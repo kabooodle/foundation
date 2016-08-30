@@ -1,4 +1,2 @@
 # kabooodle
-------------
-
-
+I am currently working on the business logic for an idea I'm throwing against the wall in my spare time.  I'm concentrating more on a minimal viable product but also still fleshing out the business rules, therefore ignoring the need of true presenters, JS models, etc;  Unit tests to come though.
