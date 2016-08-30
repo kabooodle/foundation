@@ -15,15 +15,19 @@
             </div>
         </div>
 
-        <div class="btn-group dropdown">
+        <div class="btn-group dropdown " style="display: none" id="btngroup-bulk" >
             <button class="btn white btn-sm dropdown-toggle" data-toggle="dropdown">
                 <span class="dropdown-label">Bulk</span>
                 <span class="caret"></span>
             </button>
             <div class="dropdown-menu text-left text-sm">
                 <a class="dropdown-item" href="">Delete</a>
+                <a data-toggle="modal" id="btn_add_selected" data-target="#m-md" href="{{ route('shop.inventory.index', [user()->username]) }}" class="dropdown-item">Add Selected Items to Sale</a>
             </div>
         </div>
+
+
+
     </div>
 </div>
 
@@ -41,7 +45,7 @@
     <table class="table table-condensed table-as-list white">
         <thead>
         <tr>
-            <th></th>
+            <th><div style="padding-left: 12px !important;"><input id="select_all" type="checkbox" class=""></div></th>
             <th class="text-muted">Details</th>
             <th class="text-muted">*In-stock</th>
             <th class="text-muted">Price</th>
@@ -53,7 +57,7 @@
             <tr>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important" valign="middle" class="">
                     <div class="list-item p-r-0 @if($item->flashsales->count() > 0) b-success b-l b-l-2x @endif ">
-                        <input type="checkbox">
+                        <input type="checkbox" class="selected_items_checkbox" name="selected_items[]" value="{{ $item->id }}">
                     </div>
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important">
@@ -103,7 +107,58 @@
     </table>
 
 
+    <div class="center-block text-center">
+        {{ $data->links() }}
+    </div>
+
+    <div id="m-md" class="modal" data-backdrop="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Large modal</h5>
+                </div>
+                <div class="modal-body text-center p-lg">
+                    <p>Are you sure to execute this action?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn dark-white p-x-md" data-dismiss="modal">Cancel</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div>
+    </div>
 
 
+    @push('footer-scripts')
+    <script>
+        $(function(){
+            var $selectAllEl = $('#select_all');
+            var $selectedBtnEl = $('#btngroup-bulk');
+            var $selectedItemsEl = $('.selected_items_checkbox');
+            $selectAllEl.change(function(e){
+                e.preventDefault();
+                if ($selectAllEl.is(':checked')) {
+                    $selectedItemsEl.each(function(i,e){
+                        $(this).prop('checked', true).trigger('change');
+                    });
+                } else {
+                    $selectedItemsEl.each(function(i,e){
+                        $(this).prop('checked', false).trigger('change');
+                    });
+                }
+            });
+
+            $selectedItemsEl.change(function(e){
+                var $selectedItemsCheckedEls = $('.selected_items_checkbox:checked');
+                var totalChecked = $selectedItemsCheckedEls.length;
+                if (totalChecked > 0 ) {
+                    $selectedBtnEl.show();
+                } else {
+                    $selectedBtnEl.hide();
+                    $selectAllEl.prop('checked', false).trigger('change');
+                }
+            });
+        });
+    </script>
+    @endpush
 
 @endsection

@@ -3,6 +3,7 @@
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
 use Binput;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Messages;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Inventory;
@@ -24,9 +25,20 @@ class InventoryController extends Controller
     /**
      * @return \Illuminate\Contracts\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
         $data = user()->inventory;
+
+        $page = $request->get('page', 1);
+        $perPage = config('pagination.per-page');
+
+        $data = new LengthAwarePaginator(
+            $data->forPage($page, $perPage),
+            count($data),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         return $this->view('inventory.index')->with(compact('data'));
     }
