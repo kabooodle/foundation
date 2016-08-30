@@ -1,0 +1,1 @@
+<div class="alert alert-{{ $_alerttype }}"><div class="container-inner"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p class="text-center">{{ $_alertmessage }}</p></div></div>

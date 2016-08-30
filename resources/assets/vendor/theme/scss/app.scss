@@ -1,0 +1,20 @@
+@import "../bootstrap/scss/_mixins.scss";
+@import "../bootstrap/scss/_variables.scss";
+@import "mixins.scss";
+@import "variables.scss";
+@import "variables.md.scss";
+
+@import "bs.scss";
+@import "ui.scss";
+@import "utils.scss";
+@import "md.scss";
+@import "../font-awesome/css/font-awesome.scss";
+@import "../material-design-icons/material-design-icons.scss";
+@import "../animate.css/animate.min.scss";
+@import "bs.alert.scss";
+@import "algolia.scss";
+
+.turbolinks-progress-bar {
+  height: 2px;
+  background-color: #a88add
+}

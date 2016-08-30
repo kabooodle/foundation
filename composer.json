@@ -1,0 +1,72 @@
+{
+    "name": "fuel/kabooodle",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/kabooodle/tiny-php"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9 || ^7.0",
+        "algolia/algoliasearch-laravel": "1.2.2",
+        "alt-three/bus": "1.1.0",
+        "barryvdh/laravel-cors": "0.8.2",
+        "dingo/api": "1.0.*@dev",
+        "laravel/cashier": "6.0.18",
+        "laravel/framework": "5.2.31",
+        "laravelcollective/html": "5.2.4",
+        "graham-campbell/binput": "3.4.0",
+        "graham-campbell/htmlmin": "4.4.0",
+        "ramsey/uuid": "3.5.0",
+        "rtconner/laravel-tagging": "2.2.0",
+        "shippo/shippo-php": "1.1.1",
+        "sofa/revisionable": "5.2.1",
+        "spatie/laravel-fractal": "1.9.1",
+        "tymon/jwt-auth": "1.0.*@dev",
+        "wildbit/laravel-postmark-provider": "3.0.0",
+        "zackkitzmiller/tiny": "1.2.2",
+        "pusher/pusher-php-server": "2.2.1"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "~1.4",
+        "mockery/mockery": "0.9.*",
+        "phpunit/phpunit": "~4.0",
+        "symfony/css-selector": "2.8.*|3.0.*",
+        "symfony/dom-crawler": "2.8.*|3.0.*",
+        "barryvdh/laravel-ide-helper": "2.2.1",
+        "barryvdh/laravel-debugbar": "2.2.2"
+    },
+    "autoload": {
+        "classmap": [
+            "resources/database"
+        ],
+        "files" : [
+          "resources/helpers.php"
+        ],
+        "psr-4": {
+            "Kabooodle\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kabooodle\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postInstall",
+            "php artisan ide-helper:generate",
+            "php artisan ide-helper:meta",
+            "php artisan optimize"
+        ],
+        "post-update-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "php artisan ide-helper:generate",
+            "php artisan ide-helper:meta",
+            "php artisan optimize"
+        ]
+    },
+    "config": {
+        "preferred-install": "dist"
+    }
+}

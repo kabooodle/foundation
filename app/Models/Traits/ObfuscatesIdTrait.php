@@ -1,0 +1,72 @@
+<?php
+
+namespace Kabooodle\Models\Traits;
+
+use Tiny;
+
+/**
+ * Class ObfuscatesIdTrait
+ * @package Kabooodle\Models\Traits
+ */
+trait ObfuscatesIdTrait
+{
+    /**
+     * @var string
+     */
+    public $obfuscatesSeparator = '__';
+
+    /**
+     * @return string
+     */
+    public function obfuscateToURIStringFromModel()
+    {
+        return $this->obfuscateToURIString($this->id, $this->name);
+    }
+
+    /**
+     * @param $id
+     * @param $string
+     *
+     * @return string
+     */
+    public function obfuscateToURIString($id, $string)
+    {
+        return str_slug($string) . $this->obfuscatesSeparator .  $this->obfuscateIdToString($id);
+    }
+
+    /**
+     * @param $string
+     *
+     * @return int
+     */
+    public function obfuscateFromURIString($string)
+    {
+        return (int) $this->obfuscateStringToId(substr($string, strpos($string, $this->obfuscatesSeparator) + 1));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function obfuscateIdToString($id)
+    {
+        return Tiny::to($id);
+    }
+
+    /**
+     * @param $string
+     *
+     * @return int
+     */
+    public function obfuscateStringToId($string)
+    {
+        return (int) Tiny::from($string);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUUID()
+    {
+        return $this->obfuscateToURIStringFromModel();
+    }
+}
