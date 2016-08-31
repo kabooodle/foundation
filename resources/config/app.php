@@ -149,10 +149,10 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+        Barryvdh\Cors\ServiceProvider::class,
         Dingo\Api\Provider\LaravelServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-        Barryvdh\Cors\ServiceProvider::class,
 
 
         Kabooodle\Foundation\Providers\AppServiceProvider::class,

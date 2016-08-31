@@ -4,6 +4,7 @@ namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
 use Binput;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
 use Messages;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Inventory;
@@ -81,6 +82,10 @@ class InventoryController extends Controller
             $tags = Binput::get('tags');
             if ($tags) {
                 $item->tag($tags);
+            }
+
+            if (Binput::get('flashsales', false) && $item->current_qty > 0) {
+                $this->dispatchNow(new AddInventoryToSalesCommand(user(), [$item->id], Binput::get('flashsales')));
             }
 
             event(new InventoryItemWasAddedEvent($item));

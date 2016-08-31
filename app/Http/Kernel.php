@@ -15,7 +15,8 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \Kabooodle\Http\Middleware\IfTurbolinksMiddleware::class
+        \Kabooodle\Http\Middleware\IfTurbolinksMiddleware::class,
+//        \Barryvdh\Cors\HandleCors::class
     ];
 
     /**
@@ -34,7 +35,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            \Barryvdh\Cors\HandleCors::class,
+//            \Barryvdh\Cors\HandleCors::class,
             'throttle:60,1',
         ],
     ];
@@ -44,7 +45,6 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => \Kabooodle\Http\Middleware\Authenticate::class,
-        'cors' =>             \Barryvdh\Cors\HandleCors::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
         'guest' => \Kabooodle\Http\Middleware\RedirectIfAuthenticated::class,
