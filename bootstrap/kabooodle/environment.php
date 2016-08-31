@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
 
 $env = $app->detectEnvironment(function() use ($app){
     $httpHost = ( isset($_SERVER['HTTP_HOST']) ) ? $_SERVER['HTTP_HOST'] : gethostname();
@@ -18,7 +22,6 @@ $env = $app->detectEnvironment(function() use ($app){
             $env = 'local';
             break;
     }
-
 
     // Overload existing properties
     if (file_exists(__DIR__ . '/../../.env.' . $env)) {
