@@ -1,4 +1,19 @@
 <?php
+if (! function_exists('apiRoute')) {
+    /**
+     * @param        $routeName
+     * @param array  $routeParams
+     * @param string $version
+     * @param bool   $absoluteUrl
+     *
+     * @return string
+     */
+    function apiRoute($routeName, $routeParams = [], $version = 'v1', $absoluteUrl = true)
+    {
+        return app('Dingo\Api\Routing\UrlGenerator')->version($version)->route($routeName, $routeParams, $absoluteUrl);
+    }
+}
+
 if (! function_exists('appName')) {
     /**
      * @return mixed

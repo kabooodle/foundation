@@ -8,6 +8,7 @@ use Dingo\Api\Routing\Helpers;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Contracts\Pagination\Paginator;
 
 /**
@@ -16,7 +17,7 @@ use Illuminate\Contracts\Pagination\Paginator;
  */
 abstract class AbstractApiController extends Controller
 {
-    use Helpers;
+    use DispatchesJobs, Helpers;
 
     /**
      * The HTTP response headers.

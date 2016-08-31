@@ -56,6 +56,21 @@
                     {{ Form::text('tags', null, ['class' => 'form-control selectized']) }}
                 </div>
             </div>
+            <div class="form-group row">
+                <label for="tags" class="col-sm-3 form-control-label">Add to Flash Sale<small class="text-muted block">(This can be done later)</small></label>
+                <div class="col-sm-9">
+                @foreach(user()->flashsalesAsSeller as $flashSale)
+                    <div class="form-group">
+                        <label class="md-check">
+                            <input type="checkbox" class="has-value" name="flashsales[]"
+                                   value="{{ $flashSale->id }}">
+                            <i class="green"></i>
+                            {!! $flashSale->name !!}
+                        </label>
+                    </div>
+                @endforeach
+                </div>
+            </div>
             <div class="form-group row m-t-md">
                 <div class="col-sm-offset-3 col-sm-9">
                     <button type="submit" class="btn primary">Save</button>

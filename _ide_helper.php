@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.2.31 on 2016-08-29.
+ * Generated for Laravel 5.2.31 on 2016-08-31.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -1727,37 +1727,6 @@ namespace {
     class Blade extends \Illuminate\Support\Facades\Blade{
         
         /**
-         * Minifies the output before saving it.
-         *
-         * @param string $value
-         * @return string 
-         * @static 
-         */
-        public static function compileMinify($value){
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::compileMinify($value);
-        }
-        
-        /**
-         * Return the compilers.
-         *
-         * @return string[] 
-         * @static 
-         */
-        public static function getCompilers(){
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::getCompilers();
-        }
-        
-        /**
-         * Return the blade minifier instance.
-         *
-         * @return \GrahamCampbell\HTMLMin\Minifiers\BladeMinifier 
-         * @static 
-         */
-        public static function getBladeMinifier(){
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::getBladeMinifier();
-        }
-        
-        /**
          * Compile the view at the given path.
          *
          * @param string $path
@@ -1765,8 +1734,7 @@ namespace {
          * @static 
          */
         public static function compile($path = null){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::compile($path);
+            \Illuminate\View\Compilers\BladeCompiler::compile($path);
         }
         
         /**
@@ -1776,8 +1744,7 @@ namespace {
          * @static 
          */
         public static function getPath(){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::getPath();
+            return \Illuminate\View\Compilers\BladeCompiler::getPath();
         }
         
         /**
@@ -1788,8 +1755,7 @@ namespace {
          * @static 
          */
         public static function setPath($path){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::setPath($path);
+            \Illuminate\View\Compilers\BladeCompiler::setPath($path);
         }
         
         /**
@@ -1800,8 +1766,7 @@ namespace {
          * @static 
          */
         public static function compileString($value){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::compileString($value);
+            return \Illuminate\View\Compilers\BladeCompiler::compileString($value);
         }
         
         /**
@@ -1812,8 +1777,7 @@ namespace {
          * @static 
          */
         public static function compileEchoDefaults($value){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::compileEchoDefaults($value);
+            return \Illuminate\View\Compilers\BladeCompiler::compileEchoDefaults($value);
         }
         
         /**
@@ -1823,8 +1787,7 @@ namespace {
          * @static 
          */
         public static function getExtensions(){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::getExtensions();
+            return \Illuminate\View\Compilers\BladeCompiler::getExtensions();
         }
         
         /**
@@ -1835,8 +1798,7 @@ namespace {
          * @static 
          */
         public static function extend($compiler){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::extend($compiler);
+            \Illuminate\View\Compilers\BladeCompiler::extend($compiler);
         }
         
         /**
@@ -1848,8 +1810,7 @@ namespace {
          * @static 
          */
         public static function directive($name, $handler){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::directive($name, $handler);
+            \Illuminate\View\Compilers\BladeCompiler::directive($name, $handler);
         }
         
         /**
@@ -1859,8 +1820,7 @@ namespace {
          * @static 
          */
         public static function getCustomDirectives(){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::getCustomDirectives();
+            return \Illuminate\View\Compilers\BladeCompiler::getCustomDirectives();
         }
         
         /**
@@ -1870,8 +1830,7 @@ namespace {
          * @static 
          */
         public static function getRawTags(){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::getRawTags();
+            return \Illuminate\View\Compilers\BladeCompiler::getRawTags();
         }
         
         /**
@@ -1883,8 +1842,7 @@ namespace {
          * @static 
          */
         public static function setRawTags($openTag, $closeTag){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::setRawTags($openTag, $closeTag);
+            \Illuminate\View\Compilers\BladeCompiler::setRawTags($openTag, $closeTag);
         }
         
         /**
@@ -1897,8 +1855,7 @@ namespace {
          * @static 
          */
         public static function setContentTags($openTag, $closeTag, $escaped = false){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::setContentTags($openTag, $closeTag, $escaped);
+            \Illuminate\View\Compilers\BladeCompiler::setContentTags($openTag, $closeTag, $escaped);
         }
         
         /**
@@ -1910,8 +1867,7 @@ namespace {
          * @static 
          */
         public static function setEscapedContentTags($openTag, $closeTag){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::setEscapedContentTags($openTag, $closeTag);
+            \Illuminate\View\Compilers\BladeCompiler::setEscapedContentTags($openTag, $closeTag);
         }
         
         /**
@@ -1921,8 +1877,7 @@ namespace {
          * @static 
          */
         public static function getContentTags(){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::getContentTags();
+            return \Illuminate\View\Compilers\BladeCompiler::getContentTags();
         }
         
         /**
@@ -1932,8 +1887,7 @@ namespace {
          * @static 
          */
         public static function getEscapedContentTags(){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::getEscapedContentTags();
+            return \Illuminate\View\Compilers\BladeCompiler::getEscapedContentTags();
         }
         
         /**
@@ -1944,8 +1898,7 @@ namespace {
          * @static 
          */
         public static function setEchoFormat($format){
-            //Method inherited from \Illuminate\View\Compilers\BladeCompiler            
-            \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::setEchoFormat($format);
+            \Illuminate\View\Compilers\BladeCompiler::setEchoFormat($format);
         }
         
         /**
@@ -1957,7 +1910,7 @@ namespace {
          */
         public static function getCompiledPath($path){
             //Method inherited from \Illuminate\View\Compilers\Compiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::getCompiledPath($path);
+            return \Illuminate\View\Compilers\BladeCompiler::getCompiledPath($path);
         }
         
         /**
@@ -1969,7 +1922,7 @@ namespace {
          */
         public static function isExpired($path){
             //Method inherited from \Illuminate\View\Compilers\Compiler            
-            return \GrahamCampbell\HTMLMin\Compilers\MinifyCompiler::isExpired($path);
+            return \Illuminate\View\Compilers\BladeCompiler::isExpired($path);
         }
         
     }

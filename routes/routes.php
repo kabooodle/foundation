@@ -40,7 +40,7 @@ Route::group(['domain' => 'api.'.getEnvDomain(true)], function($route){
         $api->get('/version', \Kabooodle\Http\Controllers\Api\GeneralController::class.'@version');
         $api->post('/auth/login', \Kabooodle\Http\Controllers\Api\Auth\AuthApiController::class.'@login');
 
-        $api->group(['middleware' => 'jwt.auth|cors'], function($api){
+        $api->group(['middleware' => 'jwt.auth'], function($api){
             require_once __DIR__ . DIRECTORY_SEPARATOR . 'groups' . DIRECTORY_SEPARATOR . 'api-routes.php';
         });
     });

@@ -172,6 +172,22 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return mixed
+     */
+    public function flashsaleItems()
+    {
+        return $this->belongsToMany(FlashSales::class, 'flashsale_items', 'seller_id', 'flashsale_id')->withTimestamps()->withPivot('inventory_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function flashsalesAsSeller()
+    {
+        return $this->belongsToMany(FlashSales::class, 'flashsales_sellers', 'user_id', 'flashsales_id')->withTimestamps()->where('flashsales.active', 1);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function flashsalesInvitations()

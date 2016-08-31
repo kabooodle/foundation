@@ -10,7 +10,7 @@
         "php": ">=5.5.9 || ^7.0",
         "algolia/algoliasearch-laravel": "1.2.2",
         "alt-three/bus": "1.1.0",
-        "barryvdh/laravel-cors": "0.8.2",
+        "barryvdh/laravel-cors": "0.8.1",
         "dingo/api": "1.0.*@dev",
         "laravel/cashier": "6.0.18",
         "laravel/framework": "5.2.31",

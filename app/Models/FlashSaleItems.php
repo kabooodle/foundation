@@ -30,11 +30,6 @@ class FlashsaleItems extends BaseEloquentModel
         'flashsale_id' => 'int',
         'seller_id' => 'int',
         'inventory_id' => 'int',
-        'quantity' => 'int',
-        'base_price' => 'float',
-        'base_price_discount' => 'float',
-        'enabled' => 'boolean',
-        'enable_on' => 'datetime'
     ];
 
     /**
@@ -44,13 +39,6 @@ class FlashsaleItems extends BaseEloquentModel
         'flashsale_id' => 0,
         'seller_id' => 0,
         'inventory_id' => 0,
-        'quantity' => 0,
-        'base_price' => 0,
-        'base_price_discount' => 0,
-        'description' => null,
-        'policies' => null,
-        'enabled' => false,
-        'enable_on' => null,
     ];
 
     /**
@@ -59,8 +47,6 @@ class FlashsaleItems extends BaseEloquentModel
     protected $fillable = [
         'name',
         'description',
-        'policies',
-        'enabled'
     ];
     /**
      * @var array
