@@ -10,7 +10,7 @@ use Kabooodle\Models\FlashSales;
  * Class InventoryItemWasRemovedFromSale
  * @package Kabooodle\Bus\Events\Inventory
  */
-final class InventoryItemWasRemovedFromSale
+final class InventoryItemWasRemovedFromSaleEvent
 {
     /**
      * InventoryItemWasRemovedFromSale constructor.

@@ -4,7 +4,7 @@ namespace Kabooodle\Bus\Handlers\Commands\Inventory;
 
 use Kabooodle\Models\FlashsaleItems;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
-use Kabooodle\Bus\Events\Inventory\InventoryItemWasRemovedFromSale;
+use Kabooodle\Bus\Events\Inventory\InventoryItemWasRemovedFromSaleEvent;
 
 /**
  * Class DeleteInventoryFromSaleCommand
@@ -32,7 +32,7 @@ class DeleteInventoryFromSaleCommandHandler
 
         $item->forceDelete();
 
-        event(new InventoryItemWasRemovedFromSale($command->getUser(), $item->inventory, $item->flashsale));
+        event(new InventoryItemWasRemovedFromSaleEvent($command->getUser(), $item->inventory, $item->flashsale));
 
         return $item;
     }
