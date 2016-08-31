@@ -2,9 +2,9 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Inventory;
 
+use Kabooodle\Models\FlashsaleItems;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
 use Kabooodle\Bus\Events\Inventory\InventoryItemWasRemovedFromSale;
-use Kabooodle\Models\FlashsaleItems;
 
 /**
  * Class DeleteInventoryFromSaleCommand
@@ -21,9 +21,9 @@ class DeleteInventoryFromSaleCommandHandler
     {
         $flashSaleItemId = $command->getflashSaleItemPivotId();
 
-//        $item = $command->getUser()->flashsaleItems->filter(function($item) use ($flashSaleItemId) {
+//        $flashSale = $command->getUser()->flashsaleItems->filter(function($item) use ($flashSaleItemId) {
 //            return $item->pivot->id == $flashSaleItemId;
-//        })->first()->pivot;
+//        })->first();
 //
 //        $item->delete();
 
@@ -32,7 +32,7 @@ class DeleteInventoryFromSaleCommandHandler
 
         $item->forceDelete();
 
-        event(new InventoryItemWasRemovedFromSale());
+        event(new InventoryItemWasRemovedFromSale($command->getUser(), $item->inventory, $item->flashsale));
 
         return $item;
     }

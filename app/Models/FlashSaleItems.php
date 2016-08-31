@@ -71,6 +71,14 @@ class FlashsaleItems extends BaseEloquentModel implements Revisionable
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function inventory()
+    {
+        return $this->belongsto(Inventory::class, 'inventory_id');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|User
      */
     public function seller()
