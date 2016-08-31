@@ -131,7 +131,15 @@
                         <div class="flashsale_wrapper">
                             <span class="text-muted">Flash sales:</span>
                             @foreach($item->flashsales as $flashsale)
-                                <span class="label">{{ $flashsale->name }} <a data-toggle="tooltip" data-route="{{ apiRoute('inventory.associate.destroy', [user()->username, $flashsale->pivot->id]) }}" data-placement="top" title="Remove from sale" class="m-l btn_remove_fromflashsale" data-item-id="{{ $item->id }}" data-flashsale-id="{{ $flashsale->id }}" href="#"><i class="fa fa-times"></i></a></span>
+                                <span class="label">{{ $flashsale->name }} <a data-toggle="tooltip"
+                                                                              data-route="{{ apiRoute('inventory.associate.destroy', [user()->username, $flashsale->pivot->id]) }}"
+                                                                              data-placement="top"
+                                                                              title="Remove from sale"
+                                                                              class="m-l btn_remove_fromflashsale"
+                                                                              data-item-id="{{ $item->id }}"
+                                                                              data-flashsale-id="{{ $flashsale->id }}"
+                                                                              href="#"><i
+                                                class="fa fa-times"></i></a></span>
                             @endforeach
                         </div>
                     </td>
@@ -211,7 +219,7 @@
                 e.preventDefault();
                 if ($selectAllEl.is(':checked')) {
                     $selectedItemsEl.each(function (i, e) {
-                        if (! $(e).is(':checked')) {
+                        if (!$(e).is(':checked')) {
                             $(e).prop('checked', true).trigger('change');
                         }
                     });
@@ -226,10 +234,10 @@
 
             $selectedItemsEl.change(function (e) {
                 if ($(this).is(':checked')) {
-                    $(this).closest('tr').parent().find('tr[data-id="'+$(this).val()+'"]').addClass("highlight_row");
+                    $(this).closest('tr').parent().find('tr[data-id="' + $(this).val() + '"]').addClass("highlight_row");
                     $formSaveEl.append('<input type="hidden" name="inventoryids[]" id="inventory_item_id_' + $(this).val() + '" value="' + $(this).val() + '">');
                 } else {
-                    $(this).closest('tr').parent().find('tr[data-id="'+$(this).val()+'"]').removeClass("highlight_row");
+                    $(this).closest('tr').parent().find('tr[data-id="' + $(this).val() + '"]').removeClass("highlight_row");
                     $formSaveEl.find('#inventory_item_id_' + $(this).val()).remove();
                 }
                 var $selectedItemsCheckedEls = $('.selected_items_checkbox:checked');
@@ -269,7 +277,7 @@
 
             var x = $('.btn_remove_fromflashsale');
 
-            x.click(function(e){
+            x.click(function (e) {
                 e.preventDefault();
                 var that = $(this);
 
@@ -277,23 +285,54 @@
                 that.addClass('disabled').prop('disabled', true);
                 that.html('<i class="fa fa-spinner fa-spin"></i>');
 
-                $.ajax({
-                    url: that.attr('data-route'),
-                    type: "DELETE",
-                    dataType: "json"
-                })
-                        .done(function (json) {
-                            var wrapper = that.closest('.flashsale_wrapper');
-                            that.closest('.label').remove();
-                            if (wrapper.find('.label').length == 0) {
-                                wrapper.closest('tr').remove();
-                            }
-                        })
-                        .fail(function (xhr, status, errorThrown) {
-                            alert("Sorry, there was a problem! Please try again.");
+                noty({
+                    text: 'Are you sure? This will remove the item from the flash sale',
+                    layout: 'center',
+                    theme: 'relax',
+                    type: 'alert',
+                    modal: true,
+                    animation: {
+                        open: {height: 'toggle'},
+                        close: {height: 'toggle'},
+                        easing: 'linear',
+                        speed: 1
+                    },
+                    timeout: 9000,
+                    buttons: [
+                        {
+                            addClass: 'btn btn-sm primary b-primary', text: 'Ok', onClick: function ($noty) {
+                            $noty.close();
+
+                            $.ajax({
+                                url: that.attr('data-route'),
+                                type: "DELETE",
+                                dataType: "json"
+                            })
+                                    .done(function (json) {
+                                        var wrapper = that.closest('.flashsale_wrapper');
+                                        that.closest('.label').remove();
+                                        if (wrapper.find('.label').length == 0) {
+                                            wrapper.closest('tr').remove();
+                                        }
+                                    })
+                                    .fail(function (xhr, status, errorThrown) {
+                                        alert("Sorry, there was a problem! Please try again.");
+                                        that.parent().find('button').removeClass('disabled').prop('disabled', false);
+                                        that.html('<i class="fa fa-times"></i>');
+                                    });
+                        }
+                        },
+                        {
+                            addClass: 'btn btn-link white btn-sm', text: 'Cancel', onClick: function ($noty) {
+                            $noty.close();
                             that.parent().find('button').removeClass('disabled').prop('disabled', false);
                             that.html('<i class="fa fa-times"></i>');
-                        });
+                        }
+                        }
+                    ]
+                });
+
+
             });
 
         });
