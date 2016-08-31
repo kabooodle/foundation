@@ -13,12 +13,13 @@ use Kabooodle\Models\Traits\FollowableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
+use Sofa\Revisionable\Revisionable;
 
 /**
  * Class FlashsaleItems
  * @package Kabooodle\Models
  */
-class FlashsaleItems extends BaseEloquentModel
+class FlashsaleItems extends BaseEloquentModel implements Revisionable
 {
     use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait,ObfuscatesIdTrait,  RevisionableTrait, SoftDeletes;
 

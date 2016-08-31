@@ -67,10 +67,10 @@
         </thead>
         <tbody>
         @foreach($data as $item)
-            <tr>
+            <tr data-id="{{ $item->id }}">
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle" class="">
-                    <div class="list-item p-r-0 @if($item->flashsales->count() > 0) b-success b-l b-l-2x @endif ">
+                    <div class="list-item p-r-0 ">
                         <input type="checkbox" class="selected_items_checkbox" name="selected_items[]"
                                value="{{ $item->id }}">
                     </div>
@@ -124,6 +124,19 @@
 
                 </td>
             </tr>
+            @if($item->flashsales->count() > 0)
+                <tr data-id="{{ $item->id }}">
+                    <td class="b-t-0 b-" style="border-top: 0"></td>
+                    <td colspan="4" class="b-t-0" style="border-top: 0">
+                        <div class="flashsale_wrapper">
+                            <span class="text-muted">Flash sales:</span>
+                            @foreach($item->flashsales as $flashsale)
+                                <span class="label">{{ $flashsale->name }} <a data-toggle="tooltip" data-route="{{ apiRoute('inventory.associate.destroy', [user()->username, $flashsale->pivot->id]) }}" data-placement="top" title="Remove from sale" class="m-l btn_remove_fromflashsale" data-item-id="{{ $item->id }}" data-flashsale-id="{{ $flashsale->id }}" href="#"><i class="fa fa-times"></i></a></span>
+                            @endforeach
+                        </div>
+                    </td>
+                </tr>
+            @endif
         @endforeach
         </tbody>
     </table>
@@ -213,10 +226,10 @@
 
             $selectedItemsEl.change(function (e) {
                 if ($(this).is(':checked')) {
-                    $(this).closest('tr').addClass("highlight_row");
+                    $(this).closest('tr').parent().find('tr[data-id="'+$(this).val()+'"]').addClass("highlight_row");
                     $formSaveEl.append('<input type="hidden" name="inventoryids[]" id="inventory_item_id_' + $(this).val() + '" value="' + $(this).val() + '">');
                 } else {
-                    $(this).closest('tr').removeClass("highlight_row");
+                    $(this).closest('tr').parent().find('tr[data-id="'+$(this).val()+'"]').removeClass("highlight_row");
                     $formSaveEl.find('#inventory_item_id_' + $(this).val()).remove();
                 }
                 var $selectedItemsCheckedEls = $('.selected_items_checkbox:checked');
@@ -251,6 +264,35 @@
                             alert("Sorry, there was a problem! Please try again.");
                             that.parent().find('button').removeClass('disabled').prop('disabled', false);
                             that.html('Save');
+                        });
+            });
+
+            var x = $('.btn_remove_fromflashsale');
+
+            x.click(function(e){
+                e.preventDefault();
+                var that = $(this);
+
+                that.tooltip('dispose');
+                that.addClass('disabled').prop('disabled', true);
+                that.html('<i class="fa fa-spinner fa-spin"></i>');
+
+                $.ajax({
+                    url: that.attr('data-route'),
+                    type: "DELETE",
+                    dataType: "json"
+                })
+                        .done(function (json) {
+                            var wrapper = that.closest('.flashsale_wrapper');
+                            that.closest('.label').remove();
+                            if (wrapper.find('.label').length == 0) {
+                                wrapper.closest('tr').remove();
+                            }
+                        })
+                        .fail(function (xhr, status, errorThrown) {
+                            alert("Sorry, there was a problem! Please try again.");
+                            that.parent().find('button').removeClass('disabled').prop('disabled', false);
+                            that.html('<i class="fa fa-times"></i>');
                         });
             });
 
