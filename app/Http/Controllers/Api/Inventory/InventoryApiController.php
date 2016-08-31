@@ -10,6 +10,7 @@ use Binput;
 use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
+use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
 
 /**
  * Class InventoryApiController
@@ -29,6 +30,20 @@ class InventoryApiController extends AbstractApiController
 
         $result = $this->dispatchNow(new AddInventoryToSalesCommand($this->getUser(), $inventoryIds, $flashsaleIds));
 
-        return $result;
+        return $this->setData($result)->respond();
+    }
+
+    /**
+     * @param Request $request
+     * @param         $username
+     * @param         $flashSaleItemId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroyAssociation(Request $request, $username, $flashSaleItemId)
+    {
+        $this->dispatchNow(new DeleteInventoryFromSaleCommand($this->getUser(), $flashSaleItemId));
+
+        return $this->noContent();
     }
 }

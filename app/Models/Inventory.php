@@ -157,7 +157,7 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
      */
     public function flashsales()
     {
-        return $this->belongsToMany(FlashSales::class, 'flashsale_items', 'inventory_id', 'flashsale_id')->withTimestamps();
+        return $this->belongsToMany(FlashSales::class, 'flashsale_items', 'inventory_id', 'flashsale_id')->withTimestamps()->withPivot(['id as pivot_id']);
     }
 
     /**

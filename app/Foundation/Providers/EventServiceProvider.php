@@ -29,6 +29,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         \Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Inventory\InventoryItemWasAddedEventHandler::class
+        ],
+        \Kabooodle\Bus\Events\Inventory\InventoryItemWasRemovedFromSaleEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Inventory\InventoryItemWasRemovedFromSaleEventHandler::class
         ]
     ];
     /**

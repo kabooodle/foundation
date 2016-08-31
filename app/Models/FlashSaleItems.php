@@ -13,12 +13,13 @@ use Kabooodle\Models\Traits\FollowableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
+use Sofa\Revisionable\Revisionable;
 
 /**
  * Class FlashsaleItems
  * @package Kabooodle\Models
  */
-class FlashsaleItems extends BaseEloquentModel
+class FlashsaleItems extends BaseEloquentModel implements Revisionable
 {
     use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait,ObfuscatesIdTrait,  RevisionableTrait, SoftDeletes;
 
@@ -67,6 +68,14 @@ class FlashsaleItems extends BaseEloquentModel
     public function flashsale()
     {
         return $this->belongsTo(FlashSales::class, 'flashsale_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function inventory()
+    {
+        return $this->belongsto(Inventory::class, 'inventory_id');
     }
 
     /**

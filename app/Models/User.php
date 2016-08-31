@@ -180,7 +180,7 @@ class User extends BaseEloquentModel implements
      */
     public function flashsaleItems()
     {
-        return $this->belongsToMany(FlashSales::class, 'flashsale_items', 'seller_id', 'flashsale_id')->withTimestamps()->withPivot('inventory_id');
+        return $this->belongsToMany(FlashSales::class, 'flashsale_items', 'seller_id', 'flashsale_id')->withTimestamps()->withPivot(['inventory_id', 'id as pivot_id']);
     }
 
     /**
