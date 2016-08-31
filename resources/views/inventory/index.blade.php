@@ -22,7 +22,7 @@
             </button>
             <div class="dropdown-menu text-left text-sm">
                 <a class="dropdown-item" href="">Delete</a>
-                <a data-toggle="modal" id="btn_add_selected" data-target="#m-md" href="{{ route('shop.inventory.index', [user()->username]) }}" class="dropdown-item">Add Selected Items to Sale</a>
+                <a id="btn_add_selected" href="{{ route('shop.inventory.associate.create', [user()->username]) }}?" class="dropdown-item">Add Selected Items to Sale</a>
             </div>
         </div>
 
@@ -130,10 +130,49 @@
 
     @push('footer-scripts')
     <script>
+
+            var JQUERY4U = {};
+            var W = window;
+
+            JQUERY4U.UTIL = {
+                /**
+                 * Add a parameter to url if doesn't already exist
+                 * @param param - the parameter to add
+                 * @param value - the value of the parameter
+                 * @return url - the url with the appended parameter
+                 */
+                addParamToUrl: function(param, value) {
+                    //check if param exists
+                    var result = new RegExp(param + "=([^&]*)", "i").exec(W.location.search);
+                    result = result && result[1] || "";
+
+                    //added seperately to append ? before params
+                    var loc = W.location;
+                    var url = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
+
+                    //param doesn't exist in url, add it
+                    if (result == '') {
+                        //doesn't have any params
+                        if (loc.search == '') {
+                            url += "?" + param + '=' + value;
+                        } else {
+                            url += "&" + param + '=' + value;
+                        }
+                    }
+
+                    return url;
+                }
+            };
+
+
         $(function(){
             var $selectAllEl = $('#select_all');
             var $selectedBtnEl = $('#btngroup-bulk');
             var $selectedItemsEl = $('.selected_items_checkbox');
+            var $addSelectedBtnEl =  $('#btn_add_selected');
+
+            var href = $addSelectedBtnEl.prop('href');
+
             $selectAllEl.change(function(e){
                 e.preventDefault();
                 if ($selectAllEl.is(':checked')) {
@@ -152,6 +191,7 @@
                 var totalChecked = $selectedItemsCheckedEls.length;
                 if (totalChecked > 0 ) {
                     $selectedBtnEl.show();
+//                    $addSelectedBtnEl.prop('href', JQUERY4U.UTIL.addParamToUrl('selected_items[]', $(this).val()));
                 } else {
                     $selectedBtnEl.hide();
                     $selectAllEl.prop('checked', false).trigger('change');
