@@ -35,3 +35,18 @@
 .nav-pills > .active > a > .label{
   color: $dark-black;
 }
+
+
+.label {
+  &.outline {
+    background-color: transparent;
+    color: darken($light, 30%);
+    border: 1px solid darken($light, 25%);
+    &:hover {
+      color: darken($light, 40%);
+    }
+    &.success {
+      background-color: $success;
+    }
+  }
+}

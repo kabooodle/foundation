@@ -103,6 +103,15 @@ sup {
 .nav-pills > .active > a > .label {
   color: rgba(0, 0, 0, 0.87); }
 
+.label.outline {
+  background-color: transparent;
+  color: #acacac;
+  border: 1px solid #b8b8b8; }
+  .label.outline:hover {
+    color: #929292; }
+  .label.outline.success {
+    background-color: #6cc788; }
+
 .btn {
   font-weight: 500;
   outline: 0 !important;

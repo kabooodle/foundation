@@ -95,7 +95,7 @@
                                     @if($item->tagged->count() > 0)
                                         <span class="text-muted">Tags: </span>
                                         @foreach($item->tagged as $tag) <span
-                                                class="label label-xs text-u-c">{!! $tag->tag_name !!}</span> @endforeach
+                                                class="label label-xs outline text-u-c">{!! $tag->tag_name !!}</span> @endforeach
                                     @endif
                                     {{--<div class="text-sm text-muted">--}}
                                     {{--Last Updated: {{ $item->updated_at }}, Added On: {{ $item->created_at }}--}}
@@ -131,7 +131,7 @@
                         <div class="flashsale_wrapper">
                             <span class="text-muted">Flash sales:</span>
                             @foreach($item->flashsales as $flashsale)
-                                <span class="label">{{ $flashsale->name }} <a data-toggle="tooltip"
+                                <span class="label outline">{{ $flashsale->name }} <a data-toggle="tooltip"
                                                                               data-route="{{ apiRoute('inventory.associate.destroy', [user()->username, $flashsale->pivot->id]) }}"
                                                                               data-placement="top"
                                                                               title="Remove from sale"
@@ -282,7 +282,7 @@
                 var that = $(this);
 
                 that.tooltip('dispose');
-                that.addClass('disabled').prop('disabled', true);
+                that.addClass('disabled').attr('disabled', true).unbind('click');
                 that.html('<i class="fa fa-spinner fa-spin"></i>');
 
                 noty({
@@ -319,6 +319,7 @@
                                         alert("Sorry, there was a problem! Please try again.");
                                         that.parent().find('button').removeClass('disabled').prop('disabled', false);
                                         that.html('<i class="fa fa-times"></i>');
+                                        that.bind('click', true);
                                     });
                         }
                         },
@@ -327,6 +328,7 @@
                             $noty.close();
                             that.parent().find('button').removeClass('disabled').prop('disabled', false);
                             that.html('<i class="fa fa-times"></i>');
+                            that.bind('click', true);
                         }
                         }
                     ]
