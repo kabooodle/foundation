@@ -33,19 +33,25 @@ class SellersInventoryController extends Controller
      *
      * @param $saleIdAndName
      *
-     * @return $this
      */
     public function index($saleIdAndName)
     {
-        $decryptedId = $this->obfuscateFromURIString($saleIdAndName);
-        $item = FlashSales::find($decryptedId);
+        return redirect()->route('flashsales.show', [$saleIdAndName]);
 
-        try {
-            $items = $this->dispatchNow(new GetSellerInventoryCommand($item, user()));
-            return $items->load(['item', 'seller']);
-        } catch (GetSellerInventoryException $e) {
-            dd($e);
-        }
+
+//        $decryptedId = $this->obfuscateFromURIString($saleIdAndName);
+//        $item = FlashSales::find($decryptedId);
+
+//        try {
+//            $data = $this->dispatchNow(new GetSellerInventoryCommand($item, user()));
+//            return $this->view('flashsales.shop.index')->with(compact('data', 'item'));
+//        } catch (GetSellerInventoryException $e) {
+//            dd($e);
+//        }
+
+//        $inventory = $item->inventoryItems;
+//
+//        return $this->view('flashsales.shop.index', [$saleIdAndName])->with(compact('item', 'inventory'));
     }
 
     /**
@@ -70,19 +76,18 @@ class SellersInventoryController extends Controller
 
     /**
      * @param $saleIdAndName
-     * @param $username
+     * @param $itemIdAndName
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function show($saleIdAndName, $username)
+    public function show($saleIdAndName, $itemIdAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($saleIdAndName);
         $item = FlashSales::find($decryptedId);
 
-        if ($item && $seller = $item->sellers->filter(function($user) use ($username){
-                return $user->username == $username;
-            })->first()) {
-            dd($seller);
+        $inventory = $item->inventoryItems->find($this->obfuscateFromURIString($itemIdAndName));
+        if ($item) {
+            return $this->view('flashsales.shop.show')->with(compact('inventory', 'item'));
         }
 
         return redirect()->route('flashsales.shop.index', [$saleIdAndName]);

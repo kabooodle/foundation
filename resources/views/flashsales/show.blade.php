@@ -14,6 +14,7 @@
     @include('flashsales.partials._flashsaleheader')
 
 
+    @if($item->inventoryItems->count() > 0)
     <div class="row">
         <div class="col-md-3">
             <div class="list-group m-b">
@@ -50,7 +51,7 @@
                             </div>
                             <div class="p-a">
                                 <div class="text-muted clearfix">
-                                    <h6><a href="#" class="_800">{!! $inventoryItem->name !!}</a></h6>
+                                    <h6 class="m-b-0"><a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}" class="_800">{!! $inventoryItem->name !!}</a></h6>
                                 </div>
                             </div>
                         </div>
@@ -60,6 +61,7 @@
         </div>
     </div>
 
+    @endif
     <hr>
     <div id="about" class="anchor" style=" display: block;
     position: relative;

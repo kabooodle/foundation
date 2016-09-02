@@ -8,7 +8,7 @@
         <a data-turbolinks="false" href="#about" class="btn-link btn-sm">Items</a>
         <a data-turbolinks="false" href="#about" class="btn-link btn-sm">About</a>
         {{--<a data-turbolinks="false" href="#policies" class="btn-link btn-sm">Policies</a>--}}
-        <a data-turbolinks="false" href="{{ route('flashsales.edit', [$item->getUUID()]) }}" class="btn btn-sm primary b-primary">Follow</a>
+        <a data-turbolinks="false" href="#" class="btn btn-sm primary b-primary">Watch</a>
         @if(user())
         <span class="b-l m-l m-r"></span>
             <div class="btn-group dropdown prpl-hover dropdown-onhover ">

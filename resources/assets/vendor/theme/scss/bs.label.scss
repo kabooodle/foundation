@@ -40,10 +40,10 @@
 .label {
   &.outline {
     background-color: transparent;
-    color: darken($light, 30%);
+    color: darken($light, 40%);
     border: 1px solid darken($light, 25%);
     &:hover {
-      color: darken($light, 40%);
+      color: darken($light, 60%);
     }
     &.success {
       background-color: $success;

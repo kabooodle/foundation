@@ -6,7 +6,7 @@
 
 @section('body-content')
 
-    <div class="padding">
+
         <div class="row">
         @foreach($data as $item)
                 <div class="col-md-3">
@@ -40,5 +40,5 @@
         <!-- / list -->
 
     {{ $data->links() }}
-    </div>
+
 @endsection

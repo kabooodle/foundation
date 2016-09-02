@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Carbon\Carbon;
 use Eloquent;
 
 /**
@@ -27,6 +28,36 @@ class BaseEloquentModel extends Eloquent
     public function scopeNoEagerLoads($query)
     {
         return $query->setEagerLoads([]);
+    }
+
+    /**
+     * @param $v
+     *
+     * @return string
+     */
+    public function getCreatedAtAttribute($v)
+    {
+        return Carbon::createFromFormat(DATE_ISO8601,$this->convertDateTimeTo8601($v));
+    }
+
+    /**
+     * @param $v
+     *
+     * @return string
+     */
+    public function getUpdatedAtAttribute($v)
+    {
+        return Carbon::createFromFormat(DATE_ISO8601,$this->convertDateTimeTo8601($v));
+    }
+
+    /**
+     * @param $date
+     *
+     * @return string
+     */
+    public function convertDateTimeTo8601($date)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $date)->format(DATE_ISO8601);
     }
 
     /**

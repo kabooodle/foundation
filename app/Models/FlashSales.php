@@ -165,6 +165,26 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     }
 
     /**
+     * @param $v
+     *
+     * @return Carbon
+     */
+    public function getStartsAtAttribute($v)
+    {
+        return Carbon::createFromFormat(DATE_ISO8601,$this->convertDateTimeTo8601($v));
+    }
+
+    /**
+     * @param $v
+     *
+     * @return Carbon
+     */
+    public function getEndsAtAttribute($v)
+    {
+        return Carbon::createFromFormat(DATE_ISO8601,$this->convertDateTimeTo8601($v));
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphOne
      */
     public function coverimage()
@@ -258,7 +278,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function inventoryItems()
     {
-        return $this->belongsToMany(Inventory::class, 'flashsale_items', 'flashsale_id', 'inventory_id')->withTimestamps();
+        return $this->belongsToMany(Inventory::class, 'flashsale_items', 'flashsale_id', 'inventory_id')->withTimestamps()->withPivot('inventory_id');
     }
 
     /**
@@ -268,11 +288,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function enabledInventoryItems()
     {
-        return
-            $this->hasMany(FlashsaleItems::class, 'flashsale_id')->where('enabled', 1)
-            ->where(function($q){
-                $q->whereNull('enable_on')->orWhere('enable_on', '<=', 'NOW()');
-            });
+        return $this->inventoryItems();
     }
 
     /**
