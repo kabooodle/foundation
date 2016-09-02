@@ -7,6 +7,7 @@ body{
 	height: auto;
 	min-height: 100%;
 	position: relative;
+	color: $prpl-800;
 }
 
 .app{
@@ -184,3 +185,16 @@ body{
 		margin: 0;
 	}
 }
+
+.container {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+@media (min-width: 990px) and (max-width: 992px) {
+	.container {
+		max-width: 990px;
+	}
+}
+
+

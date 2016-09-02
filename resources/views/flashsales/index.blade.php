@@ -24,7 +24,6 @@
 
 @section('body-content')
 
-    <div class="padding">
         @if($data->count() > 0)
 
             <div class="row">
@@ -76,5 +75,5 @@
             </div>
 
         @endif
-    </div>
+
 @endsection
