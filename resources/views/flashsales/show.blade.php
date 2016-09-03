@@ -52,6 +52,7 @@
                             <div class="p-a">
                                 <div class="text-muted clearfix">
                                     <h6 class="m-b-0"><a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}" class="_800">{!! $inventoryItem->name !!}</a></h6>
+                                    <p class="m-b-0"><span class="text-muted">Quantity:</span> <span class="">{{ $inventoryItem->getAvailableQuantity() == 0 ? 'Out of stock' : $inventoryItem->getAvailableQuantity() }}</span></p>
                                 </div>
                             </div>
                         </div>

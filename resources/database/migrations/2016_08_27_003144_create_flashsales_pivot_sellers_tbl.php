@@ -24,12 +24,12 @@ class CreateFlashsalesPivotSellersTbl extends Migration
             $table->foreign('user_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
 
             $table->foreign('flashsales_id')
                 ->references('id')->on('flashsales')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
         });
     }
 

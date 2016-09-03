@@ -182,3 +182,15 @@
 .text-shadow{
   text-shadow: 0 1px 0 rgba(0,0,0,.1);
 }
+
+del,
+strike,
+.text-strikethrough,
+.strike {
+
+  //color:           $danger;
+  //font-size:       15px;
+  text-decoration: line-through;
+  /*noinspection CssOverwrittenProperties*/
+  text-decoration: white double line-through; /* Ignored in CSS1/CSS2 UAs */
+}

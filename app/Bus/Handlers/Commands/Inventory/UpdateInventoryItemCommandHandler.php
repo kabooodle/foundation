@@ -22,7 +22,7 @@ class UpdateInventoryItemCommandHandler
         $item = $command->getItem();
         $item->name = array_get($command->attributes, 'name', $item->name);
         $item->description = array_get($command->attributes, 'description', $item->description);
-        $item->current_qty = array_get($command->attributes, 'current_qty', $item->current_qty);
+        $item->initial_qty = array_get($command->attributes, 'initial_qty', $item->initial_qty);
         $item->price_usd = array_get($command->attributes, 'price_usd', 0);
         if (!empty($command->attributes['tags'])) {
             $item->retag($command->attributes['tags']);

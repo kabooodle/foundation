@@ -31,12 +31,12 @@ class CreateInvitationsTbl extends Migration
             $table->foreign('invited_by')
                 ->references('id')->on('users')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
 
             $table->foreign('user_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
         });
     }
 

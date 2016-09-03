@@ -24,12 +24,12 @@ class CreateInventoryCategoriesTbl extends Migration
             $table->foreign('inventory_id')
                 ->references('id')->on('inventory')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
 
             $table->foreign('category_id')
                 ->references('id')->on('categories')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
         });
     }
 

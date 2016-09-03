@@ -140,6 +140,8 @@
                     <div class="dropdown-menu">
                         <a href="{{  route('shop.inventory.index', [user()->username]) }}" class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Manage Items</a>
                         <a href="{{ route('shop.inventory.create', [user()->username]) }}" class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add Items</a>
+                        <div class="divider"></div>
+                        <a href="{{ route('shop.claims.index', [user()->username]) }}" class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Claimed Items</a>
                     </div>
                     {{--<div class=--}}
                          {{--"dropdown-menu pull-down p-a w-full text-color text-primary-hover">--}}

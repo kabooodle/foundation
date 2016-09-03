@@ -261,4 +261,28 @@ class User extends BaseEloquentModel implements
 
         return $username;
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsOnMyInventory()
+    {
+        return $this->hasManyThrough(Claims::class,  Inventory::class)->where('inventory.user_id', $this->id);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsAsSeller()
+    {
+        return $this->claimsOnMyInventory();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsAsBuyer()
+    {
+        return $this->hasMany(Claims::class, 'claimed_by');
+    }
 }

@@ -7,6 +7,7 @@
 namespace Kabooodle\Foundation\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Kabooodle\Bus\Events\Claim\NewItemWasClaimedEvent;
 
 /**
  * Class EventServiceProvider
@@ -29,6 +30,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         \Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Inventory\InventoryItemWasAddedEventHandler::class
+        ],
+        \Kabooodle\Bus\Events\Claim\NewItemWasClaimedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Claim\ItemWasClaimedEventHandler::class
         ],
         \Kabooodle\Bus\Events\Inventory\InventoryItemWasRemovedFromSaleEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Inventory\InventoryItemWasRemovedFromSaleEventHandler::class

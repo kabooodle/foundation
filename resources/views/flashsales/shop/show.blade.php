@@ -14,5 +14,5 @@
     @include('flashsales.partials._flashsaleheader_mini')
 
     @include('inventory.partials._show', ['item' => $inventory])
-
+    @include('inventory.partials._claimmodal')
 @endsection

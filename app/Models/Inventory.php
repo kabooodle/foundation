@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Models\Traits\ClaimableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
@@ -22,15 +23,16 @@ use Kabooodle\Models\Contracts\LikeableInterface;
  */
 class Inventory extends BaseEloquentModel implements LikeableInterface, Revisionable
 {
-    use AlgoliaEloquentTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, SoftDeletes, TaggableTrait, RevisionableTrait;
+    use AlgoliaEloquentTrait, ClaimableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, SoftDeletes, TaggableTrait, RevisionableTrait;
 
     /**
      * @var array
      */
     protected $with = [
-        'tagged',
-        'categories',
-        'flashsales'
+//        'tagged',
+//        'categories',
+//        'flashsales',
+//        'claims'
     ];
 
     /**
@@ -54,7 +56,6 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
         'size' => '',
         'barcode' => null,
         'initial_qty' => 0,
-        'current_qty' => 0,
         'date_received' => '',
         'price_usd' => 0.0
     ];
@@ -69,7 +70,6 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
         'barcode' => 'string',
         'date_received' => 'date',
         'initial_qty' => 'int',
-        'current_qty' => 'int',
         'price_usd' => 'double'
     ];
 
@@ -84,7 +84,6 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
         'size',
         'barcode',
         'initial_qty',
-        'current_qty',
         'date_received',
         'tags'
     ];
@@ -102,7 +101,7 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
         return [
             'name' => 'required',
             'description' => 'required',
-            'current_qty' => 'required|int',
+            'initial_qty' => 'required|int',
             'price_usd' => 'required|numeric|digits_between:0,100000000',
             'categories' => 'required|exists:categories,id'
         ];
@@ -113,7 +112,6 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
         parent::boot();
 
         self::creating(function($model){
-            $model->initial_qty = $model->current_qty;
             $model->date_received = \Carbon\Carbon::now();
         });
     }
@@ -166,5 +164,31 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
     public function getPrice()
     {
         return number_format($this->price_usd, 2);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claims()
+    {
+        return $this->hasMany(Claims::class, 'inventory_id');
+    }
+
+    /**
+     * @param int $qty
+     *
+     * @return bool
+     */
+    public function canSatisfyRequestedQuantityOf($qty = 1)
+    {
+        return (bool) $this->getAvailableQuantity() >= $qty;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAvailableQuantity()
+    {
+        return $this->initial_qty;
     }
 }

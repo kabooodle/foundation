@@ -60,8 +60,9 @@
                 <div style="padding-left: 12px !important;"><input id="select_all" type="checkbox" class=""></div>
             </th>
             <th class="text-muted">Details</th>
-            <th class="text-muted">*In-stock</th>
-            <th class="text-muted">Price</th>
+            <th class="text-muted p-l-0 m-l-0">*Available Qty</th>
+            <th class="text-muted p-l-0 m-l-0">Price</th>
+            <th class="text-muted p-l-0 m-l-0">Claims</th>
             <th></th>
         </tr>
         </thead>
@@ -107,11 +108,15 @@
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
-                    <span class="h5">{{ $item->current_qty }}</span>
+                    <span class="h5">{{ $item->getAvailableQuantity() }}</span>
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
                     <span class="h5 ">${{ $item->price_usd }}</span>
+                </td>
+                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
+                    valign="middle">
+                    <span class="h5 "><span class="text-success">{{ $item->acceptedClaims->count() }}</span> <span class="text-muted">|</span> <span class="text-warning">{{ $item->pendingClaims->count() }}</span> </span>
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
@@ -127,7 +132,7 @@
             @if($item->flashsales->count() > 0)
                 <tr data-id="{{ $item->id }}">
                     <td class="b-t-0 b-" style="border-top: 0"></td>
-                    <td colspan="4" class="b-t-0" style="border-top: 0">
+                    <td colspan="5" class="b-t-0" style="border-top: 0">
                         <div class="flashsale_wrapper">
                             <span class="text-muted">Flash sales:</span>
                             @foreach($item->flashsales as $flashsale)

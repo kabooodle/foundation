@@ -7,13 +7,14 @@
 namespace Kabooodle\Http\Controllers\Web\FlashSales;
 
 use Binput;
-use Kabooodle\Bus\Commands\Flashsale\Inventory\GetSellerInventoryCommand;
-use Kabooodle\Foundation\Exceptions\GetSellerInventoryException;
 use Messages;
+use Response;
+use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
 
 /**
  * Class SellersInventoryController
@@ -55,26 +56,6 @@ class SellersInventoryController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        // What would this resource method be for? Not sure.
-    }
-
-    /**
-     * @param  \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        // What would this resource method be for? Not sure.
-    }
-
-    /**
      * @param $saleIdAndName
      * @param $itemIdAndName
      *
@@ -105,20 +86,25 @@ class SellersInventoryController extends Controller
 
     /**
      * @param Request $request
-     * @param         $idAndName
+     * @param         $saleIdAndName
+     * @param         $itemIdAndName
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $idAndName, $username)
+    public function claim(Request $request, $saleIdAndName, $itemIdAndName)
     {
-       //
-    }
+        $decryptedId = $this->obfuscateFromURIString(Binput::clean($saleIdAndName));
+        $flashSale = FlashSales::find($decryptedId);
 
-    /**
-     * @param Request $request
-     * @param         $idAndName
-     * @param         $username
-     */
-    public function destroy(Request $request, $idAndName, $username)
-    {
-        // I'm not sure this should be used unless you are an admin.
+        $inventory = $flashSale->inventoryItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
+
+        try {
+            $this->dispatchNow(new ClaimInventoryItemCommand(user(), $flashSale, $inventory));
+
+            Messages::success('Item claimed successfully!');
+            return Response::json([], 200);
+        } catch (Exception $e) {
+            return \Response::json(['message' => $e->getMessage()], 500);
+        }
     }
 }

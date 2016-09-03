@@ -3965,6 +3965,15 @@ a.text-blue:hover {
 .text-shadow {
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1); }
 
+del,
+strike,
+.text-strikethrough,
+.strike {
+  text-decoration: line-through;
+  /*noinspection CssOverwrittenProperties*/
+  text-decoration: white double line-through;
+  /* Ignored in CSS1/CSS2 UAs */ }
+
 .w-8 {
   width: 8px;
   height: 8px;

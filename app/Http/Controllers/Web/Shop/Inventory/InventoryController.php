@@ -72,7 +72,7 @@ class InventoryController extends Controller
             $item = Inventory::factory([
                 'name' => Binput::get('name'),
                 'description' => Binput::get('description'),
-                'current_qty' => (int) Binput::get('current_qty'),
+                'initial_qty' => (int) Binput::get('initial_qty'),
                 'user_id' => user()->id,
                 'price_usd' => Binput::get('price_usd')
             ]);
@@ -88,7 +88,7 @@ class InventoryController extends Controller
                 $item->tag($tags);
             }
 
-            if (Binput::get('flashsales', false) && $item->current_qty > 0) {
+            if (Binput::get('flashsales', false) && $item->initial_qty > 0) {
                 $this->dispatchNow(new AddInventoryToSalesCommand(user(), [$item->id], Binput::get('flashsales')));
             }
 
