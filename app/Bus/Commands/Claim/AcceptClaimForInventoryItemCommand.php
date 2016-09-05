@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Bus\Commands\Claim;
 
+use Carbon\Carbon;
 use Kabooodle\Models\User;
 
 /**
@@ -17,14 +18,18 @@ class AcceptClaimForInventoryItemCommand
     /**
      * AcceptClaimForInventoryItemCommand constructor.
      *
-     * @param User $user
-     * @param      $claimId
-     * @param null $notes
+     * @param User        $user
+     * @param             $claimId
+     * @param null        $acceptedPrice
+     * @param Carbon|null $timestamp
+     * @param null        $notes
      */
-    public function __construct(User $user, $claimId, $notes = null)
+    public function __construct(User $user, $claimId, $acceptedPrice = null, Carbon $timestamp = null, $notes = null)
     {
         $this->user = $user;
         $this->claimId = $claimId;
+        $this->acceptedPrice = $acceptedPrice;
+        $this->timestamp = $timestamp;
         $this->notes = $notes;
     }
 
@@ -50,5 +55,19 @@ class AcceptClaimForInventoryItemCommand
     public function getNotes()
     {
         return $this->notes;
+    }
+
+
+    public function getTimestamp()
+    {
+        return $this->timestamp ? : Carbon::now();
+    }
+
+    /**
+     * @return null
+     */
+    public function getAcceptedPrice()
+    {
+        return $this->acceptedPrice ? : null;
     }
 }

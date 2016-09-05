@@ -45,6 +45,7 @@ class Claims extends BaseEloquentModel implements Revisionable
         'shoppable_id' => 0,
         'shoppable_type' => null,
         'accepted' => null,
+        'accepted_price' => null,
         'accepted_on' => null,
         'rejected_on' => null,
         'rejected_by' => null,
@@ -61,6 +62,7 @@ class Claims extends BaseEloquentModel implements Revisionable
         'price' => 'float',
         'inventory_item_object_data' => 'object',
         'accepted' => 'bool',
+        'accepted_price' => 'float',
         'accepted_on' => 'date',
         'rejected_on' => 'date',
         'rejected_by' => 'int',
@@ -77,6 +79,7 @@ class Claims extends BaseEloquentModel implements Revisionable
         'claimed_by',
         'inventory_item_object_data',
         'price',
+        'accepted_price',
         'shoppable_id',
         'shoppable_type',
     ];

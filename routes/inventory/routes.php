@@ -17,7 +17,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryController::class.'@claim'
         ]);
         Route::resource('shop.claims', \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryClaimsController::class, [
-            'only' => ['index', 'show', 'update','destroy'],
+            'only' => ['index', 'show', 'update', 'destroy'],
             'parameters' => ['shop' => 'username']
         ]);
 });

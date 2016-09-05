@@ -108,15 +108,15 @@
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
-                    <span class="h5">{{ $item->getAvailableQuantity() }}</span>
-                </td>
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
-                    valign="middle">
                     <span class="h5 ">${{ $item->price_usd }}</span>
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
-                    <span class="h5 "><span class="text-success">{{ $item->acceptedClaims->count() }}</span> <span class="text-muted">|</span> <span class="text-warning">{{ $item->pendingClaims->count() }}</span> </span>
+                    <span class="h5 "><a href="#"><span class="text-success">{{ $item->acceptedClaims->count() }}</span></a> <span class="text-muted">|</span> <a href="#"><span class="text-warning">{{ $item->pendingClaims->count() }}</span></a></span>
+                </td>
+                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
+                    valign="middle">
+                    <span class="h5">{{ $item->getAvailableQuantity() }}</span>
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">

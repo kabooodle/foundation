@@ -7,17 +7,14 @@
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
 use Binput;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
-use Messages;
+use Response;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Kabooodle\Models\Inventory;
-use Kabooodle\Models\Categories;
-use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent;
-use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
+use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Kabooodle\Bus\Commands\Claim\AcceptClaimForInventoryItemCommand;
+use Kabooodle\Bus\Commands\Claim\RejectClaimForInventoryItemCommand;
 
 /**
  * Class InventoryClaimsController
@@ -62,25 +59,57 @@ class InventoryClaimsController extends Controller
      * @param Request $request
      * @param         $username
      * @param         $claimsUUID
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $username, $claimsUUID)
     {
         $data = user()->claimsOnMyInventory;
-        $item = $data->filter(function($item) use ($claimsUUID) {
+        $item = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();
+
+        if ($item) {
+            $timestamp = Binput::get('accepted_on', false) ? Carbon::createFromTimestamp(strtotime(Binput::get('accepted_on'))) : null;
+            $result = $this->dispatchNow(new AcceptClaimForInventoryItemCommand(
+                user(),
+                $claimsUUID,
+                Binput::get('accepted_price', null),
+                $timestamp,
+                Binput::get('text', null)
+            ));
+
+            return Response::json([
+                'html' => $this->view('inventory.claims.partials._claimrow')->with('claim', $result)->render()
+            ], 200);
+        }
+
+        return Response::json([], 401);
     }
 
     /**
      * @param Request $request
      * @param         $username
      * @param         $claimsUUID
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Request $request, $username, $claimsUUID)
     {
         $data = user()->claimsOnMyInventory;
-        $item = $data->filter(function($item) use ($claimsUUID) {
+        $item = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();
+
+        if ($item) {
+            $result = $this->dispatchNow(new RejectClaimForInventoryItemCommand(user(), $claimsUUID,
+                Binput::get('text', null)));
+
+            return Response::json([
+                'html' => $this->view('inventory.claims.partials._claimrow')->with('claim', $result)->render()
+            ], 200);
+        }
+
+        return Response::json([], 401);
     }
 }

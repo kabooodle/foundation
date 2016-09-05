@@ -19,11 +19,13 @@ class RejectClaimForInventoryItemCommand
      *
      * @param User $user
      * @param      $claimId
+     * @param null $notes
      */
-    public function __construct(User $user, $claimId, $reason = null)
+    public function __construct(User $user, $claimId, $notes = null)
     {
         $this->user = $user;
         $this->claimId = $claimId;
+        $this->notes = $notes;
     }
 
     /**
@@ -40,5 +42,13 @@ class RejectClaimForInventoryItemCommand
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNotes()
+    {
+        return $this->notes;
     }
 }
