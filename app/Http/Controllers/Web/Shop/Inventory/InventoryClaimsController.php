@@ -32,7 +32,7 @@ class InventoryClaimsController extends Controller
      */
     public function index(Request $request, $username)
     {
-        $data = user()->claimsOnMyInventory->load([]);
+        $data = user()->claimsOnMyInventory;
 
         $page = $request->get('page', 1);
         $perPage = config('pagination.per-page');
@@ -55,28 +55,32 @@ class InventoryClaimsController extends Controller
      */
     public function show($username, $idAndName)
     {
-
+        //
     }
 
     /**
      * @param Request $request
-     * @param         $idAndName
-     *
-     * @return $this
+     * @param         $username
+     * @param         $claimsUUID
      */
-    public function update(Request $request, $username, $idAndName)
+    public function update(Request $request, $username, $claimsUUID)
     {
-
+        $data = user()->claimsOnMyInventory;
+        $item = $data->filter(function($item) use ($claimsUUID) {
+            return $item->uuid == $claimsUUID;
+        })->first();
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param         $username
+     * @param         $claimsUUID
      */
-    public function destroy($id)
+    public function destroy(Request $request, $username, $claimsUUID)
     {
-        //
+        $data = user()->claimsOnMyInventory;
+        $item = $data->filter(function($item) use ($claimsUUID) {
+            return $item->uuid == $claimsUUID;
+        })->first();
     }
 }

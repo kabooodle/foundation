@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Models\Traits\UuidableTrait;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
@@ -18,7 +19,7 @@ use Sofa\Revisionable\Laravel\RevisionableTrait;
  */
 class Claims extends BaseEloquentModel implements Revisionable
 {
-    use AlgoliaEloquentTrait, ObfuscatesIdTrait, RevisionableTrait, SoftDeletes;
+    use AlgoliaEloquentTrait, ObfuscatesIdTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array

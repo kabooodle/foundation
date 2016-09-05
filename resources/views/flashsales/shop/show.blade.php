@@ -14,5 +14,5 @@
     @include('flashsales.partials._flashsaleheader_mini')
 
     @include('inventory.partials._show', ['item' => $inventory])
-    @include('inventory.partials._claimmodal')
+    @include('inventory.partials._claimmodal', ['post' => route('flashsales.shop.claim', [$item->getUUID(), $inventory->getUUID()]) , 'redirect' => route('flashsales.shop.index', [$item->getUUID()])])
 @endsection

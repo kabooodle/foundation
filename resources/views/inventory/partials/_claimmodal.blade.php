@@ -14,7 +14,7 @@
                             Blah blah blah.</p>
                     </div>
                     <div class="modal-footer">
-                        <button data-route="{{ route('flashsales.shop.claim', [$item->getUUID(), $inventory->getUUID()]) }}" type="button" class="btn claim p-x-md" id="btn_confirmed_claim">Confirm Claim!</button>
+                        <button data-route="{{ $post }}" type="button" class="btn claim p-x-md" id="btn_confirmed_claim">Confirm Claim!</button>
                         <button type="button" class="m-l-1 btn btn-link" id="btn_confirmed_claim_cancel"
                                 data-dismiss="modal">Cancel
                         </button>
@@ -48,7 +48,7 @@
                     .done(function (json) {
 //                        $('#modal_claim_wrapper').modal('hide');
                         that.html('Success! One moment...');
-                        window.location.href = '{{ route('flashsales.shop.index', [$item->getUUID()]) }}'
+                        window.location.href = '{{ $redirect }}'
                     })
                     .fail(function (xhr, status, errorThrown) {
                         alert(xhr.responseJSON.message);

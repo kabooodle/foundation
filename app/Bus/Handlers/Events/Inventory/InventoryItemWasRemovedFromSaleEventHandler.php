@@ -36,11 +36,11 @@ class InventoryItemWasRemovedFromSaleEventHandler
      */
     public function handle(InventoryItemWasRemovedFromSaleEvent $event)
     {
-        $user = $event->getUser();
-        $flashsale = $event->getFlashsale();
-        $item = $event->getInventoryItem();
-        $this->mailer->queue('inventory.emails.flashsale.removed', ['flashsale' => $flashsale, 'item' => $item], function ($m) use ($user) {
-            $m->to($user->email)->subject('Item removed from flash sale on '.env('APP_NAME'));
-        });
+//        $user = $event->getUser();
+//        $flashsale = $event->getFlashsale();
+//        $item = $event->getInventoryItem();
+//        $this->mailer->queue('inventory.emails.flashsale.removed', ['flashsale' => $flashsale, 'item' => $item], function ($m) use ($user) {
+//            $m->to($user->email)->subject('Item removed from flash sale on '.env('APP_NAME'));
+//        });
     }
 }

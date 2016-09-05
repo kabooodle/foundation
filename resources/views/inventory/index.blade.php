@@ -60,9 +60,9 @@
                 <div style="padding-left: 12px !important;"><input id="select_all" type="checkbox" class=""></div>
             </th>
             <th class="text-muted">Details</th>
-            <th class="text-muted p-l-0 m-l-0">*Available Qty</th>
             <th class="text-muted p-l-0 m-l-0">Price</th>
             <th class="text-muted p-l-0 m-l-0">Claims</th>
+            <th class="text-muted p-l-0 m-l-0">*Available Qty</th>
             <th></th>
         </tr>
         </thead>

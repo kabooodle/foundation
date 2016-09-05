@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.2.31 on 2016-08-31.
+ * Generated for Laravel 5.2.31 on 2016-09-05.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -13847,6 +13847,75 @@ namespace {
          */
         public static function clean($str){
             return \GrahamCampbell\Security\Security::clean($str);
+        }
+        
+    }
+
+
+    class Datatables extends \Yajra\Datatables\Facades\Datatables{
+        
+        /**
+         * Gets query and returns instance of class.
+         *
+         * @param mixed $builder
+         * @return mixed 
+         * @static 
+         */
+        public static function of($builder){
+            return \Yajra\Datatables\Datatables::of($builder);
+        }
+        
+        /**
+         * Datatables using Query Builder.
+         *
+         * @param \Illuminate\Database\Query\Builder $builder
+         * @return \Yajra\Datatables\Engines\QueryBuilderEngine 
+         * @static 
+         */
+        public static function usingQueryBuilder($builder){
+            return \Yajra\Datatables\Datatables::usingQueryBuilder($builder);
+        }
+        
+        /**
+         * Datatables using Collection.
+         *
+         * @param \Illuminate\Support\Collection $builder
+         * @return \Yajra\Datatables\Engines\CollectionEngine 
+         * @static 
+         */
+        public static function usingCollection($builder){
+            return \Yajra\Datatables\Datatables::usingCollection($builder);
+        }
+        
+        /**
+         * Datatables using Eloquent.
+         *
+         * @param mixed $builder
+         * @return \Yajra\Datatables\Engines\EloquentEngine 
+         * @static 
+         */
+        public static function usingEloquent($builder){
+            return \Yajra\Datatables\Datatables::usingEloquent($builder);
+        }
+        
+        /**
+         * Get html builder class.
+         *
+         * @return \Yajra\Datatables\Html\Builder 
+         * @static 
+         */
+        public static function getHtmlBuilder(){
+            return \Yajra\Datatables\Datatables::getHtmlBuilder();
+        }
+        
+        /**
+         * Get request object.
+         *
+         * @return \Yajra\Datatables\Request|static 
+         * @static 
+         */
+        public static function getRequest(){
+            return \Yajra\Datatables\Datatables::getRequest();
         }
         
     }

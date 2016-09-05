@@ -80,7 +80,7 @@
         <tr class="  ">
             <th></th>
             <th class="text-muted">Item</th>
-            <th class="text-muted p-l-0 m-l-0">Price</th>
+            <th class="text-muted p-l-0 m-l-0">Claim Price</th>
             <th class="text-muted p-l-0 m-l-0">Claimer</th>
             <th class="text-muted p-l-0 m-l-0">Claimed On</th>
             <th class="text-muted p-l-0 m-l-0">Accepted/Rejected On</th>
@@ -103,7 +103,7 @@
             <td style="vertical-align: middle !important">{!!  $claim->claimedBy->name  !!}</td>
             <td style="vertical-align: middle !important">{{ $claim->created_at->diffForHumans() }}</td>
             <td style="vertical-align: middle !important">
-                <span class="">@if($claim->wasRejected()) {{ $claim->rejected_on->diffForHumans() }} @elseif($claim->wasAccepted()) {{ $claim->accepted_on->diffForHumans() }} @else  @endif</span>
+                <span class="">@if($claim->wasRejected()) {{ $claim->rejected_on->diffForHumans() }} @elseif($claim->wasAccepted()) {{ $claim->accepted_on->diffForHumans() }} @else Pending  @endif</span>
             </td>
             <td style="vertical-align: middle !important">
                 <div class="pull-right">
