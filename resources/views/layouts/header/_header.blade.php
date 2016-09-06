@@ -97,10 +97,10 @@
                                                                   src="https://placekitten.com/g/32/32"> <i class=
                                                                                                            "busy b-white right"></i></span></a>
                 <div class="dropdown-menu pull-right dropdown-menu-scale">
-                    <a class="dropdown-item" ui-sref=
-                    "app.inbox.list"><span>Inbox</span> <span class=
-                                                              "label warn m-l-xs">3</span></a> <a class="dropdown-item"
-                                                                                                  ui-sref="app.page.profile"><span>Profile</span></a>
+                    {{--<a class="dropdown-item" ui-sref=--}}
+                    {{--"app.inbox.list"><span>Inbox</span> <span class=--}}
+                                                              {{--"label warn m-l-xs">3</span></a> --}}
+                                                              <a class="dropdown-item" href="{{ route('profile.index') }}"><span>Profile</span></a>
                     <a class=
                        "dropdown-item" href="{{ route('auth.logout') }}">Sign out</a>
                 </div>

@@ -3,7 +3,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2016-09-05.
+    * Generated on 2016-09-06.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -88,6 +88,7 @@ namespace PHPSTORM_META {
             'Sofa\Revisionable\Listener' instanceof \Sofa\Revisionable\Laravel\Listener,
             'security' instanceof \GrahamCampbell\Security\Security,
             'binput' instanceof \GrahamCampbell\Binput\Binput,
+            'SammyK\LaravelFacebookSdk\LaravelFacebookSdk' instanceof \SammyK\LaravelFacebookSdk\LaravelFacebookSdk,
             'Spatie\Fractal\Fractal' instanceof \Spatie\Fractal\Fractal,
             'html' instanceof \Collective\Html\HtmlBuilder,
             'form' instanceof \Collective\Html\FormBuilder,
@@ -262,6 +263,7 @@ namespace PHPSTORM_META {
             'Sofa\Revisionable\Listener' instanceof \Sofa\Revisionable\Laravel\Listener,
             'security' instanceof \GrahamCampbell\Security\Security,
             'binput' instanceof \GrahamCampbell\Binput\Binput,
+            'SammyK\LaravelFacebookSdk\LaravelFacebookSdk' instanceof \SammyK\LaravelFacebookSdk\LaravelFacebookSdk,
             'Spatie\Fractal\Fractal' instanceof \Spatie\Fractal\Fractal,
             'html' instanceof \Collective\Html\HtmlBuilder,
             'form' instanceof \Collective\Html\FormBuilder,
@@ -436,6 +438,7 @@ namespace PHPSTORM_META {
             'Sofa\Revisionable\Listener' instanceof \Sofa\Revisionable\Laravel\Listener,
             'security' instanceof \GrahamCampbell\Security\Security,
             'binput' instanceof \GrahamCampbell\Binput\Binput,
+            'SammyK\LaravelFacebookSdk\LaravelFacebookSdk' instanceof \SammyK\LaravelFacebookSdk\LaravelFacebookSdk,
             'Spatie\Fractal\Fractal' instanceof \Spatie\Fractal\Fractal,
             'html' instanceof \Collective\Html\HtmlBuilder,
             'form' instanceof \Collective\Html\FormBuilder,
@@ -610,6 +613,7 @@ namespace PHPSTORM_META {
             'Sofa\Revisionable\Listener' instanceof \Sofa\Revisionable\Laravel\Listener,
             'security' instanceof \GrahamCampbell\Security\Security,
             'binput' instanceof \GrahamCampbell\Binput\Binput,
+            'SammyK\LaravelFacebookSdk\LaravelFacebookSdk' instanceof \SammyK\LaravelFacebookSdk\LaravelFacebookSdk,
             'Spatie\Fractal\Fractal' instanceof \Spatie\Fractal\Fractal,
             'html' instanceof \Collective\Html\HtmlBuilder,
             'form' instanceof \Collective\Html\FormBuilder,

@@ -8,7 +8,6 @@ namespace Kabooodle\Models;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Kabooodle\Models\Contracts\ShoppableInterface;
 use Laravel\Cashier\Billable;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Auth\Authenticatable;
@@ -21,7 +20,9 @@ use Sofa\Revisionable\Laravel\RevisionableTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Kabooodle\Models\Contracts\LikeableInterface;
+use Kabooodle\Models\Contracts\ShoppableInterface;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use SammyK\LaravelFacebookSdk\SyncableGraphNodeTrait;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
@@ -39,7 +40,17 @@ class User extends BaseEloquentModel implements
     ShoppableInterface,
     Revisionable
 {
-    use AlgoliaEloquentTrait, Authenticatable, Authorizable, Billable, CanResetPassword, LikeableTrait, FollowableTrait, ObfuscatesIdTrait, RevisionableTrait;
+    use AlgoliaEloquentTrait, Authenticatable, Authorizable, Billable, CanResetPassword, LikeableTrait, FollowableTrait, ObfuscatesIdTrait, RevisionableTrait, SyncableGraphNodeTrait;
+
+    /**
+     * @var array
+     */
+    protected $dates =[
+        'created_at',
+        'updated_at',
+        'trial_ends_at',
+        'facebook_access_token_expires'
+    ];
 
     /**
      * Don't use "created" because it will fail a foreign key constraint. And this is erroneous anyway.
@@ -99,7 +110,7 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'stripe_id', 'card_brand', 'card_last_four', 'trial_ends_at', 'pivot', 'activated'
+        'password', 'remember_token', 'stripe_id', 'card_brand', 'card_last_four', 'trial_ends_at', 'pivot', 'activated', 'access_token', 'facebook_user_id'
     ];
 
     /**
@@ -286,5 +297,13 @@ class User extends BaseEloquentModel implements
     public function claimsAsBuyer()
     {
         return $this->hasMany(Claims::class, 'claimed_by');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function fbTokenExpired()
+    {
+        return $this->facebook_access_token_expires ? $this->facebook_access_token_expires->lt(Carbon::now()) : true;
     }
 }

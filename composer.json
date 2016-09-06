@@ -23,6 +23,7 @@
         "graham-campbell/htmlmin": "4.4.0",
         "ramsey/uuid": "3.5.0",
         "rtconner/laravel-tagging": "2.2.0",
+        "sammyk/laravel-facebook-sdk": "^3.0",
         "shippo/shippo-php": "1.1.1",
         "sofa/revisionable": "5.2.1",
         "spatie/laravel-fractal": "1.9.1",

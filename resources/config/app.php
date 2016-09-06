@@ -171,6 +171,9 @@ return [
         GrahamCampbell\Security\SecurityServiceProvider::class,
         GrahamCampbell\Binput\BinputServiceProvider::class,
         Laravel\Cashier\CashierServiceProvider::class,
+//        SammyK\LaravelFacebookSdk\LaravelFacebookSdkServiceProvider::class,
+        Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
+
 
         Spatie\Fractal\FractalServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
@@ -235,7 +238,7 @@ return [
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
 
         'Binput' => GrahamCampbell\Binput\Facades\Binput::class,
-        'Security' => GrahamCampbell\Security\Facades\Security::class
+        'Security' => GrahamCampbell\Security\Facades\Security::class,
+        'Facebook' => Kabooodle\Services\Social\Facebook\FacebookSdkFacade::class,
     ],
-
 ];
