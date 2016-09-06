@@ -12,8 +12,14 @@
 
     @if($item->flashsales && $item->flashsales->count() > 0)
     <div class="box-color p-a warning b-0">
-        <h6 class="text-center"><strong class="_700">Note:</strong> This item is currently listed in <kbd>{{ $item->flashsales->count() }}</kbd> active flash sales.</h6>
+        <h6 class="text-center m-b-0"><strong class="_700">Note:</strong> This item is currently listed in <kbd>{{ $item->flashsales->count() }}</kbd> active flash sales.</h6>
     </div>
+    @endif
+
+    @if($item->pendingClaims && $item->pendingClaims->count() > 0)
+        <div class="box-color p-a warning b-0">
+            <h6 class="text-center m-b-0"><strong class="_700">Note:</strong> This item currently has <kbd>{{ $item->pendingClaims->count() }}</kbd> pending claims.</h6>
+        </div>
     @endif
 
     {{ Form::open(['route' => ['shop.inventory.update', $item->user->username, $item->getUUID()], 'method' => 'put']) }}
@@ -40,13 +46,13 @@
                     {{ Form::number('price_usd', $item->getPrice(), ['class' => 'form-control float', 'step' => 'any', 'min' => 0]) }}
                 </div>
             </div>
-            <div class="form-group row {{ $errors->has('current_qty') ? 'has-danger' : null }}">
+            <div class="form-group row {{ $errors->has('initial_qty') ? 'has-danger' : null }}">
                 <label for="inputEmail3" class="col-sm-3 form-control-label">Available Quantity</label>
                 <div class="col-sm-9">
-                    {{ Form::number('current_qty', $item->current_qty, ['class' => 'form-control', 'v-model' => 'current_qty', 'number']) }}
+                    {{ Form::number('initial_qty', $item->initial_qty, ['class' => 'form-control', 'v-model' => 'initial_qty', 'number']) }}
                 </div>
             </div>
-            <div class="form-group row {{ $errors->has('current_qty') ? 'has-danger' : null }}">
+            <div class="form-group row {{ $errors->has('initial_qty') ? 'has-danger' : null }}">
                 <label for="inputEmail3" class="col-sm-3 form-control-label">Categories</label>
                 <div class="col-sm-9">
                     {{ Form::select('categories', \Kabooodle\Models\Categories::all()->sortBy('name')->pluck('name','id'), ($item->categories->count() > 0 ? $item->categories->first()->id : null), ['class' => 'form-control']) }}

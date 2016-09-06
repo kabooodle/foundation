@@ -8,7 +8,9 @@ namespace Kabooodle\Models;
 
 use Carbon\Carbon;
 use Sofa\Revisionable\Revisionable;
+use Illuminate\Queue\SerializesModels;
 use Kabooodle\Models\Traits\LikeableTrait;
+use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Kabooodle\Models\Traits\AuthorableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,14 +18,15 @@ use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
+use Kabooodle\Models\Contracts\ShoppableInterface;
 
 /**
  * Class FlashSales
  * @package Kabooodle\Models
  */
-class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisionable
+class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisionable, ShoppableInterface
 {
-    use AlgoliaEloquentTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, SoftDeletes, RevisionableTrait, AuthorableTrait;
+    use AlgoliaEloquentTrait, ClaimableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, SerializesModels, SoftDeletes, RevisionableTrait, AuthorableTrait;
 
     const TYPE_SINGLE = 'single';
     const TYPE_GROUP = 'group';
@@ -51,7 +54,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      * @var array
      */
     protected $with = [
-        'likes',
+//        'likes',
     ];
 
     /**
@@ -369,5 +372,13 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public function saleIsYetToStart()
     {
         return (bool) ! $this->saleHasStarted() && ! $this->saleHasEnded();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function claims()
+    {
+        return $this->morphMany(Claims::class, 'shoppable');
     }
 }

@@ -34,27 +34,27 @@ class CreateSaleSellerItems extends Migration
             $table->foreign('flashsale_id')
                 ->references('id')->on('flashsales')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
 
             $table->foreign('created_by')
                 ->references('id')->on('users')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
 
             $table->foreign('updated_by')
                 ->references('id')->on('users')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
 
             $table->foreign('inventory_id')
                 ->references('id')->on('inventory')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
 
             $table->foreign('seller_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade')
-                ->onUpdated('cascade');
+                ->onUpdate('cascade');
         });
     }
 

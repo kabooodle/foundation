@@ -173,6 +173,7 @@ return [
         Laravel\Cashier\CashierServiceProvider::class,
 
         Spatie\Fractal\FractalServiceProvider::class,
+        Yajra\Datatables\DatatablesServiceProvider::class,
         ZackKitzmiller\Laravel5\TinyServiceProvider::class,
     ],
 

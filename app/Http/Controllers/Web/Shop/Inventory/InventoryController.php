@@ -6,18 +6,25 @@
 
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
+
 use Binput;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
+use Datatables;
 use Messages;
+use Response;
+use Exception;
 use Illuminate\Http\Request;
-use Kabooodle\Models\Inventory;
-use Kabooodle\Models\Categories;
-use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
-use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent;
+use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
+use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
+use Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent;
+use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Models\Categories;
+use Kabooodle\Models\Inventory;
+use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use Kabooodle\Models\User;
+
 
 /**
  * Class InventoryController
@@ -30,9 +37,9 @@ class InventoryController extends Controller
     /**
      * @return \Illuminate\Contracts\View\View
      */
-    public function index(Request $request)
+    public function index(Request $request, $username)
     {
-        $data = user()->inventory;
+        $data = user()->inventory->load(['categories', 'claims', 'tagged']);
 
         $page = $request->get('page', 1);
         $perPage = config('pagination.per-page');
@@ -48,6 +55,54 @@ class InventoryController extends Controller
         return $this->view('inventory.index')->with(compact('data'));
     }
 
+//    public function queryIndex()
+//    {
+//        return Datatables::collection(user()->inventory->load([
+//            'categories',
+//            'claims',
+//            'tagged',
+//            'acceptedClaims',
+//            'pendingClaims'
+//        ]))
+//            ->addRowAttr('valign', 'middle')
+//            ->addRowAttr('style',
+//                'padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important')
+//            ->editColumn('id', ' <div class="list-item p-r-0 ">
+//                        <input type="checkbox" class="selected_items_checkbox" name="selected_items[]"
+//                               value="{{ $id }}">
+//                    </div>', 0)
+//            ->editColumn('name', '<div class="list ">
+//                        <div class="list-item p-l-0 p-r-0">
+//                            <div class="list-left">
+//
+//                        <span class="w-40 avatar">
+//                                            <img src="https://placekitten.com/g/32/32">
+//                                          </span>
+//                            </div>
+//                            <div class="list-body">
+//                                <div>
+//                                    <a href=""
+//                                       class="_500 h6">{{ $name }}</a>
+//                                </div>
+//                                <div class="text-ellipsis text-muted text-sm">
+//                                    Categories: @foreach($categories as $cat) {{ $cat["name"] }} @endforeach</div>
+//                                <div class="text-sm hidden-sm hidden-xs hidden-xs-down">
+//                                    @if(count($tagged) > 0)
+//                                        <span class="text-muted">Tags: </span>
+//                                        @foreach($tagged as $tag) <span
+//                                                class="label label-xs outline text-u-c">{!! $tag["tag_name"] !!}</span> @endforeach
+//                                    @endif
+//                                </div>
+//                            </div>
+//                        </div>
+//                    </div>', 1)
+//            ->editColumn('price_usd', '<span class="h5">${{$price_usd}}</span>')
+//            ->addColumn('claims',
+//                ' <span class="h5 "><span class="text-success">{{ count($accepted_claims) }}</span> <span class="text-muted">|</span> <span class="text-warning">{{ count($pending_claims) }}</span> </span>')
+//            ->editColumn('initial_qty', ' <span class="h5">{{ $initial_qty }}</span>')
+//            ->make(true);
+//    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -61,7 +116,8 @@ class InventoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, $username)
@@ -72,7 +128,7 @@ class InventoryController extends Controller
             $item = Inventory::factory([
                 'name' => Binput::get('name'),
                 'description' => Binput::get('description'),
-                'current_qty' => (int) Binput::get('current_qty'),
+                'initial_qty' => (int) Binput::get('initial_qty'),
                 'user_id' => user()->id,
                 'price_usd' => Binput::get('price_usd')
             ]);
@@ -88,7 +144,7 @@ class InventoryController extends Controller
                 $item->tag($tags);
             }
 
-            if (Binput::get('flashsales', false) && $item->current_qty > 0) {
+            if (Binput::get('flashsales', false) && $item->initial_qty > 0) {
                 $this->dispatchNow(new AddInventoryToSalesCommand(user(), [$item->id], Binput::get('flashsales')));
             }
 
@@ -173,11 +229,36 @@ class InventoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * @param Request $request
+     * @param         $username
+     * @param         $idAndName
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function claim(Request $request, $username, $idAndName)
+    {
+        $decryptedId = $this->obfuscateFromURIString(Binput::clean($idAndName));
+        $user = User::where('username', $username)->first();
+
+        $item = $user->inventory->find($decryptedId);
+        try {
+            $this->dispatchNow(new ClaimInventoryItemCommand(user(), $user, $item));
+
+            Messages::success('Item claimed successfully!');
+
+            return Response::json([], 200);
+        } catch (Exception $e) {
+            return Response::json(['message' => $e->getMessage()], 500);
+        }
     }
 }

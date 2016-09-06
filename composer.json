@@ -4,6 +4,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/kabooodle/tiny-php"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/kabooodle/laravel-datatables"
         }
     ],
     "require": {
@@ -25,7 +29,8 @@
         "tymon/jwt-auth": "1.0.*@dev",
         "wildbit/laravel-postmark-provider": "3.0.0",
         "zackkitzmiller/tiny": "1.2.2",
-        "pusher/pusher-php-server": "2.2.1"
+        "pusher/pusher-php-server": "2.2.1",
+        "yajra/laravel-datatables-oracle": "6.18.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

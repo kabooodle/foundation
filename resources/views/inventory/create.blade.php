@@ -38,10 +38,10 @@
                     {{ Form::number('price_usd', null or 0, ['class' => 'form-control float', 'step' => 'any', 'min' => 0]) }}
                 </div>
             </div>
-            <div class="form-group row {{ $errors->has('current_qty') ? 'has-danger' : null }}">
-                <label for="current_qty" class="col-sm-3 form-control-label">Current Total Quantity</label>
+            <div class="form-group row {{ $errors->has('initial_qty') ? 'has-danger' : null }}">
+                <label for="initial_qty" class="col-sm-3 form-control-label">Current Total Quantity</label>
                 <div class="col-sm-9">
-                    {{ Form::number('current_qty', null or 0, ['class' => 'form-control', 'v-model' => 'current_qty', 'number']) }}
+                    {{ Form::number('initial_qty', null or 0, ['class' => 'form-control', 'v-model' => 'initial_qty', 'number']) }}
                 </div>
             </div>
             <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
@@ -94,13 +94,6 @@
                     }
                 }
             });
-
-            $('.float').keypress(function(event) {
-                if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-                    event.preventDefault();
-                }
-            });
-
         });
     </script>
 

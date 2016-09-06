@@ -8,6 +8,7 @@ namespace Kabooodle\Models;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Kabooodle\Models\Contracts\ShoppableInterface;
 use Laravel\Cashier\Billable;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Auth\Authenticatable;
@@ -35,6 +36,7 @@ class User extends BaseEloquentModel implements
     CanResetPasswordContract,
     JWTSubject,
     LikeableInterface,
+    ShoppableInterface,
     Revisionable
 {
     use AlgoliaEloquentTrait, Authenticatable, Authorizable, Billable, CanResetPassword, LikeableTrait, FollowableTrait, ObfuscatesIdTrait, RevisionableTrait;
@@ -260,5 +262,29 @@ class User extends BaseEloquentModel implements
         }
 
         return $username;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsOnMyInventory()
+    {
+        return $this->hasManyThrough(Claims::class,  Inventory::class)->where('inventory.user_id', $this->id);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsAsSeller()
+    {
+        return $this->claimsOnMyInventory();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsAsBuyer()
+    {
+        return $this->hasMany(Claims::class, 'claimed_by');
     }
 }

@@ -233,5 +233,11 @@ $(function () {
     }, function() {
         $(this).removeClass('open active').find('.dropdown-menu').stop(true, true).hide();
     });
+
+    $('.float').keypress(function(event) {
+        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+    });
 });
 //# sourceMappingURL=app.js.map
