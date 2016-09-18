@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.2.31 on 2016-09-16.
+ * Generated for Laravel 5.2.31 on 2016-09-18.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -2286,7 +2286,7 @@ namespace {
          * @static 
          */
         public static function increment($key, $value = 1){
-            return \Illuminate\Cache\FileStore::increment($key, $value);
+            return \Illuminate\Cache\RedisStore::increment($key, $value);
         }
         
         /**
@@ -2298,7 +2298,7 @@ namespace {
          * @static 
          */
         public static function decrement($key, $value = 1){
-            return \Illuminate\Cache\FileStore::decrement($key, $value);
+            return \Illuminate\Cache\RedisStore::decrement($key, $value);
         }
         
         /**
@@ -2308,27 +2308,38 @@ namespace {
          * @static 
          */
         public static function flush(){
-            \Illuminate\Cache\FileStore::flush();
+            \Illuminate\Cache\RedisStore::flush();
         }
         
         /**
-         * Get the Filesystem instance.
+         * Get the Redis connection instance.
          *
-         * @return \Illuminate\Filesystem\Filesystem 
+         * @return \Predis\ClientInterface 
          * @static 
          */
-        public static function getFilesystem(){
-            return \Illuminate\Cache\FileStore::getFilesystem();
+        public static function connection(){
+            return \Illuminate\Cache\RedisStore::connection();
         }
         
         /**
-         * Get the working directory of the cache.
+         * Set the connection name to be used.
          *
-         * @return string 
+         * @param string $connection
+         * @return void 
          * @static 
          */
-        public static function getDirectory(){
-            return \Illuminate\Cache\FileStore::getDirectory();
+        public static function setConnection($connection){
+            \Illuminate\Cache\RedisStore::setConnection($connection);
+        }
+        
+        /**
+         * Get the Redis database instance.
+         *
+         * @return \Illuminate\Redis\Database 
+         * @static 
+         */
+        public static function getRedis(){
+            return \Illuminate\Cache\RedisStore::getRedis();
         }
         
         /**
@@ -2338,7 +2349,18 @@ namespace {
          * @static 
          */
         public static function getPrefix(){
-            return \Illuminate\Cache\FileStore::getPrefix();
+            return \Illuminate\Cache\RedisStore::getPrefix();
+        }
+        
+        /**
+         * Set the cache key prefix.
+         *
+         * @param string $prefix
+         * @return void 
+         * @static 
+         */
+        public static function setPrefix($prefix){
+            \Illuminate\Cache\RedisStore::setPrefix($prefix);
         }
         
     }
@@ -5009,6 +5031,19 @@ namespace {
     class Event extends \Illuminate\Support\Facades\Event{
         
         /**
+         * Fire an event and call the listeners.
+         *
+         * @param string|object $event
+         * @param mixed $payload
+         * @param bool $halt
+         * @return array|null 
+         * @static 
+         */
+        public static function fire($event, $payload = array(), $halt = false){
+            return \Kabooodle\Services\EventDispatcher::fire($event, $payload, $halt);
+        }
+        
+        /**
          * Register an event listener with the dispatcher.
          *
          * @param string|array $events
@@ -5018,7 +5053,8 @@ namespace {
          * @static 
          */
         public static function listen($events, $listener, $priority = 0){
-            \Illuminate\Events\Dispatcher::listen($events, $listener, $priority);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            \Kabooodle\Services\EventDispatcher::listen($events, $listener, $priority);
         }
         
         /**
@@ -5029,7 +5065,8 @@ namespace {
          * @static 
          */
         public static function hasListeners($eventName){
-            return \Illuminate\Events\Dispatcher::hasListeners($eventName);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            return \Kabooodle\Services\EventDispatcher::hasListeners($eventName);
         }
         
         /**
@@ -5041,7 +5078,8 @@ namespace {
          * @static 
          */
         public static function push($event, $payload = array()){
-            \Illuminate\Events\Dispatcher::push($event, $payload);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            \Kabooodle\Services\EventDispatcher::push($event, $payload);
         }
         
         /**
@@ -5052,7 +5090,8 @@ namespace {
          * @static 
          */
         public static function subscribe($subscriber){
-            \Illuminate\Events\Dispatcher::subscribe($subscriber);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            \Kabooodle\Services\EventDispatcher::subscribe($subscriber);
         }
         
         /**
@@ -5064,7 +5103,8 @@ namespace {
          * @static 
          */
         public static function until($event, $payload = array()){
-            return \Illuminate\Events\Dispatcher::until($event, $payload);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            return \Kabooodle\Services\EventDispatcher::until($event, $payload);
         }
         
         /**
@@ -5075,7 +5115,8 @@ namespace {
          * @static 
          */
         public static function flush($event){
-            \Illuminate\Events\Dispatcher::flush($event);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            \Kabooodle\Services\EventDispatcher::flush($event);
         }
         
         /**
@@ -5085,20 +5126,8 @@ namespace {
          * @static 
          */
         public static function firing(){
-            return \Illuminate\Events\Dispatcher::firing();
-        }
-        
-        /**
-         * Fire an event and call the listeners.
-         *
-         * @param string|object $event
-         * @param mixed $payload
-         * @param bool $halt
-         * @return array|null 
-         * @static 
-         */
-        public static function fire($event, $payload = array(), $halt = false){
-            return \Illuminate\Events\Dispatcher::fire($event, $payload, $halt);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            return \Kabooodle\Services\EventDispatcher::firing();
         }
         
         /**
@@ -5109,7 +5138,8 @@ namespace {
          * @static 
          */
         public static function getListeners($eventName){
-            return \Illuminate\Events\Dispatcher::getListeners($eventName);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            return \Kabooodle\Services\EventDispatcher::getListeners($eventName);
         }
         
         /**
@@ -5120,7 +5150,8 @@ namespace {
          * @static 
          */
         public static function makeListener($listener){
-            return \Illuminate\Events\Dispatcher::makeListener($listener);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            return \Kabooodle\Services\EventDispatcher::makeListener($listener);
         }
         
         /**
@@ -5131,7 +5162,8 @@ namespace {
          * @static 
          */
         public static function createClassListener($listener){
-            return \Illuminate\Events\Dispatcher::createClassListener($listener);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            return \Kabooodle\Services\EventDispatcher::createClassListener($listener);
         }
         
         /**
@@ -5142,7 +5174,8 @@ namespace {
          * @static 
          */
         public static function forget($event){
-            \Illuminate\Events\Dispatcher::forget($event);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            \Kabooodle\Services\EventDispatcher::forget($event);
         }
         
         /**
@@ -5152,7 +5185,8 @@ namespace {
          * @static 
          */
         public static function forgetPushed(){
-            \Illuminate\Events\Dispatcher::forgetPushed();
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            \Kabooodle\Services\EventDispatcher::forgetPushed();
         }
         
         /**
@@ -5163,7 +5197,8 @@ namespace {
          * @static 
          */
         public static function setQueueResolver($resolver){
-            return \Illuminate\Events\Dispatcher::setQueueResolver($resolver);
+            //Method inherited from \Illuminate\Events\Dispatcher            
+            return \Kabooodle\Services\EventDispatcher::setQueueResolver($resolver);
         }
         
     }
@@ -13918,6 +13953,463 @@ namespace {
          */
         public static function clean($str){
             return \GrahamCampbell\Security\Security::clean($str);
+        }
+        
+    }
+
+
+    class Facebook extends \Kabooodle\Services\Social\Facebook\FacebookSdkFacade{
+        
+        /**
+         * 
+         *
+         * @param \Kabooodle\Services\Social\Facebook\AccessToken|string|null $accessToken
+         * @return \Facebook\GraphNodes\GraphNode|bool 
+         * @static 
+         */
+        public static function testAccessToken($accessToken = null){
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::testAccessToken($accessToken);
+        }
+        
+        /**
+         * 
+         *
+         * @param null|int $userId
+         * @return \Facebook\GraphNodes\GraphEdge 
+         * @static 
+         */
+        public static function getUsersGroups($userId = null){
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getUsersGroups($userId);
+        }
+        
+        /**
+         * 
+         *
+         * @param null|int $groupId
+         * @return \Facebook\GraphNodes\GraphEdge 
+         * @static 
+         */
+        public static function getGroupAlbums($groupId){
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getGroupAlbums($groupId);
+        }
+        
+        /**
+         * 
+         *
+         * @param $albumId
+         * @param array $params
+         * @param null $userToken
+         * @return \Facebook\GraphNodes\GraphNode 
+         * @static 
+         */
+        public static function postPhotoToGroupAlbum($albumId, $params = array(), $userToken = null){
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::postPhotoToGroupAlbum($albumId, $params, $userToken);
+        }
+        
+        /**
+         * 
+         *
+         * @param $photoId
+         * @param array $params
+         * @param null $userToken
+         * @return \Facebook\GraphNodes\GraphNode 
+         * @static 
+         */
+        public static function deletePhoto($photoId, $params = array(), $userToken = null){
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::deletePhoto($photoId, $params, $userToken);
+        }
+        
+        /**
+         * 
+         *
+         * @param $photoId
+         * @param array $params
+         * @param null $userToken
+         * @return \Facebook\GraphNodes\GraphNode 
+         * @static 
+         */
+        public static function postCommentToPhoto($photoId, $params = array(), $userToken = null){
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::postCommentToPhoto($photoId, $params, $userToken);
+        }
+        
+        /**
+         * Sends a request to Graph and returns the result.
+         *
+         * @param string $method
+         * @param string $endpoint
+         * @param array $params
+         * @param \Kabooodle\Services\Social\Facebook\AccessToken|string|null $accessToken
+         * @param string|null $eTag
+         * @param string|null $graphVersion
+         * @return \Kabooodle\Services\Social\Facebook\FacebookResponse 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function sendRequest($method, $endpoint, $params = array(), $accessToken = null, $eTag = null, $graphVersion = null){
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::sendRequest($method, $endpoint, $params, $accessToken, $eTag, $graphVersion);
+        }
+        
+        /**
+         * 
+         *
+         * @param array $config
+         * @return \SammyK\LaravelFacebookSdk\LaravelFacebookSdk 
+         * @static 
+         */
+        public static function newInstance($config){
+            //Method inherited from \SammyK\LaravelFacebookSdk\LaravelFacebookSdk            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::newInstance($config);
+        }
+        
+        /**
+         * Generate an OAuth 2.0 authorization URL for authentication.
+         *
+         * @param array $scope
+         * @param string $callback_url
+         * @return string 
+         * @static 
+         */
+        public static function getLoginUrl($scope = array(), $callback_url = ''){
+            //Method inherited from \SammyK\LaravelFacebookSdk\LaravelFacebookSdk            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getLoginUrl($scope, $callback_url);
+        }
+        
+        /**
+         * Generate a re-request authorization URL.
+         *
+         * @param array $scope
+         * @param string $callback_url
+         * @return string 
+         * @static 
+         */
+        public static function getReRequestUrl($scope, $callback_url = ''){
+            //Method inherited from \SammyK\LaravelFacebookSdk\LaravelFacebookSdk            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getReRequestUrl($scope, $callback_url);
+        }
+        
+        /**
+         * Generate a re-authentication authorization URL.
+         *
+         * @param array $scope
+         * @param string $callback_url
+         * @return string 
+         * @static 
+         */
+        public static function getReAuthenticationUrl($scope = array(), $callback_url = ''){
+            //Method inherited from \SammyK\LaravelFacebookSdk\LaravelFacebookSdk            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getReAuthenticationUrl($scope, $callback_url);
+        }
+        
+        /**
+         * Get an access token from a redirect.
+         *
+         * @param string $callback_url
+         * @return \Facebook\Authentication\AccessToken|null 
+         * @static 
+         */
+        public static function getAccessTokenFromRedirect($callback_url = ''){
+            //Method inherited from \SammyK\LaravelFacebookSdk\LaravelFacebookSdk            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getAccessTokenFromRedirect($callback_url);
+        }
+        
+        /**
+         * Returns the FacebookApp entity.
+         *
+         * @return \Facebook\FacebookApp 
+         * @static 
+         */
+        public static function getApp(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getApp();
+        }
+        
+        /**
+         * Returns the FacebookClient service.
+         *
+         * @return \Facebook\FacebookClient 
+         * @static 
+         */
+        public static function getClient(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getClient();
+        }
+        
+        /**
+         * Returns the OAuth 2.0 client service.
+         *
+         * @return \Facebook\OAuth2Client 
+         * @static 
+         */
+        public static function getOAuth2Client(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getOAuth2Client();
+        }
+        
+        /**
+         * Returns the last response returned from Graph.
+         *
+         * @return \Facebook\FacebookResponse|\Facebook\FacebookBatchResponse|null 
+         * @static 
+         */
+        public static function getLastResponse(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getLastResponse();
+        }
+        
+        /**
+         * Returns the URL detection handler.
+         *
+         * @return \Facebook\UrlDetectionInterface 
+         * @static 
+         */
+        public static function getUrlDetectionHandler(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getUrlDetectionHandler();
+        }
+        
+        /**
+         * Returns the default AccessToken entity.
+         *
+         * @return \Facebook\AccessToken|null 
+         * @static 
+         */
+        public static function getDefaultAccessToken(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getDefaultAccessToken();
+        }
+        
+        /**
+         * Sets the default access token to use with requests.
+         *
+         * @param \Facebook\AccessToken|string $accessToken The access token to save.
+         * @throws \InvalidArgumentException
+         * @static 
+         */
+        public static function setDefaultAccessToken($accessToken){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::setDefaultAccessToken($accessToken);
+        }
+        
+        /**
+         * Returns the default Graph version.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function getDefaultGraphVersion(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getDefaultGraphVersion();
+        }
+        
+        /**
+         * Returns the redirect login helper.
+         *
+         * @return \Facebook\FacebookRedirectLoginHelper 
+         * @static 
+         */
+        public static function getRedirectLoginHelper(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getRedirectLoginHelper();
+        }
+        
+        /**
+         * Returns the JavaScript helper.
+         *
+         * @return \Facebook\FacebookJavaScriptHelper 
+         * @static 
+         */
+        public static function getJavaScriptHelper(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getJavaScriptHelper();
+        }
+        
+        /**
+         * Returns the canvas helper.
+         *
+         * @return \Facebook\FacebookCanvasHelper 
+         * @static 
+         */
+        public static function getCanvasHelper(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getCanvasHelper();
+        }
+        
+        /**
+         * Returns the page tab helper.
+         *
+         * @return \Facebook\FacebookPageTabHelper 
+         * @static 
+         */
+        public static function getPageTabHelper(){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getPageTabHelper();
+        }
+        
+        /**
+         * Sends a GET request to Graph and returns the result.
+         *
+         * @param string $endpoint
+         * @param \Facebook\AccessToken|string|null $accessToken
+         * @param string|null $eTag
+         * @param string|null $graphVersion
+         * @return \Facebook\FacebookResponse 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function get($endpoint, $accessToken = null, $eTag = null, $graphVersion = null){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::get($endpoint, $accessToken, $eTag, $graphVersion);
+        }
+        
+        /**
+         * Sends a POST request to Graph and returns the result.
+         *
+         * @param string $endpoint
+         * @param array $params
+         * @param \Facebook\AccessToken|string|null $accessToken
+         * @param string|null $eTag
+         * @param string|null $graphVersion
+         * @return \Facebook\FacebookResponse 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function post($endpoint, $params = array(), $accessToken = null, $eTag = null, $graphVersion = null){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::post($endpoint, $params, $accessToken, $eTag, $graphVersion);
+        }
+        
+        /**
+         * Sends a DELETE request to Graph and returns the result.
+         *
+         * @param string $endpoint
+         * @param array $params
+         * @param \Facebook\AccessToken|string|null $accessToken
+         * @param string|null $eTag
+         * @param string|null $graphVersion
+         * @return \Facebook\FacebookResponse 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function delete($endpoint, $params = array(), $accessToken = null, $eTag = null, $graphVersion = null){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::delete($endpoint, $params, $accessToken, $eTag, $graphVersion);
+        }
+        
+        /**
+         * Sends a request to Graph for the next page of results.
+         *
+         * @param \Facebook\GraphEdge $graphEdge The GraphEdge to paginate over.
+         * @return \Facebook\GraphEdge|null 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function next($graphEdge){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::next($graphEdge);
+        }
+        
+        /**
+         * Sends a request to Graph for the previous page of results.
+         *
+         * @param \Facebook\GraphEdge $graphEdge The GraphEdge to paginate over.
+         * @return \Facebook\GraphEdge|null 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function previous($graphEdge){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::previous($graphEdge);
+        }
+        
+        /**
+         * Sends a request to Graph for the next page of results.
+         *
+         * @param \Facebook\GraphEdge $graphEdge The GraphEdge to paginate over.
+         * @param string $direction The direction of the pagination: next|previous.
+         * @return \Facebook\GraphEdge|null 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function getPaginationResults($graphEdge, $direction){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::getPaginationResults($graphEdge, $direction);
+        }
+        
+        /**
+         * Sends a batched request to Graph and returns the result.
+         *
+         * @param array $requests
+         * @param \Facebook\AccessToken|string|null $accessToken
+         * @param string|null $graphVersion
+         * @return \Facebook\FacebookBatchResponse 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function sendBatchRequest($requests, $accessToken = null, $graphVersion = null){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::sendBatchRequest($requests, $accessToken, $graphVersion);
+        }
+        
+        /**
+         * Instantiates a new FacebookRequest entity.
+         *
+         * @param string $method
+         * @param string $endpoint
+         * @param array $params
+         * @param \Facebook\AccessToken|string|null $accessToken
+         * @param string|null $eTag
+         * @param string|null $graphVersion
+         * @return \Facebook\FacebookRequest 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function request($method, $endpoint, $params = array(), $accessToken = null, $eTag = null, $graphVersion = null){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::request($method, $endpoint, $params, $accessToken, $eTag, $graphVersion);
+        }
+        
+        /**
+         * Factory to create FacebookFile's.
+         *
+         * @param string $pathToFile
+         * @return \Facebook\FacebookFile 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function fileToUpload($pathToFile){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::fileToUpload($pathToFile);
+        }
+        
+        /**
+         * Factory to create FacebookVideo's.
+         *
+         * @param string $pathToFile
+         * @return \Facebook\FacebookVideo 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function videoToUpload($pathToFile){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::videoToUpload($pathToFile);
+        }
+        
+        /**
+         * Upload a video in chunks.
+         *
+         * @param int $target The id of the target node before the /videos edge.
+         * @param string $pathToFile The full path to the file.
+         * @param array $metadata The metadata associated with the video file.
+         * @param string|null $accessToken The access token.
+         * @param int $maxTransferTries The max times to retry a failed upload chunk.
+         * @param string|null $graphVersion The Graph API version to use.
+         * @return array 
+         * @throws FacebookSDKException
+         * @static 
+         */
+        public static function uploadVideo($target, $pathToFile, $metadata = array(), $accessToken = null, $maxTransferTries = 5, $graphVersion = null){
+            //Method inherited from \Facebook\Facebook            
+            return \Kabooodle\Services\Social\Facebook\FacebookSdkService::uploadVideo($target, $pathToFile, $metadata, $accessToken, $maxTransferTries, $graphVersion);
         }
         
     }

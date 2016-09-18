@@ -3,7 +3,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2016-09-16.
+    * Generated on 2016-09-18.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -11,7 +11,7 @@ namespace PHPSTORM_META {
     $STATIC_METHOD_TYPES = [
         new \Illuminate\Contracts\Container\Container => [
             '' == '@',
-            'events' instanceof \Illuminate\Events\Dispatcher,
+            'events' instanceof \Kabooodle\Services\EventDispatcher,
             'router' instanceof \Illuminate\Routing\Router,
             'url' instanceof \Illuminate\Routing\UrlGenerator,
             'redirect' instanceof \Illuminate\Routing\Redirector,
@@ -89,6 +89,7 @@ namespace PHPSTORM_META {
             'Sofa\Revisionable\Listener' instanceof \Sofa\Revisionable\Laravel\Listener,
             'security' instanceof \GrahamCampbell\Security\Security,
             'binput' instanceof \GrahamCampbell\Binput\Binput,
+            'Kabooodle\Services\Social\Facebook\FacebookSdkService' instanceof \Kabooodle\Services\Social\Facebook\FacebookSdkService,
             'tracker.config' instanceof \PragmaRX\Support\Config,
             'tracker.fileSystem' instanceof \PragmaRX\Support\Filesystem,
             'Spatie\Fractal\Fractal' instanceof \Spatie\Fractal\Fractal,
@@ -189,7 +190,7 @@ namespace PHPSTORM_META {
         ],
         \Illuminate\Contracts\Container\Container::make('') => [
             '' == '@',
-            'events' instanceof \Illuminate\Events\Dispatcher,
+            'events' instanceof \Kabooodle\Services\EventDispatcher,
             'router' instanceof \Illuminate\Routing\Router,
             'url' instanceof \Illuminate\Routing\UrlGenerator,
             'redirect' instanceof \Illuminate\Routing\Redirector,
@@ -267,6 +268,7 @@ namespace PHPSTORM_META {
             'Sofa\Revisionable\Listener' instanceof \Sofa\Revisionable\Laravel\Listener,
             'security' instanceof \GrahamCampbell\Security\Security,
             'binput' instanceof \GrahamCampbell\Binput\Binput,
+            'Kabooodle\Services\Social\Facebook\FacebookSdkService' instanceof \Kabooodle\Services\Social\Facebook\FacebookSdkService,
             'tracker.config' instanceof \PragmaRX\Support\Config,
             'tracker.fileSystem' instanceof \PragmaRX\Support\Filesystem,
             'Spatie\Fractal\Fractal' instanceof \Spatie\Fractal\Fractal,
@@ -367,7 +369,7 @@ namespace PHPSTORM_META {
         ],
         \App::make('') => [
             '' == '@',
-            'events' instanceof \Illuminate\Events\Dispatcher,
+            'events' instanceof \Kabooodle\Services\EventDispatcher,
             'router' instanceof \Illuminate\Routing\Router,
             'url' instanceof \Illuminate\Routing\UrlGenerator,
             'redirect' instanceof \Illuminate\Routing\Redirector,
@@ -445,6 +447,7 @@ namespace PHPSTORM_META {
             'Sofa\Revisionable\Listener' instanceof \Sofa\Revisionable\Laravel\Listener,
             'security' instanceof \GrahamCampbell\Security\Security,
             'binput' instanceof \GrahamCampbell\Binput\Binput,
+            'Kabooodle\Services\Social\Facebook\FacebookSdkService' instanceof \Kabooodle\Services\Social\Facebook\FacebookSdkService,
             'tracker.config' instanceof \PragmaRX\Support\Config,
             'tracker.fileSystem' instanceof \PragmaRX\Support\Filesystem,
             'Spatie\Fractal\Fractal' instanceof \Spatie\Fractal\Fractal,
@@ -545,7 +548,7 @@ namespace PHPSTORM_META {
         ],
         \app('') => [
             '' == '@',
-            'events' instanceof \Illuminate\Events\Dispatcher,
+            'events' instanceof \Kabooodle\Services\EventDispatcher,
             'router' instanceof \Illuminate\Routing\Router,
             'url' instanceof \Illuminate\Routing\UrlGenerator,
             'redirect' instanceof \Illuminate\Routing\Redirector,
@@ -623,6 +626,7 @@ namespace PHPSTORM_META {
             'Sofa\Revisionable\Listener' instanceof \Sofa\Revisionable\Laravel\Listener,
             'security' instanceof \GrahamCampbell\Security\Security,
             'binput' instanceof \GrahamCampbell\Binput\Binput,
+            'Kabooodle\Services\Social\Facebook\FacebookSdkService' instanceof \Kabooodle\Services\Social\Facebook\FacebookSdkService,
             'tracker.config' instanceof \PragmaRX\Support\Config,
             'tracker.fileSystem' instanceof \PragmaRX\Support\Filesystem,
             'Spatie\Fractal\Fractal' instanceof \Spatie\Fractal\Fractal,

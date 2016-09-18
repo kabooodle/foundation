@@ -3426,12 +3426,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jarektkaczyk/revisionable.git",
-                "reference": "03686f8a507d1419e6332b87c15808da05c08c8d"
+                "reference": "764daf594132167df6a6d0e72e7bde7edec3c81a"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/jarektkaczyk/revisionable/zipball/764daf594132167df6a6d0e72e7bde7edec3c81a",
-                "reference": "03686f8a507d1419e6332b87c15808da05c08c8d",
+                "reference": "764daf594132167df6a6d0e72e7bde7edec3c81a",
                 "shasum": ""
             },
             "require": {
@@ -4736,34 +4736,34 @@
         },
         {
             "name": "vinkla/algolia",
-            "version": "2.4.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vinkla/laravel-algolia.git",
-                "reference": "d1a9e73dacf72ef1d593fa7bf4bc19a3816efae1"
+                "reference": "11ff2b17ac74f9ffae518e2078e8b512c9532b3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vinkla/laravel-algolia/zipball/d1a9e73dacf72ef1d593fa7bf4bc19a3816efae1",
-                "reference": "d1a9e73dacf72ef1d593fa7bf4bc19a3816efae1",
+                "url": "https://api.github.com/repos/vinkla/laravel-algolia/zipball/11ff2b17ac74f9ffae518e2078e8b512c9532b3e",
+                "reference": "11ff2b17ac74f9ffae518e2078e8b512c9532b3e",
                 "shasum": ""
             },
             "require": {
                 "algolia/algoliasearch-client-php": "^1.6.3",
-                "graham-campbell/manager": "^2.4",
+                "graham-campbell/manager": "^2.3",
                 "illuminate/contracts": "5.1.* || 5.2.* || 5.3.*",
                 "illuminate/support": "5.1.* || 5.2.* || 5.3.*",
-                "php": "^5.6.4 || ^7.0"
+                "php": "^5.5.9 || ^7.0"
             },
             "require-dev": {
-                "graham-campbell/testbench": "^3.2",
-                "mockery/mockery": "^0.9.5",
-                "phpunit/phpunit": "^5.4"
+                "graham-campbell/testbench": "^3.1",
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^4.8 || ^5.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.3-dev"
                 }
             },
             "autoload": {
@@ -4788,7 +4788,7 @@
                 "laravel",
                 "search"
             ],
-            "time": "2016-07-11 19:12:28"
+            "time": "2016-05-05 11:03:24"
         },
         {
             "name": "vlucas/phpdotenv",
