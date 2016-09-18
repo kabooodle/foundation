@@ -30,6 +30,7 @@ elixir(function (mix) {
         .scripts([
             'vendor/theme/scripts/jquery/jquery/dist/jquery.js',
             'vendor/vuejs/vue.1.0.26.js',
+            'vendor/vuejs/vue-resource.js',
             // 'vendor/turbolinks/turbolinks.5.0.0.js',
             'vendor/theme/scripts/jquery/tether/dist/js/tether.min.js',
             'vendor/theme/scripts/jquery/bootstrap/dist/js/bootstrap.js',
@@ -38,7 +39,8 @@ elixir(function (mix) {
             'vendor/datetimepicker/bootstrap-datetimepicker.min.js',
             // 'vendor/theme/scripts/jquery/PACE/pace.min.js',
             // 'vendor/theme/scripts/jquery/screenfull/dist/screenfull.min.js',
-            'vendor/jquery/noty/packaged/jquery.noty.packaged.js'
+            'vendor/jquery/noty/packaged/jquery.noty.packaged.js',
+            'vendor/clipboard/clipboard.js'
         ], elixir.config.publicPath + 'js/vendor.js')
 
         .scripts([

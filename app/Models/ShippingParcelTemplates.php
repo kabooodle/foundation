@@ -1,0 +1,71 @@
+<?php
+
+namespace Kabooodle\Models;
+
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * Class ShippingAddress
+ * @package Kabooodle\Models
+ */
+class ShippingParcelTemplates extends BaseEloquentModel
+{
+    use SoftDeletes;
+
+    CONST DIMENSIONS_NUMBER_FORMAT = 2;
+
+    /**
+     * @var array
+     */
+    protected $appends = [
+        'name_with_dimensions'
+    ];
+
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * @var string
+     */
+    protected $table = 'shipping_parcel_templates';
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    public function getLengthAttribute($value)
+    {
+        return number_format($value, self::DIMENSIONS_NUMBER_FORMAT);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    public function getWidthAttribute($value)
+    {
+        return number_format($value, self::DIMENSIONS_NUMBER_FORMAT);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    public function getHeightAttribute($value)
+    {
+        return number_format($value, self::DIMENSIONS_NUMBER_FORMAT);
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameWithDimensionsAttribute()
+    {
+        return $this->name." ({$this->length} x {$this->width} x {$this->height} {$this->distance_unit})";
+    }
+}

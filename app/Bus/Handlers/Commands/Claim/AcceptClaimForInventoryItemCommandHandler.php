@@ -7,7 +7,6 @@
 namespace Kabooodle\Bus\Handlers\Commands\Claim;
 
 use DB;
-use Carbon\Carbon;
 use Kabooodle\Models\Claims;
 use Kabooodle\Bus\Commands\Claim\AcceptClaimForInventoryItemCommand;
 

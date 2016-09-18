@@ -7,7 +7,11 @@
 namespace Kabooodle\Models;
 
 use Carbon\Carbon;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Support\Str;
+use Kabooodle\Bus\Commands\Social\Facebook\GetUserFacebookGroupsCommand;
+use Kabooodle\Presenters\Models\UserModelPresenter;
+use Kabooodle\Presenters\PresentableTrait;
 use Laravel\Cashier\Billable;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Auth\Authenticatable;
@@ -40,7 +44,12 @@ class User extends BaseEloquentModel implements
     ShoppableInterface,
     Revisionable
 {
-    use AlgoliaEloquentTrait, Authenticatable, Authorizable, Billable, CanResetPassword, LikeableTrait, FollowableTrait, ObfuscatesIdTrait, RevisionableTrait, SyncableGraphNodeTrait;
+    use AlgoliaEloquentTrait, Authenticatable, Authorizable, Billable, CanResetPassword, DispatchesJobs, LikeableTrait, FollowableTrait, ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SyncableGraphNodeTrait;
+
+    /**
+     * @var string
+     */
+    protected $presenter = UserModelPresenter::class;
 
     /**
      * @var array
@@ -131,6 +140,7 @@ class User extends BaseEloquentModel implements
 
         self::creating(function($user){
             $user->username = self::_createUsername($user->name);
+            $user->public_hash = self::_createHash();
         });
 
         self::saving(function($user){
@@ -194,6 +204,14 @@ class User extends BaseEloquentModel implements
     public function flashsaleItems()
     {
         return $this->belongsToMany(FlashSales::class, 'flashsale_items', 'seller_id', 'flashsale_id')->withTimestamps()->withPivot(['inventory_id', 'id as pivot_id']);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function facebookItems()
+    {
+        return $this->hasMany(FacebookItems::class, 'seller_id');
     }
 
     /**
@@ -261,6 +279,22 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return\Illuminate\Database\Eloquent\Relations\HasOne|ShippingAddress
+     */
+    public function shipFromAddress()
+    {
+        return $this->hasOne(ShippingAddress::class, 'user_id')->where('type', ShippingAddress::TYPE_FROM);
+    }
+
+    /**
+     * @return\Illuminate\Database\Eloquent\Relations\HasOne|ShippingAddress
+     */
+    public function shipToAddress()
+    {
+        return $this->hasOne(ShippingAddress::class, 'user_id')->where('type', ShippingAddress::TYPE_TO);
+    }
+
+    /**
      * @param $name
      *
      * @return string
@@ -273,6 +307,19 @@ class User extends BaseEloquentModel implements
         }
 
         return $username;
+    }
+
+    /**
+     * @return mixed
+     */
+    private static function _createHash()
+    {
+        $hash = Str::random(9);
+        if (self::where('public_hash', $hash)->count() >= 1) {
+            return self::_createHash();
+        }
+
+        return $hash;
     }
 
     /**
@@ -305,5 +352,55 @@ class User extends BaseEloquentModel implements
     public function fbTokenExpired()
     {
         return $this->facebook_access_token_expires ? $this->facebook_access_token_expires->lt(Carbon::now()) : true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFacebookUserToken()
+    {
+        return $this->facebook_access_token;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFacebookUserId()
+    {
+        return $this->facebook_user_id;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFacebookGroups()
+    {
+        return $this->dispatchNow(new GetUserFacebookGroupsCommand($this));
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function referredBy()
+    {
+        return $this->belongsTo(self::class, 'referred_by_user_id');
+    }
+
+    /**
+     * TODO: Make this only pull "qualifying" referrals
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function qualifyingReferrals()
+    {
+        return $this->referrals();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function referrals()
+    {
+        return $this->hasMany(self::class, 'referred_by_user_id')->orderBy('created_at', 'desc');
     }
 }

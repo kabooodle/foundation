@@ -51,9 +51,9 @@ trait ObfuscatesIdTrait
     /**
      * @return mixed
      */
-    public function obfuscateIdToString($id)
+    public function obfuscateIdToString($id = null)
     {
-        return Tiny::to($id);
+        return Tiny::to($id ? : $this->id);
     }
 
     /**

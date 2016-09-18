@@ -6,10 +6,12 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Models\Traits\ClaimableTrait;
+use DB;
+use Carbon\Carbon;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
+use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
@@ -112,7 +114,7 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
         parent::boot();
 
         self::creating(function($model){
-            $model->date_received = \Carbon\Carbon::now();
+            $model->date_received = Carbon::now();
         });
     }
 
@@ -159,11 +161,13 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
     }
 
     /**
-     * @return string
+     * TODO: Identify a better relationship for flash sales and facebook sales.
+     *
+     * @return array|static[]
      */
-    public function getPrice()
+    public function facebooksales()
     {
-        return number_format($this->price_usd, 2);
+        return $this->hasMany(FacebookItems::class, 'inventory_id');
     }
 
     /**
@@ -175,13 +179,21 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
     }
 
     /**
+     * @return string
+     */
+    public function getPrice()
+    {
+        return number_format($this->price_usd, 2);
+    }
+
+    /**
      * @param int $qty
      *
      * @return bool
      */
     public function canSatisfyRequestedQuantityOf($qty = 1)
     {
-        return (bool) $this->getAvailableQuantity() >= $qty;
+        return $this->getAvailableQuantity() >= $qty;
     }
 
     /**

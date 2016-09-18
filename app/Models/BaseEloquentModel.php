@@ -76,7 +76,7 @@ class BaseEloquentModel extends Eloquent
     public function createdAtHuman()
     {
         if ($this->created_at) {
-            return $this->created_at->format('m-d-Y H:i:sa');
+            return $this->created_at->format('m-d-Y h:ia');
         }
 
         return null;
@@ -88,7 +88,7 @@ class BaseEloquentModel extends Eloquent
     public function updatedAtHuman()
     {
         if ($this->updated_at) {
-            return $this->updated_at->format('m-d-Y H:ia');
+            return $this->updated_at->format('m-d-Y h:ia');
         }
 
         return null;

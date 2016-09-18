@@ -1,0 +1,232 @@
+<?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
+
+namespace Kabooodle\Models;
+
+use Carbon\Carbon;
+use Kabooodle\Models\Traits\UuidableTrait;
+use Kabooodle\Services\Shippr\RatesObject;
+
+/**
+ * Class ShippingAddress
+ * @package Kabooodle\Models
+ */
+class ShippingShipments extends BaseEloquentModel
+{
+    use UuidableTrait;
+
+    /**
+     * @var array
+     */
+    protected $appends = [
+        'rates_as_raw'
+    ];
+
+    /**
+     * @var array
+     */
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'expires_on'
+    ];
+
+    /**
+     * @var string
+     */
+    protected $table = 'shipping_shipments';
+
+    /**
+     * @var array
+     */
+    protected $attributes = [
+        'uuid' => null,
+        'user_id' => 0,
+        'claim_id' => 0,
+        'shipment_id' => '',
+        'recipient_id' => '',
+        'recipient_data' => [],
+        'sender_id' => '',
+        'sender_data' => [],
+        'parcel_id' => '',
+        'parcel_data' => [],
+        'status' => 'WAITING',
+        'shipment_state' => 'VALID',
+        'rates_url' => '',
+        'rates_list' => [],
+        'messages' => ''
+    ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($model){
+            // According to SHIPPO, rates expire after 7 days.
+           $model->expires_on = Carbon::now()->addDays(7);
+        });
+    }
+
+    /**
+     * @param $value
+     */
+    public function setParcelDataAttribute($value)
+    {
+        $this->attributes['parcel_data'] = json_encode($value);
+    }
+
+    /**
+     * @param $value
+     */
+    public function setMessagesAttribute($value)
+    {
+        $this->attributes['messages'] = json_encode($value);
+    }
+
+    /**
+     * @param $value
+     */
+    public function setRatesListAttribute($value)
+    {
+        $this->attributes['rates_list'] = json_encode($value);
+    }
+
+    /**
+     * @param $value
+     */
+    public function setRecipientDataAttribute($value)
+    {
+        $this->attributes['recipient_data'] = json_encode($value);
+    }
+
+    /**
+     * @param $value
+     */
+    public function setSenderDataAttribute($value)
+    {
+        $this->attributes['sender_data'] = json_encode($value);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return MailingAddress
+     */
+    public function getSenderDataAttribute($value)
+    {
+        return MailingAddress::fromArray(json_decode($value, true));
+    }
+
+    /**
+     * @param $value
+     *
+     * @return MailingAddress
+     */
+    public function getRecipientDataAttribute($value)
+    {
+        return MailingAddress::fromArray(json_decode($value, true));
+    }
+
+    /**
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function getParcelDataAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function getRatesListAttribute($value)
+    {
+        $_shipments = json_decode($value, true);
+        $shipments = null;
+        foreach($_shipments as $shipment) {
+            $shipments[] = new RatesObject($shipment);
+        }
+
+        return $shipments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRecipientData()
+    {
+        return $this->recipient_data;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSenderData()
+    {
+        return $this->sender_data;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function claim()
+    {
+        return $this->belongsTo(Claims::class, 'claim_id');
+    }
+
+    /**
+     * @return array|mixed
+     */
+    public function getRatesAsRawAttribute()
+    {
+        return $this->getOriginal('rates_list');
+    }
+
+    /**
+     * @param $rateID
+     *
+     * @return bool|RatesObject
+     */
+    public function getRateId($rateID)
+    {
+        $rates = $this->rates_list;
+        /** @var RatesObject $rate */
+        foreach($rates as $rate) {
+            if ($rate->getRateId() == $rateID) {
+                return $rate;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMeasurements()
+    {
+        return "{$this->parcel_data['length']} x {$this->parcel_data['width']} x {$this->parcel_data['height']} {$this->parcel_data['distance_unit']}";
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function transaction()
+    {
+        return $this->hasOne(ShippingTransactions::class, 'shipping_shipments_id');
+    }
+}

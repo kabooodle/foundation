@@ -6,20 +6,28 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Models\Traits\UuidableTrait;
 use Sofa\Revisionable\Revisionable;
+use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
+use Kabooodle\Models\Contracts\NotificationableInterface;
 
 /**
  * Class Claims
  * @package Kabooodle\Models
  */
-class Claims extends BaseEloquentModel implements Revisionable
+class Claims extends BaseEloquentModel implements NotificationableInterface, Revisionable
 {
     use AlgoliaEloquentTrait, ObfuscatesIdTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
+
+    /**
+     * @var array
+     */
+    protected $appends = [
+        'claimer_item_date_price'
+    ];
 
     /**
      * @var array
@@ -169,5 +177,39 @@ class Claims extends BaseEloquentModel implements Revisionable
     public function wasAccepted()
     {
         return (bool) ($this->accepted == 1 && $this->accepted_on <> null && $this->rejected_by === null);
+    }
+
+    /**
+     * @return string
+     */
+    public function getClaimerItemDatePriceAttribute()
+    {
+        $claimer = $this->claimer;
+        $item = $this->inventoryItem;
+        $date = $this->updatedAtHuman();
+        $price = $this->price;
+
+        return $item->name.', '.$claimer->name.', $'.$price.', on: '.$date;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function shipments()
+    {
+        return $this->hasMany(ShippingShipments::class, 'claim_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function shipmentTransaction()
+    {
+        $s = $this->shipments->load('transaction')->first();
+        if ($s) {
+            return $s->transaction;
+        }
+
+        return null;
     }
 }

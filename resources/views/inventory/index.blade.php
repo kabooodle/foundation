@@ -29,9 +29,13 @@
                 </div>
             </div>
 
-            <a style="display: none" id="btn_add_selected" data-toggle="modal" data-target="#m-md"
-               data-backdrop="static" data-keyboard="false" href="#" class="text-white  btn btn-sm warning">Add Selected
+            <a style="display: none" data-toggle="modal" data-target="#m-md"
+               data-backdrop="static" data-keyboard="false" href="#" class="btn_add_selected text-white  btn btn-sm warning">Add Selected
                 Items to Sale</a>
+
+            <a style="display: none" data-toggle="modal" data-target="#m-md-fb"
+               data-backdrop="static" data-keyboard="false" href="#" class="text-white btn_add_selected btn btn-sm warning">Add Selected
+                Items to Facebook</a>
 
         </div>
     </div>
@@ -150,6 +154,29 @@
                     </td>
                 </tr>
             @endif
+
+            @if($item->facebooksales->count() > 0)
+                <tr data-id="{{ $item->id }}">
+                    <td class="b-t-0 b-" style="border-top: 0"></td>
+                    <td colspan="5" class="b-t-0" style="border-top: 0">
+                        <div class="flashsale_wrapper">
+                            <span class="text-muted">Facebook Albums:</span>
+                            @foreach($item->facebooksales as $facebooksale)
+                                <span class="label outline">{{ $facebooksale->facebook_post_id }} <a data-toggle="tooltip"
+                                                                                      data-route="{{ apiRoute('inventory.associate.destroy', [user()->username, $facebooksale->id]) }}"
+                                                                                      data-placement="top"
+                                                                                      title="Remove from sale"
+                                                                                      class="m-l btn_remove_fromflashsale"
+                                                                                      data-item-id="{{ $item->id }}"
+                                                                                      data-flashsale-id="{{ $facebooksale->id }}"
+                                                                                      href="#"><i
+                                                class="fa fa-times"></i></a></span>
+                            @endforeach
+                        </div>
+                    </td>
+                </tr>
+            @endif
+
         @endforeach
         </tbody>
     </table>
@@ -164,7 +191,7 @@
             <div class="row-cell v-m">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        {{ Form::open(['id' => 'form-save']) }}
+                        {{ Form::open(['class' => 'form-save']) }}
                         <div class="modal-header">
                             <h5 class="modal-title">Select sales to assign item</h5>
                         </div>
@@ -190,7 +217,7 @@
                             @endforeach
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn primary p-x-md" id="btn_save_selected">Save</button>
+                            <button type="button" class="btn primary p-x-md btn_save_selected" id="">Save</button>
                             <button type="button" class="m-l-1 btn btn-link" data-dismiss="modal">Cancel</button>
                         </div>
                         {{ Form::close() }}
@@ -202,15 +229,51 @@
     </div>
 
 
+
+
+
+    <div id="m-md-fb" class="modal" data-backdrop="true" style="display: none;">
+        <div class="row-col h-v">
+            <div class="row-cell v-m">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        {{ Form::open(['class' => 'form-save']) }}
+                        <div class="modal-header">
+                            <h5 class="modal-title">Select sales to assign item</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Select Facebook Group</label>
+                                {{ Form::select('fb_group', user()->present()->getFacebookGroupsForList(), [] , ['class' => 'form-control']) }}
+                            </div>
+                            <div class="form-group">
+                                <label>Select Album(s)</label>
+                                {{ Form::select('fb_albums[]', user()->present()->getFacebookAlbumsByFroupForList(327095390958693), [] , ['class' => 'form-control', 'multiple']) }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn primary p-x-md btn_save_selected" id="">Save</button>
+                            <button type="button" class="m-l-1 btn btn-link" data-dismiss="modal">Cancel</button>
+                        </div>
+                        {{ Form::close() }}
+                    </div><!-- /.modal-content -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
     @push('footer-scripts')
     <script>
 
         $(function () {
             var $selectAllEl = $('#select_all');
             var $selectedItemsEl = $('.selected_items_checkbox');
-            var $addSelectedBtnEl = $('#btn_add_selected');
-            var $selectedSaveBtnEl = $('#btn_save_selected');
-            var $formSaveEl = $('#form-save');
+            var $addSelectedBtnEl = $('.btn_add_selected');
+            var $selectedSaveBtnEl = $('.btn_save_selected');
+            var $formSaveEl = $('.form-save');
 
             var href = $addSelectedBtnEl.prop('href');
 

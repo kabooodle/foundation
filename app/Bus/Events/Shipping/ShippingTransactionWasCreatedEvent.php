@@ -1,0 +1,41 @@
+<?php
+
+namespace Kabooodle\Bus\Events\Shipping;
+
+use Kabooodle\Bus\Events\Event;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Kabooodle\Models\ShippingTransactions;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+/**
+ * Class ShippingTransactionWasCreatedEvent
+ * @package Kabooodle\Bus\Events\Shippings
+ */
+final class ShippingTransactionWasCreatedEvent extends Event implements ShouldQueue
+{
+    use InteractsWithQueue, SerializesModels;
+
+    /**
+     * @var ShippingTransactions
+     */
+    protected $transaction;
+
+    /**
+     * ShippingTransactionWasCreatedEvent constructor.
+     *
+     * @param ShippingTransactions $transaction
+     */
+    public function __construct(ShippingTransactions $transaction)
+    {
+        $this->transaction = $transaction;
+    }
+
+    /**
+     * @return ShippingTransactions
+     */
+    public function getTransaction()
+    {
+        return $this->transaction;
+    }
+}

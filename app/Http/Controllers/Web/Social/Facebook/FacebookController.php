@@ -8,9 +8,12 @@ namespace Kabooodle\Http\Controllers\Web\Social\Facebook;
 
 use Messages;
 use Illuminate\Http\Request;
+use Facebook\FacebookResponse;
 use Facebook\Exceptions\FacebookSDKException;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Services\Social\Facebook\FacebookSdkService;
+use Kabooodle\Bus\Events\Social\UserFacebookCredentialsRevokedEvent;
+use Kabooodle\Bus\Events\Social\UserFacebookCredentialsConnectedEvent;
 
 /**
  * Class FacebookController
@@ -84,13 +87,15 @@ class FacebookController extends Controller
         }
 
         /** @var \Facebook\GraphNodes\GraphUser $facebook_user */
-        $facebook_user = $response->getGraphUser();
+        $facebookUser = $response->getGraphUser();
 
         $user = user();
-        $user->facebook_user_id = $facebook_user->getId();
+        $user->facebook_user_id = $facebookUser->getId();
         $user->facebook_access_token = (string) $token;
         $user->facebook_access_token_expires = $token->getExpiresAt();
         $user->save();
+
+        event(new UserFacebookCredentialsConnectedEvent($user));
 
         Messages::success('Connection to Facebook successful!');
 
@@ -102,15 +107,19 @@ class FacebookController extends Controller
      */
     public function revoke()
     {
+        /** @var FacebookResponse $revoked */
         $revoked = $this->fb->delete('/me/permissions', [],  user()->facebook_access_token);
 
-        $user = user();
-        $user->facebook_user_id = null;
-        $user->facebook_access_token = null;
-        $user->facebook_access_token_expires = null;
-        $user->save();
+        if ($revoked) {
+            $user = user();
+            $user->facebook_access_token = null;
+            $user->facebook_access_token_expires = null;
+            $user->save();
 
-        Messages::success('Connection to Facebook removed.');
+            event(new UserFacebookCredentialsRevokedEvent($user));
+
+            Messages::success('Connection to Facebook removed.');
+        }
 
         return redirect()->route('profile.index');
     }

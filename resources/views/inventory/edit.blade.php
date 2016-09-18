@@ -22,6 +22,12 @@
         </div>
     @endif
 
+    @if($item->facebooksales && $item->facebooksales->count() > 0)
+        <div class="box-color p-a warning b-0">
+            <h6 class="text-center m-b-0"><strong class="_700">Note:</strong> This item is currently listed in <kbd>{{ $item->facebooksales->count() }}</kbd> facebook albums.</h6>
+        </div>
+    @endif
+
     {{ Form::open(['route' => ['shop.inventory.update', $item->user->username, $item->getUUID()], 'method' => 'put']) }}
     <div class="box">
         <div class="box-header">

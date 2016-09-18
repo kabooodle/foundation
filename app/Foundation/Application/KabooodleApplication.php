@@ -7,6 +7,8 @@
 namespace Kabooodle\Foundation\Application;
 
 use Illuminate\Foundation\Application;
+use Illuminate\Routing\RoutingServiceProvider;
+use Kabooodle\Foundation\Providers\EventDispatcherServiceProvider;
 
 /**
  * Class KabooodleApplication
@@ -18,6 +20,16 @@ class KabooodleApplication extends Application
      * @var string
      */
     const APP_VERSION = '0.0.3';
+
+    /**
+     * @return void
+     */
+    protected function registerBaseServiceProviders()
+    {
+        $this->register(new EventDispatcherServiceProvider($this));
+
+        $this->register(new RoutingServiceProvider($this));
+    }
 
     /**
      * Get the path to the application configuration files.

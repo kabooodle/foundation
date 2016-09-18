@@ -26,9 +26,10 @@ class InventoryApiController extends AbstractApiController
     public function associate(Request $request)
     {
         $flashsaleIds = Binput::get('flashsales', []);
+        $facebookAlbumIds = Binput::get('fb_albums', []);
         $inventoryIds = Binput::get('inventoryids', []);
 
-        $result = $this->dispatchNow(new AddInventoryToSalesCommand($this->getUser(), $inventoryIds, $flashsaleIds));
+        $result = $this->dispatchNow(new AddInventoryToSalesCommand($this->getUser(), $inventoryIds, $flashsaleIds, $facebookAlbumIds));
 
         return $this->setData($result)->respond();
     }

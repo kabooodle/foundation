@@ -96,11 +96,13 @@
                 "dropdown" href=""><span class="avatar w-32"><img alt="..."
                                                                   src="https://placekitten.com/g/32/32"> <i class=
                                                                                                            "busy b-white right"></i></span></a>
-                <div class="dropdown-menu pull-right dropdown-menu-scale">
+                <div class="dropdown-menu pull-right">
                     {{--<a class="dropdown-item" ui-sref=--}}
                     {{--"app.inbox.list"><span>Inbox</span> <span class=--}}
                                                               {{--"label warn m-l-xs">3</span></a> --}}
                                                               <a class="dropdown-item" href="{{ route('profile.index') }}"><span>Profile</span></a>
+
+                    <a class="dropdown-item" href="{{ route('referrals.index') }}"><span>Referrals</span></a>
                     <a class=
                        "dropdown-item" href="{{ route('auth.logout') }}">Sign out</a>
                 </div>
@@ -411,6 +413,9 @@
                         {{--</div>--}}
                     {{--</div>--}}
                 </li>
+                    <li class="nav-item">
+                        <a href="{{  route('shipping.create') }}" class="nav-link {{ Request::is('shipping/create') ? 'active' : null }}"><span class="nav-text">Shipping</span></a>
+                    </li>
                 @endif
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('groups*') ? 'active' : null }}" href="{{ route('groups.index') }}" ui-sref-active="active"><span class=

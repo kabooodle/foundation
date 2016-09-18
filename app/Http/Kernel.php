@@ -7,6 +7,7 @@
 namespace Kabooodle\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Kabooodle\Http\Middleware\ReferralProgramMiddleware;
 
 /**
  * Class Kernel
@@ -32,8 +33,10 @@ class Kernel extends HttpKernel
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-//            \Kabooodle\Http\Middleware\VerifyCsrfToken::class,
-            \Kabooodle\Http\Middleware\ResponseHeadersMiddleware::class
+            \Kabooodle\Http\Middleware\ReferralProgramMiddleware::class,
+            \Kabooodle\Http\Middleware\VerifyCsrfToken::class,
+            \Kabooodle\Http\Middleware\ResponseHeadersMiddleware::class,
+//            \PragmaRX\Tracker\Vendor\Laravel\Middlewares\Tracker::class,
 //            \Kabooodle\Http\Middleware\FilterIfPjax::class,
 //            \Kabooodle\Http\Middleware\AccountActive::class,
         ],

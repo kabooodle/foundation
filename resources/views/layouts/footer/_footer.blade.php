@@ -91,7 +91,7 @@
 <div class="footer prpl-800 dk pos-rlt" style="background: url('/assets/images/shopping-bg.png') bottom repeat-x;">
     <div class="padding">
         <div class=" p-a center-block">
-            <h3 class="text-center footer-slogan">A community where you can sell or buy everything and more!</h3>
+            <h3 class="text-center footer-slogan">A community where you can sell and buy everything and more!</h3>
         </div>
     </div>
 </div>

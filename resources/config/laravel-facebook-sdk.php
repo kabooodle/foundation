@@ -39,7 +39,7 @@ return [
      *
      * https://developers.facebook.com/docs/facebook-login/permissions
      */
-    'default_scope' => ['email,user_managed_groups'],
+    'default_scope' => ['email,user_managed_groups,publish_actions,publish_pages'],
 
     /*
      * The default endpoint that Facebook will redirect to after

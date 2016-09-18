@@ -16,11 +16,14 @@
         "alt-three/bus": "1.1.0",
         "barryvdh/laravel-cors": "0.8.1",
         "dingo/api": "1.0.*@dev",
+        "graham-campbell/binput": "3.4.0",
+        "graham-campbell/htmlmin": "4.4.0",
         "laravel/cashier": "6.0.18",
         "laravel/framework": "5.2.31",
         "laravelcollective/html": "5.2.4",
-        "graham-campbell/binput": "3.4.0",
-        "graham-campbell/htmlmin": "4.4.0",
+        "league/flysystem-aws-s3-v3": "~1.0",
+        "predis/predis": "~1.0",
+        "pusher/pusher-php-server": "2.2.1",
         "ramsey/uuid": "3.5.0",
         "rtconner/laravel-tagging": "2.2.0",
         "sammyk/laravel-facebook-sdk": "^3.0",
@@ -29,9 +32,9 @@
         "spatie/laravel-fractal": "1.9.1",
         "tymon/jwt-auth": "1.0.*@dev",
         "wildbit/laravel-postmark-provider": "3.0.0",
+        "yajra/laravel-datatables-oracle": "6.18.1",
         "zackkitzmiller/tiny": "1.2.2",
-        "pusher/pusher-php-server": "2.2.1",
-        "yajra/laravel-datatables-oracle": "6.18.1"
+        "pragmarx/tracker": "^3.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

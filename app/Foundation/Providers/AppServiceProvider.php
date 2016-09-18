@@ -8,6 +8,7 @@ namespace Kabooodle\Foundation\Providers;
 
 use AltThree\Bus\Dispatcher;
 use Illuminate\Pagination\Paginator;
+use Kabooodle\Services\EventDispatcher;
 use Illuminate\Support\ServiceProvider;
 use Kabooodle\Libraries\Messages\Messages;
 use Kabooodle\Libraries\Messages\MessagesInterface;

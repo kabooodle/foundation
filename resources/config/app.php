@@ -138,7 +138,7 @@ return [
         Illuminate\Filesystem\FilesystemServiceProvider::class,
         Illuminate\Foundation\Providers\FoundationServiceProvider::class,
         Illuminate\Hashing\HashServiceProvider::class,
-        Postmark\Adapters\LaravelMailProvider::class,
+        Kabooodle\Foundation\Providers\MailServiceProvider::class,
         Illuminate\Pagination\PaginationServiceProvider::class,
         Illuminate\Pipeline\PipelineServiceProvider::class,
         Illuminate\Queue\QueueServiceProvider::class,
@@ -171,10 +171,9 @@ return [
         GrahamCampbell\Security\SecurityServiceProvider::class,
         GrahamCampbell\Binput\BinputServiceProvider::class,
         Laravel\Cashier\CashierServiceProvider::class,
-//        SammyK\LaravelFacebookSdk\LaravelFacebookSdkServiceProvider::class,
         Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
 
-
+        PragmaRX\Tracker\Vendor\Laravel\ServiceProvider::class,
         Spatie\Fractal\FractalServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         ZackKitzmiller\Laravel5\TinyServiceProvider::class,
@@ -237,6 +236,7 @@ return [
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
 
+        'Tracker' => PragmaRX\Tracker\Vendor\Laravel\Facade::class,
         'Binput' => GrahamCampbell\Binput\Facades\Binput::class,
         'Security' => GrahamCampbell\Security\Facades\Security::class,
         'Facebook' => Kabooodle\Services\Social\Facebook\FacebookSdkFacade::class,

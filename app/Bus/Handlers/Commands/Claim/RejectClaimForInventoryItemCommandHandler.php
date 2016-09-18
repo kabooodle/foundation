@@ -30,6 +30,8 @@ class RejectClaimForInventoryItemCommandHandler
         $claim->accepted = false;
         $claim->save();
 
+        $claim->inventoryItem->increment('initial_qty');
+
         return $claim;
     }
 }
