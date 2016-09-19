@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Middleware;
 
 use Closure;
+use Messages;
 
 /**
  * Class Subscribed
@@ -23,7 +24,9 @@ class Subscribed
     public function handle($request, Closure $next, $subscription)
     {
         if ($request->user() && ! $request->user()->subscribed($subscription)) {
-            return redirect('billing');
+            Messages::error('Subscription required.');
+
+            return redirect()->route('profile.subscription.index');
         }
 
         return $next($request);

@@ -133,7 +133,7 @@
                 {{--</div>--}}
             {{--</form>--}}
             <ul class="nav navbar-nav pull-left nav-active-border b-warning">
-                @if(user())
+                @if(user() && user()->subscribed('main'))
                 <li class="nav-item">
                     <a href="{{  route('shop.show', [user()->username]) }}" class="nav-link {{ Request::is('shop/'.user()->username.'') ? 'active' : null }}"><span class="nav-text">Your Store</span></a>
                 </li>

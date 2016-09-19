@@ -403,4 +403,27 @@ class User extends BaseEloquentModel implements
     {
         return $this->hasMany(self::class, 'referred_by_user_id')->orderBy('created_at', 'desc');
     }
+
+    /**
+     * @return bool
+     */
+    public function getCard()
+    {
+        if (! $this->hasStripeId()) {
+            return false;
+        }
+
+        $customer = $this->asStripeCustomer();
+
+        $defaultCard = false;
+
+        foreach ($customer->sources->data as $card) {
+            if ($card->id === $customer->default_source) {
+                $defaultCard = $card;
+                break;
+            }
+        }
+
+        return $defaultCard;
+    }
 }

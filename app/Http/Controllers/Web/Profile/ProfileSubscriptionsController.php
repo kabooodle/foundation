@@ -7,9 +7,12 @@
 namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
+use Messages;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Bus\Commands\Profile\SubscribeUserToPlanCommand;
+use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadySubscribedToPlanException;
 
 /**
  * Class ProfileSubscriptionsController
@@ -31,16 +34,35 @@ class ProfileSubscriptionsController extends Controller
 
     /**
      * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request)
     {
         try {
-            $this->validate($request, $this->rules());
+            $this->validate($request, $this->rules(), $this->rulesMessages());
 
             $plan = Binput::get('p', false);
-
             $user = user();
+
+            if (! $user->hasCardOnFile()) {
+                return $this->view('')->with('plan', $plan);
+            }
+
+            $subscribed = $this->dispatchNow(new SubscribeUserToPlanCommand($user, 'main', $plan, false));
+
+            Messages::success('Congratulations! Your subscription was activated!');
+
+            return redirect('/');
         } catch (ValidationException $e) {
+            Messages::error($e->validator->messages()->first());
+
+            return redirect()->back()->withInput()->withErrors($e->validator);
+        } catch (UserAlreadySubscribedToPlanException $e) {
+            Messages::error("You're already subscribed to this plan!");
+
+            return redirect(route('profile.subscription.index'));
+        } catch (\Exception $e) {
             dd($e);
         }
     }
@@ -51,7 +73,17 @@ class ProfileSubscriptionsController extends Controller
     private function rules()
     {
         return  [
-            'p' => 'required'
+            'p' => 'required|in:kabooodle_launch_plan'
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function rulesMessages()
+    {
+        return [
+            'p.in' => 'Plan you selected is not available.'
         ];
     }
 }

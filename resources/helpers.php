@@ -1,4 +1,93 @@
 <?php
+
+if (! function_exists('months')) {
+    /**
+     * @return array
+     */
+    function months()
+    {
+        $range = srange(01, 12);
+        $list = [];
+
+        foreach ($range as $k) {
+            $list[$k] = $k.' - '.date("F", mktime(0, 0, 0, $k, 10));
+        }
+
+        return $list;
+    }
+}
+
+
+
+if (! function_exists('srange')) {
+    /**
+     * @param $min
+     * @param $max
+     * @return array
+     */
+    function srange($min, $max)
+    {
+        return array_combine(range($min, $max), range($min, $max));
+    }
+}
+
+if (! function_exists('centsToDollars')) {
+    /**
+     * @param $cents
+     *
+     * @return string
+     */
+    function centsToDollars($cents, $prefix = '$')
+    {
+        $dollars = number_format($cents/100, 2, '.', ' ');
+        return $prefix ? $prefix . $dollars : $dollars;
+    }
+}
+
+if (! function_exists('ccTypes')) {
+    /**
+     * @return array
+     */
+    function ccTypes($except = null)
+    {
+        $types = [
+            'visa' => 'icon-visa-lg.png',
+            'mastercard' => 'icon-mc-lg.png',
+            'american_express' => 'icon-amex-lg.png',
+            'discover' => 'icon-discover-lg.png',
+            'diners_club' => 'icon-dinersclub-lg.png',
+            'jcb' => 'icon-jcb-lg.png',
+            'default' => 'icon-default-lg.png'
+        ];
+
+        if ($except) {
+            unset($types[$except]);
+        }
+
+        return $types;
+    }
+}
+
+if (! function_exists('ccImgPath')) {
+    /**
+     * @param $name
+     *
+     * @return string
+     */
+    function ccImgPath($name)
+    {
+        $path = '/assets/images/icons/creditcards/';
+        $images = ccTypes();
+        $name = trim(strtolower(str_replace(' ', '_', $name)));
+        if (array_key_exists($name, $images)) {
+            return $path . $images[$name];
+        }
+
+        return $path . $images['default'];
+    }
+}
+
+
 if (! function_exists('getParcelsListUSPS')) {
     /**
      * @return Array
