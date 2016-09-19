@@ -77,18 +77,32 @@
         </div>
     </div>
 
-    <div class="">
-        Cancel Subscription
+    @if(user()->subscribedToPlan('kabooodle_launch_plan', 'main'))
+    <div class="m-t-2">
+        <button type="button"  id="cancel-subscription" class="btn-link text-danger">Cancel Subscription</button>
     </div>
-
+    @endif
 
 @endsection
 
 
 @push('footer-scripts')
 
+@if(user()->subscribedToPlan('kabooodle_launch_plan', 'main'))
 <script>
-
+$(function(){
+   var formCancelEl = $('#cancel-subscription');
+    formCancelEl.click(function(e){
+        e.preventDefault();
+        var $that = $(this);
+        $.ajax({
+            url: '{{ route('profile.subscription.destroy') }}',
+            type: 'DELETE'
+        });
+//        $that.addClass('disabled').prop('disabled', true);
+        //        formCancelEl.submit();
+    });
+});
 </script>
-
+@endif
 @endpush

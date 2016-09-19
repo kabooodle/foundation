@@ -56,6 +56,7 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
         'guest' => \Kabooodle\Http\Middleware\RedirectIfAuthenticated::class,
         'subscribed' => \Kabooodle\Http\Middleware\Subscribed::class,
+        'creditcardrequired' => \Kabooodle\Http\Middleware\CreditCardOnFileRequiredMiddleware::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
         'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,

@@ -7,6 +7,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/kabooodle/cashier"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/kabooodle/laravel-datatables"
         }
     ],
@@ -19,7 +23,7 @@
         "dingo/api": "1.0.*@dev",
         "graham-campbell/binput": "3.4.0",
         "graham-campbell/htmlmin": "4.4.0",
-        "laravel/cashier": "6.0.18",
+        "laravel/cashier": "6.0.19",
         "laravel/framework": "5.2.31",
         "laravelcollective/html": "5.2.4",
         "league/flysystem-aws-s3-v3": "~1.0",

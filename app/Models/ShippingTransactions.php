@@ -6,9 +6,8 @@
 
 namespace Kabooodle\Models;
 
-use Carbon\Carbon;
 use Kabooodle\Models\Traits\UuidableTrait;
-use Kabooodle\Services\Shippr\RatesObject;
+use Sofa\Revisionable\Laravel\RevisionableTrait;
 
 /**
  * Class ShippingTransactions
@@ -16,7 +15,7 @@ use Kabooodle\Services\Shippr\RatesObject;
  */
 class ShippingTransactions extends BaseEloquentModel
 {
-    use UuidableTrait;
+    use RevisionableTrait, UuidableTrait;
 
     /**
      * @var string

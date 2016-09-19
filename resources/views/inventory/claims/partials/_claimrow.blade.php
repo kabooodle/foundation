@@ -28,7 +28,7 @@
                     </div>
                 </div>
             @elseif ($claim->wasAccepted())
-                <a href="{{ $claim->shipmentTransaction() ? route('shipping.labels.show', [$claim->shipmentTransaction()->shipping_shipments_uuid, $claim->shipmentTransaction()->uuid]) : route('shipping.create', ['c'=>$claim->uuid]) }}" class="btn white btn-sm">{{ $claim->shipmentTransaction() ? 'View Shipping Data' : 'Create Shipping Label' }}</a>
+                <a href="{{ $claim->shipmentTransaction() ? route('shipping.transactions.show', [$claim->shipmentTransaction()->shipping_shipments_uuid, $claim->shipmentTransaction()->uuid]) : route('shipping.create', ['c'=>$claim->uuid]) }}" class="btn white btn-sm">{{ $claim->shipmentTransaction() ? 'View Shipping Data' : 'Create Shipping Label' }}</a>
             @else
 
             @endif

@@ -130,7 +130,7 @@
             <td>@{{ rate.days }} @{{ parseInt(rate.days) |  pluralize "day" }}</td>
             <td>$@{{ rate.amount }}</td>
             <td class="pull-right">
-                <button type="button" v-on:click="purchaseLabel" data-route="{{ route('shipping.labels.store', [$shipment->uuid]) }}"  class="btn btn-xs success btn-purchase-label-el" data-uuid="@{{  rate.object_id }}">
+                <button type="button" v-on:click="purchaseLabel" data-route="{{ route('shipping.transactions.store', [$shipment->uuid]) }}"  class="btn btn-xs success btn-purchase-label-el" data-uuid="@{{  rate.object_id }}">
                     Purchase Label
                 </button>
             </td>

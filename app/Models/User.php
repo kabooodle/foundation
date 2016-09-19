@@ -426,4 +426,12 @@ class User extends BaseEloquentModel implements
 
         return $defaultCard;
     }
+
+    /**
+     * @return int
+     */
+    public function availableShippingLabelsCount()
+    {
+        return 0;
+    }
 }

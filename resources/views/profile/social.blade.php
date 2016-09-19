@@ -4,6 +4,10 @@
 @section('settings-content')
 
     <div class="box">
+        <div class="box-header">
+            <h2>Connect your social profiles</h2>
+        </div>
+        <div class="box-divider"></div>
         <div class="box-body clearfix">
             <div class="list-body">
                 <div class="pull-left m-r-1">

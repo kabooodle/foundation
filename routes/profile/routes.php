@@ -26,6 +26,10 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'profile.subscription.store',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@store'
     ]);
+    Route::delete('/profile/subscription', [
+        'as' => 'profile.subscription.destroy',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@destroy'
+    ]);
     Route::get('/profile/subscription/invoices', [
         'as' => 'profile.subscription.invoices.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionInvoicesController::class.'@index'
@@ -41,5 +45,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/profile/creditcard', [
         'as' => 'profile.creditcard.store',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileCreditCardController::class.'@store'
+    ]);
+    Route::get('profile/shippinglabels', [
+        'as' => 'profile.shippinglabels.index',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileShippingLabelsController::class.'@index'
     ]);
 });

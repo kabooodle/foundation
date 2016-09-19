@@ -9,6 +9,7 @@ namespace Kabooodle\Models;
 use Carbon\Carbon;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Services\Shippr\RatesObject;
+use Sofa\Revisionable\Laravel\RevisionableTrait;
 
 /**
  * Class ShippingAddress
@@ -16,7 +17,7 @@ use Kabooodle\Services\Shippr\RatesObject;
  */
 class ShippingShipments extends BaseEloquentModel
 {
-    use UuidableTrait;
+    use RevisionableTrait, UuidableTrait;
 
     /**
      * @var array

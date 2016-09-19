@@ -8,8 +8,6 @@ namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
 use Messages;
-use Response;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
@@ -17,10 +15,10 @@ use Kabooodle\Bus\Commands\Profile\SubscribeUserToPlanCommand;
 use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadySubscribedToPlanException;
 
 /**
- * Class ProfileSubscriptionsController
+ * Class ProfileShippingLabelsController
  * @package Kabooodle\Http\Controllers\Web\Profile
  */
-class ProfileSubscriptionsController extends Controller
+class ProfileShippingLabelsController extends Controller
 {
     /**
      * @param Request $request
@@ -31,7 +29,7 @@ class ProfileSubscriptionsController extends Controller
     {
         $user = user();
 
-        return $this->view('profile.subscription.index')->with(compact('user'));
+        return $this->view('profile.shippinglabels.index')->with(compact('user'));
     }
 
     /**
@@ -68,22 +66,6 @@ class ProfileSubscriptionsController extends Controller
             return redirect(route('profile.subscription.index'));
         } catch (\Exception $e) {
             dd($e);
-        }
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(Request $request)
-    {
-        try {
-            user()->subscription('main')->cancelNow();
-
-            return Response::json(['onGracePeriod' => user()->subscription('main')->onGracePeriod(), 'onTrial' => user()->subscription('main')->onTrial()], 200);
-        } catch (Exception $e) {
-            return Response::json([], 500);
         }
     }
 

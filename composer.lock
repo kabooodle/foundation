@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "38a07d34b1b8a9851793f17e934ad1d0",
-    "content-hash": "adc1e0c301c19893064e59404f7bbfc8",
+    "content-hash": "9268e8ace90112ee77cf5d6bb8e7938f",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -1594,16 +1593,16 @@
         },
         {
             "name": "laravel/cashier",
-            "version": "v6.0.18",
+            "version": "v6.0.19",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/cashier.git",
-                "reference": "1e5c092a14150af194e3ec2d774f07c5b1c4da01"
+                "url": "https://github.com/kabooodle/cashier.git",
+                "reference": "8fc40df658b9cf6a0a5ab8647f2df16648e4c5a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/cashier/zipball/1e5c092a14150af194e3ec2d774f07c5b1c4da01",
-                "reference": "1e5c092a14150af194e3ec2d774f07c5b1c4da01",
+                "url": "https://api.github.com/repos/kabooodle/cashier/zipball/8fc40df658b9cf6a0a5ab8647f2df16648e4c5a8",
+                "reference": "8fc40df658b9cf6a0a5ab8647f2df16648e4c5a8",
                 "shasum": ""
             },
             "require": {
@@ -1634,7 +1633,6 @@
                     "Laravel\\Cashier\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1650,7 +1648,10 @@
                 "laravel",
                 "stripe"
             ],
-            "time": "2016-06-17 18:59:32"
+            "support": {
+                "source": "https://github.com/kabooodle/cashier/tree/v6.0.19"
+            },
+            "time": "2016-09-19 22:43:58"
         },
         {
             "name": "laravel/framework",

@@ -6,12 +6,16 @@
 
 namespace Kabooodle\Models;
 
+use Sofa\Revisionable\Laravel\RevisionableTrait;
+
 /**
  * Class ShippingAddress
  * @package Kabooodle\Models
  */
 class ShippingAddress extends BaseEloquentModel
 {
+    use RevisionableTrait;
+
     const TYPE_FROM = 'ship_from';
     const TYPE_TO = 'ship_to';
 

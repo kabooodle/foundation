@@ -16,10 +16,10 @@ use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Events\Shipping\ShippingTransactionWasCreatedEvent;
 
 /**
- * Class ShippingLabelController
+ * Class ShippingTransactionController
  * @package Kabooodle\Http\Controllers\Web\Shipping
  */
-class ShippingLabelController extends Controller
+class ShippingTransactionController extends Controller
 {
     use DispatchesJobs;
 
@@ -60,7 +60,7 @@ class ShippingLabelController extends Controller
 
             $this->dispatch(new ShippingTransactionWasCreatedEvent($st));
 
-            $redirectRoute = route('shipping.labels.show', [$shipmentUUID, $st->uuid]);
+            $redirectRoute = route('shipping.transaction.show', [$shipmentUUID, $st->uuid]);
 
             return \Response::json(['txn_id' => $transaction['object_id'], 'redirect' => $redirectRoute], 200);
 
@@ -81,6 +81,6 @@ class ShippingLabelController extends Controller
         $shipment = ShippingShipments::where('uuid', $shipmentUUID)->where('user_id', user()->id)->firstOrFail();
         $transaction = ShippingTransactions::where('uuid', $transactionUUID)->where('user_id', user()->id)->firstOrFail();
 
-        return $this->view('shipping.order.label')->with(compact('transaction', 'shipment'));
+        return $this->view('shipping.order.transaction')->with(compact('transaction', 'shipment'));
     }
 }

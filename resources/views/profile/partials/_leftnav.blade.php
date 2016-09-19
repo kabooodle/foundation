@@ -10,11 +10,14 @@
 <a href="{{ route('profile.addresses.edit') }}" class="nav-link {{ Request::is('profile/addresses') ? 'active' : null }}">
     Addresses
 </a>
+<a href="{{ route('profile.shippinglabels.index') }}" class="nav-link {{ Request::is('profile/shippinglabels') ? 'active' : null }}">
+    Shipping Label Credits <span class="label">{{ user()->availableShippingLabelsCount() }}</span>
+</a>
 <a href="{{ route('profile.subscription.index') }}" class="nav-link {{ Request::is('profile/subscription') ? 'active' : null }}">
     Subscription
 </a>
 <a href="{{ route('profile.subscription.invoices.index') }}" class="nav-link {{ Request::is('profile/subscription/invoices') ? 'active' : null }}">
-    Payments
+    Purchases
 </a>
 <a href="{{ route('profile.creditcard.index') }}" class="nav-link {{ Request::is('profile/creditcard') ? 'active' : null }}">
     Credit Card

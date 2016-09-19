@@ -5,7 +5,7 @@
 
     <div class="box">
         <div class="box-header">
-            <h2 class="m-b-0">Payment and Purchase History</h2>
+            <h2 class="m-b-0">Purchase History</h2>
         </div>
         <div class="box-divider"></div>
         <div class="box-body">
