@@ -30,7 +30,7 @@ class NotificationableEvent
      * @param NotificationableInterface $event
      * @param                           $payload
      */
-    public function __construct(NotificationableInterface $event,  $payload)
+    public function __construct($event,  $payload)
     {
         $this->event = $event;
         $this->payload = $payload;
