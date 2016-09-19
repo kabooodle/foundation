@@ -152,7 +152,7 @@ return [
         Barryvdh\Cors\ServiceProvider::class,
         Dingo\Api\Provider\LaravelServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
+//        Barryvdh\Debugbar\ServiceProvider::class,
 
 
         Kabooodle\Foundation\Providers\AppServiceProvider::class,
@@ -226,7 +226,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
 
-        'Debugbar' => Barryvdh\Debugbar\Facade::class,
+//        'Debugbar' => Barryvdh\Debugbar\Facade::class,
 
         'Messages' => Kabooodle\Libraries\Messages\MessagesFacade::class,
         'HTMLMin' => GrahamCampbell\HTMLMin\Facades\HTMLMin::class,
