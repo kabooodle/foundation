@@ -30,6 +30,10 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'profile.subscription.invoices.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionInvoicesController::class.'@index'
     ]);
+    Route::get('/profile/subscription/invoices/{invoice}', [
+        'as' => 'profile.subscription.invoices.show',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionInvoicesController::class.'@show'
+    ]);
     Route::get('/profile/creditcard', [
         'as' => 'profile.creditcard.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileCreditCardController::class.'@index'

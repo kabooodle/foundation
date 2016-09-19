@@ -155,3 +155,17 @@
     content: '/ ';
   }
 }
+
+
+#inner-left-menu .nav-active-primary {
+  & a {
+    &.active {
+      color: $primary !important;
+      background: #fff !important;
+      font-weight: 600;
+    }
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

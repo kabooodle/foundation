@@ -36,7 +36,7 @@ class ProfileSubscriptionInvoicesController extends Controller
      */
     public function show($invoiceId)
     {
-        return \Auth::user()->downloadInvoice($invoiceId, [
+        return user()->downloadInvoice($invoiceId, [
             'vendor'  => 'Your Company',
             'product' => 'Your Product',
         ]);

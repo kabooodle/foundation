@@ -41,6 +41,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         \Kabooodle\Bus\Events\Shipping\ShippingTransactionWasCreatedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Shipping\ShippingTransactionWasCreatedEventHandler::class
+        ],
+        \Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Profile\UserWasSubscribedToPlanEventHandler::class
         ]
     ];
     /**

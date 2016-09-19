@@ -6,7 +6,12 @@
     {{ Form::open(['route' => 'profile.creditcard.store']) }}
 
     <div class="box">
+        <div class="box-header">
+            <h2>@if($card) Update Your @endif Credit  Card</h2>
+        </div>
+        <div class="box-divider"></div>
         <div class="box-body">
+            <p class="">We do <u>not</u> store your full credit card number or CVC code after we submit it to our credit card processor, Stripe. Stripe does store and protects this information. They are a major credit card processor who specializes in handling this information. You can find out more about Stripe and their PCI compliance at <a href="https://stripe.com/" class="_500 text-primary">their website</a>.</p>
             <?php
             $opaques = [
                     'active' => 1,
@@ -14,15 +19,15 @@
                     'muted' => .2
             ];
             ?>
-            <div class="form-group row">
-                <label class="control-label col-sm-3">Card Number</label>
+            <div class="form-group row {{ $errors->has('card_number') ? 'has-danger' : null }}">
+                <label class="form-control-label col-sm-3">Card Number</label>
                 <div class="col-sm-7">
-                    {{ Form::number('card_number', null, ['class' => 'form-control', 'id' => 'form_card_no', 'data-card-type' => ($card ? $card->card_brand : null), 'max' => 9999999999999999, 'min' => 0000000000000001]) }}
+                    {{ Form::number('card_number', null, ['class' => 'form-control', 'id' => 'form_card_no', 'data-card-type' => ($card ? $card->brand : null), 'placeholder' => ($card ? '************'.$card->last4 : null),  'max' => 9999999999999999, 'min' => 0000000000000001]) }}
                     <div class="clearfix">
                         @foreach(array_keys(ccTypes('default')) as $ccType)
                             <?php $opacity = $opaques['inactive']; ?>
                             @if(isset($card) && $card)
-                                @if($ccType == $card->brand_slug)
+                                @if($ccType == strtolower($card->brand))
                                     <?php $opacity = $opaques['active']; ?>
                                 @else
                                     <?php $opacity = $opaques['muted']; ?>
@@ -38,22 +43,22 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="control-label col-sm-3">Expiration Month</label>
+            <div class="form-group row {{ $errors->has('exp_month') ? 'has-danger' : null }}">
+                <label class="form-control-label col-sm-3">Expiration Month</label>
                 <div class="col-sm-4">
-                    {{ Form::select('exp_month', months(), null, ['class' => 'form-control']) }}
+                    {{ Form::select('exp_month', months(), ($card ? $card->exp_month : null), ['class' => 'form-control']) }}
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="control-label col-sm-3">Expiration Year</label>
+            <div class="form-group row {{ $errors->has('exp_year') ? 'has-danger' : null }}">
+                <label class="form-control-label col-sm-3">Expiration Year</label>
                 <div class="col-sm-3">
-                    {{ Form::select('exp_year', srange(date("Y"), 2030), null, ['class' => 'form-control']) }}
+                    {{ Form::select('exp_year', srange(date("Y"), 2030), ($card ? $card->exp_year : null), ['class' => 'form-control']) }}
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="control-label col-sm-3">CVV</label>
+            <div class="form-group row {{ $errors->has('cvv') ? 'has-danger' : null }}">
+                <label class="form-control-label col-sm-3">CVC</label>
                 <div class="col-sm-3">
                     {{ Form::number('cvv', null, ['class'=>'form-control', 'max' => 9999, 'min' => 001]) }}
                 </div>

@@ -187,8 +187,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="text-sm-right text-xs-left">
-                        <small class="text-muted">© Copyright 2016. All rights
-                            reserved.</small>
+                        <small class="text-muted">&copy; 2016. Made with <i class="fa fa-heart"></i> in Folsom, CA.</small>
                     </div>
                 </div>
             </div>

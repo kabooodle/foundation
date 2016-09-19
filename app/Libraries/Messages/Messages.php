@@ -62,6 +62,7 @@ class Messages extends M implements MessagesInterface
     public function add($key, $message)
     {
         $key = trim(strtolower($key));
+        $message = addslashes($message);
         parent::add($key, $message);
         $this->save();
     }

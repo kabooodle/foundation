@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="hidden-xs-down" id="inner-left-menu">
-                <div class="nav-active-primary">
+                <div class="nav-active-primary white">
                     <div class="nav nav-pills nav-sm">
                         @yield('body-content-left-nav')
                     </div>

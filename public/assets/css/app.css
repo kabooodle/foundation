@@ -777,6 +777,14 @@ a.list-group-item {
   .breadcrumb > li + li:before {
     content: '/ '; }
 
+#inner-left-menu .nav-active-primary a.active {
+  color: #88a4ff !important;
+  background: #fff !important;
+  font-weight: 600; }
+
+#inner-left-menu .nav-active-primary a:hover {
+  text-decoration: underline; }
+
 .navbar {
   border: none;
   margin: 0;

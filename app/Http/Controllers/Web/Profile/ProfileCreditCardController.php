@@ -8,10 +8,12 @@ namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
 use Messages;
+use Stripe\Error\Card;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\Profile\StoreCreditCardForUserCommand;
+
 
 /**
  * Class ProfileCreditCardController
@@ -55,7 +57,13 @@ class ProfileCreditCardController extends Controller
             return redirect()->route('profile.creditcard.index');
 
         } catch (ValidationException $e) {
-            return redirect()->back()->withInput()->withErrors($e->validator);
+            Messages::error('Some fields require input!');
+
+            return redirect()->back()->withInput($request->all())->withErrors($e->validator);
+        } catch (Card $e) {
+            Messages::error($e->getMessage());
+
+            return redirect()->route('profile.creditcard.index')->withInput($request->all());
         }
     }
 

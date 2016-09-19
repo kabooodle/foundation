@@ -18,7 +18,7 @@
             <div class="row no-gutter">
                 <div class="col-sm-4">
                     <div class="box">
-                        <div class="box-body text-center lter warning">
+                        <div class="box-body text-center lter success">
                             <h6 class="text-u-c m-a-0 m-t">Monthly</h6>
                             <h3 class="m-a-0">
                                 <sup>$</sup>
@@ -33,7 +33,7 @@
                                 <button type="button" disabled class="btn disabled btn-block btn-lg white">Current Plan</button>
                             @else
                             {{ Form::open(['route' => ['profile.subscription.store', 'p=kabooodle_launch_plan']]) }}
-                            <button type="submit" class="btn btn-block btn-lg white">Purchase</button>
+                            <button type="submit" class="btn btn-block btn-lg warning">Purchase</button>
                             {{ Form::close() }}
                             @endif
                         </div>
@@ -76,6 +76,11 @@
             </div>
         </div>
     </div>
+
+    <div class="">
+        Cancel Subscription
+    </div>
+
 
 @endsection
 
