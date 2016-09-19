@@ -15,6 +15,7 @@
         "algolia/algoliasearch-laravel": "1.2.2",
         "alt-three/bus": "1.1.0",
         "barryvdh/laravel-cors": "0.8.1",
+        "barryvdh/laravel-ide-helper": "2.2.1",
         "dingo/api": "1.0.*@dev",
         "graham-campbell/binput": "3.4.0",
         "graham-campbell/htmlmin": "4.4.0",
@@ -42,7 +43,6 @@
         "phpunit/phpunit": "~4.0",
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*",
-        "barryvdh/laravel-ide-helper": "2.2.1",
         "barryvdh/laravel-debugbar": "2.2.2"
     },
     "autoload": {
