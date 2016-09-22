@@ -22,6 +22,16 @@ class CreateCreditChargeTypesTbl extends Migration
             $table->decimal('per_credit', 10, 2);
             $table->boolean('active')->default(1);
         });
+
+        DB::statement('INSERT INTO `credit_charge_types` (`id`, `name`, `slug`, `description`, `amount`, `credits_equiv`, `per_credit`, `active`)
+VALUES
+	(1, \'$25 for $25 credits\', \'\', \'\', 25.00, 25.00, 1.00, 1),
+	(2, \'$50 for $52 credits\', \'\', \'\', 50.00, 52.00, 0.96, 1),
+	(3, \'$100 for $105 credits\', \'\', \'\', 100.00, 105.00, 0.95, 1),
+	(4, \'$200 for $212 credits\', \'\', \'\', 200.00, 212.00, 0.94, 1),
+	(5, \'$300 for $323 credits\', \'\', \'\', 300.00, 323.00, 0.93, 1),
+	(6, \'$400 for $434 credits\', \'\', \'\', 400.00, 434.00, 0.92, 1);
+');
     }
 
     /**
