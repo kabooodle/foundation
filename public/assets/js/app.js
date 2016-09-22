@@ -1,1 +1,279 @@
-!function(e){"use strict";(navigator.userAgent.match(/MSIE/i)||navigator.userAgent.match(/Trident.*rv:11\./))&&e("body").addClass("ie");var t=window.navigator.userAgent||window.navigator.vendor||window.opera;/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/.test(t)&&e("body").addClass("smart")}(jQuery),function(e){"use strict";e("input, textarea").each(function(){e(this).val()?e(this).addClass("has-value"):e(this).removeClass("has-value")}),e(document).on("blur","input, textarea",function(t){e(this).val()?e(this).addClass("has-value"):e(this).removeClass("has-value")})}(jQuery),function(e){"use strict";e(document).on("click","[ui-nav] a",function(t){var n,o,i=e(t.target);i.is("a")||(i=i.closest("a")),o=i.parent(),n=o.siblings(".active"),o.toggleClass("active"),n.removeClass("active")})}(jQuery);var uiLoad=uiLoad||{};!function(e,t,n){"use strict";var o=[],i=!1,s=e.Deferred();n.load=function(t){return t=e.isArray(t)?t:t.split(/\s+/),i||(i=s.promise()),e.each(t,function(e,t){i=i.then(function(){return t.indexOf(".css")>=0?a(t):r(t)})}),s.resolve(),i};var r=function(n){if(o[n])return o[n].promise();var i=e.Deferred(),s=t.createElement("script");return s.src=n,s.onload=function(e){i.resolve(e)},s.onerror=function(e){i.reject(e)},t.body.appendChild(s),o[n]=i,i.promise()},a=function(n){if(o[n])return o[n].promise();var i=e.Deferred(),s=t.createElement("link");return s.rel="stylesheet",s.type="text/css",s.href=n,s.onload=function(e){i.resolve(e)},s.onerror=function(e){i.reject(e)},t.head.appendChild(s),o[n]=i,i.promise()}}(jQuery,document,uiLoad),function(e){"use strict";e(document).on("click","[ui-fullscreen]",function(e){e.preventDefault(),screenfull.enabled&&screenfull.toggle()})}(jQuery),function(e){"use strict";e.extend(jQuery.easing,{def:"easeOutQuad",easeInOutExpo:function(e,t,n,o,i){return 0==t?n:t==i?n+o:(t/=i/2)<1?o/2*Math.pow(2,10*(t-1))+n:o/2*(-Math.pow(2,-10*--t)+2)+n}}),e(document).on("click","[ui-scroll-to]",function(t){t.preventDefault();var n=e("#"+e(this).attr("ui-scroll-to"));e("html,body").animate({scrollTop:n.offset().top},600,"easeInOutExpo")})}(jQuery),function($){"use strict";$.fn.uiJp=function(){var lists=this;return lists.each(function(){var self=$(this),options=eval("["+self.attr("ui-options")+"]");$.isPlainObject(options[0])&&(options[0]=$.extend({},options[0])),self[self.attr("ui-jp")].apply(self,options)}),lists}}(jQuery),new Vue({el:"#kabooodle_app",data:{},methods:{disableOnClick:function(){}}}),$(function(){$("form").submit(function(){var e=$(this);e.find(":submit").prop("disabled",!0)}),$('[data-toggle="tooltip"]').tooltip(),$(".dropdown.dropdown-onhover").hover(function(){$(this).addClass("open active").find(".dropdown-menu").stop(!0,!0).show()},function(){$(this).removeClass("open active").find(".dropdown-menu").stop(!0,!0).hide()}),$(".float").keypress(function(e){46==e.which&&$(this).val().indexOf(".")==-1||!(e.which<48||e.which>57)||e.preventDefault()})});
+(function ($) {
+	"use strict";
+
+    // Checks for ie
+    if ( !!navigator.userAgent.match(/MSIE/i) || !!navigator.userAgent.match(/Trident.*rv:11\./) ){
+    	$('body').addClass('ie');
+    }
+
+    // Checks for iOs, Android, Blackberry, Opera Mini, and Windows mobile devices
+    var ua = window['navigator']['userAgent'] || window['navigator']['vendor'] || window['opera'];
+    if( (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua) ){
+    	$('body').addClass('smart');
+	} 
+
+})(jQuery);
+
+(function ($) {
+	"use strict";
+
+	$('input, textarea').each(function(){
+		$(this).val() ? $(this).addClass('has-value') : $(this).removeClass('has-value');
+	});
+	$(document).on('blur', 'input, textarea', function(e){
+		$(this).val() ? $(this).addClass('has-value') : $(this).removeClass('has-value');
+	});
+
+})(jQuery);
+
+(function ($) {
+  "use strict";
+  
+  $(document).on('click', '[ui-nav] a', function (e) {
+    var $this = $(e.target), $active, $li;
+    $this.is('a') || ($this = $this.closest('a'));
+    
+    $li = $this.parent();
+    $active = $li.siblings( ".active" );
+    $li.toggleClass('active');
+    $active.removeClass('active');
+  });
+})(jQuery);
+
+
+/**
+ * 0.1.0
+ * Deferred load js/css file, used for ui-jq.js and Lazy Loading.
+ * 
+ * @ flatfull.com All Rights Reserved.
+ * Author url: http://themeforest.net/user/flatfull
+ */
+var uiLoad = uiLoad || {};
+
+(function($, $document, uiLoad) {
+	"use strict";
+
+	var loaded = [],
+	promise = false,
+	deferred = $.Deferred();
+
+	/**
+	 * Chain loads the given sources
+	 * @param srcs array, script or css
+	 * @returns {*} Promise that will be resolved once the sources has been loaded.
+	 */
+	uiLoad.load = function (srcs) {
+		srcs = $.isArray(srcs) ? srcs : srcs.split(/\s+/);
+		if(!promise){
+			promise = deferred.promise();
+		}
+
+		$.each(srcs, function(index, src) {
+			promise = promise.then( function(){
+				return src.indexOf('.css') >=0 ? loadCSS(src) : loadScript(src);
+			} );
+		});
+		deferred.resolve();
+		return promise;
+	};
+
+	/**
+	 * Dynamically loads the given script
+	 * @param src The url of the script to load dynamically
+	 * @returns {*} Promise that will be resolved once the script has been loaded.
+	 */
+	var loadScript = function (src) {
+		if(loaded[src]) return loaded[src].promise();
+
+		var deferred = $.Deferred();
+		var script = $document.createElement('script');
+		script.src = src;
+		script.onload = function (e) {
+			deferred.resolve(e);
+		};
+		script.onerror = function (e) {
+			deferred.reject(e);
+		};
+		$document.body.appendChild(script);
+		loaded[src] = deferred;
+
+		return deferred.promise();
+	};
+
+	/**
+	 * Dynamically loads the given CSS file
+	 * @param href The url of the CSS to load dynamically
+	 * @returns {*} Promise that will be resolved once the CSS file has been loaded.
+	 */
+	var loadCSS = function (href) {
+		if(loaded[href]) return loaded[href].promise();
+
+		var deferred = $.Deferred();
+		var style = $document.createElement('link');
+		style.rel = 'stylesheet';
+		style.type = 'text/css';
+		style.href = href;
+		style.onload = function (e) {
+			deferred.resolve(e);
+		};
+		style.onerror = function (e) {
+			deferred.reject(e);
+		};
+		$document.head.appendChild(style);
+		loaded[href] = deferred;
+
+		return deferred.promise();
+	}
+
+})(jQuery, document, uiLoad);
+
+(function ($) {
+	"use strict";
+
+	$(document).on('click', '[ui-fullscreen]', function (e) {
+		e.preventDefault();
+		if (screenfull.enabled) {
+		  screenfull.toggle();
+		}
+	});
+})(jQuery);
+
+(function ($) {
+	"use strict";
+  	$.extend( jQuery.easing,{
+	    def: 'easeOutQuad',
+	    easeInOutExpo: function (x, t, b, c, d) {
+	        if (t==0) return b;
+	        if (t==d) return b+c;
+	        if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
+	        return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
+	    }
+	});
+
+	$(document).on('click', '[ui-scroll-to]', function (e) {
+		e.preventDefault();
+		var target = $('#'+$(this).attr('ui-scroll-to'));
+		$('html,body').animate({
+          scrollTop: target.offset().top
+        }, 600, 'easeInOutExpo');
+	});
+})(jQuery);
+
+(function ($) {
+  	"use strict";
+  
+	$.fn.uiJp = function(){
+
+		var lists  = this;
+
+        lists.each(function()
+        {
+        	var self = $(this);
+			var options = eval('[' + self.attr('ui-options') + ']');
+			if ($.isPlainObject(options[0])) {
+				options[0] = $.extend({}, options[0]);
+			}
+
+			// uiLoad.load(MODULE_CONFIG[self.attr('ui-jp')]).then( function(){
+				self[self.attr('ui-jp')].apply(self, options);
+			// });
+        });
+
+        return lists;
+	}
+
+})(jQuery);
+
+new Vue({
+    el: '#kabooodle_app',
+    data: {},
+    methods: {
+        disableOnClick: function () {
+        }
+    }
+});
+
+function confirmModal(confirmCB, closeCB) {
+    noty({
+        text: 'Confirm that you wish to proceed with purchase.',
+        layout: 'center',
+        theme: 'relax',
+        type: 'alert',
+        modal: true,
+        animation: {
+            open: {height: 'toggle'},
+            close: {height: 'toggle'},
+            easing: 'linear',
+            speed: 1
+        },
+        timeout: 9000,
+        buttons: [
+            {
+                addClass: 'btn btn-sm primary', text: 'Confirm Purchase', onClick: function ($noty) {
+                if (typeof confirmCB === 'function') {
+                    confirmCB($noty);
+                }
+            }
+            },
+            {
+                addClass: 'btn btn-link btn-sm', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
+                $noty.close();
+                if (typeof closeCB === 'function') {
+                    closeCB($noty);
+                }
+            }
+            }
+        ]
+    });
+}
+
+$(function () {
+
+    // $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+    //     var token;
+    //     if (! options.crossDomain) {
+    //         token = $('meta[name="token"]').attr('content');
+    //         if (token) {
+    //             jqXHR.setRequestHeader('X-CSRF-Token', token);
+    //         }
+    //     }
+    //
+    //     return jqXHR;
+    // });
+
+    // $.ajaxSetup({
+    //     beforeSend: function (xhr) {
+    //         xhr.setRequestHeader('Accept', 'application/json');
+    //     },
+    //     statusCode: {
+    //         401: function () {
+    //             window.location.href = '/';
+    //         },
+    //         403: function () {
+    //             window.location.href = '/';
+    //         }
+    //     }
+    // });
+
+    $('form').submit(function () {
+        var $form = $(this);
+        $form.find(':submit').prop('disabled', true);
+    });
+
+    $('[data-toggle="tooltip"]').tooltip();
+    // $('[ui-jp]').uiJp();
+    $('.dropdown.dropdown-onhover').hover(function () {
+        $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();
+    }, function () {
+        $(this).removeClass('open active').find('.dropdown-menu').stop(true, true).hide();
+    });
+
+    $('.float').keypress(function (event) {
+        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+    });
+
+
+});
+//# sourceMappingURL=app.js.map

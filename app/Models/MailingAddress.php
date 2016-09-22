@@ -10,20 +10,65 @@ namespace Kabooodle\Models;
  * Class MailingAddress
  * @package Kabooodle\Models
  */
-class MailingAddress
+final class MailingAddress
 {
+    /**
+     * @var null
+     */
+    public $company;
+
+    /**
+     * @var string
+     */
+    public $street1;
+
+    /**
+     * @var null|string
+     */
+    public $street2;
+
+    /**
+     * @var string
+     */
+    public $city;
+
+    /**
+     * @var string
+     */
+    public $state;
+
+    /**
+     * @var string
+     */
+    public $zip;
+
+    /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @var null|string
+     */
+    public $phone;
+
     /**
      * MailingAddress constructor.
      *
-     * @param null $company
-     * @param      $street1
-     * @param null $street2
-     * @param      $city
-     * @param      $state
-     * @param      $zip
-     * @param      $name
-     * @param      $email
-     * @param null $phone
+     * @param null          $company
+     * @param string        $street1
+     * @param null|string   $street2
+     * @param string        $city
+     * @param string        $state
+     * @param string        $zip
+     * @param string        $name
+     * @param string        $email
+     * @param null|string   $phone
      */
     public function __construct(
         $company = null,
@@ -155,15 +200,5 @@ class MailingAddress
             $array['email'],
             array_get($array, 'phone')
         );
-    }
-
-    /**
-     * @param $name
-     *
-     * @return null
-     */
-    public function __get($name)
-    {
-        return property_exists($this, $name) ? $this->{$name} : null;
     }
 }

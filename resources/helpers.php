@@ -1,5 +1,7 @@
 <?php
 
+
+
 if (! function_exists('months')) {
     /**
      * @return array
@@ -28,6 +30,21 @@ if (! function_exists('srange')) {
     function srange($min, $max)
     {
         return array_combine(range($min, $max), range($min, $max));
+    }
+}
+
+if (! function_exists('dollarsToCents')) {
+    /**
+     * @param        $dollars
+     * @param string $prefix
+     *
+     * @return string
+     */
+    function dollarsToCents($dollars, $prefix = '$')
+    {
+        $dollars = str_replace('$', '', $dollars);
+        $cents = $dollars * 100;
+        return $prefix ? $prefix . $cents : $cents;
     }
 }
 
@@ -88,17 +105,6 @@ if (! function_exists('ccImgPath')) {
 }
 
 
-if (! function_exists('getParcelsListUSPS')) {
-    /**
-     * @return Array
-     */
-    function getParcelListByCarrier()
-    {
-        $model = \Kabooodle\Models\ShippingParcelTemplates::orderBy('name')->get();
-
-        return $model->pluck('name_with_dimensions', 'parcel_id')->toArray();
-    }
-}
 
 if (! function_exists('getSateAbbrevs')) {
     /**
@@ -222,8 +228,12 @@ if (! function_exists('getEnvDomain')) {
      */
     function getEnvDomain($withTld = false)
     {
-        $name = request()->server->get('HTTP_HOST');
+        $httpHost = ( isset($_SERVER['HTTP_HOST']) ) ? $_SERVER['HTTP_HOST'] : gethostname();
+        if ($httpHost == 'kabooodle.ngrok.io' ) {
+            return $httpHost;
+        }
 
+        $name = request()->server->get('HTTP_HOST');
         if (filter_var($name, FILTER_VALIDATE_IP) or is_numeric($name)) {
             return $name;
         }

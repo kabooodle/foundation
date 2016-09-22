@@ -6,13 +6,14 @@
 
 namespace Kabooodle\Models;
 
+use Sofa\Revisionable\Revisionable;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 
 /**
  * Class ShippingAddress
  * @package Kabooodle\Models
  */
-class ShippingAddress extends BaseEloquentModel
+class ShippingAddress extends BaseEloquentModel implements Revisionable
 {
     use RevisionableTrait;
 

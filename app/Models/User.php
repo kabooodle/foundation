@@ -428,10 +428,18 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * @return int
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function availableShippingLabelsCount()
+    public function creditTransactions()
     {
-        return 0;
+        return $this->hasMany(CreditTransactions::class, 'user_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAvailableBalance()
+    {
+        return $this->creditTransactions->sum('amount');
     }
 }

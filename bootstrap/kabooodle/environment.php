@@ -17,6 +17,11 @@ $env = $app->detectEnvironment(function() use ($app){
             $env = 'staging';
             break;
 
+        case 'kabooodle.ngrok.io' :
+        case '932b4484.ngrok.io':
+            $env = 'ngrok';
+            break;
+
         case 'kabooodle.dev' :
         default :
             $env = 'local';

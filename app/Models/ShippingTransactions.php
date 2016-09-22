@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 
@@ -13,9 +14,11 @@ use Sofa\Revisionable\Laravel\RevisionableTrait;
  * Class ShippingTransactions
  * @package Kabooodle\Models
  */
-class ShippingTransactions extends BaseEloquentModel
+class ShippingTransactions extends BaseEloquentModel implements Revisionable
 {
     use RevisionableTrait, UuidableTrait;
+
+    const RATE_ADDON = 0.10;
 
     /**
      * @var string
@@ -33,8 +36,11 @@ class ShippingTransactions extends BaseEloquentModel
         'transaction_id' => 0,
         'tracking_number' => '',
         'tracking_status' => [],
-        'rate_id' => 0,
         'rate_data' => [],
+        'rate_id' => 0,
+        'rate_amount' => 0,
+        'rate_amount_addon' => self::RATE_ADDON,
+        'rate_final_amount' => self::RATE_ADDON,
         'tracking_url_provider' => '',
         'tracking_history' => [],
         'label_url' => '',
@@ -43,6 +49,16 @@ class ShippingTransactions extends BaseEloquentModel
         'messages' => [],
         'raw_response' => [],
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        self::creating(function($model){
+            $model->rate_amount_addon = self::RATE_ADDON;
+            $model->rate_final_amount = $model->rate_amount + self::RATE_ADDON;
+        });
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

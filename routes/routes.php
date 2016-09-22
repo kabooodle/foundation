@@ -1,5 +1,4 @@
 <?php
-
 //Route::get('/', function () {
 //
 //    $x = new \Kabooodle\Libraries\LLRClient\LLRClient;
@@ -8,7 +7,15 @@
 //    dd($r, $x->getConnectionError());
 //});
 
+Route::group(['middleware' => ['web']], function() {
+    Route::post(
+        '__captainHook/shtriwpe',
+        \Kabooodle\Http\Controllers\Web\Webhooks\StripeWebhooksController::class . '@handleWebhook'
+    );
+});
+
 Route::group(['middleware' => ['web'], 'domain' => getEnvDomain(true)], function(){
+
     Route::group(['middleware' => 'auth'], function () {
         Route::get('/', function () {
             return View::make('welcome');

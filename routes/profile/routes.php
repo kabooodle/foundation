@@ -46,8 +46,14 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'profile.creditcard.store',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileCreditCardController::class.'@store'
     ]);
-    Route::get('profile/shippinglabels', [
-        'as' => 'profile.shippinglabels.index',
-        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileShippingLabelsController::class.'@index'
+    Route::get('profile/credits', [
+        'as' => 'profile.credits.index',
+        'middleware' => 'subscribed:main',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileCreditsController::class.'@index'
+    ]);
+    Route::post('profile/credits', [
+        'as' => 'profile.credits.store',
+        'middleware' => 'subscribed:main',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileCreditsController::class.'@store'
     ]);
 });

@@ -50,6 +50,7 @@ class ShippingTransactionController extends Controller
             $st->rate_id = $rateUUID;
             $st->label_url = $transaction['label_url'];
             $st->rate_data = $rate;
+            $st->rate_amount = $rate->getAmount();
             $st->tracking_number = $transaction['tracking_number'];
             $st->tracking_status = $transaction['tracking_status'];
             $st->tracking_url_provider = $transaction['tracking_url_provider'];
@@ -60,7 +61,7 @@ class ShippingTransactionController extends Controller
 
             $this->dispatch(new ShippingTransactionWasCreatedEvent($st));
 
-            $redirectRoute = route('shipping.transaction.show', [$shipmentUUID, $st->uuid]);
+            $redirectRoute = route('shipping.transactions.show', [$shipmentUUID, $st->uuid]);
 
             return \Response::json(['txn_id' => $transaction['object_id'], 'redirect' => $redirectRoute], 200);
 

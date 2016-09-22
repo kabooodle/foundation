@@ -10,9 +10,11 @@
 <a href="{{ route('profile.addresses.edit') }}" class="nav-link {{ Request::is('profile/addresses') ? 'active' : null }}">
     Addresses
 </a>
-<a href="{{ route('profile.shippinglabels.index') }}" class="nav-link {{ Request::is('profile/shippinglabels') ? 'active' : null }}">
-    Shipping Label Credits <span class="label">{{ user()->availableShippingLabelsCount() }}</span>
+@if(user()->subscribed('main'))
+<a href="{{ route('profile.credits.index') }}" class="nav-link {{ Request::is('profile/credits') ? 'active' : null }}">
+    Credits
 </a>
+@endif
 <a href="{{ route('profile.subscription.index') }}" class="nav-link {{ Request::is('profile/subscription') ? 'active' : null }}">
     Subscription
 </a>

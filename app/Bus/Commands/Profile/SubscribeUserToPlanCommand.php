@@ -12,47 +12,47 @@ use Kabooodle\Models\User;
  * Class SubscribeUserToPlanCommand
  * @package Kabooodle\Bus\Commands\Profile
  */
-class SubscribeUserToPlanCommand
+final class SubscribeUserToPlanCommand
 {
     /**
      * @var User
      */
-    private $actor;
+    public $actor;
 
     /**
      * @var string
      */
-    private $subscription;
-
-    /**
-     * @var string
-     */
-    private $plan;
-
-    /**
-     * @var bool
-     */
-    private $skipTrial;
+    public $subscriptionName;
 
     /**
      * @var int
      */
-    private $trialDays;
+    public $planId;
+
+    /**
+     * @var bool
+     */
+    public $skipTrial;
+
+    /**
+     * @var int
+     */
+    public $trialDays;
 
     /**
      * SubscribeUserToPlanCommand constructor.
      *
      * @param User $actor
      * @param      $subscriptionName
-     * @param      $planName
+     * @param int     $planId
      * @param bool $skipTrial
      * @param int  $trialDays
      */
-    public function __construct(User $actor, $subscriptionName, $planName, $skipTrial = false, $trialDays = 30)
+    public function __construct(User $actor, $subscriptionName, $planId, $skipTrial = false, $trialDays = 30)
     {
         $this->actor = $actor;
-        $this->subscription = $subscriptionName;
-        $this->plan = $planName;
+        $this->subscriptionName = $subscriptionName;
+        $this->planId = $planId;
         $this->skipTrial = $skipTrial;
         $this->trialDays = $trialDays;
     }
@@ -70,7 +70,7 @@ class SubscribeUserToPlanCommand
      */
     public function getSubscriptionName()
     {
-        return $this->subscription;
+        return $this->subscriptionName;
     }
 
     /**
@@ -78,7 +78,7 @@ class SubscribeUserToPlanCommand
      */
     public function getPlanId()
     {
-        return $this->plan;
+        return $this->planId;
     }
 
     /**

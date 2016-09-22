@@ -13,11 +13,26 @@ namespace Kabooodle\Bus\Commands\User;
 final class AddUserCommand
 {
     /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @var string
+     */
+    public $password;
+
+    /**
      * AddUserCommand constructor.
      *
-     * @param $name
-     * @param $email
-     * @param $password
+     * @param string    $name
+     * @param string    $email
+     * @param string    $password
      */
     public function __construct($name, $email, $password)
     {
@@ -42,6 +57,9 @@ final class AddUserCommand
         return $this->password;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;

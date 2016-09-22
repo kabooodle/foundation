@@ -14,13 +14,38 @@ use Kabooodle\Services\Shippr\ParcelObject;
  * Class GetShippingRatesCommand
  * @package Kabooodle\Bus\Commands\Shipping
  */
-class GetShippingRatesCommand
+final class GetShippingRatesCommand
 {
+    /**
+     * @var User
+     */
+    public $actor;
+
+    /**
+     * @var string
+     */
+    public $claimUUID;
+
+    /**
+     * @var MailingAddress
+     */
+    public $recipient;
+
+    /**
+     * @var MailingAddress
+     */
+    public $sender;
+
+    /**
+     * @var ParcelObject
+     */
+    public $parcelObject;
+
     /**
      * GetShippingRatesCommand constructor.
      *
      * @param User           $actor
-     * @param                $claimUUID
+     * @param string         $claimUUID
      * @param MailingAddress $recipient
      * @param MailingAddress $sender
      * @param ParcelObject   $parcelObject

@@ -6,14 +6,15 @@
 
 namespace Kabooodle\Models;
 
+use Sofa\Revisionable\Revisionable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 
 /**
- * Class ShippingLabels
+ * Class CreditTransactions
  * @package Kabooodle\Models
  */
-class ShippingLabelsTransactions extends BaseEloquentModel
+class CreditTransactions extends BaseEloquentModel implements Revisionable
 {
     use RevisionableTrait, SoftDeletes;
 
@@ -25,19 +26,20 @@ class ShippingLabelsTransactions extends BaseEloquentModel
     /**
      * @var string
      */
-    protected $table = 'shipping_labels_transactions';
+    protected $table = 'credit_transactions';
 
     /**
      * @var array
      */
     protected $attributes = [
         'user_id' => 0,
-        'shipping_transaction_id' => 0,
-        'quantity' => 0,
-        'transaction_quantity' => 0,
-        'source' => '',
+        'transactable_id' => 0,
+        'transactable_type' => '',
+        'transaction_amount' => 0,
+        'amount' => 0,
         'incr' => '-',
-        'type' => self::TYPE_DEBIT
+        'previous_balance_of' => '',
+        'type' => self::TYPE_DEBIT,
     ];
 
     public static function boot()
@@ -46,12 +48,13 @@ class ShippingLabelsTransactions extends BaseEloquentModel
 
         self::saving(function($model){
             if ($model->type == self::TYPE_DEBIT) {
-                $model->transaction_quantity = '-'.$model->quantity;
+                $model->transaction_amount = '-'.$model->amount;
                 $model->incr = self::INCR_DEBIT;
             } else {
-                $model->transaction_quantity = $model->quantity;
+                $model->transaction_amount = $model->amount;
                 $model->incr = self::INCR_CREDIT;
             }
+            $model->previous_balance_of = self::where('user_id', $model->user_id)->sum('amount');
         });
     }
 
@@ -64,17 +67,10 @@ class ShippingLabelsTransactions extends BaseEloquentModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function shippingTransaction()
+    public function transactable()
     {
-        return $this->belongsTo(ShippingTransactions::class, 'shipping_transaction_id');
-    }
-
-    public function getAvailableLabels()
-    {
-//        SELECT personId,SUM(amount) as Total
-//        FROM outputaddition
-//        GROUP BY personID
+        return $this->morphTo();
     }
 }

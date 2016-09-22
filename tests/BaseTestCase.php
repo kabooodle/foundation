@@ -2,22 +2,20 @@
 
 namespace Kabooodle\Tests;
 
-use DB;
-
+use Mockery;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionObject;
 use ReflectionProperty;
-use Kabooodle\Foundation\Application\KabooodleApplication;
 use Illuminate\Foundation\Testing\TestCase as L_TestCase;
+use Kabooodle\Foundation\Application\KabooodleApplication;
 
 /**
  * Class TestCase
  * @package Kabooodle\Tests
  */
-class TestCase extends L_TestCase
+abstract class BaseTestCase extends L_TestCase
 {
-
     /**
      * The base URL to use while testing the application.
      *
@@ -32,7 +30,7 @@ class TestCase extends L_TestCase
      */
     public function createApplication()
     {
-        $app = require_once __DIR__.'/../bootstrap/app.php';
+        $app = require __DIR__ . '/../bootstrap/app.php';
 
         $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
@@ -41,18 +39,12 @@ class TestCase extends L_TestCase
 
     public static function setUpBeforeClass()
     {
-        global $__fm;
-        static::$fm = $__fm;
 
-        Faker::setLocale('en_EN');
-        DB::table('user_actions')->truncate();
-        DB::beginTransaction();
     }
 
     public static function tearDownAfterClass()
     {
-        static::$fm->deleteSaved();
-        DB::rollBack();
+
     }
 
     /**
@@ -61,6 +53,7 @@ class TestCase extends L_TestCase
     public static function app()
     {
         global $__app;
+
         return $__app;
     }
 
@@ -74,15 +67,16 @@ class TestCase extends L_TestCase
                 $prop->setValue($this, null);
             }
         }
-//        Mockery::close();
+        Mockery::close();
     }
 
     /**
      * getPrivateMethod
      *
-     * @param 	string $className
-     * @param 	string $methodName
-     * @return	ReflectionMethod
+     * @param    string $className
+     * @param    string $methodName
+     *
+     * @return    ReflectionMethod
      */
     public function getPrivateMethod($className, $methodName)
     {
@@ -96,9 +90,10 @@ class TestCase extends L_TestCase
     /**
      * getPrivateProperty
      *
-     * @param 	string $className
-     * @param 	string $propertyName
-     * @return	ReflectionProperty
+     * @param    string $className
+     * @param    string $propertyName
+     *
+     * @return    ReflectionProperty
      */
     public function getPrivateProperty($className, $propertyName)
     {

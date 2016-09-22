@@ -13,20 +13,35 @@ use Kabooodle\Models\MailingAddress;
  * Class UpdateUserShippingAddressesCommand
  * @package Kabooodle\Commands\Profile
  */
-class UpdateUserShippingAddressesCommand
+final class UpdateUserShippingAddressesCommand
 {
+    /**
+     * @var User
+     */
+    public $actor;
+
+    /**
+     * @var MailingAddress
+     */
+    public $fromAddress;
+
+    /**
+     * @var MailingAddress
+     */
+    public $toAddress;
+
     /**
      * UpdateUserShippingAddressesCommand constructor.
      *
      * @param User           $actor
-     * @param MailingAddress $from
-     * @param MailingAddress $to
+     * @param MailingAddress $fromAddress
+     * @param MailingAddress $toAddress
      */
-    public function __construct(User $actor, MailingAddress $from, MailingAddress $to)
+    public function __construct(User $actor, MailingAddress $fromAddress, MailingAddress $toAddress)
     {
         $this->actor = $actor;
-        $this->fromAddress = $from;
-        $this->toAddress = $to;
+        $this->fromAddress = $fromAddress;
+        $this->toAddress = $toAddress;
     }
 
     /**

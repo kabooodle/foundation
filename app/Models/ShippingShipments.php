@@ -7,6 +7,7 @@
 namespace Kabooodle\Models;
 
 use Carbon\Carbon;
+use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Services\Shippr\RatesObject;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
@@ -15,7 +16,7 @@ use Sofa\Revisionable\Laravel\RevisionableTrait;
  * Class ShippingAddress
  * @package Kabooodle\Models
  */
-class ShippingShipments extends BaseEloquentModel
+class ShippingShipments extends BaseEloquentModel implements Revisionable
 {
     use RevisionableTrait, UuidableTrait;
 
@@ -194,7 +195,12 @@ class ShippingShipments extends BaseEloquentModel
      */
     public function getRatesAsRawAttribute()
     {
-        return $this->getOriginal('rates_list');
+        $rates = json_decode($this->getOriginal('rates_list'), true);
+        foreach ($rates as &$rate) {
+            $rate['amount'] = $rate['amount'] + rateAddon();
+            $rate['amount_local'] = $rate['amount_local'] + rateAddon();
+        }
+        return json_encode($rates);
     }
 
     /**

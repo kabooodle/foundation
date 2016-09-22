@@ -12,8 +12,13 @@ use Kabooodle\Models\User;
  * Class StoreCreditCardForUserCommand
  * @package Kabooodle\Bus\Commands\Profile
  */
-class StoreCreditCardForUserCommand
+final class StoreCreditCardForUserCommand
 {
+    public $actor;
+    public $cardNumber;
+    public $expMo;
+    public $expYr;
+    public $cvv;
     /**
      * StoreCreditCardForUserCommand constructor.
      *

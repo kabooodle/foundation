@@ -11,14 +11,13 @@ use Messages;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Commands\Profile\SubscribeUserToPlanCommand;
-use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadySubscribedToPlanException;
+use Kabooodle\Bus\Commands\Profile\PurchaseCreditsForUserCommand;
 
 /**
- * Class ProfileShippingLabelsController
+ * Class ProfileCreditsController
  * @package Kabooodle\Http\Controllers\Web\Profile
  */
-class ProfileShippingLabelsController extends Controller
+class ProfileCreditsController extends Controller
 {
     /**
      * @param Request $request
@@ -29,7 +28,7 @@ class ProfileShippingLabelsController extends Controller
     {
         $user = user();
 
-        return $this->view('profile.shippinglabels.index')->with(compact('user'));
+        return $this->view('profile.credits.index')->with(compact('user'));
     }
 
     /**
@@ -42,28 +41,24 @@ class ProfileShippingLabelsController extends Controller
         try {
             $this->validate($request, $this->rules(), $this->rulesMessages());
 
-            $plan = Binput::get('p', false);
+            $creditTypeId = Binput::get('p', false);
             $user = user();
 
             if (! $user->hasCardOnFile()) {
                 Messages::error('No credit card on file.');
 
-                return $this->view('profile.creditcard.index')->with('plan', $plan);
+                return $this->view('profile.creditcard.index');
             }
 
-            $this->dispatchNow(new SubscribeUserToPlanCommand($user, 'main', $plan, false));
+            $this->dispatchNow(new PurchaseCreditsForUserCommand($user, $creditTypeId));
 
-            Messages::success('Congratulations! Your subscription was activated!');
+            Messages::success('Congratulations! Credits added to your account');
 
-            return redirect('/');
+            return redirect()->route('profile.credits.index');
         } catch (ValidationException $e) {
             Messages::error($e->validator->messages()->first());
 
             return redirect()->back()->withInput()->withErrors($e->validator);
-        } catch (UserAlreadySubscribedToPlanException $e) {
-            Messages::error("You're already subscribed to this plan!");
-
-            return redirect(route('profile.subscription.index'));
         } catch (\Exception $e) {
             dd($e);
         }
@@ -75,7 +70,7 @@ class ProfileShippingLabelsController extends Controller
     private function rules()
     {
         return  [
-            'p' => 'required|in:kabooodle_launch_plan'
+            'p' => 'required|in:'.implode(',',creditTypes()->pluck('id')->toArray())
         ];
     }
 
@@ -85,7 +80,7 @@ class ProfileShippingLabelsController extends Controller
     private function rulesMessages()
     {
         return [
-            'p.in' => 'Plan you selected is not available.'
+            'p.in' => 'Credits group you selected is not available.'
         ];
     }
 }
