@@ -12,16 +12,21 @@ use Kabooodle\Models\User;
  * Class GetUserFacebookGroupsCommand
  * @package Kabooodle\Bus\Commands\Social\Facebook
  */
-class GetUserFacebookGroupsCommand
+final class GetUserFacebookGroupsCommand
 {
+    /**
+     * @var User
+     */
+    public $actor;
+
     /**
      * GetUserFacebookGroupsCommand constructor.
      *
      * @param User $user
      */
-    public function __construct(User $user)
+    public function __construct(User $actor)
     {
-        $this->actor = $user;
+        $this->actor = $actor;
     }
 
     /**
