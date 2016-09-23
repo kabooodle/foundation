@@ -25,7 +25,7 @@ class CreateCreditTransactionsTbl extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['user_id', 'amount']);
+            $table->index(['user_id', 'transaction_amount']);
         });
 
         Schema::table(\Kabooodle\Models\CreditTransactions::getTableName(), function(Blueprint $table){
