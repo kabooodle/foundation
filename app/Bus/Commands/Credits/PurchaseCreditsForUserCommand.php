@@ -4,7 +4,7 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Commands\Profile;
+namespace Kabooodle\Bus\Commands\Credits;
 
 use Kabooodle\Models\User;
 

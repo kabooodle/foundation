@@ -4,15 +4,15 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Handlers\Commands\Profile;
+namespace Kabooodle\Bus\Handlers\Commands\Credits;
 
-use Kabooodle\Bus\Commands\Profile\SubscribeUserToPlanCommand;
-use Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent;
-use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadySubscribedToPlanException;
-use Kabooodle\Foundation\Exceptions\Subscription\UserHasNoCreditCardOnFileException;
 use Kabooodle\Models\User;
 use Laravel\Cashier\Subscription;
 use Stripe\Error\InvalidRequest;
+use Kabooodle\Bus\Commands\Credits\SubscribeUserToPlanCommand;
+use Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent;
+use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadySubscribedToPlanException;
+use Kabooodle\Foundation\Exceptions\Subscription\UserHasNoCreditCardOnFileException;
 
 /**
  * Class SubscribeUserToPlanCommandHandler

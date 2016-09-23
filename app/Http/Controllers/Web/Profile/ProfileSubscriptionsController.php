@@ -13,7 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Commands\Profile\SubscribeUserToPlanCommand;
+use Kabooodle\Bus\Commands\Credits\SubscribeUserToPlanCommand;
 use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadySubscribedToPlanException;
 
 /**

@@ -29,7 +29,6 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
             return $this->cache->tags($tag)->get($actor->getFacebookUserId());
         }
 
-        \Log::info('cache missed');
         event(new CacheMissEvent($tag, $actor->getFacebookUserId()));
 
         try {

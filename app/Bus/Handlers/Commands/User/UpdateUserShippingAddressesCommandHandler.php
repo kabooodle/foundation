@@ -4,10 +4,10 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Handlers\Commands\Profile;
+namespace Kabooodle\Bus\Handlers\Commands\User;
 
 use Kabooodle\Models\ShippingAddress;
-use Kabooodle\Bus\Commands\Profile\UpdateUserShippingAddressesCommand;
+use Kabooodle\Bus\Commands\User\UpdateUserShippingAddressesCommand;
 
 /**
  * Class UpdateUserShippingAddressesCommandHandler

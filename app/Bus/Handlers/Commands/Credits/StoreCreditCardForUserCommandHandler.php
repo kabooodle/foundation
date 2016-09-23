@@ -4,10 +4,10 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Handlers\Commands\Profile;
+namespace Kabooodle\Bus\Handlers\Commands\Credits;
 
-use Kabooodle\Bus\Commands\Profile\StoreCreditCardForUserCommand;
 use Stripe\Token;
+use Kabooodle\Bus\Commands\Credits\StoreCreditCardForUserCommand;
 
 /**
  * Class StoreCreditCardForUserCommand

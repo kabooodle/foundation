@@ -26,6 +26,7 @@ class CreateUserShippingFromAddressTbl extends Migration
             $table->string('phone')->nullable()->default(null);
             $table->tinyInteger('is_residential')->default(1);
             $table->text('metadata')->nullable();
+            $table->timestamps();
         });
     }
 

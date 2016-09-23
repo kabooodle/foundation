@@ -11,7 +11,7 @@ use Messages;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Commands\Profile\PurchaseCreditsForUserCommand;
+use Kabooodle\Bus\Commands\Credits\PurchaseCreditsForUserCommand;
 
 /**
  * Class ProfileCreditsController

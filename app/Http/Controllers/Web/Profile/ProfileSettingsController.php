@@ -13,7 +13,7 @@ use Kabooodle\Models\MailingAddress;
 use Kabooodle\Models\ShippingAddress;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Commands\Profile\UpdateUserShippingAddressesCommand;
+use Kabooodle\Bus\Commands\User\UpdateUserShippingAddressesCommand;
 
 /**
  * Class ProfileSettingsController

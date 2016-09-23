@@ -12,7 +12,7 @@ use Stripe\Error\Card;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Commands\Profile\StoreCreditCardForUserCommand;
+use Kabooodle\Bus\Commands\Credits\StoreCreditCardForUserCommand;
 
 
 /**
