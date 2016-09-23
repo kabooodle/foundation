@@ -8,6 +8,11 @@ namespace Kabooodle\Models\Contracts;
  */
 interface CreditTransactableInterface
 {
+    const TYPE_DEBIT = 'debit';
+    const TYPE_CREDIT = 'credit';
+    const INCR_DEBIT = '-';
+    const INCR_CREDIT = '+';
+
     /**
      * @return mixed
      */

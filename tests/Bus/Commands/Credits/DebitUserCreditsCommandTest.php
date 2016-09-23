@@ -53,4 +53,9 @@ class DebitStub implements CreditTransactableInterface
     {
         return -10;
     }
+
+    public function getTransactionType()
+    {
+        return CreditTransactableInterface::TYPE_DEBIT;
+    }
 }

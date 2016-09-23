@@ -9,6 +9,7 @@ namespace Kabooodle\Models;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
+use Kabooodle\Models\Contracts\CreditTransactableInterface;
 
 /**
  * Class CreditTransactions
@@ -18,10 +19,10 @@ class CreditTransactions extends BaseEloquentModel implements Revisionable
 {
     use RevisionableTrait, SoftDeletes;
 
-    const TYPE_DEBIT = 'debit';
-    const TYPE_CREDIT = 'credit';
-    const INCR_DEBIT = '-';
-    const INCR_CREDIT = '+';
+    const TYPE_DEBIT = CreditTransactableInterface::TYPE_CREDIT;
+    const TYPE_CREDIT = CreditTransactableInterface::TYPE_DEBIT;
+    const INCR_DEBIT = CreditTransactableInterface::INCR_DEBIT;
+    const INCR_CREDIT = CreditTransactableInterface::INCR_CREDIT;
 
     /**
      * @var string
