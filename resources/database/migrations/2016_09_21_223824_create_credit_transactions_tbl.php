@@ -17,8 +17,8 @@ class CreateCreditTransactionsTbl extends Migration
             $table->integer('user_id')->unsigned();
             $table->string('transactable_type');
             $table->integer('transactable_id')->unsigned();
-            $table->integer('amount')->default(0)->unsigned();
-            $table->integer('transaction_amount');
+            $table->decimal('abs_amount', 10, 2)->default(0);
+            $table->decimal('transaction_amount', 10, 2)->default(0);
             $table->integer('previous_balance_of');
             $table->enum('incr', ['+', '-'])->default('+');
             $table->enum('type', [\Kabooodle\Models\CreditTransactions::TYPE_CREDIT, \Kabooodle\Models\CreditTransactions::TYPE_DEBIT])->default(\Kabooodle\Models\CreditTransactions::TYPE_CREDIT);

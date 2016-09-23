@@ -36,7 +36,7 @@ class CreditTransactions extends BaseEloquentModel implements Revisionable
         'transactable_id' => 0,
         'transactable_type' => '',
         'transaction_amount' => 0,
-        'amount' => 0,
+        'abs_amount' => 0,
         'incr' => '-',
         'previous_balance_of' => '',
         'type' => self::TYPE_DEBIT,

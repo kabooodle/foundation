@@ -465,7 +465,7 @@ class User extends BaseEloquentModel implements
      */
     public function getAvailableBalance()
     {
-        return $this->creditTransactions->sum('amount');
+        return $this->creditTransactions->sum('transaction_amount');
     }
 
     /**

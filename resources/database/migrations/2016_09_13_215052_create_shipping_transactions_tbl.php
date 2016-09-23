@@ -12,7 +12,7 @@ class CreateShippingTransactionsTbl extends Migration
      */
     public function up()
     {
-        Schema::create('shipping_transactions', function(Blueprint $table){
+        Schema::create('shipping_transactions', function(Illuminate\Database\Schema\Blueprint $table){
             $table->increments('id');
             $table->binary('uuid');
             $table->integer('user_id')->unsigned();
@@ -36,7 +36,7 @@ class CreateShippingTransactionsTbl extends Migration
         });
 
 
-        Schema::table('shipping_transactions', function(Blueprint $table){
+        Schema::table('shipping_transactions', function(Illuminate\Database\Schema\Blueprint $table){
             $table->foreign('user_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade')

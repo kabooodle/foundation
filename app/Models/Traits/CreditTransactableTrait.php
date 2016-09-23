@@ -28,7 +28,7 @@ trait CreditTransactableTrait
                 $transaction->user_id = $model->user_id;
                 $transaction->transactable_type = get_class($model);
                 $transaction->transactable_id = $model->id;
-                $transaction->amount = $transactionAmount;
+                $transaction->abs_amount = abs($transactionAmount);
                 $transaction->type = $model->getTransactionType();
                 $transaction->save();
             }
