@@ -1,25 +1,18 @@
 <?php
-//// Using this file as the bootstrapper in phpunit so that we can have
-//// more control over what we are doing when you call "phpunit"
-//
-////require_once __DIR__ .'/../bootstrap/autoload.php';
-//
-////$unitTesting = true;
-////$testEnvironment = 'testing';
-////$__app = require __DIR__.'/../bootstrap/app.php';
-//
-//if (in_array($__app->environment(), ['testing'])) {
-////    $connection = new PDO("mysql:host=".getenv('EVALS_DB_HOST')."", getenv('EVALS_DB_USER'), getenv('EVALS_DB_PW'));
-////
-////    $output = new Symfony\Component\Console\Output\ConsoleOutput();
-////    $output->writeln("<info>Truncating database...</info>");
-////
-////    $connection->query("DROP DATABASE IF EXISTS ".getenv('EVALS_DB_NAME'))->execute();
-////    $connection->query("CREATE DATABASE IF NOT EXISTS ".getenv('EVALS_DB_NAME'))->execute();
-////
-////    Artisan::call('migrate', ['--env' => 'testing']);
-////    Artisan::call('db:seed', ['--env' => 'testing']);
-//}
-////
-////$__fm = new \League\FactoryMuffin\FactoryMuffin;
-////$__fm->loadFactories(__DIR__.'/_factories');
+
+require __DIR__ .'/../bootstrap/autoload.php';
+$__app = require __DIR__.'/../bootstrap/app.php';
+$__app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+
+if (env('APP_ENV') == 'testing') {
+    $connection = new PDO("mysql:host=".env('DB_HOST')."", env('DB_USERNAME'), env('DB_PASSWORD'));
+
+    $output = new Symfony\Component\Console\Output\ConsoleOutput();
+    $output->writeln("<info>Truncating database...</info>");
+
+    $connection->query("DROP DATABASE IF EXISTS ".env('DB_DATABASE'))->execute();
+    $connection->query("CREATE DATABASE IF NOT EXISTS ".env('DB_DATABASE'))->execute();
+    $output->writeln("<info>Migrating database...</info>");
+    Artisan::call('migrate', ['--env' => 'testing']);
+    $output->writeln("<info>Beginning tests</info>");
+}

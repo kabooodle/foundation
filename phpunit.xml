@@ -3,7 +3,7 @@
          backupStaticAttributes="false"
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutOutputDuringTests="true"
-         bootstrap="bootstrap/autoload.php"
+         bootstrap="tests/autoload.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -24,5 +24,9 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
+        <env name="DB_HOST" value="127.0.0.1"/>
+        <env name="DB_USERNAME" value="root"/>
+        <env name="DB_PASSWORD" value="Vern1484!"/>
+        <env name="DB_DATABASE" value="kabooodle_unittesting"/>
     </php>
 </phpunit>

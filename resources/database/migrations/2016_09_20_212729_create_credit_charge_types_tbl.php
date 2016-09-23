@@ -32,6 +32,19 @@ VALUES
 	(5, \'$300 for $323 credits\', \'\', \'\', 300.00, 323.00, 0.93, 1),
 	(6, \'$400 for $434 credits\', \'\', \'\', 400.00, 434.00, 0.92, 1);
 ');
+
+
+        Schema::table('credit_receipts', function(Blueprint $table){
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->foreign('credit_charge_type_id')
+                ->references('id')->on(\Kabooodle\Models\CreditChargeTypes::getTableName())
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+        });
     }
 
     /**

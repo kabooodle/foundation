@@ -25,17 +25,7 @@ class CreateCreditOrdersTbl extends Migration
             $table->timestamps();
         });
 
-        Schema::table('credit_receipts', function(Blueprint $table){
-            $table->foreign('user_id')
-                ->references('id')->on('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
 
-            $table->foreign('credit_charge_type_id')
-                ->references('id')->on(\Kabooodle\Models\CreditChargeTypes::getTableName())
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-        });
     }
 
     /**

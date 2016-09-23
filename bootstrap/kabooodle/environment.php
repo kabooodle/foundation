@@ -5,27 +5,33 @@
  */
 
 $env = $app->detectEnvironment(function() use ($app){
-    $httpHost = ( isset($_SERVER['HTTP_HOST']) ) ? $_SERVER['HTTP_HOST'] : gethostname();
-    switch ($httpHost) {
-        case 'kabooodle.com':
-            $env = 'production';
-            break;
 
-        case 'kabooodle-staging':
-        case 'kabooodle.net':
-        case '162.243.133.39':
-            $env = 'staging';
-            break;
+    $args = isset($_SERVER['argv']) ? $_SERVER['argv'] : null;
+    if ($args && str_contains($args[0], 'phpunit')) {
+        $env = 'testing';
+    } else {
+        $httpHost = ( isset($_SERVER['HTTP_HOST']) ) ? $_SERVER['HTTP_HOST'] : gethostname();
+        switch ($httpHost) {
+            case 'kabooodle.com':
+                $env = 'production';
+                break;
 
-        case 'kabooodle.ngrok.io' :
-        case '932b4484.ngrok.io':
-            $env = 'ngrok';
-            break;
+            case 'kabooodle-staging':
+            case 'kabooodle.net':
+            case '162.243.133.39':
+                $env = 'staging';
+                break;
 
-        case 'kabooodle.dev' :
-        default :
-            $env = 'local';
-            break;
+            case 'kabooodle.ngrok.io' :
+            case '932b4484.ngrok.io':
+                $env = 'ngrok';
+                break;
+
+            case 'kabooodle.dev' :
+            default :
+                $env = 'local';
+                break;
+        }
     }
 
     // Overload existing properties

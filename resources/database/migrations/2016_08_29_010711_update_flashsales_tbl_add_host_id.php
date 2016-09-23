@@ -13,7 +13,7 @@ class UpdateFlashsalesTblAddHostId extends Migration
     public function up()
     {
         Schema::table(\Kabooodle\Models\FlashSales::getTableName(), function(Blueprint $table){
-            $table->dropForeign('flashsales_ibfk_1');
+            $table->dropForeign('flashsales_group_id_foreign');
             $table->dropColumn('group_id');
             $table->integer('host_id')->unsigned()->before('active');
         });

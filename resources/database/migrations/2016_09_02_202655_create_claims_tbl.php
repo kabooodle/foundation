@@ -29,11 +29,6 @@ class CreateClaimsTbl extends Migration
         });
 
         Schema::table(\Kabooodle\Models\Claims::getTableName(), function(Blueprint $table){
-            $table->foreign('inventory_id')
-                ->references('id')->on('inventory')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-
             $table->foreign('claimed_by')
                 ->references('id')->on('users')
                 ->onDelete('cascade')

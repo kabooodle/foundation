@@ -3,9 +3,9 @@
 namespace Kabooodle\Tests\Bus\Handlers\Commands\Profile;
 
 use Mockery;
-use Kabooodle\Models\User;
 use Kabooodle\Tests\BaseTestCase;
 use Kabooodle\Bus\Commands\User\AddUserCommand;
+use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 use Kabooodle\Bus\Handlers\Commands\User\AddUserCommandHandler;
 
 /**
@@ -22,10 +22,13 @@ class AddUserCommandHandlerTest extends BaseTestCase
             '123456789'
         );
 
-        $object = Mockery::mock(User::class);
-        $object->shouldReceive('save')->once();
+        $object = Mockery::mock(\Kabooodle\Models\User::class)->makePartial();
+        $object->shouldReceive('factory')->once()->andReturn($object);
+        $this->expectsEvents([UserWasCreatedEvent::class]);
 
-        $handler = new AddUserCommandHandler;
+        $this->app->instance(\Kabooodle\Models\User::class, $object);
+
+        $handler = new AddUserCommandHandler($object);
         $handler->handle($command);
     }
 }

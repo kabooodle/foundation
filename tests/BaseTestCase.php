@@ -2,6 +2,7 @@
 
 namespace Kabooodle\Tests;
 
+use Event;
 use Mockery;
 use ReflectionClass;
 use ReflectionMethod;
@@ -24,41 +25,28 @@ abstract class BaseTestCase extends L_TestCase
     protected $baseUrl = 'http://kabooodle.dev';
 
     /**
-     * Creates the application.
-     *
-     * @return \Illuminate\Foundation\Application
+     * @return KabooodleApplication
      */
-    public function createApplication()
+    public static function app()
     {
-        $app = require __DIR__ . '/../bootstrap/app.php';
-
+        $app = require __DIR__.'/../bootstrap/app.php';
         $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
         return $app;
     }
 
-    public static function setUpBeforeClass()
-    {
-
-    }
-
-    public static function tearDownAfterClass()
-    {
-
-    }
-
     /**
-     * @return KabooodleApplication
+     * @return \Illuminate\Foundation\Application
      */
-    public static function app()
+    public function createApplication()
     {
-        global $__app;
-
-        return $__app;
+        return self::app();
     }
 
     public function tearDown()
     {
+        parent::tearDown();
+
         // https://phpunit.de/manual/current/en/fixtures.html
         $refl = new ReflectionObject($this);
         foreach ($refl->getProperties() as $prop) {
@@ -102,5 +90,22 @@ abstract class BaseTestCase extends L_TestCase
         $property->setAccessible(true);
 
         return $property;
+    }
+
+    /**
+     * Not needed because L5 has "expectsEvents()"
+     *
+     * @param     $event
+     * @param int $times
+     */
+    public function expectsEvent($event, $times = 1)
+    {
+        Event::shouldReceive('fire')
+            ->times($times)
+            ->withArgs([
+                Mockery::type($event),
+                Mockery::any(),
+                Mockery::any()
+            ]);
     }
 }

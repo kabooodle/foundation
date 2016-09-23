@@ -19,18 +19,6 @@ class CreateInventoryCategoriesTbl extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-
-        Schema::table(\Kabooodle\Models\FlashsaleItems::getTableName(), function (Blueprint $table) {
-            $table->foreign('inventory_id')
-                ->references('id')->on('inventory')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-
-            $table->foreign('category_id')
-                ->references('id')->on('categories')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-        });
     }
 
     /**
