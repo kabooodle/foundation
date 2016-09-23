@@ -12,7 +12,7 @@ class CreateCreditTransactionsTbl extends Migration
      */
     public function up()
     {
-        Schema::create(\Kabooodle\Models\CreditTransactions::getTableName(), function(Blueprint $table){
+        Schema::create(\Kabooodle\Models\CreditTransactionsLog::getTableName(), function(Blueprint $table){
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->string('transactable_type');
@@ -21,14 +21,14 @@ class CreateCreditTransactionsTbl extends Migration
             $table->decimal('transaction_amount', 10, 2)->default(0);
             $table->integer('previous_balance_of');
             $table->enum('incr', ['+', '-'])->default('+');
-            $table->enum('type', [\Kabooodle\Models\CreditTransactions::TYPE_CREDIT, \Kabooodle\Models\CreditTransactions::TYPE_DEBIT])->default(\Kabooodle\Models\CreditTransactions::TYPE_CREDIT);
+            $table->enum('type', [\Kabooodle\Models\CreditTransactionsLog::TYPE_CREDIT, \Kabooodle\Models\CreditTransactionsLog::TYPE_DEBIT])->default(\Kabooodle\Models\CreditTransactionsLog::TYPE_CREDIT);
             $table->timestamps();
             $table->softDeletes();
 
             $table->index(['user_id', 'transaction_amount']);
         });
 
-        Schema::table(\Kabooodle\Models\CreditTransactions::getTableName(), function(Blueprint $table){
+        Schema::table(\Kabooodle\Models\CreditTransactionsLog::getTableName(), function(Blueprint $table){
             $table->foreign('user_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade')

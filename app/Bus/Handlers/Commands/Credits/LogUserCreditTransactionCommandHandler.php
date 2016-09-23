@@ -7,26 +7,26 @@
 namespace Kabooodle\Bus\Handlers\Commands\Credits;
 
 use Kabooodle\Models\User;
-use Kabooodle\Models\CreditTransactions;
+use Kabooodle\Models\CreditTransactionsLog;
 use Kabooodle\Bus\Events\Credits\UserCreditsDebitFailed;
 use Kabooodle\Bus\Events\Credits\UserCreditsDebitedEvent;
-use Kabooodle\Bus\Commands\Credits\DebitUserCreditsCommand;
 use Kabooodle\Models\Contracts\CreditTransactableInterface;
+use Kabooodle\Bus\Commands\Credits\LogUserCreditTransactionCommand;
 use Kabooodle\Foundation\Exceptions\Credits\InsufficientBalanceException;
 
 /**
- * Class DebitUserCreditsCommandHandler
+ * Class LogUserCreditTransactionCommandHandler
  * @package Kabooodle\Bus\Handlers\Commands\Credits
  */
-class DebitUserCreditsCommandHandler
+class LogUserCreditTransactionCommandHandler
 {
     /**
-     * @param DebitUserCreditsCommand $command
+     * @param LogUserCreditTransactionCommand $command
      *
-     * @return CreditTransactions
+     * @return CreditTransactionsLog
      * @throws InsufficientBalanceException
      */
-    public function handle(DebitUserCreditsCommand $command)
+    public function handle(LogUserCreditTransactionCommand $command)
     {
         $actor = $command->getActor();
         $transactable = $command->getTransactable();
@@ -50,16 +50,16 @@ class DebitUserCreditsCommandHandler
      * @param User                        $actor
      * @param CreditTransactableInterface $transactable
      *
-     * @return CreditTransactions
+     * @return CreditTransactionsLog
      */
     public function storeCreditTransaction(User $actor, CreditTransactableInterface $transactable)
     {
-        $transaction = new CreditTransactions;
+        $transaction = new CreditTransactionsLog;
         $transaction->user_id = $actor->id;
         $transaction->transactable_id = $transactable->id;
         $transaction->transactable_type = $transactable;
         $transaction->amount = $transactable->creditTransactionAmount();
-        $transaction->type = CreditTransactions::TYPE_DEBIT;
+        $transaction->type = CreditTransactionsLog::TYPE_DEBIT;
         $transaction->save();
 
         return $transaction;

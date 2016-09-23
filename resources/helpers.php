@@ -1,7 +1,4 @@
 <?php
-
-
-
 if (! function_exists('months')) {
     /**
      * @return array
@@ -18,8 +15,6 @@ if (! function_exists('months')) {
         return $list;
     }
 }
-
-
 
 if (! function_exists('srange')) {
     /**

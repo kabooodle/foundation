@@ -12,7 +12,6 @@ if (! function_exists('hasSufficientBalance')) {
     }
 }
 
-
 if (! function_exists('creditTypes')) {
     /**
      * @return \Illuminate\Database\Eloquent\Collection
@@ -28,7 +27,6 @@ if (! function_exists('creditTypes')) {
     }
 }
 
-
 if (! function_exists('rateAddon')) {
     /**
      * @return float
@@ -38,7 +36,6 @@ if (! function_exists('rateAddon')) {
         return \Kabooodle\Models\ShippingTransactions::RATE_ADDON;
     }
 }
-
 
 if (! function_exists('getParcelsListUSPS')) {
     /**

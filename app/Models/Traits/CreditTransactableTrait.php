@@ -2,7 +2,7 @@
 
 namespace Kabooodle\Models\Traits;
 
-use Kabooodle\Models\CreditTransactions;
+use Kabooodle\Models\CreditTransactionsLog;
 use Kabooodle\Models\Contracts\CreditTransactableInterface;
 
 /**
@@ -13,25 +13,22 @@ trait CreditTransactableTrait
 {
     public static function bootCreditTransactableTrait()
     {
-        self::creating(function($model){
+        self::creating(function (CreditTransactableInterface $model) {
             // check again that the user has sufficient credits for this transaction.
-            if (! $model->user->hasSufficientCredits($model->creditTransactionAmount())) {
+            if (!$model->user->hasSufficientCredits($model->creditTransactionAmount())) {
                 return false;
             }
         });
 
-        self::saved(function($model){
-            if ($model instanceof CreditTransactableInterface) {
-                $transactionAmount = $model->creditTransactionAmount();
-
-                $transaction = new CreditTransactions;
-                $transaction->user_id = $model->user_id;
-                $transaction->transactable_type = get_class($model);
-                $transaction->transactable_id = $model->id;
-                $transaction->abs_amount = abs($transactionAmount);
-                $transaction->type = $model->getTransactionType();
-                $transaction->save();
-            }
+        self::saved(function (CreditTransactableInterface $model) {
+            $transactionAmount = $model->creditTransactionAmount();
+            $transaction = new CreditTransactionsLog;
+            $transaction->user_id = $model->user_id;
+            $transaction->transactable_type = get_class($model);
+            $transaction->transactable_id = $model->id;
+            $transaction->abs_amount = abs($transactionAmount);
+            $transaction->type = $model->getTransactionType();
+            $transaction->save();
         });
     }
 }

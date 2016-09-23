@@ -6,9 +6,9 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Credits;
 
-use Kabooodle\Models\CreditReceipts;
 use Stripe\Invoice;
 use Kabooodle\Models\User;
+use Kabooodle\Models\CreditReceipts;
 use Kabooodle\Models\CreditChargeTypes;
 use Kabooodle\Bus\Commands\Credits\PurchaseCreditsForUserCommand;
 use Kabooodle\Bus\Events\Profile\CreditsWerePurchasedForUserEvent;

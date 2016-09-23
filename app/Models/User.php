@@ -7,26 +7,26 @@
 namespace Kabooodle\Models;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Support\Str;
-use Kabooodle\Bus\Commands\Social\Facebook\GetUserFacebookGroupsCommand;
-use Kabooodle\Presenters\Models\UserModelPresenter;
-use Kabooodle\Presenters\PresentableTrait;
 use Laravel\Cashier\Billable;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Auth\Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Kabooodle\Models\Traits\FollowableTrait;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use Sofa\Revisionable\Laravel\RevisionableTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
 use Kabooodle\Models\Contracts\ShoppableInterface;
+use Kabooodle\Presenters\Models\UserModelPresenter;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use SammyK\LaravelFacebookSdk\SyncableGraphNodeTrait;
+use Kabooodle\Bus\Commands\Social\Facebook\GetUserFacebookGroupsCommand;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
@@ -457,15 +457,23 @@ class User extends BaseEloquentModel implements
      */
     public function creditTransactions()
     {
-        return $this->hasMany(CreditTransactions::class, 'user_id');
+        return $this->hasMany(CreditTransactionsLog::class, 'user_id');
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function creditBalance()
+    {
+        return $this->hasOne(CreditBalance::class, 'user_id');
+    }
+
+    /**
+     * @return float
      */
     public function getAvailableBalance()
     {
-        return $this->creditTransactions->sum('transaction_amount');
+        return (float) $this->creditBalance->sum('balance');
     }
 
     /**

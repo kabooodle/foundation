@@ -12,10 +12,10 @@ use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\CreditTransactableInterface;
 
 /**
- * Class CreditTransactions
+ * Class CreditTransactionsLog
  * @package Kabooodle\Models
  */
-class CreditTransactions extends BaseEloquentModel implements Revisionable
+class CreditTransactionsLog extends BaseEloquentModel implements Revisionable
 {
     use RevisionableTrait, SoftDeletes;
 
@@ -27,7 +27,7 @@ class CreditTransactions extends BaseEloquentModel implements Revisionable
     /**
      * @var string
      */
-    protected $table = 'credit_transactions';
+    protected $table = 'credit_transactions_logs';
 
     /**
      * @var array

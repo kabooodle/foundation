@@ -9,7 +9,7 @@ namespace Kabooodle\Bus\Events\Credits;
 use Kabooodle\Models\User;
 use Kabooodle\Bus\Events\Event;
 use Illuminate\Queue\InteractsWithQueue;
-use Kabooodle\Models\CreditTransactions;
+use Kabooodle\Models\CreditTransactionsLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**
@@ -26,7 +26,7 @@ final class UserCreditsDebitedEvent extends Event implements ShouldQueue
     public $actor;
 
     /**
-     * @var CreditTransactions
+     * @var CreditTransactionsLog
      */
     public $transaction;
 
@@ -34,9 +34,9 @@ final class UserCreditsDebitedEvent extends Event implements ShouldQueue
      * UserCreditsDebitedEvent constructor.
      *
      * @param User               $actor
-     * @param CreditTransactions $transaction
+     * @param CreditTransactionsLog $transaction
      */
-    public function __construct(User $actor, CreditTransactions $transaction)
+    public function __construct(User $actor, CreditTransactionsLog $transaction)
     {
         $this->actor = $actor;
         $this->transaction = $transaction;
@@ -51,7 +51,7 @@ final class UserCreditsDebitedEvent extends Event implements ShouldQueue
     }
 
     /**
-     * @return CreditTransactions
+     * @return CreditTransactionsLog
      */
     public function getTransaction()
     {

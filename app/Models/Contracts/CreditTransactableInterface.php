@@ -2,6 +2,8 @@
 
 namespace Kabooodle\Models\Contracts;
 
+use Kabooodle\Models\User;
+
 /**
  * Interface CreditTransactableInterface
  * @package Kabooodle\Models\Contracts
@@ -22,4 +24,9 @@ interface CreditTransactableInterface
      * @return mixed
      */
     public function getTransactionType();
+
+    /**
+     * @return User
+     */
+    public function user();
 }
