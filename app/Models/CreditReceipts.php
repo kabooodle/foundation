@@ -101,4 +101,12 @@ class CreditReceipts extends BaseEloquentModel implements CreditTransactableInte
 
         return $chargeType->credits_equiv;
     }
+
+    /**
+     * @return string
+     */
+    public function getTransactionType()
+    {
+        return CreditTransactions::TYPE_CREDIT;
+    }
 }

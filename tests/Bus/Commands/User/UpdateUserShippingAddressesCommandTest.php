@@ -1,12 +1,12 @@
 <?php
 
-namespace Kabooodle\Tests\Bus\Commands\Profile;
+namespace Kabooodle\Tests\Bus\Commands\User;
 
 use Kabooodle\Tests\BaseTestCase;
 use Kabooodle\Models\MailingAddress;
 use AltThree\TestBench\CommandTrait;
-use Kabooodle\Bus\Commands\Profile\UpdateUserShippingAddressesCommand;
-use Kabooodle\Bus\Handlers\Commands\Profile\UpdateUserShippingAddressesCommandHandler;
+use Kabooodle\Bus\Commands\User\UpdateUserShippingAddressesCommand;
+use Kabooodle\Bus\Handlers\Commands\User\UpdateUserShippingAddressesCommandHandler;
 
 /**
  * Class StoreCreditcardForUserCommandTest

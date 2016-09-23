@@ -1,0 +1,55 @@
+<?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
+
+namespace Kabooodle\Bus\Commands\Credits;
+
+use Kabooodle\Models\User;
+use Kabooodle\Models\Contracts\CreditTransactableInterface;
+
+/**
+ * Class DebitUserCreditsCommand
+ * @package Kabooodle\Bus\Commands\Credits
+ */
+final class DebitUserCreditsCommand
+{
+    /**
+     * @var User
+     */
+    public $actor;
+
+    /**
+     * @var CreditTransactableInterface
+     */
+    public $transactable;
+
+    /**
+     * DebitUserCreditsCommand constructor.
+     *
+     * @param User                        $actor
+     * @param CreditTransactableInterface $transactable
+     */
+    public function __construct(User $actor, CreditTransactableInterface $transactable)
+    {
+        $this->actor = $actor;
+        $this->transactable = $transactable;
+    }
+
+    /**
+     * @return CreditTransactableInterface
+     */
+    public function getTransactable()
+    {
+        return $this->transactable;
+    }
+
+    /**
+     * @return User
+     */
+    public function getActor()
+    {
+        return $this->actor;
+    }
+}

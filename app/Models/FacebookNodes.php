@@ -28,17 +28,17 @@ class FacebookNodes extends BaseEloquentModel
 //        'facebook_node' => self::NODE_ALBUM,
     ];
 
-//    public static function boot()
-//    {
-//        parent::boot();
-//
-//        $handlers = ['updating', 'creating'];
-//        foreach ($handlers as $handler) {
-//            self::$handler(function ($model) {
-//                $model->updated_by = user()->id;
-//            });
-//        }
-//    }
+    public static function boot()
+    {
+        parent::boot();
+
+        $handlers = ['updating', 'creating'];
+        foreach ($handlers as $handler) {
+            self::$handler(function ($model) {
+                $model->updated_by = user()->id;
+            });
+        }
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany|FacebookItems

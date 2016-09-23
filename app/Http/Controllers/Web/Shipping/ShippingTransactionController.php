@@ -8,6 +8,7 @@ namespace Kabooodle\Http\Controllers\Web\Shipping;
 
 use Binput;
 use Illuminate\Http\Request;
+use Kabooodle\Foundation\Exceptions\Credits\InsufficientBalanceException;
 use Kabooodle\Models\ShippingShipments;
 use Kabooodle\Models\ShippingTransactions;
 use Kabooodle\Services\Shippr\ShipprService;
@@ -36,6 +37,10 @@ class ShippingTransactionController extends Controller
         $shipment = ShippingShipments::where('uuid', $shipmentUUID)->where('user_id', user()->id)->firstOrFail();
         $rate = $shipment->getRateId($rateUUID);
 
+//        if (! user()->hasSufficientBalance($rate->getAmount())) {
+//            return \Response::json(['error' => 'Insufficient credits : $'.user()->getAvailableBalance()], 500);
+//        }
+
         try {
             $shippr = new ShipprService;
 
@@ -57,7 +62,10 @@ class ShippingTransactionController extends Controller
             $st->tracking_history = $transaction['tracking_history'];
             $st->status = $transaction['object_status'];
             $st->messages = $transaction['messages'];
-            $st->save();
+
+            if (!$st->save()) {
+                throw new InsufficientBalanceException;
+            }
 
             $this->dispatch(new ShippingTransactionWasCreatedEvent($st));
 
@@ -65,6 +73,8 @@ class ShippingTransactionController extends Controller
 
             return \Response::json(['txn_id' => $transaction['object_id'], 'redirect' => $redirectRoute], 200);
 
+        } catch (InsufficientBalanceException $e) {
+            return \Response::json(['error' => 'Insufficient credits : $'.user()->getAvailableBalance()], 500);
         } catch (\Exception $e) {
             dd($e);
         }

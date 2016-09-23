@@ -157,6 +157,15 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
         ];
     }
 
+    public static function boot()
+    {
+        parent::boot();
+
+        self::created(function(self $model){
+            $model->admins()->save($model->owner);
+        });
+    }
+
     /**
      * @param array $attributes
      *

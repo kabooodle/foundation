@@ -9,14 +9,16 @@ namespace Kabooodle\Models;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
+use Kabooodle\Models\Traits\CreditTransactableTrait;
+use Kabooodle\Models\Contracts\CreditTransactableInterface;
 
 /**
  * Class ShippingTransactions
  * @package Kabooodle\Models
  */
-class ShippingTransactions extends BaseEloquentModel implements Revisionable
+class ShippingTransactions extends BaseEloquentModel implements CreditTransactableInterface, Revisionable
 {
-    use RevisionableTrait, UuidableTrait;
+    use CreditTransactableTrait, RevisionableTrait, UuidableTrait;
 
     const RATE_ADDON = 0.10;
 
@@ -54,7 +56,7 @@ class ShippingTransactions extends BaseEloquentModel implements Revisionable
     {
         parent::boot();
 
-        self::creating(function($model){
+        self::saving(function($model){
             $model->rate_amount_addon = self::RATE_ADDON;
             $model->rate_final_amount = $model->rate_amount + self::RATE_ADDON;
         });
@@ -124,5 +126,21 @@ class ShippingTransactions extends BaseEloquentModel implements Revisionable
     public function getTrackingStatusAttribute($value)
     {
         return json_decode($value, true);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function creditTransactionAmount()
+    {
+        return $this->rate_final_amount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTransactionType()
+    {
+        return CreditTransactions::TYPE_DEBIT;
     }
 }

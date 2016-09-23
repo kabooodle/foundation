@@ -18,9 +18,11 @@
 <a href="{{ route('profile.subscription.index') }}" class="nav-link {{ Request::is('profile/subscription') ? 'active' : null }}">
     Subscription
 </a>
+@if(user()->subscribed('main'))
 <a href="{{ route('profile.subscription.invoices.index') }}" class="nav-link {{ Request::is('profile/subscription/invoices') ? 'active' : null }}">
     Purchases
 </a>
+@endif
 <a href="{{ route('profile.creditcard.index') }}" class="nav-link {{ Request::is('profile/creditcard') ? 'active' : null }}">
     Credit Card
 </a>

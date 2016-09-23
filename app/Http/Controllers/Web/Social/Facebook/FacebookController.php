@@ -43,7 +43,8 @@ class FacebookController extends Controller
         try {
             $token = $fb->getAccessTokenFromRedirect();
         } catch (FacebookSDKException $e) {
-            dd($e->getMessage());
+            Messages::error('An error occurred, please try again.');
+            return redirect()->route('profile.social.edit');
         }
 
         // Access token will be null if the user denied the request
@@ -74,7 +75,8 @@ class FacebookController extends Controller
             try {
                 $token = $oauth_client->getLongLivedAccessToken($token);
             } catch (FacebookSDKException $e) {
-                dd($e->getMessage());
+                Messages::error('An error occurred, please try again.');
+                return redirect()->route('profile.social.edit');
             }
         }
 
@@ -83,7 +85,8 @@ class FacebookController extends Controller
         try {
             $response = $fb->get('/me?fields=id,name,email');
         } catch (FacebookSDKException $e) {
-            dd($e->getMessage());
+            Messages::error('An error occurred, please try again.');
+            return redirect()->route('profile.social.edit');
         }
 
         /** @var \Facebook\GraphNodes\GraphUser $facebook_user */
@@ -99,7 +102,7 @@ class FacebookController extends Controller
 
         Messages::success('Connection to Facebook successful!');
 
-        return redirect()->route('profile.index');
+        return redirect()->route('profile.social.edit');
     }
 
     /**
@@ -118,9 +121,9 @@ class FacebookController extends Controller
 
             event(new UserFacebookCredentialsRevokedEvent($user));
 
-            Messages::success('Connection to Facebook removed.');
+            Messages::success('Connection to Facebook revoked.');
         }
 
-        return redirect()->route('profile.index');
+        return redirect()->route('profile.social.edit');
     }
 }

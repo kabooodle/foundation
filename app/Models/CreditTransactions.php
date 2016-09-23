@@ -59,6 +59,18 @@ class CreditTransactions extends BaseEloquentModel implements Revisionable
     }
 
     /**
+     * @param $value
+     */
+    public function setTransactableTypeAttribute($value)
+    {
+        if ($value instanceof \Eloquent) {
+            $value = get_class($value);
+        }
+
+        $this->attributes['transactable_type'] = $value;
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()

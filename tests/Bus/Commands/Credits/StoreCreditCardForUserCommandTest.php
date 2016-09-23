@@ -1,11 +1,11 @@
 <?php
 
-namespace Kabooodle\Tests\Bus\Commands\Profile;
+namespace Kabooodle\Tests\Bus\Commands\Credits;
 
 use Kabooodle\Tests\BaseTestCase;
 use AltThree\TestBench\CommandTrait;
-use Kabooodle\Bus\Commands\Profile\StoreCreditCardForUserCommand;
-use Kabooodle\Bus\Handlers\Commands\Profile\StoreCreditCardForUserCommandHandler;
+use Kabooodle\Bus\Commands\Credits\StoreCreditCardForUserCommand;
+use Kabooodle\Bus\Handlers\Commands\Credits\StoreCreditCardForUserCommandHandler;
 
 /**
  * Class StoreCreditcardForUserCommandTest

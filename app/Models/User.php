@@ -223,6 +223,31 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return mixed
+     */
+    public function flashsalesAsAdmin()
+    {
+        return $this->belongsToMany(FlashSales::class, 'flashsales_admins', 'user_id', 'flashsales_id')->withTimestamps()->where('flashsales.active', 1);
+    }
+
+    /**
+     * @return null
+     */
+    public function flashsalesAsSellerAndAdmins()
+    {
+        $asSeller = $this->flashsalesAsSeller;
+        $asAdmin = $this->flashsalesAsAdmin;
+
+        if (count($asSeller) > 0) {
+            return $asAdmin ? $this->asSeller->merge($asAdmin) : $this->flashsalesAsSeller();
+        } elseif (count($asAdmin) > 0) {
+            return $this->flashsalesAsAdmin();
+        }
+
+        return $this->flashsalesAsAdmin();
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function flashsalesInvitations()
@@ -441,5 +466,27 @@ class User extends BaseEloquentModel implements
     public function getAvailableBalance()
     {
         return $this->creditTransactions->sum('amount');
+    }
+
+    /**
+     * @param $debitAmount
+     *
+     * @return bool
+     */
+    public function hasSufficientBalance($debitAmount)
+    {
+        $debitAmount = abs(intval($debitAmount));
+
+        return ($this->getAvailableBalance() - $debitAmount) > 0;
+    }
+
+    /**
+     * @param $debitAmount
+     *
+     * @return bool
+     */
+    public function hasSufficientCredits($debitAmount)
+    {
+        return $this->hasSufficientBalance($debitAmount);
     }
 }

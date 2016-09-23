@@ -26,6 +26,7 @@
     </div>
 
 
+    @if(user()->referrals->count() > 0)
     <div class="padding white p-b-0">
         <div class="row">
             @foreach(user()->referrals as $referral)
@@ -48,6 +49,7 @@
             @endforeach
         </div>
     </div>
+    @endif
 
     @push('footer-scripts')
     <script>

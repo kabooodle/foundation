@@ -12,4 +12,9 @@ interface CreditTransactableInterface
      * @return mixed
      */
     public function creditTransactionAmount();
+
+    /**
+     * @return mixed
+     */
+    public function getTransactionType();
 }

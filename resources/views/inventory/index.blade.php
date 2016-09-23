@@ -205,7 +205,7 @@
                                 </label>
                             </div>
 
-                            @foreach(user()->flashsalesAsSeller as $flashSale)
+                            @foreach(user()->flashsalesAsSellerAndAdmins as $flashSale)
                                 <div class="form-group">
                                     <label class="md-check">
                                         <input type="checkbox" class="has-value" name="flashsales[]"

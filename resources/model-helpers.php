@@ -1,4 +1,18 @@
 <?php
+if (! function_exists('hasSufficientBalance')) {
+    /**
+     * @param \Kabooodle\Models\User $user
+     * @param                        $debitAmount
+     *
+     * @return bool
+     */
+    function hasSufficientBalance(\Kabooodle\Models\User $user, $debitAmount)
+    {
+        return $user->hasSufficientBalance($debitAmount);
+    }
+}
+
+
 if (! function_exists('creditTypes')) {
     /**
      * @return \Illuminate\Database\Eloquent\Collection

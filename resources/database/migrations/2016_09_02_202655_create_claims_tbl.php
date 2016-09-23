@@ -18,7 +18,8 @@ class CreateClaimsTbl extends Migration
             $table->integer('claimed_by')->unsigned();
             $table->integer('shoppable_id')->unsigned();
             $table->string('shoppable_type');
-            $table->text('inventory_item_object-data');
+            $table->text('inventory_item_object_data');
+            $table->integer('price');
             $table->boolean('accepted')->nullable()->default(null);
             $table->dateTime('accepted_on')->nullable()->default(null);
             $table->dateTime('rejected_on')->nullable()->default(null);

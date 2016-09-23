@@ -4,8 +4,8 @@ namespace Kabooodle\Tests\Bus\Commands\Profile;
 
 use Kabooodle\Tests\BaseTestCase;
 use AltThree\TestBench\CommandTrait;
-use Kabooodle\Bus\Commands\Profile\PurchaseCreditsForUserCommand;
-use Kabooodle\Bus\Handlers\Commands\Profile\PurchaseCreditsForUserCommandHandler;
+use Kabooodle\Bus\Commands\Credits\PurchaseCreditsForUserCommand;
+use Kabooodle\Bus\Handlers\Commands\Credits\PurchaseCreditsForUserCommandHandler;
 
 /**
  * Class PurchaseCreditsForUserCommandTest
