@@ -53,11 +53,11 @@ class CreditBalance extends BaseEloquentModel
                 throw new StaleDataException;
             }
 
-            if (self::hasSufficientBalance($model)) {
+            if (! self::hasSufficientBalance($model, $model->last_transaction_amount_of)) {
                 throw new InsufficientBalanceException;
             }
 
-            $model->balance = ($model->balance) + (abs(intval($model->last_transaction_amount_of)));
+            $model->balance = ($model->balance) + ($model->last_transaction_amount_of);
             $model->previous_balance_of = $original['balance'];
         });
     }
@@ -79,12 +79,15 @@ class CreditBalance extends BaseEloquentModel
 
     /**
      * @param CreditBalance $model
+     * @param null          $amount
      *
      * @return bool
      */
-    public static function hasSufficientBalance(CreditBalance $model)
+    public static function hasSufficientBalance(CreditBalance $model, $amount = null)
     {
-        return ($model->balance) + (abs(intval($model->last_transaction_amount_of))) >= 0;
+        $amount  = $amount ? : $model->last_transaction_amount_of;
+
+        return ($model->balance) + ($amount) >= 0;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Kabooodle\Models\Traits;
 
 use Kabooodle\Models\CreditTransactionsLog;
 use Kabooodle\Models\Contracts\CreditTransactableInterface;
+use Kabooodle\Foundation\Exceptions\Credits\InsufficientBalanceException;
 
 /**
  * Class CreditTransactableTrait
@@ -15,8 +16,10 @@ trait CreditTransactableTrait
     {
         self::creating(function (CreditTransactableInterface $model) {
             // check again that the user has sufficient credits for this transaction.
-            if (!$model->user->hasSufficientCredits($model->creditTransactionAmount())) {
-                return false;
+            if ($model->getTransactionType() == CreditTransactableInterface::TYPE_DEBIT) {
+                if (!$model->user->hasSufficientCredits($model->creditTransactionAmount())) {
+                    throw new InsufficientBalanceException;
+                }
             }
         });
 
@@ -27,6 +30,7 @@ trait CreditTransactableTrait
             $transaction->transactable_type = get_class($model);
             $transaction->transactable_id = $model->id;
             $transaction->abs_amount = abs($transactionAmount);
+            $transaction->transaction_amount = $transactionAmount;
             $transaction->type = $model->getTransactionType();
             $transaction->save();
         });

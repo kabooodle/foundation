@@ -1,40 +1,47 @@
 <?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
 
 namespace Kabooodle\Services\Shippr;
+
+use Kabooodle\Models\Contracts\ProductPricingInterface;
 
 /**
  * Class RatesObject
  * @package Kabooodle\Services\Shippr
  */
-class RatesObject
+final class RatesObject implements ProductPricingInterface
 {
-    protected $state;
+    public $state;
     /**
      * @var
      */
-    protected $rateId;
+    public $rateId;
 
     /**
      * @var
      */
-    protected $shipmentId;
+    public $shipmentId;
 
     /**
      * @var
      */
-    protected $amount;
-    protected $provider;
-    protected $serviceLevelName;
-    protected $serviceLevelToken;
-    protected $days;
-    protected $arrivesBy;
-    protected $durationTerms;
-    protected $isTrackable;
+    public $amount;
+    public $provider;
+    public $serviceLevelName;
+    public $serviceLevelToken;
+    public $days;
+    public $arrivesBy;
+    public $durationTerms;
+    public $isTrackable;
+    public $adjustedTotalAmount;
 
     /**
      * @var array
      */
-    protected $carrierLogos = [
+    public $carrierLogos = [
         'small' => '',
         'large' => ''
     ];
@@ -53,12 +60,13 @@ class RatesObject
     /**
      * @param array $shippo
      */
-    protected function mapValuesToProperties(array $shippo)
+    public function mapValuesToProperties(array $shippo)
     {
         $this->state = $shippo['object_state'];
         $this->rateId = $shippo['object_id'];
         $this->shipmentId = $shippo['shipment'];
         $this->amount = $shippo['amount'];
+        $this->adjustedTotalAmount = number_format($shippo['amount'] + rateAddon(),2);
         $this->provider = $shippo['provider'];
         $this->serviceLevelName = $shippo['servicelevel_name'];
         $this->serviceLevelToken = $shippo['servicelevel_token'];
@@ -164,5 +172,13 @@ class RatesObject
     public function getCarrierLogos()
     {
         return $this->carrierLogos;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAdjustedTotalAmount()
+    {
+        return $this->adjustedTotalAmount;
     }
 }

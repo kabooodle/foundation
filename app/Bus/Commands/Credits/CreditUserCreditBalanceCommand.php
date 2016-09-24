@@ -6,14 +6,14 @@
 
 namespace Kabooodle\Bus\Commands\Credits;
 
-use Kabooodle\Models\Contracts\CreditTransactableInterface;
 use Kabooodle\Models\User;
+use Kabooodle\Models\Contracts\CreditTransactableInterface;
 
 /**
- * Class DebitUserCreditBalanceCommand
+ * Class CreditUserCreditBalanceCommand
  * @package Kabooodle\Bus\Commands\Credits
  */
-final class DebitUserCreditBalanceCommand
+final class CreditUserCreditBalanceCommand
 {
     /**
      * @var User
@@ -23,7 +23,7 @@ final class DebitUserCreditBalanceCommand
     /**
      * @var float
      */
-    public $debitAmount;
+    public $creditAmount;
 
     /**
      * @var string
@@ -34,13 +34,13 @@ final class DebitUserCreditBalanceCommand
      * DebitUserCreditBalanceCommand constructor.
      *
      * @param User   $actor
-     * @param float  $debitAmount
+     * @param        $creditAmount
      * @param string $type
      */
-    public function __construct(User $actor, $debitAmount, $type = CreditTransactableInterface::TYPE_DEBIT)
+    public function __construct(User $actor, $creditAmount, $type = CreditTransactableInterface::TYPE_CREDIT)
     {
         $this->actor = $actor;
-        $this->debitAmount = $debitAmount;
+        $this->creditAmount = $creditAmount;
         $this->type = $type;
     }
 
@@ -55,9 +55,9 @@ final class DebitUserCreditBalanceCommand
     /**
      * @return float
      */
-    public function getDebitAmount()
+    public function getCreditAmount()
     {
-        return $this->debitAmount;
+        return $this->creditAmount;
     }
 
     /**

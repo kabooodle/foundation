@@ -3,6 +3,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Credits;
 
 use Kabooodle\Models\CreditBalance;
+use Kabooodle\Models\Contracts\CreditTransactableInterface;
 use Kabooodle\Bus\Commands\Credits\DebitUserCreditBalanceCommand;
 
 /**
@@ -14,17 +15,24 @@ class DebitUserCreditBalanceCommandHandler
     /**
      * @param DebitUserCreditBalanceCommand $command
      *
-     * @return CreditBalance
+     * @return \Illuminate\Database\Eloquent\Model|CreditBalance
      */
     public function handle(DebitUserCreditBalanceCommand $command)
     {
         $actor = $command->getActor();
-        $debitAmount = $command->getDebitAmount();
+        $type = $command->getType();
 
-        $creditBalance = new CreditBalance;
-        $creditBalance->user_id = $actor->id;
-        $creditBalance->last_transaction_amount_of = $debitAmount;
-        $creditBalance->save();
+        if ($type === CreditTransactableInterface::TYPE_DEBIT) {
+            $debitAmount = - $command->getDebitAmount();
+        } else {
+            $debitAmount = $command->getDebitAmount();
+        }
+
+        $creditBalance = CreditBalance::updateOrCreate([
+           'user_id' => $actor->id
+        ],[
+            'last_transaction_amount_of' => $debitAmount
+        ]);
 
         return $creditBalance;
     }

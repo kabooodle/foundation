@@ -8,13 +8,14 @@ namespace Kabooodle\Http\Controllers\Web\Shipping;
 
 use Binput;
 use Illuminate\Http\Request;
-use Kabooodle\Bus\Commands\Credits\DebitUserCreditBalanceCommand;
-use Kabooodle\Foundatino\Exceptions\StaleDataException;
 use Kabooodle\Models\ShippingShipments;
 use Kabooodle\Models\ShippingTransactions;
 use Kabooodle\Services\Shippr\ShipprService;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Foundatino\Exceptions\StaleDataException;
+use Kabooodle\Models\Contracts\CreditTransactableInterface;
+use Kabooodle\Bus\Commands\Credits\DebitUserCreditBalanceCommand;
 use Kabooodle\Bus\Events\Shipping\ShippingTransactionWasCreatedEvent;
 use Kabooodle\Foundation\Exceptions\Credits\InsufficientBalanceException;
 
@@ -41,11 +42,7 @@ class ShippingTransactionController extends Controller
 
         try {
 
-            $this->dispatchNow(new DebitUserCreditBalanceCommand(user(), $rate->getAmount()));
-
-            //        if (! user()->hasSufficientBalance($rate->getAmount())) {
-//            return \Response::json(['error' => 'Insufficient credits : $'.user()->getAvailableBalance()], 500);
-//        }
+            $this->dispatchNow(new DebitUserCreditBalanceCommand(user(), $rate->getAdjustedTotalAmount(), CreditTransactableInterface::TYPE_DEBIT));
 
             $shippr = new ShipprService;
 
@@ -60,17 +57,14 @@ class ShippingTransactionController extends Controller
             $st->rate_id = $rateUUID;
             $st->label_url = $transaction['label_url'];
             $st->rate_data = $rate;
-            $st->rate_amount = $rate->getAmount();
+            $st->rate_amount = $rate->getAdjustedTotalAmount();
             $st->tracking_number = $transaction['tracking_number'];
             $st->tracking_status = $transaction['tracking_status'];
             $st->tracking_url_provider = $transaction['tracking_url_provider'];
             $st->tracking_history = $transaction['tracking_history'];
             $st->status = $transaction['object_status'];
             $st->messages = $transaction['messages'];
-
-            if (!$st->save()) {
-                throw new InsufficientBalanceException;
-            }
+            $st->save();
 
             $this->dispatch(new ShippingTransactionWasCreatedEvent($st));
 

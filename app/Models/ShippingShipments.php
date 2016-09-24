@@ -195,12 +195,7 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
      */
     public function getRatesAsRawAttribute()
     {
-        $rates = json_decode($this->getOriginal('rates_list'), true);
-        foreach ($rates as &$rate) {
-            $rate['amount'] = $rate['amount'] + rateAddon();
-            $rate['amount_local'] = $rate['amount_local'] + rateAddon();
-        }
-        return json_encode($rates);
+        return json_encode($this->rates_list, JSON_UNESCAPED_SLASHES);
     }
 
     /**

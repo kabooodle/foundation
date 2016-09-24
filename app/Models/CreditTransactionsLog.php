@@ -19,8 +19,8 @@ class CreditTransactionsLog extends BaseEloquentModel implements Revisionable
 {
     use RevisionableTrait, SoftDeletes;
 
-    const TYPE_DEBIT = CreditTransactableInterface::TYPE_CREDIT;
-    const TYPE_CREDIT = CreditTransactableInterface::TYPE_DEBIT;
+    const TYPE_DEBIT = CreditTransactableInterface::TYPE_DEBIT;
+    const TYPE_CREDIT = CreditTransactableInterface::TYPE_CREDIT;
     const INCR_DEBIT = CreditTransactableInterface::INCR_DEBIT;
     const INCR_CREDIT = CreditTransactableInterface::INCR_CREDIT;
 
@@ -49,13 +49,13 @@ class CreditTransactionsLog extends BaseEloquentModel implements Revisionable
 
         self::saving(function($model){
             if ($model->type == self::TYPE_DEBIT) {
-                $model->transaction_amount = '-'.$model->amount;
+                $model->transaction_amount = '-'.$model->abs_amount;
                 $model->incr = self::INCR_DEBIT;
             } else {
-                $model->transaction_amount = $model->amount;
+                $model->transaction_amount = $model->abs_amount;
                 $model->incr = self::INCR_CREDIT;
             }
-            $model->previous_balance_of = self::where('user_id', $model->user_id)->sum('amount');
+            $model->previous_balance_of = self::where('user_id', $model->user_id)->sum('transaction_amount');
         });
     }
 

@@ -6,6 +6,9 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Credits;
 
+use DB;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Kabooodle\Bus\Commands\Credits\CreditUserCreditBalanceCommand;
 use Stripe\Invoice;
 use Kabooodle\Models\User;
 use Kabooodle\Models\CreditReceipts;
@@ -19,6 +22,8 @@ use Kabooodle\Bus\Events\Profile\CreditsWerePurchasedForUserEvent;
  */
 class PurchaseCreditsForUserCommandHandler
 {
+    use DispatchesJobs;
+
     /**
      * @param PurchaseCreditsForUserCommand $command
      *
@@ -31,37 +36,42 @@ class PurchaseCreditsForUserCommandHandler
         $creditChargeType = CreditChargeTypes::findOrFail($command->getCreditTypeId());
         $cents = $this->dollarsToCents($creditChargeType->amount);
 
-        // Make the invoice item request
-        $response = $this->makeInvoice($cents, $actor, $creditChargeType);
+        $this->dispatchNow(new CreditUserCreditBalanceCommand($actor, $creditChargeType->amount));
 
-        // We are returned an invoice object that contains a summary of the invoice and the sub-items.
-        // However, this invoice might contain multiple line items in addition to the above
-        // credit invoice item.  So lets iterate over the invoiced items and find the item we paid for from above
-        // to confirm we're good and paid and can proceed with handling this.
-        if ($response && $response['closed'] == true && $response['paid'] == true) {
-            $items = $response['lines'];
-            foreach($items['data'] as $item) {
-                if (isset($item['metadata']['id']) && $item['metadata']['id'] == $creditChargeType->id) {
+        return DB::transaction(function() use ($cents, $actor, $creditChargeType){
 
-                    $receipt = new CreditReceipts;
-                    $receipt->user_id = $actor->id;
-                    $receipt->credit_charge_type_id = $creditChargeType->id;
-                    $receipt->stripe_invoice_id = $response['id'];
-                    $receipt->stripe_charge_id = $response['charge'];
-                    $receipt->transaction_items = $response['lines']['data'];
-                    $receipt->transaction_amount_cents = $response['total'];
-                    $receipt->stripe_raw_response = $response;
+            // Make the invoice item request
+            $response = $this->makeInvoice($cents, $actor, $creditChargeType);
 
-                    $receipt->save();
+            // We are returned an invoice object that contains a summary of the invoice and the sub-items.
+            // However, this invoice might contain multiple line items in addition to the above
+            // credit invoice item.  So lets iterate over the invoiced items and find the item we paid for from above
+            // to confirm we're good and paid and can proceed with handling this.
+            if ($response && $response['closed'] == true && $response['paid'] == true) {
+                $items = $response['lines'];
+                foreach($items['data'] as $item) {
+                    if (isset($item['metadata']['id']) && $item['metadata']['id'] == $creditChargeType->id) {
 
-                    event(new CreditsWerePurchasedForUserEvent);
+                        $receipt = new CreditReceipts;
+                        $receipt->user_id = $actor->id;
+                        $receipt->credit_charge_type_id = $creditChargeType->id;
+                        $receipt->stripe_invoice_id = $response['id'];
+                        $receipt->stripe_charge_id = $response['charge'];
+                        $receipt->transaction_items = $response['lines']['data'];
+                        $receipt->transaction_amount_cents = $response['total'];
+                        $receipt->stripe_raw_response = $response;
 
-                    break;
+                        $receipt->save();
+
+                        event(new CreditsWerePurchasedForUserEvent);
+
+                        return $response;
+                    }
                 }
             }
-        }
 
-        return $response;
+            return false;
+        });
     }
 
     /**

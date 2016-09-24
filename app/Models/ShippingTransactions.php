@@ -58,7 +58,6 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
 
         self::saving(function($model){
             $model->rate_amount_addon = self::RATE_ADDON;
-            $model->rate_final_amount = $model->rate_amount + self::RATE_ADDON;
         });
     }
 
@@ -141,6 +140,6 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
      */
     public function getTransactionType()
     {
-        return CreditTransactions::TYPE_DEBIT;
+        return CreditTransactableInterface::TYPE_DEBIT;
     }
 }

@@ -93,6 +93,14 @@ class CreditReceipts extends BaseEloquentModel implements CreditTransactableInte
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
      * @return number
      */
     public function creditTransactionAmount()
@@ -107,6 +115,6 @@ class CreditReceipts extends BaseEloquentModel implements CreditTransactableInte
      */
     public function getTransactionType()
     {
-        return CreditTransactions::TYPE_CREDIT;
+        return CreditTransactableInterface::TYPE_CREDIT;
     }
 }
