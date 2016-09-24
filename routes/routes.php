@@ -7,6 +7,10 @@
 //    dd($r, $x->getConnectionError());
 //});
 
+Route::get('privacy', function(){
+   return view('content.privacy');
+});
+
 Route::group(['middleware' => ['web']], function() {
     Route::post(
         '__captainHook/shtriwpe',
