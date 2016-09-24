@@ -47,7 +47,7 @@
                                 {{--{{ str_limit(nl2br($sale->description), 100) }}--}}
                                 <div class="text-xs pull-right">
                                 <a href="{{ route('flashsales.show', [$sale->getUUID()]) }}"><span class="_600">{{ $sale->likes->count() }}</span> <span class="text-muted">Followers</span></a>
-                                    <a class="m-l-1" href="{{ route('flashsales.show', [$sale->getUUID()]) }}"><span class="_600">{{ $sale->sellers->count() }}</span>  <span class="text-muted">Sellers</span></a>
+                                    <a class="m-l-1" href="{{ route('flashsales.show', [$sale->getUUID()]) }}"><span class="_600">{{ $sale->adminsAndSellers()->count() }}</span>  <span class="text-muted">Sellers</span></a>
                                     <a class="m-l-1" href="{{ route('flashsales.show', [$sale->getUUID()]) }}"><span class="_600">{{ $sale->inventoryItems->count() }}</span>  <span class="text-muted">Items</span></a>
                                 </div>
                             </div>
