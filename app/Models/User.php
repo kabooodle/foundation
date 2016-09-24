@@ -474,8 +474,8 @@ class User extends BaseEloquentModel implements
     public function getAvailableBalance()
     {
         $balance = $this->creditBalance;
-        
-        return (float) $balance ? $balance->sum('balance') : 0.00;
+
+        return (float) ($balance ? $balance->sum('balance') : 0.00);
     }
 
     /**

@@ -29,12 +29,12 @@
                 </div>
             </div>
 
-            <a style="display: none" data-toggle="modal" data-target="#m-md"
-               data-backdrop="static" data-keyboard="false" href="#" class="btn_add_selected text-white  btn btn-sm warning">Add Selected
+            <a data-toggle="modal" data-target="#m-md"
+               data-backdrop="static" data-keyboard="false" href="#" disabled class="disabled btn_add_selected text-white  btn btn-sm warning">Add Selected
                 Items to Sale</a>
 
-            <a style="display: none" data-toggle="modal" data-target="#m-md-fb"
-               data-backdrop="static" data-keyboard="false" href="#" class="text-white btn_add_selected btn btn-sm warning">Add Selected
+            <a data-toggle="modal" data-target="#m-md-fb"
+               data-backdrop="static" data-keyboard="false" href="#" disabled class="disabled text-white btn_add_selected btn btn-sm warning">Add Selected
                 Items to Facebook</a>
 
         </div>
@@ -311,9 +311,9 @@
                 var $selectedItemsCheckedEls = $('.selected_items_checkbox:checked');
                 var totalChecked = $selectedItemsCheckedEls.length;
                 if (totalChecked > 0) {
-                    $addSelectedBtnEl.show();
+                    $addSelectedBtnEl.removeClass('disabled').prop('disabled', false);
                 } else {
-                    $addSelectedBtnEl.hide();
+                    $addSelectedBtnEl.addClass('disabled').prop('disabled', true);
                     $selectAllEl.prop('checked', false).trigger('change');
                 }
             });
