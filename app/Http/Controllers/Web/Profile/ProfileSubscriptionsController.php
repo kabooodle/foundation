@@ -50,7 +50,7 @@ class ProfileSubscriptionsController extends Controller
             if (! $user->hasCardOnFile()) {
                 Messages::error('No credit card on file.');
 
-                return $this->view('profile.creditcard.index')->with('plan', $plan)->with('card', null);
+                return $this->redirect()->route('profile.creditcard.index');
             }
 
             $this->dispatchNow(new SubscribeUserToPlanCommand($user, 'main', $plan, false));
