@@ -352,7 +352,7 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class)->where('inventory.user_id', $this->id);
+        return $this->hasManyThrough(Claims::class,  Inventory::class)->where('inventory.user_id', $this->id)->with(['shipments', 'shipments.transaction']);
     }
 
     /**
@@ -361,6 +361,23 @@ class User extends BaseEloquentModel implements
     public function claimsAsSeller()
     {
         return $this->claimsOnMyInventory();
+    }
+
+    /**
+     * TODO: This is not optimized. Optimize it.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsAsSellerNoShipping()
+    {
+        $inventoryItems = $this->claimsOnMyInventory;
+        if ($inventoryItems->count() > 0 ) {
+            return $inventoryItems->filter(function(Claims $claim){
+               return $claim->shipmentTransaction() ? false : true;
+            });
+        }
+
+        return $inventoryItems;
     }
 
     /**

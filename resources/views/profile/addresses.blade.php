@@ -3,6 +3,7 @@
 @section('settings-content')
 
     {{ Form::open(['route' => 'profile.addresses.update', 'method' => 'POST']) }}
+    @if(user()->subscribed('main'))
     <div class="box">
         <div class="box-header">
             <h2>Shipping From Address</h2>
@@ -13,7 +14,7 @@
             @include('profile.partials._addressform', ['_key' => 'from', '_from' => $from])
         </div>
     </div>
-
+    @endif
     <div class="box">
         <div class="box-header">
             <h2>Shipping To Address</h2>
