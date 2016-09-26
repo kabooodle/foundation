@@ -30,28 +30,28 @@
                 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
 
         $(function(){
-            document.addEventListener("turbolinks:request-start", function(event) {
-                var xhr = event.data.xhr;
-                xhr.setRequestHeader("Authorization", "Bearer "+$('meta[name=user_hash]').attr("content")+"");
-            });
-
-            $.ajaxPrefilter(function(options, originalOptions, xhr ) {
-                xhr.setRequestHeader("Authorization", "Bearer "+$('meta[name=user_hash]').attr("content")+"");
-            });
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')
-                }
-            });
+//            document.addEventListener("turbolinks:request-start", function(event) {
+//                var xhr = event.data.xhr;
+//                xhr.setRequestHeader("Authorization", "Bearer "+$('meta[name=user_hash]').attr("content")+"");
+//            });
+//
+//            $.ajaxPrefilter(function(options, originalOptions, xhr ) {
+//                xhr.setRequestHeader("Authorization", "Bearer "+$('meta[name=user_hash]').attr("content")+"");
+//            });
+//
+//            $.ajaxSetup({
+//                headers: {
+//                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')
+//                }
+//            });
         });
 
-        {{--var pusher = new Pusher('{{ env('PUSHER_KEY') }}');--}}
-        {{--var channel = pusher.subscribe('private_{{ $_current_user->username }}');--}}
-        {{--channel.bind('kabooodle.testevent', function(data) {--}}
-            {{--var newCount = data.unreadNotificationsCount;--}}
-            {{--$('#notify_total').addClass('warning').removeClass('hide').html(newCount);--}}
-        {{--});--}}
+        var pusher = new Pusher('{{ env('PUSHER_KEY') }}');
+        var channel = pusher.subscribe('private_{{ $_current_user->username }}');
+        channel.bind('kabooodle.testevent', function(data) {
+            var newCount = data.unreadNotificationsCount;
+            $('#notify_total').addClass('warning').removeClass('hide').html(newCount);
+        });
         @endif
     </script>
 

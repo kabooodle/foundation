@@ -71,15 +71,18 @@
                     {{ Form::text('tags', $item->tagsList(), ['class' => 'form-control selectized', 'id' => 'tags']) }}
                 </div>
             </div>
-            <div class="form-group row m-t-md">
-                <div class="col-sm-offset-3 col-sm-9">
-                    <button type="submit" class="btn primary">Save</button>
-                    <a href="{{ route('shop.inventory.show', [$item->user->username, $item->getUUID()]) }}" class="text-muted m-l">Cancel</a>
-                </div>
-            </div>
+
 
         </div>
     </div>
+
+    <div class="form-group row m-t-md">
+        <div class="col-sm-offset-3 col-sm-9">
+            <button type="submit" class="btn primary">Save</button>
+            <a href="{{ route('shop.inventory.show', [$item->user->username, $item->getUUID()]) }}" class="text-muted m-l">Cancel</a>
+        </div>
+    </div>
+
     {{ Form::close() }}
 
     @push('footer-scripts')

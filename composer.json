@@ -18,6 +18,7 @@
         "php": ">=5.5.9 || ^7.0",
         "algolia/algoliasearch-laravel": "1.2.2",
         "alt-three/bus": "1.1.0",
+        "aws/aws-sdk-php-laravel": "~3.0",
         "barryvdh/laravel-cors": "0.8.1",
         "barryvdh/laravel-ide-helper": "2.2.1",
         "dingo/api": "1.0.*@dev",
@@ -27,6 +28,7 @@
         "laravel/framework": "5.2.31",
         "laravelcollective/html": "5.2.4",
         "league/flysystem-aws-s3-v3": "~1.0",
+        "pragmarx/tracker": "^3.0",
         "predis/predis": "~1.0",
         "pusher/pusher-php-server": "2.2.1",
         "ramsey/uuid": "3.5.0",
@@ -38,8 +40,7 @@
         "tymon/jwt-auth": "1.0.*@dev",
         "wildbit/laravel-postmark-provider": "3.0.0",
         "yajra/laravel-datatables-oracle": "6.18.1",
-        "zackkitzmiller/tiny": "1.2.2",
-        "pragmarx/tracker": "^3.0"
+        "zackkitzmiller/tiny": "1.2.2"
     },
     "require-dev": {
         "alt-three/testbench": "^1.8",
@@ -82,6 +83,9 @@
         ]
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "github-oauth": {
+            "github.com": "940518d694316861963030a87ad682004bda7e07"
+        }
     }
 }

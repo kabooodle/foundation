@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 /**
  * Class AbstractApiController
@@ -21,7 +22,7 @@ use Illuminate\Contracts\Pagination\Paginator;
  */
 abstract class AbstractApiController extends Controller
 {
-    use DispatchesJobs, Helpers;
+    use DispatchesJobs, Helpers, ValidatesRequests;
 
     /**
      * The HTTP response headers.
