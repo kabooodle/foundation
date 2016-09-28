@@ -7,12 +7,10 @@
 //    dd($r, $x->getConnectionError());
 //});
 
-Route::get('/', function(){
-    if (! user()) {
-        return redirect()->route('auth.login');
-    } else {
-        return 'hi';
-    }
+Route::group(['middleware' => ['web'], 'domain' => getEnvDomain(true)], function(){
+    Route::get('/', function(){
+       return 'hi';
+    });
 });
 
 Route::get('privacy', function(){
