@@ -6,9 +6,10 @@
 
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
-
 use Binput;
 use Datatables;
+use Illuminate\Routing\Redirector;
+use Kabooodle\Bus\Commands\Inventory\AddInventoryCommand;
 use Messages;
 use Response;
 use Exception;
@@ -118,39 +119,27 @@ class InventoryController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|Redirector
      */
     public function store(Request $request, $username)
     {
         try {
             $this->validate($request, Inventory::getRules());
 
-            $item = Inventory::factory([
-                'name' => Binput::get('name'),
-                'description' => Binput::get('description'),
-                'initial_qty' => (int) Binput::get('initial_qty'),
-                'user_id' => user()->id,
-                'price_usd' => Binput::get('price_usd')
-            ]);
+            $command = new AddInventoryCommand(
+                user(),
+                Binput::get('name'),
+                Binput::get('description'),
+                (int) Binput::get('initial_qty'),
+                Binput::get('price_usd'),
+                Binput::get('categories'),
+                Binput::get('tags'),
+                Binput::get('flashsales'),
+                Binput::get('images')
+            );
+            $item = $this->dispatchNow($command);
 
-            $requestCategories = Binput::get('categories');
-            if ($requestCategories) {
-                $categories = Categories::whereIn('id', [$requestCategories])->get();
-                $item->categories()->saveMany($categories);
-            }
-
-            $tags = Binput::get('tags');
-            if ($tags) {
-                $item->tag($tags);
-            }
-
-            if (Binput::get('flashsales', false) && $item->initial_qty > 0) {
-                $this->dispatchNow(new AddInventoryToSalesCommand(user(), [$item->id], Binput::get('flashsales')));
-            }
-
-            event(new InventoryItemWasAddedEvent($item));
-
-            Messages::success("New item, {$item->name}, was successfully added to your inventory!");
+            Messages::success("New item(s) successfully added to your inventory!");
 
             return $this->redirect(route('shop.inventory.index', [$username]));
 
@@ -165,7 +154,7 @@ class InventoryController extends Controller
     /**
      * @param $idAndName
      *
-     * @return $this|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function show($username, $idAndName)
     {
@@ -184,7 +173,7 @@ class InventoryController extends Controller
      * @param $username
      * @param $idAndName
      *
-     * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function edit($username, $idAndName)
     {

@@ -30,20 +30,22 @@
                 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
 
         $(function(){
-//            document.addEventListener("turbolinks:request-start", function(event) {
-//                var xhr = event.data.xhr;
-//                xhr.setRequestHeader("Authorization", "Bearer "+$('meta[name=user_hash]').attr("content")+"");
-//            });
-//
-//            $.ajaxPrefilter(function(options, originalOptions, xhr ) {
-//                xhr.setRequestHeader("Authorization", "Bearer "+$('meta[name=user_hash]').attr("content")+"");
-//            });
-//
-//            $.ajaxSetup({
-//                headers: {
-//                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')
-//                }
-//            });
+            document.addEventListener("turbolinks:request-start", function(event) {
+                var xhr = event.data.xhr;
+                xhr.setRequestHeader("Authorization", "Bearer "+$('meta[name=user_hash]').attr("content")+"");
+            });
+
+            $.ajaxPrefilter(function(options, originalOptions, xhr ) {
+                if (options.url.toLowerCase().indexOf("amazonaws") <= 0) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + $('meta[name=user_hash]').attr("content") + "");
+                }
+            });
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')
+                }
+            });
         });
 
         var pusher = new Pusher('{{ env('PUSHER_KEY') }}');

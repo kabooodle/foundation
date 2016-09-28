@@ -7,6 +7,14 @@ new Vue({
     }
 });
 
+function randomAlphaStr(m) {
+    var m = m || 9;
+    s = '',
+        r = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    for (var i=0; i < m; i++) { s += r.charAt(Math.floor(Math.random()*r.length)); }
+    return s;
+};
+
 function confirmModal(confirmCB, closeCB) {
     noty({
         text: 'Confirm that you wish to proceed with purchase.',

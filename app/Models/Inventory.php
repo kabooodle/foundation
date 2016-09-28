@@ -105,7 +105,7 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
             'description' => 'required',
             'initial_qty' => 'required|int',
             'price_usd' => 'required|numeric|digits_between:0,100000000',
-            'categories' => 'required|exists:categories,id'
+            'categories' => 'required|exists:categories,id',
         ];
     }
 
@@ -176,6 +176,14 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
     public function claims()
     {
         return $this->hasMany(Claims::class, 'inventory_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function files()
+    {
+        return $this->morphMany(Files::class, 'fileable');
     }
 
     /**

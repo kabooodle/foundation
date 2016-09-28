@@ -57,7 +57,7 @@ Route::group(['domain' => 'api.'.getEnvDomain(true)], function($route){
         'uses' => \Kabooodle\Http\Controllers\Api\GeneralController::class.'@ping'
     ]);
 
-    $route->get('files', \Kabooodle\Http\Controllers\Api\FilesApiController::class.'@createPresignedData');
+    $route->get('files', \Kabooodle\Http\Controllers\Api\Files\FilesApiController::class.'@createPresignedData');
 
     $api = app('Dingo\Api\Routing\Router');
 

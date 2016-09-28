@@ -23,7 +23,8 @@ elixir(function (mix) {
             // 'vendor/theme/scripts/jquery/select2-bootstrap-theme/dist/select2-bootstrap.4.css'
             'vendor/selectizejs/dist/css/selectize.css',
             'vendor/selectizejs/dist/css/selectize.default.css',
-            'vendor/datetimepicker/bootstrap-datetimepicker.min.css'
+            'vendor/datetimepicker/bootstrap-datetimepicker.min.css',
+            'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.css'
             // 'vendor/selectizejs/dist/css/selectize.bootstrap3.css'
         ], elixir.config.publicPath + 'css/merchant.css')
 
@@ -45,7 +46,9 @@ elixir(function (mix) {
 
         .scripts([
             // 'vendor/theme/scripts/jquery/select2/dist/js/select2.full.js',
-            'vendor/selectizejs/dist/js/standalone/selectize.js'
+            'vendor/selectizejs/dist/js/standalone/selectize.js',
+            'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.js',
+            'app/s3uploader.js'
         ], elixir.config.publicPath + 'js/merchant.js')
 
         .scripts([

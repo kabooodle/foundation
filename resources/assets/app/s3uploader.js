@@ -3,6 +3,7 @@
  *
  */
 (function($, window, document, undefined){
+
     /**
      *
      * @param element
@@ -17,11 +18,12 @@
         this.options = $.extend({}, this.options, this._parseHtmlDataAttributes(this.$element));
         this.jqXHRCollection = [];
         this.templateElements = {
-            progress_container: '.js-fileupload_progress',
+            progress_container: '.js-fileupload-progress',
             progress_bar: '.progress',
             add_file_button: '.fileinput-button',
             file_upload_target: '.js-s3_fileupload',
-            cancel_button: '.js-cancel_button'
+            cancel_button: '.js-cancel_button',
+            showExtendedBool: true
         };
         this._defaults = $.fn.s3uploader.defaults;
         this.init();
@@ -41,17 +43,17 @@
             if (!$.fn.fileupload) {
                 this.throwException('missing-dependency', 'fileupload plugin required.');
             }
-            this.setTemplate();
+            this.setTemplate(this.options.templateEl);
             this.initFileUpload();
             return this;
         },
         /**
          *
          */
-        setTemplate: function(){
+        setTemplate: function($el){
             this.$element.html(
-                Template.getTemplate(this.options.multiple, this.options.button_name, this.options.extended_upload_info)
-            );
+                $el ? $el : Template.getTemplate(this.options.multiple, this.options.button_name, this.options.extended_upload_info)
+            , true);
         },
         /**
          *
@@ -74,7 +76,7 @@
                     var hash = Math.random().toString(36).substr(2, 5);
                     var timestamp = Math.floor(new Date().getTime() / 1000);
                     var ajaxData = that.options.s3_key_payload;
-                    ajaxData.filename = that.options.s3_key_payload.filename || timestamp + '_' + hash + '_' + data.files[0].name;
+                    ajaxData.filename = timestamp + '_' + data.files[0].name;
                     that.jqXHRCollection.push($.ajax({
                         url: that.options.s3_key_url,
                         dataType: 'JSON',
@@ -103,27 +105,8 @@
                     }));
                 },
                 formData: {},
-                success: function (data) {
-                    that.options.on_s3_upload(data);
-                    if(that.options.save_file_model) {
-                        that.jqXHRCollection.push($.ajax({
-                            url: that.options.file_create_url,
-                            type: 'POST',
-                            data: {
-                                mime: that.options.file.type,
-                                filename: that.options.file.name,
-                                size: that.options.file.size,
-                                s3_key: that.options.response.data.key,
-                                s3_meta_key_vals: that.options.s3_meta_key_vals
-                            }
-                        }).done(function(response){
-                            that.options.on_file_saved(that.$element, response.data);
-                            that.log('api.files.create: done', response);
-                        }).fail(function(response){
-                            that.log('api.files.create: fail', response);
-                            that.buttonToggler(false);
-                        }));
-                    }
+                success: function (data, textStatus, jqXHR) {
+                    that.options.on_s3_upload(data, textStatus, jqXHR);
                 },
                 done: function (e, data) {},
                 fail: function(e, data, error){
@@ -137,13 +120,11 @@
                     }
                     var progress = Math.floor(data.loaded / data.total * 100);
                     if (data.context) {
-                        data.context.each(function () {
-                            that.setProgress(progress);
-                        });
+                        that.setProgress(progress);
                     }
                 },
                 stop: function () {
-                    that.$element.find(that.templateElements.progress_container).slideUp(1600);
+                    that.resetProgress();
                     that.buttonToggler(false);
                 }
             };
@@ -163,6 +144,18 @@
             that.$element.find(that.templateElements.progress_bar)
                 .attr('aria-valuenow', percent).children().first()
                 .css('width', percent + '%');
+        },
+
+        /**
+         *
+         */
+        resetProgress: function() {
+            var that = this;
+            setTimeout(function(){
+                that.$element.find(that.templateElements.progress_bar)
+                    .attr('aria-valuenow', 5).children().first()
+                    .css('width', '5%');
+            }, 1000);
         },
         /**
          *
@@ -260,7 +253,7 @@
                 '        </span>' +
                 '    </div>' +
                 '    <div class="col-sm-8">' +
-                '        <div class="fileupload-progress" style="display:none;">' +
+                '        <div class="js-fileupload-progress fileupload-progress" style="display:none;">' +
                 '            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">' +
                 '                <div class="progress-bar progress-bar-success" style="width:0%;"></div>' +
                 '            </div>';
@@ -295,12 +288,12 @@
         multiple: false,
         debug: false,
         optional_s3_folder: '',
-        file_create_url: '',            // required only if save_file_model == true
-        save_file_model: true,
         video_tags: [],
         extended_upload_info: true,
         button_name: '',
         drop_zone: '',
+        templateEl : null,
+        maxChunkSize: 10000000,
         on_file_add: function (element, data) {},
         on_file_saved: function ($element, data) {},
         on_s3_upload: function (data) {}

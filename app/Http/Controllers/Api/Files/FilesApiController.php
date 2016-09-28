@@ -4,11 +4,12 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Http\Controllers\Api;
+namespace Kabooodle\Http\Controllers\Api\Files;
 
 use Binput;
 use Kabooodle\Models\User;
 use Illuminate\Http\Request;
+use Kabooodle\Http\Controllers\Api\AbstractApiController;
 
 /**
  * Class FilesApiController
