@@ -222,7 +222,7 @@
             save_file_model: false,
             multiple: true,
             s3_bucket: 'kabooodle-storage',
-            s3_key_url: '//api.kabooodle.dev/files',
+            s3_key_url: '{{ route('api.files.sign') }}',
             s3_key_payload: {
                 user: '{{ user()->public_hash }}'
             },
