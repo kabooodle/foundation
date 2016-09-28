@@ -72,7 +72,7 @@ class AddInventoryCommandHandler
                         $command->getDescription(),
                         $command->getPrice(),
                         $command->getQty(),
-                        $image
+                        [$image]
                     );
                 }
             }
@@ -105,11 +105,11 @@ class AddInventoryCommandHandler
     {
         if ($images) {
             foreach ($images as $image) {
-                $image = $this->normalizeImageData($image);
-                if (isset($image['album_item']) && $image['album_item'] == 1) {
-                    $this->imagesAssociatedToItem[] = $image;
+                $cleanedImage = $this->normalizeImageData($image);
+                if (isset($cleanedImage['album_item']) && $cleanedImage['album_item'] == 1) {
+                    $this->imagesAssociatedToItem[] = $cleanedImage;
                 } else {
-                    $this->imagesAsNewItem[] = $image;
+                    $this->imagesAsNewItem[] = $cleanedImage;
                 }
             }
         }
@@ -153,13 +153,10 @@ class AddInventoryCommandHandler
             'price_usd' => $price,
         ]);
 
-        if (!is_array($images)) {
-            $images = [$images];
-        }
-
         if ($images && count($images) > 0) {
             $order = 0;
             foreach ($images as $image) {
+                $item['initial_qty'] = $image['qty'];
                 $item->files()->save(new Files([
                     'location' => $image['location'],
                     'key' => $image['key'],
@@ -168,10 +165,11 @@ class AddInventoryCommandHandler
                     'fileable_id' => $item->id,
                     'sort_order' => $order
                 ]));
-
                 $order++;
             }
         }
+
+        $item->save();
 
         return $item;
     }
