@@ -6,10 +6,30 @@
 
 @push('header-styles')
 <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"/>
+
 @endpush
 
 
 @section('body-inner-content')
+
+    <style>
+        .thumbnail {
+            position: relative;
+            width: 210px;
+            height: 210px;
+            overflow: hidden;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .thumbnail img {
+            width: 100%;
+            height: auto;
+        }
+        .thumbnail:hover,
+        .thumbnail img:hover {
+            cursor: zoom-in;
+        }
+    </style>
 
     @include('widgets._fileuploadscripts')
 
@@ -126,13 +146,15 @@
             <div class="col-sm-6 thumbnail-container">
                 <div class="box">
                     <div class="item" >
-                        <div class="item-overlay active p-a">
+                        <div class="item-overlay active p-a p-b-0" style="z-index: 99">
                             <button type="button" v-on:click="deleteFile" data-id="@{{ image.id }}" class="pull-right btn btn-xs white text-danger"><i class="fa fa-trash fa-fw"></i></button>
                         </div>
-                        <img :src="image.location" class="w-full"/>
+                        <div class="thumbnail">
+                            <img :src="image.location" data-gallery="image-thumbs" data-width="100%" class="w-full"  data-toggle="lightbox" data-remote="@{{ image.location }}"/>
+                        </div>
                     </div>
                     <input type="hidden" name="images[@{{ image.key }}][data]" value="@{{ image | json }}" />
-                    <div class="box-body">
+                    <div class="box-body m-t-0 p-t-0">
                         <div class="image_item_component" style="display: none;">
                             <label class="text-muted text-sm m-b-0 p-b-0">Quantity:</label>
                             <input type="text" value="1" name="images[@{{ image.key }}][qty]" class="text-center image_qty_btn" disabled />
@@ -218,6 +240,13 @@
 <script>
 
     $(function () {
+        $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+            event.preventDefault();
+            $(this).ekkoLightbox({
+//                alwaysShowClose: true
+            });
+        });
+
         $('#js-program_logo_upload').s3uploader({
             save_file_model: false,
             multiple: true,
