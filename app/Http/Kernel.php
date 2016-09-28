@@ -21,7 +21,7 @@ class Kernel extends HttpKernel
     protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
         \Kabooodle\Http\Middleware\IfTurbolinksMiddleware::class,
-//        \Barryvdh\Cors\HandleCors::class
+        \Barryvdh\Cors\HandleCors::class
     ];
 
     /**
@@ -34,7 +34,7 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Kabooodle\Http\Middleware\ReferralProgramMiddleware::class,
-            \Kabooodle\Http\Middleware\VerifyCsrfToken::class
+            \Kabooodle\Http\Middleware\VerifyCsrfToken::class,
 //            \Kabooodle\Http\Middleware\ResponseHeadersMiddleware::class,
 //            \PragmaRX\Tracker\Vendor\Laravel\Middlewares\Tracker::class,
 //            \Kabooodle\Http\Middleware\FilterIfPjax::class,
@@ -42,7 +42,6 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            \Barryvdh\Cors\HandleCors::class,
             'throttle:60,1',
         ],
     ];
