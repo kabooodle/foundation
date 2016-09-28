@@ -7,6 +7,14 @@
 //    dd($r, $x->getConnectionError());
 //});
 
+Route::get('/', function(){
+    if (! user()) {
+        return redirect()->route('auth.login');
+    } else {
+        return 'hi';
+    }
+});
+
 Route::get('privacy', function(){
    return view('content.privacy');
 });
@@ -18,7 +26,7 @@ Route::group(['middleware' => ['web']], function() {
     );
 });
 
-Route::group(['middleware' => ['web'], 'domain' => getEnvDomain(true)], function(){
+Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], function(){
 
     Route::group(['middleware' => 'auth'], function () {
         Route::get('/', function () {

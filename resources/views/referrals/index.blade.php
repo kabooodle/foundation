@@ -6,13 +6,13 @@
     <div class="text-center m-b-3 ">
         <img src="/assets/images/513550806.jpg" width="100%">
         <h1 style="line-height: 50px" class="m-b-3 _300 m-t-2">Get your merchant account for free for a year when you invite your friends to {{ env('APP_NAME') }}!</h1>
-        <h5 class="_400 text-muted" style="line-height: 30px;">If you refer 10 friends, and they upgrade their accounts to basic, we'll give you the merchant account for free for a year! Need shipping labels? For every 5 friends whom join, we'll give you 100 labels too!</h5>
+        <h5 class="_400 text-muted" style="line-height: 30px;">If you refer 10 friends, and they upgrade their accounts to basic, we'll give you the merchant account for free for a year! Also, we will credit each account $5.00! Need credits now? <a class="text-warning _600" href="{{ route('profile.credits.index') }}">Go here!</a></h5>
     </div>
 
     <div class="box padding">
             <div class="row">
                 <div class="col-md-6">
-                    <p class="m-b-0 p-b-0 text-center"><span id="link-text">http://kabooodle.dev/invite/3490eirofjk</span>
+                    <p class="m-b-0 p-b-0 text-center"><span id="link-text">http://kabooodle.dev/invite/{{ user()->username }}</span>
                         <button class="btn btn-xs white" data-clipboard-target="#link-text">
                             Copy Link
                         </button>
@@ -32,7 +32,7 @@
             @foreach(user()->referrals as $referral)
 
                 <div class="col-md-4">
-                    <ul class="list p-b-0 b-a">
+                    <ul class="list p-b-0 b-a {{ $referral->subscribed('main') ? 'b-success' : null }}">
                         <li class="list-item">
                             <a href="http://kabooodle.dev/shop/jaketoolson" class="list-left">
                             <span class="w-40 avatar">
@@ -41,7 +41,8 @@
                             </a>
                             <div class="list-body">
                                 <div class="_500"><a href="http://kabooodle.dev/shop/jaketoolson">{!! $referral->name !!}</a></div>
-                                <div class="text-muted">{{ $referral->created_at->diffForHumans() }}</div>
+                                <div class="text-muted">joined: {{ $referral->created_at->diffForHumans() }}</div>
+                                <div class="text-muted text-sm">{{ $referral->subscribed('main') ? 'Qualified!' : 'not yet qualified' }}</div>
                             </div>
                         </li>
                     </ul>

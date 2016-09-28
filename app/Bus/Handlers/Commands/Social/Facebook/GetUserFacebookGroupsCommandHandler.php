@@ -40,7 +40,7 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
 
             return $groups;
         } catch (FacebookSDKException $e) {
-            return [];
+            throw $e;
         }
     }
 }

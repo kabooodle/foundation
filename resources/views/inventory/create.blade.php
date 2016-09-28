@@ -11,7 +11,6 @@
 
 
 @section('body-inner-content')
-
     <style>
         .thumbnail {
             position: relative;
@@ -182,7 +181,7 @@
 
 
     <script>
-        var inventoryImages = [];
+        var inventoryImages = [{!! ( old('images') ? json_encode(old('images')) : null) !!}];
         var InventoryComponent = Vue.extend({
             template: '#thumbnail-template',
             data: function () {

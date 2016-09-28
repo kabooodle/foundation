@@ -175,29 +175,6 @@
                                         <tr>
                                             <td class='movableContentContainer ' valign='top'>
                                                 <div class="movableContent" style="border: 0px; padding-top: 0px; position: relative;">
-                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                                        <tbody>
-                                                        <tr>
-                                                            <td height="35"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                                                    <tbody>
-                                                                    <tr>
-                                                                        <td valign="top" align="center" class="specbundle"><div class="contentEditableContainer contentTextEditable">
-                                                                                <div class="contentEditable">
-                                                                                    <p style='text-align:center;margin:0;font-family:Georgia,Time,sans-serif;font-size:26px;color:#222222;'><span class="specbundle2"><span class="font1">Email</span></span></p>
-                                                                                </div>
-                                                                            </div></td>
-                                                                    </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="movableContent" style="border: 0px; padding-top: 0px; position: relative;">
                                                     <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
                                                         <tr>
                                                             <td valign='top' align='center'>
@@ -242,39 +219,18 @@
                                                                         <td valign="top" class="specbundle"><div class="contentEditableContainer contentTextEditable">
                                                                                 <div class="contentEditable" align='center'>
                                                                                     <p  style='text-align:left;color:#CCCCCC;font-size:12px;font-weight:normal;line-height:20px;'>
-                                                                                        <span style='font-weight:bold;'>[CLIENTS.COMPANY_NAME]</span>
+                                                                                        <span style='font-weight:bold;'>kabooodle,LLC</span>
                                                                                         <br>
-                                                                                        [CLIENTS.ADDRESS]
+                                                                                        www.kabooodle.com
                                                                                         <br>
-                                                                                        <a target='_blank' href="[FORWARD]">Forward to a friend</a><br>
                                                                                         <a target="_blank" class='link1' class='color:#382F2E;' href="[UNSUBSCRIBE]">Unsubscribe</a>
-                                                                                        <br>
-                                                                                        <a target='_blank' class='link1' class='color:#382F2E;' href="[SHOWEMAIL]">Show this email in your browser</a>
                                                                                     </p>
                                                                                 </div>
                                                                             </div></td>
                                                                         <td valign="top" width="30" class="specbundle">&nbsp;</td>
-                                                                        <td valign="top" class="specbundle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                                                                <tbody>
-                                                                                <tr>
-                                                                                    <td valign='top' width='52'>
-                                                                                        <div class="contentEditableContainer contentFacebookEditable">
-                                                                                            <div class="contentEditable">
-                                                                                                <a target='_blank' href="#"><img src="images/facebook.png" width='52' height='53' alt='facebook icon' data-default="placeholder" data-max-width="52" data-customIcon="true"></a>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </td>
-                                                                                    <td valign="top" width="16">&nbsp;</td>
-                                                                                    <td valign='top' width='52'>
-                                                                                        <div class="contentEditableContainer contentTwitterEditable">
-                                                                                            <div class="contentEditable">
-                                                                                                <a target='_blank' href="#"><img src="images/twitter.png" width='52' height='53' alt='twitter icon' data-default="placeholder" data-max-width="52" data-customIcon="true"></a>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                </tbody>
-                                                                            </table>
+                                                                        <td valign="top" class="specbundle" style="text-align: right;">
+                                                                                                <a target='_blank' href="https://www.facebook.com/kabooodle"><img src="http://kabooodle.com/assets/images/icons/social/facebook.png" width='24' height='24' alt='facebook icon' style="display: inline-block !important;" data-default="placeholder" data-customIcon="true"></a>
+                                                                                                <a target='_blank' href="https://twitter.com/gokabooodle"><img src="http://kabooodle.com/assets/images/icons/social/twitter.png" width='24' height='24' alt='twitter icon' style="display: inline-block !important;" data-default="placeholder" data-customIcon="true"></a>
                                                                         </td>
                                                                     </tr>
                                                                     </tbody>

@@ -103,7 +103,7 @@ class InventoryClaimsController extends Controller
 
         if ($item) {
             $result = $this->dispatchNow(new RejectClaimForInventoryItemCommand(user(), $claimsUUID,
-                Binput::get('text', null)));
+                Binput::get('rejected_reason', null)));
 
             return Response::json([
                 'html' => $this->view('inventory.claims.partials._claimrow')->with('claim', $result)->render()

@@ -3,6 +3,7 @@
 namespace Kabooodle\Libraries\Emails;
 
 use Closure;
+use InvalidArgumentException;
 use Illuminate\Contracts\Mail\MailQueue;
 
 /**
@@ -29,12 +30,12 @@ abstract class AbstractEmail
     /**
      * @var string
      */
-    protected $resourceView;
+    protected $resourceView = null;
 
     /**
      * @var array
      */
-    protected $parameters;
+    protected $parameters = null;
 
     /**
      * AbstractEmail constructor.
@@ -43,7 +44,7 @@ abstract class AbstractEmail
      * @param array   $parameters
      * @param Closure $callable
      */
-    public function __construct($resourceView, array $parameters = [], Closure $callable)
+    public function __construct($resourceView = null, array $parameters = [], Closure $callable = null)
     {
         $this->callable = $callable;
         $this->resourceView = $resourceView;
@@ -53,6 +54,42 @@ abstract class AbstractEmail
     }
 
     abstract public function getEmailTemplate();
+
+    /**
+     * @param $resourceView
+     *
+     * @return $this
+     */
+    public function setView($resourceView)
+    {
+        $this->resourceView = $resourceView;
+
+        return $this;
+    }
+
+    /**
+     * @param array $parameters
+     *
+     * @return $this
+     */
+    public function setParameters(array $parameters)
+    {
+        $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    /**
+     * @param Closure $callable
+     *
+     * @return $this
+     */
+    public function setCallable(Closure $callable)
+    {
+        $this->callable = $callable;
+
+        return $this;
+    }
 
     /**
      * @return Closure
@@ -81,10 +118,15 @@ abstract class AbstractEmail
     /**
      * TODO: Consider passing queue parameter such that queuing can be made optional.
      *
-     * @return bool
+     * @return mixed
+     * @throws InvalidArgumentException
      */
     public function send()
     {
+        if (! $this->getCallable()) {
+            throw new InvalidArgumentException('Missing [callable] when attempting to email.');
+        }
+
         // The template we will be embedding the email's content into.
         // This is just a dot.object path representation.
         $template = $this->getEmailTemplate();
@@ -94,7 +136,7 @@ abstract class AbstractEmail
         $content = $this->getView()->make($this->getResourceView(), $this->getParameters())->render();
 
         // For now, we're implicitly queueing all emails.
-        $this->getMailer()->queue($template, ['emailContent' => $content] + $this->getParameters(), $this->getCallable());
+        return $this->getMailer()->queue($template, ['emailContent' => $content] + $this->getParameters(), $this->getCallable());
     }
 
     /**

@@ -56,6 +56,11 @@ class AddInventoryToSalesCommandHandler
         return null;
     }
 
+    /**
+     * @param User $user
+     * @param      $inventoryIds
+     * @param      $facebookAlbumIds
+     */
     public function handleFacebookAlbums(User &$user, $inventoryIds, $facebookAlbumIds)
     {
         if (count($facebookAlbumIds) > 0) {

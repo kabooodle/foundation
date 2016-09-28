@@ -6,8 +6,10 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Claim;
 
+use DB;
 use Carbon\Carbon;
 use Kabooodle\Models\Claims;
+use Kabooodle\Bus\Events\Claim\ClaimWasRejectedEvent;
 use Kabooodle\Bus\Commands\Claim\RejectClaimForInventoryItemCommand;
 
 /**
@@ -19,19 +21,23 @@ class RejectClaimForInventoryItemCommandHandler
     /**
      * @param RejectClaimForInventoryItemCommand $command
      *
-     * @return \Illuminate\Database\Eloquent\Model|null|static
+     * @return mixed|Claims
      */
     public function handle(RejectClaimForInventoryItemCommand $command)
     {
-        $claim = Claims::where('uuid', $command->getClaimId())->first();
-        $claim->rejected_by = user()->id;
-        $claim->rejected_on = Carbon::now();
-        $claim->rejected_reason = $command->getNotes();
-        $claim->accepted = false;
-        $claim->save();
+        return DB::transaction(function() use ($command) {
+            $claim = Claims::where('uuid', $command->getClaimId())->first();
+            $claim->rejected_by = user()->id;
+            $claim->rejected_on = Carbon::now();
+            $claim->rejected_reason = $command->getNotes();
+            $claim->accepted = false;
+            $claim->save();
 
-        $claim->inventoryItem->increment('initial_qty');
+            $claim->inventoryItem->increment('initial_qty');
 
-        return $claim;
+            event(new ClaimWasRejectedEvent($command->getUser(), $claim));
+
+            return $claim;
+        });
     }
 }

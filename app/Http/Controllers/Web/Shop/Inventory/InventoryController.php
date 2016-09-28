@@ -147,7 +147,7 @@ class InventoryController extends Controller
             Messages::error('Some fields require input!');
 
             return $this->redirect(route('shop.inventory.create', [$username]))
-                ->withErrors($e->validator->getMessageBag());
+                ->withErrors($e->validator->getMessageBag())->withInput($request->all());
         }
     }
 

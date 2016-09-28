@@ -6,7 +6,7 @@
 
 namespace Kabooodle\Bus\Handlers\Events\Group;
 
-use Illuminate\Contracts\Mail\Mailer;
+use Kabooodle\Libraries\Emails\KitEmail;
 use Kabooodle\Bus\Events\Group\GroupWasCreatedEvent;
 
 /**
@@ -16,23 +16,18 @@ use Kabooodle\Bus\Events\Group\GroupWasCreatedEvent;
 class GroupWasCreatedEventHandler
 {
     /**
-     * GroupWasCreatedEventHandler constructor.
-     *
-     * @param Mailer $mailer
-     */
-    public function __construct(Mailer $mailer)
-    {
-        $this->mailer = $mailer;
-    }
-
-    /**
      * @param GroupWasCreatedEvent $event
      */
     public function handle(GroupWasCreatedEvent $event)
     {
         $group = $event->getGroup();
-        $this->mailer->send('groups.emails.created', ['group' => $group], function ($m) use ($group) {
-            $m->to(user()->email)->subject('Group created on '.env('APP_NAME'));
-        });
+
+        $mail = new KitEmail;
+        $mail->setView('groups.emails.created')
+            ->setParameters(['group' => $group])
+            ->setCallable(function ($m) use ($group) {
+                $m->to(user()->email)->subject('Group created on '.env('APP_NAME'));
+            })
+            ->send();
     }
 }

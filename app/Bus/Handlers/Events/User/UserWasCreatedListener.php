@@ -6,7 +6,7 @@
 
 namespace Kabooodle\Bus\Handlers\Events\User;
 
-use Illuminate\Contracts\Mail\Mailer;
+use Kabooodle\Libraries\Emails\PiperEmail;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 
 /**
@@ -16,29 +16,20 @@ use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 class UserWasCreatedListener
 {
     /**
-     * @var Mailer
-     */
-    public $mailer;
-
-    /**
-     * UserWasCreatedListener constructor.
-     *
-     * @param Mailer $mailer
-     */
-    public function __construct(Mailer $mailer)
-    {
-        $this->mailer = $mailer;
-    }
-
-    /**
      * @param UserWasCreatedEvent $event
      */
     public function handle(UserWasCreatedEvent $event)
     {
         $user = $event->getUser();
-        $this->mailer->send('auth.emails.welcome', ['user' => $user], function ($m) use ($user) {
-            $m->to($user->email)->subject('Welcome to '.env('APP_NAME').'!');
-        });
+
+        $mail = new PiperEmail;
+        $mail->setView('auth.emails.welcome')
+            ->setParameters(['user' => $user])
+            ->setCallable(function ($m) use ($user) {
+                $m->to($user->email)
+                    ->subject('Welcome to '.env('APP_NAME').'!');
+            })
+            ->send();
 
 //        $this->nexmo->message()->send([
 //            'to' => '19163902455',

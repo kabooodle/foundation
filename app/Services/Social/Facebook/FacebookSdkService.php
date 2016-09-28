@@ -113,33 +113,34 @@ class FacebookSdkService extends LaravelFacebookSdk
      */
     public function sendRequest($method, $endpoint, array $params = [], $accessToken = null, $eTag = null, $graphVersion = null)
     {
-        $accessToken = $accessToken ?: $this->defaultAccessToken;
-        $graphVersion = $graphVersion ?: $this->defaultGraphVersion;
-
-        // Prepare a Facebook Request
-        $request = $this->request($method, $endpoint, $params, $accessToken, $eTag, $graphVersion);
-
-        // Send the Prepared Request to Facebook Graph
-        $response = $this->client->sendRequest($request);
-
-        // THIS IS BULLSHIT THROW AWAY CODE, JUST TESTING LOGIC HANDLING
-        // AND FACEBOOKS BULLSHIT SDK
-        if ($method  <> 'delete' && $endpoint <> '/me/permissions') {
-
-            $x = new FacebookNodes;
-//        $x->facebook_node = '';
-//        $x->facebook_node_id = ''; // use regex to grab intvalue of endpoint
-
-            $responseGraphEdge = $response->getGraphNode();
-            $responseArray = $responseGraphEdge->asArray();
-            $responseJson = $responseGraphEdge->asJson();
-
-            $x->facebook_post_id = $responseArray['id'];
-            $x->facebook_data = $responseJson;
-            $x->save();
-        }
-
-
-        return $this->lastResponse = $response;
+        return parent::sendRequest($method, $endpoint, $params, $accessToken, $eTag, $graphVersion);
+//        $accessToken = $accessToken ?: $this->defaultAccessToken;
+//        $graphVersion = $graphVersion ?: $this->defaultGraphVersion;
+//
+//        // Prepare a Facebook Request
+//        $request = $this->request($method, $endpoint, $params, $accessToken, $eTag, $graphVersion);
+//
+//        // Send the Prepared Request to Facebook Graph
+//        $response = $this->client->sendRequest($request);
+//
+//        // THIS IS BULLSHIT THROW AWAY CODE, JUST TESTING LOGIC HANDLING
+//        // AND FACEBOOKS BULLSHIT SDK
+//        if ($method  <> 'delete' && $endpoint <> '/me/permissions') {
+//
+//            $x = new FacebookNodes;
+////        $x->facebook_node = '';
+////        $x->facebook_node_id = ''; // use regex to grab intvalue of endpoint
+//
+//            $responseGraphEdge = $response->getGraphEdge();
+//            $responseArray = $responseGraphEdge->asArray();
+//            $responseJson = $responseGraphEdge->asJson();
+//
+//            $x->facebook_post_id = $responseArray['id'];
+//            $x->facebook_data = $responseJson;
+//            $x->save();
+//        }
+//
+//
+//        return $this->lastResponse = $response;
     }
 }
