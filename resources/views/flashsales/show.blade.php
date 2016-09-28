@@ -47,7 +47,7 @@
                     <div class="col-md-4">
                         <div class="box p-a-xs">
                             <div class="item">
-                                <img src="https://placekitten.com/g/32/20" class="img-responsive">
+                                <img src="{{ $inventoryItem->firstImage() ? $inventoryItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
                             </div>
                             <div class="p-a">
                                 <div class="text-muted clearfix">

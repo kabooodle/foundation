@@ -35,6 +35,7 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
 //        'categories',
 //        'flashsales',
 //        'claims'
+//        'files'
     ];
 
     /**
@@ -184,6 +185,19 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
     public function files()
     {
         return $this->morphMany(Files::class, 'fileable');
+    }
+
+    /**
+     * @return null
+     */
+    public function firstImage()
+    {
+        $images = $this->files;
+        if ($images->count() > 0) {
+            return $images->sortBy('order')->first();
+        }
+
+        return null;
     }
 
     /**

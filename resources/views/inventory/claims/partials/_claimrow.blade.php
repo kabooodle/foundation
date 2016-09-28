@@ -3,7 +3,7 @@
     <td style="vertical-align: middle !important">
         <a href="{{ route('shop.inventory.show', [user()->username, $claim->inventoryItem->obfuscateToURIStringFromModel()]) }}"
            class="_500 h6"><span class="@if($claim->wasRejected()) w-24 @else w-40 @endif avatar">
-                                            <img src="https://placekitten.com/g/30/30">
+                                            <img src="{{ $claim->inventoryItem->firstImage() ? $claim->inventoryItem->firstImage()->location : 'https://placekitten.com/g/30/30' }}">
                                           </span></a>
     </td>
     <td style="vertical-align: middle !important">${{ $claim->inventory_item_object_data['price_usd'] }}</td>

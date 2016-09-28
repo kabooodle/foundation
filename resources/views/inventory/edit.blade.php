@@ -76,6 +76,16 @@
         </div>
     </div>
 
+    @if($item->files->count() > 0)
+        <div class="row">
+    @foreach($item->files as $file)
+        <div class="col-sm-4">
+            <img src="{{ $file->location }}" class="w-full"/>
+        </div>
+    @endforeach
+        </div>
+    @endif
+
     <div class="form-group row m-t-md">
         <div class="col-sm-offset-3 col-sm-9">
             <button type="submit" class="btn primary">Save</button>
@@ -85,38 +95,40 @@
 
     {{ Form::close() }}
 
-    @push('footer-scripts')
-    <script>
-        $(function(){
-            var tags = [
-             @foreach ($item->tagsArray() as $tag)
-                {tag: "{{$tag}}" },
-             @endforeach
-            ];
 
-            $('.selectized').selectize({
-                delimiter: ',',
-                persist: false,
-                valueField: 'tag',
-                labelField: 'tag',
-                searchField: 'tag',
-                options : tags,
-                plugins: ['remove_button'],
-                create: function(input) {
-                    return {
-                        tag: input
-                    }
-                }
-            });
-
-            $('.float').keypress(function(event) {
-                if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-                    event.preventDefault();
-                }
-            });
-        });
-    </script>
-
-    @endpush
 
 @endsection
+
+@push('footer-scripts')
+<script>
+    $(function(){
+        var tags = [
+                @foreach ($item->tagsArray() as $tag)
+            {tag: "{{$tag}}" },
+            @endforeach
+        ];
+
+        $('.selectized').selectize({
+            delimiter: ',',
+            persist: false,
+            valueField: 'tag',
+            labelField: 'tag',
+            searchField: 'tag',
+            options : tags,
+            plugins: ['remove_button'],
+            create: function(input) {
+                return {
+                    tag: input
+                }
+            }
+        });
+
+        $('.float').keypress(function(event) {
+            if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+@endpush

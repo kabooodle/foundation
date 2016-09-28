@@ -85,9 +85,9 @@
                         <div class="list-item p-l-0 p-r-0">
                             <div class="list-left">
 
-                        <span class="w-40 avatar">
-                                            <img src="https://placekitten.com/g/32/32">
-                                          </span>
+                        <span class="w-50 avatar">
+                            <img src="{{ $item->firstImage() ? $item->firstImage()->location : 'https://placekitten.com/g/32/32'}}">
+                        </span>
                             </div>
                             <div class="list-body">
                                 <div>

@@ -2,7 +2,7 @@
     <div class="row-col m-b">
         <div class="col-md-6">
             <div class="box no-border no-shadow white">
-                <img class="img-responsive" src="http://s3-us-west-2.amazonaws.com/hypebeast-wordpress/image/2009/07/huf-converse-product-red-skidgrip-2.jpg">
+                <img class="img-responsive" src="{{ $item->firstImage() ? $item->firstImage()->location : 'http://s3-us-west-2.amazonaws.com/hypebeast-wordpress/image/2009/07/huf-converse-product-red-skidgrip-2.jpg' }}">
             </div>
         </div>
         <div class="col-md-4">
