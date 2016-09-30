@@ -6,9 +6,11 @@
 
 namespace Kabooodle\Models;
 
+use DB;
 use Carbon\Carbon;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Queue\SerializesModels;
+use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
 use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
@@ -19,6 +21,7 @@ use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
 use Kabooodle\Models\Contracts\ShoppableInterface;
+use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
 
 /**
  * Class FlashSales
@@ -26,7 +29,16 @@ use Kabooodle\Models\Contracts\ShoppableInterface;
  */
 class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisionable, ShoppableInterface
 {
-    use AlgoliaEloquentTrait, ClaimableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, SerializesModels, SoftDeletes, RevisionableTrait, AuthorableTrait;
+    use AlgoliaEloquentTrait,
+        AuthorableTrait,
+        ClaimableTrait,
+        FollowableTrait,
+        LikeableTrait,
+        ObfuscatesIdTrait,
+        PresentableTrait,
+        RevisionableTrait,
+        SerializesModels,
+        SoftDeletes;
 
     const TYPE_SINGLE = 'single';
     const TYPE_GROUP = 'group';
@@ -54,8 +66,23 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      * @var array
      */
     protected $with = [
-//        'likes',
+        'likes',
     ];
+
+    /**
+     * @var string
+     */
+    protected $presenter = FlashsaleModelPresenter::class;
+
+    /**
+     * @param $indexName
+     *
+     * @return bool
+     */
+    public function indexOnly($indexName)
+    {
+        return $this->privacy == 'public';
+    }
 
     /**
      * @return array
@@ -177,6 +204,26 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     }
 
     /**
+     * @param $scope
+     *
+     * @return mixed
+     */
+    public function scopeWithoutExpired($scope)
+    {
+        return $scope->where('ends_at', '>', DB::raw('NOW()'));
+    }
+
+    /**
+     * @param $scope
+     *
+     * @return mixed
+     */
+    public function scopeWithoutSecret($scope)
+    {
+        return $scope->where('privacy', '<>', 'secret');
+    }
+
+    /**
      * @param $v
      *
      * @return Carbon
@@ -258,14 +305,13 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     /**
      * TODO: Identify better way for returning a collection of the admins + owner.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany|static
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function admins()
     {
 //        $owner = $this->owner->toArray();
 //        $admins = $this->onlyAdmins->toArray();
 //        return collect($owner)->merge(collect($admins));
-
         return $this->onlyAdmins();
     }
 
@@ -278,15 +324,15 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     }
 
     /**
- * @return \Illuminate\Database\Eloquent\Relations\HasMany
- */
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function invitations()
     {
         return $this->morphMany(Invitations::class, 'invitable')->orderBy('invited_at', 'desc');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function inventoryItems()
     {
@@ -296,7 +342,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     /**
      * TODO: Identify a way to check whether the item was enabled or enabled by date.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function enabledInventoryItems()
     {
@@ -309,6 +355,14 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public function pendingInvitations()
     {
         return $this->invitations()->where('accepted', 0);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function claims()
+    {
+        return $this->morphMany(Claims::class, 'shoppable');
     }
 
     /**
@@ -384,10 +438,20 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     }
 
     /**
-     * @return mixed
+     * @param User|null $user
+     *
+     * @return bool|User
      */
-    public function claims()
+    public function userIsAdminOrSeller(User $user = null)
     {
-        return $this->morphMany(Claims::class, 'shoppable');
+        if (!$user || is_null($user)) {
+            return false;
+        }
+
+        $sellersAndAdmins = $this->adminsAndSellers();
+
+        return $sellersAndAdmins->filter(function($user) use ($user) {
+            return $user->id == $user->id;
+        })->first();
     }
 }

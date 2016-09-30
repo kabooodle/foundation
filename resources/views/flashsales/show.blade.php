@@ -13,56 +13,55 @@
 
     @include('flashsales.partials._flashsaleheader')
 
-
-    @if($item->inventoryItems->count() > 0)
-    <div class="row">
-        <div class="col-md-3">
-            <div class="list-group m-b">
-                <a href="" class="list-group-item">
-                    <span class="pull-right label">12</span>
-                    Carly
-                </a>
-                <a href="" class="list-group-item">
-                    <span class="pull-right label ">5</span>
-                    Lindsey's
-                </a>
-                <a href="" class="list-group-item">
-                    <span class="pull-right text-muted m-l-xs"></span>
-                    <span class="pull-right label ">4</span>
-                    Socks
-                </a>
-                <a href="" class="list-group-item">
-                    <span class="pull-right label ">9</span>
-                    Nike
-                </a>
-                <a href="" class="list-group-item">
-                    <span class="pull-right label ">10</span>
-                    Adidas
-                </a>
+        @if($item->inventoryItems->count() > 0)
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group m-b">
+                    <a href="" class="list-group-item">
+                        <span class="pull-right label">12</span>
+                        Carly
+                    </a>
+                    <a href="" class="list-group-item">
+                        <span class="pull-right label ">5</span>
+                        Lindsey's
+                    </a>
+                    <a href="" class="list-group-item">
+                        <span class="pull-right text-muted m-l-xs"></span>
+                        <span class="pull-right label ">4</span>
+                        Socks
+                    </a>
+                    <a href="" class="list-group-item">
+                        <span class="pull-right label ">9</span>
+                        Nike
+                    </a>
+                    <a href="" class="list-group-item">
+                        <span class="pull-right label ">10</span>
+                        Adidas
+                    </a>
+                </div>
             </div>
-        </div>
-        <div class="col-md-9">
-            <div class="row">
-            @foreach($item->inventoryItems as $inventoryItem)
-                    <div class="col-md-4">
-                        <div class="box p-a-xs">
-                            <div class="item">
-                                <img src="{{ $inventoryItem->firstImage() ? $inventoryItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
-                            </div>
-                            <div class="p-a">
-                                <div class="text-muted clearfix">
-                                    <h6 class="m-b-0"><a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}" class="_800">{!! $inventoryItem->name !!}</a></h6>
-                                    <p class="m-b-0"><span class="text-muted">Quantity:</span> <span class="">{{ $inventoryItem->getAvailableQuantity() == 0 ? 'Out of stock' : $inventoryItem->getAvailableQuantity() }}</span></p>
+            <div class="col-md-9">
+                <div class="row">
+                @foreach($item->inventoryItems as $inventoryItem)
+                        <div class="col-md-4">
+                            <div class="box p-a-xs">
+                                <div class="item">
+                                    <img src="{{ $inventoryItem->firstImage() ? $inventoryItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
+                                </div>
+                                <div class="p-a">
+                                    <div class="text-muted clearfix">
+                                        <h6 class="m-b-0"><a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}" class="_800">{!! $inventoryItem->name !!}</a></h6>
+                                        <p class="m-b-0"><span class="text-muted">Quantity:</span> <span class="">{{ $inventoryItem->getAvailableQuantity() == 0 ? 'Out of stock' : $inventoryItem->getAvailableQuantity() }}</span></p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                    </div>
+                @endforeach
                 </div>
-            @endforeach
             </div>
         </div>
-    </div>
+        @endif
 
-    @endif
     <hr>
     <div id="about" class="anchor" style=" display: block;
     position: relative;

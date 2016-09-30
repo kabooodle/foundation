@@ -1,0 +1,16 @@
+.thumbnail {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  & img {
+    width: 100%;
+    height: auto;
+  }
+  &:hover,
+  & img:hover {
+    cursor: zoom-in;
+  }
+}

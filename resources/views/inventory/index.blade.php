@@ -196,14 +196,14 @@
                             <h5 class="modal-title">Select sales to assign item</h5>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group">
-                                <label class="md-check">
-                                    <input type="checkbox" class="has-value" name="flashsales[]"
-                                           value="{{ user()->username }}">
-                                    <i class="green"></i>
-                                    Your Store
-                                </label>
-                            </div>
+                            {{--<div class="form-group">--}}
+                                {{--<label class="md-check">--}}
+                                    {{--<input type="checkbox" class="has-value" name="flashsales[]"--}}
+                                           {{--value="{{ user()->username }}">--}}
+                                    {{--<i class="green"></i>--}}
+                                    {{--Your Store--}}
+                                {{--</label>--}}
+                            {{--</div>--}}
 
                             @foreach(user()->flashsalesAsSellerAndAdmins as $flashSale)
                                 <div class="form-group">

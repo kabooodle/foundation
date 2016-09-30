@@ -26,7 +26,6 @@ use Kabooodle\Models\Inventory;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Models\User;
 
-
 /**
  * Class InventoryController
  * @package Kabooodle\Http\Controllers\Web\Shop\Inventory
@@ -40,7 +39,11 @@ class InventoryController extends Controller
      */
     public function index(Request $request, $username)
     {
-        $data = user()->inventory->load(['categories', 'claims', 'tagged']);
+        if (user()->username <> $username) {
+            return redirect('/');
+        }
+
+        $data = user()->inventory;
 
         $page = $request->get('page', 1);
         $perPage = config('pagination.per-page');

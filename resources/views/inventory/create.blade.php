@@ -4,32 +4,7 @@
     @include('inventory.partials._leftnav')
 @endsection
 
-@push('header-styles')
-<link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"/>
-
-@endpush
-
-
 @section('body-inner-content')
-    <style>
-        .thumbnail {
-            position: relative;
-            width: 210px;
-            height: 210px;
-            overflow: hidden;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .thumbnail img {
-            width: 100%;
-            height: auto;
-        }
-        .thumbnail:hover,
-        .thumbnail img:hover {
-            cursor: zoom-in;
-        }
-    </style>
-
     @include('widgets._fileuploadscripts')
 
     {{ Form::open(['route' => ['shop.inventory.store', user()->username]]) }}
@@ -41,7 +16,12 @@
         </div>
         <div class="box-divider m-a-0"></div>
         <div class="box-body">
-
+            <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
+                <label for="categories" class="col-sm-3 form-control-label">Categories</label>
+                <div class="col-sm-9">
+                    {{ Form::select('categories', \Kabooodle\Models\Categories::all()->sortBy('name')->pluck('name','id'), [], ['class' => 'form-control']) }}
+                </div>
+            </div>
             <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
                 <label for="name" class="col-sm-3 form-control-label">Name</label>
                 <div class="col-sm-9">
@@ -64,12 +44,6 @@
                 <label for="initial_qty" class="col-sm-3 form-control-label">Current Total Quantity</label>
                 <div class="col-sm-9">
                     {{ Form::number('initial_qty', null or 0, ['class' => 'form-control', 'v-model' => 'initial_qty', 'number']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
-                <label for="categories" class="col-sm-3 form-control-label">Categories</label>
-                <div class="col-sm-9">
-                    {{ Form::select('categories', \Kabooodle\Models\Categories::all()->sortBy('name')->pluck('name','id'), [], ['class' => 'form-control']) }}
                 </div>
             </div>
             <div class="form-group row {{ $errors->has('tags') ? 'has-danger' : null }}">
@@ -110,24 +84,22 @@
                     <div id="js-program_logo_upload"></div>
 
                     <div id="uploadTemplate">
-                    <button type="button" class="btn white  fileinput-button" style="display: inline-block;">
-                        Add Image(s)<input type="file" name="file" class="js-s3_fileupload" accept='image/*' multiple/>
-                    </button>
-                    <button type="button" class="btn danger js-cancel_button" style="display: none;">
-                        Cancel
-                        <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
-                            <div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
-                                <div class="progress-bar progress-bar-success" style="width: 5%;"></div>
+                        <button type="button" class="btn white  fileinput-button" style="display: inline-block;">
+                            Add Image(s)<input type="file" name="file" class="js-s3_fileupload" accept='image/*' multiple/>
+                        </button>
+                        <button type="button" class="btn danger js-cancel_button" style="display: none;">
+                            Cancel
+                            <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
+                                <div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
+                                    <div class="progress-bar progress-bar-success" style="width: 5%;"></div>
+                                </div>
                             </div>
-                            {{--<div class="progress-extended"></div>--}}
-                        </div>
-                    </button>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <div class="form-group row m-t-md">
         <div class="col-sm-offset-3 col-sm-9">
@@ -154,24 +126,20 @@
                     </div>
                     <input type="hidden" name="images[@{{ image.key }}][data]" value="@{{ image | json }}" />
                     <div class="box-body m-t-0 p-t-0">
-                        <div class="image_item_component" style="display: none;">
+                        <div class="image_item_component">
                             <label class="text-muted text-sm m-b-0 p-b-0">Quantity:</label>
-                            <input type="text" value="1" name="images[@{{ image.key }}][qty]" class="text-center image_qty_btn" disabled />
-                            <input type="hidden" value="1" name="images[@{{ image.key }}][item_new]" disabled />
-                            <label class="text-muted text-sm m-b-0 p-b-0 m-t-1">Size:</label>
-                            <select name="images[@{{ image.key }}][size]" class="form-control text-muted">
-                                <option value="">No sizes yet</option>
-                            </select>
+                            <input type="text" value="1" name="images[@{{ image.key }}][qty]" class="text-center image_qty_btn"  />
+                            <input type="hidden" value="1" name="images[@{{ image.key }}][item_new]"  />
                         </div>
-                        <div class="m-t-1">
-                            <button type="button" class="image_asalbum_btn btn btn-block image_item_component white text-muted text-sm" v-on:click="convertImageToAlbumImage" style="display: none">
-                                or Add Image back to album
-                            </button>
-                            <button type="button" class="image_asitem_btn image_album_component btn btn-block text-muted white text-sm" v-on:click="convertImageToItem" >
-                                Convert to new inventory item
-                                <input type="hidden" value="1" name="images[@{{ image.key }}][album_item]"   />
-                            </button>
-                        </div>
+                        {{--<div class="m-t-1">--}}
+                            {{--<button type="button" class="image_asalbum_btn btn btn-block image_item_component white text-muted text-sm" v-on:click="convertImageToAlbumImage" style="display: none">--}}
+                                {{--or Add Image back to album--}}
+                            {{--</button>--}}
+                            {{--<button type="button" class="image_asitem_btn image_album_component btn btn-block text-muted white text-sm" v-on:click="convertImageToItem" >--}}
+                                {{--Convert to new inventory item--}}
+                                {{--<input type="hidden" value="1" name="images[@{{ image.key }}][album_item]"   />--}}
+                            {{--</button>--}}
+                        {{--</div>--}}
                     </div>
                 </div>
             </div>
@@ -205,22 +173,22 @@
                         min: 1
                     });
                 },
-                convertImageToAlbumImage : function(e) {
-                    var scope = this,
-                            $this = $(e.target),
-                            $container = $this.closest('.thumbnail-container');
-
-                    $container.find('.image_item_component').hide().find(':input').prop('disabled', true);
-                    $container.find('.image_album_component').show().find(':input').prop('disabled', false);
-                },
-                convertImageToItem : function(e) {
-                    var scope = this,
-                            $this = $(e.target),
-                            $container = $this.closest('.thumbnail-container');
-
-                    $container.find('.image_album_component').hide().find(':input').prop('disabled', true);
-                    $container.find('.image_item_component').show().find(':input').prop('disabled', false);
-                },
+//                convertImageToAlbumImage : function(e) {
+//                    var scope = this,
+//                            $this = $(e.target),
+//                            $container = $this.closest('.thumbnail-container');
+//
+//                    $container.find('.image_item_component').hide().find(':input').prop('disabled', true);
+//                    $container.find('.image_album_component').show().find(':input').prop('disabled', false);
+//                },
+//                convertImageToItem : function(e) {
+//                    var scope = this,
+//                            $this = $(e.target),
+//                            $container = $this.closest('.thumbnail-container');
+//
+//                    $container.find('.image_album_component').hide().find(':input').prop('disabled', true);
+//                    $container.find('.image_item_component').show().find(':input').prop('disabled', false);
+//                },
                 deleteFile : function(e) {
                     var scope = this,
                             $this = $(e.target);
@@ -239,13 +207,6 @@
 <script>
 
     $(function () {
-        $(document).on('click', '[data-toggle="lightbox"]', function(event) {
-            event.preventDefault();
-            $(this).ekkoLightbox({
-//                alwaysShowClose: true
-            });
-        });
-
         $('#js-program_logo_upload').s3uploader({
             save_file_model: false,
             multiple: true,

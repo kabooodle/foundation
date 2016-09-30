@@ -26,7 +26,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      * @var array
      */
     protected $appends = [
-        'claimer_item_date_price'
+//        'claimer_item_date_price' // leave lazy load
     ];
 
     /**
@@ -34,7 +34,10 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     protected $with = [
 //        'shoppable',
-//        'claimer'
+        'shipments',
+        'shipments.transaction',
+        'claimer',
+//        'inventoryItem',
     ];
 
     /**
@@ -201,15 +204,16 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
+     * FIXME: This needs to be a hasOneThrough (which doesnt exist).
+     * As a reminder, a claim can have many shipments, because shipments are nothing more than
+     * a data entry containing prices based on the parcel data.  The user may not like this price config etc;
+     * and try again.  However, you can only "transact" one claim, meaning, you can only pay for one of the
+     * shipping configurations you like.  Once paid for, thats it, the item cannot be re-shipped etc;
+     *
      * @return mixed
      */
     public function shipmentTransaction()
     {
-        $s = $this->shipments->load('transaction')->first();
-        if ($s) {
-            return $s->transaction;
-        }
-
-        return null;
+        return $this->hasManyThrough(ShippingTransactions::class, ShippingShipments::class, 'claim_id')->first();
     }
 }

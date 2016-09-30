@@ -1232,11 +1232,6 @@ if (! function_exists('getSateAbbrevs')) {
     }
 }
 
-
-
-
-
-
 if (! function_exists('apiRoute')) {
     /**
      * @param        $routeName
@@ -1280,18 +1275,27 @@ if (! function_exists('getEnvDomain')) {
      */
     function getEnvDomain($withTld = false)
     {
-        $httpHost = ( isset($_SERVER['HTTP_HOST']) ) ? $_SERVER['HTTP_HOST'] : gethostname();
-        if ($httpHost == 'kabooodle.ngrok.io' ) {
+        $httpHost = strtolower(request()->server->get('HTTP_HOST') ? : gethostname());
+
+        // Warning, what you are about to see is a hack.
+        // Although confusing at first, its essentially required because of how L5 handles
+        // environments (stupidly). So either close your eyes and jump ahead 4 lines or
+        // behold: the sexy hack.
+        if ($httpHost == 'app.kabooodle.ngrok.io') {
+            return 'kabooodle.ngrok.io';
+        }
+
+        // Actually, this whole method of getting the fucking domain is hacky......
+
+        // If we are using an ip address....
+        if (filter_var($httpHost, FILTER_VALIDATE_IP) or is_numeric($httpHost)) {
             return $httpHost;
         }
 
-        $name = request()->server->get('HTTP_HOST');
-        if (filter_var($name, FILTER_VALIDATE_IP) or is_numeric($name)) {
-            return $name;
-        }
+        $array = explode(".", $httpHost);
 
-        $array = explode(".", $name);
-
+        // Some fuckers try to surf using www.app.domain.tld or something stupid.
+        // so lets fix stupid...
         $name = count($array) >= 3 ? $array[1] : $array[0];
 
         return $withTld ? $name . '.'.getTld() : $name;
@@ -1327,6 +1331,16 @@ if (! function_exists('getAppVersion')) {
     function getAppVersion()
     {
         return Kabooodle\Foundation\Application\KabooodleApplication::APP_VERSION;
+    }
+}
+
+if (! function_exists('userOrGuest')) {
+    /**
+     * @return \Kabooodle\Models\User|null|bool
+     */
+    function userOrGuest()
+    {
+        return Auth::guest() ? null : Auth::user();
     }
 }
 

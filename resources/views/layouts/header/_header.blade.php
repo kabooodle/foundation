@@ -84,11 +84,11 @@
         <div class="collapse navbar-toggleable-sm" data-pjax="" id="navbar-4">
             <ul class="nav navbar-nav pull-left nav-active-border b-warning">
                 @if(user() && user()->subscribed('main'))
-                    <li class="nav-item">
-                        <a href="{{  route('shop.show', [user()->username]) }}"
-                           class="nav-link {{ Request::is('shop/'.user()->username.'') ? 'active' : null }}"><span
-                                    class="nav-text">Your Store</span></a>
-                    </li>
+                    {{--<li class="nav-item">--}}
+                        {{--<a href="{{  route('shop.show', [user()->username]) }}"--}}
+                           {{--class="nav-link {{ Request::is('shop/'.user()->username.'') ? 'active' : null }}"><span--}}
+                                    {{--class="nav-text">Your Store</span></a>--}}
+                    {{--</li>--}}
                     <li class="nav-item dropdown dropdown-onhover">
                         <a class="nav-link dropdown-toggle {{ Request::is('shop/*/inventory*') ? 'active' : null }}"
                            href="{{ route('shop.inventory.index', [user()->username]) }}" data-toggle="dropdown"><span

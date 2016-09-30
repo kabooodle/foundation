@@ -6,10 +6,6 @@
 
 @section('body-inner-content')
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"  />
-    @endpush
-
     @if($item->flashsales && $item->flashsales->count() > 0)
     <div class="box-color p-a warning b-0">
         <h6 class="text-center m-b-0"><strong class="_700">Note:</strong> This item is currently listed in <kbd>{{ $item->flashsales->count() }}</kbd> active flash sales.</h6>
@@ -72,17 +68,22 @@
                 </div>
             </div>
 
-
         </div>
     </div>
 
     @if($item->files->count() > 0)
         <div class="row">
-    @foreach($item->files as $file)
-        <div class="col-sm-4">
-            <img src="{{ $file->location }}" class="w-full"/>
-        </div>
-    @endforeach
+        @foreach($item->files as $file)
+            <div class="col-sm-4">
+                <div class="box">
+                    <div class="item">
+                        <div class="thumbnail">
+                            <img src="{{ $file->location }}" data-gallery="{!!  $item->name  !!}" class="w-full" data-toggle="lightbox" data-remote="{{ $file->location }}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
         </div>
     @endif
 
@@ -120,12 +121,6 @@
                 return {
                     tag: input
                 }
-            }
-        });
-
-        $('.float').keypress(function(event) {
-            if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-                event.preventDefault();
             }
         });
     });

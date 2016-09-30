@@ -77,13 +77,17 @@ $(function () {
     //     }
     // });
 
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox();
+    });
+
     $('form').submit(function () {
         var $form = $(this);
         $form.find(':submit').prop('disabled', true);
     });
 
     $('[data-toggle="tooltip"]').tooltip();
-    // $('[ui-jp]').uiJp();
     $('.dropdown.dropdown-onhover').hover(function () {
         $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();
     }, function () {
@@ -95,6 +99,5 @@ $(function () {
             event.preventDefault();
         }
     });
-
 
 });

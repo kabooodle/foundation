@@ -21,7 +21,7 @@ class CurrentUserComposer
      */
     public function compose(View $view)
     {
-        $view->with_currentUser(Auth::user());
+        $view->with_currentUser(user()->toJson());
         $view->with_authToken(Auth::user() ? JWTAuth::fromUser(Auth::user()) : null);
     }
 }

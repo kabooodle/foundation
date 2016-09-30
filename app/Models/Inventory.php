@@ -31,11 +31,11 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
      * @var array
      */
     protected $with = [
-//        'tagged',
-//        'categories',
-//        'flashsales',
-//        'claims'
-//        'files'
+        'tagged',
+        'categories',
+        'flashsales',
+//        'claims', // <- deathtrap of recursion
+        'files'
     ];
 
     /**
@@ -104,8 +104,8 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
         return [
             'name' => 'required',
             'description' => 'required',
-            'initial_qty' => 'required|int',
-            'price_usd' => 'required|numeric|digits_between:0,100000000',
+            'initial_qty' => 'required|integer|min:0',
+            'price_usd' => 'required|min:0|digits_between:0,100000000|numeric',
             'categories' => 'required|exists:categories,id',
         ];
     }

@@ -54,14 +54,14 @@ class AddInventoryCommandHandler
 
         return DB::transaction(function () use ($command) {
             // First, create the main item.
-            $items[] = $this->buildNewInventoryItem(
-                $command->getActor(),
-                $command->getName(),
-                $command->getDescription(),
-                $command->getPrice(),
-                $command->getQty(),
-                $this->imagesAssociatedToItem
-            );
+//            $items[] = $this->buildNewInventoryItem(
+//                $command->getActor(),
+//                $command->getName(),
+//                $command->getDescription(),
+//                $command->getPrice(),
+//                $command->getQty(),
+//                $this->imagesAssociatedToItem
+//            );
 
             // Iterate over the images that are to be duplicates of the original item.
             if ($this->imagesAsNewItem && count($this->imagesAsNewItem) > 0) {

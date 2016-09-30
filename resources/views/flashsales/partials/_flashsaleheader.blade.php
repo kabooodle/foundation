@@ -11,7 +11,16 @@
         </div>
         <div class="box-divider m-a-0"></div>
         <div class="box-body m-0 p-b-1">
-                    <p class="h6 _500">{{ $item->startsAtHuman() }} - {{ $item->endsAtHuman() }}</p>
+            <div class="clearfix">
+                <p class="h6 _500 pull-left">{{ $item->startsAtHuman() }} - {{ $item->endsAtHuman() }}</p>
+                <div class="pull-right">
+                    @if(! $item->saleIsActive())
+                        @if($item->userIsAdminOrSeller(userOrGuest()))
+                            <p class="text-sm label  text-muted">Browsing as Seller</p>
+                        @endif
+                    @endif
+                </div>
+            </div>
                     {{--<p class="text-muted text-left">Host: <a class="a" href="{{ route('groups.show', [$item->group->getUUID()]) }}">{!!  $item->group->name !!}</a></p>--}}
         </div>
     </div>

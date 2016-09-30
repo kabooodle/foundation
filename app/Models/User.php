@@ -47,6 +47,13 @@ class User extends BaseEloquentModel implements
     use AlgoliaEloquentTrait, Authenticatable, Authorizable, Billable, CanResetPassword, DispatchesJobs, LikeableTrait, FollowableTrait, ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SyncableGraphNodeTrait;
 
     /**
+     * @var array
+     */
+    protected $with = [
+        'creditBalance'
+    ];
+
+    /**
      * @var string
      */
     protected $presenter = UserModelPresenter::class;

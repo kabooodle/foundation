@@ -14,7 +14,8 @@ elixir(function (mix) {
         ], elixir.config.publicPath + 'css/app.css')
 
         .sass([
-            'vendor/theme/bootstrap/scss/bootstrap.scss'
+            'vendor/theme/bootstrap/scss/bootstrap.scss',
+            'vendor/lightbox/lightbox.css'
         ], elixir.config.publicPath + 'css/vendor.css')
 
         .styles([
@@ -41,7 +42,8 @@ elixir(function (mix) {
             // 'vendor/theme/scripts/jquery/PACE/pace.min.js',
             // 'vendor/theme/scripts/jquery/screenfull/dist/screenfull.min.js',
             'vendor/jquery/noty/packaged/jquery.noty.packaged.js',
-            'vendor/clipboard/clipboard.js'
+            'vendor/clipboard/clipboard.js',
+            'vendor/lightbox/lightbox.js'
         ], elixir.config.publicPath + 'js/vendor.js')
 
         .scripts([

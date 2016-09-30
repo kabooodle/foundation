@@ -6,12 +6,14 @@
 
 namespace Kabooodle\Http\Controllers\Web\FlashSales;
 
+use DB;
 use Binput;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
 use Kabooodle\Bus\Commands\Flashsale\UpdateFlashsaleCommand;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Http\Requests\Flashsale\FlashsaleViewRequest;
 use Kabooodle\Models\Dates\StartsAndEndsAt;
 use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
@@ -30,7 +32,7 @@ class FlashSalesController extends Controller
      */
     public function index()
     {
-        $data = FlashSales::paginate();
+        $data = FlashSales::withoutExpired()->paginate();
 
         return $this->view('flashsales.index')->with(compact('data'));
     }
@@ -85,31 +87,31 @@ class FlashSalesController extends Controller
     }
 
     /**
-     * @param $idAndName
+     * @param FlashsaleViewRequest $request
+     * @param                      $idAndName
      *
-     * @return $this|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function show($idAndName)
+    public function show(FlashsaleViewRequest $request, $idAndName)
     {
-        $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $item = FlashSales::find($decryptedId);
+        $item = $request->getFlashsale();
 
-        if ($item) {
+        if ($item && ! $item->saleHasEnded()) {
             return $this->view('flashsales.show')->with(compact('item'));
         }
 
-        return $this->redirect(route('inventory.index'));
+        return $this->redirect('/');
     }
 
     /**
-     * @param $idAndName
+     * @param FlashsaleViewRequest $request
+     * @param                      $idAndName
      *
-     * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function edit($idAndName)
+    public function edit(FlashsaleViewRequest $request, $idAndName)
     {
-        $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $item = FlashSales::find($decryptedId);
+        $item = $request->getFlashsale();
 
         if ($item) {
             if (!$item->owner->id == user()->id) {
@@ -123,18 +125,16 @@ class FlashSalesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param         $idAndName
+     * @param FlashsaleViewRequest $request
+     * @param                      $idAndName
      *
-     * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $idAndName)
+    public function update(FlashsaleViewRequest $request, $idAndName)
     {
-        $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $item = FlashSales::find($decryptedId);
-
         try {
             $this->validate($request, FlashSales::getRules());
+            $item = $request->getFlashsale();
 
             if (!$item->owner->id == user()->id) {
                 return redirect()->route('flashsales.show', [$idAndName]);
