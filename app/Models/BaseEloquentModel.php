@@ -26,6 +26,11 @@ class BaseEloquentModel extends Eloquent
     public static $perEnvironment = true;
 
     /**
+     * @var array
+     */
+    public static $revisionableEvents = ['Updated', 'Deleted', 'Restored'];
+
+    /**
      * @param $query
      *
      * @return mixed

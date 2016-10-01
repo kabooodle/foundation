@@ -7,6 +7,10 @@
 @section('body-inner-content')
     @include('widgets._fileuploadscripts')
 
+    <script>
+        var inventoryTypes = {!!  \Kabooodle\Models\InventoryType::withStylesAndSizes()->get()->toJson()  !!}
+    </script>
+
     {{ Form::open(['route' => ['shop.inventory.store', user()->username]]) }}
 
     <div class="box">
@@ -17,17 +21,23 @@
         <div class="box-divider m-a-0"></div>
         <div class="box-body">
             <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
-                <label for="categories" class="col-sm-3 form-control-label">Categories</label>
+                <label for="type" class="col-sm-3 form-control-label">Type</label>
                 <div class="col-sm-9">
-                    {{ Form::select('categories', \Kabooodle\Models\Categories::all()->sortBy('name')->pluck('name','id'), [], ['class' => 'form-control']) }}
+                    {{ Form::select('type', \Kabooodle\Models\InventoryType::LuLaRoe()->withStylesAndSizes()->get()->pluck('name','id'), [], ['class' => 'form-control']) }}
                 </div>
             </div>
-            <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
-                <label for="name" class="col-sm-3 form-control-label">Name</label>
+            <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
+                <label for="type" class="col-sm-3 form-control-label">Style</label>
                 <div class="col-sm-9">
-                    {{ Form::text('name', null, ['class' => 'form-control']) }}
+                    {{ Form::select('styles', \Kabooodle\Models\InventoryType::LuLaRoe()->withStylesAndSizes()->first()->styles->pluck('name','id'), [], ['class' => 'form-control']) }}
                 </div>
             </div>
+            {{--<div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">--}}
+                {{--<label for="name" class="col-sm-3 form-control-label">Name</label>--}}
+                {{--<div class="col-sm-9">--}}
+                    {{--{{ Form::text('name', null, ['class' => 'form-control']) }}--}}
+                {{--</div>--}}
+            {{--</div>--}}
             <div class="form-group row {{ $errors->has('description') ? 'has-danger' : null }}">
                 <label for="description" class="col-sm-3 form-control-label">Description</label>
                 <div class="col-sm-9">
@@ -35,69 +45,93 @@
                 </div>
             </div>
             <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}">
-                <label for="price_usd" class="col-sm-3 form-control-label">Price in $</label>
+                <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
                 <div class="col-sm-9">
                     {{ Form::number('price_usd', null or 0, ['class' => 'form-control float', 'step' => 'any', 'min' => 0]) }}
                 </div>
             </div>
             <div class="form-group row {{ $errors->has('initial_qty') ? 'has-danger' : null }}">
-                <label for="initial_qty" class="col-sm-3 form-control-label">Current Total Quantity</label>
+                <label for="initial_qty" class="col-sm-3 form-control-label">Quantity</label>
                 <div class="col-sm-9">
                     {{ Form::number('initial_qty', null or 0, ['class' => 'form-control', 'v-model' => 'initial_qty', 'number']) }}
                 </div>
             </div>
             <div class="form-group row {{ $errors->has('tags') ? 'has-danger' : null }}">
-                <label for="tags" class="col-sm-3 form-control-label">Tags or Keywords</label>
+                <label for="tags" class="col-sm-3 form-control-label">Tags, Keywords</label>
                 <div class="col-sm-9">
                     {{ Form::text('tags', null, ['class' => 'form-control selectized']) }}
                 </div>
             </div>
-            <div class="form-group row">
-                <label for="tags" class="col-sm-3 form-control-label">Add to Flash Sale
-                    <small class="text-muted block">(This can be done later)</small>
-                </label>
-                <div class="col-sm-9">
-                    @if(user()->flashsalesAsSeller->count() > 0)
-                    @foreach(user()->flashsalesAsSeller as $flashSale)
-                        <div class="form-group">
-                            <label class="md-check">
-                                <input type="checkbox" class="has-value" name="flashsales[]"
-                                       value="{{ $flashSale->id }}">
-                                <i class="green"></i>
-                                {!! $flashSale->name !!}
-                            </label>
-                        </div>
-                    @endforeach
-                    @else
-                        <p class="text-muted"><em>You are not currently an admin or seller in any flash sales.</em></p>
-                    @endif
-                </div>
-            </div>
+            {{--<div class="form-group row">--}}
+                {{--<label for="tags" class="col-sm-3 form-control-label">Add to Flash Sale--}}
+                    {{--<small class="text-muted block">(This can be done later)</small>--}}
+                {{--</label>--}}
+                {{--<div class="col-sm-9">--}}
+                    {{--@if(user()->flashsalesAsSeller->count() > 0)--}}
+                    {{--@foreach(user()->flashsalesAsSeller as $flashSale)--}}
+                        {{--<div class="form-group">--}}
+                            {{--<label class="md-check">--}}
+                                {{--<input type="checkbox" class="has-value" name="flashsales[]"--}}
+                                       {{--value="{{ $flashSale->id }}">--}}
+                                {{--<i class="green"></i>--}}
+                                {{--{!! $flashSale->name !!}--}}
+                            {{--</label>--}}
+                        {{--</div>--}}
+                    {{--@endforeach--}}
+                    {{--@else--}}
+                        {{--<p class="text-muted"><em>You are not currently an admin or seller in any flash sales.</em></p>--}}
+                    {{--@endif--}}
+                {{--</div>--}}
+            {{--</div>--}}
 
-            <div class="form-group row m-t-md">
-                <label for="tags" class="col-sm-3 form-control-label">Images</label>
-                <div class="col-sm-9">
-                    <div class="row clearfix">
-                        <div is="inventory-component"></div>
-                    </div>
-
-                    <div id="js-program_logo_upload"></div>
-
-                    <div id="uploadTemplate">
-                        <button type="button" class="btn white  fileinput-button" style="display: inline-block;">
-                            Add Image(s)<input type="file" name="file" class="js-s3_fileupload" accept='image/*' multiple/>
-                        </button>
-                        <button type="button" class="btn danger js-cancel_button" style="display: none;">
-                            Cancel
-                            <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
-                                <div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
-                                    <div class="progress-bar progress-bar-success" style="width: 5%;"></div>
+            <div class="modal fade" id="modals">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="clearfix text-center center-block">
+                                <div class="btn-group btn-group-md col-sm-9" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn white">Small</button>
+                                    <button type="button" class="btn white">Large</button>
+                                    <button type="button" class="btn white">XL</button>
                                 </div>
                             </div>
-                        </button>
-                    </div>
-                </div>
+                            <div class="form-group row m-t-md">
+                            <label for="tags" class="col-sm-3 form-control-label">Images</label>
+                            <div class="col-sm-9">
+                            <div class="row clearfix">
+                            <div is="inventory-component"></div>
+                            </div>
+
+                            <div id="js-program_logo_upload"></div>
+
+                            <div id="uploadTemplate">
+                            <button type="button" class="btn white  fileinput-button" style="display: inline-block;">
+                            Add Image(s)<input type="file" name="file" class="js-s3_fileupload" accept='image/*' multiple/>
+                            </button>
+                            <button type="button" class="btn danger js-cancel_button" style="display: none;">
+                            Cancel
+                            <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
+                            <div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
+                            <div class="progress-bar progress-bar-success" style="width: 5%;"></div>
+                            </div>
+                            </div>
+                            </button>
+                            </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+
+            <div class="form-group row">
+                <label for="" class="col-sm-3 form-control-table"></label>
+                <button type="button" class="btn btn-sm white" data-toggle="modal" data-target="#modals">Add Size(s)</button>
+
             </div>
+
+
         </div>
     </div>
 
@@ -109,7 +143,6 @@
     </div>
 
     {{ Form::close() }}
-
 
     <script id="thumbnail-template" type="text/x-template">
 
