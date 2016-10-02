@@ -29,6 +29,8 @@ class Emojify
             self::$client = new Client(new Ruleset());
         }
 
+        self::$client->ascii = true;
+        self::$client->sprites = true;
         return self::$client;
     }
 }

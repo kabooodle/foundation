@@ -1,6 +1,3 @@
-<script src="//cdn.jsdelivr.net/emojione/2.2.6/lib/js/emojione.min.js"></script>
-<link rel="stylesheet" href="//cdn.jsdelivr.net/emojione/2.2.6/assets/css/emojione.min.css"/>
-
 <div class="box">
     <div class="box-header">
         <h3>Comments <span class="label success" id="comments_count">{{ $comment_model->comments->count() }}</span></h3>
