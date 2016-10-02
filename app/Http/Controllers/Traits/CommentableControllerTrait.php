@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
 
 namespace Kabooodle\Http\Controllers\Traits;
 
@@ -27,8 +31,12 @@ trait CommentableControllerTrait
         /** @var Comments $comment */
         $comment = $this->dispatchNow(new AddCommentCommand(user(), $commentable, $commentText));
 
+        // Gott refresh this relationship.
+        $commentable->load('comments');
+
         return [
             'json' => $comment->toJson(),
+            'comments' => $commentable->comments->toJson(),
             'total' => $commentable->comments->count(),
             'html' => $comment->present()->buildComment()
         ];

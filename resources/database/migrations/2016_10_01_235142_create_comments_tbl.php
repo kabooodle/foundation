@@ -14,6 +14,7 @@ class CreateCommentsTbl extends Migration
     {
         Schema::create(\Kabooodle\Models\Comments::getTableName(), function(Blueprint $table){
             $table->increments('id');
+            $table->binary('uuid');
             $table->integer('user_id')->unsigned();
             $table->integer('commentable_parent_id')->unsigned();
             $table->integer('commentable_id')->unsigned();
@@ -28,6 +29,8 @@ class CreateCommentsTbl extends Migration
                 ->onDelete('cascade')
                 ->onUpdated('cascade');
         });
+
+        DB::update("ALTER TABLE ".\Kabooodle\Models\Comments::getTableName()." AUTO_INCREMENT = 100433;");
     }
 
     /**

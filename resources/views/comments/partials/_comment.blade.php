@@ -1,4 +1,4 @@
-<div class="sl-item">
+<div class="sl-item" data-id="{{ $_comment->uuid }}" data-author-id="{{ $_comment->author->public_hash }}" data-author="{{ $_comment->author->name }}">
     <div class="sl-left">
         <img src="https://unsplash.it/32/32/?random" class="img-circle">
     </div>

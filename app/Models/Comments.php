@@ -6,12 +6,14 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Presenters\Models\Comments\CommentsModelPresenter;
-use Kabooodle\Presenters\PresentableTrait;
 use Sofa\Revisionable\Revisionable;
+use Kabooodle\Models\Traits\UuidableTrait;
+use Kabooodle\Presenters\PresentableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kabooodle\Models\Traits\EmojifyableTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Libraries\Linkify\LinkifyableTrait;
+use Kabooodle\Presenters\Models\Comments\CommentsModelPresenter;
 
 /**
  * Class Comments
@@ -19,7 +21,9 @@ use Kabooodle\Libraries\Linkify\LinkifyableTrait;
  */
 class Comments extends BaseEloquentModel implements Revisionable
 {
-    use LinkifyableTrait, PresentableTrait, RevisionableTrait, SoftDeletes;
+    use EmojifyableTrait, LinkifyableTrait, PresentableTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
+
+    const CONVERT_EMOJI = true;
 
     /**
      * @var string
@@ -36,6 +40,7 @@ class Comments extends BaseEloquentModel implements Revisionable
      */
     protected $attributes = [
         'user_id' => 'int',
+        'uuid' => 'string',
         'commentable_parent_id' => 'int',
         'commentable_id' => 'int',
         'commentable_type' => 'string',
@@ -58,7 +63,8 @@ class Comments extends BaseEloquentModel implements Revisionable
      * @var array
      */
     protected $hidden = [
-        'user_id'
+        'user_id',
+        'id'
     ];
 
     public static function boot()
@@ -66,7 +72,6 @@ class Comments extends BaseEloquentModel implements Revisionable
         parent::boot();
 
         // Dont allow the ability to set "text" on the entity.
-        // We overload it here which ultimately is decorated with linkify() (below)
         self::saving(function(self $model){
             $model->text = $model->text_raw;
         });
@@ -104,10 +109,17 @@ class Comments extends BaseEloquentModel implements Revisionable
     }
 
     /**
-     * @param string $value
+     * @param $value
+     *
+     * @return string
      */
-    public function setTextAttribute($value)
+    public function getTextAttribute($value)
     {
-        $this->attributes['text'] = $this->linkify($value);
+        $text = $this->linkify($value);
+        if (self::CONVERT_EMOJI) {
+            return $this->emojify($text);
+        }
+
+        return $text;
     }
 }
