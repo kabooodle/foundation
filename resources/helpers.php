@@ -8,9 +8,10 @@ if (!function_exists('staticAsset')) {
      */
     function staticAsset($path, $cacheBust = true)
     {
-        $url = env('AWS_CLOUDFRONT_DISTRIBUTION', '');
+        $url = env('AWS_CLOUDFRONT_DISTRIBUTION', false);
+        $postPart = ltrim($path, '/') . ($cacheBust ? '?v='.getAppVersion() : null);
 
-        return '//' . $url . '/' . ltrim($path, '/') . ($cacheBust ? '?v='.getAppVersion() : null);
+        return  $url ? '//' . $url . '/' . $postPart : '/' . $postPart;
     }
 }
 

@@ -21,6 +21,14 @@
 
 <script>
     $(function(){
+
+        var emoji = $("#comment_new_text").emojioneArea({
+            pickerPosition: "bottom",
+            filtersPosition: "bottom",
+            autocomplete : true,
+            saveEmojisAs: "shortname"
+        });
+
         var form = $('#comment_new_form');
         var commentsDelAllBtn = $('#comment_delete_all_btn');
 
@@ -42,10 +50,11 @@
 
             $textInput.prop('disabled', true).addClass('disabled');
 
+
             $.ajax({
                 method : 'POST',
                 url : $this.prop('action'),
-                data: data,
+                data: data
             }).success(function(response, statusText, xhr){
                 $(response.html).appendTo($commentsContainer);
                 $commentsCountEl.html(parseInt(response.total));
@@ -54,6 +63,7 @@
             }).always(function(){
                 $submitBtn.prop('disabled', false).removeClass('disabled');
                 $textInput.prop('disabled', false).removeClass('disabled').val('');
+                emoji[0].emojioneArea.setText('');
             });
 
             return false;
