@@ -16,6 +16,8 @@
             -ms-text-size-adjust: 100% !important;
             -webkit-font-smoothing: antialiased !important;
         }
+
+
         .tableContent img {
             border: 0 !important;
             display: block !important;
@@ -61,6 +63,10 @@
         }
         .bgItem{
             background: #ffffff;
+        }
+
+        #contentTable img {
+            display: inline-block !important;
         }
 
         @media only screen and (max-width:480px)
@@ -188,13 +194,13 @@
                                                     </table>
                                                 </div>
                                                 <div class="movableContent" style="border: 0px; padding-top: 0px; position: relative;">
-                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" id="contentTable">
                                                         <tr><td height='55'></td></tr>
                                                         <tr>
                                                             <td align='left'>
                                                                 <div class="contentEditableContainer contentTextEditable">
                                                                     <div class="contentEditable" align='center'>
-                                                                        {{ $emailContent or '' }}
+                                                                        {!!  $emailContent or ''  !!}
                                                                     </div>
                                                                 </div>
                                                             </td>

@@ -1,6 +1,9 @@
 <div class="box">
-    <div class="box-header">
-        <h3>Comments <span class="label success" id="comments_count">{{ $comment_model->comments->count() }}</span></h3>
+    <div class="box-header clearfix">
+        <h3 class="pull-left">Comments <span class="label grey-400 text-white" id="comments_count">{{ $comment_model->comments->count() }}</span></h3>
+        <div class="pull-right">
+            <button id="comment_delete_all_btn" data-model-id="{{$comment_model->getUUID()}}" type="button" class="btn white btn-xs text-muted">Delete All</button>
+        </div>
     </div>
     <div class="box-body">
         <div class="streamline b-l m-l-md" id="comments_container">
@@ -19,6 +22,7 @@
 <script>
     $(function(){
         var form = $('#comment_new_form');
+        var commentsDelAllBtn = $('#comment_delete_all_btn');
 
         form.submit(function(e){
             e.preventDefault();
@@ -27,6 +31,7 @@
                     $textInput = $this.find('#comment_new_text'),
                     $commentsContainer = $('#comments_container'),
                     $commentsCountEl = $('#comments_count'),
+
                     data = $this.serialize();
 
             if (!$textInput.val() || $textInput.val() == '') {
@@ -40,7 +45,7 @@
             $.ajax({
                 method : 'POST',
                 url : $this.prop('action'),
-                data: data
+                data: data,
             }).success(function(response, statusText, xhr){
                 $(response.html).appendTo($commentsContainer);
                 $commentsCountEl.html(parseInt(response.total));

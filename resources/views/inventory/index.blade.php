@@ -2,9 +2,6 @@
 
 @section('body-menu')
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"/>
-    @endpush
 
     <div class="pull-left">
         <div class="btn-toolbar center-block text-center">

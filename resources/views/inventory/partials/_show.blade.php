@@ -6,7 +6,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="box-header no-shadow"><h2 class="_700">{!! $item->name !!}</h2>
+            <div class="box-header no-shadow"><h2 class="_800">{!! $item->name !!}</h2>
                 <p class="m-b-0 m-t-1 h4 text-warning _500">${{ $item->getPrice() }}</p>
                 <div class="list-item m-t-2 m-b-0 box">
                     <a href="{{ route('shop.show', [$item->user->username]) }}" class="list-left">

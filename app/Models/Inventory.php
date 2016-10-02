@@ -143,6 +143,22 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName() : string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id');

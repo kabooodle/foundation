@@ -12,10 +12,6 @@
 
 @section('body-inner-content')
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"/>
-    @endpush
-
     @include('flashsales.partials._flashsaleheader')
 
     <div class="box">

@@ -10,10 +10,6 @@
 
 @section('body-content')
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"/>
-    @endpush
-
     <div class="row">
         <div class="col-md-12">
             {{ Form::open(['route' => ['shipping.store', user()->username]]) }}

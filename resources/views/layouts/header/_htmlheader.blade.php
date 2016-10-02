@@ -7,14 +7,14 @@
     <meta name="token" content="{{ csrf_token() }}">
 
     @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/vendor.css?{{ getAppVersion() }}" type="text/css"  />
-    <link rel="stylesheet" href="/assets/css/app.css?{{ getAppVersion() }}" type="text/css" />
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ staticAsset('/assets/css/vendor.css') }}" type="text/css"  />
+    <link rel="stylesheet" href="{{ staticAsset('/assets/css/app.css') }}?" type="text/css" />
+    <link rel="stylesheet" href="{{ staticAsset('/assets/css/merchant.css') }}" type="text/css"/>
     @endpush
 
     @push('header-scripts')
-    <script src="/assets/js/vendor.js?{{ getAppVersion() }}"></script>
-    <script src="/assets/js/merchant.js?{{ getAppVersion() }}"></script>
+    <script src="{{ staticAsset('/assets/js/vendor.js') }}"></script>
+    <script src="{{ staticAsset('/assets/js/merchant.js') }}"></script>
     <script src="//js.pusher.com/3.2/pusher.min.js"></script>
     <script type="text/javascript">
         var KABOOODLE_APP = window.KABOOODLE_APP || {};

@@ -20,10 +20,6 @@
 
 @section('body-content')
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"  />
-    @endpush
-
     <div class="row">
         <div class="col-sm-6 col-md-4 col-lg-3">
             <div class="box p-a">

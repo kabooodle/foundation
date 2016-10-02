@@ -9,11 +9,6 @@
 @section('body-inner-content')
 
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"  />
-    @endpush
-
-
     <div class="box">
         <div class="box-header">
             <h2>Create a flash sale</h2>

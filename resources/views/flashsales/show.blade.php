@@ -7,9 +7,6 @@
 
 @section('body-content')
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"  />
-    @endpush
 
     @include('flashsales.partials._flashsaleheader')
 
@@ -44,14 +41,23 @@
                 <div class="row">
                 @foreach($item->inventoryItems as $inventoryItem)
                         <div class="col-md-4">
-                            <div class="box p-a-xs">
+                            <div class="box p-a-xs p-b-0">
                                 <div class="item">
-                                    <img src="{{ $inventoryItem->firstImage() ? $inventoryItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
+                                    <a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}">
+                                        <img src="{{ $inventoryItem->firstImage() ? $inventoryItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
+                                    </a>
                                 </div>
-                                <div class="p-a">
+                                <div class="p-a p-b-0">
                                     <div class="text-muted clearfix">
                                         <h6 class="m-b-0"><a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}" class="_800">{!! $inventoryItem->name !!}</a></h6>
-                                        <p class="m-b-0"><span class="text-muted">Quantity:</span> <span class="">{{ $inventoryItem->getAvailableQuantity() == 0 ? 'Out of stock' : $inventoryItem->getAvailableQuantity() }}</span></p>
+                                        <div class="m-b-0 text-sm clearfix">
+                                            <div class="pull-left">
+                                                 <span class="text-muted ">Qty:</span> <span class="">{{ $inventoryItem->getAvailableQuantity() == 0 ? 'Out of stock' : $inventoryItem->getAvailableQuantity() }}</span>
+                                            </div>
+                                            <div class="pull-right">
+                                                <span class="text-muted"><i class="fa fa-comment-o" aria-hidden="true"></i></span> <span class="">{{ $inventoryItem->comments->count() }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

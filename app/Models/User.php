@@ -44,7 +44,18 @@ class User extends BaseEloquentModel implements
     ShoppableInterface,
     Revisionable
 {
-    use AlgoliaEloquentTrait, Authenticatable, Authorizable, Billable, CanResetPassword, DispatchesJobs, LikeableTrait, FollowableTrait, ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SyncableGraphNodeTrait;
+    use AlgoliaEloquentTrait,
+        Authenticatable,
+        Authorizable,
+        Billable,
+        CanResetPassword,
+        DispatchesJobs,
+        FollowableTrait,
+        LikeableTrait,
+        ObfuscatesIdTrait,
+        PresentableTrait,
+        RevisionableTrait,
+        SyncableGraphNodeTrait;
 
     /**
      * @var array
@@ -119,14 +130,14 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'invited_by_user_id', 'activated', 'timezone', 'city', 'state'
+        'name', 'email', 'password', 'invited_by_user_id', 'activated', 'timezone',
     ];
 
     /**
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'stripe_id', 'card_brand', 'card_last_four', 'trial_ends_at', 'pivot', 'activated', 'access_token', 'facebook_user_id'
+        'password', 'remember_token', 'id', 'stripe_id', 'card_brand', 'referred_by_user_id', 'card_last_four', 'trial_ends_at', 'pivot', 'activated', 'access_token', 'facebook_access_token', 'facebook_user_id'
     ];
 
     /**

@@ -6,11 +6,21 @@
 
 namespace Kabooodle\Models\Contracts;
 
+use Kabooodle\Models\User;
+
 /**
  * Interface CommentableInterface
  * @package Kabooodle\Models\Contracts
  */
 interface CommentableInterface
 {
+    /**
+     * @return User
+     */
+    public function getOwner();
 
+    /**
+     * @return string
+     */
+    public function getName() : string;
 }
