@@ -6,6 +6,8 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Presenters\Models\Comments\CommentsModelPresenter;
+use Kabooodle\Presenters\PresentableTrait;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
@@ -17,12 +19,17 @@ use Kabooodle\Libraries\Linkify\LinkifyableTrait;
  */
 class Comments extends BaseEloquentModel implements Revisionable
 {
-    use LinkifyableTrait, RevisionableTrait, SoftDeletes;
+    use LinkifyableTrait, PresentableTrait, RevisionableTrait, SoftDeletes;
 
     /**
      * @var string
      */
     protected $table = 'comments';
+
+    /**
+     * @var string
+     */
+    protected $presenter = CommentsModelPresenter::class;
 
     /**
      * @var array
@@ -63,6 +70,29 @@ class Comments extends BaseEloquentModel implements Revisionable
         self::saving(function(self $model){
             $model->text = $model->text_raw;
         });
+    }
+
+    public static function getRules()
+    {
+        return [
+            'text_raw' => 'required'
+        ];
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->author();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

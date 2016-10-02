@@ -38,6 +38,7 @@
 
             $.ajaxSetup({
                 headers: {
+                    '_token': $('meta[name="token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')
                 }
             });

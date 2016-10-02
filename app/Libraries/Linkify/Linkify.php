@@ -12,12 +12,21 @@ namespace Kabooodle\Libraries\Linkify;
  */
 class Linkify implements LinkifyInterface
 {
+    const HREF_CLASSES = ' text-primary _500 ';
+
     /**
      * Default options.
      *
      * @var array
      */
-    protected $options;
+    protected $defaultOptions = [
+        'attr' => ['class' => self::HREF_CLASSES]
+    ];
+
+    /**
+     * @var array
+     */
+    protected $options = [];
 
     /**
      * Constructor.
@@ -26,7 +35,7 @@ class Linkify implements LinkifyInterface
      */
     public function __construct(array $options = [])
     {
-        $this->options = $options;
+        $this->options = $options ? : $this->options;
     }
 
     /**
@@ -70,7 +79,7 @@ class Linkify implements LinkifyInterface
             return $text;
         }
 
-        $options = array_merge_recursive($this->options, $options);
+        $options = array_merge_recursive($this->options + $this->defaultOptions, $options);
 
         $attr = '';
 

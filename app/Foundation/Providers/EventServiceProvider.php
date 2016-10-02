@@ -39,6 +39,9 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Inventory\InventoryItemWasRemovedFromSaleEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Inventory\InventoryItemWasRemovedFromSaleEventHandler::class
         ],
+        \Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Comments\CommentWasCreatedEventHandler::class
+        ],
         \Kabooodle\Bus\Events\Claim\ClaimWasRejectedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Claim\ClaimWasRejectedEventHandler::class
         ],

@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\FlashSales;
 
 use Binput;
+use Kabooodle\Http\Requests\Comments\CommentRequest;
 use Messages;
 use Response;
 use Exception;
@@ -15,6 +16,7 @@ use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
+use Kabooodle\Http\Controllers\Traits\CommentableControllerTrait;
 
 /**
  * Class SellersInventoryController
@@ -22,7 +24,7 @@ use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
  */
 class SellersInventoryController extends Controller
 {
-    use ObfuscatesIdTrait;
+    use CommentableControllerTrait, ObfuscatesIdTrait;
 
     /**
      * This is where we will list all the sellers' items.
@@ -106,5 +108,23 @@ class SellersInventoryController extends Controller
         } catch (Exception $e) {
             return \Response::json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * @param CommentRequest $request
+     * @param                $saleIdAndName
+     * @param                $itemIdAndName
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeComment(CommentRequest $request, $saleIdAndName, $itemIdAndName)
+    {
+        $decryptedId = $this->obfuscateFromURIString(Binput::clean($saleIdAndName));
+        $flashSale = FlashSales::find($decryptedId);
+        $inventory = $flashSale->inventoryItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
+
+        $data = self::handleStoreComment($inventory, $request->getCommentText());
+
+        return Response::json($data, 200);
     }
 }
