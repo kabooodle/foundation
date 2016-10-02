@@ -16,7 +16,7 @@ $env = $app->detectEnvironment(function() use ($app){
     if ($args && str_contains($args[0], 'phpunit')) {
         $env = 'testing';
     } else {
-        $httpHost = strtolower(isset($_SERVER['http_host']) ? $_SERVER['http_host'] : gethostname());
+        $httpHost = strtolower(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : gethostname());
         switch ($httpHost) {
             case 'kabooodle.com':
                 $env = 'production';
@@ -28,6 +28,7 @@ $env = $app->detectEnvironment(function() use ($app){
                 $env = 'staging';
                 break;
 
+            case 'ngrok' :
             case 'kabooodle.ngrok.io' :
             case '932b4484.ngrok.io' :
             case 'app.kabooodle.ngrok.io' :
