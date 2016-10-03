@@ -1,5 +1,5 @@
 <a href="{{ route('profile.index') }}" class="nav-link {{ Request::is('profile') ? 'active' : null }}">
-    Profile
+    Account Settings
 </a>
 <a href="{{ route('profile.social.edit') }}" class="nav-link {{ Request::is('profile/notifications') ? 'active' : null }}">
     Notifications

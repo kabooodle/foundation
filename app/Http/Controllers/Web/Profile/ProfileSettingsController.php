@@ -7,6 +7,8 @@
 namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
+use Illuminate\Support\Facades\Hash;
+use Kabooodle\Models\User;
 use Messages;
 use Illuminate\Http\Request;
 use Kabooodle\Models\MailingAddress;
@@ -26,7 +28,58 @@ class ProfileSettingsController extends Controller
      */
     public function index()
     {
-        return $this->view('profile.index');
+        $user = user();
+        return $this->view('profile.index')->with(compact('user'));
+    }
+
+    public function postProfile(Request $request)
+    {
+        $input = [
+            'name' => Binput::get('name'),
+            'email' => Binput::get('email'),
+            'password' => Binput::get('password'),
+            'newPassword' => Binput::get('newPassword'),
+            'newPassword_confirmation' => Binput::get('newPassword_confirmation')
+        ];
+
+        // Set Validation Rules
+        $rules = [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . user()->id,
+            'password' => 'required_with:newPassword,newPassword_confirmation',
+            'newPassword' => 'required_with:newPassword_confirmation,password|min:6|confirmed',
+            'newPassword_confirmation' => 'required_with:newPassword_confirmation'
+        ];
+
+        try {
+            $this->validate($request, $rules);
+
+
+            user()->name = $input['name'];
+            user()->email = $input['email'];
+
+            if($input['newPassword']) {
+                if (!Hash::check($input['password'], user()->password)) {
+                    Messages::error('Password is incorrect.');
+
+                    return $this->redirect(route('profile.index'));
+                }
+                $password = Hash::make($input['newPassword']);
+                user()->password = $password;
+            }
+
+            user()->save();
+
+            Messages::success("Profile updated!");
+
+            return $this->redirect()->route('profile.index');
+
+        } catch(ValidationException $e) {
+            Messages::error($e->validator->getMessageBag()->first());
+
+            return $this->redirect(route('profile.index'))
+                ->withErrors($e->validator->getMessageBag());
+        }
     }
 
     /**

@@ -3,5 +3,24 @@
 
 @section('settings-content')
 
+    {{ Form::open(['route' => 'profile.index', 'method' => 'POST']) }}
+    <div class="box">
+        <div class="box-header">
+            <h2>Account Settings</h2>
+        </div>
+        <div class="box-divider m-a-0"></div>
+        <div class="box-body">
+            @include('profile.partials._profilesettings', ['_key' => 'user', '_user' => $user])
+        </div>
+    </div>
+
+    <div class="form-group row m-t-md">
+        <div class="col-sm-offset-3 col-sm-9">
+            <button type="submit" class="btn primary">Save</button>
+            <a class="m-l text-muted" href="">Cancel</a>
+        </div>
+    </div>
+
+    {{ Form::close() }}
 
 @endsection

@@ -5,6 +5,10 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'profile.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@index'
     ]);
+    Route::post('/profile', [
+        'as' => 'profile.index.update',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@postProfile'
+    ]);
     Route::get('/profile/addresses', [
         'as' => 'profile.addresses.edit',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@getAddresses'
