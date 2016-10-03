@@ -48,7 +48,7 @@ class ProfileSettingsController extends Controller
             'email' => 'required|email|unique:users,email,' . user()->id,
             'password' => 'required_with:newPassword,newPassword_confirmation',
             'newPassword' => 'required_with:newPassword_confirmation,password|min:6|confirmed',
-            'newPassword_confirmation' => 'required_with:newPassword_confirmation'
+            'newPassword_confirmation' => 'required_with:newPassword'
         ];
 
         try {
