@@ -8,6 +8,7 @@ namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
 use Illuminate\Support\Facades\Hash;
+use Kabooodle\Bus\Events\User\UserSettingsUpdated;
 use Kabooodle\Models\User;
 use Messages;
 use Illuminate\Http\Request;
@@ -69,6 +70,8 @@ class ProfileSettingsController extends Controller
             }
 
             user()->save();
+
+            event(new UserSettingsUpdated(user()));
 
             Messages::success("Profile updated!");
 
