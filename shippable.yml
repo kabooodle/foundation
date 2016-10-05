@@ -17,7 +17,6 @@ services:
     - mysql
 
 before_script:
-#   - mysql -e 'create database ebdb_testing;'
    - mysql -e "GRANT ALL ON *.* TO shippable@localhost IDENTIFIED BY ''; FLUSH PRIVILEGES;"
    - mkdir -p shippable/testresults
    - mkdir -p shippable/codecoverage
