@@ -10,10 +10,6 @@
 
 @section('body-content')
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"/>
-    @endpush
-
     <div class="box">
         <div class="box-header">
             <h4>Shipping Information</h4>

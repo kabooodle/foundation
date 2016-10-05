@@ -10,10 +10,6 @@
 
 @section('body-content')
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"/>
-    @endpush
-
     <div class="alert warning">
         <p class="m-b-0 text-center h6">Note: Rates expire {{ $shipment->expires_on->diffForHumans() }}.</p>
     </div>

@@ -26,6 +26,7 @@ class AddInventoryCommandTest extends BaseTestCase
             'description' => 'Some item',
             'qty' => 1,
             'price' => 100,
+            'categoryId' => 1
         ];
 
         $object = new AddInventoryCommand(
@@ -33,7 +34,8 @@ class AddInventoryCommandTest extends BaseTestCase
             $params['name'],
             $params['description'],
             $params['qty'],
-            $params['price']
+            $params['price'],
+            $params['categoryId']
         );
 
         return compact('params', 'object');

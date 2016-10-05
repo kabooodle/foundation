@@ -1,4 +1,5 @@
 var elixir = require('laravel-elixir');
+require('laravel-elixir-vueify');
 
 // elixir.config.production = true;
 elixir.config.assetsPath = 'resources/assets/';
@@ -7,8 +8,10 @@ elixir.config.publicPath = 'public/assets/';
 elixir.config.js.folder = elixir.config.css.folder = elixir.config.css.sass.folder = '/';
 
 elixir(function (mix) {
-    mix
 
+    // mix.browserify('app/app.js');
+
+    mix
         .sass([
             'vendor/theme/scss/app.scss'
         ], elixir.config.publicPath + 'css/app.css')
@@ -25,7 +28,9 @@ elixir(function (mix) {
             'vendor/selectizejs/dist/css/selectize.css',
             'vendor/selectizejs/dist/css/selectize.default.css',
             'vendor/datetimepicker/bootstrap-datetimepicker.min.css',
-            'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.css'
+            'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.css',
+            'vendor/emojione/emojione.css',
+            'vendor/emojionearea/emojionearea.css'
             // 'vendor/selectizejs/dist/css/selectize.bootstrap3.css'
         ], elixir.config.publicPath + 'css/merchant.css')
 
@@ -37,7 +42,8 @@ elixir(function (mix) {
             'vendor/theme/scripts/jquery/tether/dist/js/tether.min.js',
             'vendor/theme/scripts/jquery/bootstrap/dist/js/bootstrap.js',
             'vendor/theme/scripts/jquery/underscore/underscore-min.js',
-            'vendor/theme/scripts/jquery/moment/moment.js',
+            'vendor/moment/moment.js',
+            'vendor/moment/moment-tz.js',
             'vendor/datetimepicker/bootstrap-datetimepicker.min.js',
             // 'vendor/theme/scripts/jquery/PACE/pace.min.js',
             // 'vendor/theme/scripts/jquery/screenfull/dist/screenfull.min.js',
@@ -50,7 +56,9 @@ elixir(function (mix) {
             // 'vendor/theme/scripts/jquery/select2/dist/js/select2.full.js',
             'vendor/selectizejs/dist/js/standalone/selectize.js',
             'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.js',
-            'app/s3uploader.js'
+            'app/s3uploader.js',
+            'vendor/emojione/emojione.js',
+            'vendor/emojionearea/emojionearea.js'
         ], elixir.config.publicPath + 'js/merchant.js')
 
         .scripts([
@@ -61,9 +69,12 @@ elixir(function (mix) {
             'vendor/theme/scripts/ui-screenfull.js',
             'vendor/theme/scripts/ui-scroll-to.js',
             'vendor/theme/scripts/ui-jp.js',
-            'app/app.js'
+            'app/base.js'
 
-        ], elixir.config.publicPath + 'js/app.js');
+        ], elixir.config.publicPath + 'js/base.js');
 
-        // .version(['css/app.css', 'css/vendor.css', 'js/vendor.js']);
+
+
+
+    // .version(['css/app.css', 'css/vendor.css', 'js/vendor.js']);
 });

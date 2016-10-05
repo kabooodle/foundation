@@ -39,7 +39,7 @@ if (! function_exists('rateAddon')) {
 
 if (! function_exists('getParcelsListUSPS')) {
     /**
-     * @return Array
+     * @return array
      */
     function getParcelListByCarrier()
     {

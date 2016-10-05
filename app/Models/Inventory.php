@@ -14,18 +14,28 @@ use Kabooodle\Models\Traits\LikeableTrait;
 use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kabooodle\Models\Traits\CommentableTrait;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
+use Kabooodle\Models\Contracts\CommentableInterface;
 
 /**
  * Class Inventory
  * @package Kabooodle\Models
  */
-class Inventory extends BaseEloquentModel implements LikeableInterface, Revisionable
+class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable
 {
-    use AlgoliaEloquentTrait, ClaimableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, SoftDeletes, TaggableTrait, RevisionableTrait;
+    use AlgoliaEloquentTrait,
+        ClaimableTrait,
+        CommentableTrait,
+        FollowableTrait,
+        LikeableTrait,
+        ObfuscatesIdTrait,
+        RevisionableTrait,
+        SoftDeletes,
+        TaggableTrait;
 
     /**
      * @var array
@@ -35,7 +45,8 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
         'categories',
         'flashsales',
 //        'claims', // <- deathtrap of recursion
-        'files'
+        'files',
+        'comments'
     ];
 
     /**
@@ -127,6 +138,22 @@ class Inventory extends BaseEloquentModel implements LikeableInterface, Revision
     public static function factory(array $attributes)
     {
         return self::create($attributes);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName() : string
+    {
+        return $this->name;
     }
 
     /**

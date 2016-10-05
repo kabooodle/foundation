@@ -18,11 +18,17 @@ abstract class PresenterAbstract
     protected $entity;
 
     /**
+     * @var \Illuminate\Foundation\Application|\Illuminate\View\Factory|mixed
+     */
+    public $view;
+
+    /**
      * @param mixed $entity
      */
     public function __construct($entity)
     {
         $this->entity = $entity;
+        $this->view = app('view');
     }
 
     /**

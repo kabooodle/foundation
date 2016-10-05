@@ -17,7 +17,7 @@ trait PresentableTrait
      *
      * @var mixed
      */
-    protected $presenterInstance;
+    protected static $presenterInstance;
 
     /**
      * Prepare a new or cached presenter instance
@@ -31,10 +31,10 @@ trait PresentableTrait
             throw new PresenterException('Please set the $presenter property to your presenter path.');
         }
 
-        if (!$this->presenterInstance) {
-            $this->presenterInstance = new $this->presenter($this);
+        if (!self::$presenterInstance) {
+            self::$presenterInstance = new $this->presenter($this);
         }
 
-        return $this->presenterInstance;
+        return self::$presenterInstance;
     }
 }

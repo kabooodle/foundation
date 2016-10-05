@@ -1,4 +1,19 @@
 <?php
+if (!function_exists('staticAsset')) {
+    /**
+     * @param      $path
+     * @param bool $cacheBust
+     *
+     * @return string
+     */
+    function staticAsset($path, $cacheBust = true)
+    {
+        $url = env('AWS_CLOUDFRONT_DISTRIBUTION', false);
+        $postPart = ltrim($path, '/') . ($cacheBust ? '?v='.getAppVersion() : null);
+
+        return  $url ? '//' . $url . '/' . $postPart : '/' . $postPart;
+    }
+}
 
 if (!function_exists('getMimeContentType')) {
     function getMimeContentType($filename)

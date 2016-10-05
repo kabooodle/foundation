@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\FlashSales;
 
 use Binput;
+use Kabooodle\Http\Requests\Comments\CommentRequest;
 use Messages;
 use Response;
 use Exception;
@@ -15,6 +16,7 @@ use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
+use Kabooodle\Http\Controllers\Traits\CommentableControllerTrait;
 
 /**
  * Class SellersInventoryController
@@ -22,7 +24,7 @@ use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
  */
 class SellersInventoryController extends Controller
 {
-    use ObfuscatesIdTrait;
+    use CommentableControllerTrait, ObfuscatesIdTrait;
 
     /**
      * This is where we will list all the sellers' items.
@@ -103,6 +105,50 @@ class SellersInventoryController extends Controller
 
             Messages::success('Item claimed successfully!');
             return Response::json([], 200);
+        } catch (Exception $e) {
+            return \Response::json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * @param CommentRequest $request
+     * @param                $saleIdAndName
+     * @param                $itemIdAndName
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeComment(CommentRequest $request, $saleIdAndName, $itemIdAndName)
+    {
+        $decryptedId = $this->obfuscateFromURIString(Binput::clean($saleIdAndName));
+        $flashSale = FlashSales::find($decryptedId);
+        $inventory = $flashSale->inventoryItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
+
+        $data = self::handleStoreComment($inventory, $request->getCommentText());
+
+        return Response::json($data, 200);
+    }
+
+    /**
+     * @param CommentRequest $request
+     * @param                $saleIdAndName
+     * @param                $itemIdAndName
+     * @param                $commentId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteComment(CommentRequest $request, $saleIdAndName, $itemIdAndName, $commentId)
+    {
+        try {
+            $decryptedId = $this->obfuscateFromURIString(Binput::clean($saleIdAndName));
+            $flashSale = FlashSales::find($decryptedId);
+            $inventory = $flashSale->inventoryItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
+
+            $comments = $inventory->comments;
+            $comment = $comments->find($commentId)->firstOrFail();
+
+            $data = self::handleDeleteComment($inventory, $comment);
+
+            return Response::json($data, 200);
         } catch (Exception $e) {
             return \Response::json(['message' => $e->getMessage()], 500);
         }

@@ -17,9 +17,6 @@
 
 @section('body-content')
 
-    @push('header-styles')
-    <link rel="stylesheet" href="/assets/css/merchant.css?{{ getAppVersion() }}" type="text/css"/>
-    @endpush
     {{ Form::model($item, ['route' => ['flashsales.update', $item->getUUID()], 'method' => 'PUT']) }}
     <div class="padding">
 

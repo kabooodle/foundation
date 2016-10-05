@@ -16,6 +16,11 @@ use Eloquent;
 class BaseEloquentModel extends Eloquent
 {
     /**
+     * @var array
+     */
+    public static $revisionableEvents = ['Updated', 'Deleted', 'Restored'];
+
+    /**
      * @var bool
      */
     public static $perEnvironment = true;
@@ -100,5 +105,26 @@ class BaseEloquentModel extends Eloquent
     public static function getTableName()
     {
         return with(new static)->getTable();
+    }
+
+    /**
+     * @param string $method
+     * @param array  $parameters
+     *
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        // Magic method for calling, what are already magic properties on the model, as a function
+        // For example, "username" property would be called : $model->username however we can now invoke
+        // this retrieval using a method call: $model->getUsername()
+        if (starts_with($method, 'get')) {
+            $methodAsParameter = snake_case(str_replace('get', '', $method));
+            if (parent::__get($methodAsParameter)) {
+                return parent::__get($methodAsParameter);
+            }
+        }
+
+        return parent::__call($method, $parameters);
     }
 }

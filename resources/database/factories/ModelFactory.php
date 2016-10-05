@@ -11,6 +11,20 @@ $factory->define(Kabooodle\Models\User::class, function (Faker\Generator $faker)
     ];
 });
 
+
+$factory->define(Kabooodle\Models\Comments::class, function (Faker\Generator $faker) {
+    return [
+        'id' => $faker->randomNumber(),
+        'uuid' => \Ramsey\Uuid\Uuid::uuid4(),
+        'user_id' => 1,
+        'commentable_id' => 1,
+        'commentable_type' => '',
+        'text' => 'test',
+        'text_raw' => 'test'
+    ];
+});
+
+
 $factory->defineAs(\Kabooodle\Models\CreditTransactions::class, 'CreditTransactionsDebit', function (Faker\Generator $faker) {
     return [
         'user_id' => factory(Kabooodle\Models\User::class)->make()->id,

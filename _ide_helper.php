@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.2.31 on 2016-09-25.
+ * Generated for Laravel 5.2.31 on 2016-10-02.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -12263,6 +12263,48 @@ namespace {
          */
         public static function componentCall($method, $parameters){
             return \Collective\Html\HtmlBuilder::componentCall($method, $parameters);
+        }
+        
+    }
+
+
+    class AWS extends \Aws\Laravel\AwsFacade{
+        
+        /**
+         * Get a client by name using an array of constructor options.
+         *
+         * @param string $name Service name or namespace (e.g., DynamoDb, s3).
+         * @param array $args Arguments to configure the client.
+         * @return \Aws\AwsClientInterface 
+         * @throws \InvalidArgumentException if any required options are missing or
+         *                                   the service is not supported.
+         * @see Aws\AwsClient::__construct for a list of available options for args.
+         * @static 
+         */
+        public static function createClient($name, $args = array()){
+            return \Aws\Sdk::createClient($name, $args);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function createMultiRegionClient($name, $args = array()){
+            return \Aws\Sdk::createMultiRegionClient($name, $args);
+        }
+        
+        /**
+         * Determine the endpoint prefix from a client namespace.
+         *
+         * @param string $name Namespace name
+         * @return string 
+         * @internal 
+         * @deprecated Use the `\Aws\manifest()` function instead.
+         * @static 
+         */
+        public static function getEndpointPrefix($name){
+            return \Aws\Sdk::getEndpointPrefix($name);
         }
         
     }

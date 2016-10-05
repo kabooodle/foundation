@@ -1,0 +1,32 @@
+language: php
+
+php:
+    - 7.0
+
+env:
+  global:
+    - secure: RQ7T1x3ESWvUmK60M5SbZm/u3j2kIdoMOHJUXLDQl+31cYw/cdZjus5zHgG6s9g5NJQKZxp5gTyq5TAtXYI8mJm1yHDSirSjuad0ulW2bB9EofXkJFtOk+ECdHKI7t2twksM/Yw4CuoLybQFxm/jLTSqxIikpS88+0spq9DBgnJH2xxmEF64Wn9IY4LYQHp67ydByp5vYWZUbU+fhVzI/0sy/19z4vqZESkbhIx3KbEwT4CqtS89n5XgHtKWMmpDJNL4vUYZ22Er/VNqcEuzfopjClT9inAW89XbMNfe72NyzGC50AWkAsAFTZFBgj94slZD/W4xzQEHO07vTi0vdQZdgUmeEaCR3tdDzWvjyGBBiBPOEYcppbzkgo89XLg0aZosJsT/wUTBalDM6o0j5AvSMUD/n8OKi4AdOvzVlmdqDoO3W8hiKcdtsWyFSUXcLSnD3m0EHGAdp3MVggEdWhk3qxbQ0O8HrRsBEZ3NU/6ARGaI9TQUZWrqZ7ckSfiX6H7IKNdbKdx4COOLODk7XRirnB+/yD3Pz5Ga2jqUjAteaSpHSt6oPLn1WDwyza+4wsIK2l9rTWLQOPl9ybWnN9SFDVxi23//2vaPfMHc9YyyySIAte4We0Gu8tfvWbk+IKKOo3MsdNTfrjg7PAfwm6+fv1tLJOtvJUmIaCjNkMc=
+    - secure: yIuzmCksG14eWXrzSRqvghjIP0zG8WmIICtZeb+Mnw5KO6RWDK+3VssVzJULRks/7STaHYIvD6X1uBN4DI6aYj5MasWJEIvMRApapXpassBvQhGNlZ9Ve0riI6m7xQKyOMbSQW8ZGOlRUGVAjZFXOnnjMW9edeXwGmdziB+O3zaXz276vOgodlMobBQ/OiTShg74dheb3EMwxt8+ilnXv7xV3+Fmpl1MEZXckWkVCgtE4Nb7uzJBtiNXZukMLmzxmeKfMSRhBq25+XxzXRMkw0MsPPd3nYlXtiGsdnigUc7dQXVT5nCXYJnHgDikSUfa4GjuitRYH2og0PjMcBDWzQ==
+    - secure: ZK/XSbklGMY51uXoTDohHldNQMV0s8UzuLEDMOjcz8SlXw8eS8itF/u/AlL35xb5eNcRTHiSa16WHTwkwiDjm2HltsifjVPq+GIvn0+IwOIqs0gixuSf9CpfIRJxSLiIm6oLAA2mUyeYq68OJ5Q73c1TcCJpvYOUWQtuapq1ihWdjCpnz0WAdvRXhWPy84sXlBmfZ2ASzQ0Io7anfsz1a4Et+9dEm72jVaAIj/hH+AjxFUjlGMIpC3etpgxPcnDtmMhwgZNNF9zJveohph49rUGLhP3eyrxX+YYuk2UNjPw5DMwORYRu38m/P1YuPRjuXWKHKyDUhsx8GMIbjYDS0w==
+    - DB_HOST="127.0.0.1"
+    - DB_DATABASE="kabooodle_unittesting"
+    - DB_USERNAME="shippable"
+    - DB_PASSWORD=""
+
+services:
+    - mysql
+
+before_script:
+   - cp .env.example .env
+   - mysql -e "GRANT ALL ON *.* TO shippable@localhost IDENTIFIED BY ''; FLUSH PRIVILEGES;"
+   - mkdir -p shippable/testresults
+   - mkdir -p shippable/codecoverage
+   - composer self-update
+   - composer install --no-interaction --no-scripts --prefer-source
+
+notifications:
+  email: false
+
+script:
+   - phpunit --log-junit shippable/testresults/junit.xml
+

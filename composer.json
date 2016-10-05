@@ -40,13 +40,14 @@
         "tymon/jwt-auth": "1.0.*@dev",
         "wildbit/laravel-postmark-provider": "3.0.0",
         "yajra/laravel-datatables-oracle": "6.18.1",
-        "zackkitzmiller/tiny": "1.2.2"
+        "zackkitzmiller/tiny": "1.2.2",
+        "emojione/emojione": "^2.2"
     },
     "require-dev": {
         "alt-three/testbench": "^1.8",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~4.0",
+        "phpunit/phpunit": "5.2.9",
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*",
         "barryvdh/laravel-debugbar": "2.2.2"
@@ -71,14 +72,10 @@
     "scripts": {
         "post-install-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postInstall",
-            "php artisan ide-helper:generate",
-            "php artisan ide-helper:meta",
             "php artisan optimize"
         ],
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "php artisan ide-helper:generate",
-            "php artisan ide-helper:meta",
             "php artisan optimize"
         ]
     },

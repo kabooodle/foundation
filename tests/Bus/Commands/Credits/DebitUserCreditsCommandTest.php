@@ -6,10 +6,9 @@
 
 namespace Kabooodle\Tests\Bus\Commands\Credits;
 
-use Kabooodle\Models\User;
 use Kabooodle\Tests\BaseTestCase;
+use Kabooodle\Tests\Stubs\DebitStub;
 use AltThree\TestBench\CommandTrait;
-use Kabooodle\Models\Contracts\CreditTransactableInterface;
 use Kabooodle\Bus\Commands\Credits\DebitUserCreditBalanceCommand;
 use Kabooodle\Bus\Handlers\Commands\Credits\DebitUserCreditBalanceCommandHandler;
 
@@ -48,23 +47,5 @@ class DebitUserCreditsCommandTest extends BaseTestCase
     protected function getHandlerClass()
     {
         return DebitUserCreditBalanceCommandHandler::class;
-    }
-}
-
-class DebitStub implements CreditTransactableInterface
-{
-    public function creditTransactionAmount()
-    {
-        return -10;
-    }
-
-    public function getTransactionType()
-    {
-        return CreditTransactableInterface::TYPE_DEBIT;
-    }
-
-    public function user()
-    {
-        return factory(User::class)->make();
     }
 }
