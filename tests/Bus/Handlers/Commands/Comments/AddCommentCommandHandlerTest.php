@@ -2,12 +2,10 @@
 
 namespace Kabooodle\Tests\Bus\Handlers\Commands\Comments;
 
-use Mockery;
 use Kabooodle\Models\User;
 use Kabooodle\Tests\BaseTestCase;
 use Kabooodle\Tests\Stubs\CommentableStub;
 use Kabooodle\Bus\Commands\Comments\AddCommentCommand;
-use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
 use Kabooodle\Bus\Handlers\Commands\Comments\AddCommentCommandHandler;
 
 /**
@@ -20,22 +18,12 @@ class AddCommentCommandHandlerTest extends BaseTestCase
     {
         $user = factory(User::class)->create();
         $stub = new CommentableStub;
+        $command = new AddCommentCommand($user, $stub, 'foo bar');
 
-        $command = new AddCommentCommand(
-            $user,
-            $stub,
-            'foo bar'
-        );
-
-        $this->markTestSkipped('Unable to make assertions.');
-
-        $object = Mockery::mock(\Kabooodle\Models\Comments::class)->makePartial();
-        $object->shouldReceive('save')->once()->andReturn($object);
-        $this->expectsEvents([CommentWasCreatedEvent::class]);
-
+        $object = factory(\Kabooodle\Models\Comments::class)->make();
         $this->app->instance(\Kabooodle\Models\Comments::class, $object);
-
         $handler = new AddCommentCommandHandler($object);
-        $handler->handle($command);
+        $call = $handler->handle($command);
+        $this->assertEquals('foo bar', $call->text);
     }
 }
