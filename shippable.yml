@@ -10,6 +10,7 @@ env:
     - DB_DATABASE="kabooodle_unittesting"
     - DB_USERNAME="shippable"
     - DB_PASSWORD=""
+    - APP_KEY="base64:qC/8KoBZMMvclsmQRnzrS1nMg6EUCm0MCGvv1Cqep+A="
 
 services:
     - mysql
