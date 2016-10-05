@@ -18,7 +18,7 @@ before_script:
    - mysql -e "GRANT ALL ON *.* TO shippable@localhost IDENTIFIED BY ''; FLUSH PRIVILEGES;"
    - mkdir -p shippable/testresults
    - mkdir -p shippable/codecoverage
-   - composer install --no-interaction --no-scripts --prefer-source --no-suggest
+   - composer install --no-interaction --no-scripts --prefer-source
 
 notifications:
   email: false
