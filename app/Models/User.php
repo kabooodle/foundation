@@ -137,7 +137,7 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'id', 'stripe_id', 'card_brand', 'referred_by_user_id', 'card_last_four', 'trial_ends_at', 'pivot', 'activated', 'access_token', 'facebook_access_token', 'facebook_user_id'
+        'password', 'remember_token', 'facebook_access_token_expires', 'stripe_id', 'creditBalance', 'card_brand', 'credit_balance', 'referred_by_user_id', 'card_last_four', 'trial_ends_at', 'pivot', 'activated', 'access_token', 'facebook_access_token', 'facebook_user_id'
     ];
 
     /**

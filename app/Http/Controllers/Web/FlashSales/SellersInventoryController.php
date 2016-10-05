@@ -127,4 +127,30 @@ class SellersInventoryController extends Controller
 
         return Response::json($data, 200);
     }
+
+    /**
+     * @param CommentRequest $request
+     * @param                $saleIdAndName
+     * @param                $itemIdAndName
+     * @param                $commentId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteComment(CommentRequest $request, $saleIdAndName, $itemIdAndName, $commentId)
+    {
+        try {
+            $decryptedId = $this->obfuscateFromURIString(Binput::clean($saleIdAndName));
+            $flashSale = FlashSales::find($decryptedId);
+            $inventory = $flashSale->inventoryItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
+
+            $comments = $inventory->comments;
+            $comment = $comments->find($commentId)->firstOrFail();
+
+            $data = self::handleDeleteComment($inventory, $comment);
+
+            return Response::json($data, 200);
+        } catch (Exception $e) {
+            return \Response::json(['message' => $e->getMessage()], 500);
+        }
+    }
 }

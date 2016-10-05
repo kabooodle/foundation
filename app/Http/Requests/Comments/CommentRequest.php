@@ -41,6 +41,9 @@ class CommentRequest extends Request
      */
     public function rules()
     {
+        if ($this->isMethod('delete')) {
+            return [];
+        }
         return Comments::getRules();
     }
 

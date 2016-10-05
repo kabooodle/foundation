@@ -15,13 +15,14 @@
     @push('header-scripts')
     <script src="{{ staticAsset('/assets/js/vendor.js') }}"></script>
     <script src="{{ staticAsset('/assets/js/merchant.js') }}"></script>
+
     <script src="//js.pusher.com/3.2/pusher.min.js"></script>
+
     <script type="text/javascript">
         var KABOOODLE_APP = window.KABOOODLE_APP || {};
         KABOOODLE_APP.currentUser = {!! $_current_user !!};
 
         @if ($_current_user)
-
                 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
 
         $(function(){

@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Traits;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Kabooodle\Bus\Commands\Comments\DeleteCommentCommand;
 use Kabooodle\Libraries\Linkify\LinkifyableTrait;
 use Kabooodle\Models\Comments;
 use Kabooodle\Models\Contracts\CommentableInterface;
@@ -35,15 +36,30 @@ trait CommentableControllerTrait
         $commentable->load('comments');
 
         return [
-            'json' => $comment->toJson(),
+            'json' => $comment->load('author')->toJson(),
             'comments' => $commentable->comments->toJson(),
             'total' => $commentable->comments->count(),
             'html' => $comment->present()->buildComment()
         ];
     }
 
-    public function deleteComment()
+    /**
+     * @param CommentableInterface $commentable
+     * @param Comments             $comment
+     *
+     * @return array
+     */
+    public function handleDeleteComment(CommentableInterface $commentable, Comments $comment)
     {
-        //
+        $this->dispatchNow(new DeleteCommentCommand(user(), $commentable, $comment));
+
+        // Gott refresh this relationship.
+        $commentable->load('comments');
+
+        return [
+            'json' => json_encode(['deleted' => true]),
+            'comments' => $commentable->comments->toJson(),
+            'total' => $commentable->comments->count()
+        ];
     }
 }

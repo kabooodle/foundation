@@ -38,6 +38,13 @@ class Comments extends BaseEloquentModel implements Revisionable
     /**
      * @var array
      */
+    protected $with = [
+        'author'
+    ];
+
+    /**
+     * @var array
+     */
     protected $attributes = [
         'user_id' => 'int',
         'uuid' => 'string',
@@ -63,8 +70,8 @@ class Comments extends BaseEloquentModel implements Revisionable
      * @var array
      */
     protected $hidden = [
-        'user_id',
-        'id'
+        'commentable_id',
+        'commentable_type'
     ];
 
     public static function boot()

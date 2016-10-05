@@ -67,24 +67,25 @@
   font-size: 14px;
   border: 0;
   background-color: #fff;
-  border: 1px solid #ccc;
+  /*border: 1px solid #ccc;*/
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  /*-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);*/
+  /*-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);*/
+  /*box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);*/
   -moz-transition: border-color 0.15s ease-in-out,    -moz-box-shadow 0.15s ease-in-out;
   -o-transition: border-color 0.15s ease-in-out,         box-shadow 0.15s ease-in-out;
   -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: border-color 0.15s ease-in-out,         box-shadow 0.15s ease-in-out; }
 /* line 29, ../scss/emojionearea.scss */
 .emojionearea.focused {
-  border-color: #66afe9;
+  /*border-color: #66afe9;*/
   outline: 0;
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
+  /*-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);*/
+  /*-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);*/
+  /*box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }*/
+}
 /* line 35, ../scss/emojionearea.scss */
 .emojionearea .emojionearea-editor {
   display: block;
