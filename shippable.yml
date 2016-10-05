@@ -1,0 +1,26 @@
+language: php
+
+php:
+    - 7.0
+
+env:
+  global:
+    - DB_HOST="127.0.0.1"
+    - DB_DATABASE="kabooodle_unittesting"
+    - DB_USERNAME="shippable"
+    - DB_PASSWORD=""
+
+services:
+    - mysql
+
+before_script:
+#   - mysql -e 'create database ebdb_testing;'
+   - mysql -e "GRANT ALL ON *.* TO shippable@localhost IDENTIFIED BY ''; FLUSH PRIVILEGES;"
+   - mkdir -p shippable/testresults
+   - mkdir -p shippable/codecoverage
+
+notifications:
+  email: false
+
+script:
+   - phpunit --log-junit shippable/testresults/junit.xml
