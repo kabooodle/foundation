@@ -6,11 +6,11 @@ php:
 
 env:
   global:
+    - secure: sgZApC0A7c3eKXoP+YGBQC3SYE9loMP9TUwCidkVBGQ9XrxGclhcT4ypOjZqimSYoL9DbUZAyL7g0p+S6c4RRbZzKHR5F0jRDYlXICsPQ1hr08G7HDUstj0gx670Oz1K8dZUGBPG6zfdI+GuGW6OISyilpqZS/eV4s9IkAcv3BXiX/CzD6osi1Ar1Dl+Zb3uQjpVVud9z0PuEBI8JGe0FSaa5RKq2m6rQdaZCJXSJlBGTWvl0Sekuj70qki6YpXngyCMfb0kfAdRnR6nyP5BbndAWr4lev94IeJRDC1TsWcjKt2vINshI91pyxYBU8f+by+WvSeZCC0CNFcFLzskEw==
     - DB_HOST="127.0.0.1"
     - DB_DATABASE="kabooodle_unittesting"
     - DB_USERNAME="shippable"
     - DB_PASSWORD=""
-    - APP_KEY="base64:qC/8KoBZMMvclsmQRnzrS1nMg6EUCm0MCGvv1Cqep+A="
 
 services:
     - mysql
@@ -27,3 +27,4 @@ notifications:
 
 script:
    - phpunit --log-junit shippable/testresults/junit.xml
+
