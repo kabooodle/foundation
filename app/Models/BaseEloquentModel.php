@@ -16,6 +16,11 @@ use Eloquent;
 class BaseEloquentModel extends Eloquent
 {
     /**
+     * @var array
+     */
+    public static $revisionableEvents = ['Updated', 'Deleted', 'Restored'];
+
+    /**
      * @var bool
      */
     public static $perEnvironment = true;

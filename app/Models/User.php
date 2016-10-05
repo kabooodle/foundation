@@ -80,17 +80,6 @@ class User extends BaseEloquentModel implements
     ];
 
     /**
-     * Don't use "created" because it will fail a foreign key constraint. And this is erroneous anyway.
-     *
-     * @var array
-     */
-    protected static $revisionableEvents = [
-        'Updated',
-        'Deleted',
-        'Restored'
-    ];
-
-    /**
      * @return mixed
      */
     public function getJWTIdentifier()
