@@ -51,8 +51,9 @@
          *
          */
         setTemplate: function($el){
+            console.log($el);
             this.$element.html(
-                $el ? $el : Template.getTemplate(this.options.multiple, this.options.button_name, this.options.extended_upload_info)
+                $el ? this.$element.parent().find($el) : Template.getTemplate(this.options.multiple, this.options.button_name, this.options.extended_upload_info)
             , true);
         },
         /**

@@ -23,6 +23,13 @@ class InventoryType extends BaseEloquentModel implements Revisionable
     /**
      * @var string
      */
+    protected $with = [
+        'styles'
+    ];
+
+    /**
+     * @var string
+     */
     protected $table = 'inventory_type';
 
     /**

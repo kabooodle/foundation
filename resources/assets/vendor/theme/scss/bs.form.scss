@@ -6,7 +6,9 @@
   }
   min-height: 2.375rem;
 }
-
+select.form-control:not([size]):not([multiple]) {
+  height: 2.375rem;
+}
 .form-control-lg{
   min-height: 3.75rem;
 }
@@ -89,4 +91,12 @@
 
 option{
   color: #222;
+}
+
+
+.form-group.row {
+  .form-control-label,
+  label.col-sm-3.control-label{
+    text-align: right;
+  }
 }

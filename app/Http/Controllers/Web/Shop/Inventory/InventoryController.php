@@ -10,6 +10,7 @@ use Binput;
 use Datatables;
 use Illuminate\Routing\Redirector;
 use Kabooodle\Bus\Commands\Inventory\AddInventoryCommand;
+use Kabooodle\Bus\Commands\Inventory\GetInventoryTypesCommand;
 use Messages;
 use Response;
 use Exception;
@@ -114,7 +115,9 @@ class InventoryController extends Controller
      */
     public function create()
     {
-        return $this->view('inventory.create');
+        $inventoryTypes = $this->dispatchNow(new GetInventoryTypesCommand(['lularoe']));
+
+        return $this->view('inventory.create')->with(compact('inventoryTypes'));
     }
 
     /**
