@@ -129,6 +129,7 @@ class InventoryController extends Controller
      */
     public function store(Request $request, $username)
     {
+        dd($request->all());
         try {
             $this->validate($request, Inventory::getRules());
 

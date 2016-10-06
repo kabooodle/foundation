@@ -51,7 +51,6 @@
          *
          */
         setTemplate: function($el){
-            console.log($el);
             this.$element.html(
                 $el ? this.$element.parent().find($el) : Template.getTemplate(this.options.multiple, this.options.button_name, this.options.extended_upload_info)
             , true);
@@ -276,6 +275,7 @@
      */
     $.fn.s3uploader = function(options){
         return this.each(function(){
+            // console.log('new uploader init');
             return new S3Uploader(this, options);
         });
     };
