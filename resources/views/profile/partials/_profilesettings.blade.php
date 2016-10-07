@@ -28,3 +28,9 @@
         {{ Form::password('newPassword_confirmation', array('placeholder' => 'Confirm New Password','class' => 'form-control')) }}
     </div>
 </div>
+<div class="form-group row {{ $errors->has('timezone') ? 'has-danger' : null }}">
+    <label class="control-label col-sm-3">Select Timezone</label>
+    <div class="col-sm-6">
+        {{ Form::select('timezone', $_timezoneIdentifiers, $_user->timezone, ['class' => 'form-control']) }}
+    </div>
+</div>

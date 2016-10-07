@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
+use DateTimeZone;
 use Illuminate\Support\Facades\Hash;
 use Kabooodle\Bus\Events\User\UserSettingsUpdated;
 use Kabooodle\Models\User;
@@ -30,7 +31,11 @@ class ProfileSettingsController extends Controller
     public function index()
     {
         $user = user();
-        return $this->view('profile.index')->with(compact('user'));
+        $timezoneIdentifiers = DateTimeZone::listIdentifiers(DateTimeZone::PER_COUNTRY, 'US');
+
+        $timezoneIdentifiers = array_combine($timezoneIdentifiers, $timezoneIdentifiers);
+
+        return $this->view('profile.index')->with(compact('user', 'timezoneIdentifiers'));
     }
 
     public function postProfile(Request $request)
