@@ -120,8 +120,8 @@
 
                     </div>
                     <div class="box-footer">
-                        <div class="form-group categories_wrapper" style="display: none">
-                            <input type="text" :disabled="size_container.images.length == 0" id="categories_input_@{{ size_container.id }}" name="size[@{{ size_container.id }}][categories]" class="form-control selectized" placeholder="Type categories or keywords">
+                        <div class="form-group categories_wrapper" style="display: none" >
+                            <input type="text" :disabled="size_container.images.length > 0" id="categories_input_@{{ size_container.id }}" name="size[@{{ size_container.id }}][categories]" class="form-control selectized" placeholder="Type categories or keywords">
                         </div>
                         <div class="clearfix">
                             <div class="row">
@@ -141,7 +141,7 @@
                                             </div>
                                         </button>
                                     </div>
-                                    <button type="button" class="pull-left btn white btn-sm "  :disabled="size_container.images.length == 0" v-on:click="toggleCategory" >Add Categories</button>
+                                    <button type="button" class="pull-left btn white btn-sm "  :disabled="size_container.images.length == 0" v-on:click="toggleCategory" >Categories</button>
                                  </div>
                             </div>
                         </div>
@@ -174,7 +174,14 @@
             'add-size' : function() {
                 this.addSizeContainer();
             },
-            'image-uploaded' : function(size_container, image) {
+            'image:deleted' : function(size_container, image) {
+                if (size_container.images.length == 0) {
+                    var $wrapperEl =  $('#size_'+size_container.id).find('.categories_wrapper');
+                    $wrapperEl.hide();
+                    $wrapperEl.find('input:first-of-type').addClass('disabled').prop('disabled', true);
+                }
+            },
+            'image:uploaded' : function(size_container, image) {
                 image.json = JSON.stringify(image);
                 size_container.images.unshift(image);
                 setTimeout(function(){
@@ -214,7 +221,7 @@
                             }
                             var xml = $(data);
 
-                            that.$emit('image-uploaded', sizeContainerData, {
+                            that.$emit('image:uploaded', sizeContainerData, {
                                 id:         xml.find('Key').text(),
                                 bucket:     xml.find('Bucket').text(),
                                 key:        xml.find('Key').text(),
@@ -253,6 +260,7 @@
             },
             deleteSizeImage : function(size_container, img) {
                 size_container.images.$remove(img);
+                this.$emit('image:deleted', size_container, img);
             },
             createSizeObject : function() {
                 var rand = Math.random().toString(36).slice(2);
@@ -275,10 +283,9 @@
                         $categoryWrapperEl = $el.closest('.box-footer').find('.categories_wrapper');
                 if ($categoryWrapperEl.is(':visible')) {
                     $categoryWrapperEl.hide();
-                    $el.html('Add Categories');
                 } else {
                     $categoryWrapperEl.show();
-                    $el.html('Disable Categories');
+                    $categoryWrapperEl.find('input:first-of-type').prop('disabled', false).removeClass('disabled');
                 }
             }
         }
