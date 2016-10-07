@@ -100,3 +100,11 @@ option{
     text-align: right;
   }
 }
+
+.has-danger   .form-control-label {
+  border-color: $danger;
+}
+.has-danger .form-control {
+  border-color: $danger;
+  border:1px solid $danger;
+}

@@ -13,7 +13,12 @@
 
     <div id="inventory">
 
-        {{ Form::open(['route' => ['shop.inventory.store', user()->username]]) }}
+        <validator
+                name="inventory_validation"
+                   :classes="{ invalid : ' has-danger ' }"
+        >
+
+        {{ Form::open(['route' => ['shop.inventory.store', user()->username], 'v-on:submit' => 'validateForm']) }}
 
         <div class="box">
             <div class="box-header">
@@ -37,10 +42,10 @@
                     </div>
                 </div>
 
-                <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}">
+                <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}"  v-validate-class>
                     <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
                     <div class="col-sm-7">
-                        {{ Form::number('price_usd', null or 0, ['class' => 'form-control float', 'step' => 'any', 'min' => 0, 'placeholder' => '0.00']) }}
+                        {{ Form::number('price_usd', 0.00, ['class' => 'form-control float', 'required', 'step' => 'any', 'v-validate:price' => '{ required : true }', 'placeholder' => '0.00', 'v-model' => 'price']) }}
                     </div>
                 </div>
 
@@ -53,16 +58,18 @@
             </div>
         </div>
 
-        <inventory-sizing></inventory-sizing>
+        <inventory-sizing :size_containers.sync="size_containers"></inventory-sizing>
 
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-7">
-                <button type="submit" class="btn primary">Save</button>
-                <button type="button" class="btn white" id="size-add-btn" v-on:click="addSizeContainer">Add Size</button>
+                <button style="margin-left: 6px;" type="button" class="btn white" id="size-add-btn" v-on:click="addSizeContainer">Add Size</button>
+                <button type="submit" class="btn primary" id="btn-form-save">Save</button>
             </div>
         </div>
 
         {{ Form::close() }}
+
+        </validator>
 
         <script id="sizing-template" type="text/x-template">
             <div v-for="size_container in size_containers">
@@ -70,25 +77,33 @@
                     <div class="box-body clearfix">
                         <div class="form-group row">
                             <label class="col-sm-3 form-control-label">Size</label>
-                            <div class="col-sm-7">
-                                <div class="btn-group-justified" data-toggle="buttons">
-                                    <label class="btn white" v-for="size in size_container.sizing">
-                                        <input type="radio" name="size[@{{ size_container.id }}][size_id]" id="option1"
-                                               autocomplete="off" value="@{{ size.id }}"> @{{ size.name }}
+                            <div class="col-sm-9">
+                                <div class="" data-toggle="buttons">
+                                    <label class="form-control-label btn white" v-for="size in sizings" style="margin-right: 3px;">
+                                        <input
+                                                required
+                                                aria-required="true"
+                                                validation="required"
+                                                type="radio" name="size[@{{ size_container.id }}][size_id]" id="option1"
+                                                autocomplete="off" value="@{{ size.id }}"> @{{ size.name }}
                                     </label>
                                 </div>
                             </div>
-                            <button type="button" v-on:click="deleteSizeContainer(size_container)" style="position: absolute; top: 0; right: 0; border: 0; border-radius: 0;" class="m-l-1 pull-right btn white btn-xs text-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                            <button type="button" v-on:click="deleteSizeContainer(size_container)" style="position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3" class=" m-l-1 pull-right btn white btn-xs text-muted "><i class="fa fa-times" aria-hidden="true"></i></button>
                         </div>
 
-                        <div class="row clearfix">
-                            <div v-for="image in size_container.images">
-                                <div class="col-sm-4 thumbnail-container">
+                        <div class="row row-horizon clearfix" >
+
+                                <div class="col-sm-4 thumbnail-container"  v-for="image in size_container.images">
                                     <div class="box">
                                         <div class="item" >
-                                            <button type="button" style="z-index: 999; position: absolute; top: 0; right: 0; border: 0; border-radius: 0;" v-on:click="deleteSizeImage(size_container, image, $event)" data-id="@{{ image.id }}" class="pull-right btn btn-xs white text-danger"><i class="fa fa-trash fa-fw"></i></button>
+                                            <div class="item-overlay active p-l p-r " style="z-index: 999;">
+                                                <a type="button" style="" v-on:click="deleteSizeImage(size_container, image, $event)" data-id="@{{ image.id }}" class="pull-right text-danger"><i class="fa fa-times fa-fw"></i></a>
+                                                <span class="pull-left label dark-white text-color">@{{ size_container.images.length - $index }}</span>
+                                            </div>
+
                                             <div class="thumbnail">
-                                                <img :src="image.location" data-gallery="image-thumbs" data-width="100%" class="w-full"  data-toggle="lightbox" data-remote="@{{ image.location }}"/>
+                                                <img :src="image.location" data-gallery="image-thumbs_@{{ size_container.id }}" data-width="100%" class="w-full"  data-toggle="lightbox" data-remote="@{{ image.location }}"/>
                                             </div>
                                         </div>
                                         <input type="hidden" name="size[@{{ size_container.id }}][images][@{{ image.key }}][data]" value="@{{ image.json }}" />
@@ -100,36 +115,40 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+
                         </div>
 
                     </div>
                     <div class="box-footer">
                         <div class="form-group categories_wrapper" style="display: none">
-                            <input type="text" id="categories_input_@{{ size_container.id }}" name="size[@{{ size_container.id }}][categories]" class="form-control selectized" placeholder="Type categories or keywords">
+                            <input type="text" :disabled="size_container.images.length == 0" id="categories_input_@{{ size_container.id }}" name="size[@{{ size_container.id }}][categories]" class="form-control selectized" placeholder="Type categories or keywords">
                         </div>
                         <div class="clearfix">
-                            <div class="js-program_logo_upload_@{{size_container.id}}"></div>
-                            <div class="pull-left upload-template_@{{size_container.id}}">
-                                <button type="button" class="btn white btn-sm fileinput-button" style="display: inline-block;">
-                                    Add Images<input type="file" name="file" class="js-s3_fileupload" accept='image/*' multiple/>
-                                </button>
-                                <button type="button" class="btn danger btn-sm js-cancel_button" style="display: none;">
-                                    Cancel
-                                    <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
-                                        <div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
-                                            <div class="progress-bar progress-bar-success" style="width: 5%;"></div>
-                                        </div>
+                            <div class="row">
+                                <div class="col-sm-offset-3 col-sm-7">
+
+                                    <div class="js-program_logo_upload_@{{size_container.id}}"></div>
+                                    <div style="margin-right: 3px" class="pull-left upload-template_@{{size_container.id}}">
+                                        <button type="button" class="btn white btn-sm fileinput-button" style="display: inline-block;">
+                                            Add Images<input type="file" name="file" class="js-s3_fileupload" accept='image/*' multiple/>
+                                        </button>
+                                        <button type="button" class="btn danger btn-sm js-cancel_button" style="display: none;">
+                                            Cancel
+                                            <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
+                                                <div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
+                                                    <div class="progress-bar progress-bar-success" style="width: 5%;"></div>
+                                                </div>
+                                            </div>
+                                        </button>
                                     </div>
-                                </button>
+                                    <button type="button" class="pull-left btn white btn-sm "  :disabled="size_container.images.length == 0" v-on:click="toggleCategory" >Add Categories</button>
+                                 </div>
                             </div>
-                            <button type="button" class="m-l-1 pull-left btn white btn-sm " v-on:click="toggleCategory" >Add Categories</button>
                         </div>
                     </div>
                 </div>
             </div>
         </script>
-
     </div>
 @endsection
 
@@ -137,18 +156,19 @@
 <script>
     Vue.component('inventory-sizing', {
         template: '#sizing-template',
+        props: ["size_containers"],
         data: function () {
             return {
                 image: {size: '', key: '', location : '', bucket: ''},
-                size : {images: [{}], sizing: [{}], id : null},
-                size_containers : []
+                size : {images: [{}],id : null},
+                sizings: []
             }
         },
         events : {
             'style-changed' : function(id) {
-                var styleObject = this.getStyleSizes(id);
-                if (styleObject.length == 1) {
-                    this.size.sizing.$add(styleObject);
+                var styleSizes = this.getStyleSizes(id);
+                if (styleSizes.length > 0) {
+                    this.setSizings(styleSizes);
                 }
             },
             'add-size' : function() {
@@ -156,7 +176,7 @@
             },
             'image-uploaded' : function(size_container, image) {
                 image.json = JSON.stringify(image);
-                size_container.images.push(image);
+                size_container.images.unshift(image);
                 setTimeout(function(){
                     $('#size_'+size_container.id).find("input.image_qty_btn").TouchSpin({
                         min: 1
@@ -217,6 +237,9 @@
             this.addSizeContainer();
         },
         methods : {
+            setSizings : function(sizings){
+                this.sizings = sizings;
+            },
             getStyleSizes : function(styleId) {
                 var style = $.grep(inventoryTypes[0].styles, function(e){
                     return parseInt(e.id) === parseInt(styleId);
@@ -233,9 +256,8 @@
             },
             createSizeObject : function() {
                 var rand = Math.random().toString(36).slice(2);
-                var styleObject = this.getStyleSizes($('#inventory-styles-el').val());
-
-                return {id: rand, images: [], sizing: styleObject};
+                this.setSizings(this.getStyleSizes($('#inventory-styles-el').val()));
+                return {id: rand, images: []};
             },
             addSizeContainer : function() {
                 var sizeContainerData = this.createSizeObject();
@@ -264,7 +286,43 @@
 
     new Vue({
         el: '#inventory',
+        data: {
+            price : '0.00',
+            size_containers : []
+        },
         methods : {
+            validateSizeContainers : function() {
+                var containers = this.size_containers;
+                var valid = true;
+                $.each(containers, function(i,container){
+                    var $containerEl = $('#size_'+container.id),
+                            $validationEls = $containerEl.find('[validation]');
+                    if (! $validationEls.is(':checked')) {
+                        $validationEls.closest('.form-group').addClass('has-danger');
+                        valid = false;
+                    }
+
+                    if (container.images.length == 0) {
+                        valid = false;
+                        alert('At least one image must be associated for each size.');
+                    }
+                });
+
+                return valid;
+            },
+            validateForm: function (e) {
+                var self = this;
+
+                this.$validate(true, function () {
+                    if (self.$inventory_validation.invalid || ! self.validateSizeContainers()) {
+                        e.preventDefault();
+                        setTimeout(function(){
+                            $('#btn-form-save').prop('disabled', false).removeClass('disabled');
+                        }, 0);
+                        return false;
+                    }
+                })
+            },
             addSizeContainer : function() {
                 this.$broadcast('add-size');
             },
