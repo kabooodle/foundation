@@ -129,20 +129,18 @@ class InventoryController extends Controller
      */
     public function store(Request $request, $username)
     {
-        dd($request->all());
         try {
             $this->validate($request, Inventory::getRules());
 
+
+
             $command = new AddInventoryCommand(
                 user(),
-                Binput::get('name'),
-                Binput::get('description'),
-                (int) Binput::get('initial_qty'),
+                Binput::get('type_id'),
+                Binput::get('style_id'),
                 Binput::get('price_usd'),
-                Binput::get('categories'),
-                Binput::get('tags'),
-                Binput::get('flashsales'),
-                Binput::get('images')
+                Binput::get('sizings'),
+                Binput::get('description')
             );
             $item = $this->dispatchNow($command);
 

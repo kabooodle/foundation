@@ -2,13 +2,15 @@ function randomAlphaStr(m) {
     var m = m || 9;
     s = '',
         r = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    for (var i=0; i < m; i++) { s += r.charAt(Math.floor(Math.random()*r.length)); }
+    for (var i = 0; i < m; i++) {
+        s += r.charAt(Math.floor(Math.random() * r.length));
+    }
     return s;
 };
 
-function confirmModal(confirmCB, closeCB) {
-    noty({
-        text: 'Confirm that you wish to proceed with purchase.',
+function confirmModal(confirmCB, closeCB, options) {
+    var defaults = {
+        text: '<h6>Are you sure you want to continue?</h6>',
         layout: 'center',
         theme: 'relax',
         type: 'alert',
@@ -22,14 +24,15 @@ function confirmModal(confirmCB, closeCB) {
         timeout: 9000,
         buttons: [
             {
-                addClass: 'btn btn-sm primary', text: 'Confirm Purchase', onClick: function ($noty) {
+                addClass: 'btn btn-sm primary', text: 'Continue', onClick: function ($noty) {
                 if (typeof confirmCB === 'function') {
                     confirmCB();
+                    $noty.close();
                 }
             }
             },
             {
-                addClass: 'btn btn-link btn-sm', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
+                addClass: 'btn white btn-sm', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
                 $noty.close();
                 if (typeof closeCB === 'function') {
                     closeCB();
@@ -37,7 +40,11 @@ function confirmModal(confirmCB, closeCB) {
             }
             }
         ]
-    });
+    };
+
+    options = $.extend({}, defaults, options);
+
+    noty(options);
 }
 
 $(function () {
@@ -68,7 +75,7 @@ $(function () {
     //     }
     // });
 
-    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+    $(document).on('click', '[data-toggle="lightbox"]', function (event) {
         event.preventDefault();
         $(this).ekkoLightbox();
     });

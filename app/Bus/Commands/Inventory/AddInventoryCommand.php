@@ -20,75 +20,54 @@ final class AddInventoryCommand
     public $actor;
 
     /**
-     * @var string
+     * @var int
      */
-    public $name;
-
-    /**
-     * @var string
-     */
-    public $description;
+    public $typeId;
 
     /**
      * @var int
      */
-    public $qty;
+    public $styleId;
 
     /**
-     * @var int
+     * @var number
      */
     public $price;
 
     /**
-     * @var int
-     */
-    public $categoryId;
-
-    /**
      * @var array
      */
-    public $tags;
+    public $sizings;
 
     /**
-     * @var array
+     * @var null|string
      */
-    public $flashsales;
-
-    /**
-     * @var array
-     */
-    public $images;
+    public $description;
 
     /**
      * AddInventoryCommand constructor.
      *
-     * @param User  $actor
-     * @param       $name
-     * @param       $description
-     * @param       $qty
-     * @param       $price
-     * @param int $categoryId
-     * @param string $tags
-     * @param array $flashsales
-     * @param array $images
+     * @param User        $actor
+     * @param int         $typeId
+     * @param int         $styleId
+     * @param number      $price
+     * @param array       $sizings
+     * @param string|null $description
      */
-    public function __construct(User $actor, $name, $description, $qty,  $price, $categoryId, $tags = null, array $flashsales = null, array $images = null)
+    public function __construct(User $actor, int $typeId, int $styleId, string $price, array $sizings, string $description = null)
     {
         $this->actor = $actor;
-        $this->name = $name;
-        $this->description = $description;
-        $this->qty = $qty;
+        $this->typeId = $typeId;
+        $this->styleId = $styleId;
         $this->price = $price;
-        $this->categoryId = $categoryId;
-        $this->tags = $tags;
-        $this->flashsales = $flashsales;
-        $this->images = $images;
+        $this->sizings = $sizings;
+        $this->description = $description;
     }
 
     /**
      * @return User
      */
-    public function getActor()
+    public function getActor(): User
     {
         return $this->actor;
     }
@@ -96,64 +75,40 @@ final class AddInventoryCommand
     /**
      * @return int
      */
-    public function getCategoryId()
+    public function getTypeId(): int
     {
-        return $this->categoryId;
+        return $this->typeId;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getDescription()
+    public function getStyleId(): int
     {
-        return $this->description;
+        return $this->styleId;
     }
 
     /**
-     * @return array
+     * @return number
      */
-    public function getFlashsales()
-    {
-        return $this->flashsales;
-    }
-
-    /**
-     * @return array
-     */
-    public function getImages()
-    {
-        return $this->images;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPrice()
+    public function getPrice(): string
     {
         return $this->price;
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getQty()
+    public function getSizings(): array
     {
-        return $this->qty;
+        return $this->sizings;
     }
 
     /**
-     * @return array
+     * @return null|string
      */
-    public function getTags()
+    public function getDescription()
     {
-        return $this->tags;
+        return $this->description;
     }
 }

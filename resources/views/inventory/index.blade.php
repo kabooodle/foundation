@@ -61,6 +61,7 @@
                 <div style="padding-left: 12px !important;"><input id="select_all" type="checkbox" class=""></div>
             </th>
             <th class="text-muted">Details</th>
+            <th class="text-muted p-l-0 m-l-0">Size</th>
             <th class="text-muted p-l-0 m-l-0">Price</th>
             <th class="text-muted p-l-0 m-l-0">Claims</th>
             <th class="text-muted p-l-0 m-l-0">*Available Qty</th>
@@ -91,21 +92,20 @@
                                     <a href="{{ route('shop.inventory.show', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}"
                                        class="_500 h6">{{ $item->name }}</a>
                                 </div>
-                                <div class="text-ellipsis text-muted text-sm">
-                                    Categories: @foreach($item->categories as $cat) {{ $cat->name }} @endforeach</div>
                                 <div class="text-sm hidden-sm hidden-xs hidden-xs-down">
                                     @if($item->tagged->count() > 0)
-                                        <span class="text-muted">Tags: </span>
+                                        <span class="text-muted">Categories: </span>
                                         @foreach($item->tagged as $tag) <span
                                                 class="label label-xs outline text-u-c">{!! $tag->tag_name !!}</span> @endforeach
                                     @endif
-                                    {{--<div class="text-sm text-muted">--}}
-                                    {{--Last Updated: {{ $item->updated_at }}, Added On: {{ $item->created_at }}--}}
-                                    {{--</div>--}}
                                 </div>
                             </div>
                         </div>
                     </div>
+                </td>
+                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
+                    valign="middle">
+                    <span class="h5 ">{{ $item->styleSize->name }}</span>
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">

@@ -14,8 +14,8 @@
     <div id="inventory">
 
         <validator
-                name="inventory_validation"
-                   :classes="{ invalid : ' has-danger ' }"
+            name="inventory_validation"
+            :classes="{ invalid : ' has-danger ' }"
         >
 
         {{ Form::open(['route' => ['shop.inventory.store', user()->username], 'v-on:submit' => 'validateForm']) }}
@@ -31,14 +31,14 @@
                 <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
                     <label for="type" class="col-sm-3 form-control-label">Type</label>
                     <div class="col-sm-7">
-                        {{ Form::select('type', $inventoryTypes->pluck('name','id'), [], ['id' => 'inventory-type-el', 'class' => 'form-control']) }}
+                        {{ Form::select('type_id', $inventoryTypes->pluck('name','id'), [], ['id' => 'inventory-type-el', 'class' => 'form-control']) }}
                     </div>
                 </div>
 
                 <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
                     <label for="type" class="col-sm-3 form-control-label">Style</label>
                     <div class="col-sm-7">
-                        {{ Form::select('styles', $inventoryTypes->first()->styles->pluck('name','id'), [], ['v-on:change' => 'styleChanged', 'id' => 'inventory-styles-el', 'class' => ' form-control ']) }}
+                        {{ Form::select('style_id', $inventoryTypes->first()->styles->pluck('name','id'), [], ['v-on:change' => 'styleChanged', 'id' => 'inventory-styles-el', 'class' => ' form-control ']) }}
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="form-group row {{ $errors->has('description') ? 'has-danger' : null }}">
-                    <label for="description" class="col-sm-3 form-control-label">Description</label>
+                    <label for="description" class="col-sm-3 form-control-label">Description<small class="text-muted block">(Optional)</small></label>
                     <div class="col-sm-7">
                         {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => 2, 'placeholder'=> 'Optional']) }}
                     </div>
@@ -62,7 +62,7 @@
 
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-7">
-                <button style="margin-left: 6px;" type="button" class="btn white" id="size-add-btn" v-on:click="addSizeContainer">Add Size</button>
+                <button style="margin-left: 6px;" type="button" class="btn white" id="size-add-btn" v-on:click="addSizeContainer" :disabled="submitting">Add Size</button>
                 <button type="submit" class="btn primary" id="btn-form-save">Save</button>
             </div>
         </div>
@@ -84,7 +84,7 @@
                                                 required
                                                 aria-required="true"
                                                 validation="required"
-                                                type="radio" name="size[@{{ size_container.id }}][size_id]" id="option1"
+                                                type="radio" name="sizings[@{{ size_container.id }}][size_id]" id="option1"
                                                 autocomplete="off" value="@{{ size.id }}"> @{{ size.name }}
                                     </label>
                                 </div>
@@ -95,7 +95,7 @@
                         <div class="row row-horizon clearfix" >
 
                                 <div class="col-sm-4 thumbnail-container"  v-for="image in size_container.images">
-                                    <div class="box">
+                                    <div class="box m-b-0">
                                         <div class="item" >
                                             <div class="item-overlay active p-l p-r " style="z-index: 999;">
                                                 <a type="button" style="" v-on:click="deleteSizeImage(size_container, image, $event)" data-id="@{{ image.id }}" class="pull-right text-danger"><i class="fa fa-times fa-fw"></i></a>
@@ -106,11 +106,11 @@
                                                 <img :src="image.location" data-gallery="image-thumbs_@{{ size_container.id }}" data-width="100%" class="w-full"  data-toggle="lightbox" data-remote="@{{ image.location }}"/>
                                             </div>
                                         </div>
-                                        <input type="hidden" name="size[@{{ size_container.id }}][images][@{{ image.key }}][data]" value="@{{ image.json }}" />
+                                        <input type="hidden" name="sizings[@{{ size_container.id }}][images][@{{ image.key }}][data]" value="@{{ image.json }}" />
                                         <div class="box-body m-t-0 p-t-0">
                                             <div class="image_item_component">
                                                 <label class="text-muted text-sm m-b-0 p-b-0">Quantity:</label>
-                                                <input type="text" value="1" name="size[@{{ size_container.id }}][images][@{{ image.key }}][qty]" class="text-center image_qty_btn"  />
+                                                <input type="text" value="1" name="sizings[@{{ size_container.id }}][images][@{{ image.key }}][qty]" class="text-center image_qty_btn"  />
                                             </div>
                                         </div>
                                     </div>
@@ -121,7 +121,7 @@
                     </div>
                     <div class="box-footer">
                         <div class="form-group categories_wrapper" style="display: none" >
-                            <input type="text" :disabled="size_container.images.length > 0" id="categories_input_@{{ size_container.id }}" name="size[@{{ size_container.id }}][categories]" class="form-control selectized" placeholder="Type categories or keywords">
+                            <input type="text" :disabled="size_container.images.length > 0" id="categories_input_@{{ size_container.id }}" name="sizings[@{{ size_container.id }}][categories]" class="form-control selectized" placeholder="Type categories or keywords">
                         </div>
                         <div class="clearfix">
                             <div class="row">
@@ -259,8 +259,9 @@
                 return [];
             },
             deleteSizeImage : function(size_container, img) {
+                var that = this;
                 size_container.images.$remove(img);
-                this.$emit('image:deleted', size_container, img);
+                that.$emit('image:deleted', size_container, img);
             },
             createSizeObject : function() {
                 var rand = Math.random().toString(36).slice(2);
@@ -269,13 +270,15 @@
             },
             addSizeContainer : function() {
                 var sizeContainerData = this.createSizeObject();
-
                 this.size_containers.push(sizeContainerData);
                 this.$emit('size-container:added', sizeContainerData);
             },
             deleteSizeContainer : function(size) {
-                this.size_containers.$remove(size);
-                this.$emit('size-container:removed', size);
+                var that = this;
+                confirmModal(function(){
+                    that.size_containers.$remove(size);
+                    that.$emit('size-container:removed', size);
+                });
             },
             toggleCategory : function(e) {
                 e.preventDefault();
@@ -295,7 +298,8 @@
         el: '#inventory',
         data: {
             price : '0.00',
-            size_containers : []
+            size_containers : [],
+            submitting : false
         },
         methods : {
             validateSizeContainers : function() {
@@ -317,15 +321,19 @@
 
                 return valid;
             },
+            setSubmitting : function(val) {
+                this.submitting = val;
+            },
             validateForm: function (e) {
                 var self = this;
-
+                self.setSubmitting(true);
                 this.$validate(true, function () {
                     if (self.$inventory_validation.invalid || ! self.validateSizeContainers()) {
                         e.preventDefault();
                         setTimeout(function(){
                             $('#btn-form-save').prop('disabled', false).removeClass('disabled');
                         }, 0);
+                        self.setSubmitting(false);
                         return false;
                     }
                 })
