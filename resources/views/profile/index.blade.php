@@ -10,7 +10,7 @@
         </div>
         <div class="box-divider m-a-0"></div>
         <div class="box-body">
-            @include('profile.partials._profilesettings', ['_key' => 'user', '_user' => $user, '_timezoneIdentifiers' => $timezoneIdentifiers])
+            @include('profile.partials._profilesettings', ['_user' => $user, '_timezone' => $timezone])
         </div>
     </div>
 

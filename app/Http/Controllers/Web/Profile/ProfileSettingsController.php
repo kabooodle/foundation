@@ -10,6 +10,7 @@ use Binput;
 use DateTimeZone;
 use Illuminate\Support\Facades\Hash;
 use Kabooodle\Bus\Events\User\UserSettingsUpdated;
+use Kabooodle\Libraries\Timezone;
 use Kabooodle\Models\User;
 use Messages;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ use Kabooodle\Models\ShippingAddress;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\User\UpdateUserShippingAddressesCommand;
+use PragmaRX\Support\DateTime;
 
 /**
  * Class ProfileSettingsController
@@ -31,11 +33,9 @@ class ProfileSettingsController extends Controller
     public function index()
     {
         $user = user();
-        $timezoneIdentifiers = DateTimeZone::listIdentifiers(DateTimeZone::PER_COUNTRY, 'US');
+        $timezone = Timezone::timezoneList();
 
-        $timezoneIdentifiers = array_combine($timezoneIdentifiers, $timezoneIdentifiers);
-
-        return $this->view('profile.index')->with(compact('user', 'timezoneIdentifiers'));
+        return $this->view('profile.index')->with(compact('user', 'timezone'));
     }
 
     public function postProfile(Request $request)
@@ -45,7 +45,8 @@ class ProfileSettingsController extends Controller
             'email' => Binput::get('email'),
             'password' => Binput::get('password'),
             'newPassword' => Binput::get('newPassword'),
-            'newPassword_confirmation' => Binput::get('newPassword_confirmation')
+            'newPassword_confirmation' => Binput::get('newPassword_confirmation'),
+            'timezone' => Binput::get('timezone')
         ];
 
         // Set Validation Rules
@@ -54,7 +55,8 @@ class ProfileSettingsController extends Controller
             'email' => 'required|email|unique:users,email,' . user()->id,
             'password' => 'required_with:newPassword,newPassword_confirmation',
             'newPassword' => 'required_with:newPassword_confirmation,password|min:6|confirmed',
-            'newPassword_confirmation' => 'required_with:newPassword'
+            'newPassword_confirmation' => 'required_with:newPassword',
+            'timezone' => 'required'
         ];
 
         try {
@@ -63,6 +65,7 @@ class ProfileSettingsController extends Controller
 
             user()->name = $input['name'];
             user()->email = $input['email'];
+            user()->timezone = $input['timezone'];
 
             if($input['newPassword']) {
                 if (!Hash::check($input['password'], user()->password)) {
