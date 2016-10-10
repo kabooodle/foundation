@@ -48,6 +48,14 @@ class Files extends BaseEloquentModel
     ];
 
     /**
+     * @var array
+     */
+    protected $hidden = [
+        'fileable_type',
+        'bucket_name',
+    ];
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function fileable()

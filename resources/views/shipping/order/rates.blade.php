@@ -33,21 +33,6 @@
                 <tbody is="rates-component">
 
                 </tbody>
-
-                    {{--@foreach($rates as $rate)--}}
-                    {{--<tr>--}}
-                        {{--<td><img src="{{ $rate->getCarrierLogos()['small'] }}" alt="{{ $rate->getProvider() }}"></td>--}}
-                        {{--<td>{{ $rate->getServiceLevelName() }}</td>--}}
-                        {{--<td>{{ $rate->getDays() }} {{ str_plural('day', $rate->getDays()) }}</td>--}}
-                        {{--<td>${{ $rate->getAmount() }}</td>--}}
-                        {{--<td class="pull-right">--}}
-                            {{--<button type="button" v-on:click="purchaseLabel" class="btn btn-xs success" data-uuid="{{ $rate->getRateId() }}">--}}
-                                {{--Purchase Label--}}
-                            {{--</button>--}}
-                        {{--</td>--}}
-                    {{--</tr>--}}
-                    {{--@endforeach--}}
-
             </table>
         </div>
     </div>
@@ -126,11 +111,11 @@
             <td>@{{ rate.days }} @{{ parseInt(rate.days) |  pluralize "day" }}</td>
             <td>$@{{ rate.adjustedTotalAmount }}</td>
             <td class="pull-right">
-                <button type="button" v-on:click="purchaseLabel" data-route="{{ route('shipping.transactions.store', [$shipment->uuid]) }}"  class="btn btn-xs success btn-purchase-label-el" data-uuid="@{{  rate.shippoRateObject.object_id }}">
+                <button type="button" v-on:click="purchaseLabel" data-route="{{ route('shipping.transactions.store', [$shipment->uuid]) }}"  class="btn btn-xs white btn-purchase-label-el" data-uuid="@{{  rate.shippoRateObject.object_id }}">
                     Purchase Label
                 </button>
             </td>
-            </tr>
+        </tr>
         </tbody>
     </script>
 
@@ -152,40 +137,18 @@
 
                     scope._togglePurchaseLabelBtns($this);
 
-                    noty({
-                        text: 'Confirm that you wish to proceed with purchase.',
-                        layout: 'center',
-                        theme: 'relax',
-                        type: 'alert',
-                        modal: true,
-                        animation: {
-                            open: {height: 'toggle'},
-                            close: {height: 'toggle'},
-                            easing: 'linear',
-                            speed: 1
-                        },
-                        timeout: 9000,
-                        buttons: [
-                            {
-                                addClass: 'btn btn-sm primary', text: 'Confirm Purchase', onClick: function ($noty) {
-                                    $(this).addClass('disabled').prop('disabled', true);
-                                scope.$http.post($this.data('route'), {rate : $this.data('uuid')} ).then(function(data, x){
-                                    if (data.body.redirect && data.body.redirect.length) {
-                                        window.location.href = data.body.redirect;
-                                    }
-                                }, function(data){
-                                    $noty.close();
-                                    scope._togglePurchaseLabelBtns($this);
-                                });
+                    confirmModal(function(){
+                        $(this).addClass('disabled').prop('disabled', true);
+                        scope.$http.post($this.data('route'), {rate : $this.data('uuid')} ).then(function(data, x){
+                            if (data.body.redirect && data.body.redirect.length) {
+                                window.location.href = data.body.redirect;
                             }
-                            },
-                            {
-                                addClass: 'btn btn-link btn-sm', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
-                                $noty.close();
-                                scope._togglePurchaseLabelBtns($this);
-                            }
-                            }
-                        ]
+                        }, function($noty){
+                            $noty.close();
+                            scope._togglePurchaseLabelBtns($this);
+                        });
+                    }, function(){
+                        scope._togglePurchaseLabelBtns($this);
                     });
 
                     return false;
@@ -194,16 +157,21 @@
                     var $els = $('.btn-purchase-label-el');
                     if ($els.is(':disabled')) {
                         $els.removeClass('disabled').prop('disabled', false);
-                        $els.removeClass('white text-muted').addClass('success').css('text-decoration', 'none');
+                        $els.removeClass('text-muted').closest('tr').css('text-decoration', 'none').removeClass('text-muted');
                     } else {
                         $els.addClass('disabled').prop('disabled', true);
-                        $els.not($el).addClass('text-muted').removeClass('success').css('text-decoration', 'line-through');
+                        $els.not($el).addClass('text-muted').closest('tr').css('text-decoration', 'line-through').addClass('text-muted');
                     }
                 }
             }
         });
 
         Vue.component('rates-component', RatesComponent);
+
+        new Vue({
+            el : '#shipping_rates_wrapper'
+        });
+
     </script>
 
 @endsection

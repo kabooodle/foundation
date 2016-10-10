@@ -37,4 +37,17 @@ trait TaggableTrait
 
         return null;
     }
+
+    /**
+     * @return array|null
+     */
+    public function tagsString()
+    {
+        $a = $this->tagsArray();
+        if ($a) {
+            return implode(',', $a);
+        }
+
+        return null;
+    }
 }

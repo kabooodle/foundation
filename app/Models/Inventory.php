@@ -43,7 +43,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'style',
         'styleSize',
         'tagged',
-        'categories',
         'flashsales',
 //        'claims', // <- deathtrap of recursion
         'files',
@@ -130,6 +129,25 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         ];
     }
 
+    /**
+     * @return array
+     */
+    public static function getUpdateRules()
+    {
+        $rules = self::getRules();
+        $data = [
+            'size_id' => 'required|exists:inventory_sizes,id',
+        ];
+        array_map(function($val, &$key) use (&$data) {
+            if (in_array($key, ['style_id', 'price_usd'])) {
+                $data[$key] = $val;
+            }
+
+            return $data;
+        }, $rules, array_keys($rules));
+        return $data;
+    }
+
     public static function boot()
     {
         parent::boot();
@@ -203,14 +221,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function styleSize()
     {
         return $this->belongsTo(InventorySizes::class, 'inventory_sizes_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function categories()
-    {
-        return $this->tagged();
     }
 
     /**
@@ -295,12 +305,18 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @param $value
-     *
      * @return string
      */
-    public function getNameAttribute($value)
+    public function getNameAttribute() : string
     {
-        return $this->getName($value);
+        return $this->getName();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCategoriesAttribute()
+    {
+        return $this->tags;
     }
 }

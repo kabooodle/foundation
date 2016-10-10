@@ -6,8 +6,10 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Inventory;
 
-use Kabooodle\Models\Categories;
+use DB;
+use InvalidArgumentException;
 use Kabooodle\Models\Inventory;
+use Kabooodle\Models\InventoryTypeStyles;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 
 /**
@@ -16,29 +18,38 @@ use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
  */
 class UpdateInventoryItemCommandHandler
 {
+    /**
+     * @param UpdateInventoryItemCommand $command
+     *
+     * @return mixed
+     */
     public function handle(UpdateInventoryItemCommand $command)
     {
-        /** @var Inventory $item */
-        $item = $command->getItem();
-        $item->name = array_get($command->attributes, 'name', $item->name);
-        $item->description = array_get($command->attributes, 'description', $item->description);
-        $item->initial_qty = array_get($command->attributes, 'initial_qty', $item->initial_qty);
-        $item->price_usd = array_get($command->attributes, 'price_usd', 0);
-        if (!empty($command->attributes['tags'])) {
-            $item->retag($command->attributes['tags']);
-        } else {
-            $item->untag();
+        $style = InventoryTypeStyles::findOrFail($command->getStyleId());
+
+        // Check that the requested size belongs to the requested style
+        // Could move this to the model observer.
+        if (! $style->sizes->find($command->getSizeId())) {
+            throw new InvalidArgumentException;
         }
 
-        $requestCategories = array_get($command->attributes, 'categories');
-        if ($requestCategories) {
-            $categories = Categories::whereIn('id', [$requestCategories])->get();
-        } else {
-            $categories = [];
-        }
+        return DB::transaction(function() use ($command) {
+            /** @var Inventory $item */
+            $item = $command->getItem();
+            $item->inventory_type_styles_id = $command->getStyleId();
+            $item->inventory_sizes_id = $command->getSizeId();
+            $item->description = $command->getDescription();
+            $item->initial_qty = $command->getQty();
+            $item->price_usd = $command->getPrice();
+            if (!empty($command->getCategories())) {
+                $item->retag($command->getCategories());
+            } else {
+                $item->untag();
+            }
 
-        $item->categories()->sync($categories);
+            $item->save();
 
-        $item->save();
+            return $item;
+        });
     }
 }

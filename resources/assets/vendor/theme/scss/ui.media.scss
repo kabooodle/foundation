@@ -9,8 +9,8 @@
     width: 100%;
     height: auto;
   }
-  &:hover,
-  & img:hover {
-    cursor: zoom-in;
-  }
+}
+
+[data-toggle="lightbox"]:hover {
+  cursor: zoom-in;
 }

@@ -14,7 +14,8 @@ class UpdateInventoryTblAddTypeStyleSize extends Migration
     {
         Schema::table(\Kabooodle\Models\Inventory::getTableName(), function(Blueprint $table){
             $table->dropColumn([
-                'inventory_category_id'
+                'inventory_category_id',
+                'size'
             ]);
 
             $table->integer('inventory_type_id')->unsigned()->after('id');

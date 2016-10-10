@@ -12,7 +12,6 @@
     </script>
 
     <div id="inventory">
-
         <validator
             name="inventory_validation"
             :classes="{ invalid : ' has-danger ' }"
@@ -50,9 +49,9 @@
                 </div>
 
                 <div class="form-group row {{ $errors->has('description') ? 'has-danger' : null }}">
-                    <label for="description" class="col-sm-3 form-control-label">Description<small class="text-muted block">(Optional)</small></label>
+                    <label for="description" class="col-sm-3 form-control-label">Description<small class="text-muted block text-sm">(Optional)</small></label>
                     <div class="col-sm-7">
-                        {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => 2, 'placeholder'=> 'Optional']) }}
+                        {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => 2]) }}
                     </div>
                 </div>
             </div>
@@ -73,7 +72,7 @@
 
         <script id="sizing-template" type="text/x-template">
             <div v-for="size_container in size_containers">
-                <div class="box" id="size_@{{size_container.id}}">
+                <div class="box sizing_container" id="size_@{{size_container.id}}" data-container-id="@{{size_container.id}}">
                     <div class="box-body clearfix">
                         <div class="form-group row">
                             <label class="col-sm-3 form-control-label">Size</label>
@@ -121,26 +120,16 @@
                     </div>
                     <div class="box-footer">
                         <div class="form-group categories_wrapper" style="display: none" >
-                            <input type="text" :disabled="size_container.images.length > 0" id="categories_input_@{{ size_container.id }}" name="sizings[@{{ size_container.id }}][categories]" class="form-control selectized" placeholder="Type categories or keywords">
+                            <input type="text" :disabled="size_container.images.length > 0" id="categories_input_@{{ size_container.id }}" name="sizings[@{{ size_container.id }}][categories]" class="selectized" placeholder="Type categories or keywords">
                         </div>
                         <div class="clearfix">
                             <div class="row">
                                 <div class="col-sm-offset-3 col-sm-7">
 
-                                    <div class="js-program_logo_upload_@{{size_container.id}}"></div>
-                                    <div style="margin-right: 3px" class="pull-left upload-template_@{{size_container.id}}">
-                                        <button type="button" class="btn white btn-sm fileinput-button" style="display: inline-block;">
-                                            Add Images<input type="file" name="file" class="js-s3_fileupload" accept='image/*' multiple/>
-                                        </button>
-                                        <button type="button" class="btn danger btn-sm js-cancel_button" style="display: none;">
-                                            Cancel
-                                            <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
-                                                <div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
-                                                    <div class="progress-bar progress-bar-success" style="width: 5%;"></div>
-                                                </div>
-                                            </div>
-                                        </button>
-                                    </div>
+                                    <span class="pull-left">
+                                        <image-attach></image-attach>
+                                    </span>
+
                                     <button type="button" class="pull-left btn white btn-sm "  :disabled="size_container.images.length == 0" v-on:click="toggleCategory" >Categories</button>
                                  </div>
                             </div>
@@ -159,8 +148,8 @@
         props: ["size_containers"],
         data: function () {
             return {
-                image: {size: '', key: '', location : '', bucket: ''},
                 size : {images: [{}],id : null},
+                size_container : null,
                 sizings: []
             }
         },
@@ -181,11 +170,18 @@
                     $wrapperEl.find('input:first-of-type').addClass('disabled').prop('disabled', true);
                 }
             },
-            'image:uploaded' : function(size_container, image) {
+            'image:uploaded' : function(el, image) {
                 image.json = JSON.stringify(image);
-                size_container.images.unshift(image);
+                var sizeEl = el.closest('.sizing_container'),
+                        sizeContainerId = sizeEl.data('container-id');
+
+                var container = ($.findFirst(this.size_containers, function(obj) {
+                    return obj.id == sizeContainerId;
+                }));
+
+                container.images.unshift(image);
                 setTimeout(function(){
-                    $('#size_'+size_container.id).find("input.image_qty_btn").TouchSpin({
+                    $('#size_'+container.id).find("input.image_qty_btn").TouchSpin({
                         min: 1
                     });
                 }, 0);
@@ -204,38 +200,7 @@
                             }
                         }
                     });
-                    $('.js-program_logo_upload_'+sizeContainerData.id).s3uploader({
-                        save_file_model: false,
-                        multiple: true,
-                        s3_bucket: 'kabooodle-storage',
-                        s3_key_url: '{{ route('api.files.sign') }}',
-                        s3_key_payload: {
-                            user: '{{ user()->public_hash }}'
-                        },
-                        templateEl: $('.upload-template_'+sizeContainerData.id),
-                        fileupload_options: {},
-                        on_s3_upload: function (data, textStatus, jqXHR) {
-                            if ($.inArray(jqXHR.status, [201,200]) == -1) {
-                                alert('An error occurred with an image, please try that image again.');
-                                return false;
-                            }
-                            var xml = $(data);
 
-                            that.$emit('image:uploaded', sizeContainerData, {
-                                id:         xml.find('Key').text(),
-                                bucket:     xml.find('Bucket').text(),
-                                key:        xml.find('Key').text(),
-                                location:   xml.find('Location').text()
-                            });
-                        },
-                        on_file_add: function (element, data) {
-                            if (data.files[0].type.indexOf("image")==-1) {
-                                alert('File must be an image.', false);
-                                return false;
-                            }
-                            return true;
-                        }
-                    });
                 }, 100);
             }
         },
@@ -275,9 +240,10 @@
             },
             deleteSizeContainer : function(size) {
                 var that = this;
-                confirmModal(function(){
+                confirmModal(function($noty){
                     that.size_containers.$remove(size);
                     that.$emit('size-container:removed', size);
+                    $noty.close();
                 });
             },
             toggleCategory : function(e) {
@@ -316,6 +282,7 @@
                     if (container.images.length == 0) {
                         valid = false;
                         alert('At least one image must be associated for each size.');
+                        return valid;
                     }
                 });
 
@@ -330,9 +297,6 @@
                 this.$validate(true, function () {
                     if (self.$inventory_validation.invalid || ! self.validateSizeContainers()) {
                         e.preventDefault();
-                        setTimeout(function(){
-                            $('#btn-form-save').prop('disabled', false).removeClass('disabled');
-                        }, 0);
                         self.setSubmitting(false);
                         return false;
                     }

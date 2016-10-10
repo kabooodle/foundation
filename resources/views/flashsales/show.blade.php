@@ -48,14 +48,20 @@
                                     </a>
                                 </div>
                                 <div class="p-a p-b-0">
-                                    <div class="text-muted clearfix">
+                                    <div class="clearfix">
                                         <h6 class="m-b-0"><a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}" class="_800">{!! $inventoryItem->name !!}</a></h6>
                                         <div class="m-b-0 text-sm clearfix">
                                             <div class="pull-left">
-                                                 <span class="text-muted ">Qty:</span> <span class="">{{ $inventoryItem->getAvailableQuantity() == 0 ? 'Out of stock' : $inventoryItem->getAvailableQuantity() }}</span>
+                                                <div class="block">
+                                                    <span class="text-muted">Size:</span> <span class="">{!! $inventoryItem->styleSize->name !!}</span>
+                                                </div>
+
                                             </div>
-                                            <div class="pull-right">
-                                                <span class="text-muted"><i class="fa fa-comment-o" aria-hidden="true"></i></span> <span class="">{{ $inventoryItem->comments->count() }}</span>
+                                            <div class="pull-right" style="text-align: right">
+                                                <span class="text-muted ">Qty:</span> <span class="">{{ $inventoryItem->getAvailableQuantity() }}</span>
+                                                {{--<div>--}}
+                                                    {{--<span class="text-muted"><i class="fa fa-comment-o" aria-hidden="true"></i></span> <span class="">{{ $inventoryItem->comments->count() }}</span>--}}
+                                                {{--</div>--}}
                                             </div>
                                         </div>
                                     </div>

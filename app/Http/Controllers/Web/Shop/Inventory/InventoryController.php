@@ -11,6 +11,7 @@ use Datatables;
 use Illuminate\Routing\Redirector;
 use Kabooodle\Bus\Commands\Inventory\AddInventoryCommand;
 use Kabooodle\Bus\Commands\Inventory\GetInventoryTypesCommand;
+use Kabooodle\Models\InventoryType;
 use Messages;
 use Response;
 use Exception;
@@ -132,8 +133,6 @@ class InventoryController extends Controller
         try {
             $this->validate($request, Inventory::getRules());
 
-
-
             $command = new AddInventoryCommand(
                 user(),
                 Binput::get('type_id'),
@@ -142,9 +141,9 @@ class InventoryController extends Controller
                 Binput::get('sizings'),
                 Binput::get('description')
             );
-            $item = $this->dispatchNow($command);
+            $items = $this->dispatchNow($command);
 
-            Messages::success("New item(s) successfully added to your inventory!");
+            Messages::success(count($items)." successfully added to your inventory!");
 
             return $this->redirect(route('shop.inventory.index', [$username]));
 
@@ -164,7 +163,6 @@ class InventoryController extends Controller
     public function show($username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
-//        $item = user()->inventory->find($decryptedId);
         $item = Inventory::find($decryptedId);
 
         if ($item) {
@@ -186,7 +184,10 @@ class InventoryController extends Controller
         $item = user()->inventory->find($decryptedId);
 
         if ($item) {
-            return $this->view('inventory.edit')->with(compact('item'));
+
+            $styles = InventoryType::LuLaRoe()->first()->styles;
+
+            return $this->view('inventory.edit')->with(compact('item', 'styles'));
         }
 
         return $this->redirect(route('shop.inventory.index', [$username]));
@@ -204,9 +205,18 @@ class InventoryController extends Controller
         $item = user()->inventory->find($decryptedId);
 
         try {
-            $this->validate($request, Inventory::getRules());
+            $this->validate($request, Inventory::getUpdateRules());
 
-            $this->dispatchNow(new UpdateInventoryItemCommand($item, Binput::all()));
+            $this->dispatchNow(new UpdateInventoryItemCommand(
+                user(),
+                $item,
+                Binput::get('style_id'),
+                Binput::get('size_id'),
+                Binput::get('price_usd'),
+                Binput::get('initial_qty'),
+                Binput::get('description'),
+                Binput::get('categories')
+            ));
 
             Messages::success("Item {$item->name} updated");
 
@@ -215,7 +225,7 @@ class InventoryController extends Controller
         } catch (ValidationException $e) {
             Messages::error('Some fields require input!');
 
-            return $this->redirect(route('shop.inventory.create', [$username]))
+            return $this->redirect(route('shop.inventory.edit', [$username, $idAndName]))
                 ->withErrors($e->validator->getMessageBag());
         }
     }

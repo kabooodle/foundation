@@ -75,6 +75,10 @@
   border-color: $border-color;
 }
 
+.modal-footer {
+  border-top: none;
+}
+
 .modal-content{
   color: $dark-black;
 }
