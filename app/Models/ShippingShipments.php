@@ -150,6 +150,11 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
     public function getRatesListAttribute($value)
     {
         $_shipments = json_decode($value, true);
+        $_shipments = collect($_shipments)->filter(function($item){
+            return $item['object_state'] === 'VALID' && $item['available_shippo'] === true;
+        })->sortBy(function($item) {
+            return $item['amount'];
+        });
         $shipments = null;
         foreach($_shipments as $shipment) {
             $shipments[] = new RatesObject($shipment);

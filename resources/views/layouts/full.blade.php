@@ -13,7 +13,7 @@
         }(document, 'script', 'facebook-jssdk'));</script>
 
         <div class="app" id="app">
-            <div id="content" class="app-content box-shadow-z0" role="main">
+            <div id="{{ $contentId or 'content' }}" class="app-content box-shadow-z0" role="main">
                 @include('layouts.header._header')
 
                 @hasSection('body-menu')

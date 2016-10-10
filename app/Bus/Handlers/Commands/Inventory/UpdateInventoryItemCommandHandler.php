@@ -6,8 +6,11 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Inventory;
 
-use Kabooodle\Models\Categories;
+use DB;
+use Kabooodle\Models\Files;
+use InvalidArgumentException;
 use Kabooodle\Models\Inventory;
+use Kabooodle\Models\InventoryTypeStyles;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 
 /**
@@ -16,29 +19,95 @@ use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
  */
 class UpdateInventoryItemCommandHandler
 {
+    /**
+     * @param UpdateInventoryItemCommand $command
+     *
+     * @return mixed
+     */
     public function handle(UpdateInventoryItemCommand $command)
     {
-        /** @var Inventory $item */
-        $item = $command->getItem();
-        $item->name = array_get($command->attributes, 'name', $item->name);
-        $item->description = array_get($command->attributes, 'description', $item->description);
-        $item->initial_qty = array_get($command->attributes, 'initial_qty', $item->initial_qty);
-        $item->price_usd = array_get($command->attributes, 'price_usd', 0);
-        if (!empty($command->attributes['tags'])) {
-            $item->retag($command->attributes['tags']);
-        } else {
-            $item->untag();
+        $style = InventoryTypeStyles::findOrFail($command->getStyleId());
+
+        // Check that the requested size belongs to the requested style
+        // Could move this to the model observer.
+        if (! $style->sizes->find($command->getSizeId())) {
+            throw new InvalidArgumentException;
         }
 
-        $requestCategories = array_get($command->attributes, 'categories');
-        if ($requestCategories) {
-            $categories = Categories::whereIn('id', [$requestCategories])->get();
-        } else {
-            $categories = [];
+        return DB::transaction(function() use ($command) {
+            /** @var Inventory $item */
+            $item = $command->getItem();
+            $item->inventory_type_styles_id = $command->getStyleId();
+            $item->inventory_sizes_id = $command->getSizeId();
+            $item->description = $command->getDescription();
+            $item->initial_qty = $command->getQty();
+            $item->price_usd = $command->getPrice();
+
+            // New array containing all images associated to the item
+            // this includes existing and new.
+            $addedImages = [];
+
+            // Get a separate array of existing images so we can compare it against $addedImages.
+            // The difference will yield id's that need to be deleted.
+            $existingImages = $item->images->pluck('id')->toArray();
+
+            $images = $command->getImages();
+            foreach ($images as $image) {
+                $image = $this->normalizeImageData($image);
+                if (in_array($image['id'], $existingImages)) {
+                    $addedImages[] = $image['id'];
+                    continue;
+                }
+                $file = Files::create([
+                    'location' => $image['location'],
+                    'key' => $image['key'],
+                    'bucket_name' => $image['bucket'],
+                    'fileable_type' => get_class($item),
+                    'fileable_id' => $item->id
+                ]);
+                $addedImages[] = $file->id;
+            }
+
+            if (!empty($command->getCategories())) {
+                $item->retag($command->getCategories());
+            } else {
+                $item->untag();
+            }
+
+            $this->checkAndDeleteUnusedImages($item, $existingImages, $addedImages);
+
+            $item->save();
+
+            return $item;
+        });
+    }
+
+    /**
+     * @param Inventory $item
+     * @param array     $originalImages
+     * @param array     $insertedImages
+     */
+    public function checkAndDeleteUnusedImages(Inventory $item, array $originalImages, array $insertedImages)
+    {
+        if ($toDelete = array_diff($originalImages, $insertedImages)){
+            $item->images()->whereIn('id', $toDelete)->delete();
         }
+    }
 
-        $item->categories()->sync($categories);
+    /**
+     * @param $array
+     *
+     * @return mixed
+     */
+    public function normalizeImageData(&$array)
+    {
+        $array['data'] = json_decode($array['data'], true);
 
-        $item->save();
+        // Extract keys from data as parent key/values
+        foreach ($array['data'] as $k => $v) {
+            $array[$k] = $v;
+        }
+        $array['qty'] = isset($array['qty']) ? $array['qty'] : 1;
+        return $array;
     }
 }

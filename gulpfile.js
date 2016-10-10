@@ -38,6 +38,7 @@ elixir(function (mix) {
             'vendor/theme/scripts/jquery/jquery/dist/jquery.js',
             'vendor/vuejs/vue.1.0.26.js',
             'vendor/vuejs/vue-resource.js',
+            'vendor/vuejs/vue-validator.js',
             // 'vendor/turbolinks/turbolinks.5.0.0.js',
             'vendor/theme/scripts/jquery/tether/dist/js/tether.min.js',
             'vendor/theme/scripts/jquery/bootstrap/dist/js/bootstrap.js',

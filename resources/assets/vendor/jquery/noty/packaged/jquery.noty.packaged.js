@@ -70,7 +70,7 @@
                 this.options.closeWith = [];
                 this.options.timeout = false;
 
-                var $buttons = $('<div/>').addClass('noty_buttons');
+                var $buttons = $('<div/>').addClass('noty_buttons center-block text-center');
 
                 (this.options.layout.parent.object !== null) ? this.$bar.find('.noty_bar').append($buttons) : this.$bar.append($buttons);
 
@@ -1334,17 +1334,17 @@ $.noty.themes.relax = {
 
         this.$buttons.css({
             padding        : 5,
-            textAlign      : 'right',
-            borderTop      : '1px solid #ccc',
+            borderTop      : 'none',
             backgroundColor: '#fff'
         });
 
         this.$buttons.find('button').css({
-            marginLeft: 5
+            marginLeft: 5,
+            width           : '82px'
         });
 
         this.$buttons.find('button:first').css({
-            marginLeft: 0
+            // marginLeft: 0
         });
 
         this.$bar.on({

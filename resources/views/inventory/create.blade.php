@@ -7,247 +7,311 @@
 @section('body-inner-content')
     @include('widgets._fileuploadscripts')
 
-    {{ Form::open(['route' => ['shop.inventory.store', user()->username]]) }}
+    <script>
+        var inventoryTypes = {!!  $inventoryTypes->toJson()  !!}
+    </script>
 
-    <div class="box">
-        <div class="box-header">
-            <h2>Add Items to your Inventory</h2>
-            <small>Once an item is in your inventory, you can add it to any sale, anytime!</small>
-        </div>
-        <div class="box-divider m-a-0"></div>
-        <div class="box-body">
-            <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
-                <label for="categories" class="col-sm-3 form-control-label">Categories</label>
-                <div class="col-sm-9">
-                    {{ Form::select('categories', \Kabooodle\Models\Categories::all()->sortBy('name')->pluck('name','id'), [], ['class' => 'form-control']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
-                <label for="name" class="col-sm-3 form-control-label">Name</label>
-                <div class="col-sm-9">
-                    {{ Form::text('name', null, ['class' => 'form-control']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('description') ? 'has-danger' : null }}">
-                <label for="description" class="col-sm-3 form-control-label">Description</label>
-                <div class="col-sm-9">
-                    {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => 2]) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}">
-                <label for="price_usd" class="col-sm-3 form-control-label">Price in $</label>
-                <div class="col-sm-9">
-                    {{ Form::number('price_usd', null or 0, ['class' => 'form-control float', 'step' => 'any', 'min' => 0]) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('initial_qty') ? 'has-danger' : null }}">
-                <label for="initial_qty" class="col-sm-3 form-control-label">Current Total Quantity</label>
-                <div class="col-sm-9">
-                    {{ Form::number('initial_qty', null or 0, ['class' => 'form-control', 'v-model' => 'initial_qty', 'number']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('tags') ? 'has-danger' : null }}">
-                <label for="tags" class="col-sm-3 form-control-label">Tags or Keywords</label>
-                <div class="col-sm-9">
-                    {{ Form::text('tags', null, ['class' => 'form-control selectized']) }}
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="tags" class="col-sm-3 form-control-label">Add to Flash Sale
-                    <small class="text-muted block">(This can be done later)</small>
-                </label>
-                <div class="col-sm-9">
-                    @if(user()->flashsalesAsSeller->count() > 0)
-                    @foreach(user()->flashsalesAsSeller as $flashSale)
-                        <div class="form-group">
-                            <label class="md-check">
-                                <input type="checkbox" class="has-value" name="flashsales[]"
-                                       value="{{ $flashSale->id }}">
-                                <i class="green"></i>
-                                {!! $flashSale->name !!}
-                            </label>
-                        </div>
-                    @endforeach
-                    @else
-                        <p class="text-muted"><em>You are not currently an admin or seller in any flash sales.</em></p>
-                    @endif
-                </div>
-            </div>
+    <div id="inventory">
+        <validator
+            name="inventory_validation"
+            :classes="{ invalid : ' has-danger ' }"
+        >
 
-            <div class="form-group row m-t-md">
-                <label for="tags" class="col-sm-3 form-control-label">Images</label>
-                <div class="col-sm-9">
-                    <div class="row clearfix">
-                        <div is="inventory-component"></div>
+        {{ Form::open(['route' => ['shop.inventory.store', user()->username], 'v-on:submit' => 'validateForm']) }}
+
+        <div class="box">
+            <div class="box-header">
+                <h2>Add Items to your Inventory</h2>
+                <small>Once an item is in your inventory, you can add it to any sale, anytime!</small>
+            </div>
+            <div class="box-divider m-a-0"></div>
+            <div class="box-body">
+
+                <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
+                    <label for="type" class="col-sm-3 form-control-label">Type</label>
+                    <div class="col-sm-7">
+                        {{ Form::select('type_id', $inventoryTypes->pluck('name','id'), [], ['id' => 'inventory-type-el', 'class' => 'form-control']) }}
                     </div>
+                </div>
 
-                    <div id="js-program_logo_upload"></div>
+                <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
+                    <label for="type" class="col-sm-3 form-control-label">Style</label>
+                    <div class="col-sm-7">
+                        {{ Form::select('style_id', $inventoryTypes->first()->styles->pluck('name','id'), [], ['v-on:change' => 'styleChanged', 'id' => 'inventory-styles-el', 'class' => ' form-control ']) }}
+                    </div>
+                </div>
 
-                    <div id="uploadTemplate">
-                        <button type="button" class="btn white  fileinput-button" style="display: inline-block;">
-                            Add Image(s)<input type="file" name="file" class="js-s3_fileupload" accept='image/*' multiple/>
-                        </button>
-                        <button type="button" class="btn danger js-cancel_button" style="display: none;">
-                            Cancel
-                            <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
-                                <div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
-                                    <div class="progress-bar progress-bar-success" style="width: 5%;"></div>
+                <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}"  v-validate-class>
+                    <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
+                    <div class="col-sm-7">
+                        {{ Form::number('price_usd', 0.00, ['class' => 'form-control float', 'required', 'step' => 'any', 'v-validate:price' => '{ required : true }', 'placeholder' => '0.00', 'v-model' => 'price']) }}
+                    </div>
+                </div>
+
+                <div class="form-group row {{ $errors->has('description') ? 'has-danger' : null }}">
+                    <label for="description" class="col-sm-3 form-control-label">Description<small class="text-muted block text-sm">(Optional)</small></label>
+                    <div class="col-sm-7">
+                        {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => 2]) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <inventory-sizing :size_containers.sync="size_containers"></inventory-sizing>
+
+        <div class="form-group row m-t-md">
+            <div class="col-sm-offset-3 col-sm-7">
+                <button style="margin-left: 6px;" type="button" class="btn white" id="size-add-btn" v-on:click="addSizeContainer" :disabled="submitting">Add Size</button>
+                <button type="submit" class="btn primary" id="btn-form-save">Save</button>
+            </div>
+        </div>
+
+        {{ Form::close() }}
+
+        </validator>
+
+        <script id="sizing-template" type="text/x-template">
+            <div v-for="size_container in size_containers">
+                <div class="box sizing_container" id="size_@{{size_container.id}}" data-container-id="@{{size_container.id}}">
+                    <div class="box-body clearfix">
+                        <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Size</label>
+                            <div class="col-sm-9">
+                                <div class="" data-toggle="buttons">
+                                    <label class="form-control-label btn white" v-for="size in sizings" style="margin-right: 3px;">
+                                        <input
+                                                required
+                                                aria-required="true"
+                                                validation="required"
+                                                type="radio" name="sizings[@{{ size_container.id }}][size_id]" id="option1"
+                                                autocomplete="off" value="@{{ size.id }}"> @{{ size.name }}
+                                    </label>
                                 </div>
                             </div>
-                        </button>
+                            <button type="button" v-on:click="deleteSizeContainer(size_container)" style="position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3" class=" m-l-1 pull-right btn white btn-xs text-muted "><i class="fa fa-times" aria-hidden="true"></i></button>
+                        </div>
+
+                        <div class="row row-horizon clearfix" >
+
+                                <div class="col-sm-4 thumbnail-container"  v-for="image in size_container.images">
+                                    <div class="box m-b-0">
+                                        <div class="item" >
+                                            <div class="item-overlay active p-l p-r " style="z-index: 999;">
+                                                <a type="button" style="" v-on:click="deleteSizeImage(size_container, image, $event)" data-id="@{{ image.id }}" class="pull-right text-danger"><i class="fa fa-times fa-fw"></i></a>
+                                                <span class="pull-left label dark-white text-color">@{{ size_container.images.length - $index }}</span>
+                                            </div>
+
+                                            <div class="thumbnail">
+                                                <img :src="image.location" data-gallery="image-thumbs_@{{ size_container.id }}" data-width="100%" class="w-full"  data-toggle="lightbox" data-remote="@{{ image.location }}"/>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="sizings[@{{ size_container.id }}][images][@{{ image.key }}][data]" value="@{{ image.json }}" />
+                                        <div class="box-body m-t-0 p-t-0">
+                                            <div class="image_item_component">
+                                                <label class="text-muted text-sm m-b-0 p-b-0">Quantity:</label>
+                                                <input type="text" value="1" name="sizings[@{{ size_container.id }}][images][@{{ image.key }}][qty]" class="text-center image_qty_btn"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </div>
+
+                    </div>
+                    <div class="box-footer">
+                        <div class="form-group categories_wrapper" style="display: none" >
+                            <input type="text" :disabled="size_container.images.length > 0" id="categories_input_@{{ size_container.id }}" name="sizings[@{{ size_container.id }}][categories]" class="selectized" placeholder="Type categories or keywords">
+                        </div>
+                        <div class="clearfix">
+                            <div class="row">
+                                <div class="col-sm-offset-3 col-sm-7">
+
+                                    <span class="pull-left">
+                                        <image-attach></image-attach>
+                                    </span>
+
+                                    <button type="button" class="pull-left btn white btn-sm "  :disabled="size_container.images.length == 0" v-on:click="toggleCategory" >Categories</button>
+                                 </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </script>
     </div>
-
-    <div class="form-group row m-t-md">
-        <div class="col-sm-offset-3 col-sm-9">
-            <button type="submit" class="btn primary">Save</button>
-            <a class="m-l text-muted" href="{{ route('shop.inventory.index', [user()->username]) }}">Cancel</a>
-        </div>
-    </div>
-
-    {{ Form::close() }}
-
-
-    <script id="thumbnail-template" type="text/x-template">
-
-        <div v-for="image in images">
-            <div class="col-sm-6 thumbnail-container">
-                <div class="box">
-                    <div class="item" >
-                        <div class="item-overlay active p-a p-b-0" style="z-index: 99">
-                            <button type="button" v-on:click="deleteFile" data-id="@{{ image.id }}" class="pull-right btn btn-xs white text-danger"><i class="fa fa-trash fa-fw"></i></button>
-                        </div>
-                        <div class="thumbnail">
-                            <img :src="image.location" data-gallery="image-thumbs" data-width="100%" class="w-full"  data-toggle="lightbox" data-remote="@{{ image.location }}"/>
-                        </div>
-                    </div>
-                    <input type="hidden" name="images[@{{ image.key }}][data]" value="@{{ image | json }}" />
-                    <div class="box-body m-t-0 p-t-0">
-                        <div class="image_item_component">
-                            <label class="text-muted text-sm m-b-0 p-b-0">Quantity:</label>
-                            <input type="text" value="1" name="images[@{{ image.key }}][qty]" class="text-center image_qty_btn"  />
-                            <input type="hidden" value="1" name="images[@{{ image.key }}][item_new]"  />
-                        </div>
-                        {{--<div class="m-t-1">--}}
-                            {{--<button type="button" class="image_asalbum_btn btn btn-block image_item_component white text-muted text-sm" v-on:click="convertImageToAlbumImage" style="display: none">--}}
-                                {{--or Add Image back to album--}}
-                            {{--</button>--}}
-                            {{--<button type="button" class="image_asitem_btn image_album_component btn btn-block text-muted white text-sm" v-on:click="convertImageToItem" >--}}
-                                {{--Convert to new inventory item--}}
-                                {{--<input type="hidden" value="1" name="images[@{{ image.key }}][album_item]"   />--}}
-                            {{--</button>--}}
-                        {{--</div>--}}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </script>
-
-
-    <script>
-        var inventoryImages = [{!! ( old('images') ? json_encode(old('images')) : null) !!}];
-        var InventoryComponent = Vue.extend({
-            template: '#thumbnail-template',
-            data: function () {
-                return {
-                    images: inventoryImages
-                }
-            },
-            ready : function(){
-                this.imageInserted();
-            },
-            watch : {
-                'images' : {
-                    handler: function (value,mutation) {
-                        this.imageInserted();
-                    }
-                }
-            },
-            methods : {
-                imageInserted: function(){
-                    $('.thumbnail-container').find("input.image_qty_btn").TouchSpin({
-                        min: 1
-                    });
-                },
-//                convertImageToAlbumImage : function(e) {
-//                    var scope = this,
-//                            $this = $(e.target),
-//                            $container = $this.closest('.thumbnail-container');
-//
-//                    $container.find('.image_item_component').hide().find(':input').prop('disabled', true);
-//                    $container.find('.image_album_component').show().find(':input').prop('disabled', false);
-//                },
-//                convertImageToItem : function(e) {
-//                    var scope = this,
-//                            $this = $(e.target),
-//                            $container = $this.closest('.thumbnail-container');
-//
-//                    $container.find('.image_album_component').hide().find(':input').prop('disabled', true);
-//                    $container.find('.image_item_component').show().find(':input').prop('disabled', false);
-//                },
-                deleteFile : function(e) {
-                    var scope = this,
-                            $this = $(e.target);
-
-                    $this.closest('.thumbnail-container').remove();
-                }
-            }
-        });
-
-        Vue.component('inventory-component', InventoryComponent);
-    </script>
-
 @endsection
 
 @push('footer-scripts')
 <script>
-
-    $(function () {
-        $('#js-program_logo_upload').s3uploader({
-            save_file_model: false,
-            multiple: true,
-            s3_bucket: 'kabooodle-storage',
-            s3_key_url: '{{ route('api.files.sign') }}',
-            s3_key_payload: {
-                user: '{{ user()->public_hash }}'
-            },
-            templateEl: $('#uploadTemplate'),
-            fileupload_options: {},
-            on_s3_upload: function (data, textStatus, jqXHR) {
-                if ($.inArray(jqXHR.status, [201,200]) == -1) {
-                    alert('An error occurred with an image, please try that image again.');
-                    return false;
+    Vue.component('inventory-sizing', {
+        template: '#sizing-template',
+        props: ["size_containers"],
+        data: function () {
+            return {
+                size : {images: [{}],id : null},
+                size_container : null,
+                sizings: []
+            }
+        },
+        events : {
+            'style-changed' : function(id) {
+                var styleSizes = this.getStyleSizes(id);
+                if (styleSizes.length > 0) {
+                    this.setSizings(styleSizes);
                 }
-                var xml = $(data);
-                inventoryImages.push({
-                    id:         xml.find('Key').text(),
-                    bucket:     xml.find('Bucket').text(),
-                    key:        xml.find('Key').text(),
-                    location:   xml.find('Location').text()
+            },
+            'add-size' : function() {
+                this.addSizeContainer();
+            },
+            'image:deleted' : function(size_container, image) {
+                if (size_container.images.length == 0) {
+                    var $wrapperEl =  $('#size_'+size_container.id).find('.categories_wrapper');
+                    $wrapperEl.hide();
+                    $wrapperEl.find('input:first-of-type').addClass('disabled').prop('disabled', true);
+                }
+            },
+            'image:uploaded' : function(el, image) {
+                image.json = JSON.stringify(image);
+                var sizeEl = el.closest('.sizing_container'),
+                        sizeContainerId = sizeEl.data('container-id');
+
+                var container = ($.findFirst(this.size_containers, function(obj) {
+                    return obj.id == sizeContainerId;
+                }));
+
+                container.images.unshift(image);
+                setTimeout(function(){
+                    $('#size_'+container.id).find("input.image_qty_btn").TouchSpin({
+                        min: 1
+                    });
+                }, 0);
+            },
+            'size-container:added' : function(sizeContainerData) {
+                var that = this;
+                setTimeout(function(){
+                    $('#categories_input_'+sizeContainerData.id).selectize({
+                        delimiter: ',',
+                        persist: false,
+                        plugins: ['remove_button'],
+                        create: function (input) {
+                            return {
+                                value: input,
+                                text: input
+                            }
+                        }
+                    });
+
+                }, 100);
+            }
+        },
+        ready : function () {
+            console.log('Size component ready');
+            this.addSizeContainer();
+        },
+        methods : {
+            setSizings : function(sizings){
+                this.sizings = sizings;
+            },
+            getStyleSizes : function(styleId) {
+                var style = $.grep(inventoryTypes[0].styles, function(e){
+                    return parseInt(e.id) === parseInt(styleId);
+                });
+
+                if (style.length > 0 ) {
+                    return style[0].sizes;
+                }
+
+                return [];
+            },
+            deleteSizeImage : function(size_container, img) {
+                var that = this;
+                size_container.images.$remove(img);
+                that.$emit('image:deleted', size_container, img);
+            },
+            createSizeObject : function() {
+                var rand = Math.random().toString(36).slice(2);
+                this.setSizings(this.getStyleSizes($('#inventory-styles-el').val()));
+                return {id: rand, images: []};
+            },
+            addSizeContainer : function() {
+                var sizeContainerData = this.createSizeObject();
+                this.size_containers.push(sizeContainerData);
+                this.$emit('size-container:added', sizeContainerData);
+            },
+            deleteSizeContainer : function(size) {
+                var that = this;
+                confirmModal(function($noty){
+                    that.size_containers.$remove(size);
+                    that.$emit('size-container:removed', size);
+                    $noty.close();
                 });
             },
-            on_file_add: function (element, data) {
-                if (data.files[0].type.indexOf("image")==-1) {
-                    alert('File must be an image.', false);
-                    return false;
-                }
-                return true;
-            }
-        });
-        $('.selectized').selectize({
-            delimiter: ',',
-            persist: false,
-            create: function (input) {
-                return {
-                    value: input,
-                    text: input
+            toggleCategory : function(e) {
+                e.preventDefault();
+                var $el = $(e.target),
+                        $categoryWrapperEl = $el.closest('.box-footer').find('.categories_wrapper');
+                if ($categoryWrapperEl.is(':visible')) {
+                    $categoryWrapperEl.hide();
+                } else {
+                    $categoryWrapperEl.show();
+                    $categoryWrapperEl.find('input:first-of-type').prop('disabled', false).removeClass('disabled');
                 }
             }
-        });
+        }
+    });
+
+    new Vue({
+        el: '#inventory',
+        data: {
+            price : '0.00',
+            size_containers : [],
+            submitting : false
+        },
+        methods : {
+            validateSizeContainers : function() {
+                var containers = this.size_containers;
+                var valid = true;
+                $.each(containers, function(i,container){
+                    var $containerEl = $('#size_'+container.id),
+                            $validationEls = $containerEl.find('[validation]');
+                    if (! $validationEls.is(':checked')) {
+                        $validationEls.closest('.form-group').addClass('has-danger');
+                        valid = false;
+                    }
+
+                    if (container.images.length == 0) {
+                        valid = false;
+                        alert('At least one image must be associated for each size.');
+                        return valid;
+                    }
+                });
+
+                return valid;
+            },
+            setSubmitting : function(val) {
+                this.submitting = val;
+            },
+            validateForm: function (e) {
+                var self = this;
+                self.setSubmitting(true);
+                this.$validate(true, function () {
+                    if (self.$inventory_validation.invalid || ! self.validateSizeContainers()) {
+                        e.preventDefault();
+                        self.setSubmitting(false);
+                        return false;
+                    }
+                })
+            },
+            addSizeContainer : function() {
+                this.$broadcast('add-size');
+            },
+            styleChanged : function(e) {
+                this.$broadcast('style-changed', $(e.target).val());
+            }
+        },
+        ready: function(){
+            console.log('Inventory ready.');
+        }
     });
 </script>
 @endpush

@@ -2,13 +2,15 @@ function randomAlphaStr(m) {
     var m = m || 9;
     s = '',
         r = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    for (var i=0; i < m; i++) { s += r.charAt(Math.floor(Math.random()*r.length)); }
+    for (var i = 0; i < m; i++) {
+        s += r.charAt(Math.floor(Math.random() * r.length));
+    }
     return s;
 };
 
-function confirmModal(confirmCB, closeCB) {
-    noty({
-        text: 'Confirm that you wish to proceed with purchase.',
+function confirmModal(confirmCB, closeCB, options) {
+    var defaults = {
+        text: '<h6>Are you sure you want to continue?</h6>',
         layout: 'center',
         theme: 'relax',
         type: 'alert',
@@ -22,62 +24,61 @@ function confirmModal(confirmCB, closeCB) {
         timeout: 9000,
         buttons: [
             {
-                addClass: 'btn btn-sm primary', text: 'Confirm Purchase', onClick: function ($noty) {
+                addClass: 'btn btn-sm primary', text: 'Continue', onClick: function ($noty) {
                 if (typeof confirmCB === 'function') {
-                    confirmCB();
+                    confirmCB($noty);
                 }
             }
             },
             {
-                addClass: 'btn btn-link btn-sm', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
+                addClass: 'btn white btn-sm', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
                 $noty.close();
                 if (typeof closeCB === 'function') {
-                    closeCB();
+                    closeCB($noty);
                 }
             }
             }
         ]
-    });
+    };
+
+    options = $.extend({}, defaults, options);
+
+    noty(options);
 }
 
 $(function () {
 
-    // $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
-    //     var token;
-    //     if (! options.crossDomain) {
-    //         token = $('meta[name="token"]').attr('content');
-    //         if (token) {
-    //             jqXHR.setRequestHeader('X-CSRF-Token', token);
-    //         }
-    //     }
-    //
-    //     return jqXHR;
-    // });
+    $.extend( {
+        findFirst: function( elems, validateCb ){
+            var i;
+            for( i=0 ; i < elems.length ; ++i ) {
+                if( validateCb( elems[i], i ) )
+                    return elems[i];
+            }
+            return undefined;
+        }
+    } );
 
-    // $.ajaxSetup({
-    //     beforeSend: function (xhr) {
-    //         xhr.setRequestHeader('Accept', 'application/json');
-    //     },
-    //     statusCode: {
-    //         401: function () {
-    //             window.location.href = '/';
-    //         },
-    //         403: function () {
-    //             window.location.href = '/';
-    //         }
-    //     }
-    // });
-
-    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
-        event.preventDefault();
+    $(document).on('click', '[data-toggle="lightbox"]', function (e) {
+        e.preventDefault();
         $(this).ekkoLightbox();
     });
 
-    $('form').submit(function () {
-        var $form = $(this);
-        $form.find(':submit').prop('disabled', true);
+    $('form').submit(function (e) {
+        var $form = $(this),
+            btn = $form.find(':submit'),
+            btnHtml = btn.html();
+
+        setTimeout(function(){
+            if(! e.isDefaultPrevented()) {
+                btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
+            }
+        },0);
     });
 
+    $('[data-ride="carousel"]').carousel({
+        interval : false
+    });
     $('[data-toggle="tooltip"]').tooltip();
     $('.dropdown.dropdown-onhover').hover(function () {
         $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();
@@ -85,11 +86,9 @@ $(function () {
         $(this).removeClass('open active').find('.dropdown-menu').stop(true, true).hide();
     });
 
-    $('.float').keypress(function (event) {
-        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-            event.preventDefault();
+    $('.float').keypress(function (e) {
+        if ((e.which != 46 || $(this).val().indexOf('.') != -1) && (e.which < 48 || e.which > 57)) {
+            e.preventDefault();
         }
     });
-
-
 });

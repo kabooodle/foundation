@@ -75,6 +75,10 @@
   border-color: $border-color;
 }
 
+.modal-footer {
+  border-top: none;
+}
+
 .modal-content{
   color: $dark-black;
 }
@@ -94,4 +98,9 @@
 .aside-title{
   font-size: 1.2rem;
   margin: .45rem 0;
+}
+
+
+.noty_buttons {
+  border-top: none !important;
 }

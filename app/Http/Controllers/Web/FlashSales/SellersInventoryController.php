@@ -150,7 +150,7 @@ class SellersInventoryController extends Controller
 
             return Response::json($data, 200);
         } catch (Exception $e) {
-            return \Response::json(['message' => $e->getMessage()], 500);
+            return Response::json(['message' => $e->getMessage()], 500);
         }
     }
 }

@@ -7,14 +7,14 @@
 namespace Kabooodle\Bus\Handlers\Commands\Inventory;
 
 use DB;
-use Kabooodle\Models\User;
-use Kabooodle\Models\Files;
-use Kabooodle\Models\Inventory;
-use Kabooodle\Models\Categories;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Commands\Inventory\AddInventoryCommand;
 use Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent;
-use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
+use Kabooodle\Models\Files;
+use Kabooodle\Models\Inventory;
+use Kabooodle\Models\InventoryType;
+use Kabooodle\Models\User;
 
 /**
  * Class AddInventoryCommandHandler
@@ -25,94 +25,127 @@ class AddInventoryCommandHandler
     use DispatchesJobs;
 
     /**
-     * @var array
-     */
-    public $imagesAssociatedToItem = [];
-
-    /**
-     * @var array
-     */
-    public $imagesAsNewItem = [];
-
-    /**
-     * @var array
-     */
-    public $inventoryItems = [];
-
-    /**
      * @param AddInventoryCommand $command
      *
      * @return array
      */
     public function handle(AddInventoryCommand $command)
     {
-        // This may be backwards, but we want to check if there are any images first.
-        // this is because you can add many images, but each image may be its own inventory item
-        // and NOT associated to the actual item we're creating.  Instead, it would just contain
-        // the same meta data, except for quantity.  Quantity comes with the data.
-        $this->siftThroughImages($command->getImages());
+        $sizings = $command->getSizings();
 
-        return DB::transaction(function () use ($command) {
-            // First, create the main item.
-//            $items[] = $this->buildNewInventoryItem(
-//                $command->getActor(),
-//                $command->getName(),
-//                $command->getDescription(),
-//                $command->getPrice(),
-//                $command->getQty(),
-//                $this->imagesAssociatedToItem
-//            );
+        $inventoryType = InventoryType::findOrFail($command->getTypeId());
 
-            // Iterate over the images that are to be duplicates of the original item.
-            if ($this->imagesAsNewItem && count($this->imagesAsNewItem) > 0) {
-                foreach ($this->imagesAsNewItem as $image) {
-                    $items[] = $this->buildNewInventoryItem(
-                        $command->getActor(),
-                        $command->getName(),
-                        $command->getDescription(),
-                        $command->getPrice(),
-                        $command->getQty(),
-                        [$image]
+        // Confirm the style is associated to the type;
+        $inventoryStyle = $inventoryType->styles->find($command->getStyleId());
+
+        if (!$inventoryStyle) {
+            throw new ModelNotFoundException("Style model [{$command->getStyleId()}] not found for Type [{$command->getTypeId()}]");
+        }
+
+        return DB::transaction(function () use ($command, $sizings, $inventoryType, $inventoryStyle) {
+            // Array of all inventory items.
+            $items = [];
+            $data = [
+                'actor' => $command->getActor(),
+                'type_id' => $inventoryType->id,
+                'style_id' => $inventoryStyle->id,
+                'price_usd' => $command->getPrice(),
+                'description' => $command->getDescription(),
+            ];
+
+            // Loop over sizings for size_id and categories
+            foreach ($sizings as $sizing) {
+
+                // confirm the size is associated to the style.
+                $size = $inventoryStyle->sizes->find($sizing['size_id']);
+                if (!$size) {
+                    throw new ModelNotFoundException("Size model [{$sizing['size_id']}] not found for Style [{$command->getStyleId()}]");
+                }
+
+                // Get the size categories.
+                $categories = isset($sizing['categories']) ? $sizing['categories'] : null;
+
+                // Normalize the images array.
+
+
+                // loop over the images inside sizings for: quantity, and image data.
+                foreach($sizing['images'] as $sizeImage) {
+                    $this->normalizeImageData($sizeImage);
+                    $item = $this->buildNewInventoryItem(
+                        $data['actor'],
+                        $data['type_id'],
+                        $data['style_id'],
+                        $sizing['size_id'],
+                        $data['description'],
+                        $data['price_usd'],
+                        $categories,
+                        $sizeImage
                     );
+
+                    // Add the item to the array of items.
+                    $items[] = $item;
                 }
             }
 
-            // All inventory items we've created get the same (remaining) relationships.
-            foreach ($items as $item) {
-                $category = Categories::findOrFail($command->getCategoryId());
-                $item->categories()->saveMany([$category]);
-
-                $tags = $command->getTags();
-                if ($tags) {
-                    $item->tag($tags);
-                }
-
-                if ($command->getFlashsales() && $item->initial_qty > 0) {
-                    $this->dispatchNow(new AddInventoryToSalesCommand(user(), [$item->id], $command->getFlashsales()));
-                }
-
-                event(new InventoryItemWasAddedEvent($item));
-            }
+            // TODO: Make this a plural event name/handler
+            event(new InventoryItemWasAddedEvent($items));
 
             return $items;
         });
     }
 
     /**
-     * @param $images
+     * @param User        $actor
+     * @param int         $typeId
+     * @param int         $styleId
+     * @param int         $sizeId
+     * @param string|null $description
+     * @param             $price
+     * @param string      $categories
+     * @param array       $image
+     *
+     * @return Inventory
      */
-    public function siftThroughImages(array $images)
-    {
-        if ($images) {
-            foreach ($images as $image) {
-                $cleanedImage = $this->normalizeImageData($image);
-                if (isset($cleanedImage['album_item']) && $cleanedImage['album_item'] == 1) {
-                    $this->imagesAssociatedToItem[] = $cleanedImage;
-                } else {
-                    $this->imagesAsNewItem[] = $cleanedImage;
-                }
-            }
+    public function buildNewInventoryItem(
+        User $actor,
+        int $typeId,
+        int $styleId,
+        int $sizeId,
+        string $description = null,
+        $price,
+        string $categories = null,
+        array $image
+    ) {
+
+        // Build our item.
+        $item = Inventory::factory([
+            'user_id' => $actor->id,
+            'inventory_type_id' => $typeId,
+            'inventory_type_styles_id' => $styleId,
+            'inventory_sizes_id' => $sizeId,
+            'description' => $description,
+            'price_usd' => $price,
+            'initial_qty' => $image['qty']
+        ]);
+
+        // Associate files(images) to the item.
+        $item->files()->save(new Files([
+            'location' => $image['location'],
+            'key' => $image['key'],
+            'bucket_name' => $image['bucket'],
+            'fileable_type' => get_class($item),
+            'fileable_id' => $item->id
+        ]));
+
+        // Associate categories to the item.
+        // They are passed as a comma separated string.
+        if ($categories) {
+            $item->tag($categories);
         }
+
+        $item->save();
+
+        return $item;
     }
 
     /**
@@ -131,46 +164,5 @@ class AddInventoryCommandHandler
         $array['qty'] = isset($array['qty']) ? $array['qty'] : 1;
 
         return $array;
-    }
-
-    /**
-     * @param User       $actor
-     * @param            $name
-     * @param            $description
-     * @param            $price
-     * @param            $qty
-     * @param array|null $images
-     *
-     * @return Inventory
-     */
-    public function buildNewInventoryItem(User $actor, $name, $description, $price, $qty, array $images = null)
-    {
-        $item = Inventory::factory([
-            'name' => $name,
-            'description' => $description,
-            'initial_qty' => $qty,
-            'user_id' => $actor->id,
-            'price_usd' => $price,
-        ]);
-
-        if ($images && count($images) > 0) {
-            $order = 0;
-            foreach ($images as $image) {
-                $item['initial_qty'] = $image['qty'];
-                $item->files()->save(new Files([
-                    'location' => $image['location'],
-                    'key' => $image['key'],
-                    'bucket_name' => $image['bucket'],
-                    'fileable_type' => get_class($item),
-                    'fileable_id' => $item->id,
-                    'sort_order' => $order
-                ]));
-                $order++;
-            }
-        }
-
-        $item->save();
-
-        return $item;
     }
 }

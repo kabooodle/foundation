@@ -16,14 +16,31 @@ use Eloquent;
 class BaseEloquentModel extends Eloquent
 {
     /**
+     * @var bool
+     */
+    public static $perEnvironment = true;
+
+    /**
      * @var array
      */
     public static $revisionableEvents = ['Updated', 'Deleted', 'Restored'];
 
-    /**
-     * @var bool
-     */
-    public static $perEnvironment = true;
+    public static function boot()
+    {
+        parent::boot();
+
+        self::creating(function($model){
+            if($model->created_by) {
+                $model->created_by = user()->id;
+            }
+        });
+
+        self::updating(function($model){
+            if($model->updated_by) {
+                $model->updated_by = user()->id;
+            }
+        });
+    }
 
     /**
      * @param $query

@@ -13,6 +13,13 @@ namespace Kabooodle\Models;
 class Files extends BaseEloquentModel
 {
     /**
+     * @var array
+     */
+    protected $appends = [
+        'json'
+    ];
+
+    /**
      * @var string
      */
     protected $table = 'files';
@@ -36,9 +43,12 @@ class Files extends BaseEloquentModel
         'fileable_type' => 'string',
         'location' => 'string',
         'key' => 'string',
-        'bucket_name' => 'string'
+        'bucket_name' => 'string',
     ];
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'fileable_id',
         'fileable_type',
@@ -46,6 +56,28 @@ class Files extends BaseEloquentModel
         'key',
         'bucket_name'
     ];
+
+    /**
+     * @var array
+     */
+    protected $hidden = [
+        'fileable_type',
+    ];
+
+    /**
+     * @return string
+     */
+    public function getJsonAttribute()
+    {
+        return json_encode([
+            'id' => $this->id,
+            'key' => $this->key,
+            'bucket' => $this->bucket_name,
+            'location' => $this->location,
+            'fileable_id' => $this->fileable_id,
+            'fileable_type' => $this->fileable_type
+        ]);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo

@@ -52,7 +52,7 @@
          */
         setTemplate: function($el){
             this.$element.html(
-                $el ? $el : Template.getTemplate(this.options.multiple, this.options.button_name, this.options.extended_upload_info)
+                $el ? this.$element.parent().find($el) : Template.getTemplate(this.options.multiple, this.options.button_name, this.options.extended_upload_info)
             , true);
         },
         /**
@@ -108,7 +108,9 @@
                 success: function (data, textStatus, jqXHR) {
                     that.options.on_s3_upload(data, textStatus, jqXHR);
                 },
-                done: function (e, data) {},
+                done: function (e, data) {
+                    console.log('done uploading files.');
+                },
                 fail: function(e, data, error){
                     that.throwException(e.responseText, error);
                 },
@@ -275,6 +277,7 @@
      */
     $.fn.s3uploader = function(options){
         return this.each(function(){
+            // console.log('new uploader init');
             return new S3Uploader(this, options);
         });
     };

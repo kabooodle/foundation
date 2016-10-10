@@ -6,7 +6,6 @@
 
 namespace Kabooodle\Models;
 
-use DB;
 use Carbon\Carbon;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
@@ -41,8 +40,9 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      * @var array
      */
     protected $with = [
+        'style',
+        'styleSize',
         'tagged',
-        'categories',
         'flashsales',
 //        'claims', // <- deathtrap of recursion
         'files',
@@ -65,9 +65,11 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     protected $attributes = [
         'user_id' => 0,
+        'inventory_type_id' => 0,
+        'inventory_type_styles_id' => 0,
+        'inventory_sizes_id' => 0,
         'name' => '',
         'description' => '',
-        'size' => '',
         'barcode' => null,
         'initial_qty' => 0,
         'date_received' => '',
@@ -79,11 +81,13 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     protected $casts = [
         'user_id' => 'int',
+        'inventory_type_id' => 'int',
+        'inventory_type_styles_id' => 'int',
+        'inventory_sizes_id' => 'int',
         'name' => 'string',
         'description' => 'string',
         'barcode' => 'string',
         'date_received' => 'date',
-        'initial_qty' => 'int',
         'price_usd' => 'double'
     ];
 
@@ -92,10 +96,12 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     protected $fillable = [
         'user_id',
+        'inventory_type_id',
+        'inventory_type_styles_id',
+        'inventory_sizes_id',
         'price_usd',
         'name',
         'description',
-        'size',
         'barcode',
         'initial_qty',
         'date_received',
@@ -113,12 +119,34 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public static function getRules()
     {
         return [
-            'name' => 'required',
-            'description' => 'required',
-            'initial_qty' => 'required|integer|min:0',
+            'type_id' => 'required|in:188432',
+            'style_id' => 'required|exists:inventory_type_styles,id',
             'price_usd' => 'required|min:0|digits_between:0,100000000|numeric',
-            'categories' => 'required|exists:categories,id',
+            'sizings' => 'required|array',
+            'sizings.*.size_id' => 'required|exists:inventory_sizes,id',
+            'sizings.*.images' => 'required|array',
+            'sizings.*.images.*.data' => 'required',
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getUpdateRules()
+    {
+        $rules = self::getRules();
+        $data = [
+            'size_id' => 'required|exists:inventory_sizes,id',
+            'images' => 'required|array'
+        ];
+        array_map(function($val, &$key) use (&$data) {
+            if (in_array($key, ['style_id', 'price_usd'])) {
+                $data[$key] = $val;
+            }
+
+            return $data;
+        }, $rules, array_keys($rules));
+        return $data;
     }
 
     public static function boot()
@@ -153,7 +181,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function getName() : string
     {
-        return $this->name;
+        return $this->style ? $this->style->name : $this->name;
     }
 
     /**
@@ -173,11 +201,27 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function categories()
+    public function type()
     {
-        return $this->belongsToMany(Categories::class, 'inventory_categories', 'inventory_id', 'category_id')->withTimestamps();
+        return $this->belongsTo(InventoryType::class, 'inventory_type_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function style()
+    {
+        return $this->belongsTo(InventoryTypeStyles::class, 'inventory_type_styles_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function styleSize()
+    {
+        return $this->belongsTo(InventorySizes::class, 'inventory_sizes_id');
     }
 
     /**
@@ -215,6 +259,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function images()
+    {
+        return $this->files();
+    }
+
+    /**
      * @return null
      */
     public function firstImage()
@@ -225,6 +277,17 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         }
 
         return null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRemainingImages()
+    {
+        $firstImage = $this->firstImage();
+        return $this->images->filter(function($item) use ($firstImage){
+            return $item->id <> $firstImage->id;
+        });
     }
 
     /**
@@ -251,5 +314,21 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getAvailableQuantity()
     {
         return $this->initial_qty;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameAttribute() : string
+    {
+        return $this->getName();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCategoriesAttribute()
+    {
+        return $this->tags;
     }
 }

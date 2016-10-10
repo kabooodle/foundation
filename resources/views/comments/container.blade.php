@@ -34,7 +34,7 @@
                                             <li class="list-inline-item"><time datetime="@{{ comment.created_at.date }}">@{{ comment.created_at.date | diffhumans }}</time></li>
                                             <li class="list-inline-item" v-if="userCanDelete(comment)"><button type="button" class="white btn btn-text btn-xs" v-on:click="deleteComment(comment, $event)">Delete</button></li>
                                         </ul>
-                                    </div>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -43,7 +43,7 @@
                         <form id="comment_new_form" method="POST" action="@{{ post_route }}" accept-charset="UTF-8" v-on:submit="addNewComment">
                             <textarea id="comment_new_text" v-model="comment" name="text_raw" data-toggle="emojione" class="form-control no-border" rows="3" placeholder="Type something..."></textarea>
                             <div class="box-footer clearfix">
-                                <button id="comment_new_submit_btn" type="submit" class="btn success pull-right btn-sm" :disabled="!comment" >Post Comment</button>
+                                <button id="comment_new_submit_btn" type="submit" class="btn primary pull-right btn-sm" :disabled="!comment" >Post Comment</button>
                             </div>
                         </form>
                     </div>
