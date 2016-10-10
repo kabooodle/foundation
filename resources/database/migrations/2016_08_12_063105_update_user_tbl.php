@@ -13,7 +13,7 @@ class UpdateUserTbl extends Migration
     public function up()
     {
         Schema::table('users', function ($table) {
-            $table->string('timezone')->nullable()->after('activated');
+            $table->string('timezone')->default('America/Los_Angeles')->after('activated');
         });
 
         DB::update("ALTER TABLE users AUTO_INCREMENT = 152295;");
