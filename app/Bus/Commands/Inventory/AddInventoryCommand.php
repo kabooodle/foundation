@@ -30,7 +30,7 @@ final class AddInventoryCommand
     public $styleId;
 
     /**
-     * @var number
+     * @var string
      */
     public $price;
 
@@ -50,7 +50,7 @@ final class AddInventoryCommand
      * @param User        $actor
      * @param int         $typeId
      * @param int         $styleId
-     * @param number      $price
+     * @param string      $price
      * @param array       $sizings
      * @param string|null $description
      */
@@ -89,7 +89,7 @@ final class AddInventoryCommand
     }
 
     /**
-     * @return number
+     * @return string
      */
     public function getPrice(): string
     {

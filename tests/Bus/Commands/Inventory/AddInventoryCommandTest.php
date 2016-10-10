@@ -22,20 +22,20 @@ class AddInventoryCommandTest extends BaseTestCase
     {
         $params = [
             'actor' => factory(\Kabooodle\Models\User::class)->make(),
-            'name' => 'Test Item',
-            'description' => 'Some item',
-            'qty' => 1,
-            'price' => 100,
-            'categoryId' => 1
+            'typeId' => 1,
+            'styleId' => 1,
+            'price' => (string) 100,
+            'sizings' => [],
+            'description' => 'foo bar'
         ];
 
         $object = new AddInventoryCommand(
             $params['actor'],
-            $params['name'],
-            $params['description'],
-            $params['qty'],
+            $params['typeId'],
+            $params['styleId'],
             $params['price'],
-            $params['categoryId']
+            $params['sizings'],
+            $params['description']
         );
 
         return compact('params', 'object');
