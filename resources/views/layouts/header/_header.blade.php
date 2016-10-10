@@ -64,7 +64,7 @@
                                                                       src="https://placekitten.com/g/32/32"> <i class=
                                                                                                                 "busy b-white right"></i></span></a>
                     <div class="dropdown-menu pull-right">
-                        <a class="dropdown-item" href="{{ route('profile.index') }}"><span>Profile</span></a>
+                        <a class="dropdown-item" href="{{ route('profile.index') }}"><span>Account Settings</span></a>
 
                         <a class="dropdown-item" href="{{ route('referrals.index') }}"><span>Referrals</span></a>
                         <a class=
