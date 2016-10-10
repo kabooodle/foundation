@@ -1,16 +1,41 @@
 <div class="box white">
     <div class="row-col m-b">
         <div class="col-md-6">
-            <div class="box no-shadow white">
-                <div class="p-t-1 p-l-1">
-                    <img class="img-responsive"
-                         data-toggle="lightbox"
-                         data-gallery="gallery_{{ $item->id }}"
-                         data-remote="{{ $item->firstImage() ? $item->firstImage()->location : 'http://s3-us-west-2.amazonaws.com/hypebeast-wordpress/image/2009/07/huf-converse-product-red-skidgrip-2.jpg' }}"
-                         src="{{ $item->firstImage() ? $item->firstImage()->location : 'http://s3-us-west-2.amazonaws.com/hypebeast-wordpress/image/2009/07/huf-converse-product-red-skidgrip-2.jpg' }}">
+            <div class="box no-shadow white p-a">
+                <div id="item-{{$item->id}}-carousel" class="carousel image-carousel-container slide" data-ride="carousel">
+                    <div class="carousel-outer">
+                        <div class="carousel-inner" role="listbox">
+                            @foreach($item->images as $key => $image)
+                                <div class="carousel-item {{ $key == 0 ? 'active' : null }}" >
+                                    <img
+                                            data-toggle="lightbox"
+                                            data-remote="{{ $image->location }}"
+                                            data-gallery="gallery"
+                                            src="{{ $image->location }}"
+                                    >
+                                </div>
+                            @endforeach
+                        </div>
+                        <a class="left carousel-control" href="#item-{{$item->id}}-carousel" role="button" data-slide="prev">
+                            <span class="icon-prev" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#item-{{$item->id}}-carousel" role="button" data-slide="next">
+                            <span class="icon-next" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                    <ol class="carousel-indicators">
+                        @foreach($item->images as $key=>$image)
+                            <li data-target="#item-{{$item->id}}-carousel" data-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : null }}">
+                                <img src="{{ $image->location }}" style="width: 64px; height: 64px;">
+                            </li>
+                        @endforeach
+                    </ol>
                 </div>
             </div>
         </div>
+
         <div class="col-md-4">
             <div class="box-header no-shadow">
                 <h2><span class="_800">{!! $item->name !!}</span></h2>
@@ -33,16 +58,16 @@
         </div>
         <div class="col-md-2 b-l no-shadow">
 
-                <div class=" p-a-md">
-                    <h6 class="text-muted">Categories</h6>
-                    @if($item->categories->count() > 0)
+            <div class=" p-a-md">
+                <h6 class="text-muted">Categories</h6>
+                @if($item->categories->count() > 0)
                     @foreach($item->categories as $tag)
                         <span class="label">{{ $tag->name }}</span>
                     @endforeach
-                    @else
-                        <small class="text-muted text-sm"><em>None</em></small>
-                    @endif
-                </div>
+                @else
+                    <small class="text-muted text-sm"><em>None</em></small>
+                @endif
+            </div>
 
             <div class="text-center">
                 <small class="text-muted"><i class="fa fa-flag" aria-hidden="true"></i> Flag</small>

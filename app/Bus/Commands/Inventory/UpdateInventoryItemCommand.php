@@ -46,6 +46,11 @@ final class UpdateInventoryItemCommand
     public $qty;
 
     /**
+     * @var array
+     */
+    public $images;
+
+    /**
      * @var null|string
      */
     public $description;
@@ -65,10 +70,11 @@ final class UpdateInventoryItemCommand
      * @param int         $sizeId
      * @param float       $price
      * @param int         $qty
+     * @param             array $images
      * @param string|null $description
      * @param string|null $categories
      */
-    public function __construct(User $actor, Inventory $item, int $styleId, int $sizeId, float $price, int $qty, string $description = null, string $categories = null)
+    public function __construct(User $actor, Inventory $item, int $styleId, int $sizeId, float $price, int $qty, array $images, string $description = null, string $categories = null)
     {
         $this->actor = $actor;
         $this->item = $item;
@@ -76,6 +82,7 @@ final class UpdateInventoryItemCommand
         $this->sizeId = $sizeId;
         $this->price = $price;
         $this->qty = $qty;
+        $this->images = $images;
         $this->description = $description;
         $this->categories = $categories;
     }
@@ -126,6 +133,14 @@ final class UpdateInventoryItemCommand
     public function getStyleId(): int
     {
         return $this->styleId;
+    }
+
+    /**
+     * @return array
+     */
+    public function getImages(): array
+    {
+        return $this->images;
     }
 
     /**

@@ -214,6 +214,7 @@ class InventoryController extends Controller
                 Binput::get('size_id'),
                 Binput::get('price_usd'),
                 Binput::get('initial_qty'),
+                Binput::get('images'),
                 Binput::get('description'),
                 Binput::get('categories')
             ));

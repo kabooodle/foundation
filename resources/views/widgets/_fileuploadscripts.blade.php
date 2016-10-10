@@ -46,19 +46,19 @@
         },
         template: '' +
         '<div id="@{{ imageEl }}">' +
-        '<div style="margin-right: 3px" class="upload-template"> ' +
-        '<button type="button" class="btn white @{{ btnClassSize }} fileinput-button" style="display: inline-block;">' +
-        '@{{ buttonTitle }}<input type="file" name="file" class="js-s3_fileupload" accept="@{{ acceptRegEx }}"  multiple /> ' +
-        '</button> ' +
-        '<button type="button" class="btn danger @{{ btnClassSize }} js-cancel_button" style="display: none;">' +
-        'Cancel ' +
-        '<div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;"> ' +
-        '<div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5"> ' +
-        '<div class="progress-bar progress-bar-success" style="width: 5%;"></div> ' +
-        '</div> ' +
-        '</div> ' +
-        '</button> ' +
-        '</div>' +
+            '<div style="margin-right: 3px" class="upload-template"> ' +
+                '<button type="button" class="btn white @{{ btnClassSize }} fileinput-button" style="display: inline-block;">' +
+                    '@{{ buttonTitle }}<input type="file" name="file" class="js-s3_fileupload" accept="@{{ acceptRegEx }}"  multiple /> ' +
+                '</button> ' +
+                '<button type="button" class="btn danger @{{ btnClassSize }} js-cancel_button" style="display: none;">' +
+                    'Cancel ' +
+                    '<div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;"> ' +
+                        '<div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5"> ' +
+                            '<div class="progress-bar progress-bar-success" style="width: 5%;"></div> ' +
+                        '</div> ' +
+                    '</div> ' +
+                '</button> ' +
+            '</div>' +
         '</div>',
         methods : {
             buildImageEl : function(){
@@ -86,6 +86,7 @@
                             var responseData = {
                                 id: xml.find('Key').text(),
                                 bucket: xml.find('Bucket').text(),
+                                bucket_name: xml.find('Bucket').text(),
                                 key: xml.find('Key').text(),
                                 location: xml.find('Location').text()
                             };
@@ -102,13 +103,13 @@
                             return true;
                         }
                     });
-                },100);
+                },200);
             }
         }
     });
 </script>
 
-@push('footer-scripts')
+@push('header-scripts')
 <script src="/assets/js/fileupload/js/vendor/jquery.ui.widget.js"></script>
 <script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
 <script src="//blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>

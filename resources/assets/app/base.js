@@ -76,6 +76,9 @@ $(function () {
         },0);
     });
 
+    $('[data-ride="carousel"]').carousel({
+        interval : false
+    });
     $('[data-toggle="tooltip"]').tooltip();
     $('.dropdown.dropdown-onhover').hover(function () {
         $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();

@@ -137,6 +137,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         $rules = self::getRules();
         $data = [
             'size_id' => 'required|exists:inventory_sizes,id',
+            'images' => 'required|array'
         ];
         array_map(function($val, &$key) use (&$data) {
             if (in_array($key, ['style_id', 'price_usd'])) {
@@ -276,6 +277,17 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         }
 
         return null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRemainingImages()
+    {
+        $firstImage = $this->firstImage();
+        return $this->images->filter(function($item) use ($firstImage){
+            return $item->id <> $firstImage->id;
+        });
     }
 
     /**

@@ -14,3 +14,38 @@
 [data-toggle="lightbox"]:hover {
   cursor: zoom-in;
 }
+
+.image-carousel-container {
+  max-width: 400px;
+
+  & .carousel-indicators {
+    margin: 10px 0 0;
+    overflow: auto;
+    position: static;
+    text-align: left;
+    white-space: nowrap;
+    width: 100%;
+    & li {
+      background-color: transparent;
+      -webkit-border-radius: 0;
+      border-radius: 0;
+      display: inline-block;
+      height: auto;
+      margin: 0 !important;
+      width: auto;
+      & img {
+        display: block;
+        opacity: 0.5;
+      }
+      &.active img {
+        opacity: 1;
+      }
+      &:hover img {
+        opacity: 0.75;
+      }
+    }
+  }
+  .carousel-outer {
+    position: relative;
+  }
+}
