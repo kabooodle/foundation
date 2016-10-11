@@ -48,14 +48,14 @@
 
 
 
-        {{ Form::open(['id' => 'form_inventory_manage', 'v-on:submit' => 'validateForm', 'route' => ['shop.inventory.update', $item->user->username, $item->getUUID()], 'method' => 'put']) }}
+    {{ Form::open(['id' => 'form_inventory_manage', 'v-on:submit' => 'validateForm', 'route' => ['shop.inventory.update', $item->user->username, $item->getUUID()], 'method' => 'put']) }}
 
-        <input v-for="image in images" type="hidden" name="images[@{{ image.id }}][data]"  value="@{{ image.json }}">
+    <input v-for="image in images" type="hidden" name="images[@{{ image.id }}][data]"  value="@{{ image.json }}">
 
-        <validator
-                name="inventory_validation"
-                :classes="{ invalid : ' has-danger ' }"
-        >
+    <validator
+            name="inventory_validation"
+            :classes="{ invalid : ' has-danger ' }"
+    >
 
         <div class="box">
             <div class="box-body">
@@ -97,21 +97,22 @@
                         {{ Form::text('categories', $item->tagsString(), ['class' => 'selectized', 'id' => 'tags', 'placeholder' => 'Type categories']) }}
                     </div>
                 </div>
-                <div class="form-group row m-t-md">
-                    <div class="col-sm-offset-3 col-sm-7">
+            </div>
+        </div>
+
+        <div class="form-group row m-t-md">
+            <div class="col-sm-offset-3 col-sm-7">
                 <span class="pull-left">
                     <image-attach btn-class-size="" multiple="false"></image-attach>
                 </span>
-                        <button type="submit" class="btn primary">Save</button>
-                    </div>
-                </div>
+                <button type="submit" class="btn primary">Save</button>
             </div>
         </div>
 
 
-        </validator>
+    </validator>
 
-        {{ Form::close() }}
+    {{ Form::close() }}
 
 
 

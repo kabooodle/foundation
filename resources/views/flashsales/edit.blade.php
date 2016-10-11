@@ -185,14 +185,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group row {{ $errors->has('starts_at') ? 'has-danger' : null }}">
-                    <div class="col-sm-offset-3 col-sm-9">
-                        <button type="submit" class="btn primary btn-xl btn-lg">Save</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
+
+    <div class="form-group row {{ $errors->has('starts_at') ? 'has-danger' : null }}">
+        <div class="col-sm-offset-3 col-sm-9">
+            <button type="submit" class="btn primary btn-xl btn-lg">Save</button>
+        </div>
+    </div>
+
     {{ Form::close() }}
     @push('footer-scripts')
     <script>

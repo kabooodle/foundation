@@ -23,7 +23,8 @@ $warn:              #fcc100;
 $info:              #6887ff;
 $success:           #6cc788;
 $warning:           #f77a99;
-$danger:            #f44455;
+//$danger:            #f44455;
+$danger:          $warning;
 
 $light:             #f8f8f8;
 $grey:              #424242;

@@ -32,3 +32,5 @@
     <label class="control-label col-sm-3">Select Timezone</label>
     <div class="col-sm-6">
         {{ Form::select('timezone', $_timezone, $_user->timezone, ['class' => 'form-control']) }}
+    </div>
+</div>

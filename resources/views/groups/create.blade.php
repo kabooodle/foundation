@@ -6,14 +6,14 @@
 
 
 @section('body-inner-content')
-
+    {{ Form::open(['route' => 'groups.store']) }}
             <div class="box">
                 <div class="box-header">
                     <h2>Create a New Group</h2>
                 </div>
                 <div class="box-divider m-a-0"></div>
                 <div class="box-body">
-                    {{ Form::open(['route' => 'groups.store']) }}
+
                     <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
                         <label for="inputEmail3" class="col-sm-3 form-control-label">Name</label>
                         <div class="col-sm-9">
@@ -46,16 +46,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row m-t-md">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <button type="submit" class="btn primary">Create</button>
-                            <a class="m-l text-muted" href="{{ route('groups.index') }}">Cancel</a>
-                        </div>
-                    </div>
-                    {{ Form::close() }}
+
                 </div>
             </div>
 
+            <div class="form-group row m-t-md">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn primary">Create</button>
+                    <a class="m-l text-muted" href="{{ route('groups.index') }}">Cancel</a>
+                </div>
+            </div>
+            {{ Form::close() }}
     @push('footer-scripts')
     <script>
 

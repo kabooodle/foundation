@@ -3,6 +3,24 @@
 <link rel="stylesheet" href="https://blueimp.github.io/jQuery-File-Upload/css/jquery.fileupload-ui.css" type="text/css"/>
 @endpush
 
+<script id="image_attach_template" type="text/template">
+    <div id="@{{ imageEl }}">
+        <div style="margin-right: 3px" class="upload-template">
+            <button type="button" class="btn white @{{ btnClassSize }} fileinput-button" style="display: inline-block;">
+                @{{ buttonTitle }}<input type="file" name="file" class="js-s3_fileupload" accept="@{{ acceptRegEx }}"  multiple />
+            </button>
+            <button type="button" class="btn danger @{{ btnClassSize }} js-cancel_button" style="display: none;">
+                Cancel
+                <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
+                    <div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
+                        <div class="progress-bar progress-bar-success" style="width: 5%;"></div>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </div>
+</script>
+
 <script>
     Vue.component('image-attach', {
         props : [
@@ -44,22 +62,7 @@
                 this.attachPluginToEl($('#'+v));
             }
         },
-        template: '' +
-        '<div id="@{{ imageEl }}">' +
-            '<div style="margin-right: 3px" class="upload-template"> ' +
-                '<button type="button" class="btn white @{{ btnClassSize }} fileinput-button" style="display: inline-block;">' +
-                    '@{{ buttonTitle }}<input type="file" name="file" class="js-s3_fileupload" accept="@{{ acceptRegEx }}"  multiple /> ' +
-                '</button> ' +
-                '<button type="button" class="btn danger @{{ btnClassSize }} js-cancel_button" style="display: none;">' +
-                    'Cancel ' +
-                    '<div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;"> ' +
-                        '<div style="height: 8px;" class="progress progress-striped active m-b-0 p-b-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5"> ' +
-                            '<div class="progress-bar progress-bar-success" style="width: 5%;"></div> ' +
-                        '</div> ' +
-                    '</div> ' +
-                '</button> ' +
-            '</div>' +
-        '</div>',
+        template: '#image_attach_template',
         methods : {
             buildImageEl : function(){
                 return Math.random().toString(36).slice(2);
