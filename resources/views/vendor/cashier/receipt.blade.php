@@ -24,7 +24,7 @@
             bottom: 10px;
             width: 48px;
             right: 0;
-            margin-right: 10px;
+            margin-right: 2px;
         }
         .white {
             background-color: #fff;

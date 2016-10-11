@@ -15,6 +15,7 @@
                         <tr>
                             <th>Date</th>
                             <th>Price</th>
+                            <th>Status</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -23,6 +24,7 @@
                         <tr>
                             <td>{{ $invoice->date()->toFormattedDateString() }}</td>
                             <td>{{ $invoice->total() }}</td>
+                            <td>@if($invoice->closed == true || $invoice->ending_balance == 9) <span class="">Paid</span> @endif</td>
                             <td class="pull-right">
                                 <a class="btn btn-xs white" href="{{ route('profile.subscription.invoices.show', [$invoice->id]) }}">View</a>
                                 <a class="btn btn-xs white" href="{{ route('profile.subscription.invoices.download', [$invoice->id]) }}">Download</a>
