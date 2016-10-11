@@ -23,7 +23,10 @@
                         <tr>
                             <td>{{ $invoice->date()->toFormattedDateString() }}</td>
                             <td>{{ $invoice->total() }}</td>
-                            <td class="pull-right"><a href="{{ route('profile.subscription.invoices.show', [$invoice->id]) }}">Download</a></td>
+                            <td class="pull-right">
+                                <a class="btn btn-xs white" href="{{ route('profile.subscription.invoices.show', [$invoice->id]) }}">View</a>
+                                <a class="btn btn-xs white" href="{{ route('profile.subscription.invoices.download', [$invoice->id]) }}">Download</a>
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>

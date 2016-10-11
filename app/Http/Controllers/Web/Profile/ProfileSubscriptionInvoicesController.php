@@ -36,9 +36,22 @@ class ProfileSubscriptionInvoicesController extends Controller
      */
     public function show($invoiceId)
     {
+        return user()->findInvoiceOrFail($invoiceId)->view([
+            'vendor'  => 'Kabooodle, LLC',
+            'product' => 'Kabooodle.com',
+        ]);
+    }
+
+    /**
+     * @param $invoiceId
+     *
+     * @return mixed
+     */
+    public function download($invoiceId)
+    {
         return user()->downloadInvoice($invoiceId, [
-            'vendor'  => 'Your Company',
-            'product' => 'Your Product',
+            'vendor'  => 'Kabooodle, LLC',
+            'product' => 'Kabooodle.com',
         ]);
     }
 }
