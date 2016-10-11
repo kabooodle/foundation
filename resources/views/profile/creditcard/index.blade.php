@@ -12,14 +12,16 @@
         <div class="box-divider"></div>
         <div class="box-body">
             @include('profile.creditcard.partials._form')
+
+            <div class="form-group row m-t-md">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn primary">Save</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="form-group row m-t-md">
-        <div class="col-sm-offset-3 col-sm-9">
-            <button type="submit" class="btn primary">Save</button>
-        </div>
-    </div>
+
 
     {{ Form::close() }}
 

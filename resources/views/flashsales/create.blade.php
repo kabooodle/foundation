@@ -89,7 +89,6 @@
             <div class="form-group row m-t-md">
                 <div class="col-sm-offset-3 col-sm-9">
                     <button type="submit" class="btn primary">Save</button>
-                    <a class="m-l text-muted" href="{{ route('flashsales.index') }}">Cancel</a>
                 </div>
             </div>
             {{ Form::close() }}

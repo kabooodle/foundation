@@ -97,17 +97,18 @@
                         {{ Form::text('categories', $item->tagsString(), ['class' => 'selectized', 'id' => 'tags', 'placeholder' => 'Type categories']) }}
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="form-group row m-t-md">
-            <div class="col-sm-offset-3 col-sm-7">
+                <div class="form-group row m-t-md">
+                    <div class="col-sm-offset-3 col-sm-7">
                 <span class="pull-left">
                     <image-attach btn-class-size="" multiple="false"></image-attach>
                 </span>
-                <button type="submit" class="btn primary">Save</button>
+                        <button type="submit" class="btn primary">Save</button>
+                    </div>
+                </div>
             </div>
         </div>
+
+
         </validator>
 
         {{ Form::close() }}
