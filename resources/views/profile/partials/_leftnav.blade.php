@@ -8,7 +8,7 @@
     Social Profiles
 </a>
 <a href="{{ route('profile.addresses.edit') }}" class="nav-link {{ Request::is('profile/addresses') ? 'active' : null }}">
-    Addresses
+    Shipping Profile
 </a>
 @if(user()->subscribed('main'))
 <a href="{{ route('profile.credits.index') }}" class="nav-link {{ Request::is('profile/credits') ? 'active' : null }}">
