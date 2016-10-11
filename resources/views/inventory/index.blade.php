@@ -64,8 +64,8 @@
             <th class="text-muted p-l-0 m-l-0">Style</th>
             <th class="text-muted p-l-0 m-l-0">Size</th>
             <th class="text-muted p-l-0 m-l-0">Price</th>
-            <th class="text-muted p-l-0 m-l-0">Claims</th>
             <th class="text-muted p-l-0 m-l-0">*Qty</th>
+            <th class="text-muted p-l-0 m-l-0">Claims</th>
             <th></th>
         </tr>
         </thead>
@@ -115,11 +115,11 @@
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
-                    <span class="h5 "><a href="#"><span class="text-success">{{ $item->acceptedClaims->count() }}</span></a> <span class="text-muted">|</span> <a href="#"><span class="text-warning">{{ $item->pendingClaims->count() }}</span></a></span>
+                    <span class="h5">{{ $item->getAvailableQuantity() }}</span>
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
-                    <span class="h5">{{ $item->getAvailableQuantity() }}</span>
+                    <span class="h5 "><a href="#"><span class="text-success">{{ $item->acceptedClaims->count() }}</span></a> <span class="text-muted">|</span> <a href="#"><span class="text-warning">{{ $item->pendingClaims->count() }}</span></a></span>
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
