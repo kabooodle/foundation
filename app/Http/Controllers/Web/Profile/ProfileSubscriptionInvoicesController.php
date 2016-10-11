@@ -46,6 +46,6 @@ class ProfileSubscriptionInvoicesController extends Controller
      */
     public function download($invoiceId)
     {
-        return user()->downloadInvoice($invoiceId, []);
+        return user()->downloadInvoice($invoiceId, ['product' => 'kabooodle.com']);
     }
 }
