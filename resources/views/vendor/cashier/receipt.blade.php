@@ -118,7 +118,7 @@
             </td>
             <td style="text-align: right;">
                 <p>
-                    <strong>Product:</strong> {{ $product }}<br>
+                    <strong>Product:</strong> Kabooodle.com<br>
                     <strong>Invoice Number:</strong> {{ $id or $invoice->id }}<br>
                 </p>
             </td>
