@@ -217,7 +217,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn primary p-x-md btn_save_selected" id="">Save</button>
-                            <button type="button" class="m-l-1 btn btn-link" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="m-l-1 btn white" data-dismiss="modal">Cancel</button>
                         </div>
                         {{ Form::close() }}
                     </div><!-- /.modal-content -->
@@ -252,7 +252,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn primary p-x-md btn_save_selected" id="">Save</button>
-                            <button type="button" class="m-l-1 btn btn-link" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="m-l-1 btn white" data-dismiss="modal">Cancel</button>
                         </div>
                         {{ Form::close() }}
                     </div><!-- /.modal-content -->
