@@ -60,11 +60,12 @@
             <th>
                 <div style="padding-left: 12px !important;"><input id="select_all" type="checkbox" class=""></div>
             </th>
-            <th class="text-muted">Details</th>
+            <th class="text-muted">Img</th>
+            <th class="text-muted p-l-0 m-l-0">Style</th>
             <th class="text-muted p-l-0 m-l-0">Size</th>
             <th class="text-muted p-l-0 m-l-0">Price</th>
             <th class="text-muted p-l-0 m-l-0">Claims</th>
-            <th class="text-muted p-l-0 m-l-0">*Available Qty</th>
+            <th class="text-muted p-l-0 m-l-0">*Qty</th>
             <th></th>
         </tr>
         </thead>
@@ -88,10 +89,6 @@
                         </span>
                             </div>
                             <div class="list-body">
-                                <div>
-                                    <a href="{{ route('shop.inventory.show', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}"
-                                       class="_500 h6">{{ $item->name }}</a>
-                                </div>
                                 <div class="text-sm hidden-sm hidden-xs hidden-xs-down">
                                     @if($item->tagged->count() > 0)
                                         <span class="text-muted">Categories: </span>
@@ -102,6 +99,11 @@
                             </div>
                         </div>
                     </div>
+                </td>
+                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
+                    valign="middle">
+                    <span class="h5 ">   <a href="{{ route('shop.inventory.show', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}"
+                                            class="">{{ $item->style->name }}</a></span>
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
@@ -133,7 +135,7 @@
             @if($item->flashsales->count() > 0)
                 <tr data-id="{{ $item->id }}">
                     <td class="b-t-0 b-" style="border-top: 0"></td>
-                    <td colspan="5" class="b-t-0" style="border-top: 0">
+                    <td colspan="8" class="b-t-0" style="border-top: 0">
                         <div class="flashsale_wrapper">
                             <span class="text-muted">Flash sales:</span>
                             @foreach($item->flashsales as $flashsale)
@@ -155,7 +157,7 @@
             @if($item->facebooksales->count() > 0)
                 <tr data-id="{{ $item->id }}">
                     <td class="b-t-0 b-" style="border-top: 0"></td>
-                    <td colspan="5" class="b-t-0" style="border-top: 0">
+                    <td colspan="8" class="b-t-0" style="border-top: 0">
                         <div class="flashsale_wrapper">
                             <span class="text-muted">Facebook Albums:</span>
                             @foreach($item->facebooksales as $facebooksale)
