@@ -60,13 +60,13 @@
             <th>
                 <div style="padding-left: 12px !important;"><input id="select_all" type="checkbox" class=""></div>
             </th>
-            <th class="text-muted">Img</th>
+            <th class="text-muted">Item</th>
             <th class="text-muted p-l-0 m-l-0">Style</th>
             <th class="text-muted p-l-0 m-l-0">Size</th>
             <th class="text-muted p-l-0 m-l-0">Price</th>
             <th class="text-muted p-l-0 m-l-0">*Qty</th>
-            <th class="text-muted p-l-0 m-l-0">Claims</th>
-            <th></th>
+            <th class="text-muted p-l-0 m-l-0">Pending</th>
+            <th class="text-muted p-l-0 m-l-0"></th>
         </tr>
         </thead>
         <tbody>
@@ -84,19 +84,21 @@
                         <div class="list-item p-l-0 p-r-0">
                             <div class="list-left">
 
-                        <span class="w-50 avatar">
-                            <img src="{{ $item->firstImage() ? $item->firstImage()->location : 'https://placekitten.com/g/32/32'}}">
+                        <span class="" style="width: 32px; height: 32px; border-radius: 2px;">
+                            <img style="width: 32px; height: 32px; border-radius: 2px;" src="{{ $item->firstImage() ? $item->firstImage()->location : 'https://placekitten.com/g/32/32'}}">
                         </span>
                             </div>
+                            @if($item->tagged->count() > 0)
                             <div class="list-body">
                                 <div class="text-sm hidden-sm hidden-xs hidden-xs-down">
-                                    @if($item->tagged->count() > 0)
+
                                         <span class="text-muted">Categories: </span>
                                         @foreach($item->tagged as $tag) <span
                                                 class="label label-xs outline text-u-c">{!! $tag->tag_name !!}</span> @endforeach
-                                    @endif
+
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </div>
                 </td>
@@ -119,16 +121,22 @@
                 </td>
                 <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
                     valign="middle">
-                    <span class="h5 "><a href="#"><span class="text-success">{{ $item->acceptedClaims->count() }}</span></a> <span class="text-muted">|</span> <a href="#"><span class="text-warning">{{ $item->pendingClaims->count() }}</span></a></span>
+                    <span class="h5 "><a href="#"<a href="#"><span class="text-warning">{{ $item->pendingClaims->count() }}</span></a></span>
                 </td>
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
+                <td style="padding-bottom: 0; padding-top: 0; padding-right: 0; vertical-align: middle !important"
                     valign="middle">
-                    <div class="text-right text-muted p-r-1">
-                        <a href="{{ route('shop.inventory.show', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}"
-                           class="btn white btn-sm _400">View</a> <a
-                                href="{{ route('shop.inventory.edit', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}"
-                                class="btn white btn-sm _400">Edit</a>
-                    </div>
+                    <div class="pull-right list-item p-l-0">
+                        <div class="dropdown">
+                            <button data-toggle="dropdown" class="btn white btn-xs dropdown-toggle" type="button" ></button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="{{ route('shop.inventory.show', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}" >Preview</a>
+                         <a class="dropdown-item" href="{{ route('shop.inventory.edit', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}">Edit</a>
+                         <a class="dropdown-item" href="#">Delete</a>
+                     </div>
+                 </div>
+
+             </div>
+
 
                 </td>
             </tr>
@@ -277,7 +285,7 @@
             var href = $addSelectedBtnEl.prop('href');
 
             $('.table-as-list tbody tr').click(function (event) {
-                if (event.target.type !== 'checkbox') {
+                if (event.target.type != 'checkbox' || event.target.type != 'button') {
                     $(':checkbox', this).trigger('click');
                 }
             });

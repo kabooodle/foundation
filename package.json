@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.4",
+    "bootstrap-multiselect": "^0.9.13-1",
     "bootstrap-sass": "^3.0.0",
     "bootstrap-touchspin": "^3.1.1",
     "clipboard": "^1.5.12",
@@ -29,5 +30,8 @@
     "vue-loader": "^9.5.0",
     "vue-resource": "^1.0.3",
     "vue-validator": "^2.1.7"
+  },
+  "devDependencies": {
+    "vuetable": "^1.5.5"
   }
 }

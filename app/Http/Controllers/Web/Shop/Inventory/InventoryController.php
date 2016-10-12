@@ -12,6 +12,8 @@ use Illuminate\Routing\Redirector;
 use Kabooodle\Bus\Commands\Inventory\AddInventoryCommand;
 use Kabooodle\Bus\Commands\Inventory\GetInventoryTypesCommand;
 use Kabooodle\Models\InventoryType;
+use Kabooodle\Transformers\Inventory\InventoryTransformer;
+use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use Messages;
 use Response;
 use Exception;
@@ -45,7 +47,10 @@ class InventoryController extends Controller
             return redirect('/');
         }
 
+//        dd($request->all());
+
         $data = user()->inventory;
+
 
         $page = $request->get('page', 1);
         $perPage = config('pagination.per-page');
@@ -57,6 +62,9 @@ class InventoryController extends Controller
             $page,
             ['path' => $request->url(), 'query' => $request->query()]
         );
+
+
+        return (fractal()->collection($data)->transformWith(new InventoryTransformer())->paginateWith(new IlluminatePaginatorAdapter($data))->toJson());
 
         return $this->view('inventory.index')->with(compact('data'));
     }
