@@ -1,5 +1,6 @@
 var elixir = require('laravel-elixir');
 require('laravel-elixir-vueify');
+js_obfuscator = require('gulp-js-obfuscator');
 
 // elixir.config.production = true;
 elixir.config.assetsPath = 'resources/assets/';
@@ -9,7 +10,7 @@ elixir.config.js.folder = elixir.config.css.folder = elixir.config.css.sass.fold
 
 elixir(function (mix) {
 
-    // mix.browserify('app/app.js');
+    mix.browserify('app/vendor.js');
 
     mix
         .sass([
@@ -34,33 +35,28 @@ elixir(function (mix) {
             // 'vendor/selectizejs/dist/css/selectize.bootstrap3.css'
         ], elixir.config.publicPath + 'css/merchant.css')
 
-        .scripts([
-            'vendor/theme/scripts/jquery/jquery/dist/jquery.js',
-            'vendor/vuejs/vue.1.0.26.js',
-            'vendor/vuejs/vue-resource.js',
-            'vendor/vuejs/vue-validator.js',
-            // 'vendor/turbolinks/turbolinks.5.0.0.js',
-            'vendor/theme/scripts/jquery/tether/dist/js/tether.min.js',
-            'vendor/theme/scripts/jquery/bootstrap/dist/js/bootstrap.js',
-            'vendor/theme/scripts/jquery/underscore/underscore-min.js',
-            'vendor/moment/moment.js',
-            'vendor/moment/moment-tz.js',
-            'vendor/datetimepicker/bootstrap-datetimepicker.min.js',
-            // 'vendor/theme/scripts/jquery/PACE/pace.min.js',
-            // 'vendor/theme/scripts/jquery/screenfull/dist/screenfull.min.js',
-            'vendor/jquery/noty/packaged/jquery.noty.packaged.js',
-            'vendor/clipboard/clipboard.js',
-            'vendor/lightbox/lightbox.js'
-        ], elixir.config.publicPath + 'js/vendor.js')
+        // .scripts([
+            // 'vendor/theme/scripts/jquery/jquery/dist/jquery.js',
+            // 'vendor/vuejs/vue.1.0.26.js',
+            // 'vendor/vuejs/vue-resource.js',
+            // 'vendor/vuejs/vue-validator.js',
+            // 'vendor/theme/scripts/jquery/tether/dist/js/tether.min.js',
+            // 'vendor/theme/scripts/jquery/bootstrap/dist/js/bootstrap.js',
+            // 'vendor/theme/scripts/jquery/underscore/underscore-min.js',
+            // 'vendor/moment/moment.js',
+            // 'vendor/moment/moment-tz.js',
+            // 'vendor/datetimepicker/bootstrap-datetimepicker.min.js',
+            // 'vendor/jquery/noty/packaged/jquery.noty.packaged.js',
+            // 'vendor/clipboard/clipboard.js',
+            // 'vendor/lightbox/lightbox.js'
+        // ], elixir.config.publicPath + 'js/vendor.js')
 
-        .scripts([
-            // 'vendor/theme/scripts/jquery/select2/dist/js/select2.full.js',
-            'vendor/selectizejs/dist/js/standalone/selectize.js',
-            'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.js',
-            'app/s3uploader.js',
-            'vendor/emojione/emojione.js',
-            'vendor/emojionearea/emojionearea.js'
-        ], elixir.config.publicPath + 'js/merchant.js')
+        // .scripts([
+            // 'vendor/selectizejs/dist/js/standalone/selectize.js',
+            // 'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.js',
+            // 'vendor/emojione/emojione.js',
+            // 'vendor/emojionearea/emojionearea.js'
+        // ], elixir.config.publicPath + 'js/merchant.js')
 
         .scripts([
             'vendor/theme/scripts/ui-device.js',
@@ -70,12 +66,8 @@ elixir(function (mix) {
             'vendor/theme/scripts/ui-screenfull.js',
             'vendor/theme/scripts/ui-scroll-to.js',
             'vendor/theme/scripts/ui-jp.js',
-            'app/base.js'
+            'app/base.js',
+            'app/s3uploader.js'
 
-        ], elixir.config.publicPath + 'js/base.js');
-
-
-
-
-    // .version(['css/app.css', 'css/vendor.css', 'js/vendor.js']);
+    ], elixir.config.publicPath + 'js/base.js')
 });

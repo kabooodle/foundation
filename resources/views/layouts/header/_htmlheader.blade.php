@@ -14,7 +14,6 @@
 
     @push('header-scripts')
     <script src="{{ staticAsset('/assets/js/vendor.js') }}"></script>
-    <script src="{{ staticAsset('/assets/js/merchant.js') }}"></script>
 
     <script src="//js.pusher.com/3.2/pusher.min.js"></script>
 

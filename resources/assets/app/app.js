@@ -1,8 +1,7 @@
-// import Comments from './components/Comments.vue';
+import FileUpload from './components/FileUpload.vue';
 
-
-
-// new Vue({
-//     el: '#kabooodle_app'
-//     // components: { 'commentable' : Comments },
-// });
+export default {
+    components: {
+        'image-attach': FileUpload
+    }
+}
