@@ -9,7 +9,10 @@ require ('underscore');
 require ('moment');
 require ('moment-timezone-tsc');
 require ('eonasdan-bootstrap-datetimepicker');
+
 require ('noty');
+// require('./resources/assets/vendor/jquery/noty/packaged/jquery.noty.packaged.js');
+
 require ('clipboard');
 require ('ekko-lightbox');
 require ('selectize');

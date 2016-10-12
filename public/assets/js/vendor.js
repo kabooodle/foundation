@@ -24108,24 +24108,24 @@ moment.tz.load(require('./data/packed/latest.json'));
 }));
 },{}],22:[function(require,module,exports){
 !function(root, factory) {
-	 if (typeof define === 'function' && define.amd) {
-		 define(['jquery'], factory);
-	 } else if (typeof exports === 'object') {
-		 module.exports = factory(require('jquery'));
-	 } else {
-		 factory(root.jQuery);
-	 }
+    if (typeof define === 'function' && define.amd) {
+        define(['jquery'], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('jquery'));
+    } else {
+        factory(root.jQuery);
+    }
 }(this, function($) {
 
-/*!
- @package noty - jQuery Notification Plugin
- @version version: 2.3.8
- @contributors https://github.com/needim/noty/graphs/contributors
+    /*!
+     @package noty - jQuery Notification Plugin
+     @version version: 2.3.8
+     @contributors https://github.com/needim/noty/graphs/contributors
 
- @documentation Examples and Documentation - http://needim.github.com/noty/
+     @documentation Examples and Documentation - http://needim.github.com/noty/
 
- @license Licensed under the MIT licenses: http://www.opensource.org/licenses/mit-license.php
- */
+     @license Licensed under the MIT licenses: http://www.opensource.org/licenses/mit-license.php
+     */
 
     if(typeof Object.create !== 'function') {
         Object.create = function(o) {
@@ -24179,7 +24179,7 @@ moment.tz.load(require('./data/packed/latest.json'));
                 this.options.closeWith = [];
                 this.options.timeout = false;
 
-                var $buttons = $('<div/>').addClass('noty_buttons');
+                var $buttons = $('<div/>').addClass('noty_buttons center-block text-center');
 
                 (this.options.layout.parent.object !== null) ? this.$bar.find('.noty_bar').append($buttons) : this.$bar.append($buttons);
 
@@ -24338,8 +24338,8 @@ moment.tz.load(require('./data/packed/latest.json'));
                         if(self.options.callback.afterClose) self.options.callback.afterClose.apply(self);
                     })
                     .promise().done(function() {
-                        self.closeCleanUp();
-                    });
+                    self.closeCleanUp();
+                });
             }
 
         }, // end close
@@ -24618,7 +24618,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         type        : 'alert',
         text        : '',
         dismissQueue: true,
-        template    : '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+        template    : '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"><i class="fa fa-times fa-lg" aria-hidden="true"></i></div></div>',
         animation   : {
             open  : {height: 'toggle'},
             close : {height: 'toggle'},
@@ -24658,895 +24658,909 @@ moment.tz.load(require('./data/packed/latest.json'));
         return $.notyRenderer.init(options);
     };
 
-$.noty.layouts.bottom = {
-    name     : 'bottom',
-    options  : {},
-    container: {
-        object  : '<ul id="noty_bottom_layout_container" />',
-        selector: 'ul#noty_bottom_layout_container',
-        style   : function() {
-            $(this).css({
-                bottom       : 0,
-                left         : '5%',
-                position     : 'fixed',
-                width        : '90%',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 9999999
-            });
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none'
-    },
-    addClass : ''
-};
-
-$.noty.layouts.bottomCenter = {
-    name     : 'bottomCenter',
-    options  : { // overrides options
-
-    },
-    container: {
-        object  : '<ul id="noty_bottomCenter_layout_container" />',
-        selector: 'ul#noty_bottomCenter_layout_container',
-        style   : function() {
-            $(this).css({
-                bottom       : 20,
-                left         : 0,
-                position     : 'fixed',
-                width        : '310px',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 10000000
-            });
-
-            $(this).css({
-                left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px'
-            });
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none',
-        width  : '310px'
-    },
-    addClass : ''
-};
-
-
-$.noty.layouts.bottomLeft = {
-    name     : 'bottomLeft',
-    options  : { // overrides options
-
-    },
-    container: {
-        object  : '<ul id="noty_bottomLeft_layout_container" />',
-        selector: 'ul#noty_bottomLeft_layout_container',
-        style   : function() {
-            $(this).css({
-                bottom       : 20,
-                left         : 20,
-                position     : 'fixed',
-                width        : '310px',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 10000000
-            });
-
-            if(window.innerWidth < 600) {
+    $.noty.layouts.bottom = {
+        name     : 'bottom',
+        options  : {},
+        container: {
+            object  : '<ul id="noty_bottom_layout_container" />',
+            selector: 'ul#noty_bottom_layout_container',
+            style   : function() {
                 $(this).css({
-                    left: 5
+                    bottom       : 0,
+                    left         : '5%',
+                    position     : 'fixed',
+                    width        : '90%',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 9999999
                 });
             }
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none',
-        width  : '310px'
-    },
-    addClass : ''
-};
-$.noty.layouts.bottomRight = {
-    name     : 'bottomRight',
-    options  : { // overrides options
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none'
+        },
+        addClass : ''
+    };
 
-    },
-    container: {
-        object  : '<ul id="noty_bottomRight_layout_container" />',
-        selector: 'ul#noty_bottomRight_layout_container',
-        style   : function() {
-            $(this).css({
-                bottom       : 20,
-                right        : 20,
-                position     : 'fixed',
-                width        : '310px',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 10000000
-            });
+    $.noty.layouts.bottomCenter = {
+        name     : 'bottomCenter',
+        options  : { // overrides options
 
-            if(window.innerWidth < 600) {
+        },
+        container: {
+            object  : '<ul id="noty_bottomCenter_layout_container" />',
+            selector: 'ul#noty_bottomCenter_layout_container',
+            style   : function() {
                 $(this).css({
-                    right: 5
+                    bottom       : 20,
+                    left         : 0,
+                    position     : 'fixed',
+                    width        : '410px',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 10000000
+                });
+
+                $(this).css({
+                    left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px'
                 });
             }
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none',
-        width  : '310px'
-    },
-    addClass : ''
-};
-$.noty.layouts.center = {
-    name     : 'center',
-    options  : { // overrides options
-
-    },
-    container: {
-        object  : '<ul id="noty_center_layout_container" />',
-        selector: 'ul#noty_center_layout_container',
-        style   : function() {
-            $(this).css({
-                position     : 'fixed',
-                width        : '310px',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 10000000
-            });
-
-            // getting hidden height
-            var dupe = $(this).clone().css({visibility: "hidden", display: "block", position: "absolute", top: 0, left: 0}).attr('id', 'dupe');
-            $("body").append(dupe);
-            dupe.find('.i-am-closing-now').remove();
-            dupe.find('li').css('display', 'block');
-            var actual_height = dupe.height();
-            dupe.remove();
-
-            if($(this).hasClass('i-am-new')) {
-                $(this).css({
-                    left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px',
-                    top : ($(window).height() - actual_height) / 2 + 'px'
-                });
-            }
-            else {
-                $(this).animate({
-                    left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px',
-                    top : ($(window).height() - actual_height) / 2 + 'px'
-                }, 500);
-            }
-
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none',
-        width  : '310px'
-    },
-    addClass : ''
-};
-$.noty.layouts.centerLeft = {
-    name     : 'centerLeft',
-    options  : { // overrides options
-
-    },
-    container: {
-        object  : '<ul id="noty_centerLeft_layout_container" />',
-        selector: 'ul#noty_centerLeft_layout_container',
-        style   : function() {
-            $(this).css({
-                left         : 20,
-                position     : 'fixed',
-                width        : '310px',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 10000000
-            });
-
-            // getting hidden height
-            var dupe = $(this).clone().css({visibility: "hidden", display: "block", position: "absolute", top: 0, left: 0}).attr('id', 'dupe');
-            $("body").append(dupe);
-            dupe.find('.i-am-closing-now').remove();
-            dupe.find('li').css('display', 'block');
-            var actual_height = dupe.height();
-            dupe.remove();
-
-            if($(this).hasClass('i-am-new')) {
-                $(this).css({
-                    top: ($(window).height() - actual_height) / 2 + 'px'
-                });
-            }
-            else {
-                $(this).animate({
-                    top: ($(window).height() - actual_height) / 2 + 'px'
-                }, 500);
-            }
-
-            if(window.innerWidth < 600) {
-                $(this).css({
-                    left: 5
-                });
-            }
-
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none',
-        width  : '310px'
-    },
-    addClass : ''
-};
-
-$.noty.layouts.centerRight = {
-    name     : 'centerRight',
-    options  : { // overrides options
-
-    },
-    container: {
-        object  : '<ul id="noty_centerRight_layout_container" />',
-        selector: 'ul#noty_centerRight_layout_container',
-        style   : function() {
-            $(this).css({
-                right        : 20,
-                position     : 'fixed',
-                width        : '310px',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 10000000
-            });
-
-            // getting hidden height
-            var dupe = $(this).clone().css({visibility: "hidden", display: "block", position: "absolute", top: 0, left: 0}).attr('id', 'dupe');
-            $("body").append(dupe);
-            dupe.find('.i-am-closing-now').remove();
-            dupe.find('li').css('display', 'block');
-            var actual_height = dupe.height();
-            dupe.remove();
-
-            if($(this).hasClass('i-am-new')) {
-                $(this).css({
-                    top: ($(window).height() - actual_height) / 2 + 'px'
-                });
-            }
-            else {
-                $(this).animate({
-                    top: ($(window).height() - actual_height) / 2 + 'px'
-                }, 500);
-            }
-
-            if(window.innerWidth < 600) {
-                $(this).css({
-                    right: 5
-                });
-            }
-
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none',
-        width  : '310px'
-    },
-    addClass : ''
-};
-$.noty.layouts.inline = {
-    name     : 'inline',
-    options  : {},
-    container: {
-        object  : '<ul class="noty_inline_layout_container" />',
-        selector: 'ul.noty_inline_layout_container',
-        style   : function() {
-            $(this).css({
-                width        : '100%',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 9999999
-            });
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none'
-    },
-    addClass : ''
-};
-$.noty.layouts.top = {
-    name     : 'top',
-    options  : {},
-    container: {
-        object  : '<ul id="noty_top_layout_container" />',
-        selector: 'ul#noty_top_layout_container',
-        style   : function() {
-            $(this).css({
-                top          : 0,
-                left         : '5%',
-                position     : 'fixed',
-                width        : '90%',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 9999999
-            });
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none'
-    },
-    addClass : ''
-};
-$.noty.layouts.topCenter = {
-    name     : 'topCenter',
-    options  : { // overrides options
-
-    },
-    container: {
-        object  : '<ul id="noty_topCenter_layout_container" />',
-        selector: 'ul#noty_topCenter_layout_container',
-        style   : function() {
-            $(this).css({
-                top          : 20,
-                left         : 0,
-                position     : 'fixed',
-                width        : '310px',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 10000000
-            });
-
-            $(this).css({
-                left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px'
-            });
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none',
-        width  : '310px'
-    },
-    addClass : ''
-};
-
-$.noty.layouts.topLeft = {
-    name     : 'topLeft',
-    options  : { // overrides options
-
-    },
-    container: {
-        object  : '<ul id="noty_topLeft_layout_container" />',
-        selector: 'ul#noty_topLeft_layout_container',
-        style   : function() {
-            $(this).css({
-                top          : 20,
-                left         : 20,
-                position     : 'fixed',
-                width        : '310px',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 10000000
-            });
-
-            if(window.innerWidth < 600) {
-                $(this).css({
-                    left: 5
-                });
-            }
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none',
-        width  : '310px'
-    },
-    addClass : ''
-};
-$.noty.layouts.topRight = {
-    name     : 'topRight',
-    options  : { // overrides options
-
-    },
-    container: {
-        object  : '<ul id="noty_topRight_layout_container" />',
-        selector: 'ul#noty_topRight_layout_container',
-        style   : function() {
-            $(this).css({
-                top          : 20,
-                right        : 20,
-                position     : 'fixed',
-                width        : '310px',
-                height       : 'auto',
-                margin       : 0,
-                padding      : 0,
-                listStyleType: 'none',
-                zIndex       : 10000000
-            });
-
-            if(window.innerWidth < 600) {
-                $(this).css({
-                    right: 5
-                });
-            }
-        }
-    },
-    parent   : {
-        object  : '<li />',
-        selector: 'li',
-        css     : {}
-    },
-    css      : {
-        display: 'none',
-        width  : '310px'
-    },
-    addClass : ''
-};
-$.noty.themes.bootstrapTheme = {
-    name: 'bootstrapTheme',
-    modal: {
-        css: {
-            position: 'fixed',
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#000',
-            zIndex: 10000,
-            opacity: 0.6,
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
             display: 'none',
-            left: 0,
-            top: 0
-        }
-    },
-    style: function() {
-
-        var containerSelector = this.options.layout.container.selector;
-        $(containerSelector).addClass('list-group');
-
-        this.$closeButton.append('<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>');
-        this.$closeButton.addClass('close');
-
-        this.$bar.addClass( "list-group-item" ).css('padding', '0px');
-
-        switch (this.options.type) {
-            case 'alert': case 'notification':
-                this.$bar.addClass( "list-group-item-info" );
-                break;
-            case 'warning':
-                this.$bar.addClass( "list-group-item-warning" );
-                break;
-            case 'error':
-                this.$bar.addClass( "list-group-item-danger" );
-                break;
-            case 'information':
-                this.$bar.addClass("list-group-item-info");
-                break;
-            case 'success':
-                this.$bar.addClass( "list-group-item-success" );
-                break;
-        }
-
-        this.$message.css({
-            fontSize: '13px',
-            lineHeight: '16px',
-            textAlign: 'center',
-            padding: '8px 10px 9px',
-            width: 'auto',
-            position: 'relative'
-        });
-    },
-    callback: {
-        onShow: function() {  },
-        onClose: function() {  }
-    }
-};
+            width  : '410px'
+        },
+        addClass : ''
+    };
 
 
-$.noty.themes.defaultTheme = {
-    name    : 'defaultTheme',
-    helpers : {
-        borderFix: function() {
-            if(this.options.dismissQueue) {
-                var selector = this.options.layout.container.selector + ' ' + this.options.layout.parent.selector;
-                switch(this.options.layout.name) {
-                    case 'top':
-                        $(selector).css({borderRadius: '0px 0px 0px 0px'});
-                        $(selector).last().css({borderRadius: '0px 0px 5px 5px'});
-                        break;
-                    case 'topCenter':
-                    case 'topLeft':
-                    case 'topRight':
-                    case 'bottomCenter':
-                    case 'bottomLeft':
-                    case 'bottomRight':
-                    case 'center':
-                    case 'centerLeft':
-                    case 'centerRight':
-                    case 'inline':
-                        $(selector).css({borderRadius: '0px 0px 0px 0px'});
-                        $(selector).first().css({'border-top-left-radius': '5px', 'border-top-right-radius': '5px'});
-                        $(selector).last().css({'border-bottom-left-radius': '5px', 'border-bottom-right-radius': '5px'});
-                        break;
-                    case 'bottom':
-                        $(selector).css({borderRadius: '0px 0px 0px 0px'});
-                        $(selector).first().css({borderRadius: '5px 5px 0px 0px'});
-                        break;
-                    default:
-                        break;
+    $.noty.layouts.bottomLeft = {
+        name     : 'bottomLeft',
+        options  : { // overrides options
+
+        },
+        container: {
+            object  : '<ul id="noty_bottomLeft_layout_container" />',
+            selector: 'ul#noty_bottomLeft_layout_container',
+            style   : function() {
+                $(this).css({
+                    bottom       : 20,
+                    left         : 20,
+                    position     : 'fixed',
+                    width        : '410px',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 10000000
+                });
+
+                if(window.innerWidth < 600) {
+                    $(this).css({
+                        left: 5
+                    });
                 }
             }
-        }
-    },
-    modal   : {
-        css: {
-            position       : 'fixed',
-            width          : '100%',
-            height         : '100%',
-            backgroundColor: '#000',
-            zIndex         : 10000,
-            opacity        : 0.6,
-            display        : 'none',
-            left           : 0,
-            top            : 0
-        }
-    },
-    style   : function() {
-
-        this.$bar.css({
-            overflow  : 'hidden',
-            background: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAoCAQAAAClM0ndAAAAhklEQVR4AdXO0QrCMBBE0bttkk38/w8WRERpdyjzVOc+HxhIHqJGMQcFFkpYRQotLLSw0IJ5aBdovruMYDA/kT8plF9ZKLFQcgF18hDj1SbQOMlCA4kao0iiXmah7qBWPdxpohsgVZyj7e5I9KcID+EhiDI5gxBYKLBQYKHAQoGFAoEks/YEGHYKB7hFxf0AAAAASUVORK5CYII=') repeat-x scroll left top #fff"
-        });
-
-        this.$message.css({
-            fontSize  : '13px',
-            lineHeight: '16px',
-            textAlign : 'center',
-            padding   : '8px 10px 9px',
-            width     : 'auto',
-            position  : 'relative'
-        });
-
-        this.$closeButton.css({
-            position  : 'absolute',
-            top       : 4, right: 4,
-            width     : 10, height: 10,
-            background: "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAxUlEQVR4AR3MPUoDURSA0e++uSkkOxC3IAOWNtaCIDaChfgXBMEZbQRByxCwk+BasgQRZLSYoLgDQbARxry8nyumPcVRKDfd0Aa8AsgDv1zp6pYd5jWOwhvebRTbzNNEw5BSsIpsj/kurQBnmk7sIFcCF5yyZPDRG6trQhujXYosaFoc+2f1MJ89uc76IND6F9BvlXUdpb6xwD2+4q3me3bysiHvtLYrUJto7PD/ve7LNHxSg/woN2kSz4txasBdhyiz3ugPGetTjm3XRokAAAAASUVORK5CYII=)",
-            display   : 'none',
-            cursor    : 'pointer'
-        });
-
-        this.$buttons.css({
-            padding        : 5,
-            textAlign      : 'right',
-            borderTop      : '1px solid #ccc',
-            backgroundColor: '#fff'
-        });
-
-        this.$buttons.find('button').css({
-            marginLeft: 5
-        });
-
-        this.$buttons.find('button:first').css({
-            marginLeft: 0
-        });
-
-        this.$bar.on({
-            mouseenter: function() {
-                $(this).find('.noty_close').stop().fadeTo('normal', 1);
-            },
-            mouseleave: function() {
-                $(this).find('.noty_close').stop().fadeTo('normal', 0);
-            }
-        });
-
-        switch(this.options.layout.name) {
-            case 'top':
-                this.$bar.css({
-                    borderRadius: '0px 0px 5px 5px',
-                    borderBottom: '2px solid #eee',
-                    borderLeft  : '2px solid #eee',
-                    borderRight : '2px solid #eee',
-                    boxShadow   : "0 2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                break;
-            case 'topCenter':
-            case 'center':
-            case 'bottomCenter':
-            case 'inline':
-                this.$bar.css({
-                    borderRadius: '5px',
-                    border      : '1px solid #eee',
-                    boxShadow   : "0 2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                this.$message.css({fontSize: '13px', textAlign: 'center'});
-                break;
-            case 'topLeft':
-            case 'topRight':
-            case 'bottomLeft':
-            case 'bottomRight':
-            case 'centerLeft':
-            case 'centerRight':
-                this.$bar.css({
-                    borderRadius: '5px',
-                    border      : '1px solid #eee',
-                    boxShadow   : "0 2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                this.$message.css({fontSize: '13px', textAlign: 'left'});
-                break;
-            case 'bottom':
-                this.$bar.css({
-                    borderRadius: '5px 5px 0px 0px',
-                    borderTop   : '2px solid #eee',
-                    borderLeft  : '2px solid #eee',
-                    borderRight : '2px solid #eee',
-                    boxShadow   : "0 -2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                break;
-            default:
-                this.$bar.css({
-                    border   : '2px solid #eee',
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                break;
-        }
-
-        switch(this.options.type) {
-            case 'alert':
-            case 'notification':
-                this.$bar.css({backgroundColor: '#FFF', borderColor: '#CCC', color: '#444'});
-                break;
-            case 'warning':
-                this.$bar.css({backgroundColor: '#FFEAA8', borderColor: '#FFC237', color: '#826200'});
-                this.$buttons.css({borderTop: '1px solid #FFC237'});
-                break;
-            case 'error':
-                this.$bar.css({backgroundColor: 'red', borderColor: 'darkred', color: '#FFF'});
-                this.$message.css({fontWeight: 'bold'});
-                this.$buttons.css({borderTop: '1px solid darkred'});
-                break;
-            case 'information':
-                this.$bar.css({backgroundColor: '#57B7E2', borderColor: '#0B90C4', color: '#FFF'});
-                this.$buttons.css({borderTop: '1px solid #0B90C4'});
-                break;
-            case 'success':
-                this.$bar.css({backgroundColor: 'lightgreen', borderColor: '#50C24E', color: 'darkgreen'});
-                this.$buttons.css({borderTop: '1px solid #50C24E'});
-                break;
-            default:
-                this.$bar.css({backgroundColor: '#FFF', borderColor: '#CCC', color: '#444'});
-                break;
-        }
-    },
-    callback: {
-        onShow : function() {
-            $.noty.themes.defaultTheme.helpers.borderFix.apply(this);
         },
-        onClose: function() {
-            $.noty.themes.defaultTheme.helpers.borderFix.apply(this);
-        }
-    }
-};
-
-$.noty.themes.relax = {
-    name    : 'relax',
-    helpers : {},
-    modal   : {
-        css: {
-            position       : 'fixed',
-            width          : '100%',
-            height         : '100%',
-            backgroundColor: '#000',
-            zIndex         : 10000,
-            opacity        : 0.6,
-            display        : 'none',
-            left           : 0,
-            top            : 0
-        }
-    },
-    style   : function() {
-
-        this.$bar.css({
-            overflow    : 'hidden',
-            margin      : '4px 0',
-            borderRadius: '2px'
-        });
-
-        this.$message.css({
-            fontSize  : '14px',
-            lineHeight: '16px',
-            textAlign : 'center',
-            padding   : '10px',
-            width     : 'auto',
-            position  : 'relative'
-        });
-
-        this.$closeButton.css({
-            position  : 'absolute',
-            top       : 4, right: 4,
-            width     : 10, height: 10,
-            background: "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAxUlEQVR4AR3MPUoDURSA0e++uSkkOxC3IAOWNtaCIDaChfgXBMEZbQRByxCwk+BasgQRZLSYoLgDQbARxry8nyumPcVRKDfd0Aa8AsgDv1zp6pYd5jWOwhvebRTbzNNEw5BSsIpsj/kurQBnmk7sIFcCF5yyZPDRG6trQhujXYosaFoc+2f1MJ89uc76IND6F9BvlXUdpb6xwD2+4q3me3bysiHvtLYrUJto7PD/ve7LNHxSg/woN2kSz4txasBdhyiz3ugPGetTjm3XRokAAAAASUVORK5CYII=)",
-            display   : 'none',
-            cursor    : 'pointer'
-        });
-
-        this.$buttons.css({
-            padding        : 5,
-            textAlign      : 'right',
-            borderTop      : '1px solid #ccc',
-            backgroundColor: '#fff'
-        });
-
-        this.$buttons.find('button').css({
-            marginLeft: 5
-        });
-
-        this.$buttons.find('button:first').css({
-            marginLeft: 0
-        });
-
-        this.$bar.on({
-            mouseenter: function() {
-                $(this).find('.noty_close').stop().fadeTo('normal', 1);
-            },
-            mouseleave: function() {
-                $(this).find('.noty_close').stop().fadeTo('normal', 0);
-            }
-        });
-
-        switch(this.options.layout.name) {
-            case 'top':
-                this.$bar.css({
-                    borderBottom: '2px solid #eee',
-                    borderLeft  : '2px solid #eee',
-                    borderRight : '2px solid #eee',
-                    borderTop   : '2px solid #eee',
-                    boxShadow   : "0 2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                break;
-            case 'topCenter':
-            case 'center':
-            case 'bottomCenter':
-            case 'inline':
-                this.$bar.css({
-                    border   : '1px solid #eee',
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                this.$message.css({fontSize: '13px', textAlign: 'center'});
-                break;
-            case 'topLeft':
-            case 'topRight':
-            case 'bottomLeft':
-            case 'bottomRight':
-            case 'centerLeft':
-            case 'centerRight':
-                this.$bar.css({
-                    border   : '1px solid #eee',
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                this.$message.css({fontSize: '13px', textAlign: 'left'});
-                break;
-            case 'bottom':
-                this.$bar.css({
-                    borderTop   : '2px solid #eee',
-                    borderLeft  : '2px solid #eee',
-                    borderRight : '2px solid #eee',
-                    borderBottom: '2px solid #eee',
-                    boxShadow   : "0 -2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                break;
-            default:
-                this.$bar.css({
-                    border   : '2px solid #eee',
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
-                });
-                break;
-        }
-
-        switch(this.options.type) {
-            case 'alert':
-            case 'notification':
-                this.$bar.css({backgroundColor: '#FFF', borderColor: '#dedede', color: '#444'});
-                break;
-            case 'warning':
-                this.$bar.css({backgroundColor: '#FFEAA8', borderColor: '#FFC237', color: '#826200'});
-                this.$buttons.css({borderTop: '1px solid #FFC237'});
-                break;
-            case 'error':
-                this.$bar.css({backgroundColor: '#FF8181', borderColor: '#e25353', color: '#FFF'});
-                this.$message.css({fontWeight: 'bold'});
-                this.$buttons.css({borderTop: '1px solid darkred'});
-                break;
-            case 'information':
-                this.$bar.css({backgroundColor: '#78C5E7', borderColor: '#3badd6', color: '#FFF'});
-                this.$buttons.css({borderTop: '1px solid #0B90C4'});
-                break;
-            case 'success':
-                this.$bar.css({backgroundColor: '#BCF5BC', borderColor: '#7cdd77', color: 'darkgreen'});
-                this.$buttons.css({borderTop: '1px solid #50C24E'});
-                break;
-            default:
-                this.$bar.css({backgroundColor: '#FFF', borderColor: '#CCC', color: '#444'});
-                break;
-        }
-    },
-    callback: {
-        onShow : function() {
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none',
+            width  : '410px'
+        },
+        addClass : ''
+    };
+    $.noty.layouts.bottomRight = {
+        name     : 'bottomRight',
+        options  : { // overrides options
 
         },
-        onClose: function() {
+        container: {
+            object  : '<ul id="noty_bottomRight_layout_container" />',
+            selector: 'ul#noty_bottomRight_layout_container',
+            style   : function() {
+                $(this).css({
+                    bottom       : 20,
+                    right        : 20,
+                    position     : 'fixed',
+                    width        : '410px',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 10000000
+                });
 
+                if(window.innerWidth < 600) {
+                    $(this).css({
+                        right: 5
+                    });
+                }
+            }
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none',
+            width  : '410px'
+        },
+        addClass : ''
+    };
+    $.noty.layouts.center = {
+        name     : 'center',
+        options  : { // overrides options
+
+        },
+        container: {
+            object  : '<ul id="noty_center_layout_container" />',
+            selector: 'ul#noty_center_layout_container',
+            style   : function() {
+                $(this).css({
+                    position     : 'fixed',
+                    width        : '410px',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 10000000
+                });
+
+                // getting hidden height
+                var dupe = $(this).clone().css({visibility: "hidden", display: "block", position: "absolute", top: 0, left: 0}).attr('id', 'dupe');
+                $("body").append(dupe);
+                dupe.find('.i-am-closing-now').remove();
+                dupe.find('li').css('display', 'block');
+                var actual_height = dupe.height();
+                dupe.remove();
+
+                if($(this).hasClass('i-am-new')) {
+                    $(this).css({
+                        left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px',
+                        top : ($(window).height() - actual_height) / 2 + 'px'
+                    });
+                }
+                else {
+                    $(this).animate({
+                        left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px',
+                        top : ($(window).height() - actual_height) / 2 + 'px'
+                    }, 500);
+                }
+
+            }
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none',
+            width  : '410px'
+        },
+        addClass : ''
+    };
+    $.noty.layouts.centerLeft = {
+        name     : 'centerLeft',
+        options  : { // overrides options
+
+        },
+        container: {
+            object  : '<ul id="noty_centerLeft_layout_container" />',
+            selector: 'ul#noty_centerLeft_layout_container',
+            style   : function() {
+                $(this).css({
+                    left         : 20,
+                    position     : 'fixed',
+                    width        : '410px',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 10000000
+                });
+
+                // getting hidden height
+                var dupe = $(this).clone().css({visibility: "hidden", display: "block", position: "absolute", top: 0, left: 0}).attr('id', 'dupe');
+                $("body").append(dupe);
+                dupe.find('.i-am-closing-now').remove();
+                dupe.find('li').css('display', 'block');
+                var actual_height = dupe.height();
+                dupe.remove();
+
+                if($(this).hasClass('i-am-new')) {
+                    $(this).css({
+                        top: ($(window).height() - actual_height) / 2 + 'px'
+                    });
+                }
+                else {
+                    $(this).animate({
+                        top: ($(window).height() - actual_height) / 2 + 'px'
+                    }, 500);
+                }
+
+                if(window.innerWidth < 600) {
+                    $(this).css({
+                        left: 5
+                    });
+                }
+
+            }
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none',
+            width  : '410px'
+        },
+        addClass : ''
+    };
+
+    $.noty.layouts.centerRight = {
+        name     : 'centerRight',
+        options  : { // overrides options
+
+        },
+        container: {
+            object  : '<ul id="noty_centerRight_layout_container" />',
+            selector: 'ul#noty_centerRight_layout_container',
+            style   : function() {
+                $(this).css({
+                    right        : 20,
+                    position     : 'fixed',
+                    width        : '410px',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 10000000
+                });
+
+                // getting hidden height
+                var dupe = $(this).clone().css({visibility: "hidden", display: "block", position: "absolute", top: 0, left: 0}).attr('id', 'dupe');
+                $("body").append(dupe);
+                dupe.find('.i-am-closing-now').remove();
+                dupe.find('li').css('display', 'block');
+                var actual_height = dupe.height();
+                dupe.remove();
+
+                if($(this).hasClass('i-am-new')) {
+                    $(this).css({
+                        top: ($(window).height() - actual_height) / 2 + 'px'
+                    });
+                }
+                else {
+                    $(this).animate({
+                        top: ($(window).height() - actual_height) / 2 + 'px'
+                    }, 500);
+                }
+
+                if(window.innerWidth < 600) {
+                    $(this).css({
+                        right: 5
+                    });
+                }
+
+            }
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none',
+            width  : '410px'
+        },
+        addClass : ''
+    };
+    $.noty.layouts.inline = {
+        name     : 'inline',
+        options  : {},
+        container: {
+            object  : '<ul class="noty_inline_layout_container" />',
+            selector: 'ul.noty_inline_layout_container',
+            style   : function() {
+                $(this).css({
+                    width        : '100%',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 9999999
+                });
+            }
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none'
+        },
+        addClass : ''
+    };
+    $.noty.layouts.top = {
+        name     : 'top',
+        options  : {},
+        container: {
+            object  : '<ul id="noty_top_layout_container" />',
+            selector: 'ul#noty_top_layout_container',
+            style   : function() {
+                $(this).css({
+                    top          : 0,
+                    left         : 0,
+                    position     : 'fixed',
+                    width        : '100%',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 9999999
+                });
+            }
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none'
+        },
+        addClass : ''
+    };
+    $.noty.layouts.topCenter = {
+        name     : 'topCenter',
+        options  : { // overrides options
+
+        },
+        container: {
+            object  : '<ul id="noty_topCenter_layout_container" />',
+            selector: 'ul#noty_topCenter_layout_container',
+            style   : function() {
+                $(this).css({
+                    top          : 20,
+                    left         : 0,
+                    position     : 'fixed',
+                    width        : '410px',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 10000000
+                });
+
+                $(this).css({
+                    left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px'
+                });
+            }
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none',
+            width  : '410px'
+        },
+        addClass : ''
+    };
+
+    $.noty.layouts.topLeft = {
+        name     : 'topLeft',
+        options  : { // overrides options
+
+        },
+        container: {
+            object  : '<ul id="noty_topLeft_layout_container" />',
+            selector: 'ul#noty_topLeft_layout_container',
+            style   : function() {
+                $(this).css({
+                    top          : 20,
+                    left         : 20,
+                    position     : 'fixed',
+                    width        : '410px',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 10000000
+                });
+
+                if(window.innerWidth < 600) {
+                    $(this).css({
+                        left: 5
+                    });
+                }
+            }
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none',
+            width  : '410px'
+        },
+        addClass : ''
+    };
+    $.noty.layouts.topRight = {
+        name     : 'topRight',
+        options  : { // overrides options
+
+        },
+        container: {
+            object  : '<ul id="noty_topRight_layout_container" />',
+            selector: 'ul#noty_topRight_layout_container',
+            style   : function() {
+                $(this).css({
+                    top          : 20,
+                    right        : 20,
+                    position     : 'fixed',
+                    width        : '410px',
+                    height       : 'auto',
+                    margin       : 0,
+                    padding      : 0,
+                    listStyleType: 'none',
+                    zIndex       : 10000000
+                });
+
+                if(window.innerWidth < 600) {
+                    $(this).css({
+                        right: 5
+                    });
+                }
+            }
+        },
+        parent   : {
+            object  : '<li />',
+            selector: 'li',
+            css     : {}
+        },
+        css      : {
+            display: 'none',
+            width  : '410px'
+        },
+        addClass : ''
+    };
+    $.noty.themes.bootstrapTheme = {
+        name: 'bootstrapTheme',
+        modal: {
+            css: {
+                position: 'fixed',
+                width: '100%',
+                height: '100%',
+                backgroundColor: '#000',
+                zIndex: 10000,
+                opacity: 0.6,
+                display: 'none',
+                left: 0,
+                top: 0
+            }
+        },
+        style: function() {
+
+            var containerSelector = this.options.layout.container.selector;
+            $(containerSelector).addClass('list-group');
+
+            this.$closeButton.append('<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>');
+            this.$closeButton.addClass('close');
+
+            this.$bar.addClass( "list-group-item" ).css('padding', '0px');
+
+            switch (this.options.type) {
+                case 'alert': case 'notification':
+                this.$bar.addClass( "list-group-item-info" );
+                break;
+                case 'warning':
+                    this.$bar.addClass( "list-group-item-warning" );
+                    break;
+                case 'error':
+                    this.$bar.addClass( "list-group-item-danger" );
+                    break;
+                case 'information':
+                    this.$bar.addClass("list-group-item-info");
+                    break;
+                case 'success':
+                    this.$bar.addClass( "list-group-item-success" );
+                    break;
+            }
+
+            this.$message.css({
+                fontSize: '13px',
+                lineHeight: '16px',
+                textAlign: 'center',
+                padding: '8px 10px 9px',
+                width: 'auto',
+                position: 'relative'
+            });
+        },
+        callback: {
+            onShow: function() {  },
+            onClose: function() {  }
         }
-    }
-};
+    };
 
 
-return window.noty;
+    $.noty.themes.defaultTheme = {
+        name    : 'defaultTheme',
+        helpers : {
+            borderFix: function() {
+                if(this.options.dismissQueue) {
+                    var selector = this.options.layout.container.selector + ' ' + this.options.layout.parent.selector;
+                    switch(this.options.layout.name) {
+                        case 'top':
+                            $(selector).css({borderRadius: '0px 0px 0px 0px'});
+                            $(selector).last().css({borderRadius: '0px 0px 5px 5px'});
+                            break;
+                        case 'topCenter':
+                        case 'topLeft':
+                        case 'topRight':
+                        case 'bottomCenter':
+                        case 'bottomLeft':
+                        case 'bottomRight':
+                        case 'center':
+                        case 'centerLeft':
+                        case 'centerRight':
+                        case 'inline':
+                            $(selector).css({borderRadius: '0px 0px 0px 0px'});
+                            $(selector).first().css({'border-top-left-radius': '5px', 'border-top-right-radius': '5px'});
+                            $(selector).last().css({'border-bottom-left-radius': '5px', 'border-bottom-right-radius': '5px'});
+                            break;
+                        case 'bottom':
+                            $(selector).css({borderRadius: '0px 0px 0px 0px'});
+                            $(selector).first().css({borderRadius: '5px 5px 0px 0px'});
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        },
+        modal   : {
+            css: {
+                position       : 'fixed',
+                width          : '100%',
+                height         : '100%',
+                backgroundColor: '#000',
+                zIndex         : 10000,
+                opacity        : 0.6,
+                display        : 'none',
+                left           : 0,
+                top            : 0
+            }
+        },
+        style   : function() {
+
+            this.$bar.css({
+                overflow  : 'hidden',
+                background: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAoCAQAAAClM0ndAAAAhklEQVR4AdXO0QrCMBBE0bttkk38/w8WRERpdyjzVOc+HxhIHqJGMQcFFkpYRQotLLSw0IJ5aBdovruMYDA/kT8plF9ZKLFQcgF18hDj1SbQOMlCA4kao0iiXmah7qBWPdxpohsgVZyj7e5I9KcID+EhiDI5gxBYKLBQYKHAQoGFAoEks/YEGHYKB7hFxf0AAAAASUVORK5CYII=') repeat-x scroll left top #fff"
+            });
+
+            this.$message.css({
+                fontSize  : '13px',
+                lineHeight: '16px',
+                textAlign : 'center',
+                padding   : '8px 10px 9px',
+                width     : 'auto',
+                position  : 'relative'
+            });
+
+            this.$closeButton.css({
+                position  : 'absolute',
+                top       : 4, right: 4,
+                width     : 10, height: 10,
+                background: "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAxUlEQVR4AR3MPUoDURSA0e++uSkkOxC3IAOWNtaCIDaChfgXBMEZbQRByxCwk+BasgQRZLSYoLgDQbARxry8nyumPcVRKDfd0Aa8AsgDv1zp6pYd5jWOwhvebRTbzNNEw5BSsIpsj/kurQBnmk7sIFcCF5yyZPDRG6trQhujXYosaFoc+2f1MJ89uc76IND6F9BvlXUdpb6xwD2+4q3me3bysiHvtLYrUJto7PD/ve7LNHxSg/woN2kSz4txasBdhyiz3ugPGetTjm3XRokAAAAASUVORK5CYII=)",
+                display   : 'none',
+                cursor    : 'pointer'
+            });
+
+            this.$buttons.css({
+                padding        : 5,
+                textAlign      : 'right',
+                borderTop      : '1px solid #ccc',
+                backgroundColor: '#fff'
+            });
+
+            this.$buttons.find('button').css({
+                marginLeft: 5
+            });
+
+            this.$buttons.find('button:first').css({
+                marginLeft: 0
+            });
+
+            this.$bar.on({
+                mouseenter: function() {
+                    // $(this).find('.noty_close').stop().fadeTo('normal', 1);
+                },
+                mouseleave: function() {
+                    // $(this).find('.noty_close').stop().fadeTo('normal', 0);
+                }
+            });
+
+            switch(this.options.layout.name) {
+                case 'top':
+                    this.$bar.css({
+                        // borderRadius: '0px 0px 5px 5px',
+                        // borderBottom: '2px solid #eee',
+                        // borderLeft  : '2px solid #eee',
+                        // borderRight : '2px solid #eee',
+                        borderRadius: 'none',
+                        borderBottom: 'none',
+                        borderLeft  : 'none',
+                        borderRight : 'none',
+                        boxShadow   : "0 2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    break;
+                case 'topCenter':
+                case 'center':
+                case 'bottomCenter':
+                case 'inline':
+                    this.$bar.css({
+                        borderRadius: '5px',
+                        border      : '1px solid #eee',
+                        boxShadow   : "0 2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    this.$message.css({fontSize: '13px', textAlign: 'center'});
+                    break;
+                case 'topLeft':
+                case 'topRight':
+                case 'bottomLeft':
+                case 'bottomRight':
+                case 'centerLeft':
+                case 'centerRight':
+                    this.$bar.css({
+                        borderRadius: '5px',
+                        border      : '1px solid #eee',
+                        boxShadow   : "0 2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    this.$message.css({fontSize: '13px', textAlign: 'left'});
+                    break;
+                case 'bottom':
+                    this.$bar.css({
+                        borderRadius: '5px 5px 0px 0px',
+                        borderTop   : '2px solid #eee',
+                        borderLeft  : '2px solid #eee',
+                        borderRight : '2px solid #eee',
+                        boxShadow   : "0 -2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    break;
+                default:
+                    this.$bar.css({
+                        border   : '2px solid #eee',
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    break;
+            }
+
+            switch(this.options.type) {
+                case 'alert':
+                case 'notification':
+                    this.$bar.css({backgroundColor: '#FFF', borderColor: '#CCC', color: '#444'});
+                    break;
+                case 'warning':
+                    this.$bar.css({backgroundColor: '#FFEAA8', borderColor: '#FFC237', color: '#826200'});
+                    this.$buttons.css({borderTop: '1px solid #FFC237'});
+                    break;
+                case 'error':
+                    this.$bar.css({backgroundColor: 'red', borderColor: 'darkred', color: '#FFF'});
+                    this.$message.css({fontWeight: 'bold'});
+                    this.$buttons.css({borderTop: '1px solid darkred'});
+                    break;
+                case 'information':
+                    this.$bar.css({backgroundColor: '#57B7E2', borderColor: '#0B90C4', color: '#FFF'});
+                    this.$buttons.css({borderTop: '1px solid #0B90C4'});
+                    break;
+                case 'success':
+                    this.$bar.css({backgroundColor: 'lightgreen', borderColor: '#50C24E', color: 'darkgreen'});
+                    this.$buttons.css({borderTop: '1px solid #50C24E'});
+                    break;
+                default:
+                    this.$bar.css({backgroundColor: '#FFF', borderColor: '#CCC', color: '#444'});
+                    break;
+            }
+        },
+        callback: {
+            onShow : function() {
+                $.noty.themes.defaultTheme.helpers.borderFix.apply(this);
+            },
+            onClose: function() {
+                $.noty.themes.defaultTheme.helpers.borderFix.apply(this);
+            }
+        }
+    };
+
+    $.noty.themes.relax = {
+        name    : 'relax',
+        template    : '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"><i class="fa fa-times fa-lg" aria-hidden="true"></i></div></div>',
+        helpers : {},
+        modal   : {
+            css: {
+                position       : 'fixed',
+                width          : '100%',
+                height         : '100%',
+                backgroundColor: '#000',
+                zIndex         : 10000,
+                opacity        : 0.6,
+                display        : 'none',
+                left           : 0,
+                top            : 0
+            }
+        },
+        style   : function() {
+
+            this.$bar.css({
+                overflow    : 'hidden',
+                margin      : '0',
+                borderRadius: '0'
+            });
+
+            this.$message.css({
+                fontSize  : '14px',
+                lineHeight: '16px',
+                textAlign : 'center',
+                padding   : '20px',
+                width     : 'auto',
+                position  : 'relative'
+            });
+
+            this.$closeButton.css({
+                position  : 'absolute',
+                top       : '50%', right: 30,
+                width     : 14, height: 14,
+                margin:    '-10px',
+                // background: "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAxUlEQVR4AR3MPUoDURSA0e++uSkkOxC3IAOWNtaCIDaChfgXBMEZbQRByxCwk+BasgQRZLSYoLgDQbARxry8nyumPcVRKDfd0Aa8AsgDv1zp6pYd5jWOwhvebRTbzNNEw5BSsIpsj/kurQBnmk7sIFcCF5yyZPDRG6trQhujXYosaFoc+2f1MJ89uc76IND6F9BvlXUdpb6xwD2+4q3me3bysiHvtLYrUJto7PD/ve7LNHxSg/woN2kSz4txasBdhyiz3ugPGetTjm3XRokAAAAASUVORK5CYII=)",
+                display   : 'block',
+                cursor    : 'pointer'
+            });
+
+            this.$buttons.css({
+                padding        : 5,
+                borderTop      : 'none',
+                backgroundColor: '#fff'
+            });
+
+            this.$buttons.find('button').css({
+                marginLeft: 5,
+                width           : '82px'
+            });
+
+            this.$buttons.find('button:first').css({
+                // marginLeft: 0
+            });
+
+            this.$bar.on({
+                mouseenter: function() {
+                    // $(this).find('.noty_close').stop().fadeTo('normal', 1);
+                },
+                mouseleave: function() {
+                    // $(this).find('.noty_close').stop().fadeTo('normal', 0);
+                }
+            });
+
+            switch(this.options.layout.name) {
+                case 'top':
+                    this.$bar.css({
+                        // borderBottom: '2px solid #eee',
+                        // borderLeft  : '2px solid #eee',
+                        // borderRight : '2px solid #eee',
+                        // borderTop   : '2px solid #eee',
+                        borderBottom: '0',
+                        borderLeft  : '0',
+                        borderRight : '0',
+                        borderTop   : '0',
+                        boxShadow   : "0 2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    break;
+                case 'topCenter':
+                case 'center':
+                case 'bottomCenter':
+                case 'inline':
+                    this.$bar.css({
+                        border   : '1px solid #eee',
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    this.$message.css({fontSize: '13px', textAlign: 'center'});
+                    break;
+                case 'topLeft':
+                case 'topRight':
+                case 'bottomLeft':
+                case 'bottomRight':
+                case 'centerLeft':
+                case 'centerRight':
+                    this.$bar.css({
+                        border   : '1px solid #eee',
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    this.$message.css({fontSize: '20px', textAlign: 'left', lineHeight: '30px'});
+                    break;
+                case 'bottom':
+                    this.$bar.css({
+                        borderTop   : '2px solid #eee',
+                        borderLeft  : '2px solid #eee',
+                        borderRight : '2px solid #eee',
+                        borderBottom: '2px solid #eee',
+                        boxShadow   : "0 -2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    break;
+                default:
+                    this.$bar.css({
+                        border   : '2px solid #eee',
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+                    });
+                    break;
+            }
+
+            switch(this.options.type) {
+                case 'alert':
+                case 'notification':
+                    this.$bar.css({backgroundColor: '#FFF', borderColor: '#dedede', color: '#444'});
+                    this.$message.css({fontWeight: 'bold'});
+                    break;
+                case 'warning':
+                    this.$bar.css({backgroundColor: '#fcc100', borderColor: '#FFC237', color: '#826200'});
+                    this.$message.css({fontWeight: 'bold'});
+                    this.$buttons.css({borderTop: '1px solid #FFC237'});
+                    break;
+                case 'error':
+                    this.$bar.css({backgroundColor: '#f44455', borderColor: '#e25353', color: '#FFF'});
+                    this.$message.css({fontWeight: 'bold'});
+                    this.$buttons.css({borderTop: '1px solid darkred'});
+                    break;
+                case 'information':
+                    this.$bar.css({backgroundColor: '#6887ff', borderColor: '#3badd6', color: '#FFF'});
+                    this.$message.css({fontWeight: 'bold'});
+                    this.$buttons.css({borderTop: '1px solid #0B90C4'});
+                    break;
+                case 'success':
+                    this.$bar.css({backgroundColor: '#6cc788', borderColor: '#7cdd77', color: '#FFF'});
+                    this.$message.css({fontWeight: 'bold'});
+                    this.$buttons.css({borderTop: '1px solid #50C24E'});
+                    break;
+                default:
+                    this.$bar.css({backgroundColor: '#FFF', borderColor: '#CCC', color: '#444'});
+                    break;
+            }
+        },
+        callback: {
+            onShow : function() {
+
+            },
+            onClose: function() {
+
+            }
+        }
+    };
+
+
+    return window.noty;
 
 });
 },{"jquery":15}],23:[function(require,module,exports){
@@ -47249,7 +47263,10 @@ require('underscore');
 require('moment');
 require('moment-timezone-tsc');
 require('eonasdan-bootstrap-datetimepicker');
+
 require('noty');
+// require('./resources/assets/vendor/jquery/noty/packaged/jquery.noty.packaged.js');
+
 require('clipboard');
 require('ekko-lightbox');
 require('selectize');
