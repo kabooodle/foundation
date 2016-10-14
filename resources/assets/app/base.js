@@ -8,6 +8,18 @@ function randomAlphaStr(m) {
     return s;
 };
 
+function arrayUnique(array) {
+    var a = array.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+}
+
 function confirmModal(confirmCB, closeCB, options) {
     var defaults = {
         text: '<h6>Are you sure you want to continue?</h6>',
@@ -76,6 +88,16 @@ $(function () {
         },0);
     });
 
+    $('[data-toggle="multiselect"]').multiselect({
+        buttonClass: 'btn white',
+        maxHeight: 300,
+        enableFiltering: true,
+        templates: {
+            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fa fa-times-circle"></i></button></span>',
+            li: '<li><a tabindex="0" class="dropdown-item"><label></label></a></li>'
+        }
+    });
     $('[data-ride="carousel"]').carousel({
         interval : false
     });

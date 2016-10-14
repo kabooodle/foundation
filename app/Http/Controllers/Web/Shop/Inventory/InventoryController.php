@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
+use Response;
 use Binput;
 use Datatables;
 use Illuminate\Routing\Redirector;
@@ -14,8 +15,6 @@ use Kabooodle\Bus\Commands\Inventory\GetInventoryTypesCommand;
 use Kabooodle\Models\InventoryType;
 use Kabooodle\Transformers\Inventory\InventoryTransformer;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use Messages;
-use Response;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -25,7 +24,6 @@ use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Models\Categories;
 use Kabooodle\Models\Inventory;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Models\User;
@@ -39,7 +37,10 @@ class InventoryController extends Controller
     use ObfuscatesIdTrait;
 
     /**
-     * @return \Illuminate\Contracts\View\View
+     * @param Request $request
+     * @param         $username
+     *
+     * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|Redirector
      */
     public function index(Request $request, $username)
     {
@@ -47,10 +48,17 @@ class InventoryController extends Controller
             return redirect('/');
         }
 
-//        dd($request->all());
+        $inventoryTypes = $this->dispatchNow(new GetInventoryTypesCommand(['lularoe']));
 
-        $data = user()->inventory;
+        if ($request->has('style_id') && $request->get('style_id')) {
+            $data = user()->inventory->whereInLoose('inventory_type_styles_id', $request->get('style_id'));
+        } else {
+            $data = user()->inventory;
+        }
 
+        if ($request->has('size_id') && $request->get('size_id')) {
+            $data = $data->whereInLoose('inventory_sizes_id', $request->get('size_id'));
+        }
 
         $page = $request->get('page', 1);
         $perPage = config('pagination.per-page');
@@ -60,13 +68,23 @@ class InventoryController extends Controller
             count($data),
             $perPage,
             $page,
-            ['path' => $request->url(), 'query' => $request->query()]
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+                'to' => 1,
+                'from' => 2
+            ]
         );
 
+        if ($request->wantsJson()) {
+            return Response::json(fractal()
+                ->collection($data)
+                ->transformWith(new InventoryTransformer())
+                ->paginateWith(new IlluminatePaginatorAdapter($data))
+                ->toArray());
+        }
 
-        return (fractal()->collection($data)->transformWith(new InventoryTransformer())->paginateWith(new IlluminatePaginatorAdapter($data))->toJson());
-
-        return $this->view('inventory.index')->with(compact('data'));
+        return $this->view('inventory.index')->with(compact('data', 'inventoryTypes'));
     }
 
 //    public function queryIndex()

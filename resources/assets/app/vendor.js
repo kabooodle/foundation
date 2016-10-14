@@ -19,3 +19,4 @@ require ('selectize');
 require ('emojione');
 require ('emojionearea');
 require ('bootstrap-touchspin');
+require ('bootstrap-multiselect');
