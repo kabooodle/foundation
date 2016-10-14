@@ -45,6 +45,13 @@ Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], f
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@index'
     ]);
 
+    //Route::group(['middleware' => 'referral'], function() {
+        Route::get('/invite/{userName}', [
+            'as' => 'invite.index',
+            'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@show'
+        ]);
+    //});
+
     Route::get('c/{facebookItemString}', [
         'as' => 'externalclaim.show',
         'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryClaimsFacebookController::class.'@show'
@@ -55,7 +62,6 @@ Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], f
         'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryClaimsFacebookController::class.'@claim'
     ]);
 });
-
 
 Route::group(['domain' => 'api.'.getEnvDomain(true)], function($route){
     $route->get('/', [
