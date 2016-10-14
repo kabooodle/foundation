@@ -6,7 +6,9 @@
 
 namespace Kabooodle\Http\Controllers\Web\Referrals;
 
+use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Models\User;
 
 class ReferralsController extends Controller
 {
@@ -16,5 +18,20 @@ class ReferralsController extends Controller
     public function index()
     {
         return $this->view('referrals.index');
+    }
+
+    public function show(Request $request)
+    {
+        if(User::where('username', $request->userName)->first()) {
+            $user = User::where('username', $request->userName)->first();
+            $request->session()->put('referredBy', $user->id);
+        }
+        else {
+            return $this->redirect(route('profile.addresses.edit'));
+        }
+
+        return $this->redirect(route(''));
+        
+        //return $request->session()->get('referred_by');
     }
 }
