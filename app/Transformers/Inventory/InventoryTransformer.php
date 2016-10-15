@@ -29,7 +29,8 @@ class InventoryTransformer extends TransformerAbstract
             'size' => $inventory->styleSize,
             'item' => $inventory->files,
             'claims' => $inventory->claims,
-            'pending' => $inventory->pendingClaims
+            'pending' => $inventory->pendingClaims,
+            'sales' => $inventory->sales
         ];
     }
 }

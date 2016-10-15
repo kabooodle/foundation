@@ -3,10 +3,8 @@
 @section('body-menu')
 
 
-    <div class="pull-left">
+<div class="pull-left">
         <div class="btn-toolbar center-block text-center">
-            <button class="btn white btn-sm ">Filter</button>
-
             <div class="btn-group dropdown ">
                 <button :disabled="selectedItems.length == 0" class="btn white btn-sm dropdown-toggle"
                         data-toggle="dropdown">
@@ -35,6 +33,7 @@
 
 
     <div class="pull-right">
+        <button class="btn primary btn-sm " id="navbarSideButton">Filter</button>
         <a href="{{ route('shop.inventory.index', [user()->username]) }}" class="btn btn-sm white">Manage</a>
         <a href="{{ route('shop.inventory.create', [user()->username]) }}" class="btn btn-sm white">Add Items</a>
     </div>
@@ -43,10 +42,89 @@
 
 
 @section('body-content')
+    <script>
+        $( document ).ready(function() {
+
+            $('#navbarSideButton').on('click', function() {
+                $('#navbarSide').css({
+                    'top' :  $('.app-header').outerHeight()
+                }).toggleClass('reveal')
+            });
+        });
+    </script>
     <script type="text/javascript" src="http://cdn.jsdelivr.net/vue.table/1.5.3/vue-table.min.js"></script>
 
+    <div class="navbar-side p-a" id="navbarSide">
+        <div class="box ">
+            <div class="box-body clearfix">
+                <form>
+                    <div class="form-group row">
+                        <label class="form-control-label col-sm-4 text-sm">
+                            Has Sales
+                        </label>
+                        <div class="col-sm-8 ">
+                            <input type="checkbox" name="has_sales" class="form-control" style="margin-top: 8px;">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="form-control-label col-sm-4 text-sm">
+                            Has Claims
+                        </label>
+                        <div class="col-sm-8 ">
+                            <input type="checkbox" name="has_claims" class="form-control" style="margin-top: 8px;">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="form-control-label col-sm-4 text-sm">Style</label>
+                        <div class="col-sm-8">
+                            {{ Form::select('style_id[]', $filters['styles']->pluck('name','id')->toArray(), null, ['data-toggle' => 'multiselect', 'multiple']) }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="form-control-label col-sm-4 text-sm">Size</label>
+                        <div class="col-sm-8">
+                            {{ Form::select('size_id[]', $filters['sizes']->pluck('name','id')->toArray(), null, ['data-toggle' => 'multiselect', 'multiple']) }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="form-control-label col-sm-4 text-sm">Flash Sales</label>
+                        <div class="col-sm-8">
+                            {{ Form::select('size_id[]', $filters['flashSales']->pluck('name','id')->toArray(), null, ['data-toggle' => 'multiselect', 'multiple']) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group row p-b-0 m-b-0">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <button type="button" v-on:click="filterSubmit" class="btn-sm btn primary">Go</button>
+                            <button type="button" class="btn white btn-sm" v-on:click="hideFilterMenu">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <style>
+        .reveal {
+            left: 0 !important;;
+        }
+        .navbar-side {
+            -webkit-transform: translateX(0%);
+            -ms-transform: translateX(0%);
+            transform: translateX(0%);
+            -webkit-transition: 300ms ease;
+            transition: 300ms ease;
+            height: 100% !important;
+            width: 350px;
+            position: fixed;
+            top: 64px;
+            left: -350px;
+            padding: 0;
+            list-style: none;
+            background-color: rgba(43,41,56, .95);
+            overflow-y: auto;
+            z-index: 2000;
+        }
         tr.highlight_row td {
             background-color: #fefbf2;
         }
@@ -144,7 +222,7 @@
             height: 100%;
             cursor: pointer;
             font-weight: 400;
-            padding: 3px 20px 3px 5px
+            padding: 3px 20px 3px 10px
         }
 
         .multiselect-container > li > a > label.radio,
@@ -174,33 +252,26 @@
 
     </style>
 
-    <div class="box pull-left ">
-        <div class="box-body">
-            <form>
-                <label>Style</label>
-                {{ Form::select('style_id[]', $inventoryTypes->first()->styles->pluck('name','id')->toArray(), null, ['data-toggle' => 'multiselect', 'multiple']) }}
-                <label>Size</label>
-                {{ Form::select('size_id[]', $inventoryTypes->first()->styles->pluck('name','id')->toArray(), null, ['data-toggle' => 'multiselect', 'multiple']) }}
-                <button type="button" v-on:click="filterSubmit" class="btn primary">Search</button>
-            </form>
-        </div>
-    </div>
 
-    <div class="table-wrapper pull-right">
-        <div class="loader"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
-        <vuetable
-                :fields="columns"
-                :item-actions="itemActions"
-                :append-params="moreParams"
-                :selected-to="selectedItems"
-                per-page="100"
-                row-class-callback="rowClassCB"
-                table-wrapper=".table-wrapper"
-                pagination-path=""
-                api-url="http://app.kabooodle.dev/shop/jaketoolson/inventory"
-                table-class=" table table-condensed table-as-list white "
-        ></vuetable>
-    </div>
+            <div class="table-wrapper">
+                <div v-show="moreParams.length > 0"><small class="text-muted text-center center-block">(Filtered Results)</small></div>
+                <div class="loader"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+                <vuetable
+                        :fields="columns"
+                        :item-actions="itemActions"
+                        :append-params="moreParams"
+                        :selected-to="selectedItems"
+                        per-page="100"
+                        row-class-callback="rowClassCB"
+                        table-wrapper=".table-wrapper"
+                        pagination-path=""
+                        api-url="http://app.kabooodle.dev/shop/jaketoolson/inventory"
+                        table-class=" table table-condensed table-as-list white "
+                ></vuetable>
+            </div>
+
+
+
 
 
     <script>
@@ -248,8 +319,12 @@
                     },
                     'qty',
                     {
-                        name: 'pending',
-                        callback: 'setPropPending'
+                        name: 'claims',
+                        callback: 'setPropClaims'
+                    },
+                    {
+                        name: 'sales',
+                        callback: 'setPropSales'
                     },
                     '__actions'
                 ],
@@ -268,6 +343,9 @@
                 }
             },
             methods: {
+                hideFilterMenu : function(){
+                    $('#navbarSide').removeClass('reveal');
+                },
                 resetMoreParams: function(){
                     this.$data.moreParams = [];
                 },
@@ -285,7 +363,10 @@
                         scope.$broadcast('vuetable:refresh');
                     },0);
                 },
-                setPropPending: function (v) {
+                setPropSales: function (v) {
+                    return v.length;
+                },
+                setPropClaims: function (v) {
                     return v.length;
                 },
                 setPropItem: function (v) {
@@ -309,6 +390,9 @@
                 }
             },
             events: {
+                'vuetable:loaded' : function(){
+//                    this.hideFilterMenu();
+                },
                 'vuetable:row-clicked': function (data, event) {
                     if ($.inArray(event.target.type, ['checkbox', 'button']) == -1) {
                         var checkboxEl = $(event.target).closest('tr').find(':checkbox');

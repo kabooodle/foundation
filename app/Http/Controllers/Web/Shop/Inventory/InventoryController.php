@@ -48,16 +48,60 @@ class InventoryController extends Controller
             return redirect('/');
         }
 
-        $inventoryTypes = $this->dispatchNow(new GetInventoryTypesCommand(['lularoe']));
+        // Base filters.
+        $filters = [
+            'styles' => [],
+            'sizes' => [],
+            'flashSales' => [],
+            'claims' => [],
+            'approvedsales'  => []
+        ];
 
-        if ($request->has('style_id') && $request->get('style_id')) {
-            $data = user()->inventory->whereInLoose('inventory_type_styles_id', $request->get('style_id'));
-        } else {
-            $data = user()->inventory;
+        $data = user()->inventory;
+
+        // Build arrays of filterable data.
+        // We only want the user to have filters that are relevant to their inventory.
+        foreach($data as $item) {
+            // we need all styles
+            $filters['styles'][] = $item->style;
+            // we need all sizes
+            $filters['sizes'][] = $item->style->sizes->find($item->inventory_sizes_id);
+            // we need flashsales
+            if ($item->flashsales->count() > 0) {
+                $filters['flashSales'][] = $item->flashsales;
+            }
         }
 
+        $filters['styles'] = collect($filters['styles'])->unique();
+        $filters['sizes'] = collect($filters['sizes'])->unique();
+        $filters['flashSales'] = collect($filters['flashSales'])->unique()->filter(function($sale){
+            return $sale->saleHasEnded() ? false : true;
+        });
+        $filters['claims'] = collect($filters['claims'])->unique()->filter(function($claim){
+            return $claim->wasRejected() ? false : true;
+        });
+
+        if ($request->has('style_id') && $request->get('style_id')) {
+            $data = $data->whereInLoose('inventory_type_styles_id', $request->get('style_id'));
+        }
         if ($request->has('size_id') && $request->get('size_id')) {
             $data = $data->whereInLoose('inventory_sizes_id', $request->get('size_id'));
+        }
+        if ($request->has('qty_0')) {
+            $data = $data->where('initial_qty', 0);
+        }
+        if ($request->has('flashsale_id')) {
+            $data = $data->whereInLoose('flashsales', $request->get('flashsale_id'));
+        }
+        if ($request->has('has_sales')) {
+            $data = $data->filter(function($item){
+                return $item->sales->count() > 0;
+            });
+        }
+        if ($request->has('has_claims')) {
+            $data = $data->filter(function($item){
+                return $item->claims->count() > 0;
+            });
         }
 
         $page = $request->get('page', 1);
@@ -84,7 +128,7 @@ class InventoryController extends Controller
                 ->toArray());
         }
 
-        return $this->view('inventory.index')->with(compact('data', 'inventoryTypes'));
+        return $this->view('inventory.index')->with(compact('data', 'filters'));
     }
 
 //    public function queryIndex()

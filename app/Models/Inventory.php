@@ -46,7 +46,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'flashsales',
 //        'claims', // <- deathtrap of recursion
         'files',
-        'comments'
+        'comments',
+        'sales'
     ];
 
     /**
@@ -248,6 +249,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function claims()
     {
         return $this->hasMany(Claims::class, 'inventory_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function sales()
+    {
+        return $this->acceptedClaims();
     }
 
     /**
