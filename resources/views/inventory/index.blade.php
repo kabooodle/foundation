@@ -8,7 +8,7 @@
             <div class="btn-group dropdown ">
                 <button :disabled="selectedItems.length == 0" class="btn white btn-sm dropdown-toggle"
                         data-toggle="dropdown">
-                    <span class="dropdown-label">Bulk</span>
+                    <span class="dropdown-label">Bulk (@{{selectedItems.length}})</span>
                     <span class="caret"></span>
                 </button>
                 <div class="dropdown-menu text-left text-sm">
@@ -52,7 +52,7 @@
             });
         });
     </script>
-    <script type="text/javascript" src="http://cdn.jsdelivr.net/vue.table/1.5.3/vue-table.min.js"></script>
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/vue.table/1.5.6/vue-table.min.js"></script>
 
     <div class="navbar-side p-a" id="navbarSide">
         <div class="box ">
@@ -95,7 +95,7 @@
 
                     <div class="form-group row p-b-0 m-b-0">
                         <div class="col-sm-8 col-sm-offset-4">
-                            <button type="button" v-on:click="filterSubmit" class="btn-sm btn primary">Go</button>
+                            <button type="button" v-on:click="filterSubmit" :disabled="!ready" class="btn-sm btn primary">Go</button>
                             <button type="button" class="btn white btn-sm" v-on:click="hideFilterMenu">Close</button>
                         </div>
                     </div>
@@ -151,7 +151,7 @@
             letter-spacing: 4px;
             color: #f77a99;
             position: absolute;
-            top: 50%;
+            top: 20px;
             left: 50%;
         }
 
@@ -257,11 +257,15 @@
                 <div v-show="moreParams.length > 0"><small class="text-muted text-center center-block">(Filtered Results)</small></div>
                 <div class="loader"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
                 <vuetable
+                        pagination-info-no-data-template="No results found based on filter"
+                        pagination-class="clearfix "
+                        pagination-info-class="pull-left text-sm"
+                        pagination-component-class="pull-right text-sm"
                         :fields="columns"
                         :item-actions="itemActions"
                         :append-params="moreParams"
                         :selected-to="selectedItems"
-                        per-page="100"
+                        per-page="50"
                         row-class-callback="rowClassCB"
                         table-wrapper=".table-wrapper"
                         pagination-path=""
@@ -269,9 +273,6 @@
                         table-class=" table table-condensed table-as-list white "
                 ></vuetable>
             </div>
-
-
-
 
 
     <script>
@@ -293,6 +294,7 @@
         new Vue({
             el: '#manage_inventory',
             data: {
+                ready : false,
                 moreParams: [],
                 selectedItems: [],
                 columns: [
@@ -310,14 +312,19 @@
                         callback: 'setPropStyle'
                     },
                     {
-                        name: 'size',
+                        name: 'style_size',
+                        title: 'size',
                         callback: 'setPropSize'
                     },
                     {
-                        name: 'price',
+                        name: 'price_usd',
+                        title: 'Price',
                         callback: 'setPropPrice'
                     },
-                    'qty',
+                    {
+                        name: 'initial_qty',
+                        title: 'Qty'
+                    },
                     {
                         name: 'claims',
                         callback: 'setPropClaims'
@@ -343,6 +350,20 @@
                 }
             },
             methods: {
+                paginationConfig: function(componentName) {
+                    this.$broadcast('vuetable-pagination:set-options', {
+                        wrapperClass: 'pagination',
+                        icons: {
+                            first: '',
+                            prev: '',
+                            next: '',
+                            last: ''
+                        },
+                        activeClass: 'active',
+                        linkClass: 'btn btn-default btn-sm',
+                        pageClass: 'btn btn-default btn-sm'
+                    })
+                },
                 hideFilterMenu : function(){
                     $('#navbarSide').removeClass('reveal');
                 },
@@ -367,11 +388,11 @@
                     return v.length;
                 },
                 setPropClaims: function (v) {
-                    return v.length;
+                    return v ? v.length : 0;
                 },
                 setPropItem: function (v) {
-                    var firstImg = v[0];
-                    return '<img style="width: 32px; height: 32px; border-radius: 2px;" src="' + firstImg.location + '">';
+                    var firstImg = v ? v[0] : null;
+                    return firstImg ? '<img style="width: 32px; height: 32px; border-radius: 2px;" src="' + firstImg.location + '">' : null;
                 },
                 setPropSize: function (v) {
                     return v.name;
@@ -390,7 +411,11 @@
                 }
             },
             events: {
+                'vuetable:loading' : function(){
+                    this.ready = false;
+                },
                 'vuetable:loaded' : function(){
+                    this.ready = true;
 //                    this.hideFilterMenu();
                 },
                 'vuetable:row-clicked': function (data, event) {

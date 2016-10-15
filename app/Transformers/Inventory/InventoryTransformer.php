@@ -21,8 +21,8 @@ class InventoryTransformer extends TransformerAbstract
         return [
             'id' => $inventory->id,
             'name' => $inventory->name,
-            'price' => $inventory->price_usd,
-            'qty' => $inventory->getAvailableQuantity(),
+            'price_usd' => $inventory->price_usd,
+            'initial_qty' => $inventory->getAvailableQuantity(),
             'type_id' => $inventory->type->id,
             'style_id' => $inventory->style->id,
             'style' => $inventory->style,

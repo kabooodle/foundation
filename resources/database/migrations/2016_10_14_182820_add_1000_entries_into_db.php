@@ -14,11 +14,12 @@ class Add1000EntriesIntoDb extends Migration
     {
         $type = \Kabooodle\Models\InventoryType::LuLaRoe()->WithStylesAndSizes()->first();
 
-        for($i=0; $i<2000; $i++) {
+        $models = [];
+        $user = \Kabooodle\Models\User::first();
+        for($i=0; $i<10000; $i++) {
             $style = $type->styles->random();
             $size = $style->sizes->random();
-            \Kabooodle\Models\Inventory::create([
-                'user_id' => 152295,
+            $models[] = new \Kabooodle\Models\Inventory([
                 'inventory_type_id' => 188432,
                 'inventory_type_styles_id' => $style->id,
                 'inventory_sizes_id' => $size->id,
@@ -28,6 +29,8 @@ class Add1000EntriesIntoDb extends Migration
                 'price_usd' => rand(0,75)
             ]);
         }
+
+        $user->inventory()->saveMany($models);
     }
 
     /**

@@ -48,33 +48,31 @@ class InventoryController extends Controller
             return redirect('/');
         }
 
-        $data = user()->inventory;
+        // Begin the user inventory query.
+        $data = user()->inventory()->noEagerLoads()->with(['styleSize', 'sales', 'claims']);
 
-//        if ($request->has('style_id') && $request->get('style_id')) {
-//            $data = $data->whereInLoose('inventory_type_styles_id', $request->get('style_id'));
-//        }
-//        if ($request->has('size_id') && $request->get('size_id')) {
-//            $data = $data->whereInLoose('inventory_sizes_id', $request->get('size_id'));
-//        }
-//        if ($request->has('qty_0')) {
-//            $data = $data->where('initial_qty', 0);
-//        }
-//        if ($request->has('flashsale_id')) {
-//            $data = $data->whereInLoose('flashsales', $request->get('flashsale_id'));
-//        }
-//        if ($request->has('has_sales')) {
-//            $data = $data->filter(function($item){
-//                return $item->sales->count() > 0;
-//            });
-//        }
-//        if ($request->has('has_claims')) {
-//            $data = $data->filter(function($item){
-//                return $item->claims->count() > 0;
-//            });
-//        }
+        if ($request->has('style_id') && $request->get('style_id')) {
+            $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
+        }
+        if ($request->has('size_id') && $request->get('size_id')) {
+            $data = $data->whereIn('inventory_sizes_id', $request->get('size_id'));
+        }
+        if ($request->has('qty_0')) {
+            $data = $data->where('initial_qty', 0);
+        }
+        if ($request->has('flashsale_id')) {
+            $data = $data->whereIn('flashsales', $request->get('flashsale_id'));
+        }
+        if ($request->has('has_sales')) {
+            $data = $data->has('sales', '>', 0);
+        }
+        if ($request->has('has_claims')) {
+            $data = $data->has('claims', '>', 0);
+        }
+        $data = $data->get();
 
         $page = $request->get('page', 1);
-        $perPage = config('pagination.per-page');
+        $perPage = $request->get('per_page', config('pagination.per-page'));
 
         $data = new LengthAwarePaginator(
             $data->forPage($page, $perPage),
@@ -88,11 +86,11 @@ class InventoryController extends Controller
         );
 
         if ($request->wantsJson()) {
-            return Response::json(fractal()
-                ->collection($data)
-                ->transformWith(new InventoryTransformer())
-                ->paginateWith(new IlluminatePaginatorAdapter($data))
-                ->toArray());
+            return Response::json($data);
+//            return Response::json(fractal()
+//                ->collection($data)
+//                ->transformWith(new InventoryTransformer())
+//                ->paginateWith(new IlluminatePaginatorAdapter($data)));
         }
 
         // Base filters.
@@ -117,9 +115,9 @@ class InventoryController extends Controller
             }
         }
 
-        $filters['styles'] = collect($filters['styles'])->unique();
-        $filters['sizes'] = collect($filters['sizes'])->unique();
-        $filters['flashSales'] = collect($filters['flashSales'])->unique()->filter(function($sale){
+        $filters['styles'] = collect($filters['styles'])->sortBy('name')->unique();
+        $filters['sizes'] = collect($filters['sizes'])->sortBy('order')->sortBy('name')->unique();
+        $filters['flashSales'] = collect($filters['flashSales'])->sortBy('name')->unique()->filter(function($sale){
             return $sale->saleHasEnded() ? false : true;
         });
         $filters['claims'] = collect($filters['claims'])->unique()->filter(function($claim){
