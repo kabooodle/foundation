@@ -48,6 +48,53 @@ class InventoryController extends Controller
             return redirect('/');
         }
 
+        $data = user()->inventory;
+
+//        if ($request->has('style_id') && $request->get('style_id')) {
+//            $data = $data->whereInLoose('inventory_type_styles_id', $request->get('style_id'));
+//        }
+//        if ($request->has('size_id') && $request->get('size_id')) {
+//            $data = $data->whereInLoose('inventory_sizes_id', $request->get('size_id'));
+//        }
+//        if ($request->has('qty_0')) {
+//            $data = $data->where('initial_qty', 0);
+//        }
+//        if ($request->has('flashsale_id')) {
+//            $data = $data->whereInLoose('flashsales', $request->get('flashsale_id'));
+//        }
+//        if ($request->has('has_sales')) {
+//            $data = $data->filter(function($item){
+//                return $item->sales->count() > 0;
+//            });
+//        }
+//        if ($request->has('has_claims')) {
+//            $data = $data->filter(function($item){
+//                return $item->claims->count() > 0;
+//            });
+//        }
+
+        $page = $request->get('page', 1);
+        $perPage = config('pagination.per-page');
+
+        $data = new LengthAwarePaginator(
+            $data->forPage($page, $perPage),
+            count($data),
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        if ($request->wantsJson()) {
+            return Response::json(fractal()
+                ->collection($data)
+                ->transformWith(new InventoryTransformer())
+                ->paginateWith(new IlluminatePaginatorAdapter($data))
+                ->toArray());
+        }
+
         // Base filters.
         $filters = [
             'styles' => [],
@@ -56,8 +103,6 @@ class InventoryController extends Controller
             'claims' => [],
             'approvedsales'  => []
         ];
-
-        $data = user()->inventory;
 
         // Build arrays of filterable data.
         // We only want the user to have filters that are relevant to their inventory.
@@ -81,103 +126,8 @@ class InventoryController extends Controller
             return $claim->wasRejected() ? false : true;
         });
 
-        if ($request->has('style_id') && $request->get('style_id')) {
-            $data = $data->whereInLoose('inventory_type_styles_id', $request->get('style_id'));
-        }
-        if ($request->has('size_id') && $request->get('size_id')) {
-            $data = $data->whereInLoose('inventory_sizes_id', $request->get('size_id'));
-        }
-        if ($request->has('qty_0')) {
-            $data = $data->where('initial_qty', 0);
-        }
-        if ($request->has('flashsale_id')) {
-            $data = $data->whereInLoose('flashsales', $request->get('flashsale_id'));
-        }
-        if ($request->has('has_sales')) {
-            $data = $data->filter(function($item){
-                return $item->sales->count() > 0;
-            });
-        }
-        if ($request->has('has_claims')) {
-            $data = $data->filter(function($item){
-                return $item->claims->count() > 0;
-            });
-        }
-
-        $page = $request->get('page', 1);
-        $perPage = config('pagination.per-page');
-
-        $data = new LengthAwarePaginator(
-            $data->forPage($page, $perPage),
-            count($data),
-            $perPage,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query(),
-                'to' => 1,
-                'from' => 2
-            ]
-        );
-
-        if ($request->wantsJson()) {
-            return Response::json(fractal()
-                ->collection($data)
-                ->transformWith(new InventoryTransformer())
-                ->paginateWith(new IlluminatePaginatorAdapter($data))
-                ->toArray());
-        }
-
         return $this->view('inventory.index')->with(compact('data', 'filters'));
     }
-
-//    public function queryIndex()
-//    {
-//        return Datatables::collection(user()->inventory->load([
-//            'categories',
-//            'claims',
-//            'tagged',
-//            'acceptedClaims',
-//            'pendingClaims'
-//        ]))
-//            ->addRowAttr('valign', 'middle')
-//            ->addRowAttr('style',
-//                'padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important')
-//            ->editColumn('id', ' <div class="list-item p-r-0 ">
-//                        <input type="checkbox" class="selected_items_checkbox" name="selected_items[]"
-//                               value="{{ $id }}">
-//                    </div>', 0)
-//            ->editColumn('name', '<div class="list ">
-//                        <div class="list-item p-l-0 p-r-0">
-//                            <div class="list-left">
-//
-//                        <span class="w-40 avatar">
-//                                            <img src="https://placekitten.com/g/32/32">
-//                                          </span>
-//                            </div>
-//                            <div class="list-body">
-//                                <div>
-//                                    <a href=""
-//                                       class="_500 h6">{{ $name }}</a>
-//                                </div>
-//                                <div class="text-ellipsis text-muted text-sm">
-//                                    Categories: @foreach($categories as $cat) {{ $cat["name"] }} @endforeach</div>
-//                                <div class="text-sm hidden-sm hidden-xs hidden-xs-down">
-//                                    @if(count($tagged) > 0)
-//                                        <span class="text-muted">Tags: </span>
-//                                        @foreach($tagged as $tag) <span
-//                                                class="label label-xs outline text-u-c">{!! $tag["tag_name"] !!}</span> @endforeach
-//                                    @endif
-//                                </div>
-//                            </div>
-//                        </div>
-//                    </div>', 1)
-//            ->editColumn('price_usd', '<span class="h5">${{$price_usd}}</span>')
-//            ->addColumn('claims',
-//                ' <span class="h5 "><span class="text-success">{{ count($accepted_claims) }}</span> <span class="text-muted">|</span> <span class="text-warning">{{ count($pending_claims) }}</span> </span>')
-//            ->editColumn('initial_qty', ' <span class="h5">{{ $initial_qty }}</span>')
-//            ->make(true);
-//    }
 
     /**
      * Show the form for creating a new resource.

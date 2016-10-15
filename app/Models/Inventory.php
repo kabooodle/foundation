@@ -42,7 +42,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     protected $with = [
         'style',
         'styleSize',
-        'tagged',
+//        'tagged',
         'flashsales',
 //        'claims', // <- deathtrap of recursion
         'files',
@@ -339,5 +339,17 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getCategoriesAttribute()
     {
         return $this->tags;
+    }
+
+    public static function filter(array $filters)
+    {
+        $base = [
+            'style_id'      => [],
+            'size_id'       => [],
+            'has_claims'    => false,
+            'has_sales'     => false
+        ];
+
+        $filters = $base + $filters;
     }
 }

@@ -36,6 +36,7 @@ $env = $app->detectEnvironment(function() use ($app){
                 break;
 
             case 'orion' :
+            case 'machine' :
             case 'kabooodle.dev' :
             default :
                 $env = 'local';
