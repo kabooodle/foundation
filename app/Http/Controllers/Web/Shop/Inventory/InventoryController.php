@@ -184,12 +184,16 @@ class InventoryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function show($username, $idAndName)
+    public function show(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
         $item = Inventory::find($decryptedId);
 
         if ($item) {
+            if ($request->ajax()) {
+                return $this->view('inventory.partials._show')->with(compact('item'))->render();
+            }
+
             return $this->view('inventory.show')->with(compact('item'));
         }
 

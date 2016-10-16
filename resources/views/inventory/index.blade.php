@@ -2,41 +2,42 @@
 
 @section('body-menu')
 
-    <div class="pull-left">
-        <div class="btn-toolbar center-block text-center">
-            <div class="btn-group dropdown ">
-                <button :disabled="selectedItems.length == 0 || ! ready"
-                        v-bind:class="{'disabled': selectedItems.length == 0 || ! ready}"
-                        class="disabled btn white btn-sm dropdown-toggle"
-                        data-toggle="dropdown">
-                    <span class="dropdown-label">Bulk (@{{selectedItems.length}})</span>
-                    <span class="caret"></span>
-                </button>
-                <div class="dropdown-menu text-left text-sm">
-                    <a class="dropdown-item" href="">Delete</a>
-                </div>
+    {{--<div class="pull-left">--}}
+        {{--<div class="btn-toolbar center-block text-center">--}}
+
+
+            {{--<a :disabled="selectedItems.length == 0 || ! ready"--}}
+               {{--v-bind:class="{'disabled': selectedItems.length == 0 || ! ready}"--}}
+               {{--data-toggle="modal" data-target="#m-md"--}}
+               {{--data-backdrop="static" data-keyboard="false" href="#"--}}
+               {{--class="disabled btn_add_selected text-white  btn btn-sm warning">Add Selected--}}
+                {{--Items to Sale</a>--}}
+
+            {{--<a :disabled="selectedItems.length == 0 || ! ready"--}}
+               {{--v-bind:class="{'disabled': selectedItems.length == 0 || ! ready}"--}}
+               {{--data-toggle="modal" data-target="#m-md-fb"--}}
+               {{--data-backdrop="static" data-keyboard="false" href="#"--}}
+               {{--class="disabled text-white btn_add_selected btn btn-sm warning">Add Selected--}}
+                {{--Items to Facebook</a>--}}
+        {{--</div>--}}
+    {{--</div>--}}
+
+
+    <div class="center-block text-center">
+        <div class="btn-group dropdown ">
+            <button :disabled="selectedItems.length == 0 || ! ready"
+                    v-bind:class="{'disabled': selectedItems.length == 0 || ! ready}"
+                    class="disabled btn white btn-sm dropdown-toggle"
+                    data-toggle="dropdown">
+                <span class="dropdown-label">Bulk (@{{selectedItems.length}})</span>
+                <span class="caret"></span>
+            </button>
+            <div class="dropdown-menu text-left text-sm">
+                <a class="dropdown-item text-danger" href="">Delete</a>
             </div>
-
-            <a :disabled="selectedItems.length == 0 || ! ready"
-               v-bind:class="{'disabled': selectedItems.length == 0 || ! ready}"
-               data-toggle="modal" data-target="#m-md"
-               data-backdrop="static" data-keyboard="false" href="#"
-               class="disabled btn_add_selected text-white  btn btn-sm warning">Add Selected
-                Items to Sale</a>
-
-            <a :disabled="selectedItems.length == 0 || ! ready"
-               v-bind:class="{'disabled': selectedItems.length == 0 || ! ready}"
-               data-toggle="modal" data-target="#m-md-fb"
-               data-backdrop="static" data-keyboard="false" href="#"
-               class="disabled text-white btn_add_selected btn btn-sm warning">Add Selected
-                Items to Facebook</a>
         </div>
-    </div>
-
-    <div class="pull-right">
-        <button class="btn primary btn-sm " id="navbarSideButton">Filter</button>
-        <a href="{{ route('shop.inventory.index', [user()->username]) }}" class="btn btn-sm white">Manage</a>
-        <a href="{{ route('shop.inventory.create', [user()->username]) }}" class="btn btn-sm white">Add Items</a>
+        <button class="btn white btn-sm " id="navbarSideButton">Filter Items</button>
+        {{--<a href="{{ route('shop.inventory.create', [user()->username]) }}" class="btn btn-sm white">Add Items</a>--}}
     </div>
 
 @endsection
@@ -130,6 +131,10 @@
 
         .table-wrapper {
             position: relative;
+        }
+
+        .table-wrapper tbody tr:hover {
+            cursor: pointer;
         }
 
         /* Loading Animation: */
@@ -250,7 +255,6 @@
         }
     </style>
 
-    @{{ $refs.vuetable.tablePagination }}
     <div class="table-wrapper">
         <div v-show="moreParams.length > 0"><small class="text-muted text-center center-block">(Filtered Results)</small></div>
         <div class="loader"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
@@ -341,7 +345,10 @@
                 '<div class="dropdown-menu dropdown-menu-right text-sm"> ' +
                     '<a class="dropdown-item" href="javascript:;" v-on:click="previewItem(rowData)">View</a> ' +
                     '<a class="dropdown-item" href="javascript:;" v-on:click="editItem(rowData)">Edit</a> ' +
-                    '<a class="dropdown-item" href="javascript:;" v-on:click="deleteItem(rowData)">Delete</a> ' +
+                    '<a class="dropdown-item" v-show="rowData.pending_claims.length > 0" href="javascript:;" v-on:click="acceptClaim(rowData)">Approve Claims</a> ' +
+                    '<a class="dropdown-item" v-show="rowData.pending_claims.length > 0" href="javascript:;" :disabled="rowData.pending_claims.length == 0" v-on:click="acceptClaim(rowData)">Reject Claims</a> ' +
+                    '<hr style="margin-top: .35rem; margin-bottom: .35rem;">' +
+                    '<a class="dropdown-item text-danger" href="javascript:;" v-on:click="deleteItem(rowData)">Delete</a> ' +
                 '</div>' +
             '</div>' +
             ''].join(''),
@@ -361,7 +368,11 @@
                     window.location.href =  window.location.href + '/'+item.uuid+'/edit';
                 },
                 deleteItem: function(item) {
-
+                    confirmModal(function(noty){
+                        noty.close();
+                    }, {}, {
+                        text: '<h6>Delete the '+ item.name +'?</h6><small class="block">(Size: '+item.style_size.name+', Qty: '+item.initial_qty+')</small>'
+                    });
                 }
             }
         });
@@ -384,20 +395,18 @@
         new Vue({
             el: '#manage_inventory',
             data: {
-                paginationComponent: 'vuetable-pagination',
-                tablePagination: null,
-                paginationInfoTemplate : null,
                 ready : false,
                 moreParams: [],
                 selectedItems: [],
                 columns: [
                     {
                         name: '__component:checkbox',
+                        title: '<input type="checkbox">',
                         titleClass: 'text-center',
                         dataClass: 'text-center'
                     },
                     {
-                        name: 'item',
+                        name: 'files',
                         callback: 'setPropItem'
                     },
                     {
@@ -484,13 +493,12 @@
                 setPropPrice: function (v) {
                     return '$' + v;
                 },
-                viewProfile: function (id) {
-                    console.log('view profile with id:', id)
-                },
                 rowClassCB: function (data, index) {
                     return 'p-l-0 m-l-0';
                 },
                 addItemsToSale: function(){
+                    var scope = this;
+                    var $el = $(this);
                     var inventory_id = [];
                     var flashsale_id = [];
 
@@ -504,6 +512,13 @@
                         inventory_id.push(this.id);
                     });
 
+                    if(inventory_id.length == 0 || flashsale_id.length == 0) {
+                        alert('A flash sale or item must first be selected');
+                        return false;
+                    }
+
+                    $el.addClass('disabled').prop('disabled', true);
+
                     $.ajax({
                         data: {
                             inventory_id: inventory_id,
@@ -513,7 +528,10 @@
                         url: "{{ apiRoute('inventory.associate.store', [user()->username]) }}",
                         method: "POST",
                         success: function (response) {
-
+                            $el.html('Success!');
+                            setTimeout(function(){
+                                $el.removeClass('disabled').prop('disabled', false);
+                            },500);
                         },
                         error: function () {
                             alert('An error occurred, please try again.');
@@ -522,6 +540,18 @@
                 }
             },
             events: {
+                'vuetable:cell-dblclicked' : function(data,field,event) {
+//                    $.ajax({
+//                        url: window.location.href + '/'+data.uuid,
+//                        method: "GET",
+//                        success: function (response) {
+//                            console.log(response);
+//                        },
+//                        error: function (response) {
+//                            alert(response);
+//                        }
+//                    });
+                },
                 'vuetable:loading' : function(){
                     this.ready = false;
                 },
@@ -535,11 +565,8 @@
                         checkboxEl.trigger('click');
                     }
                 },
-                'vuetable:action': function (action, data) {
-                    console.log('vuetable:action', action, data);
-                },
                 'vuetable:load-success': function (response) {
-                    console.log('success: ', response);
+//                    console.log('success: ', response);
                 },
                 'vuetable:load-error': function (response) {
                     console.log('Load Error: ', response);

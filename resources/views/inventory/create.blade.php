@@ -1,10 +1,6 @@
-@extends('layouts.body_w_leftnav')
+@extends('layouts.full')
 
-@section('body-content-left-nav')
-    @include('inventory.partials._leftnav')
-@endsection
-
-@section('body-inner-content')
+@section('body-content')
     @include('widgets._fileuploadscripts')
 
     <script>
