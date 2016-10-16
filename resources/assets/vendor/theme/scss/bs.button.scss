@@ -6,6 +6,10 @@
 	}
 }
 
+.btn-toolbar>.btn, .btn-toolbar>.btn-group, .btn-toolbar>.input-group {
+	margin-left: 0;
+}
+
 .btn{
 	font-weight: 500;
 	outline: 0!important;

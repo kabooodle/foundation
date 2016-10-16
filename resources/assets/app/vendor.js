@@ -8,10 +8,9 @@ require ('bootstrap');
 require ('underscore');
 require ('moment');
 require ('moment-timezone-tsc');
-require ('eonasdan-bootstrap-datetimepicker');
 
-require ('noty');
-// require('./resources/assets/vendor/jquery/noty/packaged/jquery.noty.packaged.js');
+// require ('noty');
+require('../../../resources/assets/vendor/jquery/noty/packaged/jquery.noty.packaged.js');
 
 require ('clipboard');
 require ('ekko-lightbox');
@@ -20,3 +19,4 @@ require ('emojione');
 require ('emojionearea');
 require ('bootstrap-touchspin');
 require ('bootstrap-multiselect');
+require ('eonasdan-bootstrap-datetimepicker');

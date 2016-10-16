@@ -3,6 +3,7 @@
 return [
     'supportsCredentials' => true,
     'allowedOrigins'      => [
+        'http://app.kabooodle.dev',
         'http://api.kabooodle.dev',
         'http://app.kabooodle.dev',
 

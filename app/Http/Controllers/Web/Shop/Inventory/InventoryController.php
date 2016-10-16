@@ -49,7 +49,7 @@ class InventoryController extends Controller
         }
 
         // Begin the user inventory query.
-        $data = user()->inventory()->noEagerLoads()->with(['styleSize', 'sales', 'claims']);
+        $data = user()->inventory()->with('claims');
 
         if ($request->has('style_id') && $request->get('style_id')) {
             $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
@@ -61,7 +61,9 @@ class InventoryController extends Controller
             $data = $data->where('initial_qty', 0);
         }
         if ($request->has('flashsale_id')) {
-            $data = $data->whereIn('flashsales', $request->get('flashsale_id'));
+            $data = $data->whereHas('flashsales', function($q) use ($request) {
+                $q->whereIn('flashsales.id', $request->get('flashsale_id'));
+            });
         }
         if ($request->has('has_sales')) {
             $data = $data->has('sales', '>', 0);
@@ -69,6 +71,7 @@ class InventoryController extends Controller
         if ($request->has('has_claims')) {
             $data = $data->has('claims', '>', 0);
         }
+
         $data = $data->get();
 
         $page = $request->get('page', 1);
@@ -111,7 +114,9 @@ class InventoryController extends Controller
             $filters['sizes'][] = $item->style->sizes->find($item->inventory_sizes_id);
             // we need flashsales
             if ($item->flashsales->count() > 0) {
-                $filters['flashSales'][] = $item->flashsales;
+                foreach ($item->flashsales as $flashsale) {
+                    $filters['flashSales'][] = $flashsale;
+                }
             }
         }
 

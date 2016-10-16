@@ -1,7 +1,7 @@
 <!DOCTYPE html>
     <html lang="en">
     @include('layouts.header._htmlheader')
-    <body class=" @yield('body-class', 'a') " id="kabooodle_app">
+    <body class=" @yield('body-class', 'a') " id="{{ $contentId or 'kabooodle_app' }}">
 
     <div id="fb-root"></div>
     <script>(function(d, s, id) {
@@ -13,7 +13,7 @@
         }(document, 'script', 'facebook-jssdk'));</script>
 
         <div class="app" id="app">
-            <div id="{{ $contentId or 'content' }}" class="app-content box-shadow-z0" role="main">
+            <div id="content" class="app-content box-shadow-z0" role="main">
                 @include('layouts.header._header')
 
                 @hasSection('body-menu')
