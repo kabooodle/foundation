@@ -206,7 +206,7 @@ class InventoryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function edit($username, $idAndName)
+    public function edit(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
         $item = user()->inventory->find($decryptedId);
@@ -214,6 +214,9 @@ class InventoryController extends Controller
         if ($item) {
 
             $styles = InventoryType::LuLaRoe()->first()->styles;
+            if ($request->ajax()) {
+                return $this->view('inventory.partials._edit')->with(compact('item', 'styles'));
+            }
 
             return $this->view('inventory.edit')->with(compact('item', 'styles'));
         }
