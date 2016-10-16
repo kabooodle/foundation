@@ -37,7 +37,8 @@ class AddUserCommandHandler
         $user = $user::factory([
             'name' => $command->getName(),
             'email' => $command->getEmail(),
-            'password' => bcrypt($command->getPassword())
+            'password' => bcrypt($command->getPassword()),
+            'referred_by_user_id' => $command->getReferralId()
         ]);
 
         event(new UserWasCreatedEvent($user));

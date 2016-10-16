@@ -20,18 +20,9 @@ class ReferralsController extends Controller
         return $this->view('referrals.index');
     }
 
-    public function show(Request $request)
+    public function invite(Request $request)
     {
-        if(User::where('username', $request->userName)->first()) {
-            $user = User::where('username', $request->userName)->first();
-            $request->session()->put('referredBy', $user->id);
-        }
-        else {
-            return $this->redirect(route('profile.addresses.edit'));
-        }
-
-        return $this->redirect(route(''));
-        
-        //return $request->session()->get('referred_by');
+        $user = User::where('username', $request->userName)->first();
+        return view('auth.invite')->with(compact('user'));
     }
 }

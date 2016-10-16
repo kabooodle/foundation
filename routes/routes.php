@@ -45,12 +45,14 @@ Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], f
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@index'
     ]);
 
-    //Route::group(['middleware' => 'referral'], function() {
-        Route::get('/invite/{userName}', [
-            'as' => 'invite.index',
-            'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@show'
-        ]);
-    //});
+    Route::get('/invite/{userName}', [
+        'as' => 'invite.index',
+        'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@invite'
+    ]);
+
+        'as' => 'invite.register.store',
+        'uses' => \Kabooodle\Http\Controllers\Web\Auth\AuthController::class.'@postRegister'
+    ]);
 
     Route::get('c/{facebookItemString}', [
         'as' => 'externalclaim.show',

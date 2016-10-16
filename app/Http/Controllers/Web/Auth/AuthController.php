@@ -79,7 +79,7 @@ class AuthController extends Controller
         try {
             $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
 
-            $user = $this->dispatch(new AddUserCommand($request->get('name'), $request->get('email'), $request->get('password')));
+            $user = $this->dispatch(new AddUserCommand($request->get('name'), $request->get('email'), $request->get('password'), $request->session()->get('kabooodle_referrer')));
 
             Auth::attempt([
                 'email' => $user->email,
