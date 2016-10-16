@@ -2,7 +2,6 @@
 
 @section('body-menu')
 
-
     <div class="pull-left">
         <div class="btn-toolbar center-block text-center">
             <div class="btn-group dropdown ">
@@ -31,10 +30,8 @@
                data-backdrop="static" data-keyboard="false" href="#"
                class="disabled text-white btn_add_selected btn btn-sm warning">Add Selected
                 Items to Facebook</a>
-
         </div>
     </div>
-
 
     <div class="pull-right">
         <button class="btn primary btn-sm " id="navbarSideButton">Filter</button>
@@ -46,16 +43,7 @@
 
 
 @section('body-content')
-    <script>
-        $( document ).ready(function() {
 
-            $('#navbarSideButton').on('click', function() {
-                $('#navbarSide').css({
-                    'top' :  $('.app-header').outerHeight()
-                }).toggleClass('reveal')
-            });
-        });
-    </script>
     <script type="text/javascript" src="http://cdn.jsdelivr.net/vue.table/1.5.6/vue-table.min.js"></script>
 
     <div class="navbar-side p-a" id="navbarSide">
@@ -262,11 +250,12 @@
         }
     </style>
 
+    @{{ $refs.vuetable.tablePagination }}
     <div class="table-wrapper">
         <div v-show="moreParams.length > 0"><small class="text-muted text-center center-block">(Filtered Results)</small></div>
         <div class="loader"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+
         <vuetable
-                pagination-info-no-data-template="No results found based on filter"
                 pagination-class="clearfix "
                 pagination-info-class="pull-left text-sm"
                 pagination-component-class="pull-right text-sm"
@@ -282,8 +271,6 @@
                 table-class=" table table-condensed table-as-list white "
         ></vuetable>
     </div>
-
-
 
     <div id="m-md" class="modal" data-backdrop="true">
         <div class="row-col h-v">
@@ -305,7 +292,7 @@
                             @endforeach
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn primary" v-on:click="openAddToSale" >Save</button>
+                            <button type="button" class="btn primary" v-on:click="addItemsToSale" >Save</button>
                             <button type="button" class="m-l-1 btn white" data-dismiss="modal">Cancel</button>
                         </div>
                     </div><!-- /.modal-content -->
@@ -347,6 +334,38 @@
     </div>
 
     <script>
+        Vue.component('dropdown', {
+            template: ['' +
+            '<div class="dropdown pull-right m-r-1">' +
+                '<button class="btn btn-xs white dropdown-toggle" data-toggle="dropdown"></button>' +
+                '<div class="dropdown-menu dropdown-menu-right text-sm"> ' +
+                    '<a class="dropdown-item" href="javascript:;" v-on:click="previewItem(rowData)">View</a> ' +
+                    '<a class="dropdown-item" href="javascript:;" v-on:click="editItem(rowData)">Edit</a> ' +
+                    '<a class="dropdown-item" href="javascript:;" v-on:click="deleteItem(rowData)">Delete</a> ' +
+                '</div>' +
+            '</div>' +
+            ''].join(''),
+            props: {
+                rowData: {
+                    type: Object,
+                    required: true
+                }
+            },
+            methods : {
+                previewItem : function(item) {
+                    $('.table-wrapper').addClass('loading');
+                    window.location.href =  window.location.href + '/'+item.uuid;
+                },
+                editItem: function(item) {
+                    $('.table-wrapper').addClass('loading');
+                    window.location.href =  window.location.href + '/'+item.uuid+'/edit';
+                },
+                deleteItem: function(item) {
+
+                }
+            }
+        });
+
         Vue.component('checkbox', {
             template: ['<input type="checkbox" @click="checkboxClicked(rowData, $event)">'].join(''),
             props: {
@@ -365,6 +384,9 @@
         new Vue({
             el: '#manage_inventory',
             data: {
+                paginationComponent: 'vuetable-pagination',
+                tablePagination: null,
+                paginationInfoTemplate : null,
                 ready : false,
                 moreParams: [],
                 selectedItems: [],
@@ -397,21 +419,16 @@
                         title: 'Qty'
                     },
                     {
-                        name: 'claims',
+                        name: 'pending_claims',
+                        title: 'claims',
                         callback: 'setPropClaims'
                     },
                     {
                         name: 'sales',
                         callback: 'setPropSales'
                     },
-                    '__actions'
-                ],
-                itemActions: [
                     {
-                        name: 'action-dropdown',
-                        label: '',
-                        icon: 'fa fa-caret-down',
-                        class: ' btn btn-xs white'
+                        name: '__component:dropdown'
                     }
                 ]
             },
@@ -473,7 +490,7 @@
                 rowClassCB: function (data, index) {
                     return 'p-l-0 m-l-0';
                 },
-                openAddToSale: function(){
+                addItemsToSale: function(){
                     var inventory_id = [];
                     var flashsale_id = [];
 
@@ -520,9 +537,9 @@
                 },
                 'vuetable:action': function (action, data) {
                     console.log('vuetable:action', action, data);
-                    if (action == 'view-item') {
-                        this.viewProfile(data.id)
-                    }
+                },
+                'vuetable:load-success': function (response) {
+                    console.log('success: ', response);
                 },
                 'vuetable:load-error': function (response) {
                     console.log('Load Error: ', response);
@@ -543,7 +560,15 @@
                     }, 0);
                 }
             }
-        })
+        });
+
+        $(function(){
+            $('#navbarSideButton').on('click', function() {
+                $('#navbarSide').css({
+                    'top' :  $('.app-header').outerHeight()
+                }).toggleClass('reveal')
+            });
+        });
     </script>
 
 @endsection

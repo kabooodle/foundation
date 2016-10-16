@@ -25,6 +25,7 @@
 
 
 .dropdown-menu{
+  min-width: 130px;
   font-size: 0.875rem;
   color: $dark-black;
   border-radius: $border-radius-base;
@@ -33,7 +34,6 @@
   @include transform-origin(top left);
   margin-top: 0;
   //border: 0;
-  border-top: 0;
 
   > li:not(.dropdown-item) > a{
     display: block;

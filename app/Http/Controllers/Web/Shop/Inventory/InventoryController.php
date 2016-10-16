@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
+use Messages;
 use Response;
 use Binput;
 use Datatables;
@@ -49,7 +50,7 @@ class InventoryController extends Controller
         }
 
         // Begin the user inventory query.
-        $data = user()->inventory()->with('claims');
+        $data = user()->inventory()->with('pendingClaims');
 
         if ($request->has('style_id') && $request->get('style_id')) {
             $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
@@ -69,7 +70,7 @@ class InventoryController extends Controller
             $data = $data->has('sales', '>', 0);
         }
         if ($request->has('has_claims')) {
-            $data = $data->has('claims', '>', 0);
+            $data = $data->has('pendingClaims', '>', 0);
         }
 
         $data = $data->get();

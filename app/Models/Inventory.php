@@ -39,6 +39,13 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @var array
      */
+    protected $appends = [
+        'uuid'
+    ];
+
+    /**
+     * @var array
+     */
     protected $with = [
         'style',
         'styleSize',
@@ -252,6 +259,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
+     * @return mixed
+     */
+    public function pendingClaims()
+    {
+        return $this->hasMany(Claims::class, 'inventory_id')->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function sales()
@@ -323,6 +338,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getAvailableQuantity()
     {
         return $this->initial_qty;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUuidAttribute()
+    {
+        return $this->getUUID();
     }
 
     /**

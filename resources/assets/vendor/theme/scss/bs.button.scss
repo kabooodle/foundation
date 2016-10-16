@@ -195,3 +195,9 @@
 .center-block .btn-group > .btn, .center-block .btn-group-vertical > .btn {
 	float: none !important;
 }
+
+.pagination {
+	.btn {
+		margin-left: 4px;
+	}
+}
