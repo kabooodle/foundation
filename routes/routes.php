@@ -9,7 +9,7 @@
 
 Route::group(['middleware' => ['web'], 'domain' => getEnvDomain(true)], function(){
     Route::get('/', function(){
-       return 'hi';
+        return redirect('http://www.kabooodle.com');
     });
 });
 
