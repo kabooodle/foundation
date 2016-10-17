@@ -52,6 +52,8 @@ class InventoryController extends Controller
         // Begin the user inventory query.
         $data = user()->inventory()->with('pendingClaims');
 
+        dd($data->get()->first());
+
         if ($request->has('style_id') && $request->get('style_id')) {
             $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
         }

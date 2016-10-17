@@ -192,6 +192,34 @@ class User extends BaseEloquentModel implements
     /**
      * @return mixed
      */
+    public function inventoryGroupByStyle()
+    {
+//        SELECT inventory_type_styles_id,countstlyes as count_styles, inventory_sizes_id, count(inventory_sizes_id) sizes, st.name, sz.name FROM (
+//        SELECT inventory_type_styles_id, count(*) as countstlyes, inventory_sizes_id, user_id
+//		FROM `inventory`
+//		WHERE user_id = '152295'
+//		GROUP BY inventory_type_styles_id, inventory_sizes_id
+//		)as t
+//		INNER JOIN `inventory_type_styles` as st ON st.id = inventory_type_styles_id
+//		INNER JOIN `inventory_sizes` as sz ON sz.id = inventory_sizes_id
+//	GROUP BY inventory_type_styles_id, inventory_sizes_id
+
+
+        $styleIds = $this->inventory()
+            ->selectRaw('inventory_type_styles_id, inventory_sizes_id, count(inventory_type_styles_id) as styles, count(inventory_sizes_id) as sizes')
+            ->groupBy(['inventory_type_styles_id', 'inventory_sizes_id']);
+
+        dd($styleIds->get()->toArray());
+        if ($styleIds) {
+            return InventoryTypeStyles::whereIn('id', array_keys($styleIds->toArray()))->get();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getTZ()
     {
         return $this->timezone;
