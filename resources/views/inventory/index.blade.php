@@ -3,11 +3,11 @@
 @section('body-menu')
     <div class="center-block text-center">
         <div class="btn-group dropdown ">
-            <button :disabled="selectedItems.length == 0 || ! ready"
-                v-bind:class="{'disabled': selectedItems.length == 0 || ! ready}"
+            <button :disabled="selected_items.length == 0 || ! ready"
+                v-bind:class="{'disabled': selected_items.length == 0 || ! ready}"
                 class="disabled btn white btn-sm dropdown-toggle"
                 data-toggle="dropdown">
-                <span class="dropdown-label">Bulk (@{{selectedItems.length}})</span>
+                <span class="dropdown-label">Bulk (@{{selected_items.length}})</span>
                 <span class="caret"></span>
             </button>
             <div class="dropdown-menu text-left text-sm">
@@ -23,6 +23,10 @@
 @section('body-content')
 
     <style>
+        .b-prpl {
+            border-color: #9446ed;
+            border: 1px solid #9446ed;
+        }
         #selected_items_total {
             padding: 12px;
             font-size: 20px;
@@ -30,6 +34,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
+            z-index: 2000;
             border: 1px solid #9446ed;
             color: #9446ed;
             background-color: #fff;
@@ -50,13 +55,13 @@
                 <div class="box style-container" v-for="style in data_items">
                     <div class="box-header clearfix">
                         <div class="row">
-                            <div class="col-sm-3" style="margin-top: 13px;">
+                            <div class="col-sm-2" style="margin-top: 13px;">
                                 <h6 class="m-a-0">
                                     <a href="javascript:;" v-on:click="openAllSizeDrawers(style, $event)">@{{ style.name }} <span class="text-muted text-sm"><i class="fa fa-angle-down"></i></span></a>
                                     <small class="text-sm text-muted">(@{{ style.total }})</small>
                                 </h6>
                             </div>
-                            <div class="col-sm-9" style="margin-top: 3px;">
+                            <div class="col-sm-10" style="margin-top: 3px;">
                                 <div class="pull-left btn-group-prpl" data-toggle="buttons">
                                     <span v-for="size in style.sizes">
                                         <label data-selected="false" v-on:click="toggleSize(style, size, size.items, $event)" class="btn white btn-xs" style="">
@@ -71,10 +76,26 @@
                     <div v-for="size in style.sizes" class="box-size-drawer" style="display:none;" data-id="@{{ size.id }}">
                         <div class="box-divider"></div>
                         <div class="box-body">
-                            <div class="m-l-1">
-                                <a href="javascript:;" class=" _500 drawer-toggle" v-on:click="( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )">@{{ size.name }} <span class="text-muted text-sm"><i class="fa fa-angle-up"></i></span></a>
-                                <div class="row item-box"  v-if="opened_drawers.indexOf(size) > -1" >
-                                    <size-item :parsed_items.sync="parsed_items" :items="size.items"></size-item>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <a href="javascript:;" class=" _500 drawer-toggle" v-on:click="( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )">
+                                        @{{ size.name }} <span class="text-muted text-sm"><i class="fa fa-angle-up"></i></span></a>
+                                </div>
+                                <div class="col-sm-10">
+                                    <div class="item-box"  v-if="opened_drawers.indexOf(size) > -1" >
+                                        <div class="row row-horizon">
+                                            <div v-for="item in items" class="col-sm-2">
+                                                <div class="box m-b-0 p-a-xs" v-on:click="remove" v-bind:class="{'b-prpl' : selected_items.indexOf(item) > -1}" style="border-radius: .25rem;">
+                                                    <div class="item">
+                                                        <img v-bind:src="(item.files ? item.files[0].location : 'https://placekitten.com/g/32/20')" class="img-responsive" style="width: 64px; height: 64px;">
+                                                    </div>
+                                                    <div class="p-a-o text-sm clearfix">
+                                                        Qty: <span class="text-muted">@{{ item.initial_qty }}</span>  <span class="text-muted">$@{{ item.price_usd }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -82,42 +103,22 @@
                 </div>
             </div>
 
-            <div id="selected_items_total" class="box back-to-top animated tada" v-show="selected_items.length > 0">
-                <span class="_600">@{{ selected_items.length }}</span> Items Selected
-            </div>
         </div>
     </script>
 
     <script type="text/template" id="size-item-template">
-        <div>
-            <div v-for="item in items">
-                $@{{ item.price_usd }}
-            </div>
-        </div>
+
     </script>
 
     <script>
         Vue.component('size-item', {
-            props: ["items", "parsed_items"],
-            template: '#size-item-template',
-            compiled : function() {
-                this.addItemsToParsedItems(this.items);
-            },
-            methods : {
-                addItemsToParsedItems: function(items){
-//                    this.parsed_items.push(items);
-                }
-            },
-            watch : {
-                parsed_items : function(v,m) {
-                    console.log(m);
-                }
-            }
+            props: ["items", "parsed_items", "selected_items"],
+            template: '#size-item-template'
         });
 
         Vue.component('style-template', {
             template: '#style-template',
-            props: ["data_items", "fetching_data"],
+            props: ["data_items", "refreshing_data"],
             data: function() {
                 return {
                     selected_items : [],
@@ -198,18 +199,19 @@
             }
         });
 
-
         new Vue({
             el: '#manage_inventory',
             data : {
                 data_items : [],
-                parsed_items: [],
                 refreshing_data: false
             },
             ready : function() {
                 this.getInventory();
             },
             methods: {
+                remove : function() {
+                    alert('hi');
+                },
                 getInventory : function() {
                     var scope = this;
                     scope.refreshing_data = true;
