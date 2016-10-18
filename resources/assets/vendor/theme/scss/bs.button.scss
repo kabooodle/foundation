@@ -183,6 +183,13 @@
 	color: $dark-black;
 }
 
+
+.btn-group-prpl {
+	.btn.active {
+		border-color: $primary;
+	}
+}
+
 .btn-groups .btn{
   margin-bottom: .25rem;
 }

@@ -233,6 +233,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function size()
+    {
+        return $this->styleSize();
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function flashsales()
