@@ -41,7 +41,7 @@ class InventoryController extends Controller
      * @param Request $request
      * @param         $username
      *
-     * @return \Illuminate\Http\RedirectResponse|Redirector
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|Redirector
      */
     public function index(Request $request, $username)
     {
@@ -49,44 +49,47 @@ class InventoryController extends Controller
             return redirect('/');
         }
 
-        // Begin the user inventory query.
-        $groupings = [];
-        $data = user()->inventory()->NoEagerLoads()->with(['style', 'styleSize', 'files']);
-        $data = $data->get()->groupBy('inventory_type_styles_id');
-        foreach($data as $styleId => $items) {
-            $groupings[$styleId] = [
-                'name' => null,
-                'total' => $items->count()
-            ];
-            if ($items->count() > 0) {
-                foreach($items as $item) {
-                    if(! $groupings[$styleId]['name']) {
-                        $groupings[$styleId]['name'] = $item->style->name;
+        if ($request->ajax()) {
+            // Begin the user inventory query.
+            $groupings = [];
+            $data = user()->inventory()->NoEagerLoads()->with(['style', 'styleSize', 'files']);
+            $data = $data->get()->groupBy('inventory_type_styles_id');
+            foreach($data as $styleId => $items) {
+                $groupings[$styleId] = [
+                    'name' => null,
+                    'total' => $items->count()
+                ];
+                if ($items->count() > 0) {
+                    foreach($items as $item) {
+                        if(! $groupings[$styleId]['name']) {
+                            $groupings[$styleId]['name'] = $item->style->name;
+                        }
+                        $groupings[$styleId]['sizes'][$item->styleSize->id]['id'] = str_random(16);
+                        $groupings[$styleId]['sizes'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
+                        $groupings[$styleId]['sizes'][$item->styleSize->id]['name'] = $item->styleSize->name;
+                        $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
+                        $groupings[$styleId]['sizes'][$item->styleSize->id]['items'][] = [
+                            'id' => $item->id,
+                            'images' => $item->files->toArray(),
+                            'initial_qty' => $item->initial_qty,
+                            'price_usd' => $item->price_usd
+                        ];
                     }
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['id'] = str_random(16);
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['name'] = $item->styleSize->name;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['items'][] = [
-                        'id' => $item->id,
-                        'images' => $item->files->toArray(),
-                        'initial_qty' => $item->initial_qty,
-                        'price_usd' => $item->price_usd
-                    ];
-                }
 
-                // Sort based on the order key.
-                usort($groupings[$styleId]['sizes'], function ($item1, $item2) {
-                    return $item1['order'] <=> $item2['order'];
-                });
+                    // Sort based on the order key.
+                    usort($groupings[$styleId]['sizes'], function ($item1, $item2) {
+                        return $item1['order'] <=> $item2['order'];
+                    });
+                }
             }
+
+            sort($groupings);
+
+            return Response::json($groupings, 200);
         }
 
-        sort($groupings);
 
-        $groupings = json_encode($groupings, true);
-
-        return $this->view('inventory.index')->with(compact('groupings'));
+        return $this->view('inventory.index');
     }
 
     /**
@@ -95,43 +98,13 @@ class InventoryController extends Controller
      *
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|Redirector
      */
-    public function index_original(Request $request, $username)
+    public function index_old(Request $request, $username)
     {
         if (user()->username <> $username) {
             return redirect('/');
         }
 
-//        $userStyleGroups = user()->inventoryGroupByStyle();
-
-        // Begin the user inventory query.
-        $groupings = [];
         $data = user()->inventory()->NoEagerLoads()->with(['style', 'styleSize']);
-        $data = $data->get()->groupBy('inventory_type_styles_id');
-        foreach($data as $styleId => $items) {
-            $groupings[$styleId] = [
-                'name' => null,
-                'total' => $items->count()
-            ];
-            if ($items->count() > 0) {
-                foreach($items as $item) {
-                    if(! $groupings[$styleId]['name']) {
-                        $groupings[$styleId]['name'] = $item->style->name;
-                    }
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['name'] = $item->styleSize->name;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['data'][] = $item;
-                }
-
-                // Sort based on the order key.
-                uasort($groupings[$styleId]['sizes'], function ($item1, $item2) {
-                    return $item1['order'] <=> $item2['order'];
-                });
-            }
-        }
-
-        asort($groupings);
-
-        dd($groupings);
 
         if ($request->has('style_id') && $request->get('style_id')) {
             $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
@@ -211,7 +184,7 @@ class InventoryController extends Controller
             return $claim->wasRejected() ? false : true;
         });
 
-        return $this->view('inventory.index')->with(compact('data', 'filters'));
+        return $this->view('inventory.index_old')->with(compact('data', 'filters'));
     }
 
     /**

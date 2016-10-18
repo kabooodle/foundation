@@ -1,21 +1,22 @@
 @extends('layouts.full', ['contentId' => 'manage_inventory'])
 
 @section('body-menu')
-    {{--<div class="center-block text-center">--}}
-    {{--<div class="btn-group dropdown ">--}}
-    {{--<button :disabled="selectedItems.length == 0 || ! ready"--}}
-    {{--v-bind:class="{'disabled': selectedItems.length == 0 || ! ready}"--}}
-    {{--class="disabled btn white btn-sm dropdown-toggle"--}}
-    {{--data-toggle="dropdown">--}}
-    {{--<span class="dropdown-label">Bulk (@{{selectedItems.length}})</span>--}}
-    {{--<span class="caret"></span>--}}
-    {{--</button>--}}
-    {{--<div class="dropdown-menu text-left text-sm">--}}
-    {{--<a class="dropdown-item text-danger" href="">Delete</a>--}}
-    {{--</div>--}}
-    {{--</div>--}}
-    {{--<button class="btn white btn-sm " id="navbarSideButton">Filter Items</button>--}}
-    {{--</div>--}}
+    <div class="center-block text-center">
+        <div class="btn-group dropdown ">
+            <button :disabled="selectedItems.length == 0 || ! ready"
+                v-bind:class="{'disabled': selectedItems.length == 0 || ! ready}"
+                class="disabled btn white btn-sm dropdown-toggle"
+                data-toggle="dropdown">
+                <span class="dropdown-label">Bulk (@{{selectedItems.length}})</span>
+                <span class="caret"></span>
+            </button>
+            <div class="dropdown-menu text-left text-sm">
+                <a class="dropdown-item text-danger" href="">Delete</a>
+            </div>
+        </div>
+        <button class="btn white btn-sm " id="navbarSideButton">Filter Items</button>
+        <button class="btn white btn-sm " data-toggle="tooltip" v-on:click="getInventory" :disabled="refreshing_data" title="Refresh Inventory" data-placement="top" ><i class="fa fa-refresh"></i></button>
+    </div>
 @endsection
 
 
@@ -36,39 +37,44 @@
         }
     </style>
 
-    <style-template :data_items="{{ $groupings  }}"></style-template>
+    <style-template :data_items.sync="data_items" :refreshing_data.sync="refreshing_data"></style-template>
 
     <script type="text/template" id="style-template">
         <div>
-            <div class="box" v-for="style in data_items">
-                <div class="box-header clearfix">
-                    <div class="row">
-                        <div class="col-sm-3" style="margin-top: 13px;">
-                            <h6 class="m-a-0">
-                                <a v-on:click="openAllSizeDrawers(style, $event)">@{{ style.name }} <span class="text-muted text-sm"><i class="fa fa-angle-down"></i></span></a>
-                                <small class="text-sm text-muted">(@{{ style.total }})</small>
-                            </h6>
-                        </div>
-                        <div class="col-sm-9" style="margin-top: 3px;">
-                            <div class="pull-left btn-group-prpl" data-toggle="buttons">
-                                <span v-for="size in style.sizes">
-                                    <label data-selected="false" v-on:click="toggleSize(style, size, size.items, $event)" class="btn white btn-xs" style="">
-                                        <input  type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;"> <span class="text-md">@{{ size.name }}</span>
-                                        <small class="text-sm text-muted block" style="margin-top: -2px;">(@{{ size.items.length }})</small>
-                                    </label>
-                                </span>
+            <div v-if="data_items.length == 0 || refreshing_data" class="box m-b-0" style="min-height: 400px; position: relative;">
+                <div class="text-center center-block" style="position: absolute; left: 50%; top: 50%; margin-left: -5px; margin-top: -5px;">
+                    <i class="fa fa-spinner fa-spin fa-2x"></i>
+                </div>
+            </div>
+            <div v-if="!refreshing_data">
+                <div class="box style-container" v-for="style in data_items">
+                    <div class="box-header clearfix">
+                        <div class="row">
+                            <div class="col-sm-3" style="margin-top: 13px;">
+                                <h6 class="m-a-0">
+                                    <a href="javascript:;" v-on:click="openAllSizeDrawers(style, $event)">@{{ style.name }} <span class="text-muted text-sm"><i class="fa fa-angle-down"></i></span></a>
+                                    <small class="text-sm text-muted">(@{{ style.total }})</small>
+                                </h6>
+                            </div>
+                            <div class="col-sm-9" style="margin-top: 3px;">
+                                <div class="pull-left btn-group-prpl" data-toggle="buttons">
+                                    <span v-for="size in style.sizes">
+                                        <label data-selected="false" v-on:click="toggleSize(style, size, size.items, $event)" class="btn white btn-xs" style="">
+                                            <input  type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;"> <span class="text-md">@{{ size.name }}</span>
+                                            <small class="text-sm text-muted block" style="margin-top: -2px;">(@{{ size.items.length }})</small>
+                                        </label>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div  v-for="size in style.sizes">
-                    <div class="box-size-drawer" style="display:none;" data-id="@{{ size.id }}">
+                    <div v-for="size in style.sizes" class="box-size-drawer" style="display:none;" data-id="@{{ size.id }}">
                         <div class="box-divider"></div>
                         <div class="box-body">
                             <div class="m-l-1">
-                                <a class=" _500 drawer-toggle" v-on:click="( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )">@{{ size.name }} <span class="text-muted text-sm"><i class="fa fa-angle-up"></i></span></a>
-                                <div class="row size-thumb">
-
+                                <a href="javascript:;" class=" _500 drawer-toggle" v-on:click="( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )">@{{ size.name }} <span class="text-muted text-sm"><i class="fa fa-angle-up"></i></span></a>
+                                <div class="row item-box"  v-if="opened_drawers.indexOf(size) > -1" >
+                                    <size-item :parsed_items.sync="parsed_items" :items="size.items"></size-item>
                                 </div>
                             </div>
                         </div>
@@ -85,24 +91,33 @@
     <script type="text/template" id="size-item-template">
         <div>
             <div v-for="item in items">
-                @{{ item.price_usd }}
+                $@{{ item.price_usd }}
             </div>
         </div>
     </script>
 
     <script>
         Vue.component('size-item', {
-            template: '#size-item-template'
+            props: ["items", "parsed_items"],
+            template: '#size-item-template',
+            compiled : function() {
+                this.addItemsToParsedItems(this.items);
+            },
+            methods : {
+                addItemsToParsedItems: function(items){
+//                    this.parsed_items.push(items);
+                }
+            },
+            watch : {
+                parsed_items : function(v,m) {
+                    console.log(m);
+                }
+            }
         });
 
         Vue.component('style-template', {
             template: '#style-template',
-            props: {
-                data_items: {
-                    type: Array,
-                    required: true
-                }
-            },
+            props: ["data_items", "fetching_data"],
             data: function() {
                 return {
                     selected_items : [],
@@ -110,6 +125,14 @@
                 }
             },
             methods : {
+                addToOpenedDrawers:function(obj){
+                    if (this.opened_drawers.indexOf(obj) < 1) {
+                        this.opened_drawers.push(obj);
+                    }
+                },
+                removeFromOpenedDrawers:function(obj){
+                    this.opened_drawers.$remove(obj);
+                },
                 openAllSizeDrawers : function(style, event){
                     event.preventDefault();
                     var scope = this;
@@ -128,13 +151,15 @@
                 },
                 openSizeDrawer : function(size, event){
                     event.preventDefault();
-                    this.opened_drawers.push(size);
-                    $('[data-id='+size.id+']').slideDown();
+                    $('[data-id='+size.id+']').stop(true,true).slideDown();
+                    this.addToOpenedDrawers(size);
+                    this.$dispatch('drawer:opened', size);
                 },
                 closeSizeDrawer : function(size, event) {
                     event.preventDefault();
-                    this.opened_drawers.$remove(size);
-                    $('[data-id='+size.id+']').slideUp();
+                    $('[data-id='+size.id+']').stop(true,true).slideUp();
+                    this.removeFromOpenedDrawers(size);
+                    this.$dispatch('drawer:closed', size);
                 },
                 toggleSize : function(style, size, items, event) {
                     event.preventDefault();
@@ -161,12 +186,45 @@
                         this.selected_items.push(size);
                     }
                 }
+            },
+            events : {
+                'drawer:opened' : function(size){
+
+                },
+                'refreshing_data' : function(){
+                    this.selected_items = [];
+                    this.opened_drawers = [];
+                }
             }
         });
 
 
         new Vue({
-            el: '#manage_inventory'
+            el: '#manage_inventory',
+            data : {
+                data_items : [],
+                parsed_items: [],
+                refreshing_data: false
+            },
+            ready : function() {
+                this.getInventory();
+            },
+            methods: {
+                getInventory : function() {
+                    var scope = this;
+                    scope.refreshing_data = true;
+                    scope.$broadcast('refreshing_data');
+                    scope.data_items = [];
+                    $.ajax({
+                        method: 'GET',
+                        url : window.location.href
+                    }).success(function(response){
+                        scope.data_items = response;
+                    }).always(function(){
+                        scope.refreshing_data = false;
+                    });
+                }
+            }
         });
     </script>
 @endsection
