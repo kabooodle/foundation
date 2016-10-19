@@ -2,18 +2,18 @@
 
 @section('body-menu')
     <div class="center-block text-center">
-        <div class="btn-group dropdown ">
-            <button :disabled="selected_items.length == 0 || ! ready"
-                v-bind:class="{'disabled': selected_items.length == 0 || ! ready}"
-                class="disabled btn white btn-sm dropdown-toggle"
-                data-toggle="dropdown">
-                <span class="dropdown-label">Bulk (@{{selected_items.length}})</span>
-                <span class="caret"></span>
-            </button>
-            <div class="dropdown-menu text-left text-sm">
-                <a class="dropdown-item text-danger" href="">Delete</a>
-            </div>
-        </div>
+        {{--<div class="btn-group dropdown ">--}}
+            {{--<button :disabled="selected_items.length == 0 || ! ready"--}}
+                {{--v-bind:class="{'disabled': selected_items.length == 0 || ! ready}"--}}
+                {{--class="disabled btn white btn-sm dropdown-toggle"--}}
+                {{--data-toggle="dropdown">--}}
+                {{--<span class="dropdown-label">Bulk (@{{selected_items.length}})</span>--}}
+                {{--<span class="caret"></span>--}}
+            {{--</button>--}}
+            {{--<div class="dropdown-menu text-left text-sm">--}}
+                {{--<a class="dropdown-item text-danger" href="">Delete</a>--}}
+            {{--</div>--}}
+        {{--</div>--}}
         <button class="btn white btn-sm " id="navbarSideButton">Filter Items</button>
         <button class="btn white btn-sm " data-toggle="tooltip" v-on:click="getInventory" :disabled="refreshing_data" title="Refresh Inventory" data-placement="top" ><i class="fa fa-refresh"></i></button>
     </div>
@@ -84,7 +84,7 @@
                                 <div class="col-sm-10">
                                     <div class="item-box"  v-if="opened_drawers.indexOf(size) > -1" >
                                         <div class="row row-horizon">
-                                            <div v-for="item in items" class="col-sm-2">
+                                            <div v-for="item in size.items" class="col-sm-2">
                                                 <div class="box m-b-0 p-a-xs" v-on:click="remove" v-bind:class="{'b-prpl' : selected_items.indexOf(item) > -1}" style="border-radius: .25rem;">
                                                     <div class="item">
                                                         <img v-bind:src="(item.files ? item.files[0].location : 'https://placekitten.com/g/32/20')" class="img-responsive" style="width: 64px; height: 64px;">
@@ -106,15 +106,8 @@
         </div>
     </script>
 
-    <script type="text/template" id="size-item-template">
-
-    </script>
 
     <script>
-        Vue.component('size-item', {
-            props: ["items", "parsed_items", "selected_items"],
-            template: '#size-item-template'
-        });
 
         Vue.component('style-template', {
             template: '#style-template',
