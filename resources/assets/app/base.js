@@ -58,6 +58,25 @@ function confirmModal(confirmCB, closeCB, options) {
     noty(options);
 }
 
+function notify(options){
+    var defaults = {
+        text: '',
+        layout: 'top',
+        theme: 'relax',
+        type: 'error',
+        animation: {
+            open: 'animated bounceInDown',
+            close: 'animated bounceOutUp'
+        },
+        timeout: 9000,
+        closeWith: ['button','click']
+    };
+
+    options = $.extend({}, defaults, options);
+
+    noty(options);
+}
+
 $(function () {
 
     $.extend( {

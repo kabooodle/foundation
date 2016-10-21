@@ -66,11 +66,9 @@
         padding: 0;
         list-style: none;
         background-color: rgba(43,41,56, .95);
-        overflow: hidden;
         z-index: 2000;
     }
     .navbar-side-inner {
-        overflow-y: auto;
         height: 100%;
         width: 100%;
         margin-bottom: 60px;
@@ -230,59 +228,81 @@
     <div
             class="navbar-side"
             id="navbarSide">
-        <form id="post_sales_form">
-            <div class="navbar-side-inner p-a">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a data-toggle="tab" class="nav-link active" href="#post_flashsales">
-                            Flash Sales
-                            <small class="block text-sm text-center text-muted">(@{{ get_selected_flashsales_sales.length }} Selected)</small>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a data-toggle="tab" class="nav-link" href="#post_facebook">Facebook
-                            <small class="block text-sm text-center text-muted">(@{{ get_selected_facebook_sales.length }} Selected)</small>
-                        </a>
-                    </li>
-                </ul>
-                <div class="box">
-                    <div class="tab-content p-a">
-                        <div class="tab-pane active" id="post_flashsales">
-                            @foreach(user()->flashsalesAsSellerAndAdmins as $flashSale)
-                                <div class="checkbox">
-                                    <label>
-                                        <input
-                                                name="flashsales[]"
-                                                value="{{ $flashSale->id  }}"
-                                                v-bind:checked="( get_selected_flashsales_sales.indexOf({{ $flashSale->id }}) > -1 ? 'checked' : false )"
-                                                type="checkbox"
-                                                v-on:change="toggleFlashSale({{ $flashSale->id }}, $event)"> {{ $flashSale->name }}
-                                    </label>
-                                </div>
-                            @endforeach
+        <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}" methods="POST">
+        <div class="navbar-side-inner p-a">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a data-toggle="tab" class="nav-link active" href="#post_flashsales">
+                        Flash Sales
+                        <small class="block text-sm text-center text-muted">(@{{ get_selected_flashsales_sales.length }} Selected)</small>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a data-toggle="tab" class="nav-link" href="#post_facebook">Facebook
+                        <small class="block text-sm text-center text-muted">(@{{ get_selected_facebook_sales.length }} Selected)</small>
+                    </a>
+                </li>
+            </ul>
+            <div class="box">
+                <div class="tab-content p-a">
+                    <div class="tab-pane active" id="post_flashsales">
+                        @foreach(user()->flashsalesAsSellerAndAdmins as $flashSale)
+                            <div class="checkbox">
+                                <label>
+                                    <input
+                                            name="flashsalesales_ids[]"
+                                            value="{{ $flashSale->id  }}"
+                                            v-bind:checked="( get_selected_flashsales_sales.indexOf({{ $flashSale->id }}) > -1 ? 'checked' : false )"
+                                            type="checkbox"
+                                            v-on:change="toggleFlashSale({{ $flashSale->id }}, $event)"> {{ $flashSale->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="tab-pane" id="post_facebook">
+                        <div class="form-group">
+                            <label>Post on a specific date and time</label>
+                            <div class="input-group">
+                                {{ Form::text('ends_at', null, ['class' => 'form-control', 'id' => 'datetimepicker2', 'v-bind' => 'date_time_input']) }}
+                                <span class="input-group-btn">
+                                    <button
+                                            @click="clearDateTimeInput"
+                                            class="btn white"
+                                            type="button"
+                                            style="padding-bottom:.3rem;">Clear</button>
+                                </span>
+                            </div>
                         </div>
-                        <div class="tab-pane" id="post_facebook"></div>
+                        <div class="checkbox">
+                            <label>
+                                <input
+                                        name="include_description_text"
+                                        value="1"
+                                        type="checkbox"> Include Link in description
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="savesales clearfix">
-                <div class="pull-right ">
-                    <button
-                    @click="postSelectedItemsToSales"
-                    type="button"
-                    :disabled="(!has_selected_sales_and_selected_items || posting_to_sales )"
-                    v-bind:class="{'disabled' : !has_selected_sales_and_selected_items || posting_to_sales }"
-                    class="btn btn-lg primary"
-                    >Post @{{ selected_items.length }} Items</button>
-                    <button
-                            :disabled="(posting_to_sales )"
-                            v-bind:class="{'disabled' :  posting_to_sales }"
-                            v-on:click="closePostMenu"
-                            type="button"
-                            class="btn btn-lg white"
-                    >Close</button>
-                </div>
+        </div>
+        <div class="savesales clearfix">
+            <div class="pull-right ">
+                <button
+                @click="postSelectedItemsToSales"
+                type="button"
+                :disabled="(!has_selected_sales_and_selected_items || posting_to_sales )"
+                v-bind:class="{'disabled' : !has_selected_sales_and_selected_items || posting_to_sales }"
+                class="btn btn-lg primary"
+                >Post @{{ selected_items.length }} Items</button>
+                <button
+                        :disabled="(posting_to_sales )"
+                        v-bind:class="{'disabled' :  posting_to_sales }"
+                        v-on:click="closePostMenu"
+                        type="button"
+                        class="btn btn-lg white"
+                >Close</button>
             </div>
+        </div>
         </form>
     </div>
 
@@ -295,12 +315,23 @@
             :refreshing_data.sync="refreshing_data">
     </style-template>
 
-    {{--<sales-posts-template--}}
-    {{--route="{{ apiRoute('inventory.associate.store', [user()->username]) }}"--}}
-    {{--></sales-posts-template>--}}
-
 @endsection
 
 @push('footer-scripts')
 <script src="/assets/js/inventory-management.js"></script>
+<script>
+    $(function(){
+        $('#datetimepicker2').datetimepicker({
+            format: "MM/DD/YYYY hh:mmA",
+            minDate: new Date(),
+            sideBySide: true,
+            icons: {
+                up: 'fa fa-chevron-up',
+                down: 'fa fa-chevron-down',
+                previous: 'fa fa-chevron-left',
+                next: 'fa fa-chevron-right'
+            }
+        });
+    })
+</script>
 @endpush

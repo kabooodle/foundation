@@ -85,7 +85,8 @@
         props: ["data_items", "refreshing_data", 'selected_items', 'route'],
         data: function() {
             return {
-                opened_drawers : []
+                opened_drawers : [],
+                active_requests : []
             }
         },
         created : function() {
@@ -93,23 +94,36 @@
             $Bus.$on('inventory:request-reset', function(){
 
             });
+            $Bus.$on('popout-overlay:closed', function(){
+                if (scope.active_requests.length > 0) {
+                    $.each(scope.active_requests, function(){
+                        this.abort();
+                    });
+                }
+            });
         },
         methods : {
             editItemButtonClicked : function(item, event) {
                 $Bus.$emit('popout-overlay:request-open');
+                var scope = this;
 
-                // Need to retrieve the items and display it on the pop-up.
-                this.$http.get('', {
+                this.$http.get(window.location.href+'/'+item.uuid+'/edit', {
                     before(request) {
+
+                        $Bus.$emit('popout-overlay:change-prompt', false);
+
                         if (this.previousRequest) {
                             this.previousRequest.abort();
                         }
                         this.previousRequest = request;
+                        scope.active_requests.push(request);
                     }
                 }).then(function(response){
-
+                    $Bus.$emit('popout-overlay:change-content', response.body);
                 }, function(response){
-                    $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.');
+                    $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
+                }).finally(function(){
+                    scope.active_requests = [];
                 });
             },
             addToOpenedDrawers:function(obj){

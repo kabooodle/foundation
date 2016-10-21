@@ -9,6 +9,7 @@ new Vue({
             flashsales : [],
             facebook : []
         },
+        date_time_input : null,
         selected_items: [],
         data_items : [],
         refreshing_data: false,
@@ -31,7 +32,7 @@ new Vue({
             return !(this.selected_items.length == 0 || this.sum_selected_sales == 0);
         },
     },
-    mounted : function() {
+    created : function() {
         this.getInventory();
     },
     methods: {
@@ -53,21 +54,30 @@ new Vue({
             var scope = this;
             var $el = $(event.target);
             var form = $el.closest('form#post_sales_form');
-            var form_data = form.serializeArray();
+            var form_data = new FormData();
+            var selected_items_ids = _.pluck(this.selected_items, 'id');
+
+            $.each(form.serializeArray(), function(){
+                form_data.append(this.name, this.value);
+            });
+
+            for (var i = 0; i < selected_items_ids.length; i++) {
+                form_data.append('selected_items_ids[]', selected_items_ids[i]);
+            }
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
 
-            form_data.push({
-                'name' : 'selected_items_ids[]',
-                'value' :  _.pluck(this.selected_items, 'id')
-            });
-            
-            this.$http.post('http://api.kabooodle.dev/inventory/jaketoolson/associate', form_data).then(function(response){
-
+            this.$http.post(form.prop('action'), form_data).then(function(response){
+                notify({'text' : selected_items_ids.length+' Items posted or queued successfully', 'type' : 'success'});
+                scope.selected_items = [];
+                scope.selected_sales =  {
+                    flashsales : [],
+                    facebook : []
+                };
             }, function(response){
                 //
-            }).then(function(){
+            }).finally(function(){
                 scope.setPostingToSales(false);
             });
         },
@@ -99,14 +109,15 @@ new Vue({
             this.data_items = [];
             this.resetInventory();
             scope.$emit('refreshing_data');
-            $.ajax({
-                method: 'GET',
-                url : window.location.href
-            }).success(function(response){
-                scope.data_items = response;
-            }).always(function(){
+
+            this.$http.get(window.location.href).then(function(response){
+                scope.data_items = response.body;
+            }).then(function(){
                 scope.refreshing_data = false;
             });
+        },
+        clearDateTimeInput: function() {
+            $('#datetimepicker2').val('');
         }
     },
     components: {

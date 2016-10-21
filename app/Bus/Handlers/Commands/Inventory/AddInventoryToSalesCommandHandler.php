@@ -98,13 +98,14 @@ class AddInventoryToSalesCommandHandler
     public function handleFlashsales(User &$user, $inventoryIds, $flashSaleIds)
     {
         if (count($flashSaleIds) > 0 ) {
+            $flashSaleItems = $user->flashsaleItems();
             foreach ($inventoryIds as $inventoryId) {
                 foreach ($flashSaleIds as $flashSaleId) {
                     // Make sure we dont add an item to a flashsale that is already there.
                     if (!$this->itemAlreadyInFlashSale($user, $flashSaleId, $inventoryId)) {
 
                         // Perform insertion
-                        $user->flashsaleItems()->attach($flashSaleId, ['inventory_id' => $inventoryId]);
+                        $flashSaleItems->attach($flashSaleId, ['inventory_id' => $inventoryId]);
 
                         // Fire event
                         event(new InventoryItemWasAddedToSaleEvent($user, $flashSaleId, $inventoryId));

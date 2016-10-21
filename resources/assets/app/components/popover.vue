@@ -84,23 +84,29 @@
                 defaultContent: '<div class="text-center center-block" style="position: absolute; top: 50%; margin-top: -20px; margin-left: -20px; left: 50%; "><i class="fa fa-2x fa-spin fa-spinner"></i></div>'
             }
         },
+        mounted: function() {
+            this.resetOverlay();
+        },
         created : function() {
             var scope = this;
 
-            this.resetOverlay();
-
-            // Register event listeners here due to the need of Bus
+            $Bus.$on('popout-overlay:change-prompt',  function(promptOnClose){
+                scope.setPromptOnClose(promptOnClose);
+            });
             $Bus.$on('popout-overlay:close',  function(){
                 scope.closeOverlay();
             });
             $Bus.$on('popout-overlay:request-open', function(content) {
                 scope.openOverlay(content);
             });
-            $Bus.$on('popout-overlay:change-content', function(content) {
-                scope.changeOverlayContent(content);
+            $Bus.$on('popout-overlay:change-content', function(content, promptOnClose) {
+                scope.changeOverlayContent(content,promptOnClose);
             });
         },
         methods : {
+            setPromptOnClose : function(promptOnClose) {
+                this.promptOnClose = (typeof promptOnClose === 'undefined') ? true : promptOnClose;
+            },
             openOverlay : function(content){
                 $('body').addClass('noscroll');
                 $('.shot-overlay').show();
@@ -112,8 +118,8 @@
             resetOverlay : function() {
                 $('body').removeClass('noscroll');
                 $('.shot-overlay').hide();
-                this.changeOverlayContent(this.defaultContent);
-                this.$emit('popout-overlay:closed');
+                this.changeOverlayContent(this.defaultContent, true);
+                $Bus.$emit('popout-overlay:closed');
             },
             closeOverlay : function() {
                 var scope = this;
@@ -126,7 +132,8 @@
                     scope.resetOverlay();
                 }
             },
-            changeOverlayContent : function(content) {
+            changeOverlayContent : function(content, promptOnClose) {
+                this.setPromptOnClose(promptOnClose);
                 $('.shot-overlay').find('.overlay-content').html(content);
             }
         }
