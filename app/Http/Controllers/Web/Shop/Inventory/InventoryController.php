@@ -70,6 +70,10 @@ class InventoryController extends Controller
                         $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
                         $groupings[$styleId]['sizes'][$item->styleSize->id]['items'][] = [
                             'id' => $item->id,
+                            'size_id' => $item->styleSize->id,
+                            'size_name' => $item->styleSize->name,
+                            'style_id' => $styleId,
+                            'style_name' => $item->style->name,
                             'images' => $item->files->toArray(),
                             'initial_qty' => $item->initial_qty,
                             'price_usd' => $item->price_usd

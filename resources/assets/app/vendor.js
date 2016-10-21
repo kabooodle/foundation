@@ -1,11 +1,10 @@
-global.jQuery = require ('jquery');
-global.$ = global.jQuery;
-global.Vue = require ('vue');
+global.$ = global.jQuery = require ('jquery');
+global.Vue = require('vue/dist/vue.js');
 require ('vue-resource');
-require ('vue-validator');
+// require ('vue-validator');
 global.Tether = require ('tether');
 require ('bootstrap');
-require ('underscore');
+global._ = require ('underscore');
 require ('moment');
 require ('moment-timezone-tsc');
 
@@ -18,5 +17,7 @@ require ('selectize');
 require ('emojione');
 require ('emojionearea');
 require ('bootstrap-touchspin');
-require ('bootstrap-multiselect');
+$.multiselect = require ('bootstrap-multiselect');
 require ('eonasdan-bootstrap-datetimepicker');
+
+global.$Bus = new Vue();

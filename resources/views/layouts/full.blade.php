@@ -1,7 +1,7 @@
 <!DOCTYPE html>
     <html lang="en">
     @include('layouts.header._htmlheader')
-    <body class=" @yield('body-class', 'a') " id="{{ $contentId or 'kabooodle_app' }}">
+    <body class=" @yield('body-class', 'a') " id="">
 
     <div id="fb-root"></div>
     <script>(function(d, s, id) {
@@ -12,7 +12,7 @@
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));</script>
 
-        <div class="app" id="app">
+        <div class="app" id="{{ $contentId or 'kabooodle_app' }}">
             <div id="content" class="app-content box-shadow-z0" role="main">
                 @include('layouts.header._header')
 

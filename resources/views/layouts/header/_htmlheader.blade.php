@@ -22,7 +22,9 @@
         KABOOODLE_APP.currentUser = {!! $_current_user !!};
 
         @if ($_current_user)
+                // TODO MIGRATE ALL THIS SHIT TO A MODULE
                 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
+                Vue.http.headers.common['Authorization'] = "Bearer " + $('meta[name=user_hash]').attr("content");
 
         $(function(){
             document.addEventListener("turbolinks:request-start", function(event) {
