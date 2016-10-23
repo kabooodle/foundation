@@ -206,6 +206,59 @@ function arrayUnique(array) {
     return a;
 }
 
+if (!Array.prototype.indexOf) {
+    // augment the Array prototype with an indexOf that conforms
+    // to ECMAScript5
+    //   item - this is the object we're looking for
+    //   start - this is where to start looking
+    // returns the index of the item if found, otherwise -1
+    Array.prototype.indexOf = function (item, start) {
+        start = start || 0;
+        for( ; start < this.length; start++) {
+            if (this[start] === item) {
+                return start;
+            }
+        }
+        return -1;
+    };
+}
+
+if (!Array.prototype.filter) {
+    // augment the Array prototype with a filter() that conforms
+    // to ECMAScript5
+    //   iterator - this function is called for each item, if it return
+    //       a truthy value, that item is added to the returned array
+    //   context - this is optional context to call the iterator. 'this'
+    //       inside the iterator will be set to context.
+    // returns an array with only items for which the iterator returned
+    //     a truthy value
+    Array.prototype.filter = function (iterator, context) {
+        var arr = [];
+        var i;
+        for (i = 0; i < this.length; i += 1) {
+            if (iterator.call(context, this[i])) {
+                arr.push(this[i]);
+            }
+        }
+        return arr;
+    };
+}
+if (!Array.prototype.reject) {
+    // augment the Array prototype with a reject() that is the opposite
+    // of filter().
+    //   iterator - this function is called for each item, if it return
+    //       a truthy value, that item is not added to the returned array
+    //   context - this is optional context to call the iterator. 'this'
+    //       inside the iterator will be set to context.
+    // returns an array with only items for which the iterator did not
+    //     return a truthy value
+    Array.prototype.reject = function (iterator, context) {
+        return this.filter(function (item) {
+            return !iterator.call(context, item);
+        });
+    };
+}
+
 function confirmModal(confirmCB, closeCB, options) {
     var defaults = {
         text: '<h6>Are you sure you want to continue?</h6>',

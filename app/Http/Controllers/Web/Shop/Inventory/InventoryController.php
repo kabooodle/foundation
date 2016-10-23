@@ -49,51 +49,6 @@ class InventoryController extends Controller
             return redirect('/');
         }
 
-        if ($request->ajax()) {
-            // Begin the user inventory query.
-            $groupings = [];
-            $data = user()->inventory()->NoEagerLoads()->with(['style', 'styleSize', 'files']);
-            $data = $data->get()->groupBy('inventory_type_styles_id');
-            foreach($data as $styleId => $items) {
-                $groupings[$styleId] = [
-                    'name' => null,
-                    'total' => $items->count()
-                ];
-                if ($items->count() > 0) {
-                    foreach($items as $item) {
-                        if(! $groupings[$styleId]['name']) {
-                            $groupings[$styleId]['name'] = $item->style->name;
-                        }
-                        $groupings[$styleId]['sizes'][$item->styleSize->id]['id'] = str_random(16);
-                        $groupings[$styleId]['sizes'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
-                        $groupings[$styleId]['sizes'][$item->styleSize->id]['name'] = $item->styleSize->name;
-                        $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
-                        $groupings[$styleId]['sizes'][$item->styleSize->id]['items'][] = [
-                            'id' => $item->id,
-                            'uuid' => $item->getUUID(),
-                            'size_id' => $item->styleSize->id,
-                            'size_name' => $item->styleSize->name,
-                            'style_id' => $styleId,
-                            'style_name' => $item->style->name,
-                            'images' => $item->files->toArray(),
-                            'initial_qty' => $item->initial_qty,
-                            'price_usd' => $item->price_usd
-                        ];
-                    }
-
-                    // Sort based on the order key.
-                    usort($groupings[$styleId]['sizes'], function ($item1, $item2) {
-                        return $item1['order'] <=> $item2['order'];
-                    });
-                }
-            }
-
-            sort($groupings);
-
-            return Response::json($groupings, 200);
-        }
-
-
         return $this->view('inventory.index');
     }
 

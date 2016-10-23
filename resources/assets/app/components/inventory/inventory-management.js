@@ -5,15 +5,44 @@ import StyleTemplate from './style_template.vue';
 new Vue({
     el: '#manage_inventory',
     data : {
+        selected_sales_sum : 0,
         selected_sales : {
             flashsales : [],
             facebook : []
         },
+        facebooks : [
+            {
+                id: 1,
+                name: '#1',
+                fitems: []
+            },
+            {
+                id: 2,
+                name: '#2',
+                fitems: []
+            },
+            {
+                id: 3,
+                name: '#3',
+                fitems: []
+            },
+            {
+                id: 4,
+                name: '#4',
+                fitems: []
+            },
+            {
+                id: 5,
+                name: '#5',
+                fitems: []
+            },
+        ],
         date_time_input : null,
         selected_items: [],
         data_items : [],
         refreshing_data: false,
         posting_to_sales: false,
+        facebook_album_selected : null
     },
     computed : {
         get_selected_facebook_sales : function() {
@@ -34,8 +63,48 @@ new Vue({
     },
     created : function() {
         this.getInventory();
+        this.$on('post-menu:closed', function(){
+            // this.facebook_album_selected = false;
+            // $('[name=facebookalbums]:checked').prop('checked', false);
+        });
+    },
+    watch: {
+        facebooks : {
+            handler: function($object, $m) {
+                const scope = this;
+                var sum = 0;
+                $.each(this.facebooks, function(){
+                    sum += this.fitems.length;
+                });
+                scope.selected_sales_sum = sum;
+            }, deep : true
+        },
+        selected_items : {
+            handler: function(selected_items){
+                if (this.facebook_album_selected && selected_items.length > 0){
+                    this.assignItemsToSelectedAlbum(selected_items);
+                }
+            }
+        }
     },
     methods: {
+        assignItemsToSelectedAlbum(items) {
+            const scope = this;
+            // might consider using debounce
+            setTimeout(function(){
+                scope.facebook_album_selected.fitems = items;
+            }, 100);
+        },
+        removeFromAlbum(fitem, facebook, event) {
+            var index = facebook.fitems.indexOf(fitem);
+            if (index > -1){
+                facebook.fitems.splice(index, 1);
+            }
+        },
+        selectFacebookAlbum : function(facebook, event){
+            this.facebook_album_selected = facebook;
+            this.selected_items = [];
+        },
         setPostingToSales : function(val){
             this.posting_to_sales = val;
         },
@@ -43,11 +112,15 @@ new Vue({
             $('#navbarSide').css({
                 'top' :  $('.app-header').outerHeight()
             }).toggleClass('reveal');
+
+            this.$emit('post-menu:opened');
         },
         closePostMenu : function(event){
             $('#navbarSide').css({
                 'top' :  $('.app-header').outerHeight()
             }).removeClass('reveal');
+
+            this.$emit('post-menu:closed');
         },
         postSelectedItemsToSales : function(event) {
             event.preventDefault();
@@ -110,8 +183,8 @@ new Vue({
             this.resetInventory();
             scope.$emit('refreshing_data');
 
-            this.$http.get(window.location.href).then(function(response){
-                scope.data_items = response.body;
+            this.$http.get('http://api.kabooodle.dev/inventory/jaketoolson').then(function(response){
+                scope.data_items = response.body.data
             }).then(function(){
                 scope.refreshing_data = false;
             });

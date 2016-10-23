@@ -281,6 +281,26 @@
                                         type="checkbox"> Include Link in description
                             </label>
                         </div>
+                            <div class="radio" v-for="facebook in facebooks">
+                                <label>
+                                    <input
+                                            @click="selectFacebookAlbum(facebook,$event)"
+                                            type="radio"
+                                            name="facebookalbums"
+                                            :value="facebook.id"> Album - @{{ facebook.name }}
+                                </label>
+                                <div v-if="facebook.fitems.length > 0">
+                                    <span class="block text-muted text-sm">(@{{  facebook.fitems.length }} items assigned)</span>
+                                    <span v-for="fitem in facebook.fitems" style="width: 24px; height: 24px; margin: 0 3px 3px 0;">
+                                         <img
+                                        @click="removeFromAlbum(fitem, facebook, $event)"
+                                                 v-bind:src="(fitem.files && fitem.files.length > 0 ? fitem.files[0].location : 'http://lorempizza.com/24/24/'+fitem.id)"
+                                                 class="img-responsive"
+                                                    :data-id="fitem.id"
+                                                 style="width: 24px; height: 24px;">
+                                    </span>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -293,7 +313,7 @@
                 :disabled="(!has_selected_sales_and_selected_items || posting_to_sales )"
                 v-bind:class="{'disabled' : !has_selected_sales_and_selected_items || posting_to_sales }"
                 class="btn btn-lg primary"
-                >Post @{{ selected_items.length }} Items</button>
+                >Post @{{ selected_sales_sum }} Items</button>
                 <button
                         :disabled="(posting_to_sales )"
                         v-bind:class="{'disabled' :  posting_to_sales }"

@@ -58,7 +58,7 @@
                                                     type="button"
                                                     class="btn white btn-xs">
                                                         <span class="item block">
-                                                            <img v-bind:src="(item.files ? item.files[0].location : 'https://placekitten.com/g/32/20')" class="img-responsive" style="width: 64px; height: 64px;">
+                                                            <img v-bind:src="(item.files ? item.files[0].location : 'http://lorempizza.com/32/32/'+item.id)" class="img-responsive" style="width: 64px; height: 64px;">
                                                         </span>
                                                 <span class="p-a-o text-sm clearfix block">
                                                             Qty: <span class="text-muted">{{ item.initial_qty }}</span>  <span class="text-muted">${{ item.price_usd }}</span>
@@ -107,7 +107,7 @@
                 $Bus.$emit('popout-overlay:request-open');
                 var scope = this;
 
-                this.$http.get(window.location.href+'/'+item.uuid+'/edit', {
+                this.$http.get('98yhiuj', {
                     before(request) {
 
                         $Bus.$emit('popout-overlay:change-prompt', false);
