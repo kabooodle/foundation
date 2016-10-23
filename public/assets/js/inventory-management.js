@@ -6129,9 +6129,12 @@ var _style_template = require('./style_template.vue');
 
 var _style_template2 = _interopRequireDefault(_style_template);
 
+var _loading = require('../loading.vue');
+
+var _loading2 = _interopRequireDefault(_loading);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// var Vue = require('vue/dist/vue.js');
 new Vue({
     el: '#manage_inventory',
     data: {
@@ -6193,6 +6196,16 @@ new Vue({
         });
     },
     watch: {
+        refreshing_data: {
+            handler: function handler(v) {
+                console.log(v);
+                if (v == false) {
+                    $Bus.$emit('loader:request-close');
+                } else {
+                    $Bus.$emit('loader:request-show');
+                }
+            }
+        },
         facebooks: {
             handler: function handler($object, $m) {
                 var scope = this;
@@ -6320,11 +6333,12 @@ new Vue({
     },
     components: {
         'style-template': _style_template2.default,
-        'popout-overlay': _popover2.default
+        'popout-overlay': _popover2.default,
+        'loading': _loading2.default
     }
-});
+}); // var Vue = require('vue/dist/vue.js');
 
-},{"../popover.vue":7,"./style_template.vue":6}],6:[function(require,module,exports){
+},{"../loading.vue":7,"../popover.vue":8,"./style_template.vue":6}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6450,7 +6464,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"data_items.length == 0 || refreshing_data\" class=\"box m-b-0\" style=\"min-height: 400px; position: relative;\">\n        <div class=\"text-center center-block\" style=\"position: absolute; left: 50%; top: 50%; margin-left: -5px; margin-top: -5px;\">\n            <i class=\"fa fa-spinner fa-spin fa-2x\"></i>\n        </div>\n    </div>\n    <div v-if=\"!refreshing_data\">\n        <div class=\"box style-container\" v-for=\"style in data_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\" data-toggle=\"buttons\">\n                            <button v-for=\"size in style.sizes\" data-selected=\"false\" @click=\"toggleSize(style, size, size.items, $event)\" class=\"btn white btn-xs\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(size) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(size) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <div v-for=\"item in size.items\" class=\"col-sm-2 btn-group-prpl\">\n                                        <button v-bind:aria-pressed=\"(selected_items.indexOf(item) != -1 ? 'true' : null )\" @click=\"( selected_items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selected_items.indexOf(item) != -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                    <span class=\"item block\">\n                                                        <img v-bind:src=\"(item.files ? item.files[0].location : 'http://lorempizza.com/32/32/'+item.id)\" class=\"img-responsive\" style=\"width: 64px; height: 64px;\">\n                                                    </span>\n                                            <span class=\"p-a-o text-sm clearfix block\">\n                                                        Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span>  <span class=\"text-muted\">${{ item.price_usd }}</span>\n                                                    </span>\n                                        </button>\n                                        <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs white\">Edit</button>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"!refreshing_data\">\n        <div class=\"box style-container\" v-for=\"style in data_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\" data-toggle=\"buttons\">\n                            <button v-for=\"size in style.sizes\" data-selected=\"false\" @click=\"toggleSize(style, size, size.items, $event)\" class=\"btn white btn-xs\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(size) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(size) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <div v-for=\"item in size.items\" class=\"col-sm-2 btn-group-prpl\">\n                                        <button v-bind:aria-pressed=\"(selected_items.indexOf(item) != -1 ? 'true' : null )\" @click=\"( selected_items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selected_items.indexOf(item) != -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                    <span class=\"item block\">\n                                                        <img v-bind:src=\"(item.files ? item.files[0].location : 'http://lorempizza.com/32/32/'+item.id)\" class=\"img-responsive\" style=\"width: 64px; height: 64px;\">\n                                                    </span>\n                                            <span class=\"p-a-o text-sm clearfix block\">\n                                                        Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span>  <span class=\"text-muted\">${{ item.price_usd }}</span>\n                                                    </span>\n                                        </button>\n                                        <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs white\">Edit</button>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6462,6 +6476,48 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2}],7:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n\n.kb_overlay {\n    background: rgba(255,255,255,0.85);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\n.kb_overlay__inner {\n    position: fixed;\n    background: #fff;\n    padding: 3px;\n    border-radius: 30px;\n    top: 50%;\n    left: 50%;\n    margin-left: -16px;\n    margin-top: -16px;\n}\n")
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    data: function data() {
+        return {
+            kb_overlay_show: false
+        };
+    },
+    created: function created() {
+        var scope = this;
+
+        $Bus.$on('loader:request-show', function () {
+            scope.kb_overlay_show = true;
+        });
+
+        $Bus.$on('loader:request-close', function () {
+            scope.kb_overlay_show = false;
+        });
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"kb_overlay_show === true\">\n    <div class=\"kb_overlay\">\n        <div class=\"kb_overlay__inner\">\n            <img src=\"/assets/images/icons/ring-alt.gif\">\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n\n.kb_overlay {\n    background: rgba(255,255,255,0.85);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\n.kb_overlay__inner {\n    position: fixed;\n    background: #fff;\n    padding: 3px;\n    border-radius: 30px;\n    top: 50%;\n    left: 50%;\n    margin-left: -16px;\n    margin-top: -16px;\n}\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-1b6337c0", module.exports)
+  } else {
+    hotAPI.update("_v-1b6337c0", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],8:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.noscroll {\n    overflow-x: hidden;\n    overflow-y: hidden;\n}\n\n.shot-overlay {\n    background: rgba(30,30,30,0.9);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\na.close-overlay {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 20px;\n    height: 20px;\n    padding: 20px;\n    opacity: .5;\n    z-index: 9998;\n    background-repeat: no-repeat;\n    background-position: 20px 20px;\n    background-image: url(https://dribbble.com/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png);\n}\n.overlay-content {\n    position: absolute;\n    z-index: 9997;\n    top: 20px;\n    left: 50%;\n    width: 920px;\n    min-height: 400px;\n    margin-left: -460px;\n    padding: 40px 40px;\n    background: #f4f4f4;\n    background-position: fixed;\n    box-sizing: border-box;\n    border-radius: 6px;\n}\na.close-overlay img {\n    height: 0;\n}\n@media only screen and (max-width: 959px) {\n    .shot-overlay {\n        overflow-y: auto;\n    }\n    a.close-overlay {\n        opacity: .34;\n        background-image: url(/assets/icon-shot-x-7dbc9cdd6856806bcc277a21513ac00fd402944f9046212dfe5151e1bb3a5ab8.png);\n    }\n    .overlay-content {\n        left: auto;\n        top: 0;\n        width: 100%;\n        max-width: 100%;\n        margin-left: 0;\n        padding: 20px;\n        border-radius: 0;\n    }\n}\n")
 'use strict';

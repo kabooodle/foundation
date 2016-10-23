@@ -1,6 +1,7 @@
 // var Vue = require('vue/dist/vue.js');
 import PopOver from '../popover.vue';
 import StyleTemplate from './style_template.vue';
+import Loading from '../loading.vue';
 
 new Vue({
     el: '#manage_inventory',
@@ -69,6 +70,16 @@ new Vue({
         });
     },
     watch: {
+        refreshing_data : {
+            handler: function(v) {
+                console.log(v);
+                if (v == false) {
+                    $Bus.$emit('loader:request-close');
+                } else {
+                    $Bus.$emit('loader:request-show');
+                }
+            }
+        },
         facebooks : {
             handler: function($object, $m) {
                 const scope = this;
@@ -195,6 +206,7 @@ new Vue({
     },
     components: {
         'style-template' : StyleTemplate,
-        'popout-overlay' : PopOver
+        'popout-overlay' : PopOver,
+        'loading' : Loading
     }
 });

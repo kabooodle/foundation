@@ -225,6 +225,8 @@
 
 @section('body-content')
 
+    <loading></loading>
+
     <div
             class="navbar-side"
             id="navbarSide">

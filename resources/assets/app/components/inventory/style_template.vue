@@ -1,10 +1,5 @@
 <template>
     <div>
-        <div v-if="data_items.length == 0 || refreshing_data" class="box m-b-0" style="min-height: 400px; position: relative;">
-            <div class="text-center center-block" style="position: absolute; left: 50%; top: 50%; margin-left: -5px; margin-top: -5px;">
-                <i class="fa fa-spinner fa-spin fa-2x"></i>
-            </div>
-        </div>
         <div v-if="!refreshing_data">
             <div class="box style-container" v-for="style in data_items">
                 <div class="box-header clearfix">
