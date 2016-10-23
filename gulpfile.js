@@ -1,7 +1,7 @@
 var elixir = require('laravel-elixir');
 require('laravel-elixir-vueify');
 
-// elixir.config.production = true;
+// elixir.config.production = true;,
 elixir.config.assetsPath = 'resources/assets/';
 elixir.config.appPath = '';
 elixir.config.publicPath = 'public/assets/';
@@ -9,9 +9,14 @@ elixir.config.js.folder = elixir.config.css.folder = elixir.config.css.sass.fold
 
 elixir(function (mix) {
 
+    // Kabooodle VUE APP
+    mix.browserify('app/app.js');
+
+    // VUE Components
     mix.browserify('app/components/inventory/inventory-management.js');
     mix.browserify('app/components/inventory/inventory-create.js');
 
+    // Vendor File
     mix.browserify('app/vendor.js');
 
     mix
@@ -41,8 +46,8 @@ elixir(function (mix) {
             'vendor/theme/scripts/ui-screenfull.js',
             'vendor/theme/scripts/ui-scroll-to.js',
             'vendor/theme/scripts/ui-jp.js',
-            'app/base.js',
-            'app/s3uploader.js'
+            'app/util.js'
+            // 'app/s3uploader.js'
 
     ], elixir.config.publicPath + 'js/base.js')
 });

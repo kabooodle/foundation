@@ -1,8 +1,7 @@
 <!DOCTYPE html>
     <html lang="en">
     @include('layouts.header._htmlheader')
-    <body class=" @yield('body-class', 'a') " id="">
-
+    <body class=" @yield('body-class', null)">
     <div id="fb-root"></div>
     <script>(function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
@@ -28,6 +27,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div id="kabooodle_utilities">
+            <loader></loader>
+            <popout-overlay></popout-overlay>
         </div>
 
         @include('layouts.footer._footer')

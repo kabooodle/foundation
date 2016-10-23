@@ -8,9 +8,8 @@
     </div>
 </template>
 <style>
-
     .kb_overlay {
-        background: rgba(255,255,255,0.85);
+        background: rgba(255,255,255,.98);
         top: 0;
         left: 0;
         z-index: 9997;
@@ -36,7 +35,7 @@
     export default{
         data: function() {
             return {
-                kb_overlay_show: false,
+                kb_overlay_show: true,
             }
         },
         created : function() {

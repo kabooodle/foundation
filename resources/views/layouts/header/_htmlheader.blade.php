@@ -18,11 +18,11 @@
     <script src="//js.pusher.com/3.2/pusher.min.js"></script>
 
     <script type="text/javascript">
-        var KABOOODLE_APP = window.KABOOODLE_APP || {};
+        const KABOOODLE_APP = window.KABOOODLE_APP || {};
         KABOOODLE_APP.currentUser = {!! $_current_user !!};
 
         @if ($_current_user)
-                // TODO MIGRATE ALL THIS SHIT TO A MODULE
+//                // TODO MIGRATE ALL THIS SHIT TO A MODULE
                 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
                 Vue.http.headers.common['Authorization'] = "Bearer " + $('meta[name=user_hash]').attr("content");
 
@@ -46,12 +46,12 @@
             });
         });
 
-        var pusher = new Pusher('{{ env('PUSHER_KEY') }}');
-        var channel = pusher.subscribe('private_'+KABOOODLE_APP.currentUser.username);
-        channel.bind('kabooodle.testevent', function(data) {
-            var newCount = data.unreadNotificationsCount;
-            $('#notify_total').addClass('warning').removeClass('hide').html(newCount);
-        });
+        {{--var pusher = new Pusher('{{ env('PUSHER_KEY') }}');--}}
+        {{--var channel = pusher.subscribe('private_'+KABOOODLE_APP.currentUser.username);--}}
+        {{--channel.bind('kabooodle.testevent', function(data) {--}}
+            {{--var newCount = data.unreadNotificationsCount;--}}
+            {{--$('#notify_total').addClass('warning').removeClass('hide').html(newCount);--}}
+        {{--});--}}
         @endif
     </script>
     @endpush

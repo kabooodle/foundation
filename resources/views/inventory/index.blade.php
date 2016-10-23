@@ -48,6 +48,27 @@
     /*width: 100% !important;*/
     /*}*/
     /*}*/
+    .img-thumb {
+        position: relative;
+    }
+    .img-thumb img {
+        border-radius:.25rem;
+    }
+    .img-thumb:hover img {
+        opacity: .4;
+    }
+    .img-thumb .fa {
+        display: none;
+    }
+    .img-thumb:hover .fa {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: -6px;
+        margin-left: -1px;
+        color: red;
+    }
     .reveal {
         right: 0 !important;;
     }
@@ -225,8 +246,6 @@
 
 @section('body-content')
 
-    <loading></loading>
-
     <div
             class="navbar-side"
             id="navbarSide">
@@ -293,13 +312,15 @@
                                 </label>
                                 <div v-if="facebook.fitems.length > 0">
                                     <span class="block text-muted text-sm">(@{{  facebook.fitems.length }} items assigned)</span>
-                                    <span v-for="fitem in facebook.fitems" style="width: 24px; height: 24px; margin: 0 3px 3px 0;">
+                                    <span
+                                    @click="removeFromAlbum(fitem, facebook, $event)"
+                                            class="img-thumb" v-for="fitem in facebook.fitems" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
                                          <img
-                                        @click="removeFromAlbum(fitem, facebook, $event)"
-                                                 v-bind:src="(fitem.files && fitem.files.length > 0 ? fitem.files[0].location : 'http://lorempizza.com/24/24/'+fitem.id)"
-                                                 class="img-responsive"
-                                                    :data-id="fitem.id"
-                                                 style="width: 24px; height: 24px;">
+                                                v-bind:src="(fitem.files && fitem.files.length > 0 ? fitem.files[0].location : 'http://lorempizza.com/24/24/'+fitem.id)"
+                                                class="img-responsive "
+                                                :data-id="fitem.id"
+                                                style="width: 24px; height: 24px;">
+                                        <i class="fa fa-times fa-2x"></i>
                                     </span>
                                 </div>
                             </div>
@@ -328,8 +349,6 @@
         </form>
     </div>
 
-
-    <popout-overlay></popout-overlay>
 
     <style-template
             :selected_items.sync="selected_items"

@@ -1,7 +1,10 @@
-import FileUpload from './components/FileUpload.vue';
+import Loader from './components/Loading.vue';
+import Popover from  './components/Popover.vue';
 
-export default {
+new Vue({
+    el: '#kabooodle_utilities',
     components: {
-        'image-attach': FileUpload
+        'loader': Loader,
+        'popout-overlay' : Popover
     }
-}
+});

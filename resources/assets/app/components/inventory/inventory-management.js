@@ -1,7 +1,4 @@
-// var Vue = require('vue/dist/vue.js');
-import PopOver from '../popover.vue';
 import StyleTemplate from './style_template.vue';
-import Loading from '../loading.vue';
 
 new Vue({
     el: '#manage_inventory',
@@ -72,16 +69,11 @@ new Vue({
     watch: {
         refreshing_data : {
             handler: function(v) {
-                console.log(v);
-                if (v == false) {
-                    $Bus.$emit('loader:request-close');
-                } else {
-                    $Bus.$emit('loader:request-show');
-                }
+                v === false ? $Bus.$emit('loader:request-close') : $Bus.$emit('loader:request-show');
             }
         },
         facebooks : {
-            handler: function($object, $m) {
+            handler: function() {
                 const scope = this;
                 var sum = 0;
                 $.each(this.facebooks, function(){
@@ -205,8 +197,6 @@ new Vue({
         }
     },
     components: {
-        'style-template' : StyleTemplate,
-        'popout-overlay' : PopOver,
-        'loading' : Loading
+        'style-template' : StyleTemplate
     }
 });
