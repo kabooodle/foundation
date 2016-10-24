@@ -292,7 +292,7 @@
                                 <option
                                         v-if="postable_items.facebookgroups && postable_items.facebookgroups.length > 0"
                                         v-for="facebook_group in postable_items.facebookgroups"
-                                :value="facebook_group.id">@{{ facebook_group.name }}</option>
+                                :value="facebook_group.id">@{{ facebook_group.name }} (@{{facebook_group.albums ? facebook_group.albums.length : 0}} albums)</option>
                             </select>
                         </div>
                         <template v-if="selected_facebook_group">
@@ -317,20 +317,21 @@
                                         type="checkbox"> Include Link in description
                             </label>
                         </div>
-                        </template>
-                            {{--<div class="radio" v-if="postable_items.facebookgroups && postable_items.facebookgroups.length > 0" v-for="facebook in postable_items.facebookgroups">--}}
-                                {{--<label>--}}
-                                    {{--<input--}}
-                                            {{--@click="selectFacebookAlbum(facebook,$event)"--}}
-                                            {{--type="radio"--}}
-                                            {{--name="facebookalbums"--}}
-                                            {{--:value="facebook.id"> Album - @{{ facebook.name }}--}}
-                                {{--</label>--}}
-                                {{--<div v-if="facebook.fitems.length > 0">--}}
+                            <div class="radio"
+                                 {{--v-if="selected_facebook_group.albums && selected_facebook_group.albums.length > 0"--}}
+                                 v-for="facebook_album in selected_facebook_group.albums">
+                                <label>
+                                    <input
+                                            @click="selectFacebookAlbum(facebook_album,$event)"
+                                            type="radio"
+                                            name="facebookalbums"
+                                            :value="facebook_album.id"> @{{ facebook_album.name }}
+                                </label>
+                                {{--<div v-if="facebook_album.fitems && facebook_album.fitems.length > 0">--}}
                                     {{--<span class="block text-muted text-sm">(@{{  facebook.fitems.length }} items assigned)</span>--}}
                                     {{--<span--}}
-                                    {{--@click="removeFromAlbum(fitem, facebook, $event)"--}}
-                                            {{--class="img-thumb" v-for="fitem in facebook.fitems" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">--}}
+                                    {{--@click="removeFromAlbum(fitem, facebook_album, $event)"--}}
+                                            {{--class="img-thumb" v-for="fitem in facebook_album.fitems" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">--}}
                                          {{--<img--}}
                                                 {{--v-bind:src="(fitem.files && fitem.files.length > 0 ? fitem.files[0].location : 'http://lorempizza.com/24/24/'+fitem.id)"--}}
                                                 {{--class="img-responsive "--}}
@@ -339,7 +340,8 @@
                                         {{--<i class="fa fa-times fa-2x"></i>--}}
                                     {{--</span>--}}
                                 {{--</div>--}}
-                            {{--</div>--}}
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
