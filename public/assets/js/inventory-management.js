@@ -6110,6 +6110,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 new Vue({
     el: '#manage_inventory',
     data: {
+        selected: {
+            sizes: {},
+            items: {},
+            postables: {},
+            fb_group: null,
+            fb_album: null
+        },
+
         selected_sales_sum: 0,
         selected_sales: {
             flashsales: [],
@@ -6440,9 +6448,9 @@ if (module.hot) {(function () {  module.hot.accept()
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-49e9dca7", module.exports)
+    hotAPI.createRecord("_v-4e910d3e", module.exports)
   } else {
-    hotAPI.update("_v-49e9dca7", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-4e910d3e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2}]},{},[4]);

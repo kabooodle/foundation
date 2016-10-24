@@ -35,7 +35,7 @@
     export default{
         data: function() {
             return {
-                kb_overlay_show: true,
+                kb_overlay_show: false,
             }
         },
         created : function() {

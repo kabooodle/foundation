@@ -5574,7 +5574,7 @@ var Popover = function ($) {
     var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
         return typeof obj;
     } : function (obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
 
     function _classCallCheck(instance, Constructor) {
@@ -5618,117 +5618,126 @@ var Popover = function ($) {
          */
 
 
-        ClipboardAction.prototype.resolveOptions = function resolveOptions() {
-            var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-            this.action = options.action;
-            this.emitter = options.emitter;
-            this.target = options.target;
-            this.text = options.text;
-            this.trigger = options.trigger;
-
-            this.selectedText = '';
-        };
-
-        ClipboardAction.prototype.initSelection = function initSelection() {
-            if (this.text) {
-                this.selectFake();
-            } else if (this.target) {
-                this.selectTarget();
-            }
-        };
-
-        ClipboardAction.prototype.selectFake = function selectFake() {
-            var _this = this;
-
-            var isRTL = document.documentElement.getAttribute('dir') == 'rtl';
-
-            this.removeFake();
-
-            this.fakeHandlerCallback = function () {
-                return _this.removeFake();
-            };
-            this.fakeHandler = document.body.addEventListener('click', this.fakeHandlerCallback) || true;
-
-            this.fakeElem = document.createElement('textarea');
-            // Prevent zooming on iOS
-            this.fakeElem.style.fontSize = '12pt';
-            // Reset box model
-            this.fakeElem.style.border = '0';
-            this.fakeElem.style.padding = '0';
-            this.fakeElem.style.margin = '0';
-            // Move element out of screen horizontally
-            this.fakeElem.style.position = 'absolute';
-            this.fakeElem.style[isRTL ? 'right' : 'left'] = '-9999px';
-            // Move element to the same position vertically
-            var yPosition = window.pageYOffset || document.documentElement.scrollTop;
-            this.fakeElem.addEventListener('focus', window.scrollTo(0, yPosition));
-            this.fakeElem.style.top = yPosition + 'px';
-
-            this.fakeElem.setAttribute('readonly', '');
-            this.fakeElem.value = this.text;
-
-            document.body.appendChild(this.fakeElem);
-
-            this.selectedText = (0, _select2.default)(this.fakeElem);
-            this.copyText();
-        };
-
-        ClipboardAction.prototype.removeFake = function removeFake() {
-            if (this.fakeHandler) {
-                document.body.removeEventListener('click', this.fakeHandlerCallback);
-                this.fakeHandler = null;
-                this.fakeHandlerCallback = null;
-            }
-
-            if (this.fakeElem) {
-                document.body.removeChild(this.fakeElem);
-                this.fakeElem = null;
-            }
-        };
-
-        ClipboardAction.prototype.selectTarget = function selectTarget() {
-            this.selectedText = (0, _select2.default)(this.target);
-            this.copyText();
-        };
-
-        ClipboardAction.prototype.copyText = function copyText() {
-            var succeeded = void 0;
-
-            try {
-                succeeded = document.execCommand(this.action);
-            } catch (err) {
-                succeeded = false;
-            }
-
-            this.handleResult(succeeded);
-        };
-
-        ClipboardAction.prototype.handleResult = function handleResult(succeeded) {
-            this.emitter.emit(succeeded ? 'success' : 'error', {
-                action: this.action,
-                text: this.selectedText,
-                trigger: this.trigger,
-                clearSelection: this.clearSelection.bind(this)
-            });
-        };
-
-        ClipboardAction.prototype.clearSelection = function clearSelection() {
-            if (this.target) {
-                this.target.blur();
-            }
-
-            window.getSelection().removeAllRanges();
-        };
-
-        ClipboardAction.prototype.destroy = function destroy() {
-            this.removeFake();
-        };
-
         _createClass(ClipboardAction, [{
+            key: 'resolveOptions',
+            value: function resolveOptions() {
+                var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+                this.action = options.action;
+                this.emitter = options.emitter;
+                this.target = options.target;
+                this.text = options.text;
+                this.trigger = options.trigger;
+
+                this.selectedText = '';
+            }
+        }, {
+            key: 'initSelection',
+            value: function initSelection() {
+                if (this.text) {
+                    this.selectFake();
+                } else if (this.target) {
+                    this.selectTarget();
+                }
+            }
+        }, {
+            key: 'selectFake',
+            value: function selectFake() {
+                var _this = this;
+
+                var isRTL = document.documentElement.getAttribute('dir') == 'rtl';
+
+                this.removeFake();
+
+                this.fakeHandlerCallback = function () {
+                    return _this.removeFake();
+                };
+                this.fakeHandler = document.body.addEventListener('click', this.fakeHandlerCallback) || true;
+
+                this.fakeElem = document.createElement('textarea');
+                // Prevent zooming on iOS
+                this.fakeElem.style.fontSize = '12pt';
+                // Reset box model
+                this.fakeElem.style.border = '0';
+                this.fakeElem.style.padding = '0';
+                this.fakeElem.style.margin = '0';
+                // Move element out of screen horizontally
+                this.fakeElem.style.position = 'absolute';
+                this.fakeElem.style[isRTL ? 'right' : 'left'] = '-9999px';
+                // Move element to the same position vertically
+                var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+                this.fakeElem.addEventListener('focus', window.scrollTo(0, yPosition));
+                this.fakeElem.style.top = yPosition + 'px';
+
+                this.fakeElem.setAttribute('readonly', '');
+                this.fakeElem.value = this.text;
+
+                document.body.appendChild(this.fakeElem);
+
+                this.selectedText = (0, _select2.default)(this.fakeElem);
+                this.copyText();
+            }
+        }, {
+            key: 'removeFake',
+            value: function removeFake() {
+                if (this.fakeHandler) {
+                    document.body.removeEventListener('click', this.fakeHandlerCallback);
+                    this.fakeHandler = null;
+                    this.fakeHandlerCallback = null;
+                }
+
+                if (this.fakeElem) {
+                    document.body.removeChild(this.fakeElem);
+                    this.fakeElem = null;
+                }
+            }
+        }, {
+            key: 'selectTarget',
+            value: function selectTarget() {
+                this.selectedText = (0, _select2.default)(this.target);
+                this.copyText();
+            }
+        }, {
+            key: 'copyText',
+            value: function copyText() {
+                var succeeded = void 0;
+
+                try {
+                    succeeded = document.execCommand(this.action);
+                } catch (err) {
+                    succeeded = false;
+                }
+
+                this.handleResult(succeeded);
+            }
+        }, {
+            key: 'handleResult',
+            value: function handleResult(succeeded) {
+                this.emitter.emit(succeeded ? 'success' : 'error', {
+                    action: this.action,
+                    text: this.selectedText,
+                    trigger: this.trigger,
+                    clearSelection: this.clearSelection.bind(this)
+                });
+            }
+        }, {
+            key: 'clearSelection',
+            value: function clearSelection() {
+                if (this.target) {
+                    this.target.blur();
+                }
+
+                window.getSelection().removeAllRanges();
+            }
+        }, {
+            key: 'destroy',
+            value: function destroy() {
+                this.removeFake();
+            }
+        }, {
             key: 'action',
             set: function set() {
-                var action = arguments.length <= 0 || arguments[0] === undefined ? 'copy' : arguments[0];
+                var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'copy';
 
                 this._action = action;
 
@@ -5768,7 +5777,7 @@ var Popover = function ($) {
 
     module.exports = ClipboardAction;
 });
-},{"select":24}],5:[function(require,module,exports){
+},{"select":22}],5:[function(require,module,exports){
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
         define(['module', './clipboard-action', 'tiny-emitter', 'good-listener'], factory);
@@ -5801,6 +5810,24 @@ var Popover = function ($) {
             throw new TypeError("Cannot call a class as a function");
         }
     }
+
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
+
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
+        };
+    }();
 
     function _possibleConstructorReturn(self, call) {
         if (!self) {
@@ -5836,7 +5863,7 @@ var Popover = function ($) {
         function Clipboard(trigger, options) {
             _classCallCheck(this, Clipboard);
 
-            var _this = _possibleConstructorReturn(this, _Emitter.call(this));
+            var _this = _possibleConstructorReturn(this, (Clipboard.__proto__ || Object.getPrototypeOf(Clipboard)).call(this));
 
             _this.resolveOptions(options);
             _this.listenClick(trigger);
@@ -5850,62 +5877,71 @@ var Popover = function ($) {
          */
 
 
-        Clipboard.prototype.resolveOptions = function resolveOptions() {
-            var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+        _createClass(Clipboard, [{
+            key: 'resolveOptions',
+            value: function resolveOptions() {
+                var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-            this.action = typeof options.action === 'function' ? options.action : this.defaultAction;
-            this.target = typeof options.target === 'function' ? options.target : this.defaultTarget;
-            this.text = typeof options.text === 'function' ? options.text : this.defaultText;
-        };
-
-        Clipboard.prototype.listenClick = function listenClick(trigger) {
-            var _this2 = this;
-
-            this.listener = (0, _goodListener2.default)(trigger, 'click', function (e) {
-                return _this2.onClick(e);
-            });
-        };
-
-        Clipboard.prototype.onClick = function onClick(e) {
-            var trigger = e.delegateTarget || e.currentTarget;
-
-            if (this.clipboardAction) {
-                this.clipboardAction = null;
+                this.action = typeof options.action === 'function' ? options.action : this.defaultAction;
+                this.target = typeof options.target === 'function' ? options.target : this.defaultTarget;
+                this.text = typeof options.text === 'function' ? options.text : this.defaultText;
             }
+        }, {
+            key: 'listenClick',
+            value: function listenClick(trigger) {
+                var _this2 = this;
 
-            this.clipboardAction = new _clipboardAction2.default({
-                action: this.action(trigger),
-                target: this.target(trigger),
-                text: this.text(trigger),
-                trigger: trigger,
-                emitter: this
-            });
-        };
-
-        Clipboard.prototype.defaultAction = function defaultAction(trigger) {
-            return getAttributeValue('action', trigger);
-        };
-
-        Clipboard.prototype.defaultTarget = function defaultTarget(trigger) {
-            var selector = getAttributeValue('target', trigger);
-
-            if (selector) {
-                return document.querySelector(selector);
+                this.listener = (0, _goodListener2.default)(trigger, 'click', function (e) {
+                    return _this2.onClick(e);
+                });
             }
-        };
+        }, {
+            key: 'onClick',
+            value: function onClick(e) {
+                var trigger = e.delegateTarget || e.currentTarget;
 
-        Clipboard.prototype.defaultText = function defaultText(trigger) {
-            return getAttributeValue('text', trigger);
-        };
+                if (this.clipboardAction) {
+                    this.clipboardAction = null;
+                }
 
-        Clipboard.prototype.destroy = function destroy() {
-            this.listener.destroy();
-
-            if (this.clipboardAction) {
-                this.clipboardAction.destroy();
-                this.clipboardAction = null;
+                this.clipboardAction = new _clipboardAction2.default({
+                    action: this.action(trigger),
+                    target: this.target(trigger),
+                    text: this.text(trigger),
+                    trigger: trigger,
+                    emitter: this
+                });
             }
-        };
+        }, {
+            key: 'defaultAction',
+            value: function defaultAction(trigger) {
+                return getAttributeValue('action', trigger);
+            }
+        }, {
+            key: 'defaultTarget',
+            value: function defaultTarget(trigger) {
+                var selector = getAttributeValue('target', trigger);
+
+                if (selector) {
+                    return document.querySelector(selector);
+                }
+            }
+        }, {
+            key: 'defaultText',
+            value: function defaultText(trigger) {
+                return getAttributeValue('text', trigger);
+            }
+        }, {
+            key: 'destroy',
+            value: function destroy() {
+                this.listener.destroy();
+
+                if (this.clipboardAction) {
+                    this.clipboardAction.destroy();
+                    this.clipboardAction = null;
+                }
+            }
+        }]);
 
         return Clipboard;
     }(_tinyEmitter2.default);
@@ -5927,121 +5963,38 @@ var Popover = function ($) {
 
     module.exports = Clipboard;
 });
-},{"./clipboard-action":4,"good-listener":15,"tiny-emitter":28}],6:[function(require,module,exports){
+},{"./clipboard-action":4,"good-listener":13,"tiny-emitter":26}],6:[function(require,module,exports){
 /**
- * Module Dependencies
+ * A polyfill for Element.matches()
  */
+if (Element && !Element.prototype.matches) {
+    var proto = Element.prototype;
 
-try {
-  var matches = require('matches-selector')
-} catch (err) {
-  var matches = require('component-matches-selector')
+    proto.matches = proto.matchesSelector ||
+                    proto.mozMatchesSelector ||
+                    proto.msMatchesSelector ||
+                    proto.oMatchesSelector ||
+                    proto.webkitMatchesSelector;
 }
 
 /**
- * Export `closest`
- */
-
-module.exports = closest
-
-/**
- * Closest
+ * Finds the closest parent that matches a selector.
  *
- * @param {Element} el
+ * @param {Element} element
  * @param {String} selector
- * @param {Element} scope (optional)
+ * @return {Function}
  */
-
-function closest (el, selector, scope) {
-  scope = scope || document.documentElement;
-
-  // walk up the dom
-  while (el && el !== scope) {
-    if (matches(el, selector)) return el;
-    el = el.parentNode;
-  }
-
-  // check scope for match
-  return matches(el, selector) ? el : null;
+function closest (element, selector) {
+    while (element && element !== document) {
+        if (element.matches(selector)) return element;
+        element = element.parentNode;
+    }
 }
 
-},{"component-matches-selector":7,"matches-selector":7}],7:[function(require,module,exports){
-/**
- * Module dependencies.
- */
+module.exports = closest;
 
-try {
-  var query = require('query');
-} catch (err) {
-  var query = require('component-query');
-}
-
-/**
- * Element prototype.
- */
-
-var proto = Element.prototype;
-
-/**
- * Vendor function.
- */
-
-var vendor = proto.matches
-  || proto.webkitMatchesSelector
-  || proto.mozMatchesSelector
-  || proto.msMatchesSelector
-  || proto.oMatchesSelector;
-
-/**
- * Expose `match()`.
- */
-
-module.exports = match;
-
-/**
- * Match `el` to `selector`.
- *
- * @param {Element} el
- * @param {String} selector
- * @return {Boolean}
- * @api public
- */
-
-function match(el, selector) {
-  if (!el || el.nodeType !== 1) return false;
-  if (vendor) return vendor.call(el, selector);
-  var nodes = query.all(selector, el.parentNode);
-  for (var i = 0; i < nodes.length; ++i) {
-    if (nodes[i] == el) return true;
-  }
-  return false;
-}
-
-},{"component-query":8,"query":8}],8:[function(require,module,exports){
-function one(selector, el) {
-  return el.querySelector(selector);
-}
-
-exports = module.exports = function(selector, el){
-  el = el || document;
-  return one(selector, el);
-};
-
-exports.all = function(selector, el){
-  el = el || document;
-  return el.querySelectorAll(selector);
-};
-
-exports.engine = function(obj){
-  if (!obj.one) throw new Error('.one callback required');
-  if (!obj.all) throw new Error('.all callback required');
-  one = obj.one;
-  exports.all = obj.all;
-  return exports;
-};
-
-},{}],9:[function(require,module,exports){
-var closest = require('component-closest');
+},{}],7:[function(require,module,exports){
+var closest = require('./closest');
 
 /**
  * Delegates event to a selector.
@@ -6076,7 +6029,7 @@ function delegate(element, selector, type, callback, useCapture) {
  */
 function listener(element, selector, type, callback) {
     return function(e) {
-        e.delegateTarget = closest(e.target, selector, true);
+        e.delegateTarget = closest(e.target, selector);
 
         if (e.delegateTarget) {
             callback.call(element, e);
@@ -6086,10 +6039,10 @@ function listener(element, selector, type, callback) {
 
 module.exports = delegate;
 
-},{"component-closest":6}],10:[function(require,module,exports){
+},{"./closest":6}],8:[function(require,module,exports){
 +function(a){"use strict";function b(a,b){if(!(a instanceof b))throw new TypeError("Cannot call a class as a function")}var c=function(){function a(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1,d.configurable=!0,"value"in d&&(d.writable=!0),Object.defineProperty(a,d.key,d)}}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}();(function(a){var d="ekkoLightbox",e=a.fn[d],f={title:"",footer:"",showArrows:!0,type:null,alwaysShowClose:!1,loadingMessage:'<div class="ekko-lightbox-loader"><div><div></div><div></div></div></div>',leftArrow:"<span>&#10094;</span>",rightArrow:"<span>&#10095;</span>",strings:{close:"Close",fail:"Failed to load image:",type:"Could not detect remote target type. Force the type using data-type"},doc:document,onShow:function(){},onShown:function(){},onHide:function(){},onHidden:function(){},onNavigate:function(){},onContentLoaded:function(){}},g=function(){function d(c,e){var g=this;b(this,d),this._config=a.extend({},f,e),this._$modalArrows=null,this._galleryIndex=0,this._galleryName=null,this._padding=null,this._border=null,this._titleIsShown=!1,this._footerIsShown=!1,this._wantedWidth=0,this._wantedHeight=0,this._modalId="ekkoLightbox-"+Math.floor(1e3*Math.random()+1),this._$element=c instanceof jQuery?c:a(c);var h='<div class="modal-header"'+(this._config.title||this._config.alwaysShowClose?"":' style="display:none"')+'><button type="button" class="close" data-dismiss="modal" aria-label="'+this._config.strings.close+'"><span aria-hidden="true">&times;</span></button><h4 class="modal-title">'+(this._config.title||"&nbsp;")+"</h4></div>",i='<div class="modal-footer"'+(this._config.footer?"":' style="display:none"')+">"+(this._config.footer||"&nbsp;")+"</div>",j='<div class="modal-body"><div class="ekko-lightbox-container"><div class="ekko-lightbox-item fade in"></div><div class="ekko-lightbox-item fade"></div></div></div>',k='<div class="modal-dialog" role="document"><div class="modal-content">'+h+j+i+"</div></div>";a(this._config.doc.body).append('<div id="'+this._modalId+'" class="ekko-lightbox modal fade" tabindex="-1" tabindex="-1" role="dialog" aria-hidden="true">'+k+"</div>"),this._$modal=a("#"+this._modalId,this._config.doc),this._$modalDialog=this._$modal.find(".modal-dialog").first(),this._$modalContent=this._$modal.find(".modal-content").first(),this._$modalBody=this._$modal.find(".modal-body").first(),this._$modalHeader=this._$modal.find(".modal-header").first(),this._$modalFooter=this._$modal.find(".modal-footer").first(),this._$lightboxContainer=this._$modalBody.find(".ekko-lightbox-container").first(),this._$lightboxBodyOne=this._$lightboxContainer.find("> div:first-child").first(),this._$lightboxBodyTwo=this._$lightboxContainer.find("> div:last-child").first(),this._border=this._calculateBorders(),this._padding=this._calculatePadding(),this._galleryName=this._$element.data("gallery"),this._galleryName&&(this._$galleryItems=a(document.body).find('*[data-gallery="'+this._galleryName+'"]'),this._galleryIndex=this._$galleryItems.index(this._$element),a(document).on("keydown.ekkoLightbox",this._navigationalBinder.bind(this)),this._config.showArrows&&this._$galleryItems.length>1&&(this._$lightboxContainer.append('<div class="ekko-lightbox-nav-overlay"><a href="#">'+this._config.leftArrow+'</a><a href="#">'+this._config.rightArrow+"</a></div>"),this._$modalArrows=this._$lightboxContainer.find("div.ekko-lightbox-nav-overlay").first(),this._$lightboxContainer.on("click","a:first-child",function(a){return a.preventDefault(),g.navigateLeft()}),this._$lightboxContainer.on("click","a:last-child",function(a){return a.preventDefault(),g.navigateRight()}))),this._$modal.on("show.bs.modal",this._config.onShow.bind(this)).on("shown.bs.modal",function(){return g._toggleLoading(!0),g._handle(),g._config.onShown.call(g)}).on("hide.bs.modal",this._config.onHide.bind(this)).on("hidden.bs.modal",function(){return g._galleryName&&(a(document).off("keydown.ekkoLightbox"),a(window).off("resize.ekkoLightbox")),g._$modal.remove(),g._config.onHidden.call(g)}).modal(this._config),a(window).on("resize.ekkoLightbox",function(){g._resize(g._wantedWidth,g._wantedHeight)})}return c(d,null,[{key:"Default",get:function(){return f}}]),c(d,[{key:"element",value:function(){return this._$element}},{key:"modal",value:function(){return this._$modal}},{key:"navigateTo",value:function(b){return b<0||b>this._$galleryItems.length-1?this:(this._galleryIndex=b,this._$element=a(this._$galleryItems.get(this._galleryIndex)),void this._handle())}},{key:"navigateLeft",value:function(){if(1!==this._$galleryItems.length)return 0===this._galleryIndex?this._galleryIndex=this._$galleryItems.length-1:this._galleryIndex--,this._config.onNavigate.call(this,"left",this._galleryIndex),this.navigateTo(this._galleryIndex)}},{key:"navigateRight",value:function(){if(1!==this._$galleryItems.length)return this._galleryIndex===this._$galleryItems.length-1?this._galleryIndex=0:this._galleryIndex++,this._config.onNavigate.call(this,"right",this._galleryIndex),this.navigateTo(this._galleryIndex)}},{key:"close",value:function(){return this._$modal.modal("hide")}},{key:"_navigationalBinder",value:function(a){return a=a||window.event,39===a.keyCode?this.navigateRight():37===a.keyCode?this.navigateLeft():void 0}},{key:"_detectRemoteType",value:function(a,b){return b=b||!1,!b&&this._isImage(a)&&(b="image"),!b&&this._getYoutubeId(a)&&(b="youtube"),!b&&this._getVimeoId(a)&&(b="vimeo"),!b&&this._getInstagramId(a)&&(b="instagram"),(!b||["image","youtube","vimeo","instagram","video","url"].indexOf(b)<0)&&(b="url"),b}},{key:"_isImage",value:function(a){return a&&a.match(/(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i)}},{key:"_containerToUse",value:function(){var a=this,b=this._$lightboxBodyTwo,c=this._$lightboxBodyOne;return this._$lightboxBodyTwo.hasClass("in")&&(b=this._$lightboxBodyOne,c=this._$lightboxBodyTwo),c.removeClass("in"),setTimeout(function(){a._$lightboxBodyTwo.hasClass("in")||a._$lightboxBodyTwo.empty(),a._$lightboxBodyOne.hasClass("in")||a._$lightboxBodyOne.empty()},500),b.addClass("in"),b}},{key:"_handle",value:function(){var a=this._containerToUse();this._updateTitleAndFooter();var b=this._$element.attr("data-remote")||this._$element.attr("href"),c=this._detectRemoteType(b,this._$element.attr("data-type")||!1);if(["image","youtube","vimeo","instagram","video","url"].indexOf(c)<0)return this._error(this._config.strings.type);switch(c){case"image":this._preloadImage(b,a),this._preloadImageByIndex(this._galleryIndex,3);break;case"youtube":this._showYoutubeVideo(b,a);break;case"vimeo":this._showVimeoVideo(this._getVimeoId(b),a);break;case"instagram":this._showInstagramVideo(this._getInstagramId(b),a);break;case"video":this._showHtml5Video(b,a);break;default:this._loadRemoteContent(b,a)}return this}},{key:"_getYoutubeId",value:function(a){if(!a)return!1;var b=a.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);return!(!b||11!==b[2].length)&&b[2]}},{key:"_getVimeoId",value:function(a){return!!(a&&a.indexOf("vimeo")>0)&&a}},{key:"_getInstagramId",value:function(a){return!!(a&&a.indexOf("instagram")>0)&&a}},{key:"_toggleLoading",value:function(b){return b=b||!1,b?(this._$modalDialog.css("display","none"),this._$modal.removeClass("in"),a(".modal-backdrop").append(this._config.loadingMessage)):(this._$modalDialog.css("display","block"),this._$modal.addClass("in"),a(".modal-backdrop").find(".ekko-lightbox-loader").remove()),this}},{key:"_calculateBorders",value:function(){return{top:this._totalCssByAttribute("border-top-width"),right:this._totalCssByAttribute("border-right-width"),bottom:this._totalCssByAttribute("border-bottom-width"),left:this._totalCssByAttribute("border-left-width")}}},{key:"_calculatePadding",value:function(){return{top:this._totalCssByAttribute("padding-top"),right:this._totalCssByAttribute("padding-right"),bottom:this._totalCssByAttribute("padding-bottom"),left:this._totalCssByAttribute("padding-left")}}},{key:"_totalCssByAttribute",value:function(a){return parseInt(this._$modalDialog.css(a),10)+parseInt(this._$modalContent.css(a),10)+parseInt(this._$modalBody.css(a),10)}},{key:"_updateTitleAndFooter",value:function(){var a=this._$element.data("title")||"",b=this._$element.data("footer")||"";return this._titleIsShown=!1,a||this._config.alwaysShowClose?(this._titleIsShown=!0,this._$modalHeader.css("display","").find(".modal-title").html(a||"&nbsp;")):this._$modalHeader.css("display","none"),this._footerIsShown=!1,b?(this._footerIsShown=!0,this._$modalFooter.css("display","").html(b)):this._$modalFooter.css("display","none"),this}},{key:"_showYoutubeVideo",value:function(a,b){var c=this._getYoutubeId(a),d=a.indexOf("&")>0?a.substr(a.indexOf("&")):"",e=this._$element.data("width")||560,f=this._$element.data("height")||e/(560/315);return this._showVideoIframe("//www.youtube.com/embed/"+c+"?badge=0&autoplay=1&html5=1"+d,e,f,b)}},{key:"_showVimeoVideo",value:function(a,b){var c=500,d=this._$element.data("height")||c/(560/315);return this._showVideoIframe(a+"?autoplay=1",c,d,b)}},{key:"_showInstagramVideo",value:function(a,b){var c=this._$element.data("width")||612,d=c+80;return a="/"!==a.substr(-1)?a+"/":a,b.html('<iframe width="'+c+'" height="'+d+'" src="'+a+'embed/" frameborder="0" allowfullscreen></iframe>'),this._resize(c,d),this._config.onContentLoaded.call(this),this._$modalArrows&&this._$modalArrows.css("display","none"),this._toggleLoading(!1),this}},{key:"_showVideoIframe",value:function(a,b,c,d){return c=c||b,d.html('<div class="embed-responsive embed-responsive-16by9"><iframe width="'+b+'" height="'+c+'" src="'+a+'" frameborder="0" allowfullscreen class="embed-responsive-item"></iframe></div>'),this._resize(b,c),this._config.onContentLoaded.call(this),this._$modalArrows&&this._$modalArrows.css("display","none"),this._toggleLoading(!1),this}},{key:"_showHtml5Video",value:function(a,b){var c=this._$element.data("width")||560,d=this._$element.data("height")||c/(560/315);return b.html('<div class="embed-responsive embed-responsive-16by9"><video width="'+c+'" height="'+d+'" src="'+a+'" preload="auto" autoplay controls class="embed-responsive-item"></video></div>'),this._resize(c,d),this._config.onContentLoaded.call(this),this._$modalArrows&&this._$modalArrows.css("display","none"),this._toggleLoading(!1),this}},{key:"_loadRemoteContent",value:function(b,c){var d=this,e=this._$element.data("width")||560,f=this._$element.data("height")||560,g=this._$element.data("disableExternalCheck")||!1;return this._toggleLoading(!1),g||this._isExternal(b)?(c.html('<iframe src="'+b+'" frameborder="0" allowfullscreen></iframe>'),this._config.onContentLoaded.call(this)):c.load(b,a.proxy(function(){return d._$element.trigger("loaded.bs.modal")})),this._$modalArrows&&this._$modalArrows.css("display","none"),this._resize(e,f),this}},{key:"_isExternal",value:function(a){var b=a.match(/^([^:\/?#]+:)?(?:\/\/([^\/?#]*))?([^?#]+)?(\?[^#]*)?(#.*)?/);return"string"==typeof b[1]&&b[1].length>0&&b[1].toLowerCase()!==location.protocol||"string"==typeof b[2]&&b[2].length>0&&b[2].replace(new RegExp(":("+{"http:":80,"https:":443}[location.protocol]+")?$"),"")!==location.host}},{key:"_error",value:function(a){return console.error(a),this._containerToUse().html(a),this._resize(300,300),this}},{key:"_preloadImageByIndex",value:function(b,c){if(this._$galleryItems){var d=a(this._$galleryItems.get(b),!1);if("undefined"!=typeof d){var e=d.attr("data-remote")||d.attr("href");return("image"===d.attr("data-type")||this._isImage(e))&&this._preloadImage(e,!1),c>0?this._preloadImageByIndex(b+1,c-1):void 0}}}},{key:"_preloadImage",value:function(b,c){var d=this;c=c||!1;var e=new Image;return c&&!function(){var f=setTimeout(function(){c.append(d._config.loadingMessage)},200);e.onload=function(){f&&clearTimeout(f),f=null;var b=a("<img />");return b.attr("src",e.src),b.addClass("img-fluid"),c.html(b),d._$modalArrows&&d._$modalArrows.css("display",""),d._resize(e.width,e.height),d._toggleLoading(!1),d._config.onContentLoaded.call(d)},e.onerror=function(){return d._toggleLoading(!1),d._error(d._config.strings.fail+("  "+b))}}(),e.src=b,e}},{key:"_resize",value:function(b,c){c=c||b,this._wantedWidth=b,this._wantedHeight=c;var d=this._padding.left+this._padding.right+this._border.left+this._border.right,e=Math.min(b+d,this._config.doc.body.clientWidth);b+d>e?(c=(e-d)/b*c,b=e):b+=d;var f=0,g=0;this._footerIsShown&&(g=this._$modalFooter.outerHeight(!0)||55),this._titleIsShown&&(f=this._$modalHeader.outerHeight(!0)||67);var h=this._padding.top+this._padding.bottom+this._border.bottom+this._border.top,i=parseFloat(this._$modalDialog.css("margin-top"))+parseFloat(this._$modalDialog.css("margin-bottom")),j=Math.min(c,a(window).height()-h-i-f-g);if(c>j){var k=Math.min(j/c,1);b=Math.ceil(k*b)}return this._$lightboxContainer.css("height",j),this._$modalDialog.css("width","auto").css("maxWidth",b),this._$modal.modal("_handleUpdate"),this}}],[{key:"_jQueryInterface",value:function(b){var c=this;return b=b||{},this.each(function(){var e=a(c),f=a.extend({},d.Default,e.data(),"object"==typeof b&&b);new d(c,f)})}}]),d}();return a.fn[d]=g._jQueryInterface,a.fn[d].Constructor=g,a.fn[d].noConflict=function(){return a.fn[d]=e,g._jQueryInterface},g})(jQuery)}(jQuery);
 
-},{}],11:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /* jshint maxerr: 10000 */
 /* jslint unused: true */
 /* jshint shadow: true */
@@ -6600,7 +6553,7 @@ module.exports = delegate;
 }(this.emojione = this.emojione || {}));
 if(typeof module === "object") module.exports = this.emojione;
 
-},{}],12:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*!
  * EmojioneArea v3.1.5
  * https://github.com/mervick/emojionearea
@@ -7812,7 +7765,7 @@ if(typeof module === "object") module.exports = this.emojione;
 	$.fn.emojioneArea.defaults = getDefaultOptions();
 
 }) (document, window, jQuery);
-},{}],13:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*! version : 4.17.43
  =========================================================
  bootstrap-datetimejs
@@ -10437,7 +10390,7 @@ if(typeof module === "object") module.exports = this.emojione;
     }
 }));
 
-},{"jquery":16,"moment":23}],14:[function(require,module,exports){
+},{"jquery":14,"moment":21}],12:[function(require,module,exports){
 /**
  * Check if argument is a HTML element.
  *
@@ -10488,7 +10441,7 @@ exports.fn = function(value) {
     return type === '[object Function]';
 };
 
-},{}],15:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var is = require('./is');
 var delegate = require('delegate');
 
@@ -10585,7 +10538,7 @@ function listenSelector(selector, type, callback) {
 
 module.exports = listen;
 
-},{"./is":14,"delegate":9}],16:[function(require,module,exports){
+},{"./is":12,"delegate":7}],14:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.0
  * http://jquery.com/
@@ -19698,7 +19651,7 @@ return jQuery;
 
 }));
 
-},{}],17:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /**
  * microplugin.js
  * Copyright (c) 2013 Brian Reavis & contributors
@@ -19834,10 +19787,10 @@ return jQuery;
 
 	return MicroPlugin;
 }));
-},{}],18:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = require('moment-timezone');
 
-},{"moment-timezone":20}],19:[function(require,module,exports){
+},{"moment-timezone":18}],17:[function(require,module,exports){
 module.exports={
 	"version": "2016f",
 	"zones": [
@@ -20433,11 +20386,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],20:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":19,"./moment-timezone":21}],21:[function(require,module,exports){
+},{"./data/packed/latest.json":17,"./moment-timezone":19}],19:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.5
 //! author : Tim Wood
@@ -21040,7 +20993,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":22}],22:[function(require,module,exports){
+},{"moment":20}],20:[function(require,module,exports){
 //! moment.js
 //! version : 2.15.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -25275,7 +25228,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     return _moment;
 
 }));
-},{}],23:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 //! moment.js
 //! version : 2.15.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -29510,7 +29463,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     return _moment;
 
 }));
-},{}],24:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 function select(element) {
     var selectedText;
 
@@ -29545,7 +29498,7 @@ function select(element) {
 
 module.exports = select;
 
-},{}],25:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /**
  * selectize.js (v0.12.4)
  * Copyright (c) 2013–2015 Brian Reavis & contributors
@@ -32739,7 +32692,7 @@ module.exports = select;
 
 	return Selectize;
 }));
-},{"jquery":16,"microplugin":17,"sifter":26}],26:[function(require,module,exports){
+},{"jquery":14,"microplugin":15,"sifter":24}],24:[function(require,module,exports){
 /**
  * sifter.js
  * Copyright (c) 2013 Brian Reavis & contributors
@@ -33239,7 +33192,7 @@ module.exports = select;
 }));
 
 
-},{}],27:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /*! tether 1.3.7 */
 
 (function(root, factory) {
@@ -35048,7 +35001,7 @@ return Tether;
 
 }));
 
-},{}],28:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 function E () {
   // Keep this empty so it's easier to inherit from
   // (via https://github.com/lipsmack from https://github.com/scottcorgan/tiny-emitter/issues/3)
@@ -35116,7 +35069,7 @@ E.prototype = {
 
 module.exports = E;
 
-},{}],29:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -36666,7 +36619,7 @@ module.exports = E;
   }
 }.call(this));
 
-},{}],30:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /*!
  * vue-resource v1.0.3
  * https://github.com/vuejs/vue-resource
@@ -38185,7 +38138,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 module.exports = plugin;
-},{}],31:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*!
  * Vue.js v2.0.3
  * (c) 2014-2016 Evan You
@@ -45702,7 +45655,7 @@ return Vue$3;
 
 })));
 
-},{}],32:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -45731,7 +45684,7 @@ require('eonasdan-bootstrap-datetimepicker');
 global.$Bus = new Vue();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../../resources/assets/vendor/jquery/noty/packaged/jquery.noty.packaged.js":33,"bootstrap":3,"bootstrap-multiselect":1,"bootstrap-touchspin":2,"clipboard":5,"ekko-lightbox":10,"emojione":11,"emojionearea":12,"eonasdan-bootstrap-datetimepicker":13,"jquery":16,"moment":23,"moment-timezone-tsc":18,"selectize":25,"tether":27,"underscore":29,"vue-resource":30,"vue/dist/vue.js":31}],33:[function(require,module,exports){
+},{"../../../resources/assets/vendor/jquery/noty/packaged/jquery.noty.packaged.js":31,"bootstrap":3,"bootstrap-multiselect":1,"bootstrap-touchspin":2,"clipboard":5,"ekko-lightbox":8,"emojione":9,"emojionearea":10,"eonasdan-bootstrap-datetimepicker":11,"jquery":14,"moment":21,"moment-timezone-tsc":16,"selectize":23,"tether":25,"underscore":27,"vue-resource":28,"vue/dist/vue.js":29}],31:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -47126,6 +47079,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     return window.noty;
 });
 
-},{"jquery":16}]},{},[32]);
+},{"jquery":14}]},{},[30]);
 
 //# sourceMappingURL=vendor.js.map

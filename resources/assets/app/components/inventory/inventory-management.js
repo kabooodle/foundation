@@ -3,6 +3,14 @@ import StyleTemplate from './style_template.vue';
 new Vue({
     el: '#manage_inventory',
     data : {
+        selected : {
+            sizes : {},
+            items: {},
+            postables:{},
+            fb_group: null,
+            fb_album: null
+        },
+
         selected_sales_sum : 0,
         selected_sales : {
             flashsales : [],
@@ -32,7 +40,7 @@ new Vue({
         },
         has_selected_sales_and_selected_items : function() {
             return !(this.selected_items.length == 0 || this.sum_selected_sales == 0);
-        },
+        }
     },
     created : function() {
         this.getInventory();

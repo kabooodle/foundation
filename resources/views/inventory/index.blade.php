@@ -317,6 +317,7 @@
                                         type="checkbox"> Include Link in description
                             </label>
                         </div>
+                            <div>
                             <div class="radio"
                                  {{--v-if="selected_facebook_group.albums && selected_facebook_group.albums.length > 0"--}}
                                  v-for="facebook_album in selected_facebook_group.albums">
@@ -340,6 +341,7 @@
                                         {{--<i class="fa fa-times fa-2x"></i>--}}
                                     {{--</span>--}}
                                 {{--</div>--}}
+                            </div>
                             </div>
                         </template>
                     </div>
