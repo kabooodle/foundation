@@ -8,39 +8,14 @@ new Vue({
             flashsales : [],
             facebook : []
         },
-        facebooks : [
-            {
-                id: 1,
-                name: '#1',
-                fitems: []
-            },
-            {
-                id: 2,
-                name: '#2',
-                fitems: []
-            },
-            {
-                id: 3,
-                name: '#3',
-                fitems: []
-            },
-            {
-                id: 4,
-                name: '#4',
-                fitems: []
-            },
-            {
-                id: 5,
-                name: '#5',
-                fitems: []
-            },
-        ],
         date_time_input : null,
         selected_items: [],
         data_items : [],
         refreshing_data: false,
         posting_to_sales: false,
-        facebook_album_selected : null
+        facebook_album_selected : null,
+        postable_items: [],
+        selected_facebook_group : null
     },
     computed : {
         get_selected_facebook_sales : function() {
@@ -61,6 +36,7 @@ new Vue({
     },
     created : function() {
         this.getInventory();
+        this.getPostables();
         this.$on('post-menu:closed', function(){
             // this.facebook_album_selected = false;
             // $('[name=facebookalbums]:checked').prop('checked', false);
@@ -91,14 +67,29 @@ new Vue({
         }
     },
     methods: {
-        assignItemsToSelectedAlbum(items) {
+        changeFacebookGroup : function(event){
+            var groupId = event.target.value;
+            if(groupId && groupId != '') {
+                this.selected_facebook_group = this.getFacebookGroup(groupId);
+            } else {
+                this.selected_facebook_group = null;
+            }
+        },
+        getFacebookGroup : function(id) {
+            var facebookgroups = this.postable_items.facebookgroups;
+            if(facebookgroups) {
+                return _.findWhere(facebookgroups, {id : id});
+            }
+            return null;
+        },
+        assignItemsToSelectedAlbum: function(items) {
             const scope = this;
             // might consider using debounce
             setTimeout(function(){
                 scope.facebook_album_selected.fitems = items;
             }, 100);
         },
-        removeFromAlbum(fitem, facebook, event) {
+        removeFromAlbum : function(fitem, facebook, event) {
             var index = facebook.fitems.indexOf(fitem);
             if (index > -1){
                 facebook.fitems.splice(index, 1);
@@ -190,6 +181,15 @@ new Vue({
                 scope.data_items = response.body.data
             }).then(function(){
                 scope.refreshing_data = false;
+            });
+        },
+        getPostables : function() {
+            var scope = this;
+
+            this.$http.get('http://app.kabooodle.dev/inventory/postables').then(function(response){
+                scope.postable_items = response.body.data;
+            }, function(response){
+                console.log('Error in retrieving postables');
             });
         },
         clearDateTimeInput: function() {

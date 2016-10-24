@@ -267,27 +267,42 @@
             <div class="box">
                 <div class="tab-content p-a">
                     <div class="tab-pane active" id="post_flashsales">
-                        @foreach(user()->flashsalesAsSellerAndAdmins as $flashSale)
+                        <div v-if="postable_items.flashsales && postable_items.flashsales.length > 0" v-for="flashsale in postable_items.flashsales">
                             <div class="checkbox">
                                 <label>
                                     <input
                                             name="flashsalesales_ids[]"
-                                            value="{{ $flashSale->id  }}"
-                                            v-bind:checked="( get_selected_flashsales_sales.indexOf({{ $flashSale->id }}) > -1 ? 'checked' : false )"
+                                            :value="flashsale.id"
+                                            v-bind:checked="( get_selected_flashsales_sales.indexOf(flashsale.id) > -1 ? 'checked' : false )"
                                             type="checkbox"
-                                            v-on:change="toggleFlashSale({{ $flashSale->id }}, $event)"> {{ $flashSale->name }}
+                                            v-on:change="toggleFlashSale(flashsale.id, $event)"> @{{ flashsale.name }}
                                 </label>
                             </div>
-                        @endforeach
+                        </div>
                     </div>
                     <div class="tab-pane" id="post_facebook">
+                        <div class="form-group">
+                            <label>Select Group</label>
+                            <select
+                                    @change="changeFacebookGroup"
+                                    name="facebook_group"
+                                    placeholder="Select a group"
+                                    class="form-control">
+                                <option></option>
+                                <option
+                                        v-if="postable_items.facebookgroups && postable_items.facebookgroups.length > 0"
+                                        v-for="facebook_group in postable_items.facebookgroups"
+                                :value="facebook_group.id">@{{ facebook_group.name }}</option>
+                            </select>
+                        </div>
+                        <template v-if="selected_facebook_group">
                         <div class="form-group">
                             <label>Post on a specific date and time</label>
                             <div class="input-group">
                                 {{ Form::text('ends_at', null, ['class' => 'form-control', 'id' => 'datetimepicker2', 'v-bind' => 'date_time_input']) }}
                                 <span class="input-group-btn">
                                     <button
-                                            @click="clearDateTimeInput"
+                                    @click="clearDateTimeInput"
                                             class="btn white"
                                             type="button"
                                             style="padding-bottom:.3rem;">Clear</button>
@@ -302,28 +317,29 @@
                                         type="checkbox"> Include Link in description
                             </label>
                         </div>
-                            <div class="radio" v-for="facebook in facebooks">
-                                <label>
-                                    <input
-                                            @click="selectFacebookAlbum(facebook,$event)"
-                                            type="radio"
-                                            name="facebookalbums"
-                                            :value="facebook.id"> Album - @{{ facebook.name }}
-                                </label>
-                                <div v-if="facebook.fitems.length > 0">
-                                    <span class="block text-muted text-sm">(@{{  facebook.fitems.length }} items assigned)</span>
-                                    <span
-                                    @click="removeFromAlbum(fitem, facebook, $event)"
-                                            class="img-thumb" v-for="fitem in facebook.fitems" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
-                                         <img
-                                                v-bind:src="(fitem.files && fitem.files.length > 0 ? fitem.files[0].location : 'http://lorempizza.com/24/24/'+fitem.id)"
-                                                class="img-responsive "
-                                                :data-id="fitem.id"
-                                                style="width: 24px; height: 24px;">
-                                        <i class="fa fa-times fa-2x"></i>
-                                    </span>
-                                </div>
-                            </div>
+                        </template>
+                            {{--<div class="radio" v-if="postable_items.facebookgroups && postable_items.facebookgroups.length > 0" v-for="facebook in postable_items.facebookgroups">--}}
+                                {{--<label>--}}
+                                    {{--<input--}}
+                                            {{--@click="selectFacebookAlbum(facebook,$event)"--}}
+                                            {{--type="radio"--}}
+                                            {{--name="facebookalbums"--}}
+                                            {{--:value="facebook.id"> Album - @{{ facebook.name }}--}}
+                                {{--</label>--}}
+                                {{--<div v-if="facebook.fitems.length > 0">--}}
+                                    {{--<span class="block text-muted text-sm">(@{{  facebook.fitems.length }} items assigned)</span>--}}
+                                    {{--<span--}}
+                                    {{--@click="removeFromAlbum(fitem, facebook, $event)"--}}
+                                            {{--class="img-thumb" v-for="fitem in facebook.fitems" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">--}}
+                                         {{--<img--}}
+                                                {{--v-bind:src="(fitem.files && fitem.files.length > 0 ? fitem.files[0].location : 'http://lorempizza.com/24/24/'+fitem.id)"--}}
+                                                {{--class="img-responsive "--}}
+                                                {{--:data-id="fitem.id"--}}
+                                                {{--style="width: 24px; height: 24px;">--}}
+                                        {{--<i class="fa fa-times fa-2x"></i>--}}
+                                    {{--</span>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
                     </div>
                 </div>
             </div>

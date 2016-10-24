@@ -42,7 +42,7 @@ class FacebookSdkService extends LaravelFacebookSdk
     public function getUsersGroups($userId = null)
     {
         $userId = $userId ? : user()->getFacebookUserId();
-        $request = $this->get("/{$userId}/groups", user()->getFacebookUserToken());
+        $request = $this->get("/{$userId}/groups?fields=administrator,albums{id,can_upload,name},id,name", user()->getFacebookUserToken());
 
         return $request->getGraphEdge();
     }

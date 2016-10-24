@@ -19,24 +19,48 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
     /**
      * @param GetUserFacebookGroupsCommand $command
      *
-     * @return array|mixed|void
+     * @return array|mixed
+     * @throws FacebookSDKException
      */
     public function handle(GetUserFacebookGroupsCommand $command)
     {
         $tag = self::TAG;
         $actor = $command->getActor();
-        if ($this->cache->tags($tag)->has($actor->getFacebookUserId())) {
-            return $this->cache->tags($tag)->get($actor->getFacebookUserId());
-        }
+//        if ($this->cache->tags($tag)->has($actor->getFacebookUserId())) {
+//            return $this->cache->tags($tag)->get($actor->getFacebookUserId());
+//        }
 
-        event(new CacheMissEvent($tag, $actor->getFacebookUserId()));
+//        event(new CacheMissEvent($tag, $actor->getFacebookUserId()));
 
         try {
-            $groups = $this->facebook->getUsersGroups($actor->getFacebookUserId())->asArray();
-            foreach ($groups as &$group) {
-                $group['albums'] = $this->facebook->getGroupAlbums($group['id'])->asArray();
+            $groups = $this->facebook->getUsersGroups($actor->getFacebookUserId());
+            if ($groups) {
+                foreach($groups as $key => $group){
+
+                    // If the user cannot administrate, delete the group.
+                    if($group['administrator'] === false) {
+                        unset($groups[$key]);
+                        continue;
+                    }
+
+                    // If the group has albums, lets make sure the album can be uploaded to.
+                    if(isset($group['albums'])) {
+                        foreach($group['albums'] as $albumKey => $album) {
+                            if($album['can_upload'] === false) {
+                                unset($group['albums'][$albumKey]);
+                            }
+                        }
+                    } else {
+
+                        // Create an empty albums key with an empty array.
+                        $group['albums'] = [];
+                    }
+                }
             }
-            $this->cache->tags($tag)->put($actor->getFacebookUserId(), $groups, config('session.lifetime'));
+//            foreach ($groups as &$group) {
+//                $group['albums'] = $this->facebook->getGroupAlbums($group['id'])->asArray();
+//            }
+//            $this->cache->tags($tag)->put($actor->getFacebookUserId(), $groups, config('session.lifetime'));
 
             return $groups;
         } catch (FacebookSDKException $e) {

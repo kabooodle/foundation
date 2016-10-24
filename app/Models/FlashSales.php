@@ -153,6 +153,14 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     ];
 
     /**
+     * @var array
+     */
+    protected $hidden = [
+        'deleted_by',
+        'pivot'
+    ];
+
+    /**
      * @var string
      */
     protected $table = 'flashsales';

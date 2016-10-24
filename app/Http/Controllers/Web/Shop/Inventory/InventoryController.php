@@ -311,4 +311,17 @@ class InventoryController extends Controller
             return Response::json(['message' => $e->getMessage()], 500);
         }
     }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function postables(Request $request)
+    {
+        $facebookGroups = user()->getFacebookGroups()->asArray();
+        $flashSales = user()->flashsalesAsSellerAndAdmins;
+
+        return Response::json(['data' => ['flashsales' => $flashSales, 'facebookgroups' => $facebookGroups]], 200);
+    }
 }
