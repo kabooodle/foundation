@@ -6,7 +6,10 @@
 
 namespace Kabooodle\Http\Controllers\Web\Referrals;
 
+use Illuminate\Http\Request;
+use Kabooodle\Bus\Events\User\UserSubscriptionCameOffTrial;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Models\User;
 
 class ReferralsController extends Controller
 {
@@ -16,5 +19,11 @@ class ReferralsController extends Controller
     public function index()
     {
         return $this->view('referrals.index');
+    }
+
+    public function invite(Request $request)
+    {
+        $user = User::where('username', $request->userName)->first();
+        return view('auth.invite')->with(compact('user'));
     }
 }

@@ -28,17 +28,23 @@ final class AddUserCommand
     public $password;
 
     /**
+     * @var string
+     */
+    public $referralId;
+
+    /**
      * AddUserCommand constructor.
      *
      * @param string    $name
      * @param string    $email
      * @param string    $password
      */
-    public function __construct($name, $email, $password)
+    public function __construct($name, $email, $password, $referralId = null)
     {
         $this->name = $name;
         $this->email = $email;
         $this->password = $password;
+        $this->referralId = $referralId;
     }
 
     /**
@@ -63,5 +69,13 @@ final class AddUserCommand
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReferralId()
+    {
+        return $this->referralId;
     }
 }

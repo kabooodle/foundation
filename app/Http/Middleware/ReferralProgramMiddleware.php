@@ -8,6 +8,7 @@ namespace Kabooodle\Http\Middleware;
 
 use Auth;
 use Closure;
+use Kabooodle\Models\User;
 
 /**
  * Class ReferralProgramMiddleware
@@ -30,7 +31,6 @@ class ReferralProgramMiddleware
         $response = $next($request);
 
         if (Auth::guard($guard)->guest()
-            && $request->has(self::REQUEST_KEY)
             && !$this->sessionValueExists($request)
         ) {
             $this->setSessionValue($request);
@@ -46,7 +46,7 @@ class ReferralProgramMiddleware
      */
     public function sessionValueExists($request)
     {
-        return (bool) $request->session()->has(self::SESSION_KEY) && $request->session()->get(self::SESSION_KEY) == $request->get(self::REQUEST_KEY);
+        return (bool) $request->session()->has(self::SESSION_KEY) && $request->session()->get(self::REQUEST_KEY) == $request->userName;
     }
 
     /**
@@ -56,6 +56,10 @@ class ReferralProgramMiddleware
      */
     public function setSessionValue($request)
     {
-        $request->session()->put(self::SESSION_KEY, $request->get(self::REQUEST_KEY));
+        if($user = User::where('username', $request->userName)->first()) {
+
+            $request->session()->put(self::SESSION_KEY, $user->id);
+            $request->session()->put(self::REQUEST_KEY, $request->userName);
+        }
     }
 }
