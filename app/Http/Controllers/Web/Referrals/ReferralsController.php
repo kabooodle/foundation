@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Referrals;
 
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Events\User\UserSubscriptionCameOffTrial;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Models\User;
 

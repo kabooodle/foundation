@@ -56,8 +56,8 @@ class ReferralProgramMiddleware
      */
     public function setSessionValue($request)
     {
-        if(User::where('username', $request->userName)->first()) {
-            $user = User::where('username', $request->userName)->first();
+        if($user = User::where('username', $request->userName)->first()) {
+
             $request->session()->put(self::SESSION_KEY, $user->id);
             $request->session()->put(self::REQUEST_KEY, $request->userName);
         }
