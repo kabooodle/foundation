@@ -6107,48 +6107,66 @@ var _style_template2 = _interopRequireDefault(_style_template);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-new Vue({
-    el: '#manage_inventory',
-    data: {
+function getDefaultData(key) {
+    var data = {
+
+        // Array of user inventory items
+        inventory_items: [],
+
+        // Array of postable objects (flash sales, facebook groups)
+        postables: {
+            facebookgroups: [],
+            flashsales: []
+        },
+
         selected: {
-            sizes: {},
-            items: {},
-            postables: {},
+            // Holds sizes that have been selected
+            sizes: [],
+
+            // Holds items that have been selected
+            items: [],
+
+            // Holds postables that have been selected
+            postables: {
+                fb_albums: [],
+                flashsales: []
+            },
+
+            // Toggle of the selected fB group
             fb_group: null,
+
+            // Toggle of the selected fb album
             fb_album: null
         },
 
-        selected_sales_sum: 0,
-        selected_sales: {
-            flashsales: [],
-            facebook: []
+        actions: {
+            refreshing_data: false,
+            posting_to_sales: false,
+            fb_advanced_menu: false
         },
-        date_time_input: null,
-        selected_items: [],
-        data_items: [],
-        refreshing_data: false,
-        posting_to_sales: false,
-        facebook_album_selected: null,
-        postable_items: [],
-        selected_facebook_group: null
-    },
-    computed: {
-        get_selected_facebook_sales: function get_selected_facebook_sales() {
-            return this.selected_sales.facebook;
+
+        sums: {
+            selected_postables: 0
         },
-        get_selected_flashsales_sales: function get_selected_flashsales_sales() {
-            return this.selected_sales.flashsales;
-        },
-        sum_selected_sales: function sum_selected_sales() {
-            return this.get_selected_flashsales_sales.length + this.get_selected_facebook_sales.length;
-        },
-        sum_selected_sales_and_selected_items: function sum_selected_sales_and_selected_items() {
-            return this.selected_items.length + this.sum_selected_sales;
-        },
-        has_selected_sales_and_selected_items: function has_selected_sales_and_selected_items() {
-            return !(this.selected_items.length == 0 || this.sum_selected_sales == 0);
+
+        selected_sales_sum: 0
+    };
+
+    if (key) {
+        var keys = key.split('.');
+        if (keys.length) {
+            // data is only 2 deep max, so, hardcode it.
+            return keys.length > 1 ? data[keys[0]][keys[1]] : data[key];
         }
-    },
+    }
+
+    return data;
+}
+
+new Vue({
+    el: '#manage_inventory',
+    data: getDefaultData,
+    computed: {},
     created: function created() {
         this.getInventory();
         this.getPostables();
@@ -6158,61 +6176,83 @@ new Vue({
         });
     },
     watch: {
-        refreshing_data: {
+        'actions': {
             handler: function handler(v) {
-                v === false ? $Bus.$emit('loader:request-close') : $Bus.$emit('loader:request-show');
-            }
-        },
-        facebooks: {
-            handler: function handler() {
-                var scope = this;
-                var sum = 0;
-                $.each(this.facebooks, function () {
-                    sum += this.fitems.length;
-                });
-                scope.selected_sales_sum = sum;
+                v.refreshing_data === false ? $Bus.$emit('loader:request-close') : $Bus.$emit('loader:request-show');
             }, deep: true
         },
-        selected_items: {
-            handler: function handler(selected_items) {
-                if (this.facebook_album_selected && selected_items.length > 0) {
+        // facebooks : {
+        //     handler: function() {
+        //         const scope = this;
+        //         let sum = 0;
+        //         $.each(this.facebooks, function(){
+        //             sum += this.fitems.length;
+        //         });
+        //         scope.selected_sales_sum = sum;
+        //     }, deep : true
+        // },
+        selected: {
+            handler: function handler(selected) {
+                var selected_items = selected.items;
+                if (selected.fb_album && selected_items.length > 0) {
                     this.assignItemsToSelectedAlbum(selected_items);
+                    this.sums.selected_postables = _.chain(selected.postables.fb_albums).filter(function (album) {
+                        return album.hasOwnProperty('items') && album.items.length > 0;
+                    }).reduce(function (k, v) {
+                        return k + v.items.length;
+                    }, 0).value();
+
+                    return;
                 }
-            }
+                this.resetData('sums.selected_postables');
+            }, deep: true
         }
     },
     methods: {
+        resetData: function resetData(key) {
+            if (key) {
+                var keys = key.split('.');
+                return keys.length > 1 ? this[keys[0]][keys[1]] = getDefaultData(key) : this[key] = getDefaultData(key);
+            } else {
+                this.$data = getDefaultData();
+            }
+        },
         changeFacebookGroup: function changeFacebookGroup(event) {
             var groupId = event.target.value;
             if (groupId && groupId != '') {
-                this.selected_facebook_group = this.getFacebookGroup(groupId);
+                this.selected.fb_group = this.getFacebookGroup(groupId);
             } else {
-                this.selected_facebook_group = null;
+                this.resetData('selected.fb_group');
             }
+            $Bus.$emit('facebook-selection:changed');
+            this.resetData('selected.items');
         },
         getFacebookGroup: function getFacebookGroup(id) {
-            var facebookgroups = this.postable_items.facebookgroups;
+            var facebookgroups = this.postables.facebookgroups;
             if (facebookgroups) {
                 return _.findWhere(facebookgroups, { id: id });
             }
             return null;
         },
         assignItemsToSelectedAlbum: function assignItemsToSelectedAlbum(items) {
-            var scope = this;
-            // might consider using debounce
-            setTimeout(function () {
-                scope.facebook_album_selected.fitems = items;
-            }, 100);
+            var index = this.selected.postables.fb_albums.indexOf(this.selected.fb_album);
+            this.selected.postables.fb_albums[index].items = items;
         },
         removeFromAlbum: function removeFromAlbum(fitem, facebook, event) {
-            var index = facebook.fitems.indexOf(fitem);
+            var index = facebook.items.indexOf(fitem);
             if (index > -1) {
-                facebook.fitems.splice(index, 1);
+                // this.$nextTick(function(){
+                facebook.items.splice(index, 1);
+                // })
             }
         },
         selectFacebookAlbum: function selectFacebookAlbum(facebook, event) {
-            this.facebook_album_selected = facebook;
-            this.selected_items = [];
+            this.selected.fb_album = facebook;
+            if (this.selected.postables.fb_albums.indexOf(facebook) == -1) {
+                this.selected.postables.fb_albums.push(facebook);
+            }
+            $Bus.$emit('facebook-selection:changed');
+            this.resetData('selected.items');
         },
         setPostingToSales: function setPostingToSales(val) {
             this.posting_to_sales = val;
@@ -6252,11 +6292,6 @@ new Vue({
 
             this.$http.post(form.prop('action'), form_data).then(function (response) {
                 notify({ 'text': selected_items_ids.length + ' Items posted or queued successfully', 'type': 'success' });
-                scope.selected_items = [];
-                scope.selected_sales = {
-                    flashsales: [],
-                    facebook: []
-                };
             }, function (response) {
                 //
             }).finally(function () {
@@ -6276,33 +6311,28 @@ new Vue({
             }
         },
         resetInventory: function resetInventory() {
-            this.selected_items = [];
-            this.selected_sales = {
-                flashsales: [],
-                facebook: []
-            };
-            this.posting_to_sales = false;
+            this.resetData('selected.items');
             this.closePostMenu();
             $Bus.$emit('inventory:request-reset');
         },
         getInventory: function getInventory() {
             var scope = this;
-            this.refreshing_data = true;
-            this.data_items = [];
+            this.actions.refreshing_data = true;
+            scope.resetData('inventory_items');
             this.resetInventory();
             scope.$emit('refreshing_data');
 
             this.$http.get('http://api.kabooodle.dev/inventory/jaketoolson').then(function (response) {
-                scope.data_items = response.body.data;
+                scope.inventory_items = response.body.data;
             }).then(function () {
-                scope.refreshing_data = false;
+                scope.resetData('actions.refreshing_data');
             });
         },
         getPostables: function getPostables() {
             var scope = this;
 
             this.$http.get('http://app.kabooodle.dev/inventory/postables').then(function (response) {
-                scope.postable_items = response.body.data;
+                scope.postables = response.body.data;
             }, function (response) {
                 console.log('Error in retrieving postables');
             });
@@ -6323,19 +6353,26 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
-    props: ["data_items", "refreshing_data", 'selected_items', 'route'],
+    props: ["inventory_items", "actions", "selected"],
     data: function data() {
         return {
             opened_drawers: [],
-            active_requests: []
+            active_http_requests: []
         };
     },
     created: function created() {
         var scope = this;
+
+        $Bus.$on('facebook-selection:changed', function () {
+            scope.opened_drawers = [];
+            $('.btn-group-prpl').find('button.active').removeClass('active');
+        });
+
         $Bus.$on('inventory:request-reset', function () {});
+
         $Bus.$on('popout-overlay:closed', function () {
-            if (scope.active_requests.length > 0) {
-                $.each(scope.active_requests, function () {
+            if (scope.active_http_requests.length > 0) {
+                $.each(scope.active_http_requests, function () {
                     this.abort();
                 });
             }
@@ -6355,14 +6392,14 @@ exports.default = {
                         this.previousRequest.abort();
                     }
                     this.previousRequest = request;
-                    scope.active_requests.push(request);
+                    scope.active_http_requests.push(request);
                 }
             }).then(function (response) {
                 $Bus.$emit('popout-overlay:change-content', response.body);
             }, function (response) {
                 $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
             }).finally(function () {
-                scope.active_requests = [];
+                scope.active_http_requests = [];
             });
         },
         addToOpenedDrawers: function addToOpenedDrawers(obj) {
@@ -6422,35 +6459,34 @@ exports.default = {
             }
         },
         removeSizeFromSelected: function removeSizeFromSelected(size) {
-            var index = this.selected_items.indexOf(size);
+            var index = this.selected.items.indexOf(size);
             if (index != -1) {
-                this.selected_items.splice(index, 1);
+                this.selected.items.splice(index, 1);
             }
         },
         addSizeToSelected: function addSizeToSelected(size) {
-            if (this.selected_items.indexOf(size) == -1) {
-                this.selected_items.push(size);
+            if (this.selected.items.indexOf(size) == -1) {
+                this.selected.items.push(size);
             }
         }
     },
     events: {
         'drawer:opened': function drawerOpened(size) {},
         'refreshing_data': function refreshing_data() {
-            this.selected_items = [];
             this.opened_drawers = [];
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"!refreshing_data\">\n        <div class=\"box style-container\" v-for=\"style in data_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\" data-toggle=\"buttons\">\n                            <button v-for=\"size in style.sizes\" data-selected=\"false\" @click=\"toggleSize(style, size, size.items, $event)\" class=\"btn white btn-xs\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(size) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(size) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <div v-for=\"item in size.items\" class=\"col-sm-2 btn-group-prpl\">\n                                        <button v-bind:aria-pressed=\"(selected_items.indexOf(item) != -1 ? 'true' : null )\" @click=\"( selected_items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selected_items.indexOf(item) != -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                    <span class=\"item block\">\n                                                        <img v-bind:src=\"(item.files ? item.files[0].location : 'http://lorempizza.com/32/32/'+item.id)\" class=\"img-responsive\" style=\"width: 64px; height: 64px;\">\n                                                    </span>\n                                            <span class=\"p-a-o text-sm clearfix block\">\n                                                        Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span>  <span class=\"text-muted\">${{ item.price_usd }}</span>\n                                                    </span>\n                                        </button>\n                                        <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs white\">Edit</button>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"!actions.refreshing_data\">\n        <div class=\"box style-container\" v-for=\"style in inventory_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\" data-toggle=\"buttons\">\n                            <button v-for=\"size in style.sizes\" data-selected=\"false\" @click=\"toggleSize(style, size, size.items, $event)\" class=\"btn white btn-xs\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(size) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(size) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <div v-for=\"item in size.items\" class=\"col-sm-2 btn-group-prpl\">\n                                        <button v-bind:aria-pressed=\"(selected.items.indexOf(item) != -1 ? 'true' : null )\" @click=\"( selected.items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selected.items.indexOf(item) != -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                    <span class=\"item block\">\n                                                        <img v-bind:src=\"(item.files ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)\" class=\"img-responsive\" style=\"width: 64px; height: 64px;\">\n                                                    </span>\n                                            <span class=\"p-a-o text-sm clearfix block\">\n                                                        Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span>  <span class=\"text-muted\">${{ item.price_usd }}</span>\n                                                    </span>\n                                        </button>\n                                        <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs white\">Edit</button>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-4e910d3e", module.exports)
+    hotAPI.createRecord("_v-49e9dca7", module.exports)
   } else {
-    hotAPI.update("_v-4e910d3e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-49e9dca7", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2}]},{},[4]);

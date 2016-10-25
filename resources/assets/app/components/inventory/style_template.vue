@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div v-if="!refreshing_data">
-            <div class="box style-container" v-for="style in data_items">
+        <div v-if="!actions.refreshing_data">
+            <div class="box style-container" v-for="style in inventory_items">
                 <div class="box-header clearfix">
                     <div class="row">
                         <div class="col-sm-2" style="margin-top: 13px;">
@@ -46,14 +46,14 @@
                                     <div class="row row-horizon">
                                         <div v-for="item in size.items" class="col-sm-2 btn-group-prpl">
                                             <button
-                                                    v-bind:aria-pressed="(selected_items.indexOf(item) != -1 ? 'true' : null )"
-                                                    @click="( selected_items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )"
-                                                    v-bind:class="[ selected_items.indexOf(item) != -1 ? 'active' : '' ] "
+                                                    v-bind:aria-pressed="(selected.items.indexOf(item) != -1 ? 'true' : null )"
+                                                    @click="( selected.items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )"
+                                                    v-bind:class="[ selected.items.indexOf(item) != -1 ? 'active' : '' ] "
                                                     style="border-radius: .25rem;"
                                                     type="button"
                                                     class="btn white btn-xs">
                                                         <span class="item block">
-                                                            <img v-bind:src="(item.files ? item.files[0].location : 'http://lorempizza.com/32/32/'+item.id)" class="img-responsive" style="width: 64px; height: 64px;">
+                                                            <img v-bind:src="(item.files ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 64px; height: 64px;">
                                                         </span>
                                                 <span class="p-a-o text-sm clearfix block">
                                                             Qty: <span class="text-muted">{{ item.initial_qty }}</span>  <span class="text-muted">${{ item.price_usd }}</span>
@@ -77,21 +77,28 @@
 </template>
 <script>
     export default{
-        props: ["data_items", "refreshing_data", 'selected_items', 'route'],
+        props: ["inventory_items", "actions", "selected"],
         data: function() {
             return {
                 opened_drawers : [],
-                active_requests : []
+                active_http_requests : []
             }
         },
         created : function() {
             var scope = this;
+
+            $Bus.$on('facebook-selection:changed', function(){
+                scope.opened_drawers = [];
+                $('.btn-group-prpl').find('button.active').removeClass('active');
+            });
+
             $Bus.$on('inventory:request-reset', function(){
 
             });
+
             $Bus.$on('popout-overlay:closed', function(){
-                if (scope.active_requests.length > 0) {
-                    $.each(scope.active_requests, function(){
+                if (scope.active_http_requests.length > 0) {
+                    $.each(scope.active_http_requests, function(){
                         this.abort();
                     });
                 }
@@ -111,14 +118,14 @@
                             this.previousRequest.abort();
                         }
                         this.previousRequest = request;
-                        scope.active_requests.push(request);
+                        scope.active_http_requests.push(request);
                     }
                 }).then(function(response){
                     $Bus.$emit('popout-overlay:change-content', response.body);
                 }, function(response){
                     $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
                 }).finally(function(){
-                    scope.active_requests = [];
+                    scope.active_http_requests = [];
                 });
             },
             addToOpenedDrawers:function(obj){
@@ -178,14 +185,14 @@
                 }
             },
             removeSizeFromSelected : function(size) {
-                var index = this.selected_items.indexOf(size);
+                var index = this.selected.items.indexOf(size);
                 if (index != -1) {
-                    this.selected_items.splice(index, 1);
+                    this.selected.items.splice(index, 1);
                 }
             },
             addSizeToSelected: function(size) {
-                if (this.selected_items.indexOf(size) == -1) {
-                    this.selected_items.push(size);
+                if (this.selected.items.indexOf(size) == -1) {
+                    this.selected.items.push(size);
                 }
             }
         },
@@ -194,7 +201,6 @@
 
             },
             'refreshing_data' : function(){
-                this.selected_items = [];
                 this.opened_drawers = [];
             }
         }

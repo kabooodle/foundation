@@ -6217,9 +6217,9 @@ if (module.hot) {(function () {  module.hot.accept()
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-4a79d343", module.exports)
+    hotAPI.createRecord("_v-c06e6dee", module.exports)
   } else {
-    hotAPI.update("_v-4a79d343", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-c06e6dee", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5}],8:[function(require,module,exports){
@@ -6439,9 +6439,9 @@ if (module.hot) {(function () {  module.hot.accept()
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-e7710730", module.exports)
+    hotAPI.createRecord("_v-7a6e262e", module.exports)
   } else {
-    hotAPI.update("_v-e7710730", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-7a6e262e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"../FileUpload.vue":7,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5}]},{},[8]);

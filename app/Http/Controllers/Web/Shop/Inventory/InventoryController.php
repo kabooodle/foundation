@@ -58,7 +58,7 @@ class InventoryController extends Controller
      *
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|Redirector
      */
-    public function index_old(Request $request, $username)
+    public function detailed(Request $request, $username)
     {
         if (user()->username <> $username) {
             return redirect('/');
@@ -144,7 +144,7 @@ class InventoryController extends Controller
             return $claim->wasRejected() ? false : true;
         });
 
-        return $this->view('inventory.index_old')->with(compact('data', 'filters'));
+        return $this->view('inventory.detailed')->with(compact('data', 'filters'));
     }
 
     /**

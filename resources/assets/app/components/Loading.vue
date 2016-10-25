@@ -35,18 +35,18 @@
     export default{
         data: function() {
             return {
-                kb_overlay_show: false,
+                kb_overlay_show : false,
             }
         },
         created : function() {
             const scope = this;
 
-            $Bus.$on('loader:request-show', function(){
-                scope.kb_overlay_show = true;
-            });
-
             $Bus.$on('loader:request-close', function(){
                 scope.kb_overlay_show = false;
+            });
+
+            $Bus.$on('loader:request-show', function(){
+                scope.kb_overlay_show = true;
             });
         }
     }

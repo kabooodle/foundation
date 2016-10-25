@@ -46,8 +46,8 @@ elixir(function (mix) {
             'vendor/theme/scripts/ui-screenfull.js',
             'vendor/theme/scripts/ui-scroll-to.js',
             'vendor/theme/scripts/ui-jp.js',
-            'app/util.js'
-            // 'app/s3uploader.js'
+            'app/util.js',
+            'app/s3uploader.js'
 
     ], elixir.config.publicPath + 'js/base.js')
 });
