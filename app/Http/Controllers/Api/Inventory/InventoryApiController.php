@@ -30,14 +30,15 @@ class InventoryApiController extends AbstractApiController
         foreach($data as $styleId => $items) {
             $groupings[$styleId] = [
                 'name' => null,
-                'total' => $items->count()
+                'total' => $items->count(),
+                'id' => $styleId,
             ];
             if ($items->count() > 0) {
                 foreach($items as $item) {
                     if(! $groupings[$styleId]['name']) {
                         $groupings[$styleId]['name'] = $item->style->name;
                     }
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['id'] = str_random(16);
+                    $groupings[$styleId]['sizes'][$item->styleSize->id]['id'] = $item->styleSize->id;
                     $groupings[$styleId]['sizes'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
                     $groupings[$styleId]['sizes'][$item->styleSize->id]['name'] = $item->styleSize->name;
                     $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] : $item->initial_qty;

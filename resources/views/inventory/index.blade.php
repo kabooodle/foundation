@@ -357,7 +357,7 @@
                                         <div v-if="facebook_album.items && facebook_album.items.length">
                                             <span class="block text-muted text-sm">(@{{  facebook_album.items.length }} items assigned)</span>
                                             <span
-                                            @click="removeFromAlbum(item, facebook_album, $event)"
+                                            @click="removeFromAlbum(item, facebook_album, selected.fb_group, $event)"
                                             class="img-thumb" v-for="item in facebook_album.items" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
                                                 <img
                                                 v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)"

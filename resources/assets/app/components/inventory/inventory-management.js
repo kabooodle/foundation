@@ -66,9 +66,30 @@ new Vue({
     created : function() {
         this.getInventory();
         this.getPostables();
-        this.$on('post-menu:closed', function(){
+        const scope = this;
+
+        $Bus.$on('post-menu:closed', function(){
             // this.facebook_album_selected = false;
             // $('[name=facebookalbums]:checked').prop('checked', false);
+        });
+
+        $Bus.$on('facebook-album:changed', function(){
+            let album_items = scope.selected.fb_album.items;
+            if (album_items && album_items.length > 0) {
+                scope.selected.items = scope.selected.fb_album.items;
+            }
+        });
+
+        $Bus.$on('facebook-group:changed', function(){
+            // scope.postables.facebookgroups = _.map(scope.postables.facebookgroups, function(group){
+            //     group.albums = _.map(group.albums, function(album){
+            //         if (album.hasOwnProperty('items') && album.items.length > 0){
+            //             album.items = [];
+            //         }
+            //         return album;
+            //     });
+            //     return group;
+            // });
         });
     },
     watch: {
@@ -89,10 +110,10 @@ new Vue({
         // },
         selected : {
             handler: function(selected){
-                let selected_items = selected.items;
-                if (selected.fb_album && selected_items.length > 0){
+                let selected_items = this.selected.items;
+                if (this.selected.fb_album && selected_items.length > 0){
                     this.assignItemsToSelectedAlbum(selected_items);
-                    this.sums.selected_postables = _.chain(selected.postables.fb_albums)
+                    this.sums.selected_postables = _.chain(this.selected.postables.fb_albums)
                         .filter(function(album){
                             return album.hasOwnProperty('items') && album.items.length > 0;
                         })
@@ -123,8 +144,8 @@ new Vue({
             } else {
                 this.resetData('selected.fb_group')
             }
-            $Bus.$emit('facebook-selection:changed');
             this.resetData('selected.items');
+            $Bus.$emit('facebook-group:changed');
         },
         getFacebookGroup : function(id) {
             let facebookgroups = this.postables.facebookgroups;
@@ -150,8 +171,8 @@ new Vue({
             if(this.selected.postables.fb_albums.indexOf(facebook) == -1) {
                 this.selected.postables.fb_albums.push(facebook);
             }
-            $Bus.$emit('facebook-selection:changed');
             this.resetData('selected.items');
+            $Bus.$emit('facebook-album:changed');
         },
         setPostingToSales : function(val){
             this.posting_to_sales = val;

@@ -14,7 +14,6 @@
                             <div class="pull-left btn-group-prpl" data-toggle="buttons">
                                 <button
                                         v-for="size in style.sizes"
-                                        data-selected="false"
                                         @click="toggleSize(style, size, size.items, $event)"
                                         class="btn white btn-xs"
                                         style="margin-right: 3px;">
@@ -28,7 +27,7 @@
                 <div
                         v-for="size in style.sizes"
                         class="box-size-drawer"
-                        v-if="opened_drawers.indexOf(size) > -1"
+                        v-if="opened_drawers.indexOf(style.id+'_'+size.id) > -1"
                         @data-id="{{ size.id }}">
                     <div class="box-divider"></div>
                     <div class="box-body">
@@ -36,13 +35,13 @@
                             <div class="col-sm-2">
                                 <a href="javascript:;"
                                    class=" _500 drawer-toggle"
-                                   @click="( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )"
+                                   @click="(opened_drawers.indexOf(style.id+'_'+size.id) > -1 ? closeSizeDrawer(style.id, size.id, $event) : openSizeDrawer(style.id, size.id, $event) )"
                                 >
                                     {{ size.name }} <span class="text-muted text-sm"><i class="fa fa-angle-up"></i></span>
                                 </a>
                             </div>
                             <div class="col-sm-10">
-                                <div class="item-box"  v-if="opened_drawers.indexOf(size) > -1" >
+                                <div class="item-box"  v-if="opened_drawers.indexOf(style.id+'_'+size.id) > -1" >
                                     <div class="row row-horizon">
                                         <div v-for="item in size.items" class="col-sm-2 btn-group-prpl">
                                             <button
@@ -85,11 +84,21 @@
             }
         },
         created : function() {
-            var scope = this;
+            const scope = this;
 
-            $Bus.$on('facebook-selection:changed', function(){
-                scope.opened_drawers = [];
-                $('.btn-group-prpl').find('button.active').removeClass('active');
+            $Bus.$on('facebook-group:changed', function(){
+                scope.clearSelectedItems();
+            });
+
+            $Bus.$on('facebook-album:changed', function(){
+                scope.clearSelectedItems();
+                // We want to open the drawers where items are selected.
+                let selected_items = scope.selected.items;
+                if(selected_items && selected_items.length > 0){
+                    _.each(selected_items, function(item){
+                        scope.openSizeDrawer(item.style_id, item.size_id);
+                    });
+                }
             });
 
             $Bus.$on('inventory:request-reset', function(){
@@ -105,6 +114,10 @@
             });
         },
         methods : {
+            clearSelectedItems : function(){
+                this.opened_drawers = [];
+                $('.btn-group-prpl').find('button.active').removeClass('active');
+            },
             editItemButtonClicked : function(item, event) {
                 $Bus.$emit('popout-overlay:request-open');
                 var scope = this;
@@ -128,16 +141,14 @@
                     scope.active_http_requests = [];
                 });
             },
-            addToOpenedDrawers:function(obj){
-                if (this.opened_drawers.indexOf(obj) == -1) {
-                    this.opened_drawers.push(obj);
+            addToOpenedDrawers:function(styleid, sizeid){
+                var combo = styleid+'_'+sizeid;
+                if(! _.contains(this.opened_drawers, combo)){
+                    this.opened_drawers.push(combo);
                 }
             },
-            removeFromOpenedDrawers:function(obj){
-                var index = this.opened_drawers.indexOf(obj);
-                if (index != -1) {
-                    this.opened_drawers.splice(index, 1);
-                }
+            removeFromOpenedDrawers:function(styleid, sizeid){
+                this.opened_drawers = _.without(this.opened_drawers, styleid+'_'+sizeid);
             },
             openAllSizeDrawers : function(style, event){
                 event.preventDefault();
@@ -146,26 +157,26 @@
                 if($el.hasClass('opened-drawers')) {
                     $el.removeClass('opened-drawers').find('.fa').removeClass('fa-angle-up').addClass('fa-angle-down');
                     $.each(style.sizes, function(){
-                        scope.closeSizeDrawer(this, event);
+                        scope.closeSizeDrawer(style.id, this.id, event);
                     });
                 } else {
                     $el.addClass('opened-drawers').find('.fa').addClass('fa-angle-up').removeClass('fa-angle-down');
                     $.each(style.sizes, function(){
-                        scope.openSizeDrawer(this, event);
+                        scope.openSizeDrawer(style.id, this.id, event);
                     });
                 }
             },
-            openSizeDrawer : function(size, event){
-                event.preventDefault();
-                $('[data-id='+size.id+']').stop(true,true).slideDown();
-                this.addToOpenedDrawers(size);
-                this.$emit('drawer:opened', size);
+            openSizeDrawer : function(styleid, sizeid, event){
+                if (event)  event.preventDefault();
+                $('[data-id='+sizeid+']').stop(true,true).slideDown();
+                this.addToOpenedDrawers(styleid, sizeid);
+                this.$emit('drawer:opened', styleid, sizeid);
             },
-            closeSizeDrawer : function(size, event) {
+            closeSizeDrawer : function(styleid, sizeid, event) {
                 event.preventDefault();
-                $('[data-id='+size.id+']').stop(true,true).slideUp();
-                this.removeFromOpenedDrawers(size);
-                this.$emit('drawer:closed', size);
+                $('[data-id='+sizeid+']').stop(true,true).slideUp();
+                this.removeFromOpenedDrawers(styleid, sizeid);
+                this.$emit('drawer:closed', styleid, sizeid);
             },
             toggleSize : function(style, size, items, event) {
                 event.preventDefault();
@@ -176,12 +187,12 @@
                     $.each(items, function(i,v){
                         scope.removeSizeFromSelected(this);
                     });
-                    this.closeSizeDrawer(size,event);
+                    this.closeSizeDrawer(style.id, size.id,event);
                 } else {
                     $.each(items, function(i,v){
                         scope.addSizeToSelected(this);
                     });
-                    this.openSizeDrawer(size, event);
+                    this.openSizeDrawer(style.id, size.id, event);
                 }
             },
             removeSizeFromSelected : function(size) {

@@ -6170,9 +6170,30 @@ new Vue({
     created: function created() {
         this.getInventory();
         this.getPostables();
-        this.$on('post-menu:closed', function () {
+        var scope = this;
+
+        $Bus.$on('post-menu:closed', function () {
             // this.facebook_album_selected = false;
             // $('[name=facebookalbums]:checked').prop('checked', false);
+        });
+
+        $Bus.$on('facebook-album:changed', function () {
+            var album_items = scope.selected.fb_album.items;
+            if (album_items && album_items.length > 0) {
+                scope.selected.items = scope.selected.fb_album.items;
+            }
+        });
+
+        $Bus.$on('facebook-group:changed', function () {
+            // scope.postables.facebookgroups = _.map(scope.postables.facebookgroups, function(group){
+            //     group.albums = _.map(group.albums, function(album){
+            //         if (album.hasOwnProperty('items') && album.items.length > 0){
+            //             album.items = [];
+            //         }
+            //         return album;
+            //     });
+            //     return group;
+            // });
         });
     },
     watch: {
@@ -6193,10 +6214,10 @@ new Vue({
         // },
         selected: {
             handler: function handler(selected) {
-                var selected_items = selected.items;
-                if (selected.fb_album && selected_items.length > 0) {
+                var selected_items = this.selected.items;
+                if (this.selected.fb_album && selected_items.length > 0) {
                     this.assignItemsToSelectedAlbum(selected_items);
-                    this.sums.selected_postables = _.chain(selected.postables.fb_albums).filter(function (album) {
+                    this.sums.selected_postables = _.chain(this.selected.postables.fb_albums).filter(function (album) {
                         return album.hasOwnProperty('items') && album.items.length > 0;
                     }).reduce(function (k, v) {
                         return k + v.items.length;
@@ -6224,8 +6245,8 @@ new Vue({
             } else {
                 this.resetData('selected.fb_group');
             }
-            $Bus.$emit('facebook-selection:changed');
             this.resetData('selected.items');
+            $Bus.$emit('facebook-group:changed');
         },
         getFacebookGroup: function getFacebookGroup(id) {
             var facebookgroups = this.postables.facebookgroups;
@@ -6251,8 +6272,8 @@ new Vue({
             if (this.selected.postables.fb_albums.indexOf(facebook) == -1) {
                 this.selected.postables.fb_albums.push(facebook);
             }
-            $Bus.$emit('facebook-selection:changed');
             this.resetData('selected.items');
+            $Bus.$emit('facebook-album:changed');
         },
         setPostingToSales: function setPostingToSales(val) {
             this.posting_to_sales = val;
@@ -6363,9 +6384,19 @@ exports.default = {
     created: function created() {
         var scope = this;
 
-        $Bus.$on('facebook-selection:changed', function () {
-            scope.opened_drawers = [];
-            $('.btn-group-prpl').find('button.active').removeClass('active');
+        $Bus.$on('facebook-group:changed', function () {
+            scope.clearSelectedItems();
+        });
+
+        $Bus.$on('facebook-album:changed', function () {
+            scope.clearSelectedItems();
+            // We want to open the drawers where items are selected.
+            var selected_items = scope.selected.items;
+            if (selected_items && selected_items.length > 0) {
+                _.each(selected_items, function (item) {
+                    scope.openSizeDrawer(item.style_id, item.size_id);
+                });
+            }
         });
 
         $Bus.$on('inventory:request-reset', function () {});
@@ -6379,6 +6410,10 @@ exports.default = {
         });
     },
     methods: {
+        clearSelectedItems: function clearSelectedItems() {
+            this.opened_drawers = [];
+            $('.btn-group-prpl').find('button.active').removeClass('active');
+        },
         editItemButtonClicked: function editItemButtonClicked(item, event) {
             $Bus.$emit('popout-overlay:request-open');
             var scope = this;
@@ -6402,16 +6437,14 @@ exports.default = {
                 scope.active_http_requests = [];
             });
         },
-        addToOpenedDrawers: function addToOpenedDrawers(obj) {
-            if (this.opened_drawers.indexOf(obj) == -1) {
-                this.opened_drawers.push(obj);
+        addToOpenedDrawers: function addToOpenedDrawers(styleid, sizeid) {
+            var combo = styleid + '_' + sizeid;
+            if (!_.contains(this.opened_drawers, combo)) {
+                this.opened_drawers.push(combo);
             }
         },
-        removeFromOpenedDrawers: function removeFromOpenedDrawers(obj) {
-            var index = this.opened_drawers.indexOf(obj);
-            if (index != -1) {
-                this.opened_drawers.splice(index, 1);
-            }
+        removeFromOpenedDrawers: function removeFromOpenedDrawers(styleid, sizeid) {
+            this.opened_drawers = _.without(this.opened_drawers, styleid + '_' + sizeid);
         },
         openAllSizeDrawers: function openAllSizeDrawers(style, event) {
             event.preventDefault();
@@ -6420,26 +6453,26 @@ exports.default = {
             if ($el.hasClass('opened-drawers')) {
                 $el.removeClass('opened-drawers').find('.fa').removeClass('fa-angle-up').addClass('fa-angle-down');
                 $.each(style.sizes, function () {
-                    scope.closeSizeDrawer(this, event);
+                    scope.closeSizeDrawer(style.id, this.id, event);
                 });
             } else {
                 $el.addClass('opened-drawers').find('.fa').addClass('fa-angle-up').removeClass('fa-angle-down');
                 $.each(style.sizes, function () {
-                    scope.openSizeDrawer(this, event);
+                    scope.openSizeDrawer(style.id, this.id, event);
                 });
             }
         },
-        openSizeDrawer: function openSizeDrawer(size, event) {
-            event.preventDefault();
-            $('[data-id=' + size.id + ']').stop(true, true).slideDown();
-            this.addToOpenedDrawers(size);
-            this.$emit('drawer:opened', size);
+        openSizeDrawer: function openSizeDrawer(styleid, sizeid, event) {
+            if (event) event.preventDefault();
+            $('[data-id=' + sizeid + ']').stop(true, true).slideDown();
+            this.addToOpenedDrawers(styleid, sizeid);
+            this.$emit('drawer:opened', styleid, sizeid);
         },
-        closeSizeDrawer: function closeSizeDrawer(size, event) {
+        closeSizeDrawer: function closeSizeDrawer(styleid, sizeid, event) {
             event.preventDefault();
-            $('[data-id=' + size.id + ']').stop(true, true).slideUp();
-            this.removeFromOpenedDrawers(size);
-            this.$emit('drawer:closed', size);
+            $('[data-id=' + sizeid + ']').stop(true, true).slideUp();
+            this.removeFromOpenedDrawers(styleid, sizeid);
+            this.$emit('drawer:closed', styleid, sizeid);
         },
         toggleSize: function toggleSize(style, size, items, event) {
             event.preventDefault();
@@ -6450,12 +6483,12 @@ exports.default = {
                 $.each(items, function (i, v) {
                     scope.removeSizeFromSelected(this);
                 });
-                this.closeSizeDrawer(size, event);
+                this.closeSizeDrawer(style.id, size.id, event);
             } else {
                 $.each(items, function (i, v) {
                     scope.addSizeToSelected(this);
                 });
-                this.openSizeDrawer(size, event);
+                this.openSizeDrawer(style.id, size.id, event);
             }
         },
         removeSizeFromSelected: function removeSizeFromSelected(size) {
@@ -6478,7 +6511,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"!actions.refreshing_data\">\n        <div class=\"box style-container\" v-for=\"style in inventory_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\" data-toggle=\"buttons\">\n                            <button v-for=\"size in style.sizes\" data-selected=\"false\" @click=\"toggleSize(style, size, size.items, $event)\" class=\"btn white btn-xs\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(size) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"( opened_drawers.indexOf(size) != 1 ? closeSizeDrawer(size, $event) : openSizeDrawer(size, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(size) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <div v-for=\"item in size.items\" class=\"col-sm-2 btn-group-prpl\">\n                                        <button v-bind:aria-pressed=\"(selected.items.indexOf(item) != -1 ? 'true' : null )\" @click=\"( selected.items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selected.items.indexOf(item) != -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                    <span class=\"item block\">\n                                                        <img v-bind:src=\"(item.files ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)\" class=\"img-responsive\" style=\"width: 64px; height: 64px;\">\n                                                    </span>\n                                            <span class=\"p-a-o text-sm clearfix block\">\n                                                        Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span>  <span class=\"text-muted\">${{ item.price_usd }}</span>\n                                                    </span>\n                                        </button>\n                                        <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs white\">Edit</button>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"!actions.refreshing_data\">\n        <div class=\"box style-container\" v-for=\"style in inventory_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\" data-toggle=\"buttons\">\n                            <button v-for=\"size in style.sizes\" @click=\"toggleSize(style, size, size.items, $event)\" class=\"btn white btn-xs\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"(opened_drawers.indexOf(style.id+'_'+size.id) > -1 ? closeSizeDrawer(style.id, size.id, $event) : openSizeDrawer(style.id, size.id, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <div v-for=\"item in size.items\" class=\"col-sm-2 btn-group-prpl\">\n                                        <button v-bind:aria-pressed=\"(selected.items.indexOf(item) != -1 ? 'true' : null )\" @click=\"( selected.items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selected.items.indexOf(item) != -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                    <span class=\"item block\">\n                                                        <img v-bind:src=\"(item.files ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)\" class=\"img-responsive\" style=\"width: 64px; height: 64px;\">\n                                                    </span>\n                                            <span class=\"p-a-o text-sm clearfix block\">\n                                                        Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span>  <span class=\"text-muted\">${{ item.price_usd }}</span>\n                                                    </span>\n                                        </button>\n                                        <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs white\">Edit</button>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
