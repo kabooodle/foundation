@@ -39,14 +39,22 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @var array
      */
+    protected $appends = [
+        'uuid'
+    ];
+
+    /**
+     * @var array
+     */
     protected $with = [
         'style',
         'styleSize',
-        'tagged',
+//        'tagged',
         'flashsales',
 //        'claims', // <- deathtrap of recursion
         'files',
-        'comments'
+        'comments',
+        'sales'
     ];
 
     /**
@@ -225,6 +233,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function size()
+    {
+        return $this->styleSize();
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function flashsales()
@@ -248,6 +264,22 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function claims()
     {
         return $this->hasMany(Claims::class, 'inventory_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function pendingClaims()
+    {
+        return $this->hasMany(Claims::class, 'inventory_id')->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function sales()
+    {
+        return $this->acceptedClaims();
     }
 
     /**
@@ -319,6 +351,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @return string
      */
+    public function getUuidAttribute()
+    {
+        return $this->getUUID();
+    }
+
+    /**
+     * @return string
+     */
     public function getNameAttribute() : string
     {
         return $this->getName();
@@ -330,5 +370,17 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getCategoriesAttribute()
     {
         return $this->tags;
+    }
+
+    public static function filter(array $filters)
+    {
+        $base = [
+            'style_id'      => [],
+            'size_id'       => [],
+            'has_claims'    => false,
+            'has_sales'     => false
+        ];
+
+        $filters = $base + $filters;
     }
 }

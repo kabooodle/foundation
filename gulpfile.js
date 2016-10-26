@@ -1,8 +1,7 @@
 var elixir = require('laravel-elixir');
 require('laravel-elixir-vueify');
-js_obfuscator = require('gulp-js-obfuscator');
 
-// elixir.config.production = true;
+// elixir.config.production = true;,
 elixir.config.assetsPath = 'resources/assets/';
 elixir.config.appPath = '';
 elixir.config.publicPath = 'public/assets/';
@@ -10,6 +9,14 @@ elixir.config.js.folder = elixir.config.css.folder = elixir.config.css.sass.fold
 
 elixir(function (mix) {
 
+    // Kabooodle VUE APP
+    mix.browserify('app/app.js');
+
+    // VUE Components
+    mix.browserify('app/components/inventory/inventory-management.js');
+    mix.browserify('app/components/inventory/inventory-create.js');
+
+    // Vendor File
     mix.browserify('app/vendor.js');
 
     mix
@@ -23,40 +30,13 @@ elixir(function (mix) {
         ], elixir.config.publicPath + 'css/vendor.css')
 
         .styles([
-            // 'vendor/theme/scripts/jquery/select2/dist/css/select2.css',
-            // 'vendor/theme/scripts/jquery/select2-bootstrap-theme/dist/select2-bootstrap.css',
-            // 'vendor/theme/scripts/jquery/select2-bootstrap-theme/dist/select2-bootstrap.4.css'
             'vendor/selectizejs/dist/css/selectize.css',
             'vendor/selectizejs/dist/css/selectize.default.css',
             'vendor/datetimepicker/bootstrap-datetimepicker.min.css',
             'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.css',
             'vendor/emojione/emojione.css',
             'vendor/emojionearea/emojionearea.css'
-            // 'vendor/selectizejs/dist/css/selectize.bootstrap3.css'
         ], elixir.config.publicPath + 'css/merchant.css')
-
-        // .scripts([
-            // 'vendor/theme/scripts/jquery/jquery/dist/jquery.js',
-            // 'vendor/vuejs/vue.1.0.26.js',
-            // 'vendor/vuejs/vue-resource.js',
-            // 'vendor/vuejs/vue-validator.js',
-            // 'vendor/theme/scripts/jquery/tether/dist/js/tether.min.js',
-            // 'vendor/theme/scripts/jquery/bootstrap/dist/js/bootstrap.js',
-            // 'vendor/theme/scripts/jquery/underscore/underscore-min.js',
-            // 'vendor/moment/moment.js',
-            // 'vendor/moment/moment-tz.js',
-            // 'vendor/datetimepicker/bootstrap-datetimepicker.min.js',
-            // 'vendor/jquery/noty/packaged/jquery.noty.packaged.js',
-            // 'vendor/clipboard/clipboard.js',
-            // 'vendor/lightbox/lightbox.js'
-        // ], elixir.config.publicPath + 'js/vendor.js')
-
-        // .scripts([
-            // 'vendor/selectizejs/dist/js/standalone/selectize.js',
-            // 'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.js',
-            // 'vendor/emojione/emojione.js',
-            // 'vendor/emojionearea/emojionearea.js'
-        // ], elixir.config.publicPath + 'js/merchant.js')
 
         .scripts([
             'vendor/theme/scripts/ui-device.js',
@@ -66,7 +46,7 @@ elixir(function (mix) {
             'vendor/theme/scripts/ui-screenfull.js',
             'vendor/theme/scripts/ui-scroll-to.js',
             'vendor/theme/scripts/ui-jp.js',
-            'app/base.js',
+            'app/util.js',
             'app/s3uploader.js'
 
     ], elixir.config.publicPath + 'js/base.js')

@@ -1,411 +1,427 @@
-@extends('layouts.body_w_leftnav')
+@extends('layouts.full', ['contentId' => 'manage_inventory'])
 
 @section('body-menu')
-
-
-    <div class="pull-left">
-        <div class="btn-toolbar center-block text-center">
-            <div class="btn-group dropdown">
-                <button class="btn white btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <span class="dropdown-label">Filter</span>
-                    <span class="caret"></span>
-                </button>
-                <div class="dropdown-menu text-left text-sm">
-                    <a class="dropdown-item" href="">By Name</a>
-                    <a class="dropdown-item" href="">By Quantity</a>
-                </div>
+    <div class="center-block text-center">
+        <button
+                class="btn white btn-sm "
+                data-toggle="tooltip"
+                title="Refresh Inventory"
+                data-placement="top"
+                v-on:click="getInventory"
+                :disabled="actions.refreshing_data">
+            <i class="fa fa-refresh"></i>
+        </button>
+        <div class="btn-group dropdown ">
+            <button
+                    :disabled="selected.items.length == 0 || actions.refreshing_data"
+                    v-bind:class="{'disabled' : selected.items.length == 0 || actions.refreshing_data }"
+                    class=" btn white btn-sm dropdown-toggle"
+                    data-toggle="dropdown">
+                <span class="dropdown-label">Bulk</span><span class="caret"></span>
+            </button>
+            <div class="dropdown-menu text-left text-sm">
+                <a class="dropdown-item text-danger" href="">Delete</a>
             </div>
-
-            <div class="btn-group dropdown ">
-                <button class="btn white btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <span class="dropdown-label">Bulk</span>
-                    <span class="caret"></span>
-                </button>
-                <div class="dropdown-menu text-left text-sm">
-                    <a class="dropdown-item" href="">Delete</a>
-                </div>
-            </div>
-
-            <a data-toggle="modal" data-target="#m-md"
-               data-backdrop="static" data-keyboard="false" href="#" disabled class="disabled btn_add_selected text-white  btn btn-sm warning">Add Selected
-                Items to Sale</a>
-
-            <a data-toggle="modal" data-target="#m-md-fb"
-               data-backdrop="static" data-keyboard="false" href="#" disabled class="disabled text-white btn_add_selected btn btn-sm warning">Add Selected
-                Items to Facebook</a>
-
         </div>
+        <button
+                class="btn white btn-sm"
+                :disabled="selected.items.length == 0 || actions.refreshing_data"
+                v-bind:class="{'disabled' : selected.items.length == 0 || actions.refreshing_data }"
+        @click="resetInventory">
+        Unselect All (@{{selected.items.length}})
+        </button>
+        <button
+                v-on:click="openPostMenu"
+                :disabled="actions.refreshing_data"
+                v-bind:class="{'disabled' : actions.refreshing_data }"
+                class="btn primary btn-sm "
+                id="navbarSideButton">Post To Sales
+        </button>
+        {{--<button class="btn white btn-sm " id="navbarSideButton">Filter Items</button>--}}
     </div>
-
-
-    <div class="pull-right">
-        <a href="{{ route('shop.inventory.index', [user()->username]) }}" class="btn btn-sm white">Manage</a>
-        <a href="{{ route('shop.inventory.create', [user()->username]) }}" class="btn btn-sm white">Add Items</a>
-    </div>
-
 @endsection
 
+
+@push('header-styles')
+<style>
+    /*@media only screen and (max-width: 959px) {*/
+    /*.navbar-side {*/
+    /*width: 100% !important;*/
+    /*}*/
+    /*}*/
+    .img-thumb {
+        position: relative;
+    }
+
+    .img-thumb img {
+        border-radius: .25rem;
+    }
+
+    .img-thumb:hover img {
+        opacity: .4;
+    }
+
+    .img-thumb .fa {
+        display: none;
+    }
+
+    .img-thumb:hover .fa {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: -6px;
+        margin-left: -1px;
+        color: red;
+    }
+
+    .reveal {
+        right: 0 !important;;
+    }
+
+    .navbar-side {
+        -webkit-transform: translateX(0%);
+        -ms-transform: translateX(0%);
+        transform: translateX(0%);
+        -webkit-transition: 300ms ease;
+        transition: 300ms ease;
+        height: 100% !important;
+        width: 450px;
+        position: fixed;
+        top: 64px;
+        bottom: 0;
+        right: -460px;
+        padding: 0;
+        list-style: none;
+        background-color: rgba(43, 41, 56, .95);
+        z-index: 2000;
+    }
+
+    .navbar-side-inner {
+        /*height: 100%;*/
+        /*width: 100%;*/
+        /*margin-bottom: 60px;*/
+        /*overflow-y: scroll;*/
+    }
+
+    .savesales {
+        position: fixed;
+        bottom: 100px;
+        left: 0;
+        padding: 10px;
+        margin: 0;
+        width: 100%;
+    }
+
+    tr.highlight_row td {
+        background-color: #fefbf2;
+    }
+
+    .table-wrapper {
+        position: relative;
+    }
+
+    .table-wrapper tbody tr:hover {
+        cursor: pointer;
+    }
+
+    /* Loading Animation: */
+    .vuetable-wrapper {
+        position: relative;
+        opacity: 1;
+    }
+
+    .loader {
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s linear;
+        width: 200px;
+        height: 30px;
+        font-size: 1em;
+        text-align: center;
+        margin-left: -100px;
+        letter-spacing: 4px;
+        color: #f77a99;
+        position: absolute;
+        top: 20px;
+        left: 50%;
+    }
+
+    .loading .loader {
+        visibility: visible;
+        opacity: 1;
+        z-index: 100;
+    }
+
+    .loading .vuetable {
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+    }
+
+    span.multiselect-native-select {
+        position: relative
+    }
+
+    span.multiselect-native-select select {
+        border: 0 !important;
+        clip: rect(0 0 0 0) !important;
+        height: 1px !important;
+        margin: -1px -1px -1px -3px !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        position: absolute !important;
+        width: 1px !important;
+        left: 50%;
+        top: 30px
+    }
+
+    .multiselect-container {
+        position: absolute;
+        list-style-type: none;
+        margin: 0;
+        padding: 0
+    }
+
+    .multiselect-container .input-group {
+        margin: 5px
+    }
+
+    .multiselect-container > li {
+        padding: 0
+    }
+
+    .multiselect-container > li > a.multiselect-all label {
+        font-weight: 700
+    }
+
+    .multiselect-container > li.multiselect-group label {
+        margin: 0;
+        padding: 3px 20px 3px 20px;
+        height: 100%;
+        font-weight: 700
+    }
+
+    .multiselect-container > li.multiselect-group-clickable label {
+        cursor: pointer
+    }
+
+    .multiselect-container > li > a {
+        padding: 0
+    }
+
+    .multiselect-container > li > a > label {
+        margin: 0;
+        height: 100%;
+        cursor: pointer;
+        font-weight: 400;
+        padding: 3px 20px 3px 10px
+    }
+
+    .multiselect-container > li > a > label.radio,
+    .multiselect-container > li > a > label.checkbox {
+        margin: 0
+    }
+
+    .multiselect-container > li > a > label > input[type=checkbox] {
+        margin-bottom: 5px
+    }
+
+    .btn-group > .btn-group:nth-child(2) > .multiselect.btn {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px
+    }
+
+    .form-inline .multiselect-container label.checkbox,
+    .form-inline .multiselect-container label.radio {
+        padding: 3px 20px 3px 40px
+    }
+
+    .form-inline .multiselect-container li a label.checkbox input[type=checkbox],
+    .form-inline .multiselect-container li a label.radio input[type=radio] {
+        margin-left: -20px;
+        margin-right: 0
+    }
+
+    .nav-tabs .nav-item {
+        margin-bottom: 0;
+    }
+
+    .nav-tabs .nav-link.active {
+        background: #fff !important;
+    }
+
+    .nav-tabs .nav-link {
+        background: #ccc !important;
+        border-bottom: 0;
+    }
+</style>
+
+@endpush
 
 @section('body-content')
 
-    <style>
-        tr.highlight_row td {
-            background-color: #fefbf2;
-        }
-    </style>
-
-    <table class="table table-condensed table-as-list white">
-        <thead>
-        <tr>
-            <th>
-                <div style="padding-left: 12px !important;"><input id="select_all" type="checkbox" class=""></div>
-            </th>
-            <th class="text-muted">Img</th>
-            <th class="text-muted p-l-0 m-l-0">Style</th>
-            <th class="text-muted p-l-0 m-l-0">Size</th>
-            <th class="text-muted p-l-0 m-l-0">Price</th>
-            <th class="text-muted p-l-0 m-l-0">*Qty</th>
-            <th class="text-muted p-l-0 m-l-0">Claims</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($data as $item)
-            <tr data-id="{{ $item->id }}">
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
-                    valign="middle" class="">
-                    <div class="list-item p-r-0 ">
-                        <input type="checkbox" class="selected_items_checkbox" name="selected_items[]"
-                               value="{{ $item->id }}">
-                    </div>
-                </td>
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important">
-                    <div class="list ">
-                        <div class="list-item p-l-0 p-r-0">
-                            <div class="list-left">
-
-                        <span class="w-50 avatar">
-                            <img src="{{ $item->firstImage() ? $item->firstImage()->location : 'https://placekitten.com/g/32/32'}}">
-                        </span>
-                            </div>
-                            <div class="list-body">
-                                <div class="text-sm hidden-sm hidden-xs hidden-xs-down">
-                                    @if($item->tagged->count() > 0)
-                                        <span class="text-muted">Categories: </span>
-                                        @foreach($item->tagged as $tag) <span
-                                                class="label label-xs outline text-u-c">{!! $tag->tag_name !!}</span> @endforeach
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </td>
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
-                    valign="middle">
-                    <span class="h5 ">   <a href="{{ route('shop.inventory.show', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}"
-                                            class="">{{ $item->style->name }}</a></span>
-                </td>
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
-                    valign="middle">
-                    <span class="h5 ">{{ $item->styleSize->name }}</span>
-                </td>
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
-                    valign="middle">
-                    <span class="h5 ">${{ $item->price_usd }}</span>
-                </td>
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
-                    valign="middle">
-                    <span class="h5">{{ $item->getAvailableQuantity() }}</span>
-                </td>
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
-                    valign="middle">
-                    <span class="h5 "><a href="#"><span class="text-success">{{ $item->acceptedClaims->count() }}</span></a> <span class="text-muted">|</span> <a href="#"><span class="text-warning">{{ $item->pendingClaims->count() }}</span></a></span>
-                </td>
-                <td style="padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important"
-                    valign="middle">
-                    <div class="text-right text-muted p-r-1">
-                        <a href="{{ route('shop.inventory.show', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}"
-                           class="btn white btn-sm _400">View</a> <a
-                                href="{{ route('shop.inventory.edit', [$item->owner->username, $item->obfuscateToURIStringFromModel()]) }}"
-                                class="btn white btn-sm _400">Edit</a>
-                    </div>
-
-                </td>
-            </tr>
-            @if($item->flashsales->count() > 0)
-                <tr data-id="{{ $item->id }}">
-                    <td class="b-t-0 b-" style="border-top: 0"></td>
-                    <td colspan="8" class="b-t-0" style="border-top: 0">
-                        <div class="flashsale_wrapper">
-                            <span class="text-muted">Flash sales:</span>
-                            @foreach($item->flashsales as $flashsale)
-                                <span class="label outline">{{ $flashsale->name }} <a data-toggle="tooltip"
-                                                                              data-route="{{ apiRoute('inventory.associate.destroy', [user()->username, $flashsale->pivot->id]) }}"
-                                                                              data-placement="top"
-                                                                              title="Remove from sale"
-                                                                              class="m-l btn_remove_fromflashsale"
-                                                                              data-item-id="{{ $item->id }}"
-                                                                              data-flashsale-id="{{ $flashsale->id }}"
-                                                                              href="#"><i
-                                                class="fa fa-times"></i></a></span>
-                            @endforeach
-                        </div>
-                    </td>
-                </tr>
-            @endif
-
-            @if($item->facebooksales->count() > 0)
-                <tr data-id="{{ $item->id }}">
-                    <td class="b-t-0 b-" style="border-top: 0"></td>
-                    <td colspan="8" class="b-t-0" style="border-top: 0">
-                        <div class="flashsale_wrapper">
-                            <span class="text-muted">Facebook Albums:</span>
-                            @foreach($item->facebooksales as $facebooksale)
-                                <span class="label outline">{{ $facebooksale->facebook_post_id }} <a data-toggle="tooltip"
-                                                                                      data-route="{{ apiRoute('inventory.associate.destroy', [user()->username, $facebooksale->id]) }}"
-                                                                                      data-placement="top"
-                                                                                      title="Remove from sale"
-                                                                                      class="m-l btn_remove_fromflashsale"
-                                                                                      data-item-id="{{ $item->id }}"
-                                                                                      data-flashsale-id="{{ $facebooksale->id }}"
-                                                                                      href="#"><i
-                                                class="fa fa-times"></i></a></span>
-                            @endforeach
-                        </div>
-                    </td>
-                </tr>
-            @endif
-
-        @endforeach
-        </tbody>
-    </table>
-
-
-    <div class="center-block text-center">
-        {{ $data->links() }}
-    </div>
-
-    <div id="m-md" class="modal" data-backdrop="true" style="display: none;">
-        <div class="row-col h-v">
-            <div class="row-cell v-m">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        {{ Form::open(['class' => 'form-save']) }}
-                        <div class="modal-header">
-                            <h5 class="modal-title">Select sales to assign item</h5>
-                        </div>
-                        <div class="modal-body">
-                            {{--<div class="form-group">--}}
-                                {{--<label class="md-check">--}}
-                                    {{--<input type="checkbox" class="has-value" name="flashsales[]"--}}
-                                           {{--value="{{ user()->username }}">--}}
-                                    {{--<i class="green"></i>--}}
-                                    {{--Your Store--}}
-                                {{--</label>--}}
-                            {{--</div>--}}
-
-                            @foreach(user()->flashsalesAsSellerAndAdmins as $flashSale)
-                                <div class="form-group">
-                                    <label class="md-check">
-                                        <input type="checkbox" class="has-value" name="flashsales[]"
-                                               value="{{ $flashSale->id }}">
-                                        <i class="green"></i>
-                                        {!! $flashSale->name !!}
+    <div
+            class="navbar-side"
+            id="navbarSide">
+        <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}"
+              methods="POST">
+            <div class="navbar-side-inner p-a">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a data-toggle="tab" class="nav-link active" href="#post_flashsales">
+                            Flash Sales
+                            {{--<small class="block text-sm text-center text-muted">--}}
+                                {{--(@{{ get_selected_flashsales_sales.length }} selected)--}}
+                                {{--@{{ sums.selected_postables }}--}}
+                            {{--</small>--}}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-toggle="tab" class="nav-link" href="#post_facebook">Facebook
+                            {{--<small class="block text-sm text-center text-muted">--}}
+                                {{--(@{{ get_selected_facebook_sales.length }} items assigned)--}}
+                            {{--</small>--}}
+                        </a>
+                    </li>
+                </ul>
+                <div class="box">
+                    <div class="tab-content p-a">
+                        <div class="tab-pane active" id="post_flashsales">
+                            <div v-if="postables.flashsales && postables.flashsales.length > 0"
+                                 v-for="flashsale in postables.flashsales">
+                                <div class="checkbox">
+                                    <label>
+                                        <input
+                                                name="flashsalesales_ids[]"
+                                                :value="flashsale.id"
+                                                {{--v-bind:checked="( get_selected_flashsales_sales.indexOf(flashsale.id) > -1 ? 'checked' : false )"--}}
+                                                type="checkbox"
+                                                v-on:change="toggleFlashSale(flashsale.id, $event)"> @{{ flashsale.name }}
                                     </label>
                                 </div>
-                            @endforeach
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn primary p-x-md btn_save_selected" id="">Save</button>
-                            <button type="button" class="m-l-1 btn white" data-dismiss="modal">Cancel</button>
+                        <div class="tab-pane" id="post_facebook">
+                            <div class="form-group">
+                                <label>Select Group</label>
+                                <select
+                                @change="changeFacebookGroup"
+                                name="facebook_group"
+                                placeholder="Select a group"
+                                class="form-control">
+                                <option></option>
+                                <option
+                                        v-if="postables.facebookgroups && postables.facebookgroups.length > 0"
+                                        v-for="facebook_group in postables.facebookgroups"
+                                        :value="facebook_group.id">@{{ facebook_group.name }}
+                                    (@{{facebook_group.albums ? facebook_group.albums.length : 0}} albums)
+                                </option>
+                                </select>
+                            </div>
+                            <template v-if="selected.fb_group">
+                                <template v-if="actions.fb_advanced_menu">
+                                    <div class="form-group">
+                                        <label>Post on a specific date and time</label>
+                                        <div class="input-group">
+                                            {{ Form::text('ends_at', null, ['class' => 'form-control', 'id' => 'datetimepicker2', 'v-bind' => 'date_time_input']) }}
+                                            <span class="input-group-btn">
+                                    <button
+                                                @click="clearDateTimeInput"
+                                            class="btn white"
+                                            type="button"
+                                            style="padding-bottom: .3rem
+                                                ;">Clear</button>
+                                </span>
+                                        </div>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input
+                                                    name="include_description_text"
+                                                    value="1"
+                                                    type="checkbox"> Include Link in description
+                                        </label>
+                                    </div>
+                                </template>
+                                <template v-if="postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums.length > 0">
+                                    <label>Select Album</label>
+                                    <div class="radio"
+                                         v-for="facebook_album in postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums">
+                                        <label >
+                                            <input
+                                            @click="selectFacebookAlbum(facebook_album,$event)"
+                                            type="radio"
+                                            name="facebookalbums[selected.fb_group.id]"
+                                            :value="facebook_album.id"> @{{ facebook_album.name }}
+                                        </label>
+                                        <div v-if="facebook_album.items && facebook_album.items.length">
+                                            <span class="block text-muted text-sm">(@{{  facebook_album.items.length }} items assigned)</span>
+                                            <span
+                                            @click="removeFromAlbum(item, facebook_album, selected.fb_group, $event)"
+                                            class="img-thumb" v-for="item in facebook_album.items" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
+                                                <img
+                                                v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)"
+                                                class="img-responsive"
+                                                style="width: 24px; height: 24px;">
+                                                <i class="fa fa-times fa-2x"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <small class="text-muted">Selected group has no albums, or, you are not permitted to post to them.</small>
+                                </template>
+                            </template>
                         </div>
-                        {{ Form::close() }}
-                    </div><!-- /.modal-content -->
+                    </div>
                 </div>
             </div>
-        </div>
-
+            {{--<div class="savesales clearfix">--}}
+            {{--<div class="pull-right ">--}}
+            {{--<button--}}
+            {{--@click="postSelectedItemsToSales"--}}
+            {{--type="button"--}}
+            {{--:disabled="(!has_selected_sales_and_selected.items || posting_to_sales )"--}}
+            {{--v-bind:class="{'disabled' : !has_selected_sales_and_selected.items || posting_to_sales }"--}}
+            {{--class="btn btn-lg primary"--}}
+            {{-->Post @{{ selected_sales_sum }} Items</button>--}}
+            {{--<button--}}
+            {{--:disabled="(posting_to_sales )"--}}
+            {{--v-bind:class="{'disabled' :  posting_to_sales }"--}}
+            {{--v-on:click="closePostMenu"--}}
+            {{--type="button"--}}
+            {{--class="btn btn-lg white"--}}
+            {{-->Close</button>--}}
+            {{--</div>--}}
+            {{--</div>--}}
+        </form>
     </div>
 
 
-
-
-
-    <div id="m-md-fb" class="modal" data-backdrop="true" style="display: none;">
-        <div class="row-col h-v">
-            <div class="row-cell v-m">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        {{ Form::open(['class' => 'form-save']) }}
-                        <div class="modal-header">
-                            <h5 class="modal-title">Select sales to assign item</h5>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Select Facebook Group</label>
-                                {{ Form::select('fb_group', user()->present()->getFacebookGroupsForList(), [] , ['class' => 'form-control']) }}
-                            </div>
-                            <div class="form-group">
-                                <label>Select Album(s)</label>
-                                {{ Form::select('fb_albums[]', user()->present()->getFacebookAlbumsByFroupForList(327095390958693), [] , ['class' => 'form-control', 'multiple']) }}
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn primary p-x-md btn_save_selected" id="">Save</button>
-                            <button type="button" class="m-l-1 btn white" data-dismiss="modal">Cancel</button>
-                        </div>
-                        {{ Form::close() }}
-                    </div><!-- /.modal-content -->
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-
-
-    @push('footer-scripts')
-    <script>
-
-        $(function () {
-            var $selectAllEl = $('#select_all');
-            var $selectedItemsEl = $('.selected_items_checkbox');
-            var $addSelectedBtnEl = $('.btn_add_selected');
-            var $selectedSaveBtnEl = $('.btn_save_selected');
-            var $formSaveEl = $('.form-save');
-
-            var href = $addSelectedBtnEl.prop('href');
-
-            $('.table-as-list tbody tr').click(function (event) {
-                if (event.target.type !== 'checkbox') {
-                    $(':checkbox', this).trigger('click');
-                }
-            });
-
-            $selectAllEl.change(function (e) {
-                e.preventDefault();
-                if ($selectAllEl.is(':checked')) {
-                    $selectedItemsEl.each(function (i, e) {
-                        if (!$(e).is(':checked')) {
-                            $(e).prop('checked', true).trigger('change');
-                        }
-                    });
-                } else {
-                    $selectedItemsEl.each(function (i, e) {
-                        if ($(e).is(':checked')) {
-                            $(e).prop('checked', false).trigger('change');
-                        }
-                    });
-                }
-            });
-
-            $selectedItemsEl.change(function (e) {
-                if ($(this).is(':checked')) {
-                    $(this).closest('tr').parent().find('tr[data-id="' + $(this).val() + '"]').addClass("highlight_row");
-                    $formSaveEl.append('<input type="hidden" name="inventoryids[]" id="inventory_item_id_' + $(this).val() + '" value="' + $(this).val() + '">');
-                } else {
-                    $(this).closest('tr').parent().find('tr[data-id="' + $(this).val() + '"]').removeClass("highlight_row");
-                    $formSaveEl.find('#inventory_item_id_' + $(this).val()).remove();
-                }
-                var $selectedItemsCheckedEls = $('.selected_items_checkbox:checked');
-                var totalChecked = $selectedItemsCheckedEls.length;
-                if (totalChecked > 0) {
-                    $addSelectedBtnEl.removeClass('disabled').prop('disabled', false);
-                } else {
-                    $addSelectedBtnEl.addClass('disabled').prop('disabled', true);
-                    $selectAllEl.prop('checked', false).trigger('change');
-                }
-            });
-
-            $selectedSaveBtnEl.click(function (e) {
-                e.preventDefault();
-
-                var formData = $formSaveEl.serialize();
-                var that = $(this);
-
-                that.parent().find('button').addClass('disabled').prop('disabled', true);
-                that.html('Processing...');
-
-                $.ajax({
-                    url: "{{ apiRoute('inventory.associate.store', [user()->username]) }}",
-                    data: formData,
-                    type: "POST",
-                    dataType: "json"
-                })
-                        .done(function (json) {
-                            window.location.href = window.location.href;
-                        })
-                        .fail(function (xhr, status, errorThrown) {
-                            alert("Sorry, there was a problem! Please try again.");
-                            that.parent().find('button').removeClass('disabled').prop('disabled', false);
-                            that.html('Save');
-                        });
-            });
-
-            var x = $('.btn_remove_fromflashsale');
-
-            x.click(function (e) {
-                e.preventDefault();
-                var that = $(this);
-
-                that.tooltip('dispose');
-                that.addClass('disabled').attr('disabled', true).unbind('click');
-                that.html('<i class="fa fa-spinner fa-spin"></i>');
-
-                noty({
-                    text: 'Are you sure? This will remove the item from the flash sale',
-                    layout: 'center',
-                    theme: 'relax',
-                    type: 'alert',
-                    modal: true,
-                    animation: {
-                        open: {height: 'toggle'},
-                        close: {height: 'toggle'},
-                        easing: 'linear',
-                        speed: 1
-                    },
-                    timeout: 9000,
-                    buttons: [
-                        {
-                            addClass: 'btn btn-sm primary b-primary', text: 'Ok', onClick: function ($noty) {
-                            $noty.close();
-
-                            $.ajax({
-                                url: that.attr('data-route'),
-                                type: "DELETE",
-                                dataType: "json"
-                            })
-                                    .done(function (json) {
-                                        var wrapper = that.closest('.flashsale_wrapper');
-                                        that.closest('.label').remove();
-                                        if (wrapper.find('.label').length == 0) {
-                                            wrapper.closest('tr').remove();
-                                        }
-                                    })
-                                    .fail(function (xhr, status, errorThrown) {
-                                        alert("Sorry, there was a problem! Please try again.");
-                                        that.parent().find('button').removeClass('disabled').prop('disabled', false);
-                                        that.html('<i class="fa fa-times"></i>');
-                                        that.bind('click', true);
-                                    });
-                        }
-                        },
-                        {
-                            addClass: 'btn btn-link white btn-sm', text: 'Cancel', onClick: function ($noty) {
-                            $noty.close();
-                            that.parent().find('button').removeClass('disabled').prop('disabled', false);
-                            that.html('<i class="fa fa-times"></i>');
-                            that.bind('click', true);
-                        }
-                        }
-                    ]
-                });
-
-
-            });
-
-        });
-    </script>
-    @endpush
+    <style-template
+            :selected.sync="selected"
+            :inventory_items.sync="inventory_items"
+            :actions.sync="actions">
+    </style-template>
 
 @endsection
+
+@push('footer-scripts')
+<script src="/assets/js/inventory-management.js"></script>
+<script>
+    $(function () {
+
+        $('#datetimepicker2').datetimepicker({
+            format: "MM/DD/YYYY hh:mmA",
+            minDate: new Date(),
+            sideBySide: true,
+            icons: {
+                up: 'fa fa-chevron-up',
+                down: 'fa fa-chevron-down',
+                previous: 'fa fa-chevron-left',
+                next: 'fa fa-chevron-right'
+            }
+        });
+    })
+</script>
+@endpush

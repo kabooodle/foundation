@@ -10,6 +10,11 @@ Route::group(['middleware' => ['auth']], function () {
             'parameters' => ['shop' => 'username'],
             'middleware' => 'subscribed:main',
         ]);
+        Route::get('inventory/postables', [
+            'as' => 'inventory.postables',
+            'middleware' => 'subscribed:main',
+            'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryController::class.'@postables'
+        ]);
         Route::get('shop{username}/inventory/query', [
             'as' => 'shop.inventory.query',
             'middleware' => 'subscribed:main',

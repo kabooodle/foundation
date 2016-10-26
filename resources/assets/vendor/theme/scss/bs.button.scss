@@ -6,6 +6,10 @@
 	}
 }
 
+.btn-toolbar>.btn, .btn-toolbar>.btn-group, .btn-toolbar>.input-group {
+	margin-left: 0;
+}
+
 .btn{
 	font-weight: 500;
 	outline: 0!important;
@@ -179,6 +183,13 @@
 	color: $dark-black;
 }
 
+
+.btn-group-prpl {
+	.btn.active {
+		border-color: $primary;
+	}
+}
+
 .btn-groups .btn{
   margin-bottom: .25rem;
 }
@@ -190,4 +201,10 @@
 .center-block.btn-toolbar .btn-group, .center-block.btn-toolbar .input-group,
 .center-block .btn-group > .btn, .center-block .btn-group-vertical > .btn {
 	float: none !important;
+}
+
+.pagination {
+	.btn {
+		margin-left: 4px;
+	}
 }

@@ -22,7 +22,7 @@ class VerifyCsrfToken extends BaseVerifier
     protected $except = [
         'stripe*',
         '__captainHook*',
-        'api/*',
+        'api*',
         '*.api.*'
     ];
 }

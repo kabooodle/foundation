@@ -1,8 +1,7 @@
 <!DOCTYPE html>
     <html lang="en">
     @include('layouts.header._htmlheader')
-    <body class=" @yield('body-class', 'a') " id="kabooodle_app">
-
+    <body class=" @yield('body-class', null)">
     <div id="fb-root"></div>
     <script>(function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
@@ -12,8 +11,8 @@
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));</script>
 
-        <div class="app" id="app">
-            <div id="{{ $contentId or 'content' }}" class="app-content box-shadow-z0" role="main">
+        <div class="app" id="{{ $contentId or 'kabooodle_app' }}">
+            <div id="content" class="app-content box-shadow-z0" role="main">
                 @include('layouts.header._header')
 
                 @hasSection('body-menu')
@@ -28,6 +27,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div id="kabooodle_utilities">
+            <loader></loader>
+            <popout-overlay></popout-overlay>
         </div>
 
         @include('layouts.footer._footer')

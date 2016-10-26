@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
@@ -187,6 +188,30 @@ class User extends BaseEloquentModel implements
     public function inventory()
     {
         return $this->hasMany(Inventory::class, 'user_id');
+    }
+
+    /**
+     * @return array
+     */
+    public function inventoryGroupByStyle()
+    {
+
+//        $sql = "SELECT inventory_type_styles_id,countstlyes as count_styles, inventory_sizes_id, count(inventory_sizes_id) sizes, st.name, sz.name FROM (
+//                SELECT inventory_type_styles_id, count(*) as countstlyes, inventory_sizes_id, user_id
+//                FROM `inventory`
+//                WHERE user_id = {$this->id}
+//                GROUP BY inventory_type_styles_id, inventory_sizes_id
+//                )as t
+//                INNER JOIN `inventory_type_styles` as st ON st.id = inventory_type_styles_id
+//                INNER JOIN `inventory_sizes` as sz ON sz.id = inventory_sizes_id
+//              GROUP BY inventory_type_styles_id, inventory_sizes_id";
+
+        $sql = "SELECT st.name as name, inventory_type_styles_id, count(inventory_type_styles_id) as styles_count FROM inventory
+		INNER JOIN `inventory_type_styles` as st ON st.id = inventory_type_styles_id
+		WHERE user_id = {$this->id}
+	GROUP BY inventory_type_styles_id";
+
+        return DB::select($sql);
     }
 
     /**

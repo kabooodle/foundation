@@ -6,14 +6,16 @@
 
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
+use Messages;
+use Response;
 use Binput;
 use Datatables;
 use Illuminate\Routing\Redirector;
 use Kabooodle\Bus\Commands\Inventory\AddInventoryCommand;
 use Kabooodle\Bus\Commands\Inventory\GetInventoryTypesCommand;
 use Kabooodle\Models\InventoryType;
-use Messages;
-use Response;
+use Kabooodle\Transformers\Inventory\InventoryTransformer;
+use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -23,7 +25,6 @@ use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Models\Categories;
 use Kabooodle\Models\Inventory;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Models\User;
@@ -37,7 +38,10 @@ class InventoryController extends Controller
     use ObfuscatesIdTrait;
 
     /**
-     * @return \Illuminate\Contracts\View\View
+     * @param Request $request
+     * @param         $username
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|Redirector
      */
     public function index(Request $request, $username)
     {
@@ -45,69 +49,103 @@ class InventoryController extends Controller
             return redirect('/');
         }
 
-        $data = user()->inventory;
+        return $this->view('inventory.index');
+    }
+
+    /**
+     * @param Request $request
+     * @param         $username
+     *
+     * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|Redirector
+     */
+    public function detailed(Request $request, $username)
+    {
+        if (user()->username <> $username) {
+            return redirect('/');
+        }
+
+        $data = user()->inventory()->NoEagerLoads()->with(['style', 'styleSize']);
+
+        if ($request->has('style_id') && $request->get('style_id')) {
+            $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
+        }
+        if ($request->has('size_id') && $request->get('size_id')) {
+            $data = $data->whereIn('inventory_sizes_id', $request->get('size_id'));
+        }
+        if ($request->has('qty_0')) {
+            $data = $data->where('initial_qty', 0);
+        }
+        if ($request->has('flashsale_id')) {
+            $data = $data->whereHas('flashsales', function($q) use ($request) {
+                $q->whereIn('flashsales.id', $request->get('flashsale_id'));
+            });
+        }
+        if ($request->has('has_sales')) {
+            $data = $data->has('sales', '>', 0);
+        }
+        if ($request->has('has_claims')) {
+            $data = $data->has('pendingClaims', '>', 0);
+        }
+
+        $data = $data->get();
 
         $page = $request->get('page', 1);
-        $perPage = config('pagination.per-page');
+        $perPage = $request->get('per_page', config('pagination.per-page'));
 
         $data = new LengthAwarePaginator(
             $data->forPage($page, $perPage),
             count($data),
             $perPage,
             $page,
-            ['path' => $request->url(), 'query' => $request->query()]
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
         );
 
-        return $this->view('inventory.index')->with(compact('data'));
-    }
+        if ($request->wantsJson()) {
+            return Response::json($data);
+//            return Response::json(fractal()
+//                ->collection($data)
+//                ->transformWith(new InventoryTransformer())
+//                ->paginateWith(new IlluminatePaginatorAdapter($data)));
+        }
 
-//    public function queryIndex()
-//    {
-//        return Datatables::collection(user()->inventory->load([
-//            'categories',
-//            'claims',
-//            'tagged',
-//            'acceptedClaims',
-//            'pendingClaims'
-//        ]))
-//            ->addRowAttr('valign', 'middle')
-//            ->addRowAttr('style',
-//                'padding-bottom: 0; padding-top: 0; padding-left: 0; vertical-align: middle !important')
-//            ->editColumn('id', ' <div class="list-item p-r-0 ">
-//                        <input type="checkbox" class="selected_items_checkbox" name="selected_items[]"
-//                               value="{{ $id }}">
-//                    </div>', 0)
-//            ->editColumn('name', '<div class="list ">
-//                        <div class="list-item p-l-0 p-r-0">
-//                            <div class="list-left">
-//
-//                        <span class="w-40 avatar">
-//                                            <img src="https://placekitten.com/g/32/32">
-//                                          </span>
-//                            </div>
-//                            <div class="list-body">
-//                                <div>
-//                                    <a href=""
-//                                       class="_500 h6">{{ $name }}</a>
-//                                </div>
-//                                <div class="text-ellipsis text-muted text-sm">
-//                                    Categories: @foreach($categories as $cat) {{ $cat["name"] }} @endforeach</div>
-//                                <div class="text-sm hidden-sm hidden-xs hidden-xs-down">
-//                                    @if(count($tagged) > 0)
-//                                        <span class="text-muted">Tags: </span>
-//                                        @foreach($tagged as $tag) <span
-//                                                class="label label-xs outline text-u-c">{!! $tag["tag_name"] !!}</span> @endforeach
-//                                    @endif
-//                                </div>
-//                            </div>
-//                        </div>
-//                    </div>', 1)
-//            ->editColumn('price_usd', '<span class="h5">${{$price_usd}}</span>')
-//            ->addColumn('claims',
-//                ' <span class="h5 "><span class="text-success">{{ count($accepted_claims) }}</span> <span class="text-muted">|</span> <span class="text-warning">{{ count($pending_claims) }}</span> </span>')
-//            ->editColumn('initial_qty', ' <span class="h5">{{ $initial_qty }}</span>')
-//            ->make(true);
-//    }
+        // Base filters.
+        $filters = [
+            'styles' => [],
+            'sizes' => [],
+            'flashSales' => [],
+            'claims' => [],
+            'approvedsales'  => []
+        ];
+
+        // Build arrays of filterable data.
+        // We only want the user to have filters that are relevant to their inventory.
+        foreach($data as $item) {
+            // we need all styles
+            $filters['styles'][] = $item->style;
+            // we need all sizes
+            $filters['sizes'][] = $item->style->sizes->find($item->inventory_sizes_id);
+            // we need flashsales
+            if ($item->flashsales->count() > 0) {
+                foreach ($item->flashsales as $flashsale) {
+                    $filters['flashSales'][] = $flashsale;
+                }
+            }
+        }
+
+        $filters['styles'] = collect($filters['styles'])->sortBy('name')->unique();
+        $filters['sizes'] = collect($filters['sizes'])->sortBy('order')->sortBy('name')->unique();
+        $filters['flashSales'] = collect($filters['flashSales'])->sortBy('name')->unique()->filter(function($sale){
+            return $sale->saleHasEnded() ? false : true;
+        });
+        $filters['claims'] = collect($filters['claims'])->unique()->filter(function($claim){
+            return $claim->wasRejected() ? false : true;
+        });
+
+        return $this->view('inventory.detailed')->with(compact('data', 'filters'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -160,12 +198,16 @@ class InventoryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function show($username, $idAndName)
+    public function show(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
         $item = Inventory::find($decryptedId);
 
         if ($item) {
+            if ($request->ajax()) {
+                return $this->view('inventory.partials._show')->with(compact('item'))->render();
+            }
+
             return $this->view('inventory.show')->with(compact('item'));
         }
 
@@ -178,7 +220,7 @@ class InventoryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function edit($username, $idAndName)
+    public function edit(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
         $item = user()->inventory->find($decryptedId);
@@ -186,6 +228,9 @@ class InventoryController extends Controller
         if ($item) {
 
             $styles = InventoryType::LuLaRoe()->first()->styles;
+            if ($request->ajax()) {
+                return $this->view('inventory.partials._edit')->with(compact('item', 'styles'));
+            }
 
             return $this->view('inventory.edit')->with(compact('item', 'styles'));
         }
@@ -265,5 +310,18 @@ class InventoryController extends Controller
         } catch (Exception $e) {
             return Response::json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function postables(Request $request)
+    {
+        $facebookGroups = user()->getFacebookGroups()->asArray();
+        $flashSales = user()->flashsalesAsSellerAndAdmins;
+
+        return Response::json(['data' => ['flashsales' => $flashSales, 'facebookgroups' => $facebookGroups]], 200);
     }
 }

@@ -1,4 +1,15 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = { "default": require("core-js/library/fn/json/stringify"), __esModule: true };
+},{"core-js/library/fn/json/stringify":2}],2:[function(require,module,exports){
+var core  = require('../../modules/_core')
+  , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
+module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
+  return $JSON.stringify.apply($JSON, arguments);
+};
+},{"../../modules/_core":3}],3:[function(require,module,exports){
+var core = module.exports = {version: '2.4.0'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+},{}],4:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -180,7 +191,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],2:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var Vue // late bind
 var map = Object.create(null)
 var shimmed = false
@@ -481,7 +492,7 @@ function format (id) {
   return match ? match[0] : id
 }
 
-},{}],3:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 (function (process){
 /*!
  * Vue.js v2.0.3
@@ -6098,174 +6109,341 @@ setTimeout(function () {
 module.exports = Vue$2;
 
 }).call(this,require('_process'))
-},{"_process":1}],4:[function(require,module,exports){
-var inserted = exports.cache = {}
-
-exports.insert = function (css) {
-  if (inserted[css]) return
-  inserted[css] = true
-
-  var elem = document.createElement('style')
-  elem.setAttribute('type', 'text/css')
-
-  if ('textContent' in elem) {
-    elem.textContent = css
-  } else {
-    elem.styleSheet.cssText = css
-  }
-
-  document.getElementsByTagName('head')[0].appendChild(elem)
-  return elem
-}
-
-},{}],5:[function(require,module,exports){
+},{"_process":4}],7:[function(require,module,exports){
 'use strict';
 
-var _Loading = require('./components/Loading.vue');
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-var _Loading2 = _interopRequireDefault(_Loading);
+var _stringify = require('babel-runtime/core-js/json/stringify');
 
-var _Popover = require('./components/Popover.vue');
-
-var _Popover2 = _interopRequireDefault(_Popover);
+var _stringify2 = _interopRequireDefault(_stringify);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-new Vue({
-    el: '#kabooodle_utilities',
-    components: {
-        'loader': _Loading2.default,
-        'popout-overlay': _Popover2.default
-    }
-});
-
-},{"./components/Loading.vue":6,"./components/Popover.vue":7}],6:[function(require,module,exports){
-var __vueify_insert__ = require("vueify/lib/insert-css")
-var __vueify_style__ = __vueify_insert__.insert("\n.kb_overlay {\n    background: rgba(255,255,255,.98);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\n.kb_overlay__inner {\n    position: fixed;\n    background: #fff;\n    padding: 3px;\n    border-radius: 30px;\n    top: 50%;\n    left: 50%;\n    margin-left: -16px;\n    margin-top: -16px;\n}\n")
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 exports.default = {
+    props: {
+        user_hash: {
+            required: true
+        },
+        s3_key_url: {
+            required: true
+        },
+        btnClassSize: {
+            default: ' btn-sm '
+        },
+        buttonTitle: {
+            default: 'Add Images'
+        },
+        acceptRegEx: {
+            default: 'image/*'
+        },
+        multiple: {
+            default: true
+        }
+    },
     data: function data() {
         return {
-            kb_overlay_show: false
+            image: { size: '', key: '', location: '', bucket: '' },
+            imageEl: null
         };
     },
-    created: function created() {
-        var scope = this;
-
-        $Bus.$on('loader:request-close', function () {
-            scope.kb_overlay_show = false;
-        });
-
-        $Bus.$on('loader:request-show', function () {
-            scope.kb_overlay_show = true;
-        });
-    }
-};
-if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"kb_overlay_show === true\">\n    <div class=\"kb_overlay\">\n        <div class=\"kb_overlay__inner\">\n            <img src=\"/assets/images/icons/ring-alt.gif\">\n        </div>\n    </div>\n</div>\n"
-if (module.hot) {(function () {  module.hot.accept()
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  module.hot.dispose(function () {
-    __vueify_insert__.cache["\n.kb_overlay {\n    background: rgba(255,255,255,.98);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\n.kb_overlay__inner {\n    position: fixed;\n    background: #fff;\n    padding: 3px;\n    border-radius: 30px;\n    top: 50%;\n    left: 50%;\n    margin-left: -16px;\n    margin-top: -16px;\n}\n"] = false
-    document.head.removeChild(__vueify_style__)
-  })
-  if (!module.hot.data) {
-    hotAPI.createRecord("_v-55b80c00", module.exports)
-  } else {
-    hotAPI.update("_v-55b80c00", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
-  }
-})()}
-},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],7:[function(require,module,exports){
-var __vueify_insert__ = require("vueify/lib/insert-css")
-var __vueify_style__ = __vueify_insert__.insert("\n.noscroll {\n    overflow-x: hidden;\n    overflow-y: hidden;\n}\n\n.shot-overlay {\n    background: rgba(30,30,30,0.9);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\na.close-overlay {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 20px;\n    height: 20px;\n    padding: 20px;\n    opacity: .5;\n    z-index: 9998;\n    background-repeat: no-repeat;\n    background-position: 20px 20px;\n    background-image: url(https://dribbble.com/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png);\n}\n.overlay-content {\n    position: absolute;\n    z-index: 9997;\n    top: 20px;\n    left: 50%;\n    width: 920px;\n    min-height: 400px;\n    margin-left: -460px;\n    padding: 40px 40px;\n    background: #f4f4f4;\n    background-position: fixed;\n    box-sizing: border-box;\n    border-radius: 6px;\n}\na.close-overlay img {\n    height: 0;\n}\n@media only screen and (max-width: 959px) {\n    .shot-overlay {\n        overflow-y: auto;\n    }\n    a.close-overlay {\n        opacity: .34;\n        background-image: url(/assets/icon-shot-x-7dbc9cdd6856806bcc277a21513ac00fd402944f9046212dfe5151e1bb3a5ab8.png);\n    }\n    .overlay-content {\n        left: auto;\n        top: 0;\n        width: 100%;\n        max-width: 100%;\n        margin-left: 0;\n        padding: 20px;\n        border-radius: 0;\n    }\n}\n")
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = {
-    data: function data() {
-        return {
-            promptOnClose: true,
-            defaultContent: '<div class="text-center center-block" style="position: absolute; top: 50%; margin-top: -20px; margin-left: -20px; left: 50%; "><i class="fa fa-2x fa-spin fa-spinner"></i></div>'
-        };
-    },
-    mounted: function mounted() {
-        this.resetOverlay();
+    computed: {
+        has_multiple: function has_multiple() {
+            return this.multiple == true ? 'multiple' : null;
+        }
     },
     created: function created() {
-        var scope = this;
-
-        $Bus.$on('popout-overlay:change-prompt', function (promptOnClose) {
-            scope.setPromptOnClose(promptOnClose);
-        });
-        $Bus.$on('popout-overlay:close', function () {
-            scope.closeOverlay();
-        });
-        $Bus.$on('popout-overlay:request-open', function (content) {
-            scope.openOverlay(content);
-        });
-        $Bus.$on('popout-overlay:change-content', function (content, promptOnClose) {
-            scope.changeOverlayContent(content, promptOnClose);
-        });
+        console.log('File component ready.');
+        this.imageEl = this.buildImageEl();
+    },
+    watch: {
+        imageEl: function imageEl(v) {
+            this.attachPluginToEl($('#' + v));
+        }
     },
     methods: {
-        setPromptOnClose: function setPromptOnClose(promptOnClose) {
-            this.promptOnClose = typeof promptOnClose === 'undefined' ? true : promptOnClose;
+        buildImageEl: function buildImageEl() {
+            return Math.random().toString(36).slice(2);
         },
-        openOverlay: function openOverlay(content) {
-            $('body').addClass('noscroll');
-            $('.shot-overlay').show();
-            if (content) {
-                this.changeOverlayContent(content);
-            }
-            this.$emit('popout-overlay:opened');
-        },
-        resetOverlay: function resetOverlay() {
-            $('body').removeClass('noscroll');
-            $('.shot-overlay').hide();
-            this.changeOverlayContent(this.defaultContent, true);
-            $Bus.$emit('popout-overlay:closed');
-        },
-        closeOverlay: function closeOverlay() {
-            var scope = this;
-            if (this.promptOnClose) {
-                confirmModal(function (noty) {
-                    scope.resetOverlay();
-                    noty.close();
+        attachPluginToEl: function attachPluginToEl(el) {
+            var that = this;
+            setTimeout(function () {
+                el.s3uploader({
+                    save_file_model: false,
+                    multiple: true,
+                    s3_bucket: 'kabooodle-storage',
+                    s3_key_url: that.s3_key_url,
+                    s3_key_payload: {
+                        user: that.user_hash
+                    },
+                    templateEl: el.find('.upload-template'),
+                    fileupload_options: {},
+                    on_s3_upload: function on_s3_upload(data, textStatus, jqXHR) {
+                        if ($.inArray(jqXHR.status, [201, 200]) == -1) {
+                            alert('An error occurred with a file, please try that file again.');
+                            return false;
+                        }
+                        var xml = $(data);
+                        var responseData = {
+                            id: xml.find('Key').text(),
+                            bucket: xml.find('Bucket').text(),
+                            bucket_name: xml.find('Bucket').text(),
+                            key: xml.find('Key').text(),
+                            location: xml.find('Location').text()
+                        };
+
+                        responseData.json = (0, _stringify2.default)(responseData);
+
+                        $Bus.$emit('image:uploaded', el, responseData);
+                    },
+                    on_file_add: function on_file_add(element, data) {
+                        if (data.files[0].type.indexOf("image") == -1) {
+                            alert('File must be an image.', false);
+                            return false;
+                        }
+                        return true;
+                    }
                 });
-            } else {
-                scope.resetOverlay();
-            }
-        },
-        changeOverlayContent: function changeOverlayContent(content, promptOnClose) {
-            this.setPromptOnClose(promptOnClose);
-            $('.shot-overlay').find('.overlay-content').html(content);
+            }, 200);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"pop-out-overlay shot-overlay\" style=\"display: none;\">\n        <a href=\"javascript:;\" class=\"close-overlay\" v-on:click=\"closeOverlay\" aria-label=\"close\">\n            <img src=\"https://d13yacurqjgara.cloudfront.net/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png\" alt=\"Icon shot x light\">\n        </a>\n        <div class=\"overlay-content group\">\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div :id=\"imageEl\">\n    <div style=\"margin-right: 3px\" class=\"upload-template\">\n        <button type=\"button\" :class=\"'btn white '+btnClassSize+' fileinput-button'\" style=\"display: inline-block;\">\n            {{ buttonTitle }}<input type=\"file\" name=\"file\" class=\"js-s3_fileupload\" :accept=\"acceptRegEx\" multiple=\"\">\n        </button>\n        <button type=\"button\" :class=\"'btn danger '+btnClassSize+' js-cancel_button'\" style=\"display: none;\">\n            Cancel\n            <div class=\"js-fileupload-progress fileupload-progress m-b-0 p-b-0\" style=\"display: none;  margin-left: -9px; margin-right: -9px;\">\n                <div style=\"height: 8px;\" class=\"progress progress-striped active m-b-0 p-b-0\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"5\">\n                    <div class=\"progress-bar progress-bar-success\" style=\"width: 5%;\"></div>\n                </div>\n            </div>\n        </button>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.dispose(function () {
-    __vueify_insert__.cache["\n.noscroll {\n    overflow-x: hidden;\n    overflow-y: hidden;\n}\n\n.shot-overlay {\n    background: rgba(30,30,30,0.9);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\na.close-overlay {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 20px;\n    height: 20px;\n    padding: 20px;\n    opacity: .5;\n    z-index: 9998;\n    background-repeat: no-repeat;\n    background-position: 20px 20px;\n    background-image: url(https://dribbble.com/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png);\n}\n.overlay-content {\n    position: absolute;\n    z-index: 9997;\n    top: 20px;\n    left: 50%;\n    width: 920px;\n    min-height: 400px;\n    margin-left: -460px;\n    padding: 40px 40px;\n    background: #f4f4f4;\n    background-position: fixed;\n    box-sizing: border-box;\n    border-radius: 6px;\n}\na.close-overlay img {\n    height: 0;\n}\n@media only screen and (max-width: 959px) {\n    .shot-overlay {\n        overflow-y: auto;\n    }\n    a.close-overlay {\n        opacity: .34;\n        background-image: url(/assets/icon-shot-x-7dbc9cdd6856806bcc277a21513ac00fd402944f9046212dfe5151e1bb3a5ab8.png);\n    }\n    .overlay-content {\n        left: auto;\n        top: 0;\n        width: 100%;\n        max-width: 100%;\n        margin-left: 0;\n        padding: 20px;\n        border-radius: 0;\n    }\n}\n"] = false
-    document.head.removeChild(__vueify_style__)
-  })
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-70eaace9", module.exports)
+    hotAPI.createRecord("_v-c06e6dee", module.exports)
   } else {
-    hotAPI.update("_v-70eaace9", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-c06e6dee", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[5]);
+},{"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5}],8:[function(require,module,exports){
+'use strict';
 
-//# sourceMappingURL=app.js.map
+var _inventorySizing = require('./inventory-sizing.vue');
+
+var _inventorySizing2 = _interopRequireDefault(_inventorySizing);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+new Vue({
+    el: '#inventory',
+    data: {
+        price: '0.00',
+        size_containers: [],
+        submitting: false
+    },
+    methods: {
+        validateSizeContainers: function validateSizeContainers() {
+            var containers = this.size_containers;
+            var valid = true;
+            $.each(containers, function (i, container) {
+                var $containerEl = $('#size_' + container.id),
+                    $validationEls = $containerEl.find('[validation]');
+                if (!$validationEls.is(':checked')) {
+                    $validationEls.closest('.form-group').addClass('has-danger');
+                    valid = false;
+                }
+
+                if (container.images.length == 0) {
+                    valid = false;
+                    alert('At least one image must be associated for each size.');
+                    return valid;
+                }
+            });
+
+            return valid;
+        },
+        setSubmitting: function setSubmitting(val) {
+            this.submitting = val;
+        },
+        validateForm: function validateForm(e) {
+            var self = this;
+            self.setSubmitting(true);
+            // this.$validate(true, function () {
+            //     if (self.$inventory_validation.invalid || ! self.validateSizeContainers()) {
+            //         e.preventDefault();
+            //         self.setSubmitting(false);
+            //         return false;
+            //     }
+            // })
+        },
+        addSizeContainer: function addSizeContainer() {
+            $Bus.$emit('add-size');
+        },
+        styleChanged: function styleChanged(e) {
+            $Bus.$emit('style-changed', $(e.target).val());
+        }
+    },
+    mounted: function mounted() {
+        console.log('Inventory ready.');
+    },
+    components: {
+        'inventory-sizing': _inventorySizing2.default
+    }
+});
+
+},{"./inventory-sizing.vue":9}],9:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _stringify = require("babel-runtime/core-js/json/stringify");
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _FileUpload = require("../FileUpload.vue");
+
+var _FileUpload2 = _interopRequireDefault(_FileUpload);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: ["size_containers", "inventory_types", "user_hash", "s3_key_url"],
+    data: function data() {
+        return {
+            size: { images: [{}], id: null },
+            size_container: null,
+            sizings: []
+        };
+    },
+    events: {
+        'size-container:added': function sizeContainerAdded(sizeContainerData) {
+            var that = this;
+            setTimeout(function () {
+                $('#categories_input_' + sizeContainerData.id).selectize({
+                    delimiter: ',',
+                    persist: false,
+                    plugins: ['remove_button'],
+                    create: function create(input) {
+                        return {
+                            value: input,
+                            text: input
+                        };
+                    }
+                });
+            }, 100);
+        }
+    },
+    created: function created() {
+        console.log('Size component ready');
+
+        var scope = this;
+        $Bus.$on('style-changed', function (id) {
+            var styleSizes = scope.getStyleSizes(id);
+            if (styleSizes.length > 0) {
+                scope.setSizings(styleSizes);
+            }
+        });
+        $Bus.$on('add-size', function () {
+            scope.addSizeContainer();
+        });
+
+        $Bus.$on('image:deleted', function (size_container, image) {
+            if (size_container.images.length == 0) {
+                var $wrapperEl = $('#size_' + size_container.id).find('.categories_wrapper');
+                $wrapperEl.hide();
+                $wrapperEl.find('input:first-of-type').addClass('disabled').prop('disabled', true);
+            }
+        });
+        $Bus.$on('image:uploaded', function (el, image) {
+            image.json = (0, _stringify2.default)(image);
+            var sizeEl = el.closest('.sizing_container'),
+                sizeContainerId = sizeEl.data('container-id');
+
+            var container = $.findFirst(scope.size_containers, function (obj) {
+                return obj.id == sizeContainerId;
+            });
+
+            container.images.unshift(image);
+            setTimeout(function () {
+                $('#size_' + container.id).find("input.image_qty_btn").TouchSpin({
+                    min: 1
+                });
+            }, 0);
+        });
+
+        this.addSizeContainer();
+    },
+    methods: {
+        setSizings: function setSizings(sizings) {
+            this.sizings = sizings;
+        },
+        getStyleSizes: function getStyleSizes(styleId) {
+            var style = $.grep(this.inventory_types[0].styles, function (e) {
+                return parseInt(e.id) === parseInt(styleId);
+            });
+
+            if (style.length > 0) {
+                return style[0].sizes;
+            }
+
+            return [];
+        },
+        deleteSizeImage: function deleteSizeImage(size_container, img) {
+            var that = this;
+            var index = size_container.images.indexOf(img);
+            if (index != -1) {
+                size_container.images.splice(index, 1);
+                that.$emit('image:deleted', size_container, img);
+            }
+        },
+        createSizeObject: function createSizeObject() {
+            var rand = Math.random().toString(36).slice(2);
+            this.setSizings(this.getStyleSizes($('#inventory-styles-el').val()));
+            return { id: rand, images: [] };
+        },
+        addSizeContainer: function addSizeContainer() {
+            var sizeContainerData = this.createSizeObject();
+            this.size_containers.push(sizeContainerData);
+            this.$emit('size-container:added', sizeContainerData);
+        },
+        deleteSizeContainer: function deleteSizeContainer(size) {
+            var that = this;
+            confirmModal(function ($noty) {
+                var index = that.size_containers.indexOf(size);
+                if (index != -1) {
+                    that.size_containers.splice(index, 1);
+                }
+                that.$emit('size-container:removed', size);
+                $noty.close();
+            });
+        },
+        toggleCategory: function toggleCategory(e) {
+            e.preventDefault();
+            var $el = $(e.target),
+                $categoryWrapperEl = $el.closest('.box-footer').find('.categories_wrapper');
+            if ($categoryWrapperEl.is(':visible')) {
+                $categoryWrapperEl.hide();
+            } else {
+                $categoryWrapperEl.show();
+                $categoryWrapperEl.find('input:first-of-type').prop('disabled', false).removeClass('disabled');
+            }
+        }
+    },
+    components: {
+        'image-attach': _FileUpload2.default
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-for=\"size_container in size_containers\">\n        <div class=\"box sizing_container\" v-bind:id=\"'size_'+size_container.id\" v-bind:data-container-id=\"size_container.id\">\n            <div class=\"box-body clearfix\">\n                <div class=\"form-group row\">\n                    <label class=\"col-sm-3 form-control-label\">Size</label>\n                    <div class=\"col-sm-9\">\n                        <div class=\"\" data-toggle=\"buttons\">\n                            <label class=\"form-control-label btn white\" v-for=\"size in sizings\" style=\"margin-right: 3px;\">\n                                <input required=\"\" aria-required=\"true\" validation=\"required\" type=\"radio\" v-bind:name=\"'sizings['+size_container.id +'][size_id]'\" id=\"option1\" autocomplete=\"off\" v-bind:value=\"size.id\"> {{ size.name }}\n                            </label>\n                        </div>\n                    </div>\n                    <button type=\"button\" v-on:click=\"deleteSizeContainer(size_container)\" style=\"position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3\" class=\" m-l-1 pull-right btn white btn-xs text-muted \"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button>\n                </div>\n\n                <div class=\"row row-horizon clearfix\">\n\n                    <div class=\"col-sm-4 thumbnail-container\" v-for=\"(image, $index) in size_container.images\">\n                        <div class=\"box m-b-0\">\n                            <div class=\"item\">\n                                <div class=\"item-overlay active p-l p-r \" style=\"z-index: 999;\">\n                                    <a type=\"button\" style=\"\" v-on:click=\"deleteSizeImage(size_container, image, $event)\" v-bind:data-id=\"image.id\" class=\"pull-right text-danger\"><i class=\"fa fa-times fa-fw\"></i></a>\n                                    <span class=\"pull-left label dark-white text-color\">{{ size_container.images.length - $index }}</span>\n                                </div>\n\n                                <div class=\"thumbnail\">\n                                    <img :src=\"image.location\" :data-gallery=\"'image-thumbs_'+size_container.id\" data-width=\"100%\" class=\"w-full\" data-toggle=\"lightbox\" :data-remote=\"image.location\">\n                                </div>\n                            </div>\n                            <input type=\"hidden\" :name=\"'sizings['+size_container.id +'][images]['+image.key+'][data]'\" :value=\"image.json\">\n                            <div class=\"box-body m-t-0 p-t-0\">\n                                <div class=\"image_item_component\">\n                                    <label class=\"text-muted text-sm m-b-0 p-b-0\">Quantity:</label>\n                                    <input type=\"text\" value=\"1\" v-bind:name=\"'sizings['+size_container.id+'][images]['+image.key+'][qty]'\" class=\"text-center image_qty_btn\">\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n\n            </div>\n            <div class=\"box-footer\">\n                <div class=\"form-group categories_wrapper\" style=\"display: none\">\n                    <input type=\"text\" :disabled=\"size_container.images.length > 0\" v-bind:id=\"'categories_input_'+size_container.id\" v-bind:name=\"'sizings['+size_container.id+'][categories]'\" class=\"selectized\" placeholder=\"Type categories or keywords\">\n                </div>\n                <div class=\"clearfix\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-offset-3 col-sm-7\">\n\n                                    <span class=\"pull-left\">\n                                        <image-attach :s3_key_url=\"s3_key_url\" :user_hash=\"user_hash\"></image-attach>\n                                    </span>\n\n                            <button type=\"button\" class=\"pull-left btn white btn-sm \" :disabled=\"size_container.images.length == 0\" @click=\"toggleCategory\">Categories</button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-7a6e262e", module.exports)
+  } else {
+    hotAPI.update("_v-7a6e262e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"../FileUpload.vue":7,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5}]},{},[8]);
+
+//# sourceMappingURL=inventory-create.js.map

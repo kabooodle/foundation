@@ -6099,173 +6099,429 @@ module.exports = Vue$2;
 
 }).call(this,require('_process'))
 },{"_process":1}],4:[function(require,module,exports){
-var inserted = exports.cache = {}
-
-exports.insert = function (css) {
-  if (inserted[css]) return
-  inserted[css] = true
-
-  var elem = document.createElement('style')
-  elem.setAttribute('type', 'text/css')
-
-  if ('textContent' in elem) {
-    elem.textContent = css
-  } else {
-    elem.styleSheet.cssText = css
-  }
-
-  document.getElementsByTagName('head')[0].appendChild(elem)
-  return elem
-}
-
-},{}],5:[function(require,module,exports){
 'use strict';
 
-var _Loading = require('./components/Loading.vue');
+var _style_template = require('./style_template.vue');
 
-var _Loading2 = _interopRequireDefault(_Loading);
-
-var _Popover = require('./components/Popover.vue');
-
-var _Popover2 = _interopRequireDefault(_Popover);
+var _style_template2 = _interopRequireDefault(_style_template);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function getDefaultData(key) {
+    var data = {
+
+        // Array of user inventory items
+        inventory_items: [],
+
+        // Array of postable objects (flash sales, facebook groups)
+        postables: {
+            facebookgroups: [],
+            flashsales: []
+        },
+
+        selected: {
+            // Holds sizes that have been selected
+            sizes: [],
+
+            // Holds items that have been selected
+            items: [],
+
+            // Holds postables that have been selected
+            postables: {
+                fb_albums: [],
+                flashsales: []
+            },
+
+            // Toggle of the selected fB group
+            fb_group: null,
+
+            // Toggle of the selected fb album
+            fb_album: null
+        },
+
+        actions: {
+            refreshing_data: false,
+            posting_to_sales: false,
+            fb_advanced_menu: false
+        },
+
+        sums: {
+            selected_postables: 0
+        },
+
+        selected_sales_sum: 0
+    };
+
+    if (key) {
+        var keys = key.split('.');
+        if (keys.length) {
+            // data is only 2 deep max, so, hardcode it.
+            return keys.length > 1 ? data[keys[0]][keys[1]] : data[key];
+        }
+    }
+
+    return data;
+}
+
 new Vue({
-    el: '#kabooodle_utilities',
+    el: '#manage_inventory',
+    data: getDefaultData,
+    computed: {},
+    created: function created() {
+        this.getInventory();
+        this.getPostables();
+        var scope = this;
+
+        $Bus.$on('post-menu:closed', function () {
+            // this.facebook_album_selected = false;
+            // $('[name=facebookalbums]:checked').prop('checked', false);
+        });
+
+        $Bus.$on('facebook-album:changed', function () {
+            var album_items = scope.selected.fb_album.items;
+            if (album_items && album_items.length > 0) {
+                scope.selected.items = scope.selected.fb_album.items;
+            }
+        });
+
+        $Bus.$on('facebook-group:changed', function () {
+            // scope.postables.facebookgroups = _.map(scope.postables.facebookgroups, function(group){
+            //     group.albums = _.map(group.albums, function(album){
+            //         if (album.hasOwnProperty('items') && album.items.length > 0){
+            //             album.items = [];
+            //         }
+            //         return album;
+            //     });
+            //     return group;
+            // });
+        });
+    },
+    watch: {
+        'actions': {
+            handler: function handler(v) {
+                v.refreshing_data === false ? $Bus.$emit('loader:request-close') : $Bus.$emit('loader:request-show');
+            }, deep: true
+        },
+        // facebooks : {
+        //     handler: function() {
+        //         const scope = this;
+        //         let sum = 0;
+        //         $.each(this.facebooks, function(){
+        //             sum += this.fitems.length;
+        //         });
+        //         scope.selected_sales_sum = sum;
+        //     }, deep : true
+        // },
+        selected: {
+            handler: function handler(selected) {
+                var selected_items = this.selected.items;
+                if (this.selected.fb_album && selected_items.length > 0) {
+                    this.assignItemsToSelectedAlbum(selected_items);
+                    this.sums.selected_postables = _.chain(this.selected.postables.fb_albums).filter(function (album) {
+                        return album.hasOwnProperty('items') && album.items.length > 0;
+                    }).reduce(function (k, v) {
+                        return k + v.items.length;
+                    }, 0).value();
+
+                    return;
+                }
+                this.resetData('sums.selected_postables');
+            }, deep: true
+        }
+    },
+    methods: {
+        resetData: function resetData(key) {
+            if (key) {
+                var keys = key.split('.');
+                return keys.length > 1 ? this[keys[0]][keys[1]] = getDefaultData(key) : this[key] = getDefaultData(key);
+            } else {
+                this.$data = getDefaultData();
+            }
+        },
+        changeFacebookGroup: function changeFacebookGroup(event) {
+            var groupId = event.target.value;
+            if (groupId && groupId != '') {
+                this.selected.fb_group = this.getFacebookGroup(groupId);
+            } else {
+                this.resetData('selected.fb_group');
+            }
+            this.resetData('selected.items');
+            $Bus.$emit('facebook-group:changed');
+        },
+        getFacebookGroup: function getFacebookGroup(id) {
+            var facebookgroups = this.postables.facebookgroups;
+            if (facebookgroups) {
+                return _.findWhere(facebookgroups, { id: id });
+            }
+            return null;
+        },
+        assignItemsToSelectedAlbum: function assignItemsToSelectedAlbum(items) {
+            var index = this.selected.postables.fb_albums.indexOf(this.selected.fb_album);
+            this.selected.postables.fb_albums[index].items = items;
+        },
+        removeFromAlbum: function removeFromAlbum(fitem, facebook, event) {
+            var index = facebook.items.indexOf(fitem);
+            if (index > -1) {
+                // this.$nextTick(function(){
+                facebook.items.splice(index, 1);
+                // })
+            }
+        },
+        selectFacebookAlbum: function selectFacebookAlbum(facebook, event) {
+            this.selected.fb_album = facebook;
+            if (this.selected.postables.fb_albums.indexOf(facebook) == -1) {
+                this.selected.postables.fb_albums.push(facebook);
+            }
+            this.resetData('selected.items');
+            $Bus.$emit('facebook-album:changed');
+        },
+        setPostingToSales: function setPostingToSales(val) {
+            this.posting_to_sales = val;
+        },
+        openPostMenu: function openPostMenu(event) {
+            $('#navbarSide').css({
+                'top': $('.app-header').outerHeight()
+            }).toggleClass('reveal');
+
+            this.$emit('post-menu:opened');
+        },
+        closePostMenu: function closePostMenu(event) {
+            $('#navbarSide').css({
+                'top': $('.app-header').outerHeight()
+            }).removeClass('reveal');
+
+            this.$emit('post-menu:closed');
+        },
+        postSelectedItemsToSales: function postSelectedItemsToSales(event) {
+            event.preventDefault();
+            var scope = this;
+            var $el = $(event.target);
+            var form = $el.closest('form#post_sales_form');
+            var form_data = new FormData();
+            var selected_items_ids = _.pluck(this.selected_items, 'id');
+
+            $.each(form.serializeArray(), function () {
+                form_data.append(this.name, this.value);
+            });
+
+            for (var i = 0; i < selected_items_ids.length; i++) {
+                form_data.append('selected_items_ids[]', selected_items_ids[i]);
+            }
+
+            // Perhaps fire event instead of calling method directly.
+            this.setPostingToSales(true);
+
+            this.$http.post(form.prop('action'), form_data).then(function (response) {
+                notify({ 'text': selected_items_ids.length + ' Items posted or queued successfully', 'type': 'success' });
+            }, function (response) {
+                //
+            }).finally(function () {
+                scope.setPostingToSales(false);
+            });
+        },
+        toggleFlashSale: function toggleFlashSale(i, event) {
+            var el = event.target;
+            var isChecked = el.checked;
+            var index = this.selected_sales.flashsales.indexOf(i);
+            if (isChecked) {
+                this.selected_sales.flashsales.push(i);
+            } else {
+                if (index > -1) {
+                    this.selected_sales.flashsales.splice(index, 1);
+                }
+            }
+        },
+        resetInventory: function resetInventory() {
+            this.resetData('selected.items');
+            this.closePostMenu();
+            $Bus.$emit('inventory:request-reset');
+        },
+        getInventory: function getInventory() {
+            var scope = this;
+            this.actions.refreshing_data = true;
+            scope.resetData('inventory_items');
+            this.resetInventory();
+            scope.$emit('refreshing_data');
+
+            this.$http.get('http://api.kabooodle.dev/inventory/jaketoolson').then(function (response) {
+                scope.inventory_items = response.body.data;
+            }).then(function () {
+                scope.resetData('actions.refreshing_data');
+            });
+        },
+        getPostables: function getPostables() {
+            var scope = this;
+
+            this.$http.get('http://app.kabooodle.dev/inventory/postables').then(function (response) {
+                scope.postables = response.body.data;
+            }, function (response) {
+                console.log('Error in retrieving postables');
+            });
+        },
+        clearDateTimeInput: function clearDateTimeInput() {
+            $('#datetimepicker2').val('');
+        }
+    },
     components: {
-        'loader': _Loading2.default,
-        'popout-overlay': _Popover2.default
+        'style-template': _style_template2.default
     }
 });
 
-},{"./components/Loading.vue":6,"./components/Popover.vue":7}],6:[function(require,module,exports){
-var __vueify_insert__ = require("vueify/lib/insert-css")
-var __vueify_style__ = __vueify_insert__.insert("\n.kb_overlay {\n    background: rgba(255,255,255,.98);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\n.kb_overlay__inner {\n    position: fixed;\n    background: #fff;\n    padding: 3px;\n    border-radius: 30px;\n    top: 50%;\n    left: 50%;\n    margin-left: -16px;\n    margin-top: -16px;\n}\n")
-'use strict';
+},{"./style_template.vue":5}],5:[function(require,module,exports){
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
+    props: ["inventory_items", "actions", "selected"],
     data: function data() {
         return {
-            kb_overlay_show: false
+            opened_drawers: [],
+            active_http_requests: []
         };
     },
     created: function created() {
         var scope = this;
 
-        $Bus.$on('loader:request-close', function () {
-            scope.kb_overlay_show = false;
+        $Bus.$on('facebook-group:changed', function () {
+            scope.clearSelectedItems();
         });
 
-        $Bus.$on('loader:request-show', function () {
-            scope.kb_overlay_show = true;
+        $Bus.$on('facebook-album:changed', function () {
+            scope.clearSelectedItems();
+            // We want to open the drawers where items are selected.
+            var selected_items = scope.selected.items;
+            if (selected_items && selected_items.length > 0) {
+                _.each(selected_items, function (item) {
+                    scope.openSizeDrawer(item.style_id, item.size_id);
+                });
+            }
         });
-    }
-};
-if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"kb_overlay_show === true\">\n    <div class=\"kb_overlay\">\n        <div class=\"kb_overlay__inner\">\n            <img src=\"/assets/images/icons/ring-alt.gif\">\n        </div>\n    </div>\n</div>\n"
-if (module.hot) {(function () {  module.hot.accept()
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  module.hot.dispose(function () {
-    __vueify_insert__.cache["\n.kb_overlay {\n    background: rgba(255,255,255,.98);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\n.kb_overlay__inner {\n    position: fixed;\n    background: #fff;\n    padding: 3px;\n    border-radius: 30px;\n    top: 50%;\n    left: 50%;\n    margin-left: -16px;\n    margin-top: -16px;\n}\n"] = false
-    document.head.removeChild(__vueify_style__)
-  })
-  if (!module.hot.data) {
-    hotAPI.createRecord("_v-55b80c00", module.exports)
-  } else {
-    hotAPI.update("_v-55b80c00", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
-  }
-})()}
-},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],7:[function(require,module,exports){
-var __vueify_insert__ = require("vueify/lib/insert-css")
-var __vueify_style__ = __vueify_insert__.insert("\n.noscroll {\n    overflow-x: hidden;\n    overflow-y: hidden;\n}\n\n.shot-overlay {\n    background: rgba(30,30,30,0.9);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\na.close-overlay {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 20px;\n    height: 20px;\n    padding: 20px;\n    opacity: .5;\n    z-index: 9998;\n    background-repeat: no-repeat;\n    background-position: 20px 20px;\n    background-image: url(https://dribbble.com/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png);\n}\n.overlay-content {\n    position: absolute;\n    z-index: 9997;\n    top: 20px;\n    left: 50%;\n    width: 920px;\n    min-height: 400px;\n    margin-left: -460px;\n    padding: 40px 40px;\n    background: #f4f4f4;\n    background-position: fixed;\n    box-sizing: border-box;\n    border-radius: 6px;\n}\na.close-overlay img {\n    height: 0;\n}\n@media only screen and (max-width: 959px) {\n    .shot-overlay {\n        overflow-y: auto;\n    }\n    a.close-overlay {\n        opacity: .34;\n        background-image: url(/assets/icon-shot-x-7dbc9cdd6856806bcc277a21513ac00fd402944f9046212dfe5151e1bb3a5ab8.png);\n    }\n    .overlay-content {\n        left: auto;\n        top: 0;\n        width: 100%;\n        max-width: 100%;\n        margin-left: 0;\n        padding: 20px;\n        border-radius: 0;\n    }\n}\n")
-'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = {
-    data: function data() {
-        return {
-            promptOnClose: true,
-            defaultContent: '<div class="text-center center-block" style="position: absolute; top: 50%; margin-top: -20px; margin-left: -20px; left: 50%; "><i class="fa fa-2x fa-spin fa-spinner"></i></div>'
-        };
-    },
-    mounted: function mounted() {
-        this.resetOverlay();
-    },
-    created: function created() {
-        var scope = this;
+        $Bus.$on('inventory:request-reset', function () {});
 
-        $Bus.$on('popout-overlay:change-prompt', function (promptOnClose) {
-            scope.setPromptOnClose(promptOnClose);
-        });
-        $Bus.$on('popout-overlay:close', function () {
-            scope.closeOverlay();
-        });
-        $Bus.$on('popout-overlay:request-open', function (content) {
-            scope.openOverlay(content);
-        });
-        $Bus.$on('popout-overlay:change-content', function (content, promptOnClose) {
-            scope.changeOverlayContent(content, promptOnClose);
+        $Bus.$on('popout-overlay:closed', function () {
+            if (scope.active_http_requests.length > 0) {
+                $.each(scope.active_http_requests, function () {
+                    this.abort();
+                });
+            }
         });
     },
     methods: {
-        setPromptOnClose: function setPromptOnClose(promptOnClose) {
-            this.promptOnClose = typeof promptOnClose === 'undefined' ? true : promptOnClose;
+        clearSelectedItems: function clearSelectedItems() {
+            this.opened_drawers = [];
+            $('.btn-group-prpl').find('button.active').removeClass('active');
         },
-        openOverlay: function openOverlay(content) {
-            $('body').addClass('noscroll');
-            $('.shot-overlay').show();
-            if (content) {
-                this.changeOverlayContent(content);
-            }
-            this.$emit('popout-overlay:opened');
-        },
-        resetOverlay: function resetOverlay() {
-            $('body').removeClass('noscroll');
-            $('.shot-overlay').hide();
-            this.changeOverlayContent(this.defaultContent, true);
-            $Bus.$emit('popout-overlay:closed');
-        },
-        closeOverlay: function closeOverlay() {
+        editItemButtonClicked: function editItemButtonClicked(item, event) {
+            $Bus.$emit('popout-overlay:request-open');
             var scope = this;
-            if (this.promptOnClose) {
-                confirmModal(function (noty) {
-                    scope.resetOverlay();
-                    noty.close();
+
+            this.$http.get('98yhiuj', {
+                before: function before(request) {
+
+                    $Bus.$emit('popout-overlay:change-prompt', false);
+
+                    if (this.previousRequest) {
+                        this.previousRequest.abort();
+                    }
+                    this.previousRequest = request;
+                    scope.active_http_requests.push(request);
+                }
+            }).then(function (response) {
+                $Bus.$emit('popout-overlay:change-content', response.body);
+            }, function (response) {
+                $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
+            }).finally(function () {
+                scope.active_http_requests = [];
+            });
+        },
+        addToOpenedDrawers: function addToOpenedDrawers(styleid, sizeid) {
+            var combo = styleid + '_' + sizeid;
+            if (!_.contains(this.opened_drawers, combo)) {
+                this.opened_drawers.push(combo);
+            }
+        },
+        removeFromOpenedDrawers: function removeFromOpenedDrawers(styleid, sizeid) {
+            this.opened_drawers = _.without(this.opened_drawers, styleid + '_' + sizeid);
+        },
+        openAllSizeDrawers: function openAllSizeDrawers(style, event) {
+            event.preventDefault();
+            var scope = this;
+            var $el = $(event.currentTarget);
+            if ($el.hasClass('opened-drawers')) {
+                $el.removeClass('opened-drawers').find('.fa').removeClass('fa-angle-up').addClass('fa-angle-down');
+                $.each(style.sizes, function () {
+                    scope.closeSizeDrawer(style.id, this.id, event);
                 });
             } else {
-                scope.resetOverlay();
+                $el.addClass('opened-drawers').find('.fa').addClass('fa-angle-up').removeClass('fa-angle-down');
+                $.each(style.sizes, function () {
+                    scope.openSizeDrawer(style.id, this.id, event);
+                });
             }
         },
-        changeOverlayContent: function changeOverlayContent(content, promptOnClose) {
-            this.setPromptOnClose(promptOnClose);
-            $('.shot-overlay').find('.overlay-content').html(content);
+        openSizeDrawer: function openSizeDrawer(styleid, sizeid, event) {
+            if (event) event.preventDefault();
+            $('[data-id=' + sizeid + ']').stop(true, true).slideDown();
+            this.addToOpenedDrawers(styleid, sizeid);
+            this.$emit('drawer:opened', styleid, sizeid);
+        },
+        closeSizeDrawer: function closeSizeDrawer(styleid, sizeid, event) {
+            event.preventDefault();
+            $('[data-id=' + sizeid + ']').stop(true, true).slideUp();
+            this.removeFromOpenedDrawers(styleid, sizeid);
+            this.$emit('drawer:closed', styleid, sizeid);
+        },
+        toggleSize: function toggleSize(style, size, items, event) {
+            event.preventDefault();
+            var scope = this;
+            var $el = $(event.currentTarget);
+
+            if ($el.hasClass('active')) {
+                $.each(items, function (i, v) {
+                    scope.removeSizeFromSelected(this);
+                });
+                this.closeSizeDrawer(style.id, size.id, event);
+            } else {
+                $.each(items, function (i, v) {
+                    scope.addSizeToSelected(this);
+                });
+                this.openSizeDrawer(style.id, size.id, event);
+            }
+        },
+        removeSizeFromSelected: function removeSizeFromSelected(size) {
+            var index = this.selected.items.indexOf(size);
+            if (index != -1) {
+                this.selected.items.splice(index, 1);
+            }
+        },
+        addSizeToSelected: function addSizeToSelected(size) {
+            if (this.selected.items.indexOf(size) == -1) {
+                this.selected.items.push(size);
+            }
+        }
+    },
+    events: {
+        'drawer:opened': function drawerOpened(size) {},
+        'refreshing_data': function refreshing_data() {
+            this.opened_drawers = [];
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"pop-out-overlay shot-overlay\" style=\"display: none;\">\n        <a href=\"javascript:;\" class=\"close-overlay\" v-on:click=\"closeOverlay\" aria-label=\"close\">\n            <img src=\"https://d13yacurqjgara.cloudfront.net/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png\" alt=\"Icon shot x light\">\n        </a>\n        <div class=\"overlay-content group\">\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"!actions.refreshing_data\">\n        <div class=\"box style-container\" v-for=\"style in inventory_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\" data-toggle=\"buttons\">\n                            <button v-for=\"size in style.sizes\" @click=\"toggleSize(style, size, size.items, $event)\" class=\"btn white btn-xs\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"(opened_drawers.indexOf(style.id+'_'+size.id) > -1 ? closeSizeDrawer(style.id, size.id, $event) : openSizeDrawer(style.id, size.id, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <div v-for=\"item in size.items\" class=\"col-sm-2 btn-group-prpl\">\n                                        <button v-bind:aria-pressed=\"(selected.items.indexOf(item) != -1 ? 'true' : null )\" @click=\"( selected.items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selected.items.indexOf(item) != -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                    <span class=\"item block\">\n                                                        <img v-bind:src=\"(item.files ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)\" class=\"img-responsive\" style=\"width: 64px; height: 64px;\">\n                                                    </span>\n                                            <span class=\"p-a-o text-sm clearfix block\">\n                                                        Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span>  <span class=\"text-muted\">${{ item.price_usd }}</span>\n                                                    </span>\n                                        </button>\n                                        <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs white\">Edit</button>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.dispose(function () {
-    __vueify_insert__.cache["\n.noscroll {\n    overflow-x: hidden;\n    overflow-y: hidden;\n}\n\n.shot-overlay {\n    background: rgba(30,30,30,0.9);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\na.close-overlay {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 20px;\n    height: 20px;\n    padding: 20px;\n    opacity: .5;\n    z-index: 9998;\n    background-repeat: no-repeat;\n    background-position: 20px 20px;\n    background-image: url(https://dribbble.com/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png);\n}\n.overlay-content {\n    position: absolute;\n    z-index: 9997;\n    top: 20px;\n    left: 50%;\n    width: 920px;\n    min-height: 400px;\n    margin-left: -460px;\n    padding: 40px 40px;\n    background: #f4f4f4;\n    background-position: fixed;\n    box-sizing: border-box;\n    border-radius: 6px;\n}\na.close-overlay img {\n    height: 0;\n}\n@media only screen and (max-width: 959px) {\n    .shot-overlay {\n        overflow-y: auto;\n    }\n    a.close-overlay {\n        opacity: .34;\n        background-image: url(/assets/icon-shot-x-7dbc9cdd6856806bcc277a21513ac00fd402944f9046212dfe5151e1bb3a5ab8.png);\n    }\n    .overlay-content {\n        left: auto;\n        top: 0;\n        width: 100%;\n        max-width: 100%;\n        margin-left: 0;\n        padding: 20px;\n        border-radius: 0;\n    }\n}\n"] = false
-    document.head.removeChild(__vueify_style__)
-  })
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-70eaace9", module.exports)
+    hotAPI.createRecord("_v-49e9dca7", module.exports)
   } else {
-    hotAPI.update("_v-70eaace9", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-49e9dca7", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[5]);
+},{"vue":3,"vue-hot-reload-api":2}]},{},[4]);
 
-//# sourceMappingURL=app.js.map
+//# sourceMappingURL=inventory-management.js.map

@@ -25,13 +25,15 @@
 
 
 .dropdown-menu{
+  min-width: 130px;
   font-size: 0.875rem;
   color: $dark-black;
   border-radius: $border-radius-base;
   //border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid hsla(0,0%,62%,.38);
   @include transform-origin(top left);
   margin-top: 0;
-  border: 0;
+  //border: 0;
 
   > li:not(.dropdown-item) > a{
     display: block;
