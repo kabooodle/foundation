@@ -398,15 +398,14 @@
     </div>
 
 
-    <style-template
-            :selected.sync="selected"
-            :inventory_items.sync="inventory_items"
-            :actions.sync="actions">
-    </style-template>
+    <style-template></style-template>
 
 @endsection
 
 @push('footer-scripts')
+<script>
+    const inventory_route = '{{ apiRoute('inventory.index', [user()->username]) }}';
+</script>
 <script src="/assets/js/inventory-management.js"></script>
 <script>
     $(function () {

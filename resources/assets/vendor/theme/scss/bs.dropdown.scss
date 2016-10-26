@@ -4,6 +4,7 @@
   background: $prpl-1000;
   color: #a1a7c2 !important;
   margin-top: 0;
+  border: 0;
   -moz-border-radius-topleft: 0;
   -moz-border-radius-topRight: 0;
   border-top-right-radius: 0;
@@ -25,7 +26,7 @@
 
 
 .dropdown-menu{
-  min-width: 130px;
+  min-width: 180px;
   font-size: 0.875rem;
   color: $dark-black;
   border-radius: $border-radius-base;

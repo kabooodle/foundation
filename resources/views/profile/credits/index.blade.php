@@ -23,10 +23,10 @@
                         </td>
                         <td class="action-column" style="vertical-align: middle !important">
                             {{ Form::open() }}
-                            <label class="btn white pull-right">
+                            <label class="btn white pull-right m-a-0">
                                 <input type="radio" data-type="select" name="p" data-id="{{ $type->id }}" value="{{ $type->id }}"> Select
                             </label>
-                            <button type="submit" data-type="buy" class="btn primary pull-right" data-id="{{ $type->id }}" style="display: none;">Purchase</button>
+                            <button type="submit" data-type="buy" class="btn m-a-0 primary pull-right" data-id="{{ $type->id }}" style="display: none;">Purchase</button>
                             {{ Form::close() }}
                         </td>
                     </tr>

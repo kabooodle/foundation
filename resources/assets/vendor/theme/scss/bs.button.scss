@@ -146,6 +146,7 @@
 	&.btn-social:hover,
 	&.btn-social:focus,
 	&.btn-social.active{
+		border: 0 !important;
 		i:first-child{
 			top: -100%;
 		}

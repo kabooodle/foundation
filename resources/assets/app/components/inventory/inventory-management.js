@@ -1,69 +1,19 @@
+import store from './manage/store';
+import computed from './manage/computed';
 import StyleTemplate from './style_template.vue';
-
-function getDefaultData(key) {
-    let data = {
-
-        // Array of user inventory items
-        inventory_items: [],
-
-        // Array of postable objects (flash sales, facebook groups)
-        postables : {
-            facebookgroups: [],
-            flashsales: []
-        },
-
-        selected: {
-            // Holds sizes that have been selected
-            sizes: [],
-
-            // Holds items that have been selected
-            items: [],
-
-            // Holds postables that have been selected
-            postables: {
-                fb_albums: [],
-                flashsales: []
-            },
-
-            // Toggle of the selected fB group
-            fb_group: null,
-
-            // Toggle of the selected fb album
-            fb_album: null
-        },
-
-        actions : {
-            refreshing_data: false,
-            posting_to_sales: false,
-            fb_advanced_menu: false
-        },
-
-        sums : {
-            selected_postables: 0
-        },
-
-        selected_sales_sum : 0,
-    };
-
-    if(key) {
-        let keys = key.split('.');
-        if(keys.length) {
-            // data is only 2 deep max, so, hardcode it.
-            return keys.length > 1 ? data[keys[0]][keys[1]] : data[key];
-        }
-    }
-
-    return data;
-}
-
 
 new Vue({
     el: '#manage_inventory',
-    data : getDefaultData,
-    computed : {
+    store,
+    computed,
 
+    beforeCreate () {
+        $Bus.$emit('loader:request-show');
     },
+
     created : function() {
+        this.$store.dispatch('setRoute', inventory_route);
+
         this.getInventory();
         this.getPostables();
         const scope = this;
@@ -92,6 +42,7 @@ new Vue({
             // });
         });
     },
+
     watch: {
         'actions' : {
             handler: function(v) {
@@ -122,9 +73,9 @@ new Vue({
                         }, 0)
                         .value();
 
-                    return;
+                    // return;
                 }
-                this.resetData('sums.selected_postables');
+                // this.resetData('sums.selected_postables');
             }, deep: true
         }
     },
@@ -142,9 +93,9 @@ new Vue({
             if(groupId && groupId != '') {
                 this.selected.fb_group = this.getFacebookGroup(groupId);
             } else {
-                this.resetData('selected.fb_group')
+                this.selected.fb_group = '';
             }
-            this.resetData('selected.items');
+            this.selected.items = [];
             $Bus.$emit('facebook-group:changed');
         },
         getFacebookGroup : function(id) {
@@ -161,9 +112,7 @@ new Vue({
         removeFromAlbum : function(fitem, facebook, event) {
             let index = facebook.items.indexOf(fitem);
             if (index > -1){
-                // this.$nextTick(function(){
-                    facebook.items.splice(index, 1);
-                // })
+                facebook.items.splice(index, 1);
             }
         },
         selectFacebookAlbum : function(facebook, event){
@@ -171,7 +120,7 @@ new Vue({
             if(this.selected.postables.fb_albums.indexOf(facebook) == -1) {
                 this.selected.postables.fb_albums.push(facebook);
             }
-            this.resetData('selected.items');
+            this.selected.items = [];
             $Bus.$emit('facebook-album:changed');
         },
         setPostingToSales : function(val){
@@ -231,28 +180,29 @@ new Vue({
             }
         },
         resetInventory : function() {
-            this.resetData('selected.items');
+            this.selected.items = [];
             this.closePostMenu();
             $Bus.$emit('inventory:request-reset');
         },
         getInventory : function() {
             let scope = this;
             this.actions.refreshing_data = true;
-            scope.resetData('inventory_items');
+            this.inventory_items = [];
             this.resetInventory();
             scope.$emit('refreshing_data');
 
-            this.$http.get('http://api.kabooodle.dev/inventory/jaketoolson').then(function(response){
-                scope.inventory_items = response.body.data
+            this.$http.get(this.$store.getters.getInventoryRoute).then(function(response){
+                scope.$store.commit('SET_INVENTORY_ITEMS', response.body.data);
             }).then(function(){
-                scope.resetData('actions.refreshing_data');
+                // scope.resetData('actions.refreshing_data');
+                scope.actions.refreshing_data = false;
             });
         },
         getPostables : function() {
             let scope = this;
 
-            this.$http.get('http://app.kabooodle.dev/inventory/postables').then(function(response){
-                scope.postables = response.body.data;
+            this.$http.get('http://'+window.location.hostname+'/inventory/postables').then(function(response){
+                scope.$store.commit('SET_POSTABLES', response.body.data);
             }, function(response){
                 console.log('Error in retrieving postables');
             });

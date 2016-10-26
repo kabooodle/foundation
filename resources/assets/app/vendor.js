@@ -20,4 +20,7 @@ require ('bootstrap-touchspin');
 $.multiselect = require ('bootstrap-multiselect');
 require ('eonasdan-bootstrap-datetimepicker');
 
+
+// Vue.config.devtools = false;
+
 global.$Bus = new Vue();

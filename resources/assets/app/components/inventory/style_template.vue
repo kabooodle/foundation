@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="!actions.refreshing_data">
+        <!--<div v-if="!state.actions.refreshing_data">-->
             <div class="box style-container" v-for="style in inventory_items">
                 <div class="box-header clearfix">
                     <div class="row">
@@ -72,17 +72,19 @@
                 </div>
             </div>
         </div>
-    </div>
+    <!--</div>-->
 </template>
 <script>
+    import computed from './manage/computed';
+
     export default{
-        props: ["inventory_items", "actions", "selected"],
         data: function() {
             return {
                 opened_drawers : [],
                 active_http_requests : []
             }
         },
+        computed,
         created : function() {
             const scope = this;
 
@@ -196,24 +198,24 @@
                 }
             },
             removeSizeFromSelected : function(size) {
-                var index = this.selected.items.indexOf(size);
+                var index = this.$store.getters.getSelectedItems.indexOf(size);
                 if (index != -1) {
-                    this.selected.items.splice(index, 1);
+                    this.$store.commit('REMOVE_FROM_SELECTED_ITEMS', index);
                 }
             },
             addSizeToSelected: function(size) {
-                if (this.selected.items.indexOf(size) == -1) {
-                    this.selected.items.push(size);
+                if (this.$store.getters.getSelectedItems.indexOf(size) == -1) {
+                    this.$store.commit('SET_SELECTED_ITEMS', size);
                 }
             }
         },
-        events : {
-            'drawer:opened' : function(size){
-
-            },
-            'refreshing_data' : function(){
-                this.opened_drawers = [];
-            }
-        }
+//        events : {
+//            'drawer:opened' : function(size){
+//
+//            },
+//            'refreshing_data' : function(){
+//                this.opened_drawers = [];
+//            }
+//        }
     }
 </script>
