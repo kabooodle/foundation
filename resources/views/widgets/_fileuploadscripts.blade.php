@@ -10,5 +10,3 @@
 <script src="/assets/js/fileupload/js/jquery.fileupload-process.js"></script>
 <script src="/assets/js/fileupload/js/jquery.fileupload-image.js"></script>
 <script src="/assets/js/fileupload/js/jquery.fileupload-ui.js"></script>
-
-

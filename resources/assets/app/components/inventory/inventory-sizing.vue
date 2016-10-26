@@ -8,7 +8,7 @@
                     <div class="form-group row">
                         <label class="col-sm-3 form-control-label">Size</label>
                         <div class="col-sm-9">
-                            <div class="" data-toggle="buttons">
+                            <div class="btn-group-prpl" data-toggle="buttons">
                                 <label class="form-control-label btn white" v-for="size in sizings" style="margin-right: 3px;">
                                     <input
                                             required

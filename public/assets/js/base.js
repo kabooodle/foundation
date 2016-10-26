@@ -1,1 +1,741 @@
-function randomAlphaStr(t){var t=t||9;s="",r="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";for(var e=0;e<t;e++)s+=r.charAt(Math.floor(Math.random()*r.length));return s}function arrayUnique(t){for(var e=t.concat(),n=0;n<e.length;++n)for(var i=n+1;i<e.length;++i)e[n]===e[i]&&e.splice(i--,1);return e}function confirmModal(t,e,n){var i={text:"<h6>Are you sure you want to continue?</h6>",layout:"center",theme:"relax",type:"alert",modal:!0,animation:{open:{height:"toggle"},close:{height:"toggle"},easing:"linear",speed:1},timeout:9e3,buttons:[{addClass:"btn btn-sm primary",text:"Continue",onClick:function(e){"function"==typeof t&&t(e)}},{addClass:"btn white btn-sm",addId:"noty_cancel",text:"Cancel",onClick:function(t){t.close(),"function"==typeof e&&e(t)}}]};n=$.extend({},i,n),noty(n)}function notify(t){var e={text:"",layout:"top",theme:"relax",type:"error",animation:{open:"animated bounceInDown",close:"animated bounceOutUp"},timeout:9e3,closeWith:["button","click"]};t=$.extend({},e,t),noty(t)}!function(t){"use strict";(navigator.userAgent.match(/MSIE/i)||navigator.userAgent.match(/Trident.*rv:11\./))&&t("body").addClass("ie");var e=window.navigator.userAgent||window.navigator.vendor||window.opera;/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/.test(e)&&t("body").addClass("smart")}(jQuery),function(t){"use strict";t("input, textarea").each(function(){t(this).val()?t(this).addClass("has-value"):t(this).removeClass("has-value")}),t(document).on("blur","input, textarea",function(e){t(this).val()?t(this).addClass("has-value"):t(this).removeClass("has-value")})}(jQuery),function(t){"use strict";t(document).on("click","[ui-nav] a",function(e){var n,i,o=t(e.target);o.is("a")||(o=o.closest("a")),i=o.parent(),n=i.siblings(".active"),i.toggleClass("active"),n.removeClass("active")})}(jQuery);var uiLoad=uiLoad||{};!function(t,e,n){"use strict";var i=[],o=!1,s=t.Deferred();n.load=function(e){return e=t.isArray(e)?e:e.split(/\s+/),o||(o=s.promise()),t.each(e,function(t,e){o=o.then(function(){return e.indexOf(".css")>=0?a(e):r(e)})}),s.resolve(),o};var r=function(n){if(i[n])return i[n].promise();var o=t.Deferred(),s=e.createElement("script");return s.src=n,s.onload=function(t){o.resolve(t)},s.onerror=function(t){o.reject(t)},e.body.appendChild(s),i[n]=o,o.promise()},a=function(n){if(i[n])return i[n].promise();var o=t.Deferred(),s=e.createElement("link");return s.rel="stylesheet",s.type="text/css",s.href=n,s.onload=function(t){o.resolve(t)},s.onerror=function(t){o.reject(t)},e.head.appendChild(s),i[n]=o,o.promise()}}(jQuery,document,uiLoad),function(t){"use strict";t(document).on("click","[ui-fullscreen]",function(t){t.preventDefault(),screenfull.enabled&&screenfull.toggle()})}(jQuery),function(t){"use strict";t.extend(jQuery.easing,{def:"easeOutQuad",easeInOutExpo:function(t,e,n,i,o){return 0==e?n:e==o?n+i:(e/=o/2)<1?i/2*Math.pow(2,10*(e-1))+n:i/2*(-Math.pow(2,-10*--e)+2)+n}}),t(document).on("click","[ui-scroll-to]",function(e){e.preventDefault();var n=t("#"+t(this).attr("ui-scroll-to"));t("html,body").animate({scrollTop:n.offset().top},600,"easeInOutExpo")})}(jQuery),function($){"use strict";$.fn.uiJp=function(){var lists=this;return lists.each(function(){var self=$(this),options=eval("["+self.attr("ui-options")+"]");$.isPlainObject(options[0])&&(options[0]=$.extend({},options[0])),self[self.attr("ui-jp")].apply(self,options)}),lists}}(jQuery),String.prototype.regexIndexOf=function(t,e){var n=this.substring(e||0).search(t);return n>=0?n+(e||0):n},String.prototype.regexLastIndexOf=function(t,e){t=t.global?t:new RegExp(t.source,"g"+(t.ignoreCase?"i":"")+(t.multiLine?"m":"")),"undefined"==typeof e?e=this.length:e<0&&(e=0);for(var n=this.substring(0,e+1),i=-1,o=0;null!=(result=t.exec(n));)i=result.index,t.lastIndex=++o;return i},Array.prototype.includes||(Array.prototype.includes=function(t){"use strict";if(null==this)throw new TypeError("Array.prototype.includes called on null or undefined");var e=Object(this),n=parseInt(e.length,10)||0;if(0===n)return!1;var i,o=parseInt(arguments[1],10)||0;o>=0?i=o:(i=n+o,i<0&&(i=0));for(var s;i<n;){if(s=e[i],t===s||t!==t&&s!==s)return!0;i++}return!1}),Array.prototype.indexOf||(Array.prototype.indexOf=function(t,e){for(e=e||0;e<this.length;e++)if(this[e]===t)return e;return-1}),Array.prototype.filter||(Array.prototype.filter=function(t,e){var n,i=[];for(n=0;n<this.length;n+=1)t.call(e,this[n])&&i.push(this[n]);return i}),Array.prototype.reject||(Array.prototype.reject=function(t,e){return this.filter(function(n){return!t.call(e,n)})}),$(function(){$.extend({findFirst:function(t,e){var n;for(n=0;n<t.length;++n)if(e(t[n],n))return t[n]}}),$(document).on("click",'[data-toggle="lightbox"]',function(t){t.preventDefault(),$(this).ekkoLightbox()}),$("form").submit(function(t){var e=$(this),n=e.find(":submit"),i=n.html();setTimeout(function(){t.isDefaultPrevented()||n.prop("disabled",!0).html(i+' <i class="fa fa-spin fa-spinner"></i>')},0)}),$('[data-toggle="multiselect"]').multiselect({buttonClass:"btn white btn-sm",maxHeight:300,enableFiltering:!0,disableIfEmpty:!0,enableCaseInsensitiveFiltering:!0,templates:{filter:'<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',filterClearBtn:'<span class="input-group-btn"><button style="padding-left: 6px; padding-right: 6px;" class="btn btn-default multiselect-clear-filter" type="button"><i class="fa fa-times-circle"></i></button></span>',li:'<li><a tabindex="0" class="dropdown-item"><label></label></a></li>'}}),$('[data-ride="carousel"]').carousel({interval:!1}),$('[data-toggle="tooltip"]').tooltip(),$(".dropdown.dropdown-onhover").hover(function(){$(this).addClass("open active").find(".dropdown-menu").stop(!0,!0).show()},function(){$(this).removeClass("open active").find(".dropdown-menu").stop(!0,!0).hide()}),$(".float").keypress(function(t){46==t.which&&$(this).val().indexOf(".")==-1||!(t.which<48||t.which>57)||t.preventDefault()})}),function(t,e,n,i){function o(e,n){this.element=e,this.$element=t(e),this.options=t.extend({},t.fn.s3uploader.defaults,n),this.options=t.extend({},this.options,this._parseHtmlDataAttributes(this.$element)),this.jqXHRCollection=[],this.templateElements={progress_container:".js-fileupload-progress",progress_bar:".progress",add_file_button:".fileinput-button",file_upload_target:".js-s3_fileupload",cancel_button:".js-cancel_button",showExtendedBool:!0},this._defaults=t.fn.s3uploader.defaults,this.init()}o.prototype={init:function(){return t.fn.fileupload||this.throwException("missing-dependency","fileupload plugin required."),this.setTemplate(this.options.templateEl),this.initFileUpload(),this},setTemplate:function(t){this.$element.html(t?this.$element.parent().find(t):s.getTemplate(this.options.multiple,this.options.button_name,this.options.extended_upload_info),!0)},initFileUpload:function(){var e=this,i={url:"https://"+e.options.s3_bucket+".s3.amazonaws.com",dataType:"xml",type:"POST",dropZone:e.options.drop_zone,add:function(i,o){if(t.blueimp.fileupload.prototype.options.add.call(this,i,o),!e.options.on_file_add(i,o))return!1;e.buttonToggler(!0),e.$element.find(e.templateElements.progress_container).show();var s=(Math.random().toString(36).substr(2,5),Math.floor((new Date).getTime()/1e3)),r=e.options.s3_key_payload;r.filename=s+"_"+o.files[0].name,e.jqXHRCollection.push(t.ajax({url:e.options.s3_key_url,dataType:"JSON",type:"GET",data:r,success:function(i){t(n).trigger("s3uploader.s3_key_retrieved",i),e.log("api.files.s3key: done",i),o.formData={AWSAccessKeyId:i.data.AWSAccessKeyId,acl:i.data.acl,key:i.data.key,policy:i.data.policy,success_action_status:201,signature:i.data.signature},e.options.response=i,e.options.file=o.files[0],e.jqXHRCollection.push(o.submit())},fail:function(t,n,i){e.throwException(t.responseText,i),e.log("api.files.s3key: fail",i),e.buttonToggler(!1)}}))},formData:{},success:function(t,n,i){e.options.on_s3_upload(t,n,i)},done:function(t,e){},fail:function(t,n,i){e.throwException(t.responseText,i)},always:function(){},progress:function(t,n){if(t.isDefaultPrevented())return!1;var i=Math.floor(n.loaded/n.total*100);n.context&&e.setProgress(i)},stop:function(){e.resetProgress(),e.buttonToggler(!1)}};i=t.extend(i,this.options.fileupload_options),e.$element.find(e.templateElements.file_upload_target).fileupload(i),t(this.templateElements.cancel_button).on("click",t.proxy(function(t){e=this,e.cancelAll()},e))},setProgress:function(t){var e=this;e.$element.find(e.templateElements.progress_bar).attr("aria-valuenow",t).children().first().css("width",t+"%")},resetProgress:function(){var t=this;setTimeout(function(){t.$element.find(t.templateElements.progress_bar).attr("aria-valuenow",5).children().first().css("width","5%")},1e3)},buttonToggler:function(t){var e=this,n=e.$element.find(e.templateElements.add_file_button),i=e.$element.find(e.templateElements.cancel_button);t?(n.hide(),i.show()):(i.hide(),n.show())},cancelAll:function(){var e=this;t.each(e.jqXHRCollection,function(t,e){e.abort()}),e.buttonToggler(!1)},throwException:function(t,e){"undefined"!=typeof Bugsnag&&Bugsnag.notify("S3Uploader",t),this.log(t+" exception:",e)},log:function(t,e){this.options.debug},_parseHtmlDataAttributes:function(t){var e=[],n=t.data();for(var i in this.options)this.options.hasOwnProperty(i)&&n.hasOwnProperty(i)&&(e[i]=n[i]);return e}};var s={getTemplate:function(t,e,n){var i="file",o="",s="Add File";t&&(i="file",o=" multiple",s="Add Files"),e&&(s=e);var r='<div class="row">    <div class="col-sm-4">        <span class="btn btn-primary btn-sm fileinput-button">            <i class="fa fa-plus"></i>&nbsp;'+s+'            <input type="file" name="'+i+'" class="js-s3_fileupload" '+o+'>        </span>        <span class="btn btn-danger js-cancel_button btn-sm" style="display:none;">            <i class="fa fa-spin fa-spinner"></i>            Cancel        </span>    </div>    <div class="col-sm-8">        <div class="js-fileupload-progress fileupload-progress" style="display:none;">            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">                <div class="progress-bar progress-bar-success" style="width:0%;"></div>            </div>';return n&&(r+='<div class="progress-extended">&nbsp;</div>'),r+="        </div>    </div></div>"}};t.fn.s3uploader=function(t){return this.each(function(){return new o(this,t)})},t.fn.s3uploader.defaults={s3_key_url:"",s3_bucket:"",s3_key_payload:{},fileupload_options:{},multiple:!1,debug:!1,optional_s3_folder:"",video_tags:[],extended_upload_info:!0,button_name:"",drop_zone:"",templateEl:null,maxChunkSize:1e7,on_file_add:function(t,e){},on_file_saved:function(t,e){},on_s3_upload:function(t){}},t.fn.s3uploader.setDefaults=function(e){t.each(e,function(e,n){t.fn.s3uploader.defaults[e]=n})}}(jQuery,window,document);
+(function ($) {
+	"use strict";
+
+    // Checks for ie
+    if ( !!navigator.userAgent.match(/MSIE/i) || !!navigator.userAgent.match(/Trident.*rv:11\./) ){
+    	$('body').addClass('ie');
+    }
+
+    // Checks for iOs, Android, Blackberry, Opera Mini, and Windows mobile devices
+    var ua = window['navigator']['userAgent'] || window['navigator']['vendor'] || window['opera'];
+    if( (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua) ){
+    	$('body').addClass('smart');
+	} 
+
+})(jQuery);
+
+(function ($) {
+	"use strict";
+
+	$('input, textarea').each(function(){
+		$(this).val() ? $(this).addClass('has-value') : $(this).removeClass('has-value');
+	});
+	$(document).on('blur', 'input, textarea', function(e){
+		$(this).val() ? $(this).addClass('has-value') : $(this).removeClass('has-value');
+	});
+
+})(jQuery);
+
+(function ($) {
+  "use strict";
+  
+  $(document).on('click', '[ui-nav] a', function (e) {
+    var $this = $(e.target), $active, $li;
+    $this.is('a') || ($this = $this.closest('a'));
+    
+    $li = $this.parent();
+    $active = $li.siblings( ".active" );
+    $li.toggleClass('active');
+    $active.removeClass('active');
+  });
+})(jQuery);
+
+
+/**
+ * 0.1.0
+ * Deferred load js/css file, used for ui-jq.js and Lazy Loading.
+ * 
+ * @ flatfull.com All Rights Reserved.
+ * Author url: http://themeforest.net/user/flatfull
+ */
+var uiLoad = uiLoad || {};
+
+(function($, $document, uiLoad) {
+	"use strict";
+
+	var loaded = [],
+	promise = false,
+	deferred = $.Deferred();
+
+	/**
+	 * Chain loads the given sources
+	 * @param srcs array, script or css
+	 * @returns {*} Promise that will be resolved once the sources has been loaded.
+	 */
+	uiLoad.load = function (srcs) {
+		srcs = $.isArray(srcs) ? srcs : srcs.split(/\s+/);
+		if(!promise){
+			promise = deferred.promise();
+		}
+
+		$.each(srcs, function(index, src) {
+			promise = promise.then( function(){
+				return src.indexOf('.css') >=0 ? loadCSS(src) : loadScript(src);
+			} );
+		});
+		deferred.resolve();
+		return promise;
+	};
+
+	/**
+	 * Dynamically loads the given script
+	 * @param src The url of the script to load dynamically
+	 * @returns {*} Promise that will be resolved once the script has been loaded.
+	 */
+	var loadScript = function (src) {
+		if(loaded[src]) return loaded[src].promise();
+
+		var deferred = $.Deferred();
+		var script = $document.createElement('script');
+		script.src = src;
+		script.onload = function (e) {
+			deferred.resolve(e);
+		};
+		script.onerror = function (e) {
+			deferred.reject(e);
+		};
+		$document.body.appendChild(script);
+		loaded[src] = deferred;
+
+		return deferred.promise();
+	};
+
+	/**
+	 * Dynamically loads the given CSS file
+	 * @param href The url of the CSS to load dynamically
+	 * @returns {*} Promise that will be resolved once the CSS file has been loaded.
+	 */
+	var loadCSS = function (href) {
+		if(loaded[href]) return loaded[href].promise();
+
+		var deferred = $.Deferred();
+		var style = $document.createElement('link');
+		style.rel = 'stylesheet';
+		style.type = 'text/css';
+		style.href = href;
+		style.onload = function (e) {
+			deferred.resolve(e);
+		};
+		style.onerror = function (e) {
+			deferred.reject(e);
+		};
+		$document.head.appendChild(style);
+		loaded[href] = deferred;
+
+		return deferred.promise();
+	}
+
+})(jQuery, document, uiLoad);
+
+(function ($) {
+	"use strict";
+
+	$(document).on('click', '[ui-fullscreen]', function (e) {
+		e.preventDefault();
+		if (screenfull.enabled) {
+		  screenfull.toggle();
+		}
+	});
+})(jQuery);
+
+(function ($) {
+	"use strict";
+  	$.extend( jQuery.easing,{
+	    def: 'easeOutQuad',
+	    easeInOutExpo: function (x, t, b, c, d) {
+	        if (t==0) return b;
+	        if (t==d) return b+c;
+	        if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
+	        return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
+	    }
+	});
+
+	$(document).on('click', '[ui-scroll-to]', function (e) {
+		e.preventDefault();
+		var target = $('#'+$(this).attr('ui-scroll-to'));
+		$('html,body').animate({
+          scrollTop: target.offset().top
+        }, 600, 'easeInOutExpo');
+	});
+})(jQuery);
+
+(function ($) {
+  	"use strict";
+  
+	$.fn.uiJp = function(){
+
+		var lists  = this;
+
+        lists.each(function()
+        {
+        	var self = $(this);
+			var options = eval('[' + self.attr('ui-options') + ']');
+			if ($.isPlainObject(options[0])) {
+				options[0] = $.extend({}, options[0]);
+			}
+
+			// uiLoad.load(MODULE_CONFIG[self.attr('ui-jp')]).then( function(){
+				self[self.attr('ui-jp')].apply(self, options);
+			// });
+        });
+
+        return lists;
+	}
+
+})(jQuery);
+
+function randomAlphaStr(m) {
+    var m = m || 9;
+    s = '',
+        r = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    for (var i = 0; i < m; i++) {
+        s += r.charAt(Math.floor(Math.random() * r.length));
+    }
+    return s;
+};
+
+function arrayUnique(array) {
+    var a = array.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+}
+String.prototype.regexIndexOf = function(regex, startpos) {
+    var indexOf = this.substring(startpos || 0).search(regex);
+    return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
+};
+
+String.prototype.regexLastIndexOf = function(regex, startpos) {
+    regex = (regex.global) ? regex : new RegExp(regex.source, "g" + (regex.ignoreCase ? "i" : "") + (regex.multiLine ? "m" : ""));
+    if(typeof (startpos) == "undefined") {
+        startpos = this.length;
+    } else if(startpos < 0) {
+        startpos = 0;
+    }
+    var stringToWorkWith = this.substring(0, startpos + 1);
+    var lastIndexOf = -1;
+    var nextStop = 0;
+    while((result = regex.exec(stringToWorkWith)) != null) {
+        lastIndexOf = result.index;
+        regex.lastIndex = ++nextStop;
+    }
+    return lastIndexOf;
+};
+
+if (!Array.prototype.includes) {
+    Array.prototype.includes = function(searchElement /*, fromIndex*/) {
+        'use strict';
+        if (this == null) {
+            throw new TypeError('Array.prototype.includes called on null or undefined');
+        }
+
+        var O = Object(this);
+        var len = parseInt(O.length, 10) || 0;
+        if (len === 0) {
+            return false;
+        }
+        var n = parseInt(arguments[1], 10) || 0;
+        var k;
+        if (n >= 0) {
+            k = n;
+        } else {
+            k = len + n;
+            if (k < 0) {k = 0;}
+        }
+        var currentElement;
+        while (k < len) {
+            currentElement = O[k];
+            if (searchElement === currentElement ||
+                (searchElement !== searchElement && currentElement !== currentElement)) { // NaN !== NaN
+                return true;
+            }
+            k++;
+        }
+        return false;
+    };
+}
+
+if (!Array.prototype.indexOf) {
+    // augment the Array prototype with an indexOf that conforms
+    // to ECMAScript5
+    //   item - this is the object we're looking for
+    //   start - this is where to start looking
+    // returns the index of the item if found, otherwise -1
+    Array.prototype.indexOf = function (item, start) {
+        start = start || 0;
+        for( ; start < this.length; start++) {
+            if (this[start] === item) {
+                return start;
+            }
+        }
+        return -1;
+    };
+}
+
+if (!Array.prototype.filter) {
+    // augment the Array prototype with a filter() that conforms
+    // to ECMAScript5
+    //   iterator - this function is called for each item, if it return
+    //       a truthy value, that item is added to the returned array
+    //   context - this is optional context to call the iterator. 'this'
+    //       inside the iterator will be set to context.
+    // returns an array with only items for which the iterator returned
+    //     a truthy value
+    Array.prototype.filter = function (iterator, context) {
+        var arr = [];
+        var i;
+        for (i = 0; i < this.length; i += 1) {
+            if (iterator.call(context, this[i])) {
+                arr.push(this[i]);
+            }
+        }
+        return arr;
+    };
+}
+if (!Array.prototype.reject) {
+    // augment the Array prototype with a reject() that is the opposite
+    // of filter().
+    //   iterator - this function is called for each item, if it return
+    //       a truthy value, that item is not added to the returned array
+    //   context - this is optional context to call the iterator. 'this'
+    //       inside the iterator will be set to context.
+    // returns an array with only items for which the iterator did not
+    //     return a truthy value
+    Array.prototype.reject = function (iterator, context) {
+        return this.filter(function (item) {
+            return !iterator.call(context, item);
+        });
+    };
+}
+
+function confirmModal(confirmCB, closeCB, options) {
+    var defaults = {
+        text: '<h6>Are you sure you want to continue?</h6>',
+        layout: 'center',
+        theme: 'relax',
+        type: 'alert',
+        modal: true,
+        animation: {
+            open: {height: 'toggle'},
+            close: {height: 'toggle'},
+            easing: 'linear',
+            speed: 1
+        },
+        timeout: 9000,
+        buttons: [
+            {
+                addClass: 'btn btn-sm primary', text: 'Continue', onClick: function ($noty) {
+                if (typeof confirmCB === 'function') {
+                    confirmCB($noty);
+                }
+            }
+            },
+            {
+                addClass: 'btn white btn-sm', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
+                $noty.close();
+                if (typeof closeCB === 'function') {
+                    closeCB($noty);
+                }
+            }
+            }
+        ]
+    };
+
+    options = $.extend({}, defaults, options);
+
+    noty(options);
+}
+
+function notify(options){
+    var defaults = {
+        text: '',
+        layout: 'top',
+        theme: 'relax',
+        type: 'error',
+        animation: {
+            open: 'animated bounceInDown',
+            close: 'animated bounceOutUp'
+        },
+        timeout: 9000,
+        closeWith: ['button','click']
+    };
+
+    options = $.extend({}, defaults, options);
+
+    noty(options);
+}
+
+$(function () {
+
+    $.extend( {
+        findFirst: function( elems, validateCb ){
+            var i;
+            for( i=0 ; i < elems.length ; ++i ) {
+                if( validateCb( elems[i], i ) )
+                    return elems[i];
+            }
+            return undefined;
+        }
+    } );
+
+    $(document).on('click', '[data-toggle="lightbox"]', function (e) {
+        e.preventDefault();
+        $(this).ekkoLightbox();
+    });
+
+    $('form').submit(function (e) {
+        var $form = $(this),
+            btn = $form.find(':submit'),
+            btnHtml = btn.html();
+
+        setTimeout(function(){
+            if(! e.isDefaultPrevented()) {
+                btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
+            }
+        },0);
+    });
+
+    $('[data-toggle="multiselect"]').multiselect({
+        buttonClass: 'btn white btn-sm',
+        maxHeight: 300,
+        enableFiltering: true,
+        disableIfEmpty: true,
+        enableCaseInsensitiveFiltering: true,
+        templates: {
+            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+            filterClearBtn: '<span class="input-group-btn"><button style="padding-left: 6px; padding-right: 6px;" class="btn btn-default multiselect-clear-filter" type="button"><i class="fa fa-times-circle"></i></button></span>',
+            li: '<li><a tabindex="0" class="dropdown-item"><label></label></a></li>'
+        }
+    });
+    $('[data-ride="carousel"]').carousel({
+        interval : false
+    });
+    $('[data-toggle="tooltip"]').tooltip();
+    $('.dropdown.dropdown-onhover').hover(function () {
+        $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();
+    }, function () {
+        $(this).removeClass('open active').find('.dropdown-menu').stop(true, true).hide();
+    });
+
+    $('.float').keypress(function (e) {
+        if ((e.which != 46 || $(this).val().indexOf('.') != -1) && (e.which < 48 || e.which > 57)) {
+            e.preventDefault();
+        }
+    });
+});
+;
+/**
+ *
+ */
+(function($, window, document, undefined){
+
+    /**
+     *
+     * @param element
+     * @param options
+     * @returns {S3Uploader}
+     * @constructor
+     */
+    function S3Uploader(element, options) {
+        this.element = element;
+        this.$element = $(element);
+        this.options = $.extend({}, $.fn.s3uploader.defaults, options);
+        this.options = $.extend({}, this.options, this._parseHtmlDataAttributes(this.$element));
+        this.jqXHRCollection = [];
+        this.templateElements = {
+            progress_container: '.js-fileupload-progress',
+            progress_bar: '.progress',
+            add_file_button: '.fileinput-button',
+            file_upload_target: '.js-s3_fileupload',
+            cancel_button: '.js-cancel_button',
+            showExtendedBool: true
+        };
+        this._defaults = $.fn.s3uploader.defaults;
+        this.init();
+    }
+
+    /**
+     *
+     * @type {{init: Function, setTemplate: Function, initFileUpload: Function, setProgress: Function, buttonToggler: Function, throwException: Function, log: Function, _parseHtmlDataAttributes: Function}}
+     */
+    S3Uploader.prototype = {
+        /**
+         *
+         * @returns {S3Uploader}
+         * @private
+         */
+        init: function(){
+            if (!$.fn.fileupload) {
+                this.throwException('missing-dependency', 'fileupload plugin required.');
+            }
+            this.setTemplate(this.options.templateEl);
+            this.initFileUpload();
+            return this;
+        },
+        /**
+         *
+         */
+        setTemplate: function($el){
+            this.$element.html(
+                $el ? this.$element.parent().find($el) : Template.getTemplate(this.options.multiple, this.options.button_name, this.options.extended_upload_info)
+            , true);
+        },
+        /**
+         *
+         */
+        initFileUpload: function(){
+            var that = this;
+            var fileUpload = {
+                url: "https://" + that.options.s3_bucket + ".s3.amazonaws.com",
+                dataType: "xml",
+                type: "POST",
+                dropZone: that.options.drop_zone,
+                add: function (e, data) {
+                    //since we are overriding the add function, in order for image-resize to work we must call the parent add()
+                    $.blueimp.fileupload.prototype.options.add.call(this, e, data);
+                    if(!that.options.on_file_add(e, data)){
+                        return false;
+                    }
+                    that.buttonToggler(true);
+                    that.$element.find(that.templateElements.progress_container).show();
+                    var hash = Math.random().toString(36).substr(2, 5);
+                    var timestamp = Math.floor(new Date().getTime() / 1000);
+                    var ajaxData = that.options.s3_key_payload;
+                    ajaxData.filename = timestamp + '_' + data.files[0].name;
+                    that.jqXHRCollection.push($.ajax({
+                        url: that.options.s3_key_url,
+                        dataType: 'JSON',
+                        type: 'GET',
+                        data: ajaxData,
+                        success: function (response) {
+                            $(document).trigger('s3uploader.s3_key_retrieved', response);
+                            that.log('api.files.s3key: done', response);
+                            data.formData = {
+                                AWSAccessKeyId:         response.data.AWSAccessKeyId,
+                                acl:                    response.data.acl,
+                                key:                    response.data.key,
+                                policy:                 response.data.policy,
+                                success_action_status:  201,
+                                signature:              response.data.signature
+                            };
+                            that.options.response = response;
+                            that.options.file = data.files[0];
+                            that.jqXHRCollection.push(data.submit());
+                        },
+                        fail: function (e, data, error) {
+                            that.throwException(e.responseText, error);
+                            that.log('api.files.s3key: fail', error);
+                            that.buttonToggler(false);
+                        }
+                    }));
+                },
+                formData: {},
+                success: function (data, textStatus, jqXHR) {
+                    that.options.on_s3_upload(data, textStatus, jqXHR);
+                },
+                done: function (e, data) {
+                    console.log('done uploading files.');
+                },
+                fail: function(e, data, error){
+                    that.throwException(e.responseText, error);
+                },
+                always: function() {
+                },
+                progress: function (e, data) {
+                    if (e.isDefaultPrevented()) {
+                        return false;
+                    }
+                    var progress = Math.floor(data.loaded / data.total * 100);
+                    if (data.context) {
+                        that.setProgress(progress);
+                    }
+                },
+                stop: function () {
+                    that.resetProgress();
+                    that.buttonToggler(false);
+                }
+            };
+            fileUpload = $.extend(fileUpload, this.options.fileupload_options);
+            that.$element.find(that.templateElements.file_upload_target).fileupload(fileUpload);
+            $(this.templateElements.cancel_button).on('click', $.proxy(function(e){
+                that = this;
+                that.cancelAll();
+            }, that));
+        },
+        /**
+         *
+         * @param percent
+         */
+        setProgress: function(percent) {
+            var that = this;
+            that.$element.find(that.templateElements.progress_bar)
+                .attr('aria-valuenow', percent).children().first()
+                .css('width', percent + '%');
+        },
+
+        /**
+         *
+         */
+        resetProgress: function() {
+            var that = this;
+            setTimeout(function(){
+                that.$element.find(that.templateElements.progress_bar)
+                    .attr('aria-valuenow', 5).children().first()
+                    .css('width', '5%');
+            }, 1000);
+        },
+        /**
+         *
+         * @param enable
+         */
+        buttonToggler: function(enable) {
+            var that = this;
+            var addFileButton = that.$element.find(that.templateElements.add_file_button);
+            var cancelButton = that.$element.find(that.templateElements.cancel_button);
+            if(enable) {
+                addFileButton.hide();
+                cancelButton.show();
+            } else {
+                cancelButton.hide();
+                addFileButton.show();
+            }
+        },
+        cancelAll: function(){
+            var that = this;
+            $.each(that.jqXHRCollection, function(key, jqXHR){
+                jqXHR.abort();
+            });
+            that.buttonToggler(false);
+        },
+        /**
+         *
+         * @param exception
+         * @param error
+         */
+        throwException: function(exception, error){
+            if(typeof Bugsnag != 'undefined') {
+                Bugsnag.notify("S3Uploader", exception);
+            }
+            this.log(exception + ' exception:', error);
+        },
+        /**
+         *
+         * @param title
+         * @param data
+         */
+        log: function(title, data) {
+            if(this.options.debug) {
+                console.log('S3Uploader: ' + title);
+                console.log(data);
+            }
+        },
+        /**
+         *
+         * @param el
+         * @returns {Array}
+         * @private
+         */
+        _parseHtmlDataAttributes: function(el) {
+            var keys = [],
+                elDataAttributes = el.data();
+            for (var key in this.options) {
+                if (this.options.hasOwnProperty(key) && elDataAttributes.hasOwnProperty(key)) {
+                    keys[key] = elDataAttributes[key];
+                }
+            }
+            return keys;
+        }
+    };
+
+    var Template = {
+        /**
+         * @param multipleBool
+         * @param customButtonName
+         * @param showExtendedBool
+         * @returns {string}
+         */
+        getTemplate: function(multipleBool, customButtonName, showExtendedBool){
+            var name = 'file';
+            var multiple = '';
+            var buttonName = 'Add File';
+            if(multipleBool) {
+                name = 'file';
+                multiple = ' multiple';
+                buttonName = 'Add Files';
+            }
+            if(customButtonName) {
+                buttonName = customButtonName;
+            }
+            var template = '' +
+                '<div class="row">' +
+                '    <div class="col-sm-4">' +
+                '        <span class="btn btn-primary btn-sm fileinput-button">' +
+                '            <i class="fa fa-plus"></i>&nbsp;' +
+                             buttonName +
+                '            <input type="file" name="' + name + '" class="js-s3_fileupload" ' + multiple + '>' +
+                '        </span>' +
+                '        <span class="btn btn-danger js-cancel_button btn-sm" style="display:none;">' +
+                '            <i class="fa fa-spin fa-spinner"></i>' +
+                '            Cancel' +
+                '        </span>' +
+                '    </div>' +
+                '    <div class="col-sm-8">' +
+                '        <div class="js-fileupload-progress fileupload-progress" style="display:none;">' +
+                '            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">' +
+                '                <div class="progress-bar progress-bar-success" style="width:0%;"></div>' +
+                '            </div>';
+            if(showExtendedBool) {
+                template += '<div class="progress-extended">&nbsp;</div>';
+            }
+            template += '' +
+                '        </div>' +
+                '    </div>' +
+                '</div>';
+            return template;
+        }
+    };
+
+    /**
+     *
+     * @param options
+     * @returns {*}
+     */
+    $.fn.s3uploader = function(options){
+        return this.each(function(){
+            // console.log('new uploader init');
+            return new S3Uploader(this, options);
+        });
+    };
+    $.fn.s3uploader.defaults = {
+        // required, can use $.fn.s3uploader.setDefaults({});
+        s3_key_url: '',
+        s3_bucket: '',
+        // optional
+        s3_key_payload: {},
+        fileupload_options: {},
+        multiple: false,
+        debug: false,
+        optional_s3_folder: '',
+        video_tags: [],
+        extended_upload_info: true,
+        button_name: '',
+        drop_zone: '',
+        templateEl : null,
+        maxChunkSize: 10000000,
+        on_file_add: function (element, data) {},
+        on_file_saved: function ($element, data) {},
+        on_s3_upload: function (data) {}
+    };
+    $.fn.s3uploader.setDefaults = function(options){
+        $.each(options, function(key, val){
+            $.fn.s3uploader.defaults[ key ] = val;
+        });
+    };
+
+})(jQuery, window, document);
+//# sourceMappingURL=base.js.map
