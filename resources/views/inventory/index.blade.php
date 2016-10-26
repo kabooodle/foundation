@@ -72,7 +72,7 @@
         left: 0;
         margin-top: -6px;
         margin-left: -1px;
-        color: red;
+        color: #f77a99;
     }
 
     .reveal {
