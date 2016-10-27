@@ -73,11 +73,20 @@ const mutations = {
     SET_SELECTED (state, key, value) {
         state.selected[key] = value;
     },
-    SET_SELECTED_ITEMS (state, item) {
-        state.selected.items.push(item);
+    ADD_TO_SELECTED_ITEMS (state, items) {
+        state.selected.items.push(items);
+    },
+    SET_SELECTED_ITEMS (state, items) {
+        state.selected.items = [];
+        state.selected.items = items;
     },
     REMOVE_FROM_SELECTED_ITEMS (state, item){
         state.selected.items.splice(item, 1);
+    },
+    RESET_SELECTED_ITEMS (state) {
+        if(state.selected.items.length > 0) {
+            state.selected.items = [];
+        }
     },
     SET_SELECTED_POSTABLES (state, key, value) {
         state.selected.postables[key] = value;

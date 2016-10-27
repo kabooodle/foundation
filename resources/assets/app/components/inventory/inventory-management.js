@@ -26,7 +26,7 @@ new Vue({
         $Bus.$on('facebook-album:changed', function(){
             let album_items = scope.selected.fb_album.items;
             if (album_items && album_items.length > 0) {
-                scope.selected.items = scope.selected.fb_album.items;
+                scope.$store.commit('SET_SELECTED_ITEMS', scope.selected.fb_album.items);
             }
         });
 
@@ -61,7 +61,7 @@ new Vue({
         // },
         selected : {
             handler: function(selected){
-                let selected_items = this.selected.items;
+                let selected_items = this.$store.getters.getSelectedItems;
                 if (this.selected.fb_album && selected_items.length > 0){
                     this.assignItemsToSelectedAlbum(selected_items);
                     this.sums.selected_postables = _.chain(this.selected.postables.fb_albums)
@@ -106,8 +106,8 @@ new Vue({
             return null;
         },
         assignItemsToSelectedAlbum: function(items) {
-            var index = this.selected.postables.fb_albums.indexOf(this.selected.fb_album);
-            this.selected.postables.fb_albums[index].items = items;
+            var index = this.selectedPostables.fb_albums.indexOf(this.selected.fb_album);
+            this.selectedPostables.fb_albums[index].items = items;
         },
         removeFromAlbum : function(fitem, facebook, event) {
             let index = facebook.items.indexOf(fitem);
@@ -117,10 +117,11 @@ new Vue({
         },
         selectFacebookAlbum : function(facebook, event){
             this.selected.fb_album = facebook;
-            if(this.selected.postables.fb_albums.indexOf(facebook) == -1) {
-                this.selected.postables.fb_albums.push(facebook);
+            if(this.selectedPostables.fb_albums.indexOf(facebook) == -1) {
+                this.selectedPostables.fb_albums.push(facebook);
             }
-            this.selected.items = [];
+            // this.selected.items = [];
+            this.$store.commit('RESET_SELECTED_ITEMS');
             $Bus.$emit('facebook-album:changed');
         },
         setPostingToSales : function(val){

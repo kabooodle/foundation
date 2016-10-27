@@ -11,15 +11,21 @@
                             </h6>
                         </div>
                         <div class="col-sm-10" style="margin-top: 3px;">
-                            <div class="pull-left btn-group-prpl" data-toggle="buttons">
+                            <div class="pull-left btn-group-prpl">
+                                <template v-for="size in style.sizes">
                                 <button
-                                        v-for="size in style.sizes"
-                                        @click="toggleSize(style, size, size.items, $event)"
                                         class="btn white btn-xs"
+                                        :data-style-id="size.id"
+                                        :data-selected="JSON.stringify(selectedItems)"
+                                        :data-style-index="selectedItems.find(s => s.style_id === style.id && s.size_id === size.id ) "
+                                        v-bind:aria-pressed="(selectedItems.find(s => s.style_id === style.id && s.size_id === size.id ) ? ' true ' : null )"
+                                        v-bind:class="[ selectedItems.find(s => s.style_id === style.id && s.size_id === size.id )  ? 'sex active' : '' ] "
+                                        @click="( selectedItems.find(s => s.style_id === style.id && s.size_id === size.id ) ? removeSizes(style, size, size.items, $event) : addSizes(style, size, size.items, $event) )"
                                         style="margin-right: 3px;">
                                     <input  type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;"> <span class="text-md">{{ size.name }}</span>
                                     <small class="text-sm text-muted block" style="margin-top: -2px;">({{ size.items.length }})</small>
                                 </button>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -45,9 +51,9 @@
                                     <div class="row row-horizon">
                                         <div v-for="item in size.items" class="col-sm-2 btn-group-prpl">
                                             <button
-                                                    v-bind:aria-pressed="(selected.items.indexOf(item) != -1 ? 'true' : null )"
-                                                    @click="( selected.items.indexOf(item) != -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )"
-                                                    v-bind:class="[ selected.items.indexOf(item) != -1 ? 'active' : '' ] "
+                                                    v-bind:aria-pressed="(selectedItems.indexOf(item) > -1 ? ' true ' : null )"
+                                                    @click="( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )"
+                                                    v-bind:class="[ selectedItems.indexOf(item) > -1 ? 'active' : '' ] "
                                                     style="border-radius: .25rem;"
                                                     type="button"
                                                     class="btn white btn-xs">
@@ -118,7 +124,6 @@
         methods : {
             clearSelectedItems : function(){
                 this.opened_drawers = [];
-                $('.btn-group-prpl').find('button.active').removeClass('active');
             },
             editItemButtonClicked : function(item, event) {
                 $Bus.$emit('popout-overlay:request-open');
@@ -180,6 +185,20 @@
                 this.removeFromOpenedDrawers(styleid, sizeid);
                 this.$emit('drawer:closed', styleid, sizeid);
             },
+            removeSizes:function(style,size,items,event){
+                const scope = this;
+                $.each(items, function(i,v){
+                    scope.removeSizeFromSelected(this);
+                });
+                this.closeSizeDrawer(style.id, size.id,event);
+            },
+            addSizes : function(style,size,items,event){
+                const scope = this;
+                $.each(items, function(i,v){
+                    scope.addSizeToSelected(this);
+                });
+                this.openSizeDrawer(style.id, size.id, event);
+            },
             toggleSize : function(style, size, items, event) {
                 event.preventDefault();
                 var scope = this;
@@ -190,11 +209,14 @@
                         scope.removeSizeFromSelected(this);
                     });
                     this.closeSizeDrawer(style.id, size.id,event);
+                    $el.removeClass('active');
                 } else {
+
                     $.each(items, function(i,v){
                         scope.addSizeToSelected(this);
                     });
                     this.openSizeDrawer(style.id, size.id, event);
+//                    $el.addClass('active');
                 }
             },
             removeSizeFromSelected : function(size) {
@@ -205,7 +227,7 @@
             },
             addSizeToSelected: function(size) {
                 if (this.$store.getters.getSelectedItems.indexOf(size) == -1) {
-                    this.$store.commit('SET_SELECTED_ITEMS', size);
+                    this.$store.commit('ADD_TO_SELECTED_ITEMS', size);
                 }
             }
         },

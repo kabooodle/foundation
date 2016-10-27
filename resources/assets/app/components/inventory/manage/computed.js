@@ -36,9 +36,19 @@ export default {
             this.$store.commit('SET_ACTION', key, value);
         }
     },
+    selectedItems : {
+        get () {
+            return this.$store.getters.getSelectedItems;
+        }
+    },
+    selectedPostables : {
+        get () {
+            return this.$store.getters.getSelectedPostables;
+        }
+    },
     selected : {
         get () {
             return this.$store.getters.getSelected;
-        }
+        },
     }
 };
