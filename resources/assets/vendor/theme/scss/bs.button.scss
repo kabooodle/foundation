@@ -22,7 +22,7 @@
 	}
 	&.primary.disabled,
 	&.primary:disabled {
-		opacity: .25;
+		opacity: .65;
 	}
 	> i{
 		&.pull-left,
@@ -146,7 +146,7 @@
 	&.btn-social:hover,
 	&.btn-social:focus,
 	&.btn-social.active{
-		border: 0 !important;
+		border: 0 !important;;
 		i:first-child{
 			top: -100%;
 		}
