@@ -51,7 +51,8 @@ class InventoryApiController extends AbstractApiController
                         'style_name' => $item->style->name,
                         'images' => $item->files->toArray(),
                         'initial_qty' => $item->initial_qty,
-                        'price_usd' => $item->price_usd
+                        'price_usd' => $item->price_usd,
+                        'files' => $item->files
                     ];
                 }
 

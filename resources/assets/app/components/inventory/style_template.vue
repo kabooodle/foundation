@@ -58,7 +58,7 @@
                                                     type="button"
                                                     class="btn white btn-xs">
                                                         <span class="item block">
-                                                            <img v-bind:src="(item.files ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 64px; height: 64px;">
+                                                            <img v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 64px; height: 64px;">
                                                         </span>
                                                 <span class="p-a-o text-sm clearfix block">
                                                             Qty: <span class="text-muted">{{ item.initial_qty }}</span>  <span class="text-muted">${{ item.price_usd }}</span>
