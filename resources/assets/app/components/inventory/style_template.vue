@@ -15,9 +15,6 @@
                                 <template v-for="size in style.sizes">
                                 <button
                                         class="btn white btn-xs"
-                                        :data-style-id="size.id"
-                                        :data-selected="JSON.stringify(selectedItems)"
-                                        :data-style-index="selectedItems.find(s => s.style_id === style.id && s.size_id === size.id ) "
                                         v-bind:aria-pressed="(selectedItems.find(s => s.style_id === style.id && s.size_id === size.id ) ? ' true ' : null )"
                                         v-bind:class="[ selectedItems.find(s => s.style_id === style.id && s.size_id === size.id )  ? 'sex active' : '' ] "
                                         @click="( selectedItems.find(s => s.style_id === style.id && s.size_id === size.id ) ? removeSizes(style, size, size.items, $event) : addSizes(style, size, size.items, $event) )"
@@ -96,6 +93,7 @@
 
             $Bus.$on('facebook-group:changed', function(){
                 scope.clearSelectedItems();
+                $('.facebook_album_radio').prop('checked', false);
             });
 
             $Bus.$on('facebook-album:changed', function(){
@@ -127,9 +125,9 @@
             },
             editItemButtonClicked : function(item, event) {
                 $Bus.$emit('popout-overlay:request-open');
-                var scope = this;
+                const scope = this;
 
-                this.$http.get('98yhiuj', {
+                this.$http.get(window.location.href+'/'+item.uuid+'/edit', {
                     before(request) {
 
                         $Bus.$emit('popout-overlay:change-prompt', false);
@@ -199,26 +197,6 @@
                 });
                 this.openSizeDrawer(style.id, size.id, event);
             },
-            toggleSize : function(style, size, items, event) {
-                event.preventDefault();
-                var scope = this;
-                var $el = $(event.currentTarget);
-
-                if ($el.hasClass('active')) {
-                    $.each(items, function(i,v){
-                        scope.removeSizeFromSelected(this);
-                    });
-                    this.closeSizeDrawer(style.id, size.id,event);
-                    $el.removeClass('active');
-                } else {
-
-                    $.each(items, function(i,v){
-                        scope.addSizeToSelected(this);
-                    });
-                    this.openSizeDrawer(style.id, size.id, event);
-//                    $el.addClass('active');
-                }
-            },
             removeSizeFromSelected : function(size) {
                 var index = this.$store.getters.getSelectedItems.indexOf(size);
                 if (index != -1) {
@@ -231,13 +209,13 @@
                 }
             }
         },
-//        events : {
-//            'drawer:opened' : function(size){
-//
-//            },
-//            'refreshing_data' : function(){
-//                this.opened_drawers = [];
-//            }
-//        }
+        events : {
+            'drawer:opened' : function(size){
+
+            },
+            'refreshing_data' : function(){
+                this.opened_drawers = [];
+            }
+        }
     }
 </script>

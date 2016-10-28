@@ -90,6 +90,10 @@ new Vue({
         },
         changeFacebookGroup : function(event){
             let groupId = event.target.value;
+            // We need to reset the selected group and album
+            // to prevent residual propogation between selections
+            this.$store.commit('RESET_SELECTED_FB_GROUP');
+            this.$store.commit('RESET_SELECTED_FB_ALBUM');
             if(groupId && groupId != '') {
                 this.selected.fb_group = this.getFacebookGroup(groupId);
             } else {

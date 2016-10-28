@@ -6,7 +6,7 @@
                 class="btn white btn-sm "
                 data-toggle="tooltip"
                 title="Refresh Inventory"
-                data-placement="top"
+                data-placement="left"
                 v-on:click="getInventory"
                 :disabled="actions.refreshing_data">
             <i class="fa fa-refresh"></i>
@@ -351,6 +351,7 @@
                                             <input
                                             @click="selectFacebookAlbum(facebook_album,$event)"
                                             type="radio"
+                                            class="facebook_album_radio"
                                             name="facebookalbums[selected.fb_group.id]"
                                             :value="facebook_album.id"> @{{ facebook_album.name }}
                                         </label>

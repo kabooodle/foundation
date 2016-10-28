@@ -67,6 +67,23 @@
   }
 }
 
+.nav-tabs-center {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.nav-tabs.nav-tabs-white {
+  .nav-link.active {
+    background: #fff !important;
+  }
+  .nav-tabs .nav-link {
+    background:#ccc !important;
+    border-bottom: 0;
+  }
+}
+
+
 .nav-justified{
   .nav-item{
     display: table-cell;

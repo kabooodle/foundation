@@ -1,6 +1,9 @@
-<div id="inventory_manage">
+
 
 @include('widgets._fileuploadscripts')
+
+
+
 
 
 @if($item->flashsales->count() > 0 || $item->facebooksales->count() > 0 || $item->pendingClaims->count() > 0)
@@ -24,12 +27,12 @@
 
 {{ Form::open(['id' => 'form_inventory_manage', 'v-on:submit' => 'validateForm', 'route' => ['shop.inventory.update', $item->user->username, $item->getUUID()], 'method' => 'put']) }}
 
-<input v-for="image in images" type="hidden" name="images[@{{ image.id }}][data]"  value="@{{ image.json }}">
 
-<validator
-        name="inventory_validation"
-        :classes="{ invalid : ' has-danger ' }"
->
+
+{{--<validator--}}
+        {{--name="inventory_validation"--}}
+        {{--:classes="{ invalid : ' has-danger ' }"--}}
+{{-->--}}
 
     <div class="box">
         <div class="box-body">
@@ -46,16 +49,16 @@
                     {{ Form::select('size_id', $item->style->sizes->pluck('name','id'), $item->styleSize->id, ['class' => 'form-control', 'id' => 'form_size_el']) }}
                 </div>
             </div>
-            <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}" v-validate-class>
+            <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}" >
                 <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
                 <div class="col-sm-7">
-                    {{ Form::number('price_usd', $item->getPrice(), ['class' => 'form-control float', 'step' => 'any', 'min' => 0, 'v-validate:price' => '{ required : true }', 'v-model' => 'price', 'placehodler' => '0.00']) }}
+                    {{ Form::number('price_usd', $item->getPrice(), ['class' => 'form-control float', 'step' => 'any', 'min' => 0,  'placehodler' => '0.00']) }}
                 </div>
             </div>
-            <div class="form-group row {{ $errors->has('initial_qty') ? 'has-danger' : null }}" v-validate-class>
+            <div class="form-group row {{ $errors->has('initial_qty') ? 'has-danger' : null }}">
                 <label for="inputEmail3" class="col-sm-3 form-control-label">Available Quantity</label>
                 <div class="col-sm-7">
-                    {{ Form::number('initial_qty', $item->initial_qty, ['class' => 'form-control', 'v-model' => 'initial_qty', 'number', 'v-validate:initial_qty' => '{ required : true }',]) }}
+                    {{ Form::number('initial_qty', $item->initial_qty, ['class' => 'form-control','number',]) }}
                 </div>
             </div>
             <div class="form-group row {{ $errors->has('description') ? 'has-danger' : null }}">
@@ -84,91 +87,10 @@
     </div>
 
 
-</validator>
+{{--</validator>--}}
 
 {{ Form::close() }}
-</div>
+
 <script>
 
-    new Vue({
-        el: '#inventory_manage',
-        data: {
-            styles: {!! $styles->toJson() !!},
-            style: {!! $item->style->toJson() !!},
-            sizes: {!! $item->style->sizes->toJson() !!},
-            item: {!!  $item->toJson()  !!},
-            images: {!! $item->files->toJson() !!}
-        },
-        ready: function () {
-            console.log('Inventory management ready');
-            $('.selectized').selectize({
-                delimiter: ',',
-                persist: false,
-                valueField: 'tag',
-                labelField: 'tag',
-                searchField: 'tag',
-                plugins: ['remove_button'],
-                create: function (input) {
-                    return {
-                        tag: input
-                    }
-                }
-            });
-        },
-        methods: {
-            getStyleById: function(id) {
-                return $.findFirst(this.styles, function(obj) {
-                    return obj.id == id;
-                });
-            },
-            setSizes : function(sizes){
-                this.sizes = sizes;
-            },
-            setStyle : function(style){
-                this.style = style;
-            },
-            changeStyle: function(e){
-                var $el = $(e.target),
-                        id = parseInt($el.val()),
-                        style = this.getStyleById(id);
-
-                this.setStyle(style);
-                this.setSizes(style.sizes);
-            },
-            validateForm: function (e) {
-                var scope = this,
-                        $that = $(e.target);
-
-                this.$validate(true, function () {
-                    if (scope.$inventory_validation.invalid || scope.images.length == 0) {
-                        e.preventDefault();
-                        if (scope.images.length == 0) {
-                            alert('Must have at least 1 image');
-                        }
-                        return false;
-                    }
-                });
-            },
-            deleteImage: function(image){
-                this.images.$remove(image);
-            },
-            insertImage: function(image) {
-                this.images.unshift(image);
-            }
-        },
-        events: {
-            'image:uploaded' : function(el, image) {
-                this.insertImage(image);
-            }
-        },
-        watch : {
-            sizes : function(v){
-                var formSizeEl = $('#form_size_el');
-                formSizeEl.empty();
-                $.each(v, function(i,value){
-                    formSizeEl.append($('<option>').text(value.name).prop('value', value.id));
-                });
-            }
-        }
-    });
 </script>

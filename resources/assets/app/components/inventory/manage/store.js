@@ -88,6 +88,12 @@ const mutations = {
             state.selected.items = [];
         }
     },
+    RESET_SELECTED_FB_GROUP (state) {
+        state.selected.fb_group = null;
+    },
+    RESET_SELECTED_FB_ALBUM (state) {
+        state.selected.fb_album = null;
+    },
     SET_SELECTED_POSTABLES (state, key, value) {
         state.selected.postables[key] = value;
     },
@@ -95,7 +101,6 @@ const mutations = {
         state.sums[key] = value;
     }
 };
-
 
 const getters = {
     getInventoryItems : state => {
