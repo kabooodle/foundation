@@ -6217,7 +6217,7 @@ exports.default = {
     },
     methods: {
         setPromptOnClose: function setPromptOnClose(promptOnClose) {
-            this.promptOnClose = typeof promptOnClose === 'undefined' ? true : promptOnClose;
+            this.promptOnClose = promptOnClose;
         },
         openOverlay: function openOverlay(content) {
             $('body').addClass('noscroll');
@@ -6245,7 +6245,12 @@ exports.default = {
             }
         },
         changeOverlayContent: function changeOverlayContent(content, promptOnClose) {
-            this.setPromptOnClose(promptOnClose);
+            // Because this method may be called immediately after a prompt change was called,
+            // lets ignore undefined promptOnClose so that we don't inadvertently override something
+            // previously set.  If we want it set, we would pass it. simple.
+            if (typeof promptOnClose !== 'undefined') {
+                this.setPromptOnClose(promptOnClose);
+            }
             $('.shot-overlay').find('.overlay-content').html(content);
         }
     }

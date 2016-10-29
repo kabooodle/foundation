@@ -100,47 +100,18 @@
                 categories : '',
             }
         },
-        methods : {
-            getStyleById: function(id) {
-                return $.findFirst(this.styles, function(obj) {
-                    return obj.id == id;
-                });
-            },
-            setSizes : function(sizes){
-                this.sizes = sizes;
-            },
-            setSelectedStyle : function(style){
-                this.selected_style = style;
-            },
-            changeStyle: function(e){
-                var $el = $(e.target),
-                        id = parseInt($el.val()),
-                        style = this.getStyleById(id);
-                this.setSelectedStyle(style);
-                this.setSizes(style.sizes);
-            },
-            deleteImage: function(image){
-                let index = this.images.indexOf(image);
-                if(index > 0 ) {
-                    this.images.splice(index,1);
-                }
-            },
-            insertImage: function(image) {
-                // Push images to front of array so we can iterate newest to oldest.
-                this.images.unshift(image);
-            }
-        },
-        components: {
-            'image-attach' : FileUpload
-        },
         created : function(){
             const scope = this;
 
+            // Bus event listener
             $Bus.$on('image:uploaded', function(el, image){
                 scope.insertImage(image);
             });
 
+            // set the selected style
             this.setSelectedStyle(this.item.style);
+
+            // set the selected style' sizes
             this.setSizes(this.item.style.sizes);
 
             setTimeout(function(){
@@ -158,6 +129,41 @@
                     }
                 });
             });
+        },
+        methods : {
+            setSizes : function(sizes){
+                this.sizes = sizes;
+            },
+            setSelectedStyle : function(style){
+                this.selected_style = style;
+            },
+            // Iterates over styles and returns single item
+            getStyleById: function(id) {
+                return $.findFirst(this.styles, function(obj) {
+                    return obj.id == id;
+                });
+            },
+            changeStyle: function(e){
+                var $el = $(e.target),
+                        id = parseInt($el.val()),
+                        style = this.getStyleById(id);
+
+                this.setSelectedStyle(style);
+                this.setSizes(style.sizes);
+            },
+            deleteImage: function(image){
+                let index = this.images.indexOf(image);
+                if(index > 0 ) {
+                    this.images.splice(index,1);
+                }
+            },
+            insertImage: function(image) {
+                // Push images to front of array so we can iterate newest to oldest.
+                this.images.unshift(image);
+            }
+        },
+        components: {
+            'image-attach' : FileUpload
         }
     }
 </script>

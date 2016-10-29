@@ -20,7 +20,7 @@ require ('bootstrap-touchspin');
 // $.multiselect = require ('bootstrap-multiselect');
 require ('eonasdan-bootstrap-datetimepicker');
 require('blueimp-file-upload');
-require('../app/s3uploader');
+
 
 // Vue.config.devtools = false;
 
