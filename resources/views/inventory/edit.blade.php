@@ -1,4 +1,5 @@
-@extends('layouts.full', ['contentId' =>'inventory_manage'])
+@extends('layouts.full')
+
 
 {{--@section('body-content-left-nav')--}}
     {{--<div class="box no-shadow m-b-0">--}}
@@ -31,18 +32,21 @@
 {{--@endsection--}}
 
 @section('body-content')
-
     <div class="">
         <ul class="nav nav-tabs nav-tabs-white">
             <li class="nav-item" >
-                <a class="nav-link active " href="#">Item Details</a>
+                <a class="nav-link active no-border " style="border: none;" href="#">Item Details</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Current Postings</a>
+                <a class="nav-link no-border" style="border: none;" href="#">Current Postings</a>
             </li>
         </ul>
     </div>
 
-    @include('inventory.partials._edit', ['item' => $item, 'styles' => $styles])
+    <div class="box no-shadow">
+        <div class="box-body">
+        @include('inventory.partials._edit', ['item' => $item, 'styles' => $styles])
+        </div>
+    </div>
 
 @endsection

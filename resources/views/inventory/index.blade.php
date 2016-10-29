@@ -1,6 +1,8 @@
 @extends('layouts.full', ['contentId' => 'manage_inventory'])
 
 @section('body-menu')
+
+
     <div class="center-block text-center">
         <button
                 class="btn white btn-sm "

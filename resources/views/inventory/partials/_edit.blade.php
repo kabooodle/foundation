@@ -1,10 +1,5 @@
-
-
+<div id="inventory_manage">
 @include('widgets._fileuploadscripts')
-
-
-
-
 
 @if($item->flashsales->count() > 0 || $item->facebooksales->count() > 0 || $item->pendingClaims->count() > 0)
     <div class="box-color p-a white b-0">
@@ -24,73 +19,30 @@
 @endif
 
 
-
-{{ Form::open(['id' => 'form_inventory_manage', 'v-on:submit' => 'validateForm', 'route' => ['shop.inventory.update', $item->user->username, $item->getUUID()], 'method' => 'put']) }}
-
+{{ Form::open([
+    'id' => 'form_inventory_manage',
+    'v-on:submit' => 'validateForm',
+    'route' => ['shop.inventory.update', $item->user->username, $item->getUUID()],
+    'method' => 'put'
+]) }}
 
 
 {{--<validator--}}
-        {{--name="inventory_validation"--}}
-        {{--:classes="{ invalid : ' has-danger ' }"--}}
+{{--name="inventory_validation"--}}
+{{--:classes="{ invalid : ' has-danger ' }"--}}
 {{-->--}}
 
-    <div class="box">
-        <div class="box-body">
 
-            <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
-                <label for="inputEmail3" class="col-sm-3 form-control-label">Style</label>
-                <div class="col-sm-7">
-                    {{ Form::select('style_id', $styles->pluck('name', 'id'), $item->style->id, ['class' => 'form-control', 'v-on:change' => 'changeStyle']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('size') ? 'has-danger' : null }}">
-                <label for="inputPassword3" class="col-sm-3 form-control-label">Size</label>
-                <div class="col-sm-7">
-                    {{ Form::select('size_id', $item->style->sizes->pluck('name','id'), $item->styleSize->id, ['class' => 'form-control', 'id' => 'form_size_el']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}" >
-                <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
-                <div class="col-sm-7">
-                    {{ Form::number('price_usd', $item->getPrice(), ['class' => 'form-control float', 'step' => 'any', 'min' => 0,  'placehodler' => '0.00']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('initial_qty') ? 'has-danger' : null }}">
-                <label for="inputEmail3" class="col-sm-3 form-control-label">Available Quantity</label>
-                <div class="col-sm-7">
-                    {{ Form::number('initial_qty', $item->initial_qty, ['class' => 'form-control','number',]) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('description') ? 'has-danger' : null }}">
-                <label for="inputPassword3" class="col-sm-3 form-control-label">Description<small class="block text-muted text-sm">(Optional)</small></label>
-                <div class="col-sm-7">
-                    {{ Form::textarea('description', $item->description, ['class' => 'form-control', 'rows' => 2]) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('description') ? 'has-danger' : null }}">
-                <label for="inputPassword3" class="col-sm-3 form-control-label">Categories<small class="block text-muted text-sm">(Optional)</small></label>
+<inventory-edit
+        :styles="{{ $styles->toJson() }}"
+        :item="{{ $item->toJson() }}"
+        :images="{{ $item->files->toJson() }}"
+        tags="{!! $item->tagsString()  !!}"
+        api_route="{{ route('api.files.sign') }}"
+></inventory-edit>
 
-                <div class="col-sm-7">
-                    {{ Form::text('categories', $item->tagsString(), ['class' => 'selectized', 'id' => 'tags', 'placeholder' => 'Type categories']) }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group row m-t-md">
-        <div class="col-sm-offset-3 col-sm-7">
-                <span class="pull-left">
-                    <image-attach btn-class-size="" multiple="false"></image-attach>
-                </span>
-            <button type="submit" class="btn primary">Save</button>
-        </div>
-    </div>
-
-
+<script src="/assets/js/inventory-edit.js"></script>
 {{--</validator>--}}
 
 {{ Form::close() }}
-
-<script>
-
-</script>
+</div>
