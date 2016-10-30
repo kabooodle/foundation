@@ -14,21 +14,21 @@
 
 ;(function (factory) {
     'use strict';
-    if (typeof define === 'function' && define.amd) {
-        // Register as an anonymous AMD module:
-        define([
-            'jquery',
-            './jquery.fileupload'
-        ], factory);
-    } else if (typeof exports === 'object') {
-        // Node/CommonJS:
-        factory(require('jquery'));
-    } else {
-        // Browser globals:
+    // if (typeof define === 'function' && define.amd) {
+    //     // Register as an anonymous AMD module:
+    //     define([
+    //         'jquery',
+    //         './jquery.fileupload'
+    //     ], factory);
+    // } else if (typeof exports === 'object') {
+    //     // Node/CommonJS:
+    //     factory(require('jquery'));
+    // } else {
+    //     // Browser globals:
         factory(
             window.jQuery
         );
-    }
+    // }
 }(function ($) {
     'use strict';
 

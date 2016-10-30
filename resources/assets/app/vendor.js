@@ -17,10 +17,10 @@ require ('selectize');
 require ('emojione');
 require ('emojionearea');
 require ('bootstrap-touchspin');
-// $.multiselect = require ('bootstrap-multiselect');
-require ('eonasdan-bootstrap-datetimepicker');
-require('blueimp-file-upload');
-
+global.datetimepicker = require ('eonasdan-bootstrap-datetimepicker');
+//
+// // Use the localized version because the NPM version is being fuckity.
+global.multiselect = require ('../vendor/bootstrap-multiselect/dist/js/bootstrap-multiselect');
 
 // Vue.config.devtools = false;
 

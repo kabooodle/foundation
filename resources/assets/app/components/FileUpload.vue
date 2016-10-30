@@ -18,17 +18,14 @@
     </div>
 </template>
 <script>
-
-//    require('../../vendor/fileupload/js/vendor/jquery.ui.widget');
-////    require('../../vendor/fileupload/js/vendor/load-image');
-//    require('../../vendor/fileupload/js/vendor/canvas-to-blob.min');
-//        require('../../vendor/fileupload/js/jquery.iframe-transport');
-//    import fileupload from '../../vendor/fileupload/js/jquery.fileupload';
-//        require('../../vendor/fileupload/js/jquery.fileupload-process');
-//        require('../../vendor/fileupload/js/jquery.fileupload-image');
-//    require('../../vendor/fileupload/js/jquery.fileupload-ui');
-
-
+    require('../../vendor/fileupload/js/vendor/jquery.ui.widget');
+    require('../../vendor/fileupload/js/vendor/load-image');
+    require('../../vendor/fileupload/js/vendor/canvas-to-blob.min');
+    require('../../vendor/fileupload/js/jquery.iframe-transport');
+    require('../../vendor/fileupload/js/jquery.fileupload');
+    require('../../vendor/fileupload/js/jquery.fileupload-process');
+    require('../../vendor/fileupload/js/jquery.fileupload-image');
+    require('../../vendor/fileupload/js/jquery.fileupload-ui');
     import s3uploader from '../../app/s3uploader';
 
     export default{

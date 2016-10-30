@@ -14,22 +14,22 @@
 
 (function (factory) {
     'use strict';
-    if (typeof define === 'function' && define.amd) {
-        // Register as an anonymous AMD module:
-        define([
-            'jquery',
-            'tmpl',
-            './jquery.fileupload-image',
-            './jquery.fileupload-audio',
-            './jquery.fileupload-video'
-        ], factory);
-    } else {
+    // if (typeof define === 'function' && define.amd) {
+    //     // Register as an anonymous AMD module:
+    //     define([
+    //         'jquery',
+    //         'tmpl',
+    //         './jquery.fileupload-image',
+    //         './jquery.fileupload-audio',
+    //         './jquery.fileupload-video'
+    //     ], factory);
+    // } else {
         // Browser globals:
         factory(
             window.jQuery,
             window.tmpl
         );
-    }
+    // }
 }(function ($, tmpl) {
     'use strict';
     $.blueimp.fileupload.prototype._specialOptions.push(

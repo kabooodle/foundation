@@ -4,21 +4,21 @@
 * Copyright 2015 jQuery Foundation and other contributors; Licensed MIT */
 
 (function( factory ) {
-	if ( typeof define === "function" && define.amd ) {
-
-		// AMD. Register as an anonymous module.
-		define([ "jquery" ], factory );
-
-	} else if ( typeof exports === "object" ) {
-
-		// Node/CommonJS
-		factory( require( "jquery" ) );
-
-	} else {
+	// if ( typeof define === "function" && define.amd ) {
+    //
+	// 	// AMD. Register as an anonymous module.
+	// 	define([ "jquery" ], factory );
+    //
+	// } else if ( typeof exports === "object" ) {
+    //
+	// 	// Node/CommonJS
+	// 	factory( require( "jquery" ) );
+    //
+	// } else {
 
 		// Browser globals
 		factory( jQuery );
-	}
+	// }
 }(function( $ ) {
 /*!
  * jQuery UI Widget 1.11.4
