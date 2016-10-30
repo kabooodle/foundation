@@ -27,17 +27,29 @@ class StripeWebhooksController extends WebhookController
         /** @var User $user */
         $user = $this->getUserByStripeId($payload['data']['object']['customer']);
 
-        // The major thing we care about is the fact that a user is no longer in trial
-        // and their account has rolled over to the first pay status.
-        // This can be confirmed be checking their previous status and current!
-        if($user
-            && $payload['data']['previous_attributes']['status'] == "trialing"
-            && $payload['data']['object']['status'] == "active") {
+        if($user) {
 
-            // We have an account that just got off trial, fire the event.
-            event(new UserSubscriptionCameOffTrial($user, $payload));
+            // The major thing we care about is the fact that a user is no longer in trial
+            // and their account has rolled over to the first pay status.
+            // This can be confirmed be checking their previous status and current!
+           if($this->checkIfUserOffTrialAndActive($payload)) {
+               // We have an account that just got off trial, fire the event.
+               event(new UserSubscriptionCameOffTrial($user, $payload));
+           }
         }
 
         return new Response('Webhook Handled', 200);
+    }
+
+    /**
+     * @param array $payload
+     *
+     * @return bool
+     */
+    protected function checkIfUserOffTrialAndActive(array $payload)
+    {
+        return
+            $payload['data']['previous_attributes']['status'] == "trialing"
+            && $payload['data']['object']['status'] == "active";
     }
 }
