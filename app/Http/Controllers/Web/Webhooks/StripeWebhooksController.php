@@ -32,7 +32,7 @@ class StripeWebhooksController extends WebhookController
             // The major thing we care about is the fact that a user is no longer in trial
             // and their account has rolled over to the first pay status.
             // This can be confirmed be checking their previous status and current!
-           if($this->checkIfUserOffTrialAndActive($payload)) {
+           if($this->checkIfUserCameOffTrialAndActive($payload)) {
                // We have an account that just got off trial, fire the event.
                event(new UserSubscriptionCameOffTrial($user, $payload));
            }
@@ -46,7 +46,7 @@ class StripeWebhooksController extends WebhookController
      *
      * @return bool
      */
-    protected function checkIfUserOffTrialAndActive(array $payload)
+    protected function checkIfUserCameOffTrialAndActive(array $payload)
     {
         return
             $payload['data']['previous_attributes']['status'] == "trialing"
