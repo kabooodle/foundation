@@ -1,12 +1,15 @@
 <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
-    <div class="col-sm-3">
-        <div  id="profile_photo_container" style="height: 70px; width: 70px;">
-
+    <div class="col-sm-3 clearfix">
+        <div class="avatar_container _64 pull-right  avatar-thumbnail" >
+            @if($_user->avatar)
+                <img src="{{ $_user->avatar }}">
+                <input type="hidden" name="avatar" value="{{ $_user->avatar }}">
+            @endif
         </div>
     </div>
     <div class="col-sm-6">
         <file-upload
-                button_title="Add profile photo"
+                :button_title="avatar ? 'Replace profile image' : 'Add profile image'"
                 multiple="false"
                 user_hash="{{ $_user->public_hash }}"
                 s3_key_url="{{ route('api.files.sign') }}"

@@ -120,7 +120,7 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'invited_by_user_id', 'activated', 'timezone', 'referred_by_user_id',
+        'name', 'email', 'password', 'avatar', 'invited_by_user_id', 'activated', 'timezone', 'referred_by_user_id',
     ];
 
     /**

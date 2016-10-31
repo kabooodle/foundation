@@ -38,6 +38,10 @@ class ProfileSettingsController extends Controller
         return $this->view('profile.index')->with(compact('user', 'timezone'));
     }
 
+    /**
+     * @param Request $request
+     * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function postProfile(Request $request)
     {
         $input = [
@@ -62,10 +66,10 @@ class ProfileSettingsController extends Controller
         try {
             $this->validate($request, $rules);
 
-
             user()->name = $input['name'];
             user()->email = $input['email'];
             user()->timezone = $input['timezone'];
+            user()->avatar = $request->has('avatar') ? $request->get('avatar') : null;
 
             if($input['newPassword']) {
                 if (!Hash::check($input['password'], user()->password)) {

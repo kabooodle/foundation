@@ -11,6 +11,33 @@
   }
 }
 
+.avatar-thumbnail {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  &._64 {
+    width: 64px !important;
+    height: 64px !important;
+  }
+ & img {
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   height: 100%;
+   width: auto;
+   border-radius: .25rem;
+   -webkit-transform: translate(-50%, -50%);
+   -ms-transform: translate(-50%, -50%);
+   transform: translate(-50%, -50%);
+   &.portrait {
+     width: 100%;
+     height: auto;
+   }
+   }
+}
+
+
 [data-toggle="lightbox"]:hover {
   cursor: zoom-in;
 }
