@@ -60,8 +60,8 @@
                 </li>
                 <li class="nav-item dropdown dropdown-onhover">
                     <a class="nav-link dropdown-toggle clear" data-toggle=
-                    "dropdown" href=""><span class="avatar w-32"><img alt="..."
-                                                                      src="https://placekitten.com/g/32/32"> <i class=
+                    "dropdown" href=""><span class="avatar_container _32 inline avatar-thumbnail"><img alt="..."
+                                                                      src="{{ user()->avatar }}"> <i class=
                                                                                                                 "busy b-white right"></i></span></a>
                     <div class="dropdown-menu pull-right">
                         <a class="dropdown-item" href="{{ route('profile.index') }}"><span>Account Settings</span></a>

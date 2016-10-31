@@ -173,7 +173,7 @@ class User extends BaseEloquentModel implements
     public function getAvatarAttribute($value)
     {
         if (!$value){
-            
+            $value = '/assets/images/logo/roboto-avatar.png';
         }
 
         return $value;

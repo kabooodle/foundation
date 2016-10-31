@@ -16,9 +16,14 @@
   width: 200px;
   height: 200px;
   overflow: hidden;
+  display: inline-block;
   &._64 {
     width: 64px !important;
     height: 64px !important;
+  }
+  &._32 {
+    width: 32px !important;
+    height: 32px !important;
   }
  & img {
    position: absolute;
