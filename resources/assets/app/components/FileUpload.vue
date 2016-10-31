@@ -2,8 +2,27 @@
     <div>
         <div :id="imageEl">
             <div style="margin-right: 3px" class="upload-template">
-                <button type="button" :class="'btn white '+btnClassSize+' fileinput-button'" style="display: inline-block;">
-                    {{ buttonTitle }}<input type="file" name="file" class="js-s3_fileupload" :accept="acceptRegEx"  multiple />
+                <button
+                        type="button"
+                        :class="'btn white '+btnClassSize+' fileinput-button'" style="display: inline-block;">
+                    {{ button_title }}
+                    <template v-if="has_multiple">
+                    <input
+                        type="file"
+                        name="file"
+                        class="js-s3_fileupload"
+                        :accept="acceptRegEx"
+                        multiple="multiple"
+                    />
+                    </template>
+                    <template v-else>
+                        <input
+                                type="file"
+                                name="file"
+                                class="js-s3_fileupload"
+                                :accept="acceptRegEx"
+                        />
+                    </template>
                 </button>
                 <button type="button" :class="'btn danger '+btnClassSize+' js-cancel_button'" style="display: none;">
                     Cancel
@@ -39,7 +58,7 @@
             btnClassSize: {
                 default: ' btn-sm '
             },
-            buttonTitle: {
+            button_title: {
                 default: 'Add Images'
             },
             acceptRegEx: {
@@ -57,7 +76,7 @@
         },
         computed : {
             has_multiple: function() {
-                return this.multiple == true ? 'multiple' : null;
+                return this.multiple == 'true' ? true : false;
             }
         },
         created : function() {
@@ -78,7 +97,7 @@
                 $(function(){
                     el.s3uploader({
                         save_file_model: false,
-                        multiple: true,
+                        multiple: that.has_multiple,
                         s3_bucket: 'kabooodle-storage',
                         s3_key_url: that.s3_key_url,
                         s3_key_payload: {

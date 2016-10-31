@@ -1,4 +1,15 @@
 <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
+    <label class="control-label col-sm-3">Profile Photo</label>
+    <div class="col-sm-6">
+        <file-upload
+                button_title="Add profile photo"
+                multiple="false"
+                user_hash="{{ $_user->public_hash }}"
+                s3_key_url="{{ route('api.files.sign') }}"
+        ></file-upload>
+    </div>
+</div>
+<div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
     <label class="control-label col-sm-3">Name</label>
     <div class="col-sm-6">
         {{ Form::text('name', $_user ? $_user->name : null, ['class' => 'form-control'])  }}
@@ -34,3 +45,6 @@
         {{ Form::select('timezone', $_timezone, $_user->timezone, ['class' => 'form-control']) }}
     </div>
 </div>
+@push('footer-scripts')
+<script src="/assets/js/settings.js"></script>
+@endpush
