@@ -80,7 +80,7 @@
                         type="button"
                         :class="'btn white '+btnClassSize+' fileinput-button'" style="display: inline-block;">
                     {{ button_title }}
-                    <template v-if="has_multiple">
+                    <template v-if="has_multiple || multiple">
                     <input
                         type="file"
                         name="file"
@@ -150,7 +150,7 @@
         },
         computed : {
             has_multiple: function() {
-                return this.multiple == 'true' ? true : false;
+                return this.multiple == true;
             }
         },
         created : function() {

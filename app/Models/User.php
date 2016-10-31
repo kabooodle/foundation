@@ -167,6 +167,19 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @param $value
+     * @return mixed
+     */
+    public function getAvatarAttribute($value)
+    {
+        if (!$value){
+            
+        }
+
+        return $value;
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function invitedBy()

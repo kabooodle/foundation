@@ -207,11 +207,11 @@ $(function () {
             btn = $form.find(':submit'),
             btnHtml = btn.html();
 
-        setTimeout(function(){
+        // setTimeout(function(){
             if(! e.isDefaultPrevented()) {
                 btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
             }
-        },0);
+        // },0);
     });
 
     $('[data-toggle="multiselect"]').multiselect({
