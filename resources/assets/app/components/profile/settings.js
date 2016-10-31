@@ -12,6 +12,13 @@ new Vue({
             scope.avatar = data.location;
         });
     },
+    methods : {
+        removeAvatar: function(event){
+            event.preventDefault();
+            this.avatar = null;
+            $('.avatar_container').html('');
+        }
+    },
     components: {
         'file-upload' : fileupload
     }

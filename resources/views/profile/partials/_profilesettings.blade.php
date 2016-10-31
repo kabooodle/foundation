@@ -8,12 +8,18 @@
         </div>
     </div>
     <div class="col-sm-6">
-        <file-upload
-                :button_title="avatar ? 'Replace profile image' : 'Add profile image'"
-                multiple="false"
-                user_hash="{{ $_user->public_hash }}"
-                s3_key_url="{{ route('api.files.sign') }}"
-        ></file-upload>
+            <file-upload
+                    outer_class="pull-left"
+                    :button_title="avatar ? 'Replace profile image' : 'Add profile image'"
+                    multiple="false"
+                    user_hash="{{ $_user->public_hash }}"
+                    s3_key_url="{{ route('api.files.sign') }}"
+            ></file-upload>
+            <button
+                    @click="removeAvatar"
+                    type="button"
+                    class="btn white btn-sm pull-left"
+                    v-if="avatar">Remove</button>
     </div>
 </div>
 <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">

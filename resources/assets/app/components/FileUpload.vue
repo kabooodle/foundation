@@ -74,7 +74,7 @@
 </style>
 <template>
     <div>
-        <div :id="imageEl">
+        <div :id="imageEl" :class="outer_class">
             <div style="margin-right: 3px" class="upload-template">
                 <button
                         type="button"
@@ -140,6 +140,9 @@
             },
             multiple: {
                 default: true
+            },
+            outer_class: {
+                default: null
             }
         },
         data: function() {
