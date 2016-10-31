@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Bus\Handlers\Events\User;
 
+use Kabooodle\Models\User;
 use Kabooodle\Libraries\Emails\PiperEmail;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 
@@ -22,6 +23,27 @@ class UserWasCreatedListener
     {
         $user = $event->getUser();
 
+        // Send welcome email to user.
+        $this->sendWelcomeEmail($user);
+
+        // Check if user was referred by someone
+        // and send an email to the referee notifying them.
+        if($referee = $this->checkIfUserWasReferred($user)){
+            $this->notifyReferee($user, $referee);
+        }
+
+//        $this->nexmo->message()->send([
+//            'to' => '19163902455',
+//            'from' => '12242140596',
+//            'text' => 'Welcome to invoSales! Check your email.'
+//        ]);
+    }
+
+    /**
+     * @param $user
+     */
+    public function sendWelcomeEmail($user)
+    {
         $mail = new PiperEmail;
         $mail->setView('auth.emails.welcome')
             ->setParameters(['user' => $user])
@@ -30,11 +52,30 @@ class UserWasCreatedListener
                     ->subject('Welcome to '.env('APP_NAME').'!');
             })
             ->send();
+    }
 
-//        $this->nexmo->message()->send([
-//            'to' => '19163902455',
-//            'from' => '12242140596',
-//            'text' => 'Welcome to invoSales! Check your email.'
-//        ]);
+    /**
+     * @param $user
+     * @param $referee
+     */
+    public function notifyReferee($user, $referee)
+    {
+        $mail = new PiperEmail;
+        $mail->setView('auth.emails.referraljoined')
+            ->setParameters(['user' => $user, 'referee' => $referee])
+            ->setCallable(function ($m) use ($user, $referee) {
+                $m->to($referee->email)
+                    ->subject(env('APP_NAME').' referral joined!');
+            })
+            ->send();
+    }
+
+    /**
+     * @param User $user
+     * @return mixed
+     */
+    public function checkIfUserWasReferred(User $user)
+    {
+        return $user->referredBy;
     }
 }

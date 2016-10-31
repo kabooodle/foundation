@@ -6,7 +6,7 @@
     <div class="text-center m-b-3 ">
         <img src="/assets/images/513550806.jpg" width="100%">
         <h1 style="line-height: 50px" class="m-b-3 _300 m-t-2">Get your merchant account for free for a year when you invite your friends to {{ env('APP_NAME') }}!</h1>
-        <h5 class="_400 text-muted" style="line-height: 30px;">If you refer 10 friends, and they upgrade their accounts to basic, we'll give you the merchant account for free for a year! Also, we will credit each account $5.00! Need credits now? <a class="text-warning _600" href="{{ route('profile.credits.index') }}">Go here!</a></h5>
+        <h5 class="_400 text-muted" style="line-height: 30px;">If you refer 10 friends, and they upgrade their accounts to basic, we'll give you the merchant account for free for a year! Also, we will credit each account $5.00! Need credits now? <a class="text-primary _600" href="{{ route('profile.credits.index') }}">Go here!</a></h5>
     </div>
 
     <div class="box padding">
@@ -40,7 +40,7 @@
                                                         </span>
                             </a>
                             <div class="list-body">
-                                <div class="_500"><a href="http://kabooodle.dev/shop/jaketoolson">{!! $referral->name !!}</a></div>
+                                <div class="_500"><a href="">{!! $referral->name !!}</a></div>
                                 <div class="text-muted">joined: {{ $referral->created_at->diffForHumans() }}</div>
                                 <div class="text-muted text-sm">{{ $referral->subscribed('main') ? 'Qualified!' : 'not yet qualified' }}</div>
                             </div>
@@ -50,6 +50,8 @@
             @endforeach
         </div>
     </div>
+    @else
+        <p>No referrals yet!</p>
     @endif
 
     @push('footer-scripts')

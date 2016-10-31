@@ -11,11 +11,12 @@ use Messages;
 use Validator;
 use Kabooodle\Models\User;
 use Illuminate\Http\Request;
-use Kabooodle\Bus\Events\User\UserLoggedInEvent;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\User\AddUserCommand;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Kabooodle\Bus\Events\User\UserLoggedInEvent;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Kabooodle\Http\Middleware\ReferralProgramMiddleware;
 
 /**
  * Class AuthController
@@ -79,7 +80,12 @@ class AuthController extends Controller
         try {
             $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
 
-            $user = $this->dispatch(new AddUserCommand($request->get('name'), $request->get('email'), $request->get('password'), $request->session()->get('kabooodle_referrer')));
+            $user = $this->dispatch(new AddUserCommand(
+                $request->get('name'),
+                $request->get('email'),
+                $request->get('password'),
+                $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
+            ));
 
             Auth::attempt([
                 'email' => $user->email,
@@ -95,6 +101,7 @@ class AuthController extends Controller
             Messages::error($e->validator->getMessageBag()->first());
 
             return $this->redirect(route('auth.register'))
+                ->withInput($request->all())
                 ->withErrors($e->validator->getMessageBag());
         }
     }

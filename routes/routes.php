@@ -50,11 +50,6 @@ Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], f
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@invite'
     ]);
 
-    Route::post('/invite/{userName}', [
-        'as' => 'invite.register.store',
-        'uses' => \Kabooodle\Http\Controllers\Web\Auth\AuthController::class.'@postRegister'
-    ]);
-
     Route::get('c/{facebookItemString}', [
         'as' => 'externalclaim.show',
         'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryClaimsFacebookController::class.'@show'

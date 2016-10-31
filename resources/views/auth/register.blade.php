@@ -11,7 +11,7 @@
 
     <div class="p-a-md box-color r box-shadow-z1 text-color">
 
-        {{ Form::open(['method' => route('auth.register.store')]) }}
+        {{ Form::open(['route' => 'auth.register.store']) }}
 
         <div class="md-form-group">
             {{ Form::text('name', null, ['class' => 'md-input']) }}
@@ -29,8 +29,8 @@
         </div>
 
         <div class="md-form-group">
-            {{ Form::text('referred_by', null, ['class' => 'md-input']) }}
-            <label>Referred By User <small class="">(Referrers' username or email)</small></label>
+            {{ Form::text('referred_by', (isset($referrer) ? $referrer->email : null), ['class' => 'md-input']) }}
+            <label>Referred By User <small class="">(username or email)</small></label>
         </div>
 
         <p class="">By clicking on "Create Account" below, you are agreeing to the <a href="" class="text-info">Terms of Service</a> and the <a href="" class="text-info">Privacy Policy</a>.</p>
