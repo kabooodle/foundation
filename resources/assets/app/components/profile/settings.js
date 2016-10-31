@@ -3,8 +3,8 @@ import fileupload from '../FileUpload.vue';
 new Vue({
     el: '#profile_settings',
     created : ()=>{
-        $Bus.$on('image:uploaded', function(el, data){
-            console.log(data);
+        $Bus.$on('image:uploaded', (el, data)=>{
+            $('#profile_photo_container').html('<img src="'+data.location+'">');
         });
     },
     components: {

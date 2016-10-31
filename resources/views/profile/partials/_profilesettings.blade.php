@@ -1,5 +1,9 @@
 <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
-    <label class="control-label col-sm-3">Profile Photo</label>
+    <div class="col-sm-3">
+        <div  id="profile_photo_container" style="height: 70px; width: 70px;">
+
+        </div>
+    </div>
     <div class="col-sm-6">
         <file-upload
                 button_title="Add profile photo"
