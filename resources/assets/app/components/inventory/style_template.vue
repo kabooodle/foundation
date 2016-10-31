@@ -128,6 +128,7 @@
                 const scope = this;
 
                 this.$http.get(window.location.href+'/'+item.uuid+'/edit', {
+                    async: false,
                     before(request) {
 
                         $Bus.$emit('popout-overlay:change-prompt', false);
@@ -139,10 +140,13 @@
                         scope.active_http_requests.push(request);
                     }
                 }).then(function(response){
-                    $Bus.$emit('popout-overlay:change-content', response.body);
+                    setTimeout(function(){
+                        $Bus.$emit('popout-overlay:change-content', response.body);
+                    },0);
                 }, function(response){
                     $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
-                }).finally(function(){
+                })
+                .finally(function(){
                     scope.active_http_requests = [];
                 });
             },
