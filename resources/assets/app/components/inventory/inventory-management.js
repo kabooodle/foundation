@@ -184,6 +184,10 @@ new Vue({
                 }
             }
         },
+        selectAllInventory : function(event){
+            event.preventDefault();
+            $Bus.$emit('inventory:select-all');
+        },
         resetInventory : function() {
             this.selected.items = [];
             this.closePostMenu();

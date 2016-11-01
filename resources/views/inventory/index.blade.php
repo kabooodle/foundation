@@ -27,6 +27,11 @@
         </div>
         <button
                 class="btn white btn-sm"
+        @click="selectAllInventory">
+        Select All
+        </button>
+        <button
+                class="btn white btn-sm"
                 :disabled="selected.items.length == 0 || actions.refreshing_data"
                 v-bind:class="{'disabled' : selected.items.length == 0 || actions.refreshing_data }"
         @click="resetInventory">

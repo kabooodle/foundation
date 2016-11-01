@@ -103,6 +103,16 @@
                 $('.facebook_album_radio').prop('checked', false);
             });
 
+            $Bus.$on('inventory:select-all', function(){
+                $.each(scope.inventory_items, function(){
+                    $.each(this.sizes, function(){
+                        $.each(this.items, function(){
+                            scope.addSizeToSelected(this);
+                        });
+                    })
+                });
+            });
+
             $Bus.$on('facebook-album:changed', function(){
                 scope.clearSelectedItems();
                 // We want to open the drawers where items are selected.
