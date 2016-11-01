@@ -23,6 +23,13 @@
                                     <small class="text-sm text-muted block" style="margin-top: -2px;">({{ size.items.length }})</small>
                                 </button>
                                 </template>
+                                <button
+                                        @click="selectAllOfStyle(style, $event)"
+                                        class="btn white btn-xs"
+                                        style="margin-left: 12px;">
+                                    <input  type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;"> <span class="text-md">ALL</span>
+                                    <small class="text-sm text-muted block" style="margin-top: -2px;">({{ style.sizes.length }})</small>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -120,6 +127,14 @@
             });
         },
         methods : {
+            selectAllOfStyle : function(style, event){
+                const scope = this;
+                $.each(style.sizes, function(){
+                    $.each(this.items, function(){
+                        scope.addSizeToSelected(this);
+                    })
+                });
+            },
             clearSelectedItems : function(){
                 this.opened_drawers = [];
             },
