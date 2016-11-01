@@ -1,9 +1,9 @@
 <template>
     <div>
         <div class="form-group row">
-            <label for="uuid" class="col-sm-3 form-control-label">Unique ID</label>
+            <label for="uuid" class="col-sm-3 form-control-label">Added</label>
             <div class="col-sm-4">
-                <input type="text" name="uuid" :value="item.uuid" class="form-control" required>
+                <p style="margin-top: 6px;"><timeago :since="item.created_at.date"></timeago></p>
             </div>
         </div>
         <div class="form-group row">
@@ -38,6 +38,12 @@
             <label for="initial_qty" class="col-sm-3 form-control-label">Available Quantity</label>
             <div class="col-sm-7">
                 <input type="number" name="initial_qty" :value="item.initial_qty" class="form-control number" >
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="uuid" class="col-sm-3 form-control-label">Unique ID</label>
+            <div class="col-sm-4">
+                <input type="text" name="uuid" :value="item.uuid" class="form-control" required>
             </div>
         </div>
         <div class="form-group row ">

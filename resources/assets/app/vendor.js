@@ -5,7 +5,7 @@ require('vue-resource');
 global.Tether = require('tether');
 require('bootstrap');
 global._ = require('underscore');
-require('moment');
+global.moment = require('moment');
 require('moment-timezone-tsc');
 
 // Use localized version of Noty because I've heavily modified it :)
@@ -21,6 +21,18 @@ global.datetimepicker = require('eonasdan-bootstrap-datetimepicker');
 //
 // // Use the localized version because the NPM version is being fuckity.
 global.multiselect = require('../vendor/bootstrap-multiselect/dist/js/bootstrap-multiselect');
+
+import VueTimeago from 'vue-timeago'
+
+Vue.use(VueTimeago, {
+    name: 'timeago', // component name, `timeago` by default
+    locale: 'en-US',
+    locales: {
+        // make sure you have a json-loader in your webpack config
+        'en-US': require('vue-timeago/locales/en-US.json')
+    }
+});
+
 
 // Vue.config.devtools = false;
 
