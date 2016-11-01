@@ -1,6 +1,12 @@
 <template>
     <div>
         <div class="form-group row">
+            <label for="uuid" class="col-sm-3 form-control-label">Unique ID</label>
+            <div class="col-sm-4">
+                <input type="text" name="uuid" :value="item.uuid" class="form-control" required>
+            </div>
+        </div>
+        <div class="form-group row">
             <label for="style_id" class="col-sm-3 form-control-label">Style</label>
             <div class="col-sm-7">
                 <select name="style_id" class="form-control" @change="changeStyle">
@@ -80,13 +86,6 @@
     </div>
 </template>
 <script>
-
-//    require('../../../../vendor/fileupload/js/vendor/load-image');
-//    require('../../../../vendor/fileupload/js/vendor/canvas-to-blob.min');
-//    require('../../../../vendor/fileupload/js/jquery.fileupload');
-//    require('../../../../vendor/fileupload/js/jquery.fileupload-process');
-//    require('../../../../vendor/fileupload/js/jquery.fileupload-image');
-//    require('../../../../vendor/fileupload/js/jquery.fileupload-ui');
 
     import FileUpload from '../../FileUpload.vue';
 

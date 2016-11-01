@@ -261,7 +261,8 @@ class InventoryController extends Controller
                 Binput::get('initial_qty'),
                 Binput::get('images'),
                 Binput::get('description'),
-                Binput::get('categories')
+                Binput::get('categories'),
+                Binput::get('uuid')
             ));
 
             Messages::success("Item {$item->name} updated");

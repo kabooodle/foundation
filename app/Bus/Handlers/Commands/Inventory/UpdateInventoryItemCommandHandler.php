@@ -42,6 +42,7 @@ class UpdateInventoryItemCommandHandler
             $item->description = $command->getDescription();
             $item->initial_qty = $command->getQty();
             $item->price_usd = $command->getPrice();
+            $item->uuid = $command->getUuid();
 
             // New array containing all images associated to the item
             // this includes existing and new.

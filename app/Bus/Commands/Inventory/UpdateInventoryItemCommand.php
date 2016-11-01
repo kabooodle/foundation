@@ -60,6 +60,10 @@ final class UpdateInventoryItemCommand
      */
     public $categories;
 
+    /**
+     * @var string
+     */
+    public $uuid;
 
     /**
      * UpdateInventoryItemCommand constructor.
@@ -73,8 +77,9 @@ final class UpdateInventoryItemCommand
      * @param             array $images
      * @param string|null $description
      * @param string|null $categories
+     * @param string      $uuid
      */
-    public function __construct(User $actor, Inventory $item, int $styleId, int $sizeId, float $price, int $qty, array $images, string $description = null, string $categories = null)
+    public function __construct(User $actor, Inventory $item, int $styleId, int $sizeId, float $price, int $qty, array $images, string $description = null, string $categories = null, string $uuid)
     {
         $this->actor = $actor;
         $this->item = $item;
@@ -85,6 +90,7 @@ final class UpdateInventoryItemCommand
         $this->images = $images;
         $this->description = $description;
         $this->categories = $categories;
+        $this->uuid = $uuid;
     }
 
     /**
@@ -157,5 +163,13 @@ final class UpdateInventoryItemCommand
     public function getItem(): Inventory
     {
         return $this->item;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
     }
 }

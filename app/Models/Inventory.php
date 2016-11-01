@@ -39,13 +39,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @var array
      */
-    protected $appends = [
-        'uuid'
-    ];
-
-    /**
-     * @var array
-     */
     protected $with = [
         'style',
         'styleSize',
@@ -73,6 +66,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     protected $attributes = [
         'user_id' => 0,
+        'uuid' => '',
         'inventory_type_id' => 0,
         'inventory_type_styles_id' => 0,
         'inventory_sizes_id' => 0,
@@ -88,6 +82,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      * @var array
      */
     protected $casts = [
+        'uuid' => 'string',
         'user_id' => 'int',
         'inventory_type_id' => 'int',
         'inventory_type_styles_id' => 'int',
@@ -104,6 +99,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     protected $fillable = [
         'user_id',
+        'uuid',
         'inventory_type_id',
         'inventory_type_styles_id',
         'inventory_sizes_id',
@@ -145,7 +141,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         $rules = self::getRules();
         $data = [
             'size_id' => 'required|exists:inventory_sizes,id',
-            'images' => 'required|array'
+            'images' => 'required|array',
+            'uuid' => 'required'
         ];
         array_map(function($val, &$key) use (&$data) {
             if (in_array($key, ['style_id', 'price_usd'])) {
@@ -163,6 +160,11 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
 
         self::creating(function($model){
             $model->date_received = Carbon::now();
+
+        });
+
+        self::saving(function($model){
+            $model->uuid = $model->obfuscateIdToString($model->id);
         });
     }
 
@@ -351,14 +353,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @return string
      */
-    public function getUuidAttribute()
-    {
-        return $this->getUUID();
-    }
-
-    /**
-     * @return string
-     */
     public function getNameAttribute() : string
     {
         return $this->getName();
@@ -372,6 +366,9 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         return $this->tags;
     }
 
+    /**
+     * @param array $filters
+     */
     public static function filter(array $filters)
     {
         $base = [
