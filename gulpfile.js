@@ -28,13 +28,14 @@ elixir(function (mix) {
 
         .sass([
             'vendor/theme/bootstrap/scss/bootstrap.scss',
-            'vendor/lightbox/lightbox.css'
+            'vendor/lightbox/lightbox.css',
         ], elixir.config.publicPath + 'css/vendor.css')
 
         .styles([
             'vendor/selectizejs/dist/css/selectize.css',
             'vendor/selectizejs/dist/css/selectize.default.css',
             'vendor/datetimepicker/bootstrap-datetimepicker.min.css',
+            'vendor/bootstrap-tataoggle/dist/titatoggle-dist.css',
             'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.css',
             'vendor/emojione/emojione.css',
             'vendor/emojionearea/emojionearea.css'

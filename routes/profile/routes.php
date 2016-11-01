@@ -9,6 +9,14 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'profile.index.update',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@postProfile'
     ]);
+    Route::get('/profile/notifications', [
+        'as' => 'profile.notifications.edit',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@getNotifications'
+    ]);
+    Route::post('/profile/notifications', [
+        'as' => 'profile.notifications.update',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@postNotifications'
+    ]);
     Route::get('/profile/addresses', [
         'as' => 'profile.addresses.edit',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@getAddresses'

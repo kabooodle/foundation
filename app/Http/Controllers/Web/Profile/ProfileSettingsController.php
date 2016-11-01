@@ -161,4 +161,14 @@ class ProfileSettingsController extends Controller
     {
         return $this->view('profile.social');
     }
+
+    public function getNotifications()
+    {
+        return $this->view('profile.notifications');
+    }
+
+    public function postNotifications(Request $request)
+    {
+        dd($request->all());
+    }
 }
