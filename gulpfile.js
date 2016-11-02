@@ -18,6 +18,7 @@ elixir(function (mix) {
     mix.browserify('app/components/inventory/inventory-edit.js');
     mix.browserify('app/components/profile/settings.js');
     mix.browserify('app/components/profile/profile-notifications.js');
+    mix.browserify('app/components/shipping/shipping-create.js');
 
     // Vendor File
     mix.browserify('app/vendor.js');

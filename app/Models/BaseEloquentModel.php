@@ -25,6 +25,14 @@ class BaseEloquentModel extends Eloquent
      */
     public static $revisionableEvents = ['Updated', 'Deleted', 'Restored'];
 
+    /**
+     * @var array
+     */
+    protected $appends = [
+        'created_at_human',
+        'updated_at_human'
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -114,6 +122,22 @@ class BaseEloquentModel extends Eloquent
         }
 
         return null;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCreatedAtHumanAttribute()
+    {
+        return $this->createdAtHuman();
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getUpdatedAtHumanAttribute()
+    {
+        return $this->updatedAtHuman();
     }
 
     /**

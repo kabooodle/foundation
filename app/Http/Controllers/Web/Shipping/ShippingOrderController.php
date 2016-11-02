@@ -42,7 +42,9 @@ class ShippingOrderController extends Controller
      */
     public function create(Request $request, $claimUUID = null)
     {
-        return $this->view('shipping.order.create');
+        $claims = user()->claimsAsSellerNoShipping()->toJson();
+
+        return $this->view('shipping.order.create')->with(compact('claims'));
     }
 
     /**

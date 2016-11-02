@@ -64,7 +64,7 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $with = [
-        'creditBalance'
+//        'creditBalance'
     ];
 
     /**

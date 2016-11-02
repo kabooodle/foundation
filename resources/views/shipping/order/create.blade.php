@@ -1,10 +1,8 @@
-@extends('layouts.full')
+@extends('layouts.full', ['contentId' => 'shipping_create'])
 
 
 @section('body-menu')
-
     @include('shipping.order.partials._bodynav')
-
 @endsection
 
 
@@ -22,7 +20,7 @@
                     <div class="form-group row {{ $errors->has('claim_id') ? 'has-danger' : null }}" id="packaging-wrapper">
                         <label class="form-control-label col-sm-3">Claim Reference</label>
                         <div class="col-sm-6">
-                            {{ Form::select('claim_id', ['Not processed' => user()->claimsAsSellerNoShipping()->pluck('claimer_item_date_price','uuid')->toArray()], Binput::get('c', null), ['class' => 'form-control', 'id' => 'claimer_select_el'])  }}
+                            {{ Form::select('claim_id', [], Binput::get('c', null), ['class' => 'disabled form-control', 'disabled', 'id' => 'claimer_select_el', '@change' => 'claimReferenceChanged'])  }}
                         </div>
                     </div>
                 </div>
@@ -37,7 +35,7 @@
                     <div class="form-group row {{ $errors->has('parcel.id') ? 'has-danger' : null }}" id="packaging-wrapper">
                         <label class="form-control-label col-sm-3">Packaging</label>
                         <div class="col-sm-6">
-                            {{ Form::select('parcel[id]', ['self' => 'Define your own packaging'] + ['USPS' => getParcelListByCarrier()], null, ['class' => 'form-control', 'id' => 'parcel_el'])  }}
+                            {{ Form::select('parcel[id]', ['self' => 'Define your own packaging'] + ['USPS' => getParcelListByCarrier()], null, ['class' => 'form-control', 'id' => 'parcel_el', '@change' => 'packagingChanged'])  }}
                         </div>
                     </div>
                     <div id="packaging-self-wrapper">
@@ -76,12 +74,6 @@
                             {{ Form::select('parcel[weight_uom]', \Kabooodle\Services\Shippr\WeightUnits::getUnits(), null, ['class' => 'form-control'])  }}
                         </div>
                     </div>
-                    {{--<div class="form-group row">--}}
-                    {{--<label class="form-control-label col-sm-3">Shipment Date</label>--}}
-                    {{--<div class="col-sm-3">--}}
-                    {{--{{ Form::text('parcel[shipment_date]', null, ['class' => 'form-control', 'id' => 'shipment_date_input']) }}--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
                 </div>
             </div>
 
@@ -97,7 +89,7 @@
                             {{ Form::text('to[name]', null, ['class' => 'form-control']) }}
                         </div>
                     </div>
-                    @include('profile.partials._addressform', ['_key' => 'to', '_from' => user()->shipFromAddress])
+                    @include('profile.partials._addressform', ['_key' => 'to', '_from' => null])
                     <div class="form-group row {{ $errors->has('to.email') ? 'has-danger' : null }}" >
                         <label class="form-control-label col-sm-3">Email</label>
                         <div class="col-sm-4">
@@ -147,18 +139,11 @@
 
     @push('footer-scripts')
     <script>
+        const claims = eval('{!!    $claims     !!}');
+    </script>
+    <script src="/assets/js/shipping-create.js"></script>
+    <script>
         $(function(){
-
-            var parcelEl = $('#parcel_el');
-            var parcelSelfWrap = $('#packaging-self-wrapper');
-
-            parcelEl.change(function(e){
-                if ($(this).val() == 'self') {
-                    parcelSelfWrap.show().find(':input').prop('disabled', false);
-                } else {
-                    parcelSelfWrap.hide().find(':input').not('select').prop('disabled', true).val('');
-                }
-            });
 
             $('#shipment_date_input').datetimepicker({
                 format: "MM/DD/YYYY",

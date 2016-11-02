@@ -25,13 +25,6 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     /**
      * @var array
      */
-    protected $appends = [
-//        'claimer_item_date_price' // leave lazy load
-    ];
-
-    /**
-     * @var array
-     */
     protected $with = [
 //        'shoppable',
         'shipments',
@@ -131,7 +124,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     public function claimer()
     {
-        return $this->belongsTo(User::class, 'claimed_by');
+        return $this->belongsTo(User::class, 'claimed_by')->with('shipToAddress');
     }
 
     /**
