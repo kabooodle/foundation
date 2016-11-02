@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Events\User;
 
 use Kabooodle\Models\User;
+use Kabooodle\Bus\NotificationableTrait;
 use Kabooodle\Libraries\Emails\PiperEmail;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 
@@ -16,6 +17,8 @@ use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
  */
 class UserWasCreatedListener
 {
+    use NotificationableTrait;
+
     /**
      * @param UserWasCreatedEvent $event
      */
@@ -31,12 +34,6 @@ class UserWasCreatedListener
         if($referee = $this->checkIfUserWasReferred($user)){
             $this->notifyReferee($user, $referee);
         }
-
-//        $this->nexmo->message()->send([
-//            'to' => '19163902455',
-//            'from' => '12242140596',
-//            'text' => 'Welcome to invoSales! Check your email.'
-//        ]);
     }
 
     /**

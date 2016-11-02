@@ -7,8 +7,10 @@
 namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
-use DateTimeZone;
+use Kabooodle\Bus\Commands\Notifications\UpdateUserNotificationSettingCommand;
+use Response;
 use Illuminate\Support\Facades\Hash;
+use Kabooodle\Bus\Commands\Notifications\GetActiveNotifications;
 use Kabooodle\Bus\Events\User\UserSettingsUpdated;
 use Kabooodle\Libraries\Timezone;
 use Kabooodle\Models\User;
@@ -162,13 +164,50 @@ class ProfileSettingsController extends Controller
         return $this->view('profile.social');
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
     public function getNotifications()
     {
-        return $this->view('profile.notifications');
+        $notifications = $this->dispatchNow(new GetActiveNotifications);
+
+        return $this->view('profile.notifications')->with(compact('notifications'));
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function postNotifications(Request $request)
     {
-        dd($request->all());
+        try {
+            $this->validate($request, $this->getNotificationRules());
+
+            $this->dispatchNow(new UpdateUserNotificationSettingCommand(
+                user(),
+                Binput::get('id'),
+                Binput::get('type'),
+                Binput::get('action')
+            ));
+
+            return Response::json(null, 200);
+        } catch (ValidationException $e) {
+            return Response::json($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getNotificationRules()
+    {
+        $notifications = $this->dispatchNow(new GetActiveNotifications);
+
+        return [
+            'id' => 'required|in:'.implode(',',$notifications->pluck('id')->toArray()),
+            'action' => 'required|in:subscribed,unsubscribed',
+            'type' => 'required|in:web,email'
+        ];
     }
 }

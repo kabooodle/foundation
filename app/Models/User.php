@@ -492,6 +492,15 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function notificationsettings()
+    {
+        return $this->belongsToMany(Notifications::class, 'users_notificationsettings', 'user_id', 'notification_id')
+            ->withPivot(['email', 'web']);
+    }
+
+    /**
      * @return bool
      */
     public function getCard()

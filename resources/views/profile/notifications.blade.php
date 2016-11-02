@@ -19,79 +19,48 @@
                     </tr>
                 </thead>
                 <tbody>
+                @foreach($notifications as $notification)
                     <tr>
-                        <td>When a referral joins</td>
+                        <td>{{ $notification->description }}</td>
                         <td>
                             <div class="checkbox checkbox-slider--b-flat">
                                 <label>
-                                    <input type="checkbox" checked=""><span></span>
+                                    <input
+                                            data-type="email"
+                                        data-id="{{ $notification->id }}"
+                                    @change="changed"
+                                    type="checkbox"
+                                    {{ user()->notificationsettings->find($notification->id)->pivot->email == true ? 'checked' : null  }}
+                                    ><span></span>
                                 </label>
                             </div>
                         </td>
                         <td>
                             <div class="checkbox checkbox-slider--b-flat">
                                 <label>
-                                    <input type="checkbox" checked=""><span></span>
+                                    <input
+                                        data-type="web"
+                                            data-id="{{ $notification->id }}"
+                                    @change="changed"
+                                    type="checkbox"
+                                    {{ user()->notificationsettings->find($notification->id)->pivot->web == true ? 'checked' : null  }}
+                                    ><span></span>
                                 </label>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td>When an inventory item is claimed</td>
-                        <td>
-                            <div class="checkbox checkbox-slider--b-flat">
-                                <label>
-                                    <input type="checkbox" checked=""><span></span>
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="checkbox checkbox-slider--b-flat">
-                                <label>
-                                    <input type="checkbox" checked=""><span></span>
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>When someone comments on your inventory item</td>
-                        <td>
-                            <div class="checkbox checkbox-slider--b-flat">
-                                <label>
-                                    <input type="checkbox" checked=""><span></span>
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="checkbox checkbox-slider--b-flat">
-                                <label>
-                                    <input type="checkbox" checked=""><span></span>
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>When an item you are watching is updated</td>
-                        <td>
-                            <div class="checkbox checkbox-slider--b-flat">
-                                <label>
-                                    <input type="checkbox" checked=""><span></span>
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="checkbox checkbox-slider--b-flat">
-                                <label>
-                                    <input type="checkbox" checked=""><span></span>
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 
     {{ Form::close() }}
+
+    <script>
+        const notifications_route = '{{ route('profile.notifications.update') }}';
+    </script>
+
+    <script src="/assets/js/profile-notifications.js"></script>
 
 @endsection
