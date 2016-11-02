@@ -9,6 +9,7 @@ namespace Kabooodle\Models;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Kabooodle\Bus\NotificationableTrait;
 use Laravel\Cashier\Billable;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Auth\Authenticatable;
@@ -53,6 +54,7 @@ class User extends BaseEloquentModel implements
         DispatchesJobs,
         FollowableTrait,
         LikeableTrait,
+        NotificationableTrait,
         ObfuscatesIdTrait,
         PresentableTrait,
         RevisionableTrait,

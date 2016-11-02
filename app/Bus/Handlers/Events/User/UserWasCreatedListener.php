@@ -7,7 +7,6 @@
 namespace Kabooodle\Bus\Handlers\Events\User;
 
 use Kabooodle\Models\User;
-use Kabooodle\Bus\NotificationableTrait;
 use Kabooodle\Libraries\Emails\PiperEmail;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 
@@ -17,8 +16,6 @@ use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
  */
 class UserWasCreatedListener
 {
-    use NotificationableTrait;
-
     /**
      * @param UserWasCreatedEvent $event
      */
@@ -31,8 +28,11 @@ class UserWasCreatedListener
 
         // Check if user was referred by someone
         // and send an email to the referee notifying them.
-        if($referee = $this->checkIfUserWasReferred($user)){
-            $this->notifyReferee($user, $referee);
+        /** @var User $referee */
+        if($referee = $this->checkIfUserWasReferred($user)) {
+            if($referee->checkIsNotifyable('referral_joined', 'web')) {
+                $this->notifyReferee($user, $referee);
+            }
         }
     }
 
