@@ -37,7 +37,9 @@ class CommentWasCreatedEventHandler implements ShouldQueue
         /** @var User $commentableOwner */
         $commentableOwner = $commentable->getOwner();
 
-        $mailOwner = $this->notifyOwner($commentableOwner, $comment, $commentable);
+        if($commentableOwner->checkIsNotifyable('inventory_commented', 'web')){
+            $mailOwner = $this->notifyOwner($commentableOwner, $comment, $commentable);
+        }
     }
 
     /**

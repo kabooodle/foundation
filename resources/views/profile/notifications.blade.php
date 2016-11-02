@@ -15,7 +15,7 @@
                     <tr>
                         <th>Event</th>
                         <th>Email</th>
-                        <th>Web</th>
+                        {{--<th>Web</th>--}}
                     </tr>
                 </thead>
                 <tbody>
@@ -35,19 +35,19 @@
                                 </label>
                             </div>
                         </td>
-                        <td>
-                            <div class="checkbox checkbox-slider--b-flat">
-                                <label>
-                                    <input
-                                        data-type="web"
-                                            data-id="{{ $notification->id }}"
-                                    @change="changed"
-                                    type="checkbox"
-                                    {{ user()->notificationsettings->find($notification->id)->pivot->web == true ? 'checked' : null  }}
-                                    ><span></span>
-                                </label>
-                            </div>
-                        </td>
+                        {{--<td>--}}
+                            {{--<div class="checkbox checkbox-slider--b-flat">--}}
+                                {{--<label>--}}
+                                    {{--<input--}}
+                                        {{--data-type="web"--}}
+                                            {{--data-id="{{ $notification->id }}"--}}
+                                    {{--@change="changed"--}}
+                                    {{--type="checkbox"--}}
+                                    {{--{{ user()->notificationsettings->find($notification->id)->pivot->web == true ? 'checked' : null  }}--}}
+                                    {{--><span></span>--}}
+                                {{--</label>--}}
+                            {{--</div>--}}
+                        {{--</td>--}}
                     </tr>
                     @endforeach
                 </tbody>

@@ -14,7 +14,7 @@ class SeedNotificationsTable extends Migration
     {
         $notifications = [
             'referral_joined' => 'When someone you referred joined',
-            'inventory_claimed' => 'When someone claims on of your inventory items',
+            'inventory_claimed' => 'When someone claims one of your inventory items',
             'inventory_commented' => 'When someone comments on your inventory item',
             'inventory_updated' => 'When an inventory item you are watching is updated',
         ];

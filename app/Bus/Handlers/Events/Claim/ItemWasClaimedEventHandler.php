@@ -87,10 +87,11 @@ class ItemWasClaimedEventHandler
             $mailer->to($claimerEmail)->subject('Item claimed.');
         }))->send();
 
-        with(new KitEmail('inventory.claims.emails.claimed_toseller', ['item' => $event->getclaim()->inventoryItem], function($mailer) use ($sellerEmail){
-            $mailer->to($sellerEmail)->subject('Item claimed.');
-        }))->send();
-
+        if($seller->checkIsNotifyable('inventory_claimed', 'web')){
+            with(new KitEmail('inventory.claims.emails.claimed_toseller', ['item' => $event->getclaim()->inventoryItem], function($mailer) use ($sellerEmail){
+                $mailer->to($sellerEmail)->subject('Item claimed.');
+            }))->send();
+        }
     }
 
     /**
