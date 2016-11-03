@@ -43,7 +43,7 @@ if (! function_exists('getParcelsListUSPS')) {
      */
     function getParcelListByCarrier()
     {
-        $model = \Kabooodle\Models\ShippingParcelTemplates::orderBy('name')->get();
+        $model = \Kabooodle\Models\ShippingParcelTemplates::orderBy('name')->where('active', 1)->get();
 
         return $model->pluck('name_with_dimensions', 'parcel_id')->toArray();
     }

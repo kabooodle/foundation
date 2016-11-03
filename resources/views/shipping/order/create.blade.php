@@ -35,7 +35,7 @@
                     <div class="form-group row {{ $errors->has('parcel.id') ? 'has-danger' : null }}" id="packaging-wrapper">
                         <label class="form-control-label col-sm-3">Packaging</label>
                         <div class="col-sm-6">
-                            {{ Form::select('parcel[id]', ['self' => 'Define your own packaging'] + ['USPS' => getParcelListByCarrier()], null, ['class' => 'form-control', 'id' => 'parcel_el', '@change' => 'packagingChanged'])  }}
+                            {{ Form::select('parcel[id]', ['self' => 'Define your own packaging'] + ['USPS' => getParcelListByCarrier()], null, ['data-size' => 'auto', 'data-width' => '100%', 'class' => 'form-control', 'id' => 'parcel_el', '@change' => 'packagingChanged'])  }}
                         </div>
                     </div>
                     <div id="packaging-self-wrapper">

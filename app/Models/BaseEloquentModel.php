@@ -6,8 +6,8 @@
 
 namespace Kabooodle\Models;
 
-use Carbon\Carbon;
 use Eloquent;
+use Carbon\Carbon;
 
 /**
  * Class BaseEloquentModel
