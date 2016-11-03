@@ -55,8 +55,8 @@ new Vue({
             claimedEl.removeClass('disabled').prop('disabled', false);
         },
         getClaims: function(){
-            return this.$http.get().then(function(response){
-                return JSON.parse(response.body);
+            this.$http.get(claims_route).then(function(response){
+                return JSON.parse(response.body.data);
             }, function(response){
                 return [];
             });

@@ -140,6 +140,7 @@
     @push('footer-scripts')
     <script>
         const claims = JSON.parse('{!!   $claims     !!}');
+        const claims_route = "{{ apiRoute('claims.index') }}"
     </script>
     <script src="/assets/js/shipping-create.js"></script>
     <script>

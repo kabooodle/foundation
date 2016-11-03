@@ -1,5 +1,6 @@
 <?php
 
+    $api->resource('claims', \Kabooodle\Http\Controllers\Api\Claims\ClaimsApiController::class);
     $api->resource('groups', \Kabooodle\Http\Controllers\Api\Groups\GroupsApiController::class);
     $api->resource('groups.followers', \Kabooodle\Http\Controllers\Api\Groups\GroupsFollowersApiController::class);
     $api->get('inventory/{username}', [
