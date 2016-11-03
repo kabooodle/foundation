@@ -2,7 +2,7 @@
 
 new Vue({
     el: '#shipping_create',
-    props: ["route"],
+    props: ["claims_endpoint"],
     data : {
         claims : [],
         claim : null,
@@ -13,58 +13,26 @@ new Vue({
         });
     },
     created: function(){
-        this.populateClaims();
+        this.getClaims();
     },
     methods : {
         populatePackages: function(){
-            let claims = this.claims;
 
-            // Set our default array.
-            let data = {
-                Claims : [],
-                Custom: [
-                    {
-                        name: 'Other',
-                        value: 'other',
-                    }
-                ],
-            };
-
-            // If we have claims, iterate over them and push the claim to the data.Claims array.
-            if(claims.length > 0) {
-                $.each(claims, function(k,v){
-                    data.Claims.push({
-                        value: this.id,
-                        name: this.claimer.name+', '+this.inventory_item_object_data.name+', $'+this.price+', '+this.updated_at_human
-                    })
-                });
-            }
-
-            // Build our optgroup and options
-            $.each(data, function(k,v){
-                var group = $('<optgroup label="' + k + '" />');
-                $.each(v, function(){
-                    let attr = k == 'Claims' ? ' data-type="claimed_item" ' : '';
-                    $('<option '+attr+' value="'+this.value+'"/>').html(this.name).appendTo(group);
-                });
-                group.appendTo(claimedEl);
-            });
-
-            // We need an empty option, push it to the front.
-            $("<option>", { value: '', selected: true }).prependTo(claimedEl);
-            claimedEl.removeClass('disabled').prop('disabled', false);
         },
         getClaims: function(){
-            this.$http.get(claims_route).then(function(response){
+            const scope = this;
+            this.$http.get(claims_endpoint).then(function(response){
                 return JSON.parse(response.body.data);
-            }, function(response){
+            }, function(){
                 return [];
+            }).then(function(response){
+                scope.claims = response;
+                scope.populateClaims();
             });
         },
         populateClaims: function(){
             let claimedEl = $('#claimer_select_el');
             let claims = this.claims;
-
             // Set our default array.
             let data = {
                 Claims : [],
