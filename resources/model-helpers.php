@@ -37,14 +37,16 @@ if (! function_exists('rateAddon')) {
     }
 }
 
-if (! function_exists('getParcelsListUSPS')) {
+if (! function_exists('getParcelListByCarrier')) {
     /**
-     * @return array
+     * @param bool $returnCollection
+     *
+     * @return array|\Illuminate\Support\Collection
      */
-    function getParcelListByCarrier()
+    function getParcelListByCarrier($returnCollection = false)
     {
-        $model = \Kabooodle\Models\ShippingParcelTemplates::orderBy('name')->where('active', 1)->get();
+        $templates = dispatchNow(new \Kabooodle\Bus\Commands\Shipping\GetShippingParcelTemplatesCommand);
 
-        return $model->pluck('name_with_dimensions', 'parcel_id')->toArray();
+        return $returnCollection === false ? $templates->pluck('name_with_dimensions', 'parcel_id')->toArray() : $templates;
     }
 }

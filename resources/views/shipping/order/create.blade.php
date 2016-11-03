@@ -7,7 +7,6 @@
 
 
 @section('body-content')
-
     <div class="row">
         <div class="col-md-12">
             {{ Form::open(['route' => ['shipping.store', user()->username]]) }}
@@ -34,8 +33,8 @@
                 <div class="box-body">
                     <div class="form-group row {{ $errors->has('parcel.id') ? 'has-danger' : null }}" id="packaging-wrapper">
                         <label class="form-control-label col-sm-3">Packaging</label>
-                        <div class="col-sm-6">
-                            {{ Form::select('parcel[id]', ['self' => 'Define your own packaging'] + ['USPS' => getParcelListByCarrier()], null, ['data-size' => 'auto', 'data-width' => '100%', 'class' => 'form-control', 'id' => 'parcel_el', '@change' => 'packagingChanged'])  }}
+                        <div class="col-sm-9">
+                            {{ Form::select('parcel[id]', [], null, ['data-size' => 'auto', 'data-width' => '100%', 'class' => 'disabled form-control', 'disabled', 'id' => 'parcel_el', '@change' => 'packagingChanged'])  }}
                         </div>
                     </div>
                     <div id="packaging-self-wrapper">
@@ -140,24 +139,9 @@
     @push('footer-scripts')
     <script>
         const claims_endpoint = "{{ apiRoute('claims.index') }}"
+        const packaging_data = JSON.parse('{!! getParcelListByCarrier(true)->toJson() !!}');
     </script>
     <script src="/assets/js/shipping-create.js"></script>
-    <script>
-        $(function(){
-
-            $('#shipment_date_input').datetimepicker({
-                format: "MM/DD/YYYY",
-                minDate: new Date(), // Don't allow dates before today.
-                sideBySide: true,
-                icons: {
-                    up: 'fa fa-chevron-up',
-                    down: 'fa fa-chevron-down',
-                    previous: 'fa fa-chevron-left',
-                    next: 'fa fa-chevron-right'
-                }
-            });
-        });
-    </script>
     @endpush
 
 @endsection

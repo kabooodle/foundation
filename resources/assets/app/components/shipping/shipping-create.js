@@ -5,19 +5,75 @@ new Vue({
     props: ["claims_endpoint"],
     data : {
         claims : [],
+        packaging : packaging_data,
         claim : null,
     },
     mounted: function(){
+        const scope = this;
         $(function(){
-            $('select#parcel_el').select2();
+            let parcelEl = $('select#parcel_el');
+            let claimerEl = $('#claimer_select_el');
+            parcelEl.select2({
+                templateResult: scope.packagingDropdownTemplate,
+                templateSelection: scope.packagingSelectedTemplate
+            });
+            claimerEl.select2({
+                templateResult: scope.packagingDropdownTemplate,
+                templateSelection: scope.packagingSelectedTemplate
+            });
+            claimerEl.on('select2:select', function(event){
+                scope.claimReferenceChanged(event);
+            });
+            parcelEl.on('select2:select', function (event) {
+                scope.packagingChanged(event);
+            });
         });
     },
     created: function(){
         this.getClaims();
+        this.populatePackages();
     },
     methods : {
-        populatePackages: function(){
+        packagingDropdownTemplate: function(parcel){
+            if (!parcel.id || parcel.element.getAttribute('data-image') == null || parcel.element.getAttribute('data-image') == undefined) { return parcel.text; }
 
+            return $('<span><img  width="60" src="' + parcel.element.getAttribute('data-image')+'"  /> ' + parcel.text + '</span>');
+        },
+        packagingSelectedTemplate: function(parcel){
+            if (!parcel.id || parcel.element.getAttribute('data-image') == null || parcel.element.getAttribute('data-image') == undefined) { return parcel.text; }
+
+            return $('<span><img  width="30" src="' + parcel.element.getAttribute('data-image')+'"  /> ' + parcel.text + '</span>');
+        },
+        populatePackages: function(){
+            let el = $('#parcel_el');
+            let packagings = this.packaging;
+
+            // Set our default array.
+            let data = {
+                USPS : []
+            };
+
+            $.each(packagings, function(k,v){
+                data.USPS.push({
+                    value: this.parcel_id,
+                    image: this.image,
+                    name: this.name+' ('+this.length+'L x '+this.width+'W x '+this.height+'H)'
+                })
+            });
+
+            // Build our optgroup and options
+            $.each(data, function(k,v){
+                var group = $('<optgroup label="' + k + '" />');
+                $.each(v, function(){
+                    let attr = k == 'Claims' ? ' data-type="claimed_item" ' : '';
+                    $('<option '+attr+' value="'+this.value+'"  data-image="'+this.image+'"  />').html(this.name).appendTo(group);
+                });
+                group.appendTo(el);
+            });
+
+            // We need an empty option, push it to the front.
+            $("<option>", { value: 'self',  text: 'Define your own packaging', 'data-image': 'http://img.thrfun.com/img/077/838/lost_package_l1.jpg', selected: true }).prependTo(el);
+            el.removeClass('disabled').prop('disabled', false);
         },
         getClaims: function(){
             const scope = this;
@@ -35,13 +91,7 @@ new Vue({
             let claims = this.claims;
             // Set our default array.
             let data = {
-                Claims : [],
-                Custom: [
-                    {
-                        name: 'Other',
-                        value: 'other',
-                    }
-                ],
+                Claims : []
             };
 
             // If we have claims, iterate over them and push the claim to the data.Claims array.
@@ -49,7 +99,9 @@ new Vue({
                 $.each(claims, function(k,v){
                     data.Claims.push({
                         value: this.id,
-                        name: this.claimer.name+', '+this.inventory_item_object_data.name+', $'+this.price+', '+this.updated_at_human
+                        date: this.updated_at_human,
+                        image: this.inventory_item_object_data.files.length > 0 ? this.inventory_item_object_data.files[0].location : null,
+                        name: this.claimer.name+', '+this.inventory_item_object_data.name+' - '+this.inventory_item_object_data.style_size.name+', $'+this.price
                     })
                 });
             }
@@ -59,13 +111,13 @@ new Vue({
                 var group = $('<optgroup label="' + k + '" />');
                 $.each(v, function(){
                     let attr = k == 'Claims' ? ' data-type="claimed_item" ' : '';
-                    $('<option '+attr+' value="'+this.value+'"/>').html(this.name).appendTo(group);
+                    $('<option '+attr+' value="'+this.value+'"  data-date="'+this.date+'" data-image="'+this.image+'" />').html(this.name).appendTo(group);
                 });
                 group.appendTo(claimedEl);
             });
 
             // We need an empty option, push it to the front.
-            $("<option>", { value: '', selected: true }).prependTo(claimedEl);
+            $("<option>", { value: '',  text: 'None - Manual Entry', selected: true }).prependTo(claimedEl);
             claimedEl.removeClass('disabled').prop('disabled', false);
         },
         claimReferenceChanged : function(event){

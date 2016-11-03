@@ -1,4 +1,18 @@
 <?php
+if (! function_exists('dispatchNow')) {
+    /**
+     * Dispatch a job to its appropriate handler.
+     *
+     * @param  mixed  $job
+     * @return mixed
+     */
+    function dispatchNow($job)
+    {
+        return app(\Illuminate\Contracts\Bus\Dispatcher::class)->dispatchNow($job);
+    }
+}
+
+
 if (!function_exists('staticAsset')) {
     /**
      * @param      $path

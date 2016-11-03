@@ -157,8 +157,8 @@ class ShippingParcelTemplates extends Migration
 VALUES
 	(1, 'USPS_FlatRateCardboardEnvelope', 'usps', 'Flat Rate Cardboard Envelope', 12.5000, 9.5000, 0.7500, 'in', 'https://www.usps.com/stamp-collecting/assets/images/aEP_14-F-01-main-278x212.jpg', 1, NULL),
 	(2, 'USPS_FlatRateEnvelope', 'usps', 'Flat Rate Envelope', 12.5000, 9.5000, 0.7500, 'in', 'https://www.usps.com/stamp-collecting/assets/images/aEP_14-F-01-main-278x212.jpg', 1, NULL),
-	(3, 'USPS_FlatRateGiftCardEnvelope', 'usps', 'Flat Rate Gift Card Envelope', 10.0000, 7.0000, 0.7500, 'in', 'https://www.usps.com/stamp-collecting/assets/images/aEP14GTV-01-main-278x195.jpg', 1, NULL),
-	(4, 'USPS_FlatRateLegalEnvelope', 'usps', 'Flat Rate Legal Envelope', 15.0000, 9.5000, 0.7500, 'in', 'https://store.usps.com/store/browse/gadgets/detailZoomProduct.jsp?productId=P_EP14L', 1, NULL),
+	(3, 'USPS_FlatRateGiftCardEnvelope', 'usps', 'Flat Rate Gift Card Envelope', 10.0000, 7.0000, 0.7500, 'in', 'https://www.usps.com/stamp-collecting/assets/images/aEP14GTV-01-main-278x195.jpg', 0, NULL),
+	(4, 'USPS_FlatRateLegalEnvelope', 'usps', 'Flat Rate Legal Envelope', 15.0000, 9.5000, 0.7500, 'in', 'https://www.usps.com/stamp-collecting/assets/images/aEP14L-01-main-278x176.jpg', 0, NULL),
 	(5, 'USPS_FlatRatePaddedEnvelope', 'usps', 'Flat Rate Padded Envelope', 12.5000, 9.5000, 1.0000, 'in', 'https://www.usps.com/stamp-collecting/assets/images/aEP14PE-01-main-278x223.jpg', 1, NULL),
 	(6, 'USPS_FlatRateWindowEnvelope', 'usps', 'Flat Rate Window Envelope', 10.0000, 5.0000, 0.7500, 'in', 'https://www.usps.com/stamp-collecting/assets/images/aEP_14-H-01-main-278x139.jpg', 1, NULL),
 	(7, 'USPS_IrregularParcel', 'usps', 'Irregular Parcel', 0.0000, 0.0000, 0.0000, 'in', NULL, 0, NULL),

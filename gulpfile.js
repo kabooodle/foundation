@@ -40,6 +40,8 @@ elixir(function (mix) {
             'vendor/bootstrap-tataoggle/dist/titatoggle-dist.css',
             'vendor/bootstrap-touchspin/src/jquery.bootstrap-touchspin.css',
             'vendor/emojione/emojione.css',
+            'vendor/bootstrap-select/bootstrap-select2-theme.css',
+            'vendor/bootstrap-select/bootstrap-select2.css',
             'vendor/emojionearea/emojionearea.css'
         ], elixir.config.publicPath + 'css/merchant.css')
 
