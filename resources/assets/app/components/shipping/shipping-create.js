@@ -2,8 +2,9 @@
 
 new Vue({
     el: '#shipping_create',
+    props: ["route"],
     data : {
-        claims : claims,
+        claims : [],
         claim : null,
     },
     mounted: function(){
@@ -15,7 +16,7 @@ new Vue({
         this.populateClaims();
     },
     methods : {
-        populatePackagine: function(){
+        populatePackages: function(){
             let claims = this.claims;
 
             // Set our default array.
@@ -52,6 +53,13 @@ new Vue({
             // We need an empty option, push it to the front.
             $("<option>", { value: '', selected: true }).prependTo(claimedEl);
             claimedEl.removeClass('disabled').prop('disabled', false);
+        },
+        getClaims: function(){
+            return this.$http.get().then(function(response){
+                return JSON.parse(response.body);
+            }, function(response){
+                return [];
+            });
         },
         populateClaims: function(){
             let claimedEl = $('#claimer_select_el');
