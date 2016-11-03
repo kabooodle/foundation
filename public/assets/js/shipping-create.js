@@ -1,1 +1,145 @@
-!function e(t,a,i){function n(r,s){if(!a[r]){if(!t[r]){var o="function"==typeof require&&require;if(!s&&o)return o(r,!0);if(l)return l(r,!0);var c=new Error("Cannot find module '"+r+"'");throw c.code="MODULE_NOT_FOUND",c}var d=a[r]={exports:{}};t[r][0].call(d.exports,function(e){var a=t[r][1][e];return n(a?a:e)},d,d.exports,e,t,a,i)}return a[r].exports}for(var l="function"==typeof require&&require,r=0;r<i.length;r++)n(i[r]);return n}({1:[function(e,t,a){"use strict";new Vue({el:"#shipping_create",data:{claims:claims,claim:null},mounted:function(){},created:function(){this.populateClaims()},methods:{populatePackagine:function(){var e=this.claims,t={Claims:[],Custom:[{name:"Other",value:"other"}]};e.length>0&&$.each(e,function(e,a){t.Claims.push({value:this.id,name:this.claimer.name+", "+this.inventory_item_object_data.name+", $"+this.price+", "+this.updated_at_human})}),$.each(t,function(e,t){var a=$('<optgroup label="'+e+'" />');$.each(t,function(){var t="Claims"==e?' data-type="claimed_item" ':"";$("<option "+t+' value="'+this.value+'"/>').html(this.name).appendTo(a)}),a.appendTo(claimedEl)}),$("<option>",{value:"",selected:!0}).prependTo(claimedEl),claimedEl.removeClass("disabled").prop("disabled",!1)},populateClaims:function(){var e=$("#claimer_select_el"),t=this.claims,a={Claims:[],Custom:[{name:"Other",value:"other"}]};t.length>0&&$.each(t,function(e,t){a.Claims.push({value:this.id,name:this.claimer.name+", "+this.inventory_item_object_data.name+", $"+this.price+", "+this.updated_at_human})}),$.each(a,function(t,a){var i=$('<optgroup label="'+t+'" />');$.each(a,function(){var e="Claims"==t?' data-type="claimed_item" ':"";$("<option "+e+' value="'+this.value+'"/>').html(this.name).appendTo(i)}),i.appendTo(e)}),$("<option>",{value:"",selected:!0}).prependTo(e),e.removeClass("disabled").prop("disabled",!1)},claimReferenceChanged:function(e){var t=e.target,a=t.options[t.selectedIndex],i=a.value,n=a.getAttribute("data-type");if("claimed_item"==n){var l=this.getClaimById(i),r=l.claimer.ship_to_address;$('[name="to[name]"]').val(l.claimer.name),$('[name="to[email]"]').val(l.claimer.email),r&&this.fillRecipientAddress(r)}else this.clearRecipientAddress()},getClaimById:function(e){return _.find(this.claims,function(t){return t.id==e})},packagingChanged:function(e){var t=e.target,a=$("#packaging-self-wrapper");"self"==t.options[t.selectedIndex].value?a.show().find(":input").prop("disabled",!1):a.hide().find(":input").not("select").prop("disabled",!0).val("")},fillRecipientAddress:function(e){$.each(this.getAddressKeys(),function(t,a){a in e&&$('[name="to['+a+']"]').val(e[a])})},clearRecipientAddress:function(){$('[name="to[name]"]').val(""),$('[name="to[email]"]').val(""),$.each(this.getAddressKeys(),function(e,t){$('[name="to['+t+']"]').val("")})},getAddressKeys:function(){return["company","street1","street2","city","state","country","phone","zip"]}}})},{}]},{},[1]);
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+new Vue({
+    el: '#shipping_create',
+    data: {
+        claims: claims,
+        claim: null
+    },
+    mounted: function mounted() {
+        $(function () {
+            $('select#parcel_el').select2();
+        });
+    },
+    created: function created() {
+        this.populateClaims();
+    },
+    methods: {
+        populatePackagine: function populatePackagine() {
+            var claims = this.claims;
+
+            // Set our default array.
+            var data = {
+                Claims: [],
+                Custom: [{
+                    name: 'Other',
+                    value: 'other'
+                }]
+            };
+
+            // If we have claims, iterate over them and push the claim to the data.Claims array.
+            if (claims.length > 0) {
+                $.each(claims, function (k, v) {
+                    data.Claims.push({
+                        value: this.id,
+                        name: this.claimer.name + ', ' + this.inventory_item_object_data.name + ', $' + this.price + ', ' + this.updated_at_human
+                    });
+                });
+            }
+
+            // Build our optgroup and options
+            $.each(data, function (k, v) {
+                var group = $('<optgroup label="' + k + '" />');
+                $.each(v, function () {
+                    var attr = k == 'Claims' ? ' data-type="claimed_item" ' : '';
+                    $('<option ' + attr + ' value="' + this.value + '"/>').html(this.name).appendTo(group);
+                });
+                group.appendTo(claimedEl);
+            });
+
+            // We need an empty option, push it to the front.
+            $("<option>", { value: '', selected: true }).prependTo(claimedEl);
+            claimedEl.removeClass('disabled').prop('disabled', false);
+        },
+        populateClaims: function populateClaims() {
+            var claimedEl = $('#claimer_select_el');
+            var claims = this.claims;
+
+            // Set our default array.
+            var data = {
+                Claims: [],
+                Custom: [{
+                    name: 'Other',
+                    value: 'other'
+                }]
+            };
+
+            // If we have claims, iterate over them and push the claim to the data.Claims array.
+            if (claims.length > 0) {
+                $.each(claims, function (k, v) {
+                    data.Claims.push({
+                        value: this.id,
+                        name: this.claimer.name + ', ' + this.inventory_item_object_data.name + ', $' + this.price + ', ' + this.updated_at_human
+                    });
+                });
+            }
+
+            // Build our optgroup and options
+            $.each(data, function (k, v) {
+                var group = $('<optgroup label="' + k + '" />');
+                $.each(v, function () {
+                    var attr = k == 'Claims' ? ' data-type="claimed_item" ' : '';
+                    $('<option ' + attr + ' value="' + this.value + '"/>').html(this.name).appendTo(group);
+                });
+                group.appendTo(claimedEl);
+            });
+
+            // We need an empty option, push it to the front.
+            $("<option>", { value: '', selected: true }).prependTo(claimedEl);
+            claimedEl.removeClass('disabled').prop('disabled', false);
+        },
+        claimReferenceChanged: function claimReferenceChanged(event) {
+            var el = event.target;
+            var elSelected = el.options[el.selectedIndex];
+            var elSelectedVal = elSelected.value;
+            var elSelectedType = elSelected.getAttribute('data-type');
+            if (elSelectedType == 'claimed_item') {
+                var claim = this.getClaimById(elSelectedVal);
+                var address = claim.claimer.ship_to_address;
+                $('[name="to[name]"]').val(claim.claimer.name);
+                $('[name="to[email]"]').val(claim.claimer.email);
+                if (address) {
+                    this.fillRecipientAddress(address);
+                }
+            } else {
+                this.clearRecipientAddress();
+            }
+        },
+        getClaimById: function getClaimById(id) {
+            return _.find(this.claims, function (claim) {
+                return claim.id == id;
+            });
+        },
+        packagingChanged: function packagingChanged(event) {
+            var parcelEl = event.target;
+            var parcelElParent = $('#packaging-self-wrapper');
+            if (parcelEl.options[parcelEl.selectedIndex].value == 'self') {
+                parcelElParent.show().find(':input').prop('disabled', false);
+            } else {
+                parcelElParent.hide().find(':input').not('select').prop('disabled', true).val('');
+            }
+        },
+        fillRecipientAddress: function fillRecipientAddress(address) {
+            $.each(this.getAddressKeys(), function (k, v) {
+                if (v in address) {
+                    $('[name="to[' + v + ']"]').val(address[v]);
+                }
+            });
+        },
+        clearRecipientAddress: function clearRecipientAddress() {
+            $('[name="to[name]"]').val('');
+            $('[name="to[email]"]').val('');
+            $.each(this.getAddressKeys(), function (k, v) {
+                $('[name="to[' + v + ']"]').val('');
+            });
+        },
+        getAddressKeys: function getAddressKeys() {
+            return ['company', 'street1', 'street2', 'city', 'state', 'country', 'phone', 'zip'];
+        }
+    }
+});
+
+},{}]},{},[1]);
+
+//# sourceMappingURL=shipping-create.js.map

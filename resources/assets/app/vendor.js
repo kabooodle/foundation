@@ -14,6 +14,7 @@ require('../../../resources/assets/vendor/jquery/noty/packaged/jquery.noty.packa
 global.Clipboard = require('clipboard');
 require('ekko-lightbox');
 require('selectize');
+require('select2');
 require('emojione');
 require('emojionearea');
 require('bootstrap-touchspin');

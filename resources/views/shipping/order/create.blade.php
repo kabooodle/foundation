@@ -139,7 +139,7 @@
 
     @push('footer-scripts')
     <script>
-        const claims = eval('{!!    $claims     !!}');
+        const claims = JSON.parse('{!!   $claims     !!}');
     </script>
     <script src="/assets/js/shipping-create.js"></script>
     <script>

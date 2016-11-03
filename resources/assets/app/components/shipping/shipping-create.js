@@ -1,4 +1,4 @@
-// require('../../../vendor/bootstrap-select/bootstrap-select');
+
 
 new Vue({
     el: '#shipping_create',
@@ -7,7 +7,9 @@ new Vue({
         claim : null,
     },
     mounted: function(){
-        // $('select#parcel_el').selectpicker();
+        $(function(){
+            $('select#parcel_el').select2();
+        });
     },
     created: function(){
         this.populateClaims();

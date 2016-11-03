@@ -88,6 +88,13 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'shoppable_type',
     ];
 
+    /**
+     * @var array
+     */
+    protected $hidden =[
+        'shoppable_type'
+    ];
+
     public function setInventoryItemObjectDataAttribute($value)
     {
         $this->attributes['inventory_item_object_data'] = $value->toJson();

@@ -74,8 +74,7 @@ class Files extends BaseEloquentModel
             'key' => $this->key,
             'bucket' => $this->bucket_name,
             'location' => $this->location,
-            'fileable_id' => $this->fileable_id,
-            'fileable_type' => $this->fileable_type
+            'fileable_id' => $this->fileable_id
         ]);
     }
 
