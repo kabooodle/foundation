@@ -23,7 +23,7 @@ $(function(){ var n = noty({
             open: 'animated bounceInDown',
             close: 'animated bounceOutUp'
         },
-        timeout: 9000,
+        timeout: 4000,
         closeWith: ['button','click']
     });
 });

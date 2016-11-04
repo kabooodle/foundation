@@ -6,21 +6,20 @@ new Vue({
     data : {
         claims : [],
         packaging : packaging_data,
-        claim : null,
+        claimed_id : null,
+        selectedClaimer : null,
+        selectedClaims : [],
+        buyerAddress : [],
     },
     mounted: function(){
         const scope = this;
         $(function(){
             let parcelEl = $('select#parcel_el');
-            let claimerEl = $('#claimer_select_el');
-            parcelEl.select2({
-                templateResult: scope.packagingDropdownTemplate,
-                templateSelection: scope.packagingSelectedTemplate
-            });
-            claimerEl.select2({
-                templateResult: scope.packagingDropdownTemplate,
-                templateSelection: scope.packagingSelectedTemplate
-            });
+            let claimerEl = $('select#claimer_select_el');
+
+            scope.setClaimerEl();
+            scope.setPackagingEl();
+
             claimerEl.on('select2:select', function(event){
                 scope.claimReferenceChanged(event);
             });
@@ -34,10 +33,26 @@ new Vue({
         this.populatePackages();
     },
     methods : {
+        setClaimerEl : function(){
+            const scope = this;
+            let el = $('select#claimer_select_el');
+            el.select2({
+                templateResult: scope.packagingDropdownTemplate,
+                templateSelection: scope.packagingSelectedTemplate
+            });
+        },
+        setPackagingEl: function(){
+            const scope = this;
+            let el = $('select#parcel_el');
+            el.select2({
+                templateResult: scope.packagingDropdownTemplate,
+                templateSelection: scope.packagingSelectedTemplate
+            });
+        },
         packagingDropdownTemplate: function(parcel){
             if (!parcel.id || parcel.element.getAttribute('data-image') == null || parcel.element.getAttribute('data-image') == undefined) { return parcel.text; }
 
-            return $('<span><img  width="60" src="' + parcel.element.getAttribute('data-image')+'"  /> ' + parcel.text + '</span>');
+            return $('<span><img  width="40" src="' + parcel.element.getAttribute('data-image')+'"  /> ' + parcel.text + '</span>');
         },
         packagingSelectedTemplate: function(parcel){
             if (!parcel.id || parcel.element.getAttribute('data-image') == null || parcel.element.getAttribute('data-image') == undefined) { return parcel.text; }
@@ -98,7 +113,8 @@ new Vue({
             if(claims.length > 0) {
                 $.each(claims, function(k,v){
                     data.Claims.push({
-                        value: this.id,
+                        value: parseInt(this.id),
+                        claimer_id: this.claimer.id,
                         date: this.updated_at_human,
                         image: this.inventory_item_object_data.files.length > 0 ? this.inventory_item_object_data.files[0].location : null,
                         name: this.claimer.name+', '+this.inventory_item_object_data.name+' - '+this.inventory_item_object_data.style_size.name+', $'+this.price
@@ -110,8 +126,14 @@ new Vue({
             $.each(data, function(k,v){
                 var group = $('<optgroup label="' + k + '" />');
                 $.each(v, function(){
-                    let attr = k == 'Claims' ? ' data-type="claimed_item" ' : '';
-                    $('<option '+attr+' value="'+this.value+'"  data-date="'+this.date+'" data-image="'+this.image+'" />').html(this.name).appendTo(group);
+                    let typeAttr = k == 'Claims' ? ' data-type="claimed_item" ' : '';
+                    let claimerAttr = k == 'Claims' ? ' data-claimer-id="'+this.claimer_id+'" ' : '';
+                    $('<option ' +
+                        ''+typeAttr+'' +
+                        ''+claimerAttr+''+
+                        'value="'+this.value+'"  ' +
+                        'data-date="'+this.date+'" ' +
+                        'data-image="'+this.image+'" />').html(this.name).appendTo(group);
                 });
                 group.appendTo(claimedEl);
             });
@@ -123,19 +145,54 @@ new Vue({
         claimReferenceChanged : function(event){
             let el = event.target;
             let elSelected = el.options[el.selectedIndex];
-            let elSelectedVal = elSelected.value;
+            let elSelectedVal = parseInt(elSelected.value);
             let elSelectedType = elSelected.getAttribute('data-type');
+            let elSelectedClaimerId = elSelected.getAttribute('data-claimer-id');
+
+            // Set address
             if(elSelectedType == 'claimed_item') {
                 let claim = this.getClaimById(elSelectedVal);
                 let address = claim.claimer.ship_to_address;
                 $('[name="to[name]"]').val(claim.claimer.name);
                 $('[name="to[email]"]').val(claim.claimer.email);
                 if(address) {
+                    this.address = address;
                     this.fillRecipientAddress(address);
                 }
             } else {
                 this.clearRecipientAddress();
             }
+
+            // Check claimer id
+            if(elSelectedClaimerId) {
+                let selectedClaim = _.findWhere(this.claims, {id: parseInt(elSelectedVal)});
+                //Check if the claimer id is the same as the one already selected
+                if(this.selectedClaimer == elSelectedClaimerId){
+
+                } else {
+                    // Reset the claims and claimer
+                    $('#claimed_items_container').html('');
+                    $('select#claimer_select_el option').prop('disabled', false);
+                    this.selectedClaimer = elSelectedClaimerId;
+                    this.selectedClaims = [];
+                }
+
+                this.selectedClaims.push(selectedClaim);
+                let html = $('#select2-claimer_select_el-container').parent().html();
+                $(html).appendTo($('#claimed_items_container'));
+
+                $('select#claimer_select_el option:selected').prop('disabled', true);
+                this.setClaimerEl();
+
+                return;
+            }
+
+            // Reset everything;
+            this.selectedClaimer = null;
+            this.selectedClaims = [];
+            $('#claimed_items_container').html('');
+            $('select#claimer_select_el option').prop('disabled', false);
+            this.setClaimerEl();
         },
         getClaimById : function(id) {
             return _.find(this.claims, function(claim){ return claim.id == id});
