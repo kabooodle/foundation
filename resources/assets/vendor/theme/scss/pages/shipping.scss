@@ -10,9 +10,12 @@
     img {
       width: 20px;
     }
-    .del-claim:hover {
+    .del-claim {
       cursor: pointer;
-      opacity: 1;
+      margin-top: 6px;
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 }
