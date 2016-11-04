@@ -48,7 +48,7 @@ new Vue({
         }
     },
     methods : {
-        // 
+        //
         unselectClaimedReference(event){
             $(event.target).closest('.select2-selection__rendered').remove();
             this.selectedClaims.splice(this.selectedClaims.indexOf($(event.target).data('claim-id')));

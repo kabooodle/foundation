@@ -11,6 +11,7 @@
       width: 20px;
     }
     .del-claim {
+      color: $warning;
       cursor: pointer;
       margin-top: 6px;
       &:hover {
