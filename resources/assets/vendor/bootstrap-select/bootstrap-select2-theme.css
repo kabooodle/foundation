@@ -263,6 +263,9 @@
 
 .select2-container--default .select2-results__option[aria-disabled=true] {
     color: #999; }
+.select2-container--default .select2-results__option[aria-disabled=true] img {
+    opacity: .5;
+}
 
 .select2-container--default .select2-results__option[aria-selected=true] {
     background-color: #ddd; }
@@ -288,7 +291,7 @@
     padding-left: 6em; }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background-color: #5897fb;
+    background-color: #a88add;
     color: white; }
 
 .select2-container--default .select2-results__group {
@@ -472,7 +475,7 @@
     color: grey; }
 
 .select2-container--classic .select2-results__option--highlighted[aria-selected] {
-    background-color: #3875d7;
+    background-color: #a88add;
     color: white; }
 
 .select2-container--classic .select2-results__group {

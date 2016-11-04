@@ -14,6 +14,11 @@ new Vue({
     mounted: function(){
         const scope = this;
         $(function(){
+
+            $(document).on('click', '.del-claim', function(event){
+                scope.unselectClaimedReference(event);
+            });
+
             let parcelEl = $('select#parcel_el');
             let claimerEl = $('select#claimer_select_el');
 
@@ -32,7 +37,22 @@ new Vue({
         this.getClaims();
         this.populatePackages();
     },
+    watch : {
+        selectedClaims : {
+            handler : function(v){
+                if (v.length ==0 ){
+                    this.clearRecipientAddress();
+                }
+            }
+        }
+    },
     methods : {
+        unselectClaimedReference(event){
+            $(event.target).closest('.select2-selection__rendered').remove();
+            this.selectedClaims.splice(this.selectedClaims.indexOf($(event.target).data('claim-id')));
+            $('select#claimer_select_el option[value="'+$(event.target).data('claim-id')+'"]').prop('disabled', false);
+            this.setClaimerEl();
+        },
         setClaimerEl : function(){
             const scope = this;
             let el = $('select#claimer_select_el');
@@ -57,7 +77,7 @@ new Vue({
         packagingSelectedTemplate: function(parcel){
             if (!parcel.id || parcel.element.getAttribute('data-image') == null || parcel.element.getAttribute('data-image') == undefined) { return parcel.text; }
 
-            return $('<span><img  width="30" src="' + parcel.element.getAttribute('data-image')+'"  /> ' + parcel.text + '</span>');
+            return $('<span><img  width="20" src="' + parcel.element.getAttribute('data-image')+'"  /> ' + parcel.text + '</span>');
         },
         populatePackages: function(){
             let el = $('#parcel_el');
@@ -178,8 +198,9 @@ new Vue({
                 }
 
                 this.selectedClaims.push(selectedClaim);
-                let html = $('#select2-claimer_select_el-container').parent().html();
-                $(html).appendTo($('#claimed_items_container'));
+                let $html = $($('#select2-claimer_select_el-container').parent().html());
+                $html.find('span').parent().addClass('clearfix').append($('<i data-claim-id="'+elSelectedVal+'" class="fa fa-times text-muted pull-right del-claim"></i>'));
+                $html.appendTo($('#claimed_items_container'));
 
                 $('select#claimer_select_el option:selected').prop('disabled', true);
                 this.setClaimerEl();

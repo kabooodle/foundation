@@ -137,7 +137,7 @@
 }
 
 .select2-container--bootstrap .select2-results__option--highlighted[aria-selected] {
-    background-color: #337ab7;
+    background-color: #a88add;
     color: #fff;
 }
 

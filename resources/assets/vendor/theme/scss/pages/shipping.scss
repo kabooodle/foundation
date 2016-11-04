@@ -1,0 +1,18 @@
+#claimed_items_container {
+  margin: 10px 0;
+  .select2-selection__rendered {
+    font-size: .75rem;
+    display: block;
+    padding: 5px;
+    margin: 5px 0;
+    border: 1px solid $input-border;
+    border-radius: .25rem;
+    img {
+      width: 20px;
+    }
+    .del-claim:hover {
+      cursor: pointer;
+      opacity: 1;
+    }
+  }
+}
