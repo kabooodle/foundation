@@ -6,7 +6,6 @@ new Vue({
     data : {
         claims : [],
         packaging : packaging_data,
-        claimed_id : null,
         selectedClaimer : null,
         selectedClaims : [],
         buyerAddress : [],
@@ -15,15 +14,16 @@ new Vue({
         const scope = this;
         $(function(){
 
+            // Handle dynamically added selected claim delete click
             $(document).on('click', '.del-claim', function(event){
                 scope.unselectClaimedReference(event);
             });
 
-            let parcelEl = $('select#parcel_el');
-            let claimerEl = $('select#claimer_select_el');
-
             scope.setClaimerEl();
             scope.setPackagingEl();
+
+            let parcelEl = $('select#parcel_el');
+            let claimerEl = $('select#claimer_select_el');
 
             claimerEl.on('select2:select', function(event){
                 scope.claimReferenceChanged(event);
@@ -40,6 +40,7 @@ new Vue({
     watch : {
         selectedClaims : {
             handler : function(v){
+                // when selected claims reaches 0, clear the address.
                 if (v.length ==0 ){
                     this.clearRecipientAddress();
                 }
@@ -47,6 +48,7 @@ new Vue({
         }
     },
     methods : {
+        // 
         unselectClaimedReference(event){
             $(event.target).closest('.select2-selection__rendered').remove();
             this.selectedClaims.splice(this.selectedClaims.indexOf($(event.target).data('claim-id')));
