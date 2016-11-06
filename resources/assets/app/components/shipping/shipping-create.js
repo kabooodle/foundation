@@ -189,9 +189,7 @@ new Vue({
             if(elSelectedClaimerId) {
                 let selectedClaim = _.findWhere(this.claims, {id: parseInt(elSelectedVal)});
                 //Check if the claimer id is the same as the one already selected
-                if(this.selectedClaimer == elSelectedClaimerId){
-
-                } else {
+                if(this.selectedClaimer != elSelectedClaimerId){
                     // Reset the claims and claimer
                     $('#claimed_items_container').html('');
                     $('select#claimer_select_el option').prop('disabled', false);
@@ -201,7 +199,7 @@ new Vue({
 
                 this.selectedClaims.push(selectedClaim);
                 let $html = $($('#select2-claimer_select_el-container').parent().html());
-                $html.find('span').parent().addClass('clearfix').append($('<i data-claim-id="'+elSelectedVal+'" class="fa fa-times text-muted pull-right del-claim"></i>'));
+                $html.find('span').parent().addClass('clearfix').append($('<input type="hidden" name="claim_id[]" value="'+elSelectedVal+'"> <i data-claim-id="'+elSelectedVal+'" class="fa fa-times text-muted pull-right del-claim"></i>'));
                 $html.appendTo($('#claimed_items_container'));
 
                 $('select#claimer_select_el option:selected').prop('disabled', true);

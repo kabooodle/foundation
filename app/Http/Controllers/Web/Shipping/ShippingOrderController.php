@@ -61,7 +61,13 @@ class ShippingOrderController extends Controller
             $sender = Binput::get('from');
             $recipient = Binput::get('to');
 
-            $command = new GetShippingRatesCommand(user(), Binput::get('claim_id'), MailingAddress::fromArray($recipient), MailingAddress::fromArray($sender), new ParcelObject(Binput::get('parcel')));
+            $command = new GetShippingRatesCommand(
+                user(),
+                Binput::get('claim_id'),
+                MailingAddress::fromArray($recipient),
+                MailingAddress::fromArray($sender),
+                new ParcelObject(Binput::get('parcel'))
+            );
             $response = $this->dispatchNow($command);
 
             return redirect()->route('shipping.show', [$response->uuid]);

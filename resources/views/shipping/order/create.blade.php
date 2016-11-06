@@ -19,7 +19,7 @@
                     <div class="form-group row {{ $errors->has('claim_id') ? 'has-danger' : null }}" id="packaging-wrapper">
                         <label class="form-control-label col-sm-3">Claim Reference</label>
                         <div class="col-sm-6">
-                            {{ Form::select('claim_id', [], Binput::get('c', null), ['class' => 'disabled form-control', 'disabled', 'id' => 'claimer_select_el', '@change' => 'claimReferenceChanged'])  }}
+                            {{ Form::select('claim_id[]', [], Binput::get('c', null), ['class' => 'disabled form-control', 'disabled', 'id' => 'claimer_select_el', '@change' => 'claimReferenceChanged'])  }}
                             <div id="claimed_items_container"></div>
                         </div>
                     </div>

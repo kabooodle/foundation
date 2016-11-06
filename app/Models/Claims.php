@@ -200,7 +200,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     public function shipments()
     {
-        return $this->hasMany(ShippingShipments::class, 'claim_id');
+        return $this->belongsToMany(ShippingShipments::class, 'shipping_shipments_claims', 'claim_id', 'shipping_shipments_id');
     }
 
     /**
@@ -214,6 +214,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     public function shipmentTransaction()
     {
-        return $this->hasManyThrough(ShippingTransactions::class, ShippingShipments::class, 'claim_id')->first();
+        return null;
+//        return $this->hasManyThrough(ShippingTransactions::class, ShippingShipments::class, 'claim_id')->first();
     }
 }

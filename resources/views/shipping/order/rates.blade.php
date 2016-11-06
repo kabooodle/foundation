@@ -25,7 +25,7 @@
                     <tr>
                         <th>Carrier</th>
                         <th>Service Name</th>
-                        <th>*Estimated Transmit Time</th>
+                        <th>*Transit Time</th>
                         <th>Cost</th>
                         <th></th>
                     </tr>
@@ -106,12 +106,18 @@
     <script id="rates-template" type="text/x-template">
         <tbody>
         <tr v-for="rate in rates">
-            <td><img :src="rate.shippoRateObject.provider_image_75"  alt="@{{ rate.provider }}" title="@{{ rate.provider }}"></td>
+            <td><img
+                        :src="rate.shippoRateObject.provider_image_75"
+                        :alt="rate.provider"
+                        :title="rate.provider"></td>
             <td>@{{ rate.shippoRateObject.servicelevel_name }}</td>
-            <td>@{{ rate.days }} @{{ parseInt(rate.days) |  pluralize "day" }}</td>
+            <td>@{{ rate.days }} days <small class="block text-muted">@{{ rate.durationTerms}}</small></td>
             <td>$@{{ rate.adjustedTotalAmount }}</td>
             <td class="pull-right">
-                <button type="button" v-on:click="purchaseLabel" data-route="{{ route('shipping.transactions.store', [$shipment->uuid]) }}"  class="btn btn-xs white btn-purchase-label-el" data-uuid="@{{  rate.shippoRateObject.object_id }}">
+                <button type="button" v-on:click="purchaseLabel"
+                        data-route="{{ route('shipping.transactions.store', [$shipment->uuid]) }}"
+                        class="btn btn-xs white btn-purchase-label-el"
+                        :data-uuid="rate.shippoRateObject.object_id">
                     Purchase Label
                 </button>
             </td>

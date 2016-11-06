@@ -8,7 +8,6 @@ namespace Kabooodle\Bus\Handlers\Commands\Shipping;
 
 use DB;
 use Shippo_Object;
-use Kabooodle\Models\Claims;
 use Kabooodle\Models\MailingAddress;
 use Kabooodle\Models\ShippingPurpose;
 use Kabooodle\Models\ShippingShipments;
@@ -85,7 +84,6 @@ class GetShippingRatesCommandHandler
         return DB::transaction(function() use ($attributes, $command, $parcel){
             $shipmentDB = new ShippingShipments;
             $shipmentDB->user_id = $command->getActor()->id;
-            $shipmentDB->claim_id = Claims::where('uuid', $command->getClaimUUID())->firstOrFail()->id;
             $shipmentDB->shipment_id = $attributes['object_id'];
             $shipmentDB->recipient_id = $attributes['address_to'];
             $shipmentDB->recipientData = $command->getRecipient()->toArray();
@@ -99,6 +97,8 @@ class GetShippingRatesCommandHandler
             $shipmentDB->rates_list = $this->convertRatesToArray($attributes['rates_list']);
             $shipmentDB->messages = $attributes['messages'];
             $shipmentDB->save();
+
+            $shipmentDB->claims()->attach($command->getClaimIds());
 
             return $shipmentDB;
         });

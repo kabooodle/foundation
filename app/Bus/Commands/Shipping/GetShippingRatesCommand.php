@@ -22,9 +22,9 @@ final class GetShippingRatesCommand
     public $actor;
 
     /**
-     * @var string
+     * @var array
      */
-    public $claimUUID;
+    public $claimIds;
 
     /**
      * @var MailingAddress
@@ -45,15 +45,15 @@ final class GetShippingRatesCommand
      * GetShippingRatesCommand constructor.
      *
      * @param User           $actor
-     * @param string         $claimUUID
+     * @param array         $claimIds
      * @param MailingAddress $recipient
      * @param MailingAddress $sender
      * @param ParcelObject   $parcelObject
      */
-    public function __construct(User $actor, $claimUUID, MailingAddress $recipient, MailingAddress $sender, ParcelObject $parcelObject)
+    public function __construct(User $actor, array $claimIds, MailingAddress $recipient, MailingAddress $sender, ParcelObject $parcelObject)
     {
         $this->actor = $actor;
-        $this->claimUUID = $claimUUID;
+        $this->claimIds = $claimIds;
         $this->parcelObject = $parcelObject;
         $this->recipient = $recipient;
         $this->sender = $sender;
@@ -92,10 +92,10 @@ final class GetShippingRatesCommand
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getClaimUUID()
+    public function getClaimIds()
     {
-        return $this->claimUUID;
+        return $this->claimIds;
     }
 }

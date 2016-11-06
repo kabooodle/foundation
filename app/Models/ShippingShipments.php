@@ -47,7 +47,6 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
     protected $attributes = [
         'uuid' => null,
         'user_id' => 0,
-        'claim_id' => 0,
         'shipment_id' => '',
         'recipient_id' => '',
         'recipient_data' => [],
@@ -190,9 +189,9 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function claim()
+    public function claims()
     {
-        return $this->belongsTo(Claims::class, 'claim_id');
+        return $this->belongsToMany(Claims::class, 'shipping_shipments_claims', 'shipping_shipments_id', 'claim_id');
     }
 
     /**
@@ -226,7 +225,7 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
      */
     public function getMeasurements()
     {
-        return "{$this->parcel_data['length']} x {$this->parcel_data['width']} x {$this->parcel_data['height']} {$this->parcel_data['distance_unit']}";
+        return "{$this->parcel_data['length']}L x {$this->parcel_data['width']}W x {$this->parcel_data['height']}H {$this->parcel_data['distance_unit']}";
     }
 
     /**
