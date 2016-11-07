@@ -15,8 +15,8 @@ class ClaimsApiController extends AbstractApiController
      */
     public function index()
     {
-        $data = $this->getUser()->claimsAsSellerNoShipping()->toJson();
+        $data = $this->getUser()->claimsAsSellerNoShipping();
 
-        return $this->setData($data)->respond();
+        return $this->collection($data);
     }
 }

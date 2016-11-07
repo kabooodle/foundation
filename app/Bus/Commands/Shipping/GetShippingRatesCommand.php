@@ -62,7 +62,7 @@ final class GetShippingRatesCommand
     /**
      * @return ParcelObject
      */
-    public function getParcel()
+    public function getParcel() : ParcelObject
     {
         return $this->parcelObject;
     }

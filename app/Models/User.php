@@ -420,8 +420,9 @@ class User extends BaseEloquentModel implements
         $inventoryItems = $this->claimsOnMyInventory;
         if ($inventoryItems->count() > 0 ) {
             return $inventoryItems->filter(function(Claims $claim){
-               return $claim->shipmentTransaction() ? false : true;
-            });
+                // Ignore claims still pending and ones that have already shipped
+                return ($claim->wasAccepted() && ! $claim->shipmentTransaction() ? true : false);
+            })->values();
         }
 
         return $inventoryItems;

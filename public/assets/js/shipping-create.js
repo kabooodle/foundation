@@ -121,7 +121,7 @@ new Vue({
         getClaims: function getClaims() {
             var scope = this;
             this.$http.get(claims_endpoint).then(function (response) {
-                return JSON.parse(response.body.data);
+                return response.body.data;
             }, function () {
                 return [];
             }).then(function (response) {

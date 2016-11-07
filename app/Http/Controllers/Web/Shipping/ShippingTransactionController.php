@@ -7,6 +7,8 @@
 namespace Kabooodle\Http\Controllers\Web\Shipping;
 
 use Binput;
+use Response;
+use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Models\ShippingShipments;
 use Kabooodle\Models\ShippingTransactions;
@@ -29,9 +31,8 @@ class ShippingTransactionController extends Controller
 
     /**
      * @param Request $request
-     * @param         $shipmentUUID
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param $shipmentUUID
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request, $shipmentUUID)
     {
@@ -70,14 +71,14 @@ class ShippingTransactionController extends Controller
 
             $redirectRoute = route('shipping.transactions.show', [$shipmentUUID, $st->uuid]);
 
-            return \Response::json(['txn_id' => $transaction['object_id'], 'redirect' => $redirectRoute], 200);
+            return Response::json(['txn_id' => $transaction['object_id'], 'redirect' => $redirectRoute], 200);
 
         } catch (InsufficientBalanceException $e) {
-            return \Response::json(['error' => 'Insufficient credits : $'.user()->getAvailableBalance()], 500);
+            return Response::json(['error' => 'Insufficient credits : $'.user()->getAvailableBalance()], 500);
         } catch (StaleDataException $e) {
-            return \Response::json(['error' => 'Try again'], 500);
-        } catch (\Exception $e) {
-            return \Response::json(['error' => 'Try again'], 500);
+            return Response::json(['error' => 'Try again'], 500);
+        } catch (Exception $e) {
+            return Response::json(['error' => 'Try again'], 500);
         }
     }
 
