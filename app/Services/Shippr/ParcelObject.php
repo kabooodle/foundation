@@ -45,12 +45,12 @@ class ParcelObject implements ArrayAccess
     {
         // If the incoming parcel is a parcel, get data from there.
         if ($shippo['id'] <> 'self') {
-            $shipment = ShippingParcelTemplates::where('parcel_id', $shippo['id'])->firstOrFail();
-            $shippo = $shippo + $shipment->toArray();
+            $template = ShippingParcelTemplates::where('parcel_id', $shippo['id'])->firstOrFail();
+            $shippo = $template->toArray() + $shippo;
+            $this->parcelTemplate = $this->template = $template->toArray();
         }
 
-        $this->parcelId = $this->id = array_get($shippo, 'object_id');
-        $this->parcelTemplate = $this->template = array_get($shippo, 'template', false);
+        $this->parcelId = $this->id = array_get($shippo, 'object_id', $this->parcelTemplate['id']);
         $this->length = $shippo['length'];
         $this->width = $shippo['width'];
         $this->height = $shippo['height'];

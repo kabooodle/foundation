@@ -9,6 +9,16 @@ new Vue({
         selectedClaimer : null,
         selectedClaims : [],
         buyerAddress : [],
+        defaultAddressKeys : [
+        'company',
+        'street1',
+        'street2',
+        'city',
+        'state',
+        'country',
+        'phone',
+        'zip'
+    ]
     },
     mounted: function(){
         const scope = this;
@@ -49,16 +59,16 @@ new Vue({
     },
     methods : {
         //
-        unselectClaimedReference(event){
+        unselectClaimedReference : function(event){
             $(event.target).closest('.select2-selection__rendered').remove();
             this.selectedClaims.splice(this.selectedClaims.indexOf($(event.target).data('claim-id')));
             $('select#claimer_select_el option[value="'+$(event.target).data('claim-id')+'"]').prop('disabled', false);
-            this.setClaimerEl();
+            this.setClaimerEl().val('').trigger('change');
         },
         setClaimerEl : function(){
             const scope = this;
             let el = $('select#claimer_select_el');
-            el.select2({
+            return el.select2({
                 templateResult: scope.packagingDropdownTemplate,
                 templateSelection: scope.packagingSelectedTemplate
             });
@@ -94,8 +104,8 @@ new Vue({
                 data.USPS.push({
                     value: this.parcel_id,
                     image: this.image,
-                    name: this.name+' ('+this.length+'L x '+this.width+'W x '+this.height+'H)'
-                })
+                    name: this.name_with_dimensions
+                });
             });
 
             // Build our optgroup and options
@@ -138,9 +148,9 @@ new Vue({
                         value: parseInt(this.id),
                         claimer_id: this.claimer.id,
                         date: this.updated_at_human,
-                        image: this.inventory_item_object_data.files.length > 0 ? this.inventory_item_object_data.files[0].location : null,
+                        image: this.inventory_item_object_data.files && this.inventory_item_object_data.files.length > 0 ? this.inventory_item_object_data.files[0].location : null,
                         name: this.claimer.name+', '+this.inventory_item_object_data.name+' - '+this.inventory_item_object_data.style_size.name+', $'+this.price
-                    })
+                    });
                 });
             }
 
@@ -203,7 +213,7 @@ new Vue({
                 $html.appendTo($('#claimed_items_container'));
 
                 $('select#claimer_select_el option:selected').prop('disabled', true);
-                this.setClaimerEl();
+                this.setClaimerEl().val('').trigger('change');
 
                 return;
             }
@@ -213,7 +223,7 @@ new Vue({
             this.selectedClaims = [];
             $('#claimed_items_container').html('');
             $('select#claimer_select_el option').prop('disabled', false);
-            this.setClaimerEl();
+            this.setClaimerEl().val('').trigger('change');
         },
         getClaimById : function(id) {
             return _.find(this.claims, function(claim){ return claim.id == id});
@@ -242,16 +252,7 @@ new Vue({
             });
         },
         getAddressKeys: function(){
-            return [
-                'company',
-                'street1',
-                'street2',
-                'city',
-                'state',
-                'country',
-                'phone',
-                'zip'
-            ];
+            return this.defaultAddressKeys;
         }
     }
 });

@@ -10,10 +10,6 @@
 
 @section('body-content')
 
-    <div class="alert warning">
-        <p class="m-b-0 text-center h6">Note: Rates expire {{ $shipment->expires_on->diffForHumans() }}.</p>
-    </div>
-
     <div class="box white" id="shipping_rates_wrapper">
         <div class="box-header">
             <h4>Available Shipping Rates</h4>
@@ -43,10 +39,29 @@
         <div class="col-md-4">
             <div class="box">
                 <div class="box-header">
+                    <h4 class="m-b-0">Claims</h4>
+                </div>
+                <div class="box-divider"></div>
+                    @foreach($shipment->claims as $claim)
+                    <div class="box-body">
+                        @if($claim->inventoryItem->files->count() > 0)
+                            <img src="{{$claim->inventoryItem->files[0]->location}}" width="60">
+                        @endif
+                        {{ $claim->claimer->name }} - {{ $claim->inventoryItem->name }} - {{ $claim->inventoryItem->size->name }} - ${{ $claim->inventoryItem->price_usd }}
+                    </div>
+                @endforeach
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="box">
+                <div class="box-header">
                     <h4 class="m-b-0">Parcel</h4>
                 </div>
                 <div class="box-divider"></div>
                 <div class="box-body">
+                    {{ $shipment->parcelTemplate ? $shipment->parcelTemplate->name  : 'Custom' }}
+                    <br>
                     {{ $shipment->getMeasurements() }}
                     <br>
                     {{ $shipment->parcel_data['weight'] }} {{ $shipment->parcel_data['mass_unit'] }}
@@ -74,8 +89,6 @@
                     </address>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
             <div class="box">
                 <div class="box-header">
                     <h4 class="m-b-0">Sender Address</h4>
@@ -95,7 +108,7 @@
                         @endif
                     </address>
                 </div>
-             </div>
+            </div>
         </div>
     </div>
 
@@ -144,16 +157,19 @@
                     scope._togglePurchaseLabelBtns($this);
 
                     confirmModal(function(){
-                        $(this).addClass('disabled').prop('disabled', true);
+                        $('.noty-btn').addClass('disabled').prop('disabled', true);
+                        $('.noty-btn-primary').html('<i class="fa fa-spin fa-spinner"></i>');
                         scope.$http.post($this.data('route'), {rate : $this.data('uuid')} ).then(function(data, x){
                             if (data.body.redirect && data.body.redirect.length) {
                                 window.location.href = data.body.redirect;
                             }
-                        }, function($noty){
-                            $noty.close();
+                        }, function(response){
+                            $.noty.closeAll();
                             scope._togglePurchaseLabelBtns($this);
+                            notify({'text' : response.body.error});
                         });
-                    }, function(){
+                    }, function($noty){
+                        $noty.close();
                         scope._togglePurchaseLabelBtns($this);
                     });
 

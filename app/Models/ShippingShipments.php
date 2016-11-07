@@ -58,6 +58,7 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
         'shipment_state' => 'VALID',
         'rates_url' => '',
         'rates_list' => [],
+        'shipping_parcel_template_id' => '',
         'messages' => ''
     ];
 
@@ -139,6 +140,14 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
     public function getParcelDataAttribute($value)
     {
         return json_decode($value, true);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function parcelTemplate()
+    {
+        return $this->belongsTo(ShippingParcelTemplates::class, 'shipping_parcel_template_id');
     }
 
     /**

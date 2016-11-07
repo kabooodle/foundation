@@ -63,7 +63,7 @@ class ShippingOrderController extends Controller
 
             $command = new GetShippingRatesCommand(
                 user(),
-                Binput::get('claim_id'),
+                array_filter(Binput::get('claim_id')),
                 MailingAddress::fromArray($recipient),
                 MailingAddress::fromArray($sender),
                 new ParcelObject(Binput::get('parcel'))

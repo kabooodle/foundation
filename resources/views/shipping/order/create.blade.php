@@ -71,7 +71,7 @@
                             {{ Form::number('parcel[weight]', null, ['class' => 'form-control numeric float', 'numeric']) }}
                         </div>
                         <div class="col-sm-3">
-                            {{ Form::select('parcel[weight_uom]', \Kabooodle\Services\Shippr\WeightUnits::getUnits(), null, ['class' => 'form-control'])  }}
+                            {{ Form::select('parcel[weight_uom]', \Kabooodle\Services\Shippr\WeightUnits::getUnits(), (old('parcel[weight_uom]', 'oz')), ['class' => 'form-control'])  }}
                         </div>
                     </div>
                 </div>

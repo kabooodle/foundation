@@ -22,7 +22,8 @@ class ShippingParcelTemplates extends BaseEloquentModel
      * @var array
      */
     protected $appends = [
-        'name_with_dimensions'
+        'name_with_dimensions',
+        'dimensions'
     ];
 
     /**
@@ -70,6 +71,14 @@ class ShippingParcelTemplates extends BaseEloquentModel
      */
     public function getNameWithDimensionsAttribute()
     {
-        return $this->name." ({$this->length} x {$this->width} x {$this->height} {$this->distance_unit})";
+        return $this->name." (".$this->dimensions.")";
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimensionsAttribute()
+    {
+        return "{$this->length}L x {$this->width}W x {$this->height}H {$this->distance_unit}";
     }
 }

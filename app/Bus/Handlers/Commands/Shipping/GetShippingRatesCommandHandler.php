@@ -12,7 +12,6 @@ use Kabooodle\Models\MailingAddress;
 use Kabooodle\Models\ShippingPurpose;
 use Kabooodle\Models\ShippingShipments;
 use Kabooodle\Services\Shippr\ShipprService;
-use Kabooodle\Models\ShippingParcelTemplates;
 use Kabooodle\Bus\Commands\Shipping\GetShippingRatesCommand;
 
 /**
@@ -44,20 +43,13 @@ class GetShippingRatesCommandHandler
 
         $weight = $parcel['weight'];
         $weightUOM = $parcel['weight_uom'];
-//        $shippingDate = $parcel['shipment_date'];
-
         if ( $parcel['template']) {
-            $template = $this->getShippingParcelTemplate($parcel->getShippoParcelObject()['id']);
-            $length = $template->length;
-            $width = $template->width;
-            $height = $template->height;
-            $dimensionsUom = $template->distance_unit;
-        } else {
-            $length = $parcel['length'];
-            $width = $parcel['width'];
-            $height = $parcel['height'];
-            $dimensionsUom = $parcel['distance_unit'];
+            $template =  $parcel['template'];
         }
+        $length = $parcel['length'];
+        $width = $parcel['width'];
+        $height = $parcel['height'];
+        $dimensionsUom = $parcel['distance_unit'];
 
         $parcel = $this->validateParcel($length, $width, $height, $dimensionsUom, $weight, $weightUOM);
         if (isset($template)) {
@@ -73,10 +65,9 @@ class GetShippingRatesCommandHandler
     }
 
     /**
-     * @param                         $attributes
-     * @param                         $parcel
+     * @param $attributes
+     * @param $parcel
      * @param GetShippingRatesCommand $command
-     *
      * @return mixed
      */
     public function createShipmentsEntity($attributes, $parcel, GetShippingRatesCommand $command)
@@ -84,6 +75,7 @@ class GetShippingRatesCommandHandler
         return DB::transaction(function() use ($attributes, $command, $parcel){
             $shipmentDB = new ShippingShipments;
             $shipmentDB->user_id = $command->getActor()->id;
+            $shipmentDB->shipping_parcel_template_id = isset($parcel['template']) ? $parcel['template']['id'] : null;
             $shipmentDB->shipment_id = $attributes['object_id'];
             $shipmentDB->recipient_id = $attributes['address_to'];
             $shipmentDB->recipientData = $command->getRecipient()->toArray();
@@ -144,17 +136,5 @@ class GetShippingRatesCommandHandler
     public function validateAddress(MailingAddress $recipient, $purpose = ShippingPurpose::PURPOSE_PURCHASE)
     {
         return $this->shippr->createAndValidateAddress($recipient, $purpose);
-    }
-
-    /**
-     * @param $parcelId
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException;
-     */
-    public function getShippingParcelTemplate($parcelId)
-    {
-        return ShippingParcelTemplates::where('parcel_id', $parcelId)->first();
     }
 }

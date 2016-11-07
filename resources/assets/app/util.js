@@ -143,14 +143,14 @@ function confirmModal(confirmCB, closeCB, options) {
         timeout: 4000,
         buttons: [
             {
-                addClass: 'btn btn-sm primary', text: 'Continue', onClick: function ($noty) {
+                addClass: 'btn btn-sm primary noty-btn-primary noty-btn', text: 'Continue', onClick: function ($noty) {
                 if (typeof confirmCB === 'function') {
                     confirmCB($noty);
                 }
             }
             },
             {
-                addClass: 'btn white btn-sm', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
+                addClass: 'btn white btn-sm noty-btn-cancel noty-btn', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
                 $noty.close();
                 if (typeof closeCB === 'function') {
                     closeCB($noty);
