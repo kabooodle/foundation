@@ -22,6 +22,10 @@ Route::group(['middleware' => ['web']], function() {
         '__captainHook/shtriwpe',
         \Kabooodle\Http\Controllers\Web\Webhooks\StripeWebhooksController::class . '@handleWebhook'
     );
+    Route::post(
+        '__captainHook/sheepoo',
+        \Kabooodle\Http\Controllers\Web\Webhooks\ShippoWebhooksController::class . '@handleWebhook'
+    );
 });
 
 Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], function(){

@@ -126,4 +126,9 @@ class ShipprService
             'async' => false
         ]);
     }
+
+    public function registerTrackingWebhook()
+    {
+
+    }
 }

@@ -6258,9 +6258,9 @@ if (module.hot) {(function () {  module.hot.accept()
     document.head.removeChild(__vueify_style__)
   })
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-4a79d343", module.exports)
+    hotAPI.createRecord("_v-c06e6dee", module.exports)
   } else {
-    hotAPI.update("_v-4a79d343", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-c06e6dee", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"../../app/s3uploader":10,"../../vendor/fileupload/js/jquery.fileupload":14,"../../vendor/fileupload/js/jquery.fileupload-image":11,"../../vendor/fileupload/js/jquery.fileupload-process":12,"../../vendor/fileupload/js/jquery.fileupload-ui":13,"../../vendor/fileupload/js/jquery.iframe-transport":15,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":16,"../../vendor/fileupload/js/vendor/jquery.ui.widget":17,"../../vendor/fileupload/js/vendor/load-image":18,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5,"vueify/lib/insert-css":7}],9:[function(require,module,exports){

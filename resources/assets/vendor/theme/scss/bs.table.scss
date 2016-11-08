@@ -57,3 +57,12 @@
 .table th.active{
   background-color: $min-black !important;
 }
+
+.table-as-list {
+  & > thead > tr > th {
+    font-size: .65rem;
+    text-transform: uppercase;
+    opacity: 0.6;
+    border-top: none;
+  }
+}

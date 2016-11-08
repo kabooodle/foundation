@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Services\Shippr\RatesObject;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
@@ -91,6 +92,18 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     public function setRateDataAttribute($value)
     {
         $this->attributes['rate_data'] = json_encode($value);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return RatesObject
+     */
+    public function getRateDataAttribute($value)
+    {
+        $value = json_decode($value, true);
+
+        return $value;
     }
 
     /**

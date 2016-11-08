@@ -11,6 +11,18 @@
   }
 }
 
+.avatar-thumbnail-container {
+  display: flex;
+  font-size: .75rem;
+  * {
+    margin-top:auto;
+    margin-bottom:auto;
+  }
+  img {
+    vertical-align:middle
+  }
+}
+
 .avatar-thumbnail {
   position: relative;
   width: 200px;

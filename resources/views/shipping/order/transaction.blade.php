@@ -10,78 +10,164 @@
 
 @section('body-content')
 
+    <style>
+        .timeline {
+            list-style-type: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .li {
+            transition: all 200ms ease-in;
+        }
+
+        .timestamp {
+            margin-bottom: 20px;
+            padding: 0 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: .75rem;
+        }
+
+        .status {
+            padding: 0 70px;
+            display: flex;
+            justify-content: center;
+            border-top: 2px solid #D6DCE0;
+            position: relative;
+            transition: all 200ms ease-in;
+        }
+        .status h4 {
+            font-weight: 300;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+        .status:before {
+            content: "";
+            width: 25px;
+            height: 25px;
+            background-color: white;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            position: absolute;
+            margin-left: -13px;
+            top: -15px;
+            left: 50%;
+            transition: all 200ms ease-in;
+        }
+
+        .li.complete .status {
+            border-top: 2px solid #66DC71;
+        }
+        .li.complete .status:before {
+            background-color: #66DC71;
+            border: none;
+            transition: all 200ms ease-in;
+        }
+        .li.complete .status h4 {
+            color: #66DC71;
+        }
+
+        .li.incomplete {
+            color: inherit!important;
+            opacity: .6;
+        }
+
+        @media (min-device-width: 320px) and (max-device-width: 700px) {
+            .timeline {
+                list-style-type: none;
+                display: block;
+            }
+
+            .li {
+                transition: all 200ms ease-in;
+                display: flex;
+                width: inherit;
+            }
+
+            .timestamp {
+                width: 100px;
+            }
+
+            .status:before {
+                left: -8%;
+                top: 30%;
+                transition: all 200ms ease-in;
+            }
+        }
+
+
+    </style>
+
+
+    <div class="box  p-a">
+        <div class="row">
+                <ul class="timeline" id="timeline">
+                    <li class="li">
+                        <div class="timestamp">
+                        <span class="date">11/05/2016<span>
+                        </div>
+                        <div class="status">
+                            <h4> Received </h4>
+                        </div>
+                    </li>
+                    <li class="li incomplete">
+                        <div class="timestamp">
+                    <span class="date">Pending<span>
+                        </div>
+                        <div class="status">
+                            <h4> In Transit </h4>
+                        </div>
+                    </li>
+                    <li class="li incomplete">
+                        <div class="timestamp">
+                    <span class="date">Pending<span>
+                        </div>
+                        <div class="status">
+                            <h4> Delivered </h4>
+                        </div>
+                    </li>
+                </ul>
+        </div>
+    </div>
+
+
     <div class="box">
         <div class="box-header">
             <h4>Shipping Information</h4>
         </div>
         <div class="box-divider"></div>
         <div class="box-body">
-            <a href="{{ $transaction->label_url }}" target="_blank" class="btn white">Get Shipping Label</a>
-            <a href="{{ $transaction->tracking_url_provider }}" target="_blank" class="text-primary">Carrier Tracking Link</a>
-            <p>Tracking Number: {{ $transaction->tracking_number }}</p>
-            <a href=""></a>
+            <table class="table table-condensed table-as-list white">
+                <thead>
+                    <tr>
+                        <th class="text-muted">Carrier</th>
+                        <th class="text-muted">Service Name</th>
+                        <th class="text-muted">*Transit Time</th>
+                        <th class="text-muted">Cost</th>
+                        <th class="text-muted">Tracking</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><img src="{{ $transaction->rate_data['carrierLogos']['small'] }}" alt="{{ $transaction->rate_data['provider'] }}"></td>
+                        <td>{{ $transaction->rate_data['serviceLevelName'] }}</td>
+                        <td>{{ $transaction->rate_data['shippoRateObject']['days'] }} days</td>
+                        <td>${{ $transaction->rate_amount }}</td>
+                        <td><a class="text-primary" href="{{ $transaction->tracking_url_provider }}" target="_blank" >{{ $transaction->tracking_number }}</a></td>
+                        <td><a href="{{ $transaction->label_url }}" target="_blank" class="btn btn-xs white ">Get Shipping Label</a></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
     </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="box">
-                <div class="box-header">
-                    <h4 class="m-b-0">Parcel</h4>
-                </div>
-                <div class="box-divider"></div>
-                <div class="box-body">
-                    {{ $transaction->shipment->getMeasurements() }}
-                    <br>
-                    {{ $transaction->shipment->parcel_data['weight'] }} {{ $transaction->shipment->parcel_data['mass_unit'] }}
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="box">
-                <div class="box-header">
-                    <h4 class="m-b-0">Recipient Address</h4>
-                </div>
-                <div class="box-divider"></div>
-                <div class="box-body">
-                    <address class="m-b-0">
-                        <span class="_500 block">{{ $transaction->shipment->recipient_data->name }}</span>
-                        <span class="block">{{ $transaction->shipment->recipient_data->street1 }}</span>
-                        @if($transaction->shipment->recipient_data->street2)
-                            <span class="block">{{ $transaction->shipment->recipient_data->street2 }}</span>
-                        @endif
-                        <span class="block">{{ $transaction->shipment->recipient_data->city }}, {{ $transaction->shipment->recipient_data->state }}, {{ $transaction->shipment->recipient_data->zip }}</span>
-                        <a href="mailto:{{ $transaction->shipment->recipient_data->email }}">{{ $transaction->shipment->recipient_data->email }}</a>
-                        @if($transaction->shipment->recipient_data->phone)
-                            <span class="block">{{ $transaction->shipment->recipient_data->phone }}</span>
-                        @endif
-                    </address>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="box">
-                <div class="box-header">
-                    <h4 class="m-b-0">Sender Address</h4>
-                </div>
-                <div class="box-divider"></div>
-                <div class="box-body">
-                    <address class="m-b-0">
-                        <span class="_500 block">{{ $transaction->shipment->sender_data->name }}</span>
-                        <span class="block">{{ $transaction->shipment->sender_data->street1 }}</span>
-                        @if($transaction->shipment->sender_data->street2)
-                            <span class="block">{{ $transaction->shipment->sender_data->street2 }}</span>
-                        @endif
-                        <span class="block">{{ $transaction->shipment->sender_data->city }}, {{ $transaction->shipment->sender_data->state }}, {{ $transaction->shipment->sender_data->zip }}</span>
-                        <a href="mailto:{{ $transaction->shipment->sender_data->email }}">{{ $transaction->shipment->sender_data->email }}</a>
-                        @if($transaction->shipment->sender_data->phone)
-                            <span class="block">{{ $transaction->shipment->sender_data->phone }}</span>
-                        @endif
-                    </address>
-                </div>
-             </div>
-        </div>
-    </div>
 
+
+    @include('shipping.order.partials._shipmentfooter', ['shipment' => $transaction->shipment])
 
 @endsection
