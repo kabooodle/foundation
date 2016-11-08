@@ -31,9 +31,9 @@
                 </div>
                 <div class="box-divider"></div>
                 <div class="box-body">
-                    {{ $shipment->getMeasurements() }}
+                    {{ $transaction->shipment->getMeasurements() }}
                     <br>
-                    {{ $shipment->parcel_data['weight'] }} {{ $shipment->parcel_data['mass_unit'] }}
+                    {{ $transaction->shipment->parcel_data['weight'] }} {{ $transaction->shipment->parcel_data['mass_unit'] }}
                 </div>
             </div>
         </div>
@@ -45,15 +45,15 @@
                 <div class="box-divider"></div>
                 <div class="box-body">
                     <address class="m-b-0">
-                        <span class="_500 block">{{ $shipment->recipient_data->name }}</span>
-                        <span class="block">{{ $shipment->recipient_data->street1 }}</span>
-                        @if($shipment->recipient_data->street2)
-                            <span class="block">{{ $shipment->recipient_data->street2 }}</span>
+                        <span class="_500 block">{{ $transaction->shipment->recipient_data->name }}</span>
+                        <span class="block">{{ $transaction->shipment->recipient_data->street1 }}</span>
+                        @if($transaction->shipment->recipient_data->street2)
+                            <span class="block">{{ $transaction->shipment->recipient_data->street2 }}</span>
                         @endif
-                        <span class="block">{{ $shipment->recipient_data->city }}, {{ $shipment->recipient_data->state }}, {{ $shipment->recipient_data->zip }}</span>
-                        <a href="mailto:{{ $shipment->recipient_data->email }}">{{ $shipment->recipient_data->email }}</a>
-                        @if($shipment->recipient_data->phone)
-                            <span class="block">{{ $shipment->recipient_data->phone }}</span>
+                        <span class="block">{{ $transaction->shipment->recipient_data->city }}, {{ $transaction->shipment->recipient_data->state }}, {{ $transaction->shipment->recipient_data->zip }}</span>
+                        <a href="mailto:{{ $transaction->shipment->recipient_data->email }}">{{ $transaction->shipment->recipient_data->email }}</a>
+                        @if($transaction->shipment->recipient_data->phone)
+                            <span class="block">{{ $transaction->shipment->recipient_data->phone }}</span>
                         @endif
                     </address>
                 </div>
@@ -67,15 +67,15 @@
                 <div class="box-divider"></div>
                 <div class="box-body">
                     <address class="m-b-0">
-                        <span class="_500 block">{{ $shipment->sender_data->name }}</span>
-                        <span class="block">{{ $shipment->sender_data->street1 }}</span>
-                        @if($shipment->sender_data->street2)
-                            <span class="block">{{ $shipment->sender_data->street2 }}</span>
+                        <span class="_500 block">{{ $transaction->shipment->sender_data->name }}</span>
+                        <span class="block">{{ $transaction->shipment->sender_data->street1 }}</span>
+                        @if($transaction->shipment->sender_data->street2)
+                            <span class="block">{{ $transaction->shipment->sender_data->street2 }}</span>
                         @endif
-                        <span class="block">{{ $shipment->sender_data->city }}, {{ $shipment->sender_data->state }}, {{ $shipment->sender_data->zip }}</span>
-                        <a href="mailto:{{ $shipment->sender_data->email }}">{{ $shipment->sender_data->email }}</a>
-                        @if($shipment->sender_data->phone)
-                            <span class="block">{{ $shipment->sender_data->phone }}</span>
+                        <span class="block">{{ $transaction->shipment->sender_data->city }}, {{ $transaction->shipment->sender_data->state }}, {{ $transaction->shipment->sender_data->zip }}</span>
+                        <a href="mailto:{{ $transaction->shipment->sender_data->email }}">{{ $transaction->shipment->sender_data->email }}</a>
+                        @if($transaction->shipment->sender_data->phone)
+                            <span class="block">{{ $transaction->shipment->sender_data->phone }}</span>
                         @endif
                     </address>
                 </div>

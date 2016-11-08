@@ -10,15 +10,12 @@ use Binput;
 use Response;
 use Exception;
 use Illuminate\Http\Request;
-use Kabooodle\Models\ShippingShipments;
-use Kabooodle\Models\ShippingTransactions;
-use Kabooodle\Services\Shippr\ShipprService;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Foundatino\Exceptions\StaleDataException;
-use Kabooodle\Models\Contracts\CreditTransactableInterface;
-use Kabooodle\Bus\Commands\Credits\DebitUserCreditBalanceCommand;
-use Kabooodle\Bus\Events\Shipping\ShippingTransactionWasCreatedEvent;
+use Kabooodle\Foundation\Exceptions\Shippo\ShippoException;
+use Kabooodle\Bus\Commands\Shipping\GetShippingTransactionCommand;
+use Kabooodle\Bus\Commands\Shipping\CreateNewShippingTransactionCommand;
 use Kabooodle\Foundation\Exceptions\Credits\InsufficientBalanceException;
 
 /**
@@ -38,43 +35,16 @@ class ShippingTransactionController extends Controller
     {
         // Check if this already has a shipping label generated. If so, redirect to it.
         $rateUUID = Binput::get('rate');
-        $shipment = ShippingShipments::where('uuid', $shipmentUUID)->where('user_id', user()->id)->firstOrFail();
-        $rate = $shipment->getRateId($rateUUID);
 
         try {
+            $shippingTransaction = $this->dispatchNow(new CreateNewShippingTransactionCommand(user(), $rateUUID, $shipmentUUID));
+            $redirectRoute = route('shipping.transactions.show', [$shipmentUUID, $shippingTransaction->uuid]);
 
-            $this->dispatchNow(new DebitUserCreditBalanceCommand(user(), $rate->getAdjustedTotalAmount(), CreditTransactableInterface::TYPE_DEBIT));
-
-            $shippr = new ShipprService;
-
-            $transaction = $shippr->createLabel($rateUUID);
-
-            $st = new ShippingTransactions;
-            $st->user_id = user()->id;
-            $st->shipping_shipments_id = $shipment->id;
-            $st->shipping_shipments_uuid = $shipment->uuid;
-            $st->raw_response = $transaction->__toArray(true);
-            $st->transaction_id = $transaction['object_id'];
-            $st->rate_id = $rateUUID;
-            $st->label_url = $transaction['label_url'];
-            $st->rate_data = $rate;
-            $st->rate_amount = $rate->getAdjustedTotalAmount();
-            $st->tracking_number = $transaction['tracking_number'];
-            $st->tracking_status = $transaction['tracking_status'];
-            $st->tracking_url_provider = $transaction['tracking_url_provider'];
-            $st->tracking_history = $transaction['tracking_history'];
-            $st->status = $transaction['object_status'];
-            $st->messages = $transaction['messages'];
-            $st->save();
-
-            $this->dispatch(new ShippingTransactionWasCreatedEvent($st));
-
-            $redirectRoute = route('shipping.transactions.show', [$shipmentUUID, $st->uuid]);
-
-            return Response::json(['txn_id' => $transaction['object_id'], 'redirect' => $redirectRoute], 200);
-
+            return Response::json(['txn_id' => $shippingTransaction->transaction_id, 'redirect' => $redirectRoute], 200);
         } catch (InsufficientBalanceException $e) {
             return Response::json(['error' => 'Insufficient credits : $'.user()->getAvailableBalance()], 500);
+        } catch (ShippoException $e){
+            return Response::json(['error' => $e->getMessage()], 500);
         } catch (StaleDataException $e) {
             return Response::json(['error' => 'Try again'], 500);
         } catch (Exception $e) {
@@ -84,16 +54,14 @@ class ShippingTransactionController extends Controller
 
     /**
      * @param Request $request
-     * @param         $shipmentUUID
-     * @param         $transactionUUID
-     *
+     * @param $shipmentUUID
+     * @param $transactionUUID
      * @return $this
      */
     public function show(Request $request, $shipmentUUID, $transactionUUID)
     {
-        $shipment = ShippingShipments::where('uuid', $shipmentUUID)->where('user_id', user()->id)->firstOrFail();
-        $transaction = ShippingTransactions::where('uuid', $transactionUUID)->where('user_id', user()->id)->firstOrFail();
+        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(user(),$shipmentUUID, $transactionUUID));
 
-        return $this->view('shipping.order.transaction')->with(compact('transaction', 'shipment'));
+        return $this->view('shipping.order.transaction')->with(compact('transaction'));
     }
 }

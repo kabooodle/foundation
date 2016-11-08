@@ -214,7 +214,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     public function shipmentTransaction()
     {
-        return false;
-//        return $this->hasManyThrough(ShippingTransactions::class, ShippingShipments::class, 'claim_id')->first();
+//        return false;
+        return $this->hasManyThrough(ShippingTransactions::class, ShippingShipments::class, 'claim_id')->first();
     }
 }

@@ -29,6 +29,7 @@ class DebitUserCreditBalanceCommandHandler
         if ($type === CreditTransactableInterface::TYPE_DEBIT) {
             $debitAmount = - $command->getDebitAmount();
         } else {
+            // throw exception
             $debitAmount = $command->getDebitAmount();
         }
 
