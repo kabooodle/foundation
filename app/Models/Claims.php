@@ -10,7 +10,6 @@ use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\NotificationableInterface;
 
@@ -20,7 +19,7 @@ use Kabooodle\Models\Contracts\NotificationableInterface;
  */
 class Claims extends BaseEloquentModel implements NotificationableInterface, Revisionable
 {
-    use AlgoliaEloquentTrait, ObfuscatesIdTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
+    use ObfuscatesIdTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array
@@ -204,7 +203,6 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
-     * FIXME: This needs to be a hasOneThrough (which doesnt exist).
      * As a reminder, a claim can have many shipments, because shipments are nothing more than
      * a data entry containing prices based on the parcel data.  The user may not like this price config etc;
      * and try again.  However, you can only "transact" one claim, meaning, you can only pay for one of the
@@ -214,7 +212,17 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     public function shipmentTransaction()
     {
-//        return false;
-        return $this->hasManyThrough(ShippingTransactions::class, ShippingShipments::class, 'claim_id')->first();
+        $shipments = $this->shipments;
+        if($shipments->count() > 0) {
+            $shipment = $shipments->filter(function(ShippingShipments $shipment){
+                return $shipment->transaction;
+            })->first();
+
+            if($shipment) {
+                return $shipment->transaction;
+            }
+        }
+
+        return false;
     }
 }

@@ -301,7 +301,12 @@ class InventoryController extends Controller
         $decryptedId = $this->obfuscateFromURIString(Binput::clean($idAndName));
         $user = User::where('username', $username)->first();
 
-        $item = $user->inventory->find($decryptedId);
+        // We use the item so that we can store various meta data about it at the time of the claim.
+        // This metadata might include price, size, name, etc;  The reason we store this data with the claim,
+        // rather than just pivot to the item from the claim is because this data may change numerous time.
+        // Storing this data allows us to preserve it at the time of the claim.
+        // We remove the eager loaded relationships on inventory because most of it is erroneous.
+        $item = $user->inventory()->noEagerLoads()->with('style','size', 'styleSize', 'files')->find($decryptedId);
         try {
             $this->dispatchNow(new ClaimInventoryItemCommand(user(), $user, $item));
 
