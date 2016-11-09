@@ -53,6 +53,9 @@ class EventServiceProvider extends ServiceProvider
             \Kabooodle\Bus\Handlers\Events\Shipping\MoveLabelToS3Handler::class,
             \Kabooodle\Bus\Handlers\Events\Shipping\DispatchShippingWebhookHandler::class
         ],
+        \Kabooodle\Bus\Events\Shipping\ShippingLabelPrinted::class => [
+            \Kabooodle\Bus\Handlers\Events\Shipping\ShippingLabelPrintedEventHandler::class
+        ],
 
         // SOCIAL EVENTS
         \Kabooodle\Bus\Events\Social\UserFacebookCredentialsRevokedEvent::class => [

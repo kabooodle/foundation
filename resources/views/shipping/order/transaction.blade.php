@@ -107,10 +107,18 @@
                 <ul class="timeline" id="timeline">
                     <li class="li">
                         <div class="timestamp">
-                        <span class="date">11/05/2016<span>
+                        <span class="date">{{ $transaction->createdAtHuman() }}<span>
                         </div>
                         <div class="status">
-                            <h4> Received </h4>
+                            <h4>Created</h4>
+                        </div>
+                    </li>
+                    <li class="li incomplete">
+                        <div class="timestamp">
+                        <span class="date">Pending<span>
+                        </div>
+                        <div class="status">
+                            <h4>Received</h4>
                         </div>
                     </li>
                     <li class="li incomplete">
@@ -118,7 +126,7 @@
                     <span class="date">Pending<span>
                         </div>
                         <div class="status">
-                            <h4> In Transit </h4>
+                            <h4>In Transit</h4>
                         </div>
                     </li>
                     <li class="li incomplete">
@@ -126,7 +134,7 @@
                     <span class="date">Pending<span>
                         </div>
                         <div class="status">
-                            <h4> Delivered </h4>
+                            <h4>Delivered</h4>
                         </div>
                     </li>
                 </ul>
@@ -157,8 +165,12 @@
                         <td>{{ $transaction->rate_data['serviceLevelName'] }}</td>
                         <td>{{ $transaction->rate_data['shippoRateObject']['days'] }} days</td>
                         <td>${{ $transaction->rate_amount }}</td>
-                        <td><a class="text-primary" href="{{ $transaction->tracking_url_provider }}" target="_blank" >{{ $transaction->tracking_number }}</a></td>
-                        <td><a href="{{ $transaction->label_url }}" target="_blank" class="btn btn-xs white ">Get Shipping Label</a></td>
+                        <td><a class="text-primary" href="{{ $transaction->tracking_url_provider }}" target="_blank" >{{ $transaction->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>
+                        <td>
+                            <div class="pull-right">
+                                <a target="_blank" href="{{ route('shipping.transactions.label.show', [$transaction->shipping_shipments_uuid, $transaction->uuid]) }}" class="btn btn-xs white">Shipping Label</a>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>

@@ -6,8 +6,8 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Services\Shippr\RatesObject;
 use Sofa\Revisionable\Revisionable;
+use Kabooodle\Services\Shippr\RatesObject;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Traits\CreditTransactableTrait;
@@ -22,6 +22,13 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     use CreditTransactableTrait, RevisionableTrait, UuidableTrait;
 
     const RATE_ADDON = 0.10;
+
+    const FULFILLED_STATII = [
+        'UNKNOWN',
+        'IN TRANSIT',
+        'DELIVERED',
+        'RETURNED'
+    ];
 
     /**
      * @var string
@@ -51,6 +58,9 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
         'status' => '',
         'messages' => [],
         'raw_response' => [],
+        'fulfilled' => false,
+        'fulfilled_on' => null,
+        'fulfilled_status' => null
     ];
 
     public static function boot()
@@ -154,5 +164,13 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     public function getTransactionType()
     {
         return CreditTransactableInterface::TYPE_DEBIT;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isFulfilled()
+    {
+        return $this->fulfilled;
     }
 }

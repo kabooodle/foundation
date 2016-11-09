@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Bus\Events\Shipping\ShippingLabelPrinted;
 use Kabooodle\Foundatino\Exceptions\StaleDataException;
 use Kabooodle\Foundation\Exceptions\Shippo\ShippoException;
 use Kabooodle\Bus\Commands\Shipping\GetShippingTransactionCommand;
@@ -63,5 +64,20 @@ class ShippingTransactionController extends Controller
         $transaction = $this->dispatchNow(new GetShippingTransactionCommand(user(),$shipmentUUID, $transactionUUID));
 
         return $this->view('shipping.order.transaction')->with(compact('transaction'));
+    }
+
+    /**
+     * @param Request $request
+     * @param $shipmentUUID
+     * @param $transactionUUID
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function label(Request $request, $shipmentUUID, $transactionUUID)
+    {
+        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(user(),$shipmentUUID, $transactionUUID));
+
+        event(new ShippingLabelPrinted($transaction));
+
+        return $this->redirect()->to($transaction->label_url);
     }
 }
