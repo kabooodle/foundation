@@ -10,7 +10,7 @@
         <div class="box-divider"></div>
         <div class="box-body">
             @if(user()->stripe_id)
-                <table class="table table-condensed">
+                <table class="table table-condensed table-as-list white">
                     <thead>
                         <tr>
                             <th>Date</th>

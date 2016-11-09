@@ -10,141 +10,39 @@
 
 @section('body-content')
 
-    <style>
-        .timeline {
-            list-style-type: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .li {
-            transition: all 200ms ease-in;
-        }
-
-        .timestamp {
-            margin-bottom: 20px;
-            padding: 0 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: .75rem;
-        }
-
-        .status {
-            padding: 0 40px;
-            display: flex;
-            justify-content: center;
-            border-top: 2px solid #D6DCE0;
-            position: relative;
-            transition: all 200ms ease-in;
-        }
-        .status h4 {
-            font-weight: 300;
-            font-size: 1.1rem;
-            margin-top: 20px;
-        }
-        .status:before {
-            content: "";
-            width: 25px;
-            height: 25px;
-            background-color: white;
-            border-radius: 25px;
-            border: 1px solid #ddd;
-            position: absolute;
-            margin-left: -13px;
-            top: -15px;
-            left: 50%;
-            transition: all 200ms ease-in;
-        }
-
-        .li.complete .status {
-            border-top: 2px solid #66DC71;
-        }
-        .li.complete .status:before {
-            background-color: #66DC71;
-            border: none;
-            transition: all 200ms ease-in;
-        }
-        .li.complete .status h4 {
-            color: #66DC71;
-        }
-
-        .li.incomplete {
-            color: inherit!important;
-            opacity: .5;
-        }
-
-        @media (min-device-width: 320px) and (max-device-width: 700px) {
-            .timeline {
-                list-style-type: none;
-                display: block;
-            }
-
-            .li {
-                transition: all 200ms ease-in;
-                display: flex;
-                width: inherit;
-            }
-
-            .timestamp {
-                width: 100px;
-            }
-
-            .status:before {
-                left: -8%;
-                top: 30%;
-                transition: all 200ms ease-in;
-            }
-        }
-
-
-    </style>
-
-
     <div class="box  p-a">
         <div class="row">
                 <ul class="timeline" id="timeline">
-                    <li class="li">
-                        <div class="timestamp">
-                        <span class="date">{{ $transaction->createdAtHuman() }}<span>
-                        </div>
-                        <div class="status">
-                            <h4>Created</h4>
-                        </div>
-                    </li>
-                    <li class="li">
-                        <div class="timestamp">
-                        <span class="date">{{ $transaction->isLabelPrinted() ? $transaction->shipping_status_updated_on : 'Pending' }}<span>
-                        </div>
-                        <div class="status">
-                            <h4>Label Printed</h4>
-                        </div>
-                    </li>
-                    <li class="li incomplete">
-                        <div class="timestamp">
-                        <span class="date">Pending<span>
-                        </div>
-                        <div class="status">
-                            <h4>Received</h4>
-                        </div>
-                    </li>
-                    <li class="li incomplete">
-                        <div class="timestamp">
-                    <span class="date">Pending<span>
-                        </div>
-                        <div class="status">
-                            <h4>In Transit</h4>
-                        </div>
-                    </li>
-                    <li class="li incomplete">
-                        <div class="timestamp">
-                    <span class="date">Pending<span>
-                        </div>
-                        <div class="status">
-                            <h4>Delivered</h4>
-                        </div>
-                    </li>
+
+                    @include('shipping.order.partials._shipping_status_item', [
+                        '_itemStatus' => 'created',
+                        '_itemTimestamp' => $transaction->createdAtHuman(),
+                        '_itemName'=>'Created'
+                    ])
+
+                    @include('shipping.order.partials._shipping_status_item', [
+                        '_itemStatus' => $transaction->isLabelPrinted() ? 'created' : null,
+                        '_itemTimestamp' => $transaction->isLabelPrinted() ? $transaction->getShippingStatusHuman() : 'Pending',
+                        '_itemName'=>'Label Printed'
+                    ])
+
+                    @include('shipping.order.partials._shipping_status_item', [
+                        '_itemStatus' => null,
+                        '_itemTimestamp' => null,
+                        '_itemName'=>'Received'
+                    ])
+
+                    @include('shipping.order.partials._shipping_status_item', [
+                        '_itemStatus' => null,
+                        '_itemTimestamp' => null,
+                        '_itemName'=>'In Transit'
+                    ])
+
+                    @include('shipping.order.partials._shipping_status_item', [
+                        '_itemStatus' => null,
+                        '_itemTimestamp' => null,
+                        '_itemName'=>'Delivered'
+                    ])
                 </ul>
         </div>
     </div>
@@ -185,8 +83,6 @@
         </div>
 
     </div>
-
-
 
     @include('shipping.order.partials._shipmentfooter', ['shipment' => $transaction->shipment])
 

@@ -10,7 +10,7 @@
         </div>
         <div class="box-divider m-a-0"></div>
         <div class="box-body">
-            <table class="table table-sm table-condensed">
+            <table class="table table-condensed table-as-list white">
                 <thead>
                     <tr>
                         <th>Event</th>

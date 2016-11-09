@@ -49,7 +49,7 @@ class StripeWebhooksController extends WebhookController
     protected function checkIfUserCameOffTrialAndActive(array $payload)
     {
         return
-            $payload['data']['previous_attributes']['status'] == "trialing"
+            isset($payload['data']['previous_attributes']['status']) && $payload['data']['previous_attributes']['status'] == "trialing"
             && $payload['data']['object']['status'] == "active";
     }
 }

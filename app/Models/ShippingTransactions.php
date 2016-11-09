@@ -36,6 +36,15 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     /**
      * @var array
      */
+    protected $dates = [
+        'shipping_status_updated_on',
+        'created_at',
+        'updated_at'
+    ];
+
+    /**
+     * @var array
+     */
     protected $with = [
         'shipment',
     ];
@@ -186,5 +195,13 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     public function isLabelPrinted()
     {
         return $this->shipping_status == 'LABEL PRINTED';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShippingStatusHuman()
+    {
+        return $this->shipping_status_updated_on->format('m-d-Y h:ia');
     }
 }
