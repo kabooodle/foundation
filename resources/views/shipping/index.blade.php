@@ -17,7 +17,7 @@
             <table class="table table-condensed table-as-list white">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th><input type="checkbox" id="checkAll"></th>
                         <th>Recipient</th>
                         <th>Items</th>
                         <th>Cost</th>
@@ -30,7 +30,7 @@
                 <tbody>
                 @foreach($shipments as $shipment)
                     <tr>
-                        <td><input type="checkbox"></td>
+                        <td><input type="checkbox" class="shipment_checkbox"></td>
                         <td>{{ $shipment->shipment->claimer->name }}</td>
                         <td>{{ $shipment->shipment->claims->count() }}</td>
                         <td>${{ $shipment->rate_amount }}</td>
@@ -51,3 +51,31 @@
     </div>
 
 @endsection
+
+
+@push('footer-scripts')
+
+<script>
+    $(function(){
+        $('table tbody tr').not('.btn, a').click(function(event){
+            let ignore = ['input', 'a', 'button', 'textarea', 'label'];
+            let clicked = event.target.nodeName.toLowerCase();
+            let input =  $(this).find('input:checkbox');
+            if($.inArray(clicked, ignore) > -1) {
+                return;
+            }
+
+           if(input.is(':checked')){
+               input.prop('checked', false).trigger('change');
+           } else {
+               input.prop('checked', true).trigger('change');
+           }
+        });
+
+        $('#checkAll').click(function(event){
+            $('input:checkbox').not(this).prop('checked', this.checked);
+        });
+    });
+</script>
+
+@endpush

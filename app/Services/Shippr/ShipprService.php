@@ -7,11 +7,13 @@
 namespace Kabooodle\Services\Shippr;
 
 use Shippo;
+use Shippo_Util;
 use Shippo_Parcel;
 use Shippo_Object;
 use Shippo_Address;
 use Shippo_Shipment;
 use Shippo_Transaction;
+use Shippo_ApiRequestor;
 use Kabooodle\Models\MailingAddress;
 use Kabooodle\Models\ShippingPurpose;
 use Kabooodle\Services\Shippr\Exceptions\InvalidAddressException;
@@ -127,8 +129,20 @@ class ShipprService
         ]);
     }
 
-    public function registerTrackingWebhook()
+    /**
+     * @param string $carrier
+     * @param string $trackingNumber
+     *
+     * @return array|Shippo_Object
+     */
+    public function registerTrackingWebhook(string $carrier = 'usps', string $trackingNumber)
     {
+        $requestor = new Shippo_ApiRequestor;
+        list($response, $apiKey) = $requestor->request('post', '/tracks/', [
+            'carrier' => $carrier,
+            'tracking_number' => $trackingNumber
+        ]);
 
+        return Shippo_Util::convertToShippoObject($response, $apiKey);
     }
 }

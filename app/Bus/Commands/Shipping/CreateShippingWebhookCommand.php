@@ -6,13 +6,14 @@
 
 namespace Kabooodle\Bus\Commands\Shipping;
 
+use Shippo_Object;
 use Kabooodle\Models\ShippingTransactions;
 
 /**
- * Class RegisterShippoWebhookCommand
+ * Class CreateShippingWebhookCommand
  * @package Kabooodle\Bus\Commands\Shipping
  */
-final class RegisterShippoWebhookCommand
+final class CreateShippingWebhookCommand
 {
     /**
      * @var ShippingTransactions
@@ -20,13 +21,20 @@ final class RegisterShippoWebhookCommand
     public $shippingTransaction;
 
     /**
-     * RegisterShippoWebhookCommand constructor.
+     * @var Shippo_Object
+     */
+    public $shippoResponse;
+
+    /**
+     * CreateShippingWebhookCommand constructor.
      *
      * @param ShippingTransactions $shippingTransaction
+     * @param Shippo_Object        $shippoResponse
      */
-    public function __construct(ShippingTransactions $shippingTransaction)
+    public function __construct(ShippingTransactions $shippingTransaction, Shippo_Object $shippoResponse)
     {
         $this->shippingTransaction = $shippingTransaction;
+        $this->shippoResponse = $shippoResponse;
     }
 
     /**
@@ -35,5 +43,13 @@ final class RegisterShippoWebhookCommand
     public function getShippingTransaction(): ShippingTransactions
     {
         return $this->shippingTransaction;
+    }
+
+    /**
+     * @return Shippo_Object
+     */
+    public function getShippoResponse(): Shippo_Object
+    {
+        return $this->shippoResponse;
     }
 }

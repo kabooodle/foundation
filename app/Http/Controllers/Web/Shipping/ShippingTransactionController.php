@@ -49,7 +49,7 @@ class ShippingTransactionController extends Controller
         } catch (StaleDataException $e) {
             return Response::json(['error' => 'Try again'], 500);
         } catch (Exception $e) {
-            return Response::json(['error' => 'Try again'], 500);
+            return Response::json(['error' => $e->getMessage()], 500);
         }
     }
 

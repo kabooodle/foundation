@@ -10,13 +10,12 @@ use Kabooodle\Bus\Events\Event;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Kabooodle\Models\ShippingTransactions;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**
  * Class ShippingTransactionWasCreatedEvent
  * @package Kabooodle\Bus\Events\Shippings
  */
-final class ShippingTransactionWasCreatedEvent extends Event implements ShouldQueue
+final class ShippingTransactionWasCreatedEvent extends Event
 {
     use InteractsWithQueue, SerializesModels;
 
@@ -32,7 +31,7 @@ final class ShippingTransactionWasCreatedEvent extends Event implements ShouldQu
      */
     public function __construct(ShippingTransactions $transaction)
     {
-        $this->Shippingtransaction = $transaction;
+        $this->shippingTransaction = $transaction;
     }
 
     /**
