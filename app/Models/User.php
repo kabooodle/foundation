@@ -431,6 +431,30 @@ class User extends BaseEloquentModel implements
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function shippingTransactions()
+    {
+        return $this->hasMany(ShippingTransactions::class, 'user_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function unfulfilledShippingTransactions()
+    {
+        return $this->shippingTransactions()->where('fulfilled', '=', 0);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function fulfilledShippingTransactions()
+    {
+        return $this->shippingTransactions()->where('fulfilled', '=', 1);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function claimsAsBuyer()
     {
         return $this->hasMany(Claims::class, 'claimed_by');

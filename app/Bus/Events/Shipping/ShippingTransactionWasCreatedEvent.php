@@ -23,7 +23,7 @@ final class ShippingTransactionWasCreatedEvent extends Event implements ShouldQu
     /**
      * @var ShippingTransactions
      */
-    protected $transaction;
+    protected $shippingTransaction;
 
     /**
      * ShippingTransactionWasCreatedEvent constructor.
@@ -32,14 +32,14 @@ final class ShippingTransactionWasCreatedEvent extends Event implements ShouldQu
      */
     public function __construct(ShippingTransactions $transaction)
     {
-        $this->transaction = $transaction;
+        $this->Shippingtransaction = $transaction;
     }
 
     /**
      * @return ShippingTransactions
      */
-    public function getTransaction()
+    public function getShippingTransaction()
     {
-        return $this->transaction;
+        return $this->shippingTransaction;
     }
 }

@@ -75,7 +75,7 @@ class CreateNewShippingTransactionCommandHandler
             $st->messages = $transaction['messages'];
             $st->save();
 
-            $this->dispatch(new ShippingTransactionWasCreatedEvent($st));
+            event(new ShippingTransactionWasCreatedEvent($st));
 
             return $st;
         });

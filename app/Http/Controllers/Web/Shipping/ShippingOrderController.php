@@ -28,10 +28,14 @@ class ShippingOrderController extends Controller
 {
     /**
      * @param Request $request
+     *
+     * @return \Illuminate\Contracts\View\View
      */
     public function index(Request $request)
     {
+        $shipments = user()->shippingTransactions;
 
+        return $this->view('shipping.index')->with(compact('shipments'));
     }
 
     /**

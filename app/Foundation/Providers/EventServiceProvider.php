@@ -18,23 +18,23 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        \Kabooodle\Bus\Events\User\UserWasCreatedEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\User\UserWasCreatedListener::class,
+
+        // CLAIM EVENTS
+        \Kabooodle\Bus\Events\Claim\NewItemWasClaimedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Claim\ItemWasClaimedEventHandler::class
         ],
-        \Kabooodle\Bus\Events\User\UserLoggedInEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\User\UserLoggedInListener::class
+        \Kabooodle\Bus\Events\Claim\ClaimWasRejectedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Claim\ClaimWasRejectedEventHandler::class
         ],
+
+        // GROUP EVENTS
         \Kabooodle\Bus\Events\Group\GroupWasCreatedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Group\GroupWasCreatedEventHandler::class
         ],
+
+        // INVENTORY EVENTS
         \Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Inventory\InventoryItemWasAddedEventHandler::class
-        ],
-        \Kabooodle\Bus\Events\Social\UserFacebookCredentialsRevokedEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\Social\UserFacebookCredentialsRevokedEventHandler::class
-        ],
-        \Kabooodle\Bus\Events\Claim\NewItemWasClaimedEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\Claim\ItemWasClaimedEventHandler::class
         ],
         \Kabooodle\Bus\Events\Inventory\InventoryItemWasRemovedFromSaleEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Inventory\InventoryItemWasRemovedFromSaleEventHandler::class
@@ -42,15 +42,30 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Comments\CommentWasCreatedEventHandler::class
         ],
-        \Kabooodle\Bus\Events\Claim\ClaimWasRejectedEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\Claim\ClaimWasRejectedEventHandler::class
-        ],
-        \Kabooodle\Bus\Events\Shipping\ShippingTransactionWasCreatedEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\Shipping\ShippingTransactionWasCreatedEventHandler::class
-        ],
+
+        // PROFILE EVENTS
         \Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Profile\UserWasSubscribedToPlanEventHandler::class
-        ]
+        ],
+
+        // SHIPPING EVENTS
+        \Kabooodle\Bus\Events\Shipping\ShippingTransactionWasCreatedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Shipping\MoveLabelToS3Handler::class,
+            \Kabooodle\Bus\Handlers\Events\Shipping\DispatchShippingWebhookHandler::class
+        ],
+
+        // SOCIAL EVENTS
+        \Kabooodle\Bus\Events\Social\UserFacebookCredentialsRevokedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Social\UserFacebookCredentialsRevokedEventHandler::class
+        ],
+
+        // USER EVENTS
+        \Kabooodle\Bus\Events\User\UserWasCreatedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\User\UserWasCreatedListener::class,
+        ],
+        \Kabooodle\Bus\Events\User\UserLoggedInEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\User\UserLoggedInListener::class
+        ],
     ];
     /**
      * @var array

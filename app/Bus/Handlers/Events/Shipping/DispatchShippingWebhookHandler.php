@@ -1,0 +1,54 @@
+<?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
+
+namespace Kabooodle\Bus\Handlers\Events\Shipping;
+
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Kabooodle\Services\Shippr\ShipprService;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Kabooodle\Bus\Events\Shipping\ShippingTransactionWasCreatedEvent;
+
+/**
+ * Class DispatchShippingWebhookHandler
+ * @package Kabooodle\Bus\Handlers\Events\Shipping
+ */
+class DispatchShippingWebhookHandler implements ShouldQueue
+{
+    use DispatchesJobs, SerializesModels;
+
+        /**
+     * @var ShipprService
+     */
+    public $shipprService;
+
+    /**
+     * DispatchShippingWebhookHandler constructor.
+     *
+     * @param ShipprService $shipprService
+     */
+    public function __construct(ShipprService $shipprService)
+    {
+        $this->shipprService = $shipprService;
+    }
+
+    /**
+     * @param ShippingTransactionWasCreatedEvent $event
+     */
+    public function handle(ShippingTransactionWasCreatedEvent $event)
+    {
+        $transaction = $event->getShippingTransaction();
+        $routingNumber = $transaction->tracking_number;
+
+
+//        $carrier = $transaction->
+
+        // Register a Shipping Notifications Webhook with the shipping provider.
+        // This will cause the shipping provider to make post requests to our system anytime the shipping
+        // status for this item is updated.
+
+    }
+}
