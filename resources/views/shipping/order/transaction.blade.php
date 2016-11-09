@@ -24,7 +24,7 @@
 
         .timestamp {
             margin-bottom: 20px;
-            padding: 0 70px;
+            padding: 0 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -32,7 +32,7 @@
         }
 
         .status {
-            padding: 0 70px;
+            padding: 0 40px;
             display: flex;
             justify-content: center;
             border-top: 2px solid #D6DCE0;
@@ -72,7 +72,7 @@
 
         .li.incomplete {
             color: inherit!important;
-            opacity: .6;
+            opacity: .5;
         }
 
         @media (min-device-width: 320px) and (max-device-width: 700px) {
@@ -111,6 +111,14 @@
                         </div>
                         <div class="status">
                             <h4>Created</h4>
+                        </div>
+                    </li>
+                    <li class="li">
+                        <div class="timestamp">
+                        <span class="date">{{ $transaction->isLabelPrinted() ? $transaction->shipping_status_updated_on : 'Pending' }}<span>
+                        </div>
+                        <div class="status">
+                            <h4>Label Printed</h4>
                         </div>
                     </li>
                     <li class="li incomplete">
