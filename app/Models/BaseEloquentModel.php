@@ -101,15 +101,25 @@ class BaseEloquentModel extends Eloquent
     }
 
     /**
-     * @return null|string
+     * @param string $format
+     *
+     * @return null
      */
-    public function createdAtHuman()
+    public function createdAtHuman($format = 'm-d-Y h:ia')
     {
         if ($this->created_at) {
-            return $this->created_at->format('m-d-Y h:ia');
+            return $this->created_at->format($format);
         }
 
         return null;
+    }
+
+    /**
+     * @return null
+     */
+    public function createdAtHumanNoTime()
+    {
+        return $this->createdAtHuman('m-d-Y');
     }
 
     /**

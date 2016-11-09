@@ -22,7 +22,7 @@
                         <th>Items</th>
                         <th>Cost</th>
                         <th>Date</th>
-                        <th>Tracking</th>
+                        {{--<th>Tracking</th>--}}
                         <th>Status</th>
                         <th></th>
                     </tr>
@@ -34,11 +34,12 @@
                         <td>{{ $shipment->shipment->claimer->name }}</td>
                         <td>{{ $shipment->shipment->claims->count() }}</td>
                         <td>${{ $shipment->rate_amount }}</td>
-                        <td>{{ $shipment->createdAtHuman() }}</td>
-                        <td><a class="text-primary" href="{{ $shipment->tracking_url_provider }}" target="_blank" >{{ $shipment->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>
-                        <td><span class="label">Unknown</span></td>
+                        <td><time datetime="{{ $shipment->createdAtHuman() }}">{{ $shipment->createdAtHumanNoTime() }} <i data-toggle="tooltip" title="{{ $shipment->createdAtHuman() }}" data-placement="top" class="fa fa-clock-o" aria-hidden="true"></i></time></td>
+                        {{--<td><a class="text-primary" href="{{ $shipment->tracking_url_provider }}" target="_blank" >{{ $shipment->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>--}}
+                        <td>{!! $shipment->present()->getStatus()  !!}</td>
                         <td>
                             <div class="pull-right">
+                                <a href="{{ route('shipping.transactions.show', [$shipment->shipping_shipments_uuid, $shipment->uuid]) }}"  class="btn btn-xs white">View</a>
                                 <a target="_blank" href="{{ route('shipping.transactions.label.show', [$shipment->shipping_shipments_uuid, $shipment->uuid]) }}" class="btn btn-xs white">Shipping Label</a>
                             </div>
                         </td>
@@ -46,10 +47,7 @@
                 @endforeach
                 </tbody>
             </table>
-
         </div>
     </div>
-
-
 
 @endsection

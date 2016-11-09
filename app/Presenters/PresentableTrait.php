@@ -13,13 +13,6 @@ namespace Kabooodle\Presenters;
 trait PresentableTrait
 {
     /**
-     * View presenter instance
-     *
-     * @var mixed
-     */
-    protected static $presenterInstance;
-
-    /**
      * Prepare a new or cached presenter instance
      *
      * @return mixed
@@ -31,10 +24,6 @@ trait PresentableTrait
             throw new PresenterException('Please set the $presenter property to your presenter path.');
         }
 
-        if (!self::$presenterInstance) {
-            self::$presenterInstance = new $this->presenter($this);
-        }
-
-        return self::$presenterInstance;
+        return new $this->presenter($this);
     }
 }

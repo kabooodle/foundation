@@ -107,8 +107,8 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a href="{{  route('shipping.create') }}"
-                           class="nav-link {{ Request::is('shipping/create') ? 'active' : null }}"><span
+                        <a href="{{  route('shipping.index') }}"
+                           class="nav-link {{ Request::is('shipping/*') ? 'active' : null }}"><span
                                     class="nav-text">Shipping</span></a>
                     </li>
                 @endif

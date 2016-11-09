@@ -1299,6 +1299,9 @@ a.list-group-item {
   opacity: 0.6;
   border-top: none; }
 
+.table-as-list > tbody > tr > td {
+  font-size: .90rem; }
+
 .arrow {
   position: absolute;
   z-index: 10; }
@@ -2985,6 +2988,9 @@ body {
 .lter {
   background-color: rgba(255, 255, 255, 0.035); }
 
+.dker-dker {
+  background-color: rgba(0, 0, 0, 0.2); }
+
 .dker {
   background-color: rgba(0, 0, 0, 0.035); }
 
@@ -4024,6 +4030,9 @@ a.text-blue:hover {
 
 .text-black {
   color: black; }
+
+.text-black-lt-lt {
+  color: rgba(0, 0, 0, 0.3); }
 
 .text-black-lt {
   color: rgba(0, 0, 0, 0.54); }
@@ -5511,6 +5520,24 @@ strike,
 .grey-900 {
   background-color: #212121;
   color: rgba(255, 255, 255, 0.87); }
+
+.text-deep-purple-500 {
+  color: #673ab7; }
+
+.text-deep-purple-500 {
+  color: #673ab7; }
+
+.text-blue-500 {
+  color: #2196f3; }
+
+.text-green-500 {
+  color: #4caf50; }
+
+.text-pink-500 {
+  color: #e91e63; }
+
+.text-orange-500 {
+  color: #ff9800; }
 
 .md-form-group {
   padding: 18px 0 24px 0;

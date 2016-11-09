@@ -65,4 +65,7 @@
     opacity: 0.6;
     border-top: none;
   }
+  & > tbody > tr > td {
+    font-size: .90rem;
+  }
 }

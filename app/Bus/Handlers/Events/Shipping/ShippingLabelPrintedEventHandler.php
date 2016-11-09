@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
 
 namespace Kabooodle\Bus\Handlers\Events\Shipping;
 
@@ -18,9 +22,9 @@ class ShippingLabelPrintedEventHandler
     {
         $shippingTransaction = $event->getShippingTransaction();
 
-        if(! $shippingTransaction->isFulfilled()) {
-            $shippingTransaction->fulfilled = true;
-            $shippingTransaction->fulfilled_on = Carbon::now();
+        if(! $shippingTransaction->isLabelPrinted()) {
+            $shippingTransaction->shipping_status = 'LABEL PRINTED';
+            $shippingTransaction->shipping_status_updated_on = Carbon::now();
             $shippingTransaction->save();
         }
     }

@@ -1,5 +1,10 @@
 <?php
 /**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
+
+/**
  * Created by PhpStorm.
  * User: evals
  * Date: 11/7/16

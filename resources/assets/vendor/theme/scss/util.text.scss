@@ -33,6 +33,11 @@
 .text-black {
   color: $full-black;
 }
+
+.text-black-lt-lt {
+  color: rgba(0,0,0,0.30);
+}
+
 .text-black-lt {
   color: $light-black;
 }

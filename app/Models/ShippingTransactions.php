@@ -6,6 +6,8 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Presenters\Models\Shipping\ShippingTransactionPresenter;
+use Kabooodle\Presenters\PresentableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Services\Shippr\RatesObject;
 use Kabooodle\Models\Traits\UuidableTrait;
@@ -19,16 +21,29 @@ use Kabooodle\Models\Contracts\CreditTransactableInterface;
  */
 class ShippingTransactions extends BaseEloquentModel implements CreditTransactableInterface, Revisionable
 {
-    use CreditTransactableTrait, RevisionableTrait, UuidableTrait;
+    use CreditTransactableTrait, PresentableTrait, RevisionableTrait, UuidableTrait;
 
     const RATE_ADDON = 0.10;
 
-    const FULFILLED_STATII = [
+    const SHIPPING_STATII = [
+        'LABEL PRINTED',
         'UNKNOWN',
         'IN TRANSIT',
         'DELIVERED',
         'RETURNED'
     ];
+
+    /**
+     * @var array
+     */
+    protected $with = [
+        'shipment',
+    ];
+
+    /**
+     * @var string
+     */
+    protected $presenter = ShippingTransactionPresenter::class;
 
     /**
      * @var string
@@ -58,9 +73,8 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
         'status' => '',
         'messages' => [],
         'raw_response' => [],
-        'fulfilled' => false,
-        'fulfilled_on' => null,
-        'fulfilled_status' => null
+        'shipping_status' => null,
+        'shipping_status_updated_on' => null
     ];
 
     public static function boot()
@@ -169,8 +183,8 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     /**
      * @return bool|null
      */
-    public function isFulfilled()
+    public function isLabelPrinted()
     {
-        return $this->fulfilled;
+        return $this->shipping_status == 'LABEL PRINTED';
     }
 }
