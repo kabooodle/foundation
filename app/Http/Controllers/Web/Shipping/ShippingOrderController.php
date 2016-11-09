@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Shipping;
 
 use Binput;
+use Kabooodle\Foundation\Exceptions\Shippo\NoRatesFoundForParcelException;
 use Messages;
 use Shippo_Error;
 use Illuminate\Http\Request;
@@ -83,10 +84,15 @@ class ShippingOrderController extends Controller
                 Messages::error('Invalid address: '. $e->getDescription());
 
                 return redirect()->back()->withInput(Binput::all());
-        } catch (Shippo_Error $e) {
+        }  catch (NoRatesFoundForParcelException $e) {
+            Messages::error('No pricing is available based on the parcel data (size/weight).');
+
+            return redirect()->back()->withInput(Binput::all());
+        }
+        catch (Shippo_Error $e) {
             // TODO: Gracefully handle this kind of exception.  It's really a developer-eyes-only exception.
 
-            Messages::error('Invalid address');
+            Messages::error('Invalid parcel details, '. $e->getMessage());
 
             return redirect()->back()->withInput(Binput::all());
         }

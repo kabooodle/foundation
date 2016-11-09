@@ -42,19 +42,19 @@
                         <div class="form-group row {{ $errors->has('parcel.length') ? 'has-danger' : null }}">
                             <label class="form-control-label col-sm-3">Length</label>
                             <div class="col-sm-3">
-                                {{ Form::number('parcel[length]', null, ['class' => 'form-control numberic float']) }}
+                                {{ Form::number('parcel[length]', null, ['class' => 'form-control numberic float', 'length' => 444]) }}
                             </div>
                         </div>
                         <div class="form-group row {{ $errors->has('parcel.width') ? 'has-danger' : null }}">
                             <label class="form-control-label col-sm-3">Width</label>
                             <div class="col-sm-3">
-                                {{ Form::number('parcel[width]', null, ['class' => 'form-control numberic float']) }}
+                                {{ Form::number('parcel[width]', null, ['class' => 'form-control numberic float', 'length' => 444]) }}
                             </div>
                         </div>
                         <div class="form-group row {{ $errors->has('parcel.height') ? 'has-danger' : null }}">
                             <label class="form-control-label col-sm-3">Height</label>
                             <div class="col-sm-3">
-                                {{ Form::number('parcel[height]', null, ['class' => 'form-control numberic float']) }}
+                                {{ Form::number('parcel[height]', null, ['class' => 'form-control numberic float', 'length' => 444]) }}
                             </div>
                         </div>
                         <div class="form-group row {{ $errors->has('parcel.dimensions_uom') ? 'has-danger' : null }}">
@@ -68,7 +68,7 @@
                     <div class="form-group row {{ $errors->has('parcel.weight') ? 'has-danger' : null }}">
                         <label class="form-control-label col-sm-3">Weight</label>
                         <div class="col-sm-3">
-                            {{ Form::number('parcel[weight]', null, ['class' => 'form-control numeric float', 'numeric']) }}
+                            {{ Form::number('parcel[weight]', null, ['class' => 'form-control numeric float', 'numeric', 'max' => 999]) }}
                         </div>
                         <div class="col-sm-3">
                             {{ Form::select('parcel[weight_uom]', \Kabooodle\Services\Shippr\WeightUnits::getUnits(), (old('parcel[weight_uom]', 'oz')), ['class' => 'form-control'])  }}

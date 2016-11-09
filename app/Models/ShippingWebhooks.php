@@ -21,8 +21,16 @@ class ShippingWebhooks extends BaseEloquentModel
      * @var array
      */
     protected $attributes = [
-        'shipping_transaction_id' => 'integer',
-        'data' => 'string',
+        'shipping_transaction_id' => '',
+        'data' => '',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $fillable = [
+        'data',
+        'shipping_transaction_id',
     ];
 
     /**

@@ -23,11 +23,12 @@ class ShippoException extends Exception
 {
     /**
      * ShippoException constructor.
-     * @param string $message
-     * @param int $code
-     * @param Exception|null $previous
+     *
+     * @param null|string $message
+     * @param int              $code
+     * @param Exception|null   $previous
      */
-    public function __construct(string $message, $code = 0, Exception $previous = null)
+    public function __construct(string $message = null, $code = 0, Exception $previous = null)
     {
         // TODO: Identify better message handlers.
         if($message == 'FromPhone required when service is EXPRESS.') {

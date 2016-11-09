@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Shipping;
 
 use DB;
+use Kabooodle\Foundation\Exceptions\Shippo\NoRatesFoundForParcelException;
 use Shippo_Object;
 use Kabooodle\Models\MailingAddress;
 use Kabooodle\Models\ShippingPurpose;
@@ -60,6 +61,10 @@ class GetShippingRatesCommandHandler
         $sender = $this->validateAddress($sender, ShippingPurpose::PURPOSE_PURCHASE);
 
         $shipment = $this->shippr->createShipment($recipient, $sender, $parcel);
+
+        if($shipment['rates_list'] == [] || count($shipment['rates_list']) ==0){
+            throw new NoRatesFoundForParcelException;
+        }
 
         return $this->createShipmentsEntity($shipment, $parcel, $command);
     }
