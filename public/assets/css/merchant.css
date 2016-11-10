@@ -322,6 +322,26 @@
   background-color: #fafafa;
 }
 
+.selectize-control.loading::before {
+  opacity: 1;
+}
+.selectize-control::before {
+  -moz-transition: opacity 0.2s;
+  -webkit-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+  content: ' ';
+  z-index: 2;
+  position: absolute;
+  display: block;
+  top: 43%;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 0;
+  background: url(/assets/images/icons/ring-alt.gif);
+  background-size: 16px 16px;
+  opacity: 0;
+}
 /**
  * selectize.default.css (v0.12.2) - Default Theme
  * Copyright (c) 2013–2015 Brian Reavis & contributors
