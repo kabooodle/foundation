@@ -1,6 +1,6 @@
 global.$ = global.jQuery = require('jquery');
 global.Vue = require('vue/dist/vue.js');
-require('vue-resource');
+global.VueResource = require('vue-resource');
 // require('vue-validator');
 global.Tether = require('tether');
 require('bootstrap');
@@ -25,6 +25,7 @@ global.multiselect = require('../vendor/bootstrap-multiselect/dist/js/bootstrap-
 
 import VueTimeago from 'vue-timeago'
 
+Vue.use(VueResource);
 Vue.use(VueTimeago, {
     name: 'timeago', // component name, `timeago` by default
     locale: 'en-US',

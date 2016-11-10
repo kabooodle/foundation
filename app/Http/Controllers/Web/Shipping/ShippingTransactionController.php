@@ -68,9 +68,10 @@ class ShippingTransactionController extends Controller
 
     /**
      * @param Request $request
-     * @param $shipmentUUID
-     * @param $transactionUUID
-     * @return \Illuminate\Http\RedirectResponse
+     * @param         $shipmentUUID
+     * @param         $transactionUUID
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function label(Request $request, $shipmentUUID, $transactionUUID)
     {
@@ -78,6 +79,11 @@ class ShippingTransactionController extends Controller
 
         event(new ShippingLabelPrinted($transaction));
 
-        return $this->redirect()->to($transaction->label_url);
+        $remoteUrl = $transaction->label_url;
+        $filename = 'label.pdf';
+        $tempImage = tempnam(storage_path('tmp/'), $filename);
+        copy($remoteUrl, $tempImage);
+
+        return response()->download($tempImage, $filename);
     }
 }

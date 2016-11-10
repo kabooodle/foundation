@@ -33,6 +33,7 @@
     "vue": "^2.0",
     "vue-loader": "^9.7.0",
     "vue-resource": "^1.0.3",
+    "vuetable-2": "^0.9.2",
     "vuex": "^2.0.0"
   },
   "dependencies": {

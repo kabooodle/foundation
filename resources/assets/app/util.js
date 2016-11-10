@@ -217,14 +217,16 @@ $(function () {
     $('[data-toggle="multiselect"]').multiselect({
         buttonClass: 'btn white btn-sm',
         maxHeight: 300,
-        enableFiltering: true,
+        buttonWidth: '100%',
+        enableFiltering: false,
         disableIfEmpty: true,
-        enableCaseInsensitiveFiltering: true,
-        templates: {
-            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
-            filterClearBtn: '<span class="input-group-btn"><button style="padding-left: 6px; padding-right: 6px;" class="btn btn-default multiselect-clear-filter" type="button"><i class="fa fa-times-circle"></i></button></span>',
-            li: '<li><a tabindex="0" class="dropdown-item"><label></label></a></li>'
-        }
+        numberDisplayed: 1,
+        // enableCaseInsensitiveFiltering: true,
+        // templates: {
+            // filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+            // filterClearBtn: '<span class="input-group-btn"><button style="padding-left: 6px; padding-right: 6px;" class="btn btn-default multiselect-clear-filter" type="button"><i class="fa fa-times-circle"></i></button></span>',
+            // li: '<li><a tabindex="0" class="dropdown-item"><label></label></a></li>'
+        // }
     });
     $('[data-ride="carousel"]').carousel({
         interval : false

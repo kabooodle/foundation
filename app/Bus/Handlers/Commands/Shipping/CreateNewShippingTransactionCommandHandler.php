@@ -37,11 +37,12 @@ class CreateNewShippingTransactionCommandHandler
         $user = $command->getActor();
 
         $shipment = ShippingShipments::where('uuid', $shipmentUUID)->where('user_id', $user->id)->firstOrFail();
+        $claimer = $shipment->claimer;
 
         /** @var RatesObject $rate */
         $rate = $shipment->getRateId($rateUUID);
 
-        return DB::transaction(function () use ($rate, $shipment, $shipmentUUID, $user, $rateUUID) {
+        return DB::transaction(function () use ($rate, $shipment, $shipmentUUID, $user, $rateUUID, $claimer) {
 
             $shippr = new ShipprService;
 
@@ -63,6 +64,7 @@ class CreateNewShippingTransactionCommandHandler
             // Log the shipping transaction.
             $st = new ShippingTransactions;
             $st->user_id = $user->id;
+            $st->recipient_id = $claimer->id;
             $st->shipping_shipments_id = $shipment->id;
             $st->shipping_shipments_uuid = $shipment->uuid;
             $st->raw_response = $transaction->__toArray(true);

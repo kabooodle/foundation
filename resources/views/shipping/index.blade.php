@@ -2,11 +2,47 @@
 
 
 @section('body-menu')
-    @include('shipping.order.partials._bodynav')
+        <div class="pull-left">
+            <button type="button" id="btn-toggle-filters" class="btn btn-sm white">Filter Transactions</button>
+        </div>
+
+    {{--<div class="pull-right">--}}
+        {{--<a href="{{ route('shipping.create') }}" class="btn btn-sm white">Create new shipment</a>--}}
+    {{--</div>--}}
 @endsection
 
 
 @section('body-content')
+
+    <div class="navbar-side p-a " id="navbarSide">
+        <div class="box ">
+            <div class="box-body clearfix">
+                <form>
+                    <div class="form-group row">
+                        <label class=" form-control-label col-sm-4 text-sm">Status</label>
+                        <div class="col-sm-8">
+                            {{ Form::select('status[]', \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class=" form-control-label col-sm-4 text-sm">Dates</label>
+                        <div class="col-sm-8">
+                            {{ Form::select('date_range', \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, null, ['class' => 'form-control ', 'data-toggle' => 'multiselect']) }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class=" form-control-label col-sm-4 text-sm">Recipients</label>
+                        <div class="col-sm-8">
+                            {{ Form::text('recipients[]', null, ['class' => '', 'id' => 'input-recipients']) }}
+                        </div>
+                    </div>
+                    <div class="form-group row p-b-0 m-b-0">
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <div class="box">
         <div class="box-header">
@@ -40,7 +76,7 @@
                         <td>
                             <div class="pull-right">
                                 <a href="{{ route('shipping.transactions.show', [$shipment->shipping_shipments_uuid, $shipment->uuid]) }}"  class="btn btn-xs white">View</a>
-                                <a target="_blank" href="{{ route('shipping.transactions.label.show', [$shipment->shipping_shipments_uuid, $shipment->uuid]) }}" class="btn btn-xs white">Shipping Label</a>
+                                <a target="_blank" href="{{ route('shipping.transactions.label.show', [$shipment->shipping_shipments_uuid, $shipment->uuid])}}" class="btn btn-xs white">Shipping Label</a>
                             </div>
                         </td>
                     </tr>
@@ -49,14 +85,19 @@
             </table>
         </div>
     </div>
-
 @endsection
 
 
 @push('footer-scripts')
 
 <script>
+
     $(function(){
+        $('#btn-toggle-filters').click(function(event){
+            $('#navbarSide').css({
+                'top' :  $('.app-header').outerHeight()
+            }).toggleClass('reveal')
+        });
         $('table tbody tr').not('.btn, a').click(function(event){
             let ignore = ['input', 'a', 'button', 'textarea', 'label'];
             let clicked = event.target.nodeName.toLowerCase();
@@ -70,6 +111,50 @@
            } else {
                input.prop('checked', true).trigger('change');
            }
+        });
+
+        $('#input-recipients').selectize({
+            valueField: 'title',
+            labelField: 'title',
+            searchField: 'title',
+            options: [],
+            create: false,
+            render: {
+                option: function(item, escape) {
+                    var actors = [];
+                    for (var i = 0, n = item.abridged_cast.length; i < n; i++) {
+                        actors.push('<span>' + escape(item.abridged_cast[i].name) + '</span>');
+                    }
+
+                    return '<div>' +
+                            '<img src="' + escape(item.posters.thumbnail) + '" alt="">' +
+                            '<span class="title">' +
+                            '<span class="name">' + escape(item.title) + '</span>' +
+                            '</span>' +
+                            '<span class="description">' + escape(item.synopsis || 'No synopsis available at this time.') + '</span>' +
+                            '<span class="actors">' + (actors.length ? 'Starring ' + actors.join(', ') : 'Actors unavailable') + '</span>' +
+                            '</div>';
+                }
+            },
+            load: function(query, callback) {
+                if (!query.length) return callback();
+                $.ajax({
+                    url: '{{ apiRoute('shipping.filter') }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        q: query,
+                        method: 'recipients'
+                    },
+                    error: function(e,x) {
+                        console.log(e,x);
+                        callback();
+                    },
+                    success: function(res) {
+                        callback(res.movies);
+                    }
+                });
+            }
         });
 
         $('#checkAll').click(function(event){

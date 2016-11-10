@@ -26,11 +26,12 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     const RATE_ADDON = 0.10;
 
     const SHIPPING_STATII = [
+        'CREATED',
         'LABEL PRINTED',
-        'UNKNOWN',
+        'PROCESSING',
         'IN TRANSIT',
         'DELIVERED',
-        'RETURNED'
+//        'RETURNED'
     ];
 
     /**
@@ -65,6 +66,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     protected $attributes = [
         'uuid' => null,
         'user_id' => 0,
+        'recipient_id' => 0,
         'shipping_shipments_id' => 0,
         'shipping_shipments_uuid' => '',
         'transaction_id' => 0,
@@ -82,7 +84,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
         'status' => '',
         'messages' => [],
         'raw_response' => [],
-        'shipping_status' => null,
+        'shipping_status' => 'CREATED',
         'shipping_status_updated_on' => null
     ];
 
@@ -109,6 +111,14 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     public function shipment()
     {
         return $this->belongsTo(ShippingShipments::class, 'shipping_shipments_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function recipient()
+    {
+        return $this->belongsTo(User::class, 'recipient_id');
     }
 
     /**
