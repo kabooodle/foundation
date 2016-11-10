@@ -3,7 +3,7 @@
 
 @section('body-menu')
     <div class="pull-left">
-        <button type="button" id="btn-toggle-filters" class="btn btn-sm white">Filter Transactions</button>
+        <button type="button" id="" class="btn-toggle-filters btn btn-sm white">Filter Transactions</button>
     </div>
 
     <div class="pull-right">
@@ -19,25 +19,32 @@
             <div class="box-body clearfix">
                 <form>
                     <div class="form-group row">
-                        <label class=" form-control-label col-sm-4 text-sm">Status</label>
-                        <div class="col-sm-8">
+                        <label class=" form-control-label col-sm-3 text-sm">Status</label>
+                        <div class="col-sm-9">
                             {{ Form::select('status[]', \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class=" form-control-label col-sm-4 text-sm">Dates</label>
-                        <div class="col-sm-8">
-                            {{ Form::select('date_range', \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, null, ['class' => 'form-control ', 'data-toggle' => 'multiselect']) }}
+                        <label class=" form-control-label col-sm-3 text-sm">Dates</label>
+                        <div class="col-sm-9">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input type="text" id="datetimepicker1" class="input-sm form-control" name="start" />
+                                <span class="input-group-addon" style="font-size: .75rem; border-left: none; border-right: none; padding-left: .4rem; padding-right: .4rem;">to</span>
+                                <input type="text"  id="datetimepicker2" class="input-sm form-control" name="end" />
+                            </div>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class=" form-control-label col-sm-4 text-sm">Recipients</label>
-                        <div class="col-sm-8">
+                        <label class=" form-control-label col-sm-3 text-sm">Recipients</label>
+                        <div class="col-sm-9">
                             {{ Form::text('recipients[]', null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Enter names']) }}
                         </div>
                     </div>
                     <div class="form-group row p-b-0 m-b-0">
-
+                        <div class="col-sm-9 col-sm-offset-3">
+                            <button type="button" class="btn-sm btn primary">Go</button>
+                            <button type="button" class="btn white btn-sm btn-toggle-filters" >Close</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -93,11 +100,38 @@
 <script>
 
     $(function(){
-        $('#btn-toggle-filters').click(function(event){
+
+        let dateTimePickerSettings = {
+            format: "MM/DD/YYYY",
+            maxDate: moment(new Date()).add(1,'hours'),
+            icons: {
+                up: 'fa fa-chevron-up',
+                down: 'fa fa-chevron-down',
+                previous: 'fa fa-chevron-left',
+                next: 'fa fa-chevron-right'
+            },
+            useCurrent: false
+        };
+
+        let dateTimePickerEl1 = $('#datetimepicker1');
+        let dateTimePickerEl2 = $('#datetimepicker2');
+
+        dateTimePickerEl1.datetimepicker(dateTimePickerSettings);
+        dateTimePickerEl2.datetimepicker(dateTimePickerSettings);
+
+        dateTimePickerEl1.on("dp.change", function (e) {
+            dateTimePickerEl2.data("DateTimePicker").minDate(e.date);
+        });
+        dateTimePickerEl2.on("dp.change", function (e) {
+            dateTimePickerEl1.data("DateTimePicker").maxDate(e.date);
+        });
+
+        $('.btn-toggle-filters').click(function(event){
             $('#navbarSide').css({
                 'top' :  $('.app-header').outerHeight()
             }).toggleClass('reveal')
         });
+
         $('table tbody tr').not('.btn, a').click(function(event){
             let ignore = ['input', 'a', 'button', 'textarea', 'label'];
             let clicked = event.target.nodeName.toLowerCase();

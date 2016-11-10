@@ -8,11 +8,6 @@ new Vue({
         selectedItems: [],
         columns: [
             {
-                name: '__component:checkbox',
-                titleClass: 'text-center',
-                dataClass: 'text-center'
-            },
-            {
                 name: 'files',
                 callback: 'setPropItem'
             },
@@ -43,44 +38,9 @@ new Vue({
                 name: 'sales',
                 callback: 'setPropSales'
             },
-            {
-                name: '__component:dropdown'
-            }
         ]
     },
     methods: {
-        paginationConfig: function(componentName) {
-            this.$broadcast('vuetable-pagination:set-options', {
-                wrapperClass: 'pagination',
-                icons: {
-                    first: '',
-                    prev: '',
-                    next: '',
-                    last: ''
-                },
-                activeClass: 'active',
-                linkClass: 'btn btn-default btn-sm',
-                pageClass: 'btn btn-default btn-sm'
-            })
-        },
-        hideFilterMenu : function(){
-            $('#navbarSide').removeClass('reveal');
-        },
-        resetMoreParams: function(){
-            this.$data.moreParams = [];
-        },
-        filterSubmit: function (e) {
-            e.preventDefault();
-            var scope = this;
-            var el = $(e.target);
-            var form = el.closest('form');
-
-            scope.resetMoreParams();
-            scope.moreParams.push(form.serialize());
-            setTimeout(function(){
-                scope.$broadcast('vuetable:refresh');
-            },0);
-        },
         setPropSales: function (v) {
             return v.length;
         },

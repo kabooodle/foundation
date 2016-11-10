@@ -5,6 +5,7 @@
     "dev": "gulp watch"
   },
   "devDependencies": {
+    "aliasify": "^2.1.0",
     "blueimp-file-upload": "^9.13.1",
     "bootstrap": "^4.0.0-alpha.4",
     "bootstrap-multiselect": "^0.9.13-1",

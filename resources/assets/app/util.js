@@ -184,7 +184,23 @@ function notify(options){
     noty(options);
 }
 
+
+
 $(function () {
+
+    // $.fn.datetimepicker.defaults = {
+    //     format: "MM/DD/YYYY",
+    //     icons: {
+    //         up: 'fa fa-chevron-up',
+    //         down: 'fa fa-chevron-down',
+    //         previous: 'fa fa-chevron-left',
+    //         next: 'fa fa-chevron-right'
+    //     }
+    // };
+    //
+    // $.fn.datetimepicker = function (options) {
+    //     var settings = $.extend($.datetimepicker.defaults, options);
+    // };
 
     $.extend( {
         findFirst: function( elems, validateCb ){
@@ -232,6 +248,7 @@ $(function () {
         interval : false
     });
     $('[data-toggle="tooltip"]').tooltip();
+
     $('.dropdown.dropdown-onhover').hover(function () {
         $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();
     }, function () {
