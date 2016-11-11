@@ -21,16 +21,16 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Status</label>
                         <div class="col-sm-9">
-                            {{ Form::select('status[]', array_combine(\Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII), null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                            {{ Form::select('status[]', array_combine(\Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Dates</label>
                         <div class="col-sm-9">
                             <div class="input-daterange input-group" id="datepicker">
-                                <input type="text" id="datetimepicker1" class="input-sm form-control" name="startdate" />
+                                <input type="text" id="datetimepicker1" class="input-sm form-control" name="startdate" value="{{ $filters['startdate'] or null }}"/>
                                 <span class="input-group-addon" style="font-size: .75rem; border-left: none; border-right: none; padding-left: .4rem; padding-right: .4rem;">to</span>
-                                <input type="text"  id="datetimepicker2" class="input-sm form-control" name="enddate" />
+                                <input type="text"  id="datetimepicker2" class="input-sm form-control" name="enddate" value="{{ $filters['enddate'] or null }}"/>
                             </div>
                         </div>
                     </div>

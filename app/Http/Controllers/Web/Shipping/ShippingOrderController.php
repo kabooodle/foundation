@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Shipping;
 
 use Binput;
+use Carbon\Carbon;
 use Kabooodle\Models\ShippingTransactions;
 use Messages;
 use Shippo_Error;
@@ -35,23 +36,28 @@ class ShippingOrderController extends Controller
      */
     public function index(Request $request)
     {
-        $shipments = user()->shippingTransactions;
-
         $filters['statii'] = array_filter($request->get('status', []));
-        $filters['dates'] = [$request->get('startdate'), $request->get('enddate')];
+        $filters['startdate'] = $request->get('startdate', false);
+        $filters['enddate'] = $request->get('enddate', false);
         $filters['recipients'] = array_filter($request->get('recipients', []));
 
+        $shipments = user()->shippingTransactions();
+
         if(count($filters['statii']) > 0){
-            $shipments = $shipments->filter(function(ShippingTransactions $shippingTransaction) use ($filters){
-                return in_array($shippingTransaction->shipping_status, $filters['statii']);
-            });
+            $shipments = $shipments->whereIn('shipping_status', $filters['statii']);
         }
 
         if(count($filters['recipients']) > 0){
-            $shipments = $shipments->filter(function(ShippingTransactions $shippingTransaction) use ($filters){
-                return in_array($shippingTransaction->id, $filters['recipients']);
-            });
+            $shipments = $shipments->whereIn('recipient_id',  $filters['recipients']);
         }
+
+        if($filters['startdate'] && $filters['enddate']){
+            $startDate = Carbon::createFromTimestamp(strtotime($filters['startdate']))->format('Y-m-d h:i:s');
+            $endDate = Carbon::createFromTimestamp(strtotime($filters['enddate']))->format('Y-m-d h:i:s');
+            $shipments = $shipments->whereBetween('created_at', [$startDate,$endDate]);
+        }
+
+        $shipments = $shipments->get();
 
         return $this->view('shipping.index')->with(compact('shipments', 'filters'));
     }
