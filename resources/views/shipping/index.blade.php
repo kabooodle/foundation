@@ -17,20 +17,20 @@
     <div class="navbar-side p-a " id="navbarSide">
         <div class="box ">
             <div class="box-body clearfix">
-                <form>
+                <form method="GET" action="{{ route('shipping.index') }}">
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Status</label>
                         <div class="col-sm-9">
-                            {{ Form::select('status[]', \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                            {{ Form::select('status[]', array_combine(\Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII), null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Dates</label>
                         <div class="col-sm-9">
                             <div class="input-daterange input-group" id="datepicker">
-                                <input type="text" id="datetimepicker1" class="input-sm form-control" name="start" />
+                                <input type="text" id="datetimepicker1" class="input-sm form-control" name="startdate" />
                                 <span class="input-group-addon" style="font-size: .75rem; border-left: none; border-right: none; padding-left: .4rem; padding-right: .4rem;">to</span>
-                                <input type="text"  id="datetimepicker2" class="input-sm form-control" name="end" />
+                                <input type="text"  id="datetimepicker2" class="input-sm form-control" name="enddate" />
                             </div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="form-group row p-b-0 m-b-0">
                         <div class="col-sm-9 col-sm-offset-3">
-                            <button type="button" class="btn-sm btn primary">Go</button>
+                            <button type="submit" class="btn-sm btn primary">Go</button>
                             <button type="button" class="btn white btn-sm btn-toggle-filters" >Close</button>
                         </div>
                     </div>

@@ -7,7 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Shipping;
 
 use Binput;
-use Kabooodle\Foundation\Exceptions\Shippo\NoRatesFoundForParcelException;
+use Kabooodle\Models\ShippingTransactions;
 use Messages;
 use Shippo_Error;
 use Illuminate\Http\Request;
@@ -20,6 +20,7 @@ use Kabooodle\Http\Controllers\Web\Controller;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Bus\Commands\Shipping\GetShippingRatesCommand;
 use Kabooodle\Services\Shippr\Exceptions\InvalidAddressException;
+use Kabooodle\Foundation\Exceptions\Shippo\NoRatesFoundForParcelException;
 
 /**
  * Class ShippingOrderController
@@ -36,7 +37,23 @@ class ShippingOrderController extends Controller
     {
         $shipments = user()->shippingTransactions;
 
-        return $this->view('shipping.index')->with(compact('shipments'));
+        $filters['statii'] = array_filter($request->get('status', []));
+        $filters['dates'] = [$request->get('startdate'), $request->get('enddate')];
+        $filters['recipients'] = array_filter($request->get('recipients', []));
+
+        if(count($filters['statii']) > 0){
+            $shipments = $shipments->filter(function(ShippingTransactions $shippingTransaction) use ($filters){
+                return in_array($shippingTransaction->shipping_status, $filters['statii']);
+            });
+        }
+
+        if(count($filters['recipients']) > 0){
+            $shipments = $shipments->filter(function(ShippingTransactions $shippingTransaction) use ($filters){
+                return in_array($shippingTransaction->id, $filters['recipients']);
+            });
+        }
+
+        return $this->view('shipping.index')->with(compact('shipments', 'filters'));
     }
 
     /**
