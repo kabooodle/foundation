@@ -84,34 +84,30 @@
         <div class="collapse navbar-toggleable-sm" data-pjax="" id="navbar-4">
             <ul class="nav navbar-nav pull-left nav-active-border b-warning">
                 @if(user() && user()->subscribed('main'))
-                    {{--<li class="nav-item">--}}
-                        {{--<a href="{{  route('shop.show', [user()->username]) }}"--}}
-                           {{--class="nav-link {{ Request::is('shop/'.user()->username.'') ? 'active' : null }}"><span--}}
-                                    {{--class="nav-text">Your Store</span></a>--}}
-                    {{--</li>--}}
                     <li class="nav-item dropdown dropdown-onhover">
-                        <a class="nav-link dropdown-toggle {{ Request::is('shop/*/inventory*') ? 'active' : null }}"
-                           href="{{ route('shop.inventory.index', [user()->username]) }}" data-toggle="dropdown"><span
-                                    class="nav-text">Inventory</span></a>
+                        <a class="nav-link dropdown-toggle "
+                           href="#" data-toggle="dropdown"><span
+                                    class="nav-text">Merchant Services</span></a>
                         <div class="dropdown-menu">
                             <a href="{{  route('shop.inventory.index', [user()->username]) }}"
-                               class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Manage
-                                Items</a>
-                            <a href="{{ route('shop.inventory.create', [user()->username]) }}"
-                               class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add
-                                Items</a>
-                            <div class="divider"></div>
+                               class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Inventory</a>
+
                             <a href="{{ route('shop.claims.index', [user()->username]) }}"
-                               class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Claimed
-                                Items</a>
+                               class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Claims</a>
+
+                            <a  href="{{  route('sales.index') }}"
+                                class="dropdown-item {{ Request::is('sales*') ? 'active' : null }}"><span>Sales</span></a>
+
+                            <a href="{{  route('shipping.index') }}"
+                               class="dropdown-item {{ Request::is('shipping*') ? 'active' : null }}"><span>Shipping</span></a>
                         </div>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{  route('shipping.index') }}"
-                           class="nav-link {{ Request::is('shipping*') ? 'active' : null }}"><span
-                                    class="nav-text">Shipping</span></a>
-                    </li>
                 @endif
+                    <li class="nav-item">
+                        <a href="{#"
+                           class="nav-link {{ Request::is('purchases*') ? 'active' : null }}"><span
+                                    class="nav-text">Purchases</span></a>
+                    </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('groups*') ? 'active' : null }}"
                        href="{{ route('groups.index') }}" ui-sref-active="active"><span class=

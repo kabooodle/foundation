@@ -20,12 +20,25 @@
 }
 .table-condensed{
     thead>tr>th,
-    tbody>tr>th,
     tfoot>tr>th,
+    tbody>tr>th {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
     thead>tr>td,
-    tbody>tr>td,
     tfoot>tr>td{
-      padding: 5px;
+      padding: 5px 5px 5px 0;
+      &:last-of-type {
+        padding-right: 0;
+      }
+    }
+
+    tbody>tr>td {
+      padding: 15px 5px 15px 0;
+      &:last-of-type {
+        padding-right: 0;
+      }
     }
 }
 .table-bordered{

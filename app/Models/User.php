@@ -395,6 +395,18 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return mixed
+     */
+    public function acceptedClaimsOnMyInventory()
+    {
+        return $this->hasManyThrough(Claims::class,  Inventory::class)
+            ->where('inventory.user_id', $this->id)
+            ->where('accepted', 1)
+            ->whereNotNull('accepted_on')
+            ->orderBy('accepted_on', 'desc');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function claimsOnMyInventory()

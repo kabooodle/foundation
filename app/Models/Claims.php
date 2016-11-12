@@ -33,6 +33,17 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     ];
 
     /**
+     * @var array
+     */
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'accepted_on',
+        'rejected_on'
+    ];
+
+    /**
      * @var string
      */
     protected $table = 'claims';

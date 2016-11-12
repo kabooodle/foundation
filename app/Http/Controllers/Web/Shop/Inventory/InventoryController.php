@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Messages;
 use Response;
 use Binput;
@@ -35,7 +36,7 @@ use Kabooodle\Models\User;
  */
 class InventoryController extends Controller
 {
-    use ObfuscatesIdTrait;
+    use ObfuscatesIdTrait, PaginatesTrait;
 
     /**
      * @param Request $request
@@ -89,19 +90,7 @@ class InventoryController extends Controller
 
         $data = $data->get();
 
-        $page = $request->get('page', 1);
-        $perPage = $request->get('per_page', config('pagination.per-page'));
-
-        $data = new LengthAwarePaginator(
-            $data->forPage($page, $perPage),
-            count($data),
-            $perPage,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query(),
-            ]
-        );
+        $data = $this->paginateData($request, $data);
 
         if ($request->wantsJson()) {
             return Response::json($data);

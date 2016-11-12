@@ -39,6 +39,13 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @var array
      */
+    protected $appents = [
+        'name_with_variant'
+    ];
+
+    /**
+     * @var array
+     */
     protected $with = [
         'style',
         'styleSize',
@@ -356,6 +363,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getNameAttribute() : string
     {
         return $this->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameWithVariantAttribute() : string
+    {
+        return $this->getName(). ' - '.$this->size->name;
     }
 
     /**

@@ -123,6 +123,16 @@ class BaseEloquentModel extends Eloquent
     }
 
     /**
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function humanizeNoTime($value)
+    {
+        return $value->format('m-d-Y');
+    }
+
+    /**
      * @return null|string
      */
     public function updatedAtHuman()

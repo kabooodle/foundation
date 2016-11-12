@@ -49,6 +49,6 @@ class ShippingTransactionPresenter extends PresenterAbstract
                 break;
         }
 
-        return '<span class="w-8 rounded m-r-sm '.$class.'"></span> <span class="text-'.$class.'">'.$text.'</span>';
+        return '<span class="w-8 rounded '.$class.'" style="margin-right: 3px"></span> <span class="text-'.$class.'" >'.$text.'</span>';
     }
 }
