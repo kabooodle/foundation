@@ -466,15 +466,15 @@ class User extends BaseEloquentModel implements
 
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function shippingQueue()
     {
-        return $this->hasMany(ShippingQueue::class, 'user_id');
+        return $this->belongsToMany(Claims::class, ShippingQueue::getTableName(), 'user_id', 'claim_id');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function queuedToShip()
     {

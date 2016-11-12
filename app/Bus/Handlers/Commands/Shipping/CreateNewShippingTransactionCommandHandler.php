@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Shipping;
 
 use DB;
+use Kabooodle\Models\ShippingQueue;
 use Kabooodle\Models\ShippingShipments;
 use Kabooodle\Models\ShippingTransactions;
 use Kabooodle\Services\Shippr\RatesObject;
@@ -61,6 +62,9 @@ class CreateNewShippingTransactionCommandHandler
                 CreditTransactableInterface::TYPE_DEBIT
             ));
 
+            // Remove associated claims from shipping queue
+            $this->removeClaimsFromShippingQueue($shipment);
+
             // Log the shipping transaction.
             $st = new ShippingTransactions;
             $st->user_id = $user->id;
@@ -85,5 +89,16 @@ class CreateNewShippingTransactionCommandHandler
 
             return $st;
         });
+    }
+
+    /**
+     * @param ShippingShipments $shipment
+     *
+     * @return void
+     */
+    public function removeClaimsFromShippingQueue(ShippingShipments $shipment)
+    {
+        $claimIds = $shipment->claims->pluck('id');
+        ShippingQueue::whereIn('claim_id', $claimIds)->delete();
     }
 }

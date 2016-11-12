@@ -2,7 +2,6 @@
 
 namespace Kabooodle\Tests\Bus\Commands\Profile;
 
-use Faker\Provider\Uuid;
 use Kabooodle\Models\User;
 use Kabooodle\Tests\BaseTestCase;
 use AltThree\TestBench\CommandTrait;
@@ -48,7 +47,7 @@ class GetShippingRatesCommandTest extends BaseTestCase
 
         $params = [
             'actor' => factory(User::class)->make(),
-            'claimUUID' => Uuid::randomAscii(),
+            'claimIds' => range(0, 10),
             'recipient' => $mailingAddress,
             'sender' => $mailingAddress,
             'parcelObject' => $parcelObject
@@ -56,7 +55,7 @@ class GetShippingRatesCommandTest extends BaseTestCase
 
         $object = new GetShippingRatesCommand(
             $params['actor'],
-            $params['claimUUID'],
+            $params['claimIds'],
             $params['recipient'],
             $params['sender'],
             $params['parcelObject']

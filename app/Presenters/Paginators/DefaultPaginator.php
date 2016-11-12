@@ -57,16 +57,16 @@ class DefaultPaginator implements PresenterContract
     {
         // Disabled this check to always show pagination.
 
-//        if ($this->hasPages()) {
+        if ($this->hasPages()) {
             return new HtmlString(sprintf(
                 '<ul class="pagination">%s %s %s</ul>',
                 $this->getPreviousButton(),
                 $this->getLinks(),
                 $this->getNextButton()
             ));
-//        }
-//
-//        return '';
+        }
+
+        return new HtmlString('');
     }
 
     /**

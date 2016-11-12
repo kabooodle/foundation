@@ -60,8 +60,8 @@
                                         Shipping Options
                                     </button>
                                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Kabooodle</a>
-                                            <a class="dropdown-item" href="#">Manually</a>
+                                            <a class="dropdown-item" href="#">Create Label</a>
+                                            <a class="dropdown-item" href="#">Manually Ship</a>
                                         </div>
                                 </div>
                             @endif

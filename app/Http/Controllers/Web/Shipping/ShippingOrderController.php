@@ -70,9 +70,7 @@ class ShippingOrderController extends Controller
      */
     public function create(Request $request, $claimUUID = null)
     {
-        $claims = user()->shippingQueue;
-
-        return $this->view('shipping.order.create')->with(compact('claims'));
+        return $this->view('shipping.order.create');
     }
 
     /**

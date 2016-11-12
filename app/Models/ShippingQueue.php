@@ -26,6 +26,14 @@ class ShippingQueue extends BaseEloquentModel
     ];
 
     /**
+     * @var array
+     */
+    protected $fillable = [
+        'user_id',
+        'claim_id'
+    ];
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()

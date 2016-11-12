@@ -19,7 +19,7 @@ class ClaimsApiController extends AbstractApiController
      */
     public function index()
     {
-        $data = user()->shippingQueue;
+        $data = $this->getUser()->shippingQueue;
 
         return $this->collection($data);
     }
