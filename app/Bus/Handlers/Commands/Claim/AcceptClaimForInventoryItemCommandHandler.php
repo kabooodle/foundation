@@ -8,6 +8,7 @@ namespace Kabooodle\Bus\Handlers\Commands\Claim;
 
 use DB;
 use Kabooodle\Models\Claims;
+use Kabooodle\Bus\Events\Claim\ClaimWasAcceptedEvent;
 use Kabooodle\Bus\Commands\Claim\AcceptClaimForInventoryItemCommand;
 
 /**
@@ -29,7 +30,11 @@ class AcceptClaimForInventoryItemCommandHandler
             $claim->accepted_on = $command->getTimestamp();
             $claim->accepted = true;
 
-            return $claim->save() ? $claim : false;
+            $claim->save();
+
+            event(new ClaimWasAcceptedEvent($command->getUser(), $claim));
+
+            return $claim;
         });
     }
 }

@@ -17,6 +17,16 @@ class ShippingQueue extends Migration
             $table->integer('claim_id')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->timestamps();
+
+            $table->foreign('claim_id')
+                ->references('id')->on('claims')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 

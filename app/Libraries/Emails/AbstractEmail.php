@@ -48,7 +48,7 @@ abstract class AbstractEmail
      * @param array   $parameters
      * @param Closure $callable
      */
-    public function __construct($resourceView = null, array $parameters = [], Closure $callable = null)
+    public function __construct(string $resourceView = null, array $parameters = [], Closure $callable = null)
     {
         $this->callable = $callable;
         $this->resourceView = $resourceView;

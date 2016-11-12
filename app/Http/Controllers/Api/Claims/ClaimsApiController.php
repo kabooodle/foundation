@@ -15,11 +15,11 @@ use Kabooodle\Http\Controllers\Api\AbstractApiController;
 class ClaimsApiController extends AbstractApiController
 {
     /**
-     * @return \Dingo\Api\Http\Response\Factory
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        $data = $this->getUser()->claimsAsSellerNoShipping();
+        $data = user()->shippingQueue;
 
         return $this->collection($data);
     }

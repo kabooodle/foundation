@@ -206,6 +206,22 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function shippingQueue()
+    {
+        return $this->hasOne(ShippingQueue::class, 'claim_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function queuedToShip()
+    {
+        return $this->shippingQueue();
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function shipments()

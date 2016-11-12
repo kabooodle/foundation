@@ -122,14 +122,14 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'avatar', 'invited_by_user_id', 'activated', 'timezone', 'referred_by_user_id',
+        'name', 'email', 'password', 'avatar', 'invited_by_user_id', 'activated', 'timezone', 'kabooodle_as_shipping', 'referred_by_user_id',
     ];
 
     /**
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'facebook_access_token_expires', 'stripe_id', 'creditBalance', 'card_brand', 'credit_balance', 'referred_by_user_id', 'card_last_four', 'trial_ends_at', 'pivot', 'activated', 'access_token', 'facebook_access_token', 'facebook_user_id'
+        'password', 'remember_token', 'kabooodle_as_shipping', 'facebook_access_token_expires', 'stripe_id', 'creditBalance', 'card_brand', 'credit_balance', 'referred_by_user_id', 'card_last_four', 'trial_ends_at', 'pivot', 'activated', 'access_token', 'facebook_access_token', 'facebook_user_id'
     ];
 
     /**
@@ -464,6 +464,23 @@ class User extends BaseEloquentModel implements
         return $this->shippingTransactions()->where('fulfilled', '=', 1);
     }
 
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function shippingQueue()
+    {
+        return $this->hasMany(ShippingQueue::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function queuedToShip()
+    {
+        return $this->shippingQueue();
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -608,5 +625,13 @@ class User extends BaseEloquentModel implements
     public function hasSufficientCredits($debitAmount)
     {
         return $this->hasSufficientBalance($debitAmount);
+    }
+
+    /**
+     * @return bool
+     */
+    public function usesKabooodleAsShipper()
+    {
+        return $this->kabooodle_as_shipping;
     }
 }
