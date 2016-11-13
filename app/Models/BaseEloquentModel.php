@@ -37,14 +37,14 @@ class BaseEloquentModel extends Eloquent
     {
         parent::boot();
 
-        self::creating(function($model){
-            if($model->created_by) {
+        self::creating(function ($model) {
+            if ($model->created_by) {
                 $model->created_by = user()->id;
             }
         });
 
-        self::updating(function($model){
-            if($model->updated_by) {
+        self::updating(function ($model) {
+            if ($model->updated_by) {
                 $model->updated_by = user()->id;
             }
         });
@@ -67,7 +67,7 @@ class BaseEloquentModel extends Eloquent
      */
     public function getCreatedAtAttribute($v)
     {
-        return Carbon::createFromFormat(DATE_ISO8601,$this->convertDateTimeTo8601($v));
+        return Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
     }
 
     /**
@@ -77,7 +77,7 @@ class BaseEloquentModel extends Eloquent
      */
     public function getUpdatedAtAttribute($v)
     {
-        return Carbon::createFromFormat(DATE_ISO8601,$this->convertDateTimeTo8601($v));
+        return Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
     }
 
     /**

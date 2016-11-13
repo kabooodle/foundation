@@ -28,7 +28,7 @@ trait LikeableTrait
      */
     public function getIsLikedAttribute()
     {
-        $like = $this->likes->filter(function($like){
+        $like = $this->likes->filter(function ($like) {
             return $like->user_id = Auth::id();
         })->first();
 

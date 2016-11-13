@@ -35,18 +35,18 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
         try {
             $groups = $this->facebook->getUsersGroups($actor->getFacebookUserId());
             if ($groups) {
-                foreach($groups as $key => $group){
+                foreach ($groups as $key => $group) {
 
                     // If the user cannot administrate, delete the group.
-                    if($group['administrator'] === false) {
+                    if ($group['administrator'] === false) {
                         unset($groups[$key]);
                         continue;
                     }
 
                     // If the group has albums, lets make sure the album can be uploaded to.
-                    if(isset($group['albums'])) {
-                        foreach($group['albums'] as $albumKey => $album) {
-                            if($album['can_upload'] === false) {
+                    if (isset($group['albums'])) {
+                        foreach ($group['albums'] as $albumKey => $album) {
+                            if ($album['can_upload'] === false) {
                                 unset($group['albums'][$albumKey]);
                             }
                         }

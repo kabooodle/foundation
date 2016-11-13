@@ -21,6 +21,6 @@ abstract class BroadcastEvent implements ShouldBroadcast
      */
     public function __construct()
     {
-        $this->unreadNotificationsCount = rand(0,100);
+        $this->unreadNotificationsCount = rand(0, 100);
     }
 }

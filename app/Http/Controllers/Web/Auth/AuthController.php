@@ -95,9 +95,7 @@ class AuthController extends Controller
             Messages::success("Welcome to ".env('APP_NAME').", {$user->name} !");
 
             return $this->redirect('/');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
-
             Messages::error($e->validator->getMessageBag()->first());
 
             return $this->redirect(route('auth.register'))
@@ -119,7 +117,6 @@ class AuthController extends Controller
 
             return $this->parentLogin($request);
         } catch (\Illuminate\Validation\ValidationException $e) {
-
             Messages::error($e->validator->getMessageBag()->first());
 
             return $this->redirect(route('auth.login'))

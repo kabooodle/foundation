@@ -43,18 +43,18 @@ class ShippingOrderController extends Controller
 
         $shipments = user()->shippingTransactions();
 
-        if(count($filters['statii']) > 0){
+        if (count($filters['statii']) > 0) {
             $shipments = $shipments->whereIn('shipping_status', $filters['statii']);
         }
 
-        if(count($filters['recipients']) > 0){
+        if (count($filters['recipients']) > 0) {
             $shipments = $shipments->whereIn('recipient_id',  $filters['recipients']);
         }
 
-        if($filters['startdate'] && $filters['enddate']){
+        if ($filters['startdate'] && $filters['enddate']) {
             $startDate = Carbon::createFromTimestamp(strtotime($filters['startdate']))->format('Y-m-d h:i:s');
             $endDate = Carbon::createFromTimestamp(strtotime($filters['enddate']))->format('Y-m-d h:i:s');
-            $shipments = $shipments->whereBetween('created_at', [$startDate,$endDate]);
+            $shipments = $shipments->whereBetween('created_at', [$startDate, $endDate]);
         }
 
         $shipments = $shipments->get();
@@ -102,15 +102,14 @@ class ShippingOrderController extends Controller
 
             return $this->redirect()->back()->withErrors($e->validator->getMessageBag())->withInput(Binput::all());
         } catch (InvalidAddressException $e) {
-                Messages::error('Invalid address: '. $e->getDescription());
+            Messages::error('Invalid address: '. $e->getDescription());
 
-                return redirect()->back()->withInput(Binput::all());
-        }  catch (NoRatesFoundForParcelException $e) {
+            return redirect()->back()->withInput(Binput::all());
+        } catch (NoRatesFoundForParcelException $e) {
             Messages::error('No pricing is available based on the parcel data (size/weight).');
 
             return redirect()->back()->withInput(Binput::all());
-        }
-        catch (Shippo_Error $e) {
+        } catch (Shippo_Error $e) {
             // TODO: Gracefully handle this kind of exception.  It's really a developer-eyes-only exception.
 
             Messages::error('Invalid parcel details, '. $e->getMessage());

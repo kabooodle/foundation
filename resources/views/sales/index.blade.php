@@ -44,26 +44,19 @@
                         <td>${{ $sale->accepted_price ? : $sale->price }}</td>
                         <td>{{ $sale->humanizeNoTime($sale->accepted_on) }}</td>
                         <td>{!! $sale->claimer->name !!}</td>
-                        <td>@if($sale->shipmentTransaction()) {!! $sale->shipmentTransaction()->present()->getStatus()  !!} @else Accepted @endif</td>
+                        <td>
+                            {!! $sale->present()->getShippingStatus() !!}
+                        </td>
                         <td>
                             <div class="pull-right">
                             @if($sale->shipmentTransaction())
                                 <a class="btn white btn-xs" href="{{ route('shipping.transactions.show', [$sale->shipmentTransaction()->shipping_shipments_uuid, $sale->shipmentTransaction()->uuid]) }}">Track Shipping</a>
                             @else
-                                <div class="dropdown">
-                                    <button
-                                            class="btn white btn-xs dropdown-toggle"
-                                            type="button"
-                                            data-toggle="dropdown"
-                                            aria-haspopup="true"
-                                            aria-expanded="false">
-                                        Shipping Options
-                                    </button>
-                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Create Label</a>
-                                            <a class="dropdown-item" href="#">Manually Ship</a>
-                                        </div>
-                                </div>
+                                @if($sale->queuedToShip())
+                                        <a href="" class="btn btn-xs white">Ship Manually</a>
+                                @else
+                                        <a href="" class="btn btn-xs white">Ship via Kabooodle</a>
+                                @endif
                             @endif
                             </div>
                         </td>

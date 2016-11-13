@@ -45,7 +45,7 @@ class CreditBalance extends BaseEloquentModel
     {
         parent::boot();
 
-        self::saving(function(self $model){
+        self::saving(function (self $model) {
             $original = $model->getOriginal();
             $model->version = $model->version + self::VERSION_INCR;
 

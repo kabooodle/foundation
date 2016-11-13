@@ -31,7 +31,7 @@ class ShippoException extends Exception
     public function __construct(string $message = null, $code = 0, Exception $previous = null)
     {
         // TODO: Identify better message handlers.
-        if($message == 'FromPhone required when service is EXPRESS.') {
+        if ($message == 'FromPhone required when service is EXPRESS.') {
             $message = 'Recipient phone number required when using EXPRESS service.';
         }
         parent::__construct($message, $code, $previous);

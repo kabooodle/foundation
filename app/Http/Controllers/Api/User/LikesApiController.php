@@ -25,7 +25,6 @@ class LikesApiController extends AbstractApiController
     {
         $user = $this->getUser();
         if (! $user->is_liked) {
-
         }
 
         return $this->response()->noContent();
@@ -41,7 +40,6 @@ class LikesApiController extends AbstractApiController
     {
         $user = $this->getUser();
         if ($user->is_liked) {
-
         }
 
         return $this->response()->noContent();

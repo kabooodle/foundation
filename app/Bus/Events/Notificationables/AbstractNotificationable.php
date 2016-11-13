@@ -14,6 +14,5 @@ abstract class AbstractNotificationable
 {
     public function __construct()
     {
-
     }
 }

@@ -12,5 +12,4 @@ namespace Kabooodle\Foundation\Exceptions\Shippo;
  */
 class NoRatesFoundForParcelException extends ShippoException
 {
-
 }

@@ -44,7 +44,6 @@ class CreateNewShippingTransactionCommandHandler
         $rate = $shipment->getRateId($rateUUID);
 
         return DB::transaction(function () use ($rate, $shipment, $shipmentUUID, $user, $rateUUID, $claimer) {
-
             $shippr = new ShipprService;
 
             // Debit a shipping transaction with shippo.

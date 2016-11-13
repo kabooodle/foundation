@@ -37,7 +37,7 @@ class CommentWasCreatedEventHandler implements ShouldQueue
         /** @var User $commentableOwner */
         $commentableOwner = $commentable->getOwner();
 
-        if($commentableOwner->checkIsNotifyable('inventory_commented', 'web')){
+        if ($commentableOwner->checkIsNotifyable('inventory_commented', 'web')) {
             $mailOwner = $this->notifyOwner($commentableOwner, $comment, $commentable);
         }
     }
@@ -55,7 +55,7 @@ class CommentWasCreatedEventHandler implements ShouldQueue
 
         return $mailer->setView('comments.emails.newcomment_onowner')
             ->setParameters(['comment' => $comment, 'commentable' => $commentable])
-            ->setCallable(function($mail) use ($commentableOwner) {
+            ->setCallable(function ($mail) use ($commentableOwner) {
                 $mail->to($commentableOwner->email)
                     ->subject('New comment');
             })

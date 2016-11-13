@@ -66,7 +66,7 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
     {
         parent::boot();
 
-        static::creating(function($model){
+        static::creating(function ($model) {
             // According to SHIPPO, rates expire after 7 days.
            $model->expires_on = Carbon::now()->addDays(7);
         });
@@ -158,13 +158,13 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
     public function getRatesListAttribute($value)
     {
         $_shipments = json_decode($value, true);
-        $_shipments = collect($_shipments)->filter(function($item){
+        $_shipments = collect($_shipments)->filter(function ($item) {
             return $item['object_state'] === 'VALID' && $item['available_shippo'] === true;
-        })->sortBy(function($item) {
+        })->sortBy(function ($item) {
             return $item['amount'];
         });
         $shipments = null;
-        foreach($_shipments as $shipment) {
+        foreach ($_shipments as $shipment) {
             $shipments[] = new RatesObject($shipment);
         }
 
@@ -228,7 +228,7 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
     {
         $rates = $this->rates_list;
         /** @var RatesObject $rate */
-        foreach($rates as $rate) {
+        foreach ($rates as $rate) {
             if ($rate->getRateId() == $rateID) {
                 return $rate;
             }

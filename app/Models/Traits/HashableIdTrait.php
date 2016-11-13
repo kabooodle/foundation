@@ -14,6 +14,5 @@ trait HashableIdTrait
 {
     public static function bootHasableIdTrait()
     {
-
     }
 }

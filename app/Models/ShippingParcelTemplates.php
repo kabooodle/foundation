@@ -16,7 +16,7 @@ class ShippingParcelTemplates extends BaseEloquentModel
 {
     use SoftDeletes;
 
-    CONST DIMENSIONS_NUMBER_FORMAT = 2;
+    const DIMENSIONS_NUMBER_FORMAT = 2;
 
     /**
      * @var array

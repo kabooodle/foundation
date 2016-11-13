@@ -25,7 +25,6 @@ class UserShopController extends Controller
      */
     public function index($username)
     {
-
     }
 
     /**

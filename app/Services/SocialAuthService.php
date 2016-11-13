@@ -14,7 +14,7 @@ use Laravel\Socialite\Contracts\User as ProviderUser;
  * Class SocialAccountService
  * @package Kabooodle\Services
  */
-class SocialAccountService
+class SocialAuthService
 {
     /**
      * @param ProviderUser $providerUser
@@ -38,7 +38,6 @@ class SocialAccountService
             $user = User::whereEmail($providerUser->getEmail())->first();
 
             if (!$user) {
-
                 $user = User::create([
                     'email' => $providerUser->getEmail(),
                     'name' => $providerUser->getName(),

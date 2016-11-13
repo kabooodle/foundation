@@ -11,8 +11,7 @@ use Kabooodle\Models\Comments;
 use Kabooodle\Models\Contracts\CommentableInterface;
 
 /**
- * Class DeleteCommentCommand
- * @package Kabooodle\Bus\Commands\Comments
+ * Class DeleteCommentCommand.
  */
 final class DeleteCommentCommand
 {

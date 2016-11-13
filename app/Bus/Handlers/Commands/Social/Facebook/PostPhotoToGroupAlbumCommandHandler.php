@@ -33,7 +33,7 @@ class PostPhotoToGroupAlbumCommandHandler
      * @param PostPhotoToGroupAlbumCommand $command
      *
      * @return void
-     * 
+     *
      * @throws Exception
      */
     public function handle(PostPhotoToGroupAlbumCommand $command)
@@ -59,7 +59,6 @@ class PostPhotoToGroupAlbumCommandHandler
             $this->facebook->postCommentToPhoto($response['id'], ['message' => 'Sold'], $command->getFacebookToken());
 
             // event(new FacebookPhotoPostedToAlbum));
-
         } catch (Exception $e) {
             //TODO: We can get some of the queued job data from the command itself. So we can tell user when its failed.
 

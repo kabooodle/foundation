@@ -83,7 +83,7 @@ class SellersInventoryController extends Controller
      */
     public function edit($idAndName, $username)
     {
-       //
+        //
     }
 
     /**

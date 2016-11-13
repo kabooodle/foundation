@@ -9,8 +9,7 @@ namespace Kabooodle\Bus\Commands\Claim;
 use Kabooodle\Models\User;
 
 /**
- * Class RejectClaimForInventoryItemCommand
- * @package Kabooodle\Bus\Commands\Claim
+ * Class RejectClaimForInventoryItemCommand.
  */
 class RejectClaimForInventoryItemCommand
 {

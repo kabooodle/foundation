@@ -66,7 +66,7 @@ final class RatesObject implements ProductPricingInterface
         $this->rateId = $shippo['object_id'];
         $this->shipmentId = $shippo['shipment'];
         $this->amount = $shippo['amount'];
-        $this->adjustedTotalAmount = number_format($shippo['amount'] + rateAddon(),2);
+        $this->adjustedTotalAmount = number_format($shippo['amount'] + rateAddon(), 2);
         $this->provider = $shippo['provider'];
         $this->serviceLevelName = $shippo['servicelevel_name'];
         $this->serviceLevelToken = $shippo['servicelevel_token'];

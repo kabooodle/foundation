@@ -10,8 +10,7 @@ use Kabooodle\Models\User;
 use Kabooodle\Models\Contracts\CommentableInterface;
 
 /**
- * Class AddCommentCommand
- * @package Kabooodle\Bus\Commands\Comments
+ * Class AddCommentCommand.
  */
 final class AddCommentCommand
 {

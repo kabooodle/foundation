@@ -10,8 +10,7 @@ use Kabooodle\Models\User;
 use Kabooodle\Models\Contracts\CreditTransactableInterface;
 
 /**
- * Class LogUserCreditTransactionCommand
- * @package Kabooodle\Bus\Commands\Credits
+ * Class LogUserCreditTransactionCommand.
  */
 final class LogUserCreditTransactionCommand
 {

@@ -29,8 +29,8 @@ class UserWasCreatedListener
         // Check if user was referred by someone
         // and send an email to the referee notifying them.
         /** @var User $referee */
-        if($referee = $this->checkIfUserWasReferred($user)) {
-            if($referee->checkIsNotifyable('referral_joined', 'web')) {
+        if ($referee = $this->checkIfUserWasReferred($user)) {
+            if ($referee->checkIsNotifyable('referral_joined', 'web')) {
                 $this->notifyReferee($user, $referee);
             }
         }

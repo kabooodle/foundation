@@ -25,7 +25,6 @@ class GroupsApiController extends AbstractApiController
      */
     public function index()
     {
-
     }
 
     /**
@@ -35,7 +34,6 @@ class GroupsApiController extends AbstractApiController
      */
     public function create()
     {
-
     }
 
     /**
@@ -46,7 +44,6 @@ class GroupsApiController extends AbstractApiController
      */
     public function store(Request $request)
     {
-
     }
 
     /**
@@ -74,7 +71,6 @@ class GroupsApiController extends AbstractApiController
      */
     public function edit($idAndName)
     {
-
     }
 
     /**

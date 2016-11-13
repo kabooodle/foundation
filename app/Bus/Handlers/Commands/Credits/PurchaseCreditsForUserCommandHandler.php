@@ -38,7 +38,7 @@ class PurchaseCreditsForUserCommandHandler
 
         $this->dispatchNow(new CreditUserCreditBalanceCommand($actor, $creditChargeType->amount));
 
-        return DB::transaction(function() use ($cents, $actor, $creditChargeType){
+        return DB::transaction(function () use ($cents, $actor, $creditChargeType) {
 
             // Make the invoice item request
             $response = $this->makeInvoice($cents, $actor, $creditChargeType);
@@ -49,9 +49,8 @@ class PurchaseCreditsForUserCommandHandler
             // to confirm we're good and paid and can proceed with handling this.
             if ($response && $response['closed'] == true && $response['paid'] == true) {
                 $items = $response['lines'];
-                foreach($items['data'] as $item) {
+                foreach ($items['data'] as $item) {
                     if (isset($item['metadata']['id']) && $item['metadata']['id'] == $creditChargeType->id) {
-
                         $receipt = new CreditReceipts;
                         $receipt->user_id = $actor->id;
                         $receipt->credit_charge_type_id = $creditChargeType->id;

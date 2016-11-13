@@ -23,7 +23,7 @@ class AccountActive
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->guest() || ! Auth::guard($guard)->user()->accountActive() ) {
+        if (Auth::guard($guard)->guest() || ! Auth::guard($guard)->user()->accountActive()) {
             if ($request->ajax() || $request->wantsJson()) {
                 return response('Unauthorized.', 401);
             } else {

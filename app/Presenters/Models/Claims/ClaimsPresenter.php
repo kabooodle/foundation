@@ -1,0 +1,38 @@
+<?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
+
+namespace Kabooodle\Presenters\Models\Claims;
+
+use Kabooodle\Models\Claims;
+use Kabooodle\Presenters\PresenterAbstract;
+
+/**
+ * Class ClaimsPresenter
+ * @package Kabooodle\Presenters\Models\Claims
+ */
+class ClaimsPresenter extends PresenterAbstract
+{
+    /**
+     * @return string
+     */
+    public function getShippingStatus()
+    {
+        /** @var Claims $claim */
+        $claim = $this->entity;
+
+        // If we already have a shipping transaction, return the status.
+        if ($claim->shipmentTransaction()) {
+            return $claim->shipmentTransaction()->present()->getStatus();
+        }
+
+        // If this claim is queued to ship
+        if ($claim->queuedToShip()) {
+            return '<a class="btn white btn-xs" href="#">Create Label</a>';
+        }
+
+        return '<span class="">Manually Shipped</span>';
+    }
+}

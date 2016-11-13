@@ -36,7 +36,7 @@ trait FollowableTrait
      */
     public function getIsFollowedAttribute()
     {
-        $follow = $this->followers->filter(function($follow){
+        $follow = $this->followers->filter(function ($follow) {
             return $follow->user_id = Auth::id();
         })->first();
 

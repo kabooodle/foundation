@@ -12,5 +12,4 @@ namespace Kabooodle\Bus\Events;
  */
 abstract class Event
 {
-
 }

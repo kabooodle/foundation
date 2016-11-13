@@ -25,7 +25,7 @@ class GetInventoryTypesCommandHandler
         $types = InventoryType::withStylesAndSizes()->get();
 
         if ($command->getSlugs() && count($command->getSlugs()) > 0) {
-            return $types->filter(function($type) use ($command){
+            return $types->filter(function ($type) use ($command) {
                 return in_array($type->slug, $command->getSlugs());
             });
         }

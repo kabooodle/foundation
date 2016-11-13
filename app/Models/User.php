@@ -148,12 +148,12 @@ class User extends BaseEloquentModel implements
     {
         parent::boot();
 
-        self::creating(function($user){
+        self::creating(function ($user) {
             $user->username = self::_createUsername($user->name);
             $user->public_hash = self::_createHash();
         });
 
-        self::saving(function($user){
+        self::saving(function ($user) {
             $user->email = trim(strtolower($user->email));
         });
     }
@@ -174,7 +174,7 @@ class User extends BaseEloquentModel implements
      */
     public function getAvatarAttribute($value)
     {
-        if (!$value){
+        if (!$value) {
             $value = '/assets/images/logo/roboto-avatar.png';
         }
 
@@ -430,8 +430,8 @@ class User extends BaseEloquentModel implements
     public function claimsAsSellerNoShipping()
     {
         $inventoryItems = $this->claimsOnMyInventory;
-        if ($inventoryItems->count() > 0 ) {
-            return $inventoryItems->filter(function(Claims $claim){
+        if ($inventoryItems->count() > 0) {
+            return $inventoryItems->filter(function (Claims $claim) {
                 // Ignore claims still pending and ones that have already shipped
                 return ($claim->wasAccepted() && ! $claim->shipmentTransaction() ? true : false);
             })->values();

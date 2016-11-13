@@ -43,7 +43,7 @@ class CreditReceipts extends BaseEloquentModel implements CreditTransactableInte
     {
         parent::boot();
 
-        self::creating(function($model){
+        self::creating(function ($model) {
             $model->transaction_amount_dollars = centsToDollars($model->transaction_amount_cents, false);
         });
     }

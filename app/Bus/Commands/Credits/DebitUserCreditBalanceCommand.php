@@ -10,8 +10,7 @@ use Kabooodle\Models\Contracts\CreditTransactableInterface;
 use Kabooodle\Models\User;
 
 /**
- * Class DebitUserCreditBalanceCommand
- * @package Kabooodle\Bus\Commands\Credits
+ * Class DebitUserCreditBalanceCommand.
  */
 final class DebitUserCreditBalanceCommand
 {

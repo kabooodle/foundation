@@ -19,6 +19,5 @@ class UserLoggedInListener
      */
     public function handle(UserLoggedInEvent $event)
     {
-
     }
 }

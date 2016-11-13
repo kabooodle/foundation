@@ -47,7 +47,7 @@ class Groups extends BaseEloquentModel implements Revisionable
     {
         parent::boot();
 
-        self::created(function($group){
+        self::created(function ($group) {
             $group->followers()->save(user());
         });
     }

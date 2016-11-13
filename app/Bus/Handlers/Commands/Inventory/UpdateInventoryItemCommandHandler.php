@@ -34,7 +34,7 @@ class UpdateInventoryItemCommandHandler
             throw new InvalidArgumentException;
         }
 
-        return DB::transaction(function() use ($command) {
+        return DB::transaction(function () use ($command) {
             /** @var Inventory $item */
             $item = $command->getItem();
             $item->inventory_type_styles_id = $command->getStyleId();
@@ -90,7 +90,7 @@ class UpdateInventoryItemCommandHandler
      */
     public function checkAndDeleteUnusedImages(Inventory $item, array $originalImages, array $insertedImages)
     {
-        if ($toDelete = array_diff($originalImages, $insertedImages)){
+        if ($toDelete = array_diff($originalImages, $insertedImages)) {
             $item->images()->whereIn('id', $toDelete)->delete();
         }
     }

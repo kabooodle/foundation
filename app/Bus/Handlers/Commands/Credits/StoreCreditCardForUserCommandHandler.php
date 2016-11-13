@@ -44,6 +44,5 @@ class StoreCreditCardForUserCommandHandler
                 'cvc' => $command->getCvv()
             ]
         ]);
-
     }
 }

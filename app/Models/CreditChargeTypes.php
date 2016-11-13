@@ -40,7 +40,7 @@ class CreditChargeTypes extends BaseEloquentModel implements Revisionable
     {
         parent::boot();
 
-        parent::creating(function($model){
+        parent::creating(function ($model) {
             $model->slug = Str::slug($model->name);
         });
     }

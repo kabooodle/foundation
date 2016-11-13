@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
 
 namespace Kabooodle\Bus\Handlers\Events\Claim;
 
@@ -20,7 +24,7 @@ class MoveClaimToShippingEventHandler
         $user = $event->getActor();
         $claim = $event->getClaim();
 
-        if($user->usesKabooodleAsShipper()) {
+        if ($user->usesKabooodleAsShipper()) {
             ShippingQueue::create([
                 'user_id' => $user->id,
                 'claim_id' => $claim->id

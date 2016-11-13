@@ -14,7 +14,6 @@ use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\Credits\StoreCreditCardForUserCommand;
 
-
 /**
  * Class ProfileCreditCardController
  * @package Kabooodle\Http\Controllers\Web\Profile
@@ -55,7 +54,6 @@ class ProfileCreditCardController extends Controller
             Messages::success('Credit card successfully saved.');
 
             return redirect()->route('profile.creditcard.index');
-
         } catch (ValidationException $e) {
             Messages::error('Some fields require input!');
 

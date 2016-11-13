@@ -12,8 +12,7 @@ use Kabooodle\Services\EventDispatcher;
 use Illuminate\Support\ServiceProvider;
 use Kabooodle\Libraries\Messages\Messages;
 use Kabooodle\Libraries\Messages\MessagesInterface;
-Use Kabooodle\Presenters\Paginators\DefaultPaginator;
-
+use Kabooodle\Presenters\Paginators\DefaultPaginator;
 
 /**
  * Class AppServiceProvider
@@ -54,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function registerPaginationPresenter()
     {
-        Paginator::presenter(function($paginator) {
+        Paginator::presenter(function ($paginator) {
             return new DefaultPaginator($paginator);
         });
     }

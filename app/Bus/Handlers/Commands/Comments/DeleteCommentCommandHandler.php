@@ -35,7 +35,6 @@ class DeleteCommentCommandHandler
             $comment->delete();
 
             event(new CommentWasDeletedEvent($actor, $comment));
-
         } else {
             throw new Exception('User is not authorized to delete the comment');
         }
