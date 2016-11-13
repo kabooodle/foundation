@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Api\Claims;
 
+use View;
 use Binput;
 use Exception;
 use Illuminate\Http\Request;
@@ -37,9 +38,10 @@ class ClaimsApiController extends AbstractApiController
     public function switchShippingMethod(Request $request, int $claimId)
     {
         try {
-            $this->dispatchNow(new ToggleShippingMethodOnClaimCommand($this->getUser(), $claimId, Binput::get('method')));
+            $sale = $this->dispatchNow(new ToggleShippingMethodOnClaimCommand($this->getUser(), $claimId, Binput::get('method')));
+            $html = View::make('sales.partials._salesrow', compact('sale'))->render();
 
-            return $this->noContent();
+            return $this->setData($html)->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)->respond();
         }

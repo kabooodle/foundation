@@ -184,7 +184,7 @@ function notify(options){
     noty(options);
 }
 
-
+const spinny = ' <img style="margin:-1px 0 0 0; padding:0;" height="14" width="14" src="/assets/images/icons/ring-alt.gif">';
 
 $(function () {
 

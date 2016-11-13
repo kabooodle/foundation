@@ -10,6 +10,7 @@ use DB;
 use Carbon\Carbon;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Claims;
+use Kabooodle\Models\ShippingQueue;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Kabooodle\Bus\Commands\Claim\ToggleShippingMethodOnClaimCommand;
 
@@ -30,7 +31,7 @@ class ToggleShippingMethodOnClaimCommandHandler
         $claimId = $command->getClaimId();
         $method = $command->getNewShippingMethod();
         /** @var Claims $claim */
-        $claim = $user->claimsAsSellerNoShipping->find($claimId);
+        $claim = $user->claimsAsSellerNoShipping()->find($claimId);
         if(!$claim){
             throw new ModelNotFoundException;
         }
@@ -53,7 +54,7 @@ class ToggleShippingMethodOnClaimCommandHandler
     {
         $claim->shipped_manually = true;
         $claim->shipped_manually_on = Carbon::now();
-        $claim->shippingQueue()->sync([]);
+        $claim->shippingQueue()->delete();
         $claim->save();
 
         return $claim;
@@ -69,7 +70,10 @@ class ToggleShippingMethodOnClaimCommandHandler
     {
         $claim->shipped_manually = false;
         $claim->shipped_manually_on = null;
-        $claim->shippingQueue()->sync([$user->id]);
+        ShippingQueue::create([
+            'user_id' => $user->id,
+            'claim_id' =>$claim->id
+        ]);
         $claim->save();
 
         return $claim;
