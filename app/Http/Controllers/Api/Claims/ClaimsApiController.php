@@ -38,7 +38,11 @@ class ClaimsApiController extends AbstractApiController
     public function switchShippingMethod(Request $request, int $claimId)
     {
         try {
-            $sale = $this->dispatchNow(new ToggleShippingMethodOnClaimCommand($this->getUser(), $claimId, Binput::get('method')));
+            $sale = $this->dispatchNow(new ToggleShippingMethodOnClaimCommand(
+                $this->getUser(),
+                $claimId,
+                Binput::get('method')
+            ));
             $html = View::make('sales.partials._salesrow', compact('sale'))->render();
 
             return $this->setData($html)->respond();

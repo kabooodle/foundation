@@ -11,6 +11,49 @@
 
 @section('body-content')
 
+    <div class="navbar-side p-a " id="navbarSide">
+        <div class="box ">
+            <div class="box-body clearfix">
+                <form method="GET" action="{{ route('shipping.index') }}">
+                    <div class="form-group row">
+                        <label class=" form-control-label col-sm-3 text-sm">Style</label>
+                        <div class="col-sm-9">
+                            {{ Form::select('style[]', llrStyles()->pluck('name', 'id'), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class=" form-control-label col-sm-3 text-sm">Size</label>
+                        <div class="col-sm-9">
+                            {{ Form::select('size[]', llrStyles()->pluck('name', 'id'), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class=" form-control-label col-sm-3 text-sm">Dates</label>
+                        <div class="col-sm-9">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input type="text" id="datetimepicker1" class="input-sm form-control" name="startdate" value="{{ $filters['startdate'] or null }}"/>
+                                <span class="input-group-addon" style="font-size: .75rem; border-left: none; border-right: none; padding-left: .4rem; padding-right: .4rem;">to</span>
+                                <input type="text"  id="datetimepicker2" class="input-sm form-control" name="enddate" value="{{ $filters['enddate'] or null }}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class=" form-control-label col-sm-3 text-sm">Recipients</label>
+                        <div class="col-sm-9">
+                            {{ Form::text('recipients[]', null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Enter names']) }}
+                        </div>
+                    </div>
+                    <div class="form-group row p-b-0 m-b-0">
+                        <div class="col-sm-9 col-sm-offset-3">
+                            <button type="submit" class="btn-sm btn primary">Go</button>
+                            <button type="button" class="btn white btn-sm btn-toggle-filters" >Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="box">
         <div class="box-header">
             <h4>Accepted Sales</h4>
@@ -51,4 +94,13 @@
 
 @push('footer-scripts')
 <script src="/assets/js/sales-management.js"></script>
+<script>
+    $(function(){
+        $('.btn-toggle-filters').click(function(event){
+            $('#navbarSide').css({
+                'top' :  $('.app-header').outerHeight()
+            }).toggleClass('reveal')
+        });
+    });
+</script>
 @endpush

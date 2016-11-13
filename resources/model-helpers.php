@@ -1,4 +1,14 @@
 <?php
+if (! function_exists('llrStyles')) {
+    /**
+     * @return mixed
+     */
+    function llrStyles()
+    {
+        return dispatchNow(new \Kabooodle\Bus\Commands\Inventory\GetLLRStylesCommand);
+    }
+}
+
 if (! function_exists('hasSufficientBalance')) {
     /**
      * @param \Kabooodle\Models\User $user

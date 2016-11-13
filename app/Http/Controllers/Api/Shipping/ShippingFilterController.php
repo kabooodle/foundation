@@ -41,6 +41,9 @@ class ShippingFilterController extends AbstractApiController
             AND u.name LIKE :string
         ";
 
-        return DB::select(DB::raw($sql), [':userid' => $this->user()->id, ':string' => '%'.$query.'%']);
+        return DB::select(DB::raw($sql), [
+            ':userid' => $this->user()->id,
+            ':string' => '%'.$query.'%'
+        ]);
     }
 }

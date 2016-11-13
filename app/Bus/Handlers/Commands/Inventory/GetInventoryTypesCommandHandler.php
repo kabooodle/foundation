@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Inventory;
 
 use Kabooodle\Models\InventoryType;
+use Illuminate\Cache\Repository as CacheRepository;
 use Kabooodle\Bus\Commands\Inventory\GetInventoryTypesCommand;
 
 /**
@@ -15,6 +16,18 @@ use Kabooodle\Bus\Commands\Inventory\GetInventoryTypesCommand;
  */
 class GetInventoryTypesCommandHandler
 {
+    const TAG = 'kaboodle_llr_styles_and_sizes';
+
+    /**
+     * GetActiveNotificationsHandler constructor.
+     *
+     * @param CacheRepository $cache
+     */
+    public function __construct(CacheRepository $cache)
+    {
+        $this->cache = $cache;
+    }
+
     /**
      * @param GetInventoryTypesCommand $command
      *
@@ -22,7 +35,12 @@ class GetInventoryTypesCommandHandler
      */
     public function handle(GetInventoryTypesCommand $command)
     {
+        if ($this->cache->has(self::TAG)) {
+            return $this->cache->get(self::TAG);
+        }
+
         $types = InventoryType::withStylesAndSizes()->get();
+        $this->cache->add(self::TAG, $types, 43800);
 
         if ($command->getSlugs() && count($command->getSlugs()) > 0) {
             return $types->filter(function ($type) use ($command) {
