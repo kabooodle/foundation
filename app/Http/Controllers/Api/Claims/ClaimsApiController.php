@@ -6,7 +6,11 @@
 
 namespace Kabooodle\Http\Controllers\Api\Claims;
 
+use Binput;
+use Exception;
+use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Bus\Commands\Claim\ToggleShippingMethodOnClaimCommand;
 
 /**
  * Class ClaimsApiController
@@ -22,5 +26,22 @@ class ClaimsApiController extends AbstractApiController
         $data = $this->getUser()->shippingQueue;
 
         return $this->collection($data);
+    }
+
+    /**
+     * @param Request $request
+     * @param int     $claimId
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     */
+    public function switchShippingMethod(Request $request, int $claimId)
+    {
+        try {
+            $this->dispatchNow(new ToggleShippingMethodOnClaimCommand($this->getUser(), $claimId, Binput::get('method')));
+
+            return $this->noContent();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->respond();
+        }
     }
 }

@@ -53,9 +53,9 @@
                                 <a class="btn white btn-xs" href="{{ route('shipping.transactions.show', [$sale->shipmentTransaction()->shipping_shipments_uuid, $sale->shipmentTransaction()->uuid]) }}">Track Shipping</a>
                             @else
                                 @if($sale->queuedToShip())
-                                        <a href="" class="btn btn-xs white">Ship Manually</a>
+                                        <button type="button" data-route="{{apiRoute('claims.toggle', [$sale->id])}}" data-toggle="shippingMethod" data-method="manual" class="btn btn-xs white">Ship Manually</button>
                                 @else
-                                        <a href="" class="btn btn-xs white">Ship via Kabooodle</a>
+                                        <button type="button" data-route="{{apiRoute('claims.toggle', [$sale->id])}}" data-toggle="shippingMethod" data-method="kabooodle" class="btn btn-xs white">Ship via Kabooodle</button>
                                 @endif
                             @endif
                             </div>
@@ -71,5 +71,17 @@
             {{ $sales->links() }}
         </div>
     </div>
+
+    <script>
+        $(function(){
+            var shippingMethod = $('[data-toggle="shippingMethod"]');
+            shippingMethod.click(function(){
+                $.ajax({
+                    method: 'POST',
+                    url : $(this).data('route')
+                })
+            });
+        })
+    </script>
 
 @endsection

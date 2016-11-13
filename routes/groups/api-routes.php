@@ -5,6 +5,10 @@
         'uses' => \Kabooodle\Http\Controllers\Api\Shipping\ShippingFilterController::class.'@search'
     ]);
     $api->resource('claims', \Kabooodle\Http\Controllers\Api\Claims\ClaimsApiController::class);
+    $api->post('claims/{claims}/toggle_shipping', [
+        'as' => 'claims.toggle',
+        'uses' => \Kabooodle\Http\Controllers\Api\Claims\ClaimsApiController::class.'@switchShippingMethod'
+    ]);
     $api->resource('groups', \Kabooodle\Http\Controllers\Api\Groups\GroupsApiController::class);
     $api->resource('groups.followers', \Kabooodle\Http\Controllers\Api\Groups\GroupsFollowersApiController::class);
     $api->get('inventory/{username}', [
