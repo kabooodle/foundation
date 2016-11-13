@@ -32,11 +32,11 @@ class ToggleShippingMethodOnClaimCommandHandler
         $method = $command->getNewShippingMethod();
         /** @var Claims $claim */
         $claim = $user->claimsAsSellerNoShipping()->find($claimId);
-        if(!$claim){
+        if (!$claim) {
             throw new ModelNotFoundException;
         }
 
-        return DB::transaction(function() use ($claim, $method, $user) {
+        return DB::transaction(function () use ($claim, $method, $user) {
             if ($method == 'kabooodle') {
                 return $this->switchToKabooodle($claim, $user);
             }
