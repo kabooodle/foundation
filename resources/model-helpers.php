@@ -1,4 +1,14 @@
 <?php
+if (! function_exists('llrSizes')) {
+    /**
+     * @return mixed
+     */
+    function llrSizes()
+    {
+        return dispatchNow(new \Kabooodle\Bus\Commands\Inventory\GetLLRSizesCommand);
+    }
+}
+
 if (! function_exists('llrStyles')) {
     /**
      * @return mixed

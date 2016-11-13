@@ -24,7 +24,30 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Size</label>
                         <div class="col-sm-9">
-                            {{ Form::select('size[]', llrStyles()->pluck('name', 'id'), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                            {{ Form::select('size[]', llrSizes()->pluck('name', 'id'), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class=" form-control-label col-sm-3 text-sm">Price</label>
+                        <div class="col-sm-9">
+                            <input
+                                    type="text"
+                                    name="somename"
+                                    data-provide="slider"
+                                    data-slider-ticks="[1, 2, 3]"
+                                    data-slider-ticks-labels='["short", "medium", "long"]'
+                                    data-slider-min="1"
+                                    data-slider-max="3"
+                                    data-slider-step="1"
+                                    data-slider-value="3"
+                                    data-slider-tooltip="hide"
+                            >
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class=" form-control-label col-sm-3 text-sm">Size</label>
+                        <div class="col-sm-9">
+                            
                         </div>
                     </div>
                     <div class="form-group row">
