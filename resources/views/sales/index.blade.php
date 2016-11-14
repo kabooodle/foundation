@@ -181,12 +181,21 @@
             }
         });
 
+        let selectedOptions = [];
+        let selectedOptionsJson = JSON.parse('{!! json_encode($filters['purchasers']) !!}');
+        if(_.size(selectedOptionsJson) >0) {
+            selectedOptions = _.map(selectedOptionsJson, function(value, index) {
+                return index;
+            });
+        }
+
         $('#input-recipients').selectize({
             valueField: 'value',
             labelField: 'text',
             searchField: 'text',
             delimiter: ',',
             persist: false,
+            items: selectedOptions,
             plugins: ['remove_button'],
             create: false,
             render: {
