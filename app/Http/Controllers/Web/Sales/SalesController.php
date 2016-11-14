@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
+use Kabooodle\Models\User;
 
 /**
  * Class SalesController
@@ -63,6 +64,7 @@ class SalesController extends Controller
         // Recipients filter
         if ($filters['purchasers']) {
             $sales = $sales->whereIn('claimed_by',  $filters['purchasers']);
+            $filters['purchasers'] = User::whereIn('id', $filters['purchasers'])->get()->pluck('name', 'id')->toArray();
         }
 
         // Date filter
@@ -82,7 +84,6 @@ class SalesController extends Controller
                     $q->whereIn('shipping_status', $statii);
                 });
             } else {
-
                 // We want externally shipped claims.
                 if (in_array('EXTERNALLY SHIPPED', $statii)) {
                     $sales = $sales->where('shipped_manually', '=', 1);
