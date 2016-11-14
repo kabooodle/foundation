@@ -41,9 +41,15 @@ class SalesController extends Controller
 
         $sales = user()->acceptedClaimsOnMyInventory()->noEagerLoads()->with(['inventoryItem']);
 
+        // Categories filter
+        if ($filters['categories']) {
+            // Yes, the id's from the categories are just inventory ids. I did this to simplify things.
+            $sales = $sales->whereIn('inventory_id', $filters['categories']);
+        }
 
         // Price filter
         if ($filters['price_range']) {
+            $filters['price_range'] = $filters['price_range'] >400 ?400:$filters['price_range'];
             $sales = $sales->whereRaw('coalesce(accepted_price, price) >= 0')->whereRaw('coalesce(accepted_price, price) <= ?', [$filters['price_range']]);
         }
 

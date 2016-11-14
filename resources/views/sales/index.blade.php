@@ -35,7 +35,7 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Categories</label>
                         <div class="col-sm-9">
-                            {{ Form::select('categories[]', (categoriesInUse() ? categoriesInUse()->pluck('tag_name', 'id') : []), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                            {{ Form::select('categories[]', (categoriesInUse() ? categoriesInUse()->pluck('tag_name', 'id') : []), isset($filters['categories']) ? $filters['categories'] :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row">
@@ -47,10 +47,10 @@
                                     data-slider-id="price_range"
                                     type="text"
                                     data-slider-min="0"
-                                    data-slider-max="1000"
+                                    data-slider-max="400"
                                     data-slider-step="1"
-                                    data-slider-value="{{isset($filters['price_range']) ? $filters['price_range'] : 1000}}"/>
-                            <span id="ex6SliderVal" style="margin-left:2px" class=" text-sm">$0 to ${{ isset($filters['price_range']) ? $filters['price_range'] : 1000}}</span>
+                                    data-slider-value="{{isset($filters['price_range']) ? $filters['price_range'] : 400}}"/>
+                            <span id="ex6SliderVal" style="margin-left:2px" class=" text-sm">$0 to ${{ isset($filters['price_range']) ? $filters['price_range'] : 400}}</span>
                         </div>
                     </div>
                     <div class="form-group row">
