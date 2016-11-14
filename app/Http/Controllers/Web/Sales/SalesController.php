@@ -64,6 +64,8 @@ class SalesController extends Controller
         // Recipients filter
         if ($filters['purchasers']) {
             $sales = $sales->whereIn('claimed_by',  $filters['purchasers']);
+
+            // Need to reset the value to a useable array for javascript and re-populating
             $filters['purchasers'] = User::whereIn('id', $filters['purchasers'])->get()->pluck('name', 'id')->toArray();
         }
 
