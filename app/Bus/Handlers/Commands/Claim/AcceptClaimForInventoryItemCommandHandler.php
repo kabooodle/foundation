@@ -24,7 +24,7 @@ class AcceptClaimForInventoryItemCommandHandler
      */
     public function handle(AcceptClaimForInventoryItemCommand $command)
     {
-        return DB::transaction(function() use ($command) {
+        return DB::transaction(function () use ($command) {
             $claim = Claims::where('uuid', $command->getClaimId())->first();
             $claim->accepted_price = $command->getAcceptedPrice() ? : null;
             $claim->accepted_on = $command->getTimestamp();

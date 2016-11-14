@@ -22,7 +22,7 @@ class ShippingLabelPrintedEventHandler
     {
         $shippingTransaction = $event->getShippingTransaction();
 
-        if(! $shippingTransaction->isLabelPrinted()) {
+        if (! $shippingTransaction->isLabelPrinted()) {
             $shippingTransaction->shipping_status = 'LABEL PRINTED';
             $shippingTransaction->shipping_status_updated_on = Carbon::now();
             $shippingTransaction->save();

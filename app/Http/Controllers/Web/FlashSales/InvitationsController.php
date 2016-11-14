@@ -160,7 +160,7 @@ class InvitationsController extends Controller
      */
     private function getInvitation(FlashSales $flashsale, $invitationUuid)
     {
-        return $flashsale->pendingInvitations->filter(function($inv) use ($invitationUuid) {
+        return $flashsale->pendingInvitations->filter(function ($inv) use ($invitationUuid) {
             return $inv->uuid == $invitationUuid;
         })->first();
     }

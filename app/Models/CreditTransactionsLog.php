@@ -47,7 +47,7 @@ class CreditTransactionsLog extends BaseEloquentModel implements Revisionable
     {
         parent::boot();
 
-        self::saving(function($model){
+        self::saving(function ($model) {
             if ($model->type == self::TYPE_DEBIT) {
                 $model->transaction_amount = '-'.$model->abs_amount;
                 $model->incr = self::INCR_DEBIT;

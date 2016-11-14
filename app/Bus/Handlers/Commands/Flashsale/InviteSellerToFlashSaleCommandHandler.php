@@ -46,12 +46,12 @@ class InviteSellerToFlashSaleCommandHandler
         $invitations = $job->getFlashsale()->invitations;
 
         // Have we already invited this pleb?
-        if ($invitations->count() > 0 && $user && $alreadyInvited = $invitations->filter(function($inv) use ($email, $user) {
+        if ($invitations->count() > 0 && $user && $alreadyInvited = $invitations->filter(function ($inv) use ($email, $user) {
             if ($inv->user_id) {
                 return $inv->user_id == $user->id;
             }
             return $inv->email == $email;
-            })->first()) {
+        })->first()) {
             return;
         }
 
@@ -73,7 +73,6 @@ class InviteSellerToFlashSaleCommandHandler
                 $m->to($email)->subject($subject);
             });
         }
-
     }
 
     /**

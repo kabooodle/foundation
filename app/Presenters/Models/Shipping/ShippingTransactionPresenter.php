@@ -23,7 +23,7 @@ class ShippingTransactionPresenter extends PresenterAbstract
         /** @var ShippingTransactions $entity */
         $entity = $this->entity;
 
-        switch($entity->shipping_status) {
+        switch ($entity->shipping_status) {
             case 'LABEL PRINTED':
                 $class = 'deep-purple-500';
                 $text = 'Label Printed';
@@ -43,7 +43,7 @@ class ShippingTransactionPresenter extends PresenterAbstract
 
             case 'UNKNOWN':
             case null:
-            default :
+            default:
                 $class = 'grey-500';
                 $text = 'Created';
                 break;

@@ -16,10 +16,14 @@ elixir(function (mix) {
     mix.browserify('app/components/inventory/inventory-management.js');
     mix.browserify('app/components/inventory/inventory-create.js');
     mix.browserify('app/components/inventory/inventory-edit.js');
+
     mix.browserify('app/components/profile/settings.js');
     mix.browserify('app/components/profile/profile-notifications.js');
+
     mix.browserify('app/components/shipping/shipping-create.js');
     mix.browserify('app/components/shipping/shipping-create.js');
+
+    mix.browserify('app/components/sales/sales-management.js');
 
     // Vendor File
     mix.browserify('app/vendor.js');
@@ -43,7 +47,8 @@ elixir(function (mix) {
             'vendor/emojione/emojione.css',
             'vendor/bootstrap-select/bootstrap-select2-theme.css',
             'vendor/bootstrap-select/bootstrap-select2.css',
-            'vendor/emojionearea/emojionearea.css'
+            'vendor/emojionearea/emojionearea.css',
+            'vendor/bootstrap-slider/bootstrap-slider.css'
         ], elixir.config.publicPath + 'css/merchant.css')
 
         .scripts([

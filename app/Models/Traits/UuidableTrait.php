@@ -16,7 +16,7 @@ trait UuidableTrait
 {
     public static function bootUuidableTrait()
     {
-        self::saving(function($model){
+        self::saving(function ($model) {
             $model->uuid = Uuid::uuid4()->toString();
         });
     }

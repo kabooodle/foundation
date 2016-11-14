@@ -1,4 +1,33 @@
 <?php
+if (! function_exists('categoriesInUse')) {
+    /**
+     * @return mixed
+     */
+    function categoriesInUse()
+    {
+        return dispatchNow(new \Kabooodle\Bus\Commands\Inventory\GetUsedInventoryCategoriesCommand(user()));
+    }
+}
+if (! function_exists('llrSizes')) {
+    /**
+     * @return mixed
+     */
+    function llrSizes()
+    {
+        return dispatchNow(new \Kabooodle\Bus\Commands\Inventory\GetLLRSizesCommand);
+    }
+}
+
+if (! function_exists('llrStyles')) {
+    /**
+     * @return mixed
+     */
+    function llrStyles()
+    {
+        return dispatchNow(new \Kabooodle\Bus\Commands\Inventory\GetLLRStylesCommand);
+    }
+}
+
 if (! function_exists('hasSufficientBalance')) {
     /**
      * @param \Kabooodle\Models\User $user

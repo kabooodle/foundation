@@ -10,8 +10,7 @@ use Carbon\Carbon;
 use Kabooodle\Models\User;
 
 /**
- * Class AcceptClaimForInventoryItemCommand
- * @package Kabooodle\Bus\Commands\Claim
+ * Class AcceptClaimForInventoryItemCommand.
  */
 class AcceptClaimForInventoryItemCommand
 {
@@ -49,25 +48,18 @@ class AcceptClaimForInventoryItemCommand
         return $this->user;
     }
 
-    /**
-     * @return null
-     */
     public function getNotes()
     {
         return $this->notes;
     }
 
-
     public function getTimestamp()
     {
-        return $this->timestamp ? : Carbon::now();
+        return $this->timestamp ?: Carbon::now();
     }
 
-    /**
-     * @return null
-     */
     public function getAcceptedPrice()
     {
-        return $this->acceptedPrice ? : null;
+        return $this->acceptedPrice ?: null;
     }
 }

@@ -12,5 +12,4 @@ namespace Kabooodle\Models\Contracts;
  */
 interface ShoppableInterface
 {
-
 }

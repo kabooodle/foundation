@@ -16,16 +16,16 @@ trait AuthorableTrait
 {
     public static function bootAuthorableTrait()
     {
-        self::updating(function($model){
+        self::updating(function ($model) {
             $model->updated_by = user()->id;
         });
 
-        self::creating(function($model){
+        self::creating(function ($model) {
             $model->updated_by = user()->id;
             $model->created_by = user()->id;
         });
 
-        self::deleting(function($model){
+        self::deleting(function ($model) {
             $model->deleted_by = user()->id;
         });
     }

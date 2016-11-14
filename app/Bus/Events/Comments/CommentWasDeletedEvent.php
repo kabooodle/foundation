@@ -14,6 +14,5 @@ final class CommentWasDeletedEvent
 {
     public function __construct()
     {
-
     }
 }

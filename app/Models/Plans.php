@@ -17,7 +17,5 @@ final class Plans
         $plans = [
 
         ];
-
-
     }
 }

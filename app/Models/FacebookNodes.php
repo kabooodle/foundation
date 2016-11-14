@@ -12,7 +12,7 @@ namespace Kabooodle\Models;
  */
 class FacebookNodes extends BaseEloquentModel
 {
-    CONST NODE_ALBUM = 'album';
+    const NODE_ALBUM = 'album';
     const NODE_PHOTO = 'photo';
     const NODE_COMMENT = 'comment';
 

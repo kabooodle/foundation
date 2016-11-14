@@ -16,7 +16,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
  * Class LLRUser
  * @package Kabooodle\Models
  */
-class LLRUser extends BaseEloquentModel
+class trash____LLRUser extends BaseEloquentModel
 {
     /**
      * @var string

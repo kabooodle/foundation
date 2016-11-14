@@ -19,12 +19,12 @@ abstract class AbstractEmail
     /**
      * @var MailQueue|mixed|null
      */
-    static $mailer = null;
+    public static $mailer = null;
 
     /**
      * @var \Illuminate\View\Factory|mixed
      */
-    static $view = null;
+    public static $view = null;
 
     /**
      * @var Closure

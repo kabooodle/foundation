@@ -39,8 +39,12 @@ class ShippingFilterController extends AbstractApiController
             INNER JOIN shipping_transactions as st ON st.recipient_id = u.id 
             WHERE st.user_id = :userid
             AND u.name LIKE :string
+            GROUP BY u.id
         ";
 
-        return DB::select(DB::raw($sql), [':userid' => $this->user()->id, ':string' => '%'.$query.'%']);
+        return DB::select(DB::raw($sql), [
+            ':userid' => $this->user()->id,
+            ':string' => '%'.$query.'%'
+        ]);
     }
 }

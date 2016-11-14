@@ -14,9 +14,7 @@ use Kabooodle\Bus\Events\User\UserSubscriptionCameOffTrial;
  */
 class UserSubscriptionCameOffTrialListener
 {
-
     public function handle(UserSubscriptionCameOffTrial $event)
     {
-
     }
 }

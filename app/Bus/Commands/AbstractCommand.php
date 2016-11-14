@@ -10,8 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 
 /**
- * Class AbstractCommand
- * @package Kabooodle\Bus\Commands
+ * Class AbstractCommand.
  */
 abstract class AbstractCommand
 {

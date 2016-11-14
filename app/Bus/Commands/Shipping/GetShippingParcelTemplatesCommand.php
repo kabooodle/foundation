@@ -12,5 +12,4 @@ namespace Kabooodle\Bus\Commands\Shipping;
  */
 final class GetShippingParcelTemplatesCommand
 {
-
 }

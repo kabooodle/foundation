@@ -26,5 +26,4 @@ class SocialAccount extends Authenticatable
     {
         return $this->belongsTo(User::class);
     }
-
 }

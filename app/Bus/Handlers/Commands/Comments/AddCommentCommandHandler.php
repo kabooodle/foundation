@@ -24,8 +24,7 @@ class AddCommentCommandHandler
      */
     public function handle(AddCommentCommand $command)
     {
-        return DB::transaction(function() use ($command) {
-
+        return DB::transaction(function () use ($command) {
             $commentable = $command->getCommentable();
 
             $comment = new Comments;

@@ -12,5 +12,4 @@ namespace Kabooodle\Bus\Commands\Notifications;
  */
 final class GetActiveNotifications
 {
-
 }

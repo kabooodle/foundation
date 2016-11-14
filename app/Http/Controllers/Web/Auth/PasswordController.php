@@ -90,7 +90,6 @@ class PasswordController extends Controller
                     return $this->getResetFailureResponse($request, $response);
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
-
             Messages::error($e->validator->getMessageBag()->first());
 
             return $this->redirect()->back()
@@ -129,7 +128,6 @@ class PasswordController extends Controller
                     return $this->getSendResetLinkEmailFailureResponse($response);
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
-
             Messages::error($e->validator->getMessageBag()->first());
 
             return $this->redirect(route('auth.password.reset.index'))

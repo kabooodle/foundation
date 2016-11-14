@@ -85,7 +85,8 @@ final class MailingAddress
         $this->street1 = $street1;
         $this->street2 = $street2;
         $this->city = $city;
-        $this->state = $state;;
+        $this->state = $state;
+        ;
         $this->zip = $zip;
         $this->name = $name;
         $this->email = $email;

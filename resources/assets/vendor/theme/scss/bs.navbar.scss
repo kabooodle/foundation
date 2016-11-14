@@ -49,6 +49,11 @@
 .app-header .kabooodle-brand {
 	margin-top: 13px;
 }
+.app-header {
+	.avatar_container {
+		top: 10px;
+	}
+}
 .kabooodle-brand,
 .kabooodle-brand.navbar-brand {
 		background: url('/assets/images/logo/logo-white-md.png') center center no-repeat;

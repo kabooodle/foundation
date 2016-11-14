@@ -77,7 +77,6 @@ class FlashSalesController extends Controller
             Messages::success("The flash sale, {$flashsale->name}, was successfully created!");
 
             return $this->redirect(route('flashsales.index'));
-
         } catch (ValidationException $e) {
             Messages::error('Some fields require input!');
 
@@ -160,7 +159,6 @@ class FlashSalesController extends Controller
             Messages::success("{$item->name}, was successfully updated!");
 
             return $this->redirect()->route('flashsales.show', [$idAndName]);
-
         } catch (ValidationException $e) {
             Messages::error('Some fields require attention!');
 

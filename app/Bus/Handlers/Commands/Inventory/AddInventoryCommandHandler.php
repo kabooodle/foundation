@@ -69,7 +69,7 @@ class AddInventoryCommandHandler
 
 
                 // loop over the images inside sizings for: quantity, and image data.
-                foreach($sizing['images'] as $sizeImage) {
+                foreach ($sizing['images'] as $sizeImage) {
                     $this->normalizeImageData($sizeImage);
                     $item = $this->buildNewInventoryItem(
                         $data['actor'],

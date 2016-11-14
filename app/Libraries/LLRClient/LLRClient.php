@@ -66,7 +66,6 @@ class LLRClient extends Client
             }
 
             return [$this, $response, $jar];
-
         } catch (RequestException $e) {
             $this->setConnectionError($e->getCode());
 

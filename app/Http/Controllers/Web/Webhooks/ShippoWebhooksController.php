@@ -20,7 +20,7 @@ class ShippoWebhooksController extends Controller
      */
     public function handleWebhook(Request $request)
     {
-        if(!$request->has('x') || $request->get('x') <> 'KuMQnR5hhzlM2Wk7q9aS') {
+        if (!$request->has('x') || $request->get('x') <> 'KuMQnR5hhzlM2Wk7q9aS') {
             return;
         }
 

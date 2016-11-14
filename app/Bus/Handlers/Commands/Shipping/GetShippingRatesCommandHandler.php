@@ -44,7 +44,7 @@ class GetShippingRatesCommandHandler
 
         $weight = $parcel['weight'];
         $weightUOM = $parcel['weight_uom'];
-        if ( $parcel['template']) {
+        if ($parcel['template']) {
             $template =  $parcel['template'];
         }
         $length = $parcel['length'];
@@ -62,7 +62,7 @@ class GetShippingRatesCommandHandler
 
         $shipment = $this->shippr->createShipment($recipient, $sender, $parcel);
 
-        if($shipment['rates_list'] == [] || count($shipment['rates_list']) ==0){
+        if ($shipment['rates_list'] == [] || count($shipment['rates_list']) ==0) {
             throw new NoRatesFoundForParcelException;
         }
 
@@ -77,7 +77,7 @@ class GetShippingRatesCommandHandler
      */
     public function createShipmentsEntity($attributes, $parcel, GetShippingRatesCommand $command)
     {
-        return DB::transaction(function() use ($attributes, $command, $parcel){
+        return DB::transaction(function () use ($attributes, $command, $parcel) {
             $shipmentDB = new ShippingShipments;
             $shipmentDB->user_id = $command->getActor()->id;
             $shipmentDB->shipping_parcel_template_id = isset($parcel['template']) ? $parcel['template']['id'] : null;
@@ -110,7 +110,7 @@ class GetShippingRatesCommandHandler
     {
         $x = [];
         /** @var Shippo_Object $y */
-        foreach($rates as $y) {
+        foreach ($rates as $y) {
             $x[] = $y->__toArray();
         }
 

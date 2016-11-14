@@ -40,7 +40,9 @@ final class ShippingPurpose
     }
 
     // immutable properties bitch
-    public function __set($k, $v){}
+    public function __set($k, $v)
+    {
+    }
 
     /**
      * @return mixed
@@ -63,7 +65,7 @@ final class ShippingPurpose
      */
     private function mapToPurpose($purposeName)
     {
-        $this->purpose = array_filter($this->getAvailablePurposes(), function($v) use ($purposeName) {
+        $this->purpose = array_filter($this->getAvailablePurposes(), function ($v) use ($purposeName) {
             return $v === strtoupper($purposeName);
         });
     }

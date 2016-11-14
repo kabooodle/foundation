@@ -73,6 +73,11 @@
                                                     type="button"
                                                     class="btn btn-xs white"
                                             >Edit</button>
+                                            <a
+                                                    target="_blank"
+                                                    v-bind:href="this.window.location.href+'/'+item.uuid"
+                                                    class="btn btn-xs white"
+                                            >View</a>
                                         </div>
                                     </div>
                                 </div>

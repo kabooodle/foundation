@@ -25,7 +25,7 @@ class RejectClaimForInventoryItemCommandHandler
      */
     public function handle(RejectClaimForInventoryItemCommand $command)
     {
-        return DB::transaction(function() use ($command) {
+        return DB::transaction(function () use ($command) {
             $claim = Claims::where('uuid', $command->getClaimId())->first();
             $claim->rejected_by = user()->id;
             $claim->rejected_on = Carbon::now();

@@ -14,5 +14,4 @@ use Kabooodle\Http\Controllers\Web\Controller;
  */
 class ShippingParcelController extends Controller
 {
-
 }

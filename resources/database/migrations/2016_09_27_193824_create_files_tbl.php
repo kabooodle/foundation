@@ -22,6 +22,8 @@ class CreateFilesTbl extends Migration
             $table->mediumInteger('sort_order')->default(0);
             $table->timestamps();
         });
+
+        DB::update("ALTER TABLE files AUTO_INCREMENT = 199421;");
     }
 
     /**

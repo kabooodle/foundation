@@ -44,7 +44,7 @@ class ShippingTransactionController extends Controller
             return Response::json(['txn_id' => $shippingTransaction->transaction_id, 'redirect' => $redirectRoute], 200);
         } catch (InsufficientBalanceException $e) {
             return Response::json(['error' => 'Insufficient credits : $'.user()->getAvailableBalance()], 500);
-        } catch (ShippoException $e){
+        } catch (ShippoException $e) {
             return Response::json(['error' => $e->getMessage()], 500);
         } catch (StaleDataException $e) {
             return Response::json(['error' => 'Try again'], 500);
@@ -61,7 +61,7 @@ class ShippingTransactionController extends Controller
      */
     public function show(Request $request, $shipmentUUID, $transactionUUID)
     {
-        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(user(),$shipmentUUID, $transactionUUID));
+        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(user(), $shipmentUUID, $transactionUUID));
 
         return $this->view('shipping.order.transaction')->with(compact('transaction'));
     }
@@ -75,7 +75,7 @@ class ShippingTransactionController extends Controller
      */
     public function label(Request $request, $shipmentUUID, $transactionUUID)
     {
-        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(user(),$shipmentUUID, $transactionUUID));
+        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(user(), $shipmentUUID, $transactionUUID));
 
         event(new ShippingLabelPrinted($transaction));
 

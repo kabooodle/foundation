@@ -74,7 +74,6 @@ class GroupsController extends Controller
             Messages::success("New group {$group->name}, was successfully created!");
 
             return $this->redirect(route('groups.index'));
-
         } catch (ValidationException $e) {
             Messages::error($e->validator->messages()->first());
 

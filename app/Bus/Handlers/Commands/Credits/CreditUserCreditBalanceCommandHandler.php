@@ -34,7 +34,7 @@ class CreditUserCreditBalanceCommandHandler
 
        $creditBalance = CreditBalance::updateOrCreate([
            'user_id' => $actor->id
-       ],[
+       ], [
            'last_transaction_amount_of' => $creditAmount
        ]);
 

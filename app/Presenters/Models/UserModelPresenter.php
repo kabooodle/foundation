@@ -43,7 +43,7 @@ class UserModelPresenter extends PresenterAbstract
         $data = [];
         if ($groups) {
             $groups = new Collection($groups);
-            $group = $groups->filter(function($group) use ($groupId){
+            $group = $groups->filter(function ($group) use ($groupId) {
                 return $group['id'] == $groupId;
             })->first();
 

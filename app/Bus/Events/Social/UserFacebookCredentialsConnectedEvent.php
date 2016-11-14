@@ -14,5 +14,4 @@ use Kabooodle\Bus\Events\Event;
  */
 class UserFacebookCredentialsConnectedEvent extends Event
 {
-
 }

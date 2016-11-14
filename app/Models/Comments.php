@@ -79,7 +79,7 @@ class Comments extends BaseEloquentModel implements Revisionable
         parent::boot();
 
         // Dont allow the ability to set "text" on the entity.
-        self::saving(function(self $model){
+        self::saving(function (self $model) {
             $model->text = $model->text_raw;
         });
     }

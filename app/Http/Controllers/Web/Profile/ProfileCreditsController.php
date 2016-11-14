@@ -70,7 +70,7 @@ class ProfileCreditsController extends Controller
     private function rules()
     {
         return  [
-            'p' => 'required|in:'.implode(',',creditTypes()->pluck('id')->toArray())
+            'p' => 'required|in:'.implode(',', creditTypes()->pluck('id')->toArray())
         ];
     }
 

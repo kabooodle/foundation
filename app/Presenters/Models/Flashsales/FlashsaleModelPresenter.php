@@ -14,5 +14,4 @@ use Kabooodle\Presenters\PresenterAbstract;
  */
 class FlashsaleModelPresenter extends PresenterAbstract
 {
-
 }

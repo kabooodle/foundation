@@ -8,7 +8,9 @@ namespace Kabooodle\Http\Controllers\Web\Shipping;
 
 use Binput;
 use Carbon\Carbon;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Models\ShippingTransactions;
+use Kabooodle\Models\User;
 use Messages;
 use Shippo_Error;
 use Illuminate\Http\Request;
@@ -29,6 +31,8 @@ use Kabooodle\Foundation\Exceptions\Shippo\NoRatesFoundForParcelException;
  */
 class ShippingOrderController extends Controller
 {
+    use PaginatesTrait;
+
     /**
      * @param Request $request
      *
@@ -39,25 +43,26 @@ class ShippingOrderController extends Controller
         $filters['statii'] = array_filter($request->get('status', []));
         $filters['startdate'] = $request->get('startdate', false);
         $filters['enddate'] = $request->get('enddate', false);
-        $filters['recipients'] = array_filter($request->get('recipients', []));
+        $filters['purchasers'] = array_filter($request->get('purchasers', []));
 
         $shipments = user()->shippingTransactions();
 
-        if(count($filters['statii']) > 0){
+        if (count($filters['statii']) > 0) {
             $shipments = $shipments->whereIn('shipping_status', $filters['statii']);
         }
 
-        if(count($filters['recipients']) > 0){
-            $shipments = $shipments->whereIn('recipient_id',  $filters['recipients']);
+        if (count($filters['purchasers']) > 0) {
+            $shipments = $shipments->whereIn('recipient_id',  $filters['purchasers']);
+            $filters['purchasers'] = User::whereIn('id', $filters['purchasers'])->get()->pluck('name', 'id')->toArray();
         }
 
-        if($filters['startdate'] && $filters['enddate']){
-            $startDate = Carbon::createFromTimestamp(strtotime($filters['startdate']))->format('Y-m-d h:i:s');
-            $endDate = Carbon::createFromTimestamp(strtotime($filters['enddate']))->format('Y-m-d h:i:s');
-            $shipments = $shipments->whereBetween('created_at', [$startDate,$endDate]);
+        if ($filters['startdate'] && $filters['enddate']) {
+            $startDate = Carbon::createFromTimestamp(strtotime($filters['startdate'].' 00:00:00'))->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromTimestamp(strtotime($filters['enddate'].' 23:59:59'))->format('Y-m-d H:i:s');
+            $shipments = $shipments->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        $shipments = $shipments->get();
+        $shipments = $this->paginateData($request, $shipments->get());
 
         return $this->view('shipping.index')->with(compact('shipments', 'filters'));
     }
@@ -102,15 +107,14 @@ class ShippingOrderController extends Controller
 
             return $this->redirect()->back()->withErrors($e->validator->getMessageBag())->withInput(Binput::all());
         } catch (InvalidAddressException $e) {
-                Messages::error('Invalid address: '. $e->getDescription());
+            Messages::error('Invalid address: '. $e->getDescription());
 
-                return redirect()->back()->withInput(Binput::all());
-        }  catch (NoRatesFoundForParcelException $e) {
+            return redirect()->back()->withInput(Binput::all());
+        } catch (NoRatesFoundForParcelException $e) {
             Messages::error('No pricing is available based on the parcel data (size/weight).');
 
             return redirect()->back()->withInput(Binput::all());
-        }
-        catch (Shippo_Error $e) {
+        } catch (Shippo_Error $e) {
             // TODO: Gracefully handle this kind of exception.  It's really a developer-eyes-only exception.
 
             Messages::error('Invalid parcel details, '. $e->getMessage());

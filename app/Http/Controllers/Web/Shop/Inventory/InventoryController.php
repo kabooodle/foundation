@@ -77,7 +77,7 @@ class InventoryController extends Controller
             $data = $data->where('initial_qty', 0);
         }
         if ($request->has('flashsale_id')) {
-            $data = $data->whereHas('flashsales', function($q) use ($request) {
+            $data = $data->whereHas('flashsales', function ($q) use ($request) {
                 $q->whereIn('flashsales.id', $request->get('flashsale_id'));
             });
         }
@@ -111,7 +111,7 @@ class InventoryController extends Controller
 
         // Build arrays of filterable data.
         // We only want the user to have filters that are relevant to their inventory.
-        foreach($data as $item) {
+        foreach ($data as $item) {
             // we need all styles
             $filters['styles'][] = $item->style;
             // we need all sizes
@@ -126,10 +126,10 @@ class InventoryController extends Controller
 
         $filters['styles'] = collect($filters['styles'])->sortBy('name')->unique();
         $filters['sizes'] = collect($filters['sizes'])->sortBy('order')->sortBy('name')->unique();
-        $filters['flashSales'] = collect($filters['flashSales'])->sortBy('name')->unique()->filter(function($sale){
+        $filters['flashSales'] = collect($filters['flashSales'])->sortBy('name')->unique()->filter(function ($sale) {
             return $sale->saleHasEnded() ? false : true;
         });
-        $filters['claims'] = collect($filters['claims'])->unique()->filter(function($claim){
+        $filters['claims'] = collect($filters['claims'])->unique()->filter(function ($claim) {
             return $claim->wasRejected() ? false : true;
         });
 
@@ -173,7 +173,6 @@ class InventoryController extends Controller
             Messages::success(count($items)." successfully added to your inventory!");
 
             return $this->redirect(route('shop.inventory.index', [$username]));
-
         } catch (ValidationException $e) {
             Messages::error('Some fields require input!');
 
@@ -215,7 +214,6 @@ class InventoryController extends Controller
         $item = user()->inventory->find($decryptedId);
 
         if ($item) {
-
             $styles = InventoryType::LuLaRoe()->first()->styles;
             if ($request->ajax()) {
                 return $this->view('inventory.partials._edit')->with(compact('item', 'styles'));
@@ -257,7 +255,6 @@ class InventoryController extends Controller
             Messages::success("Item {$item->name} updated");
 
             return redirect()->route('shop.inventory.show', [$username, $idAndName]);
-
         } catch (ValidationException $e) {
             Messages::error('Some fields require input!');
 
@@ -295,7 +292,7 @@ class InventoryController extends Controller
         // rather than just pivot to the item from the claim is because this data may change numerous time.
         // Storing this data allows us to preserve it at the time of the claim.
         // We remove the eager loaded relationships on inventory because most of it is erroneous.
-        $item = $user->inventory()->noEagerLoads()->with('style','size', 'styleSize', 'files')->find($decryptedId);
+        $item = $user->inventory()->noEagerLoads()->with('style', 'size', 'styleSize', 'files')->find($decryptedId);
         try {
             $this->dispatchNow(new ClaimInventoryItemCommand(user(), $user, $item));
 

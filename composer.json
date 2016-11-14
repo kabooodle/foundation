@@ -22,6 +22,7 @@
         "barryvdh/laravel-cors": "0.8.1",
         "barryvdh/laravel-ide-helper": "2.2.1",
         "dingo/api": "1.0.*@dev",
+        "emojione/emojione": "2.2.6",
         "graham-campbell/binput": "3.4.0",
         "graham-campbell/htmlmin": "4.4.0",
         "laravel/cashier": "6.0.19",
@@ -29,7 +30,7 @@
         "laravelcollective/html": "5.2.4",
         "league/flysystem-aws-s3-v3": "~1.0",
         "pragmarx/tracker": "^3.0",
-        "predis/predis": "~1.0",
+        "predis/predis": "1.1.0",
         "pusher/pusher-php-server": "2.2.1",
         "ramsey/uuid": "3.5.0",
         "rtconner/laravel-tagging": "2.2.0",
@@ -40,8 +41,7 @@
         "tymon/jwt-auth": "1.0.*@dev",
         "wildbit/laravel-postmark-provider": "3.0.0",
         "yajra/laravel-datatables-oracle": "6.18.1",
-        "zackkitzmiller/tiny": "1.2.2",
-        "emojione/emojione": "^2.2"
+        "zackkitzmiller/tiny": "1.2.2"
     },
     "require-dev": {
         "alt-three/testbench": "^1.8",

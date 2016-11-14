@@ -21,7 +21,7 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Status</label>
                         <div class="col-sm-9">
-                            {{ Form::select('status[]', array_combine(\Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                            {{ Form::select('status[]', shippingStatii(), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row">
@@ -37,13 +37,14 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Recipients</label>
                         <div class="col-sm-9">
-                            {{ Form::text('recipients[]', null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Enter names']) }}
+                            {{ Form::select('purchasers[]', isset($filters['purchasers']) && $filters['purchasers'] <> false ? $filters['purchasers'] : [],  $filters['purchasers'] or null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Begin typing names', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row p-b-0 m-b-0">
                         <div class="col-sm-9 col-sm-offset-3">
                             <button type="submit" class="btn-sm btn primary">Go</button>
-                            <button type="button" class="btn white btn-sm btn-toggle-filters" >Close</button>
+                            <button type="button" class="btn white btn-sm btn-toggle-reset" >Reset</button>
+                            <a  href="#" class=" m-l-sm text-sm btn-toggle-filters" >Close</a>
                         </div>
                     </div>
                 </form>
@@ -132,6 +133,11 @@
             }).toggleClass('reveal')
         });
 
+        $('.btn-toggle-reset').click(function(event){
+            $('#navbarSide')
+                    .find('input, select').val(null).trigger('change').find('option').prop('selected', false);
+        });
+
         $('table tbody tr').not('.btn, a').click(function(event){
             let ignore = ['input', 'a', 'button', 'textarea', 'label'];
             let clicked = event.target.nodeName.toLowerCase();
@@ -147,6 +153,14 @@
            }
         });
 
+        let selectedOptions = [];
+        let selectedOptionsJson = JSON.parse('{!! json_encode($filters['purchasers']) !!}');
+        if(_.size(selectedOptionsJson) >0) {
+            selectedOptions = _.map(selectedOptionsJson, function(value, index) {
+                return index;
+            });
+        }
+
         $('#input-recipients').selectize({
             valueField: 'value',
             labelField: 'text',
@@ -154,7 +168,7 @@
             delimiter: ',',
             persist: false,
             plugins: ['remove_button'],
-            options: [],
+            items: selectedOptions,
             create: false,
             render: {
                 option: function(item, escape) {

@@ -77,4 +77,3 @@ class Timezone
       return $timezone;
   }
 }
-

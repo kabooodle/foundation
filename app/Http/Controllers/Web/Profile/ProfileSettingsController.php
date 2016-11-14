@@ -73,7 +73,7 @@ class ProfileSettingsController extends Controller
             user()->timezone = $input['timezone'];
             user()->avatar = $request->has('avatar') ? $request->get('avatar') : null;
 
-            if($input['newPassword']) {
+            if ($input['newPassword']) {
                 if (!Hash::check($input['password'], user()->password)) {
                     Messages::error('Password is incorrect.');
 
@@ -90,8 +90,7 @@ class ProfileSettingsController extends Controller
             Messages::success("Profile updated!");
 
             return $this->redirect()->route('profile.index');
-
-        } catch(ValidationException $e) {
+        } catch (ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());
 
             return $this->redirect(route('profile.index'))
@@ -205,7 +204,7 @@ class ProfileSettingsController extends Controller
         $notifications = $this->dispatchNow(new GetActiveNotifications);
 
         return [
-            'id' => 'required|in:'.implode(',',$notifications->pluck('id')->toArray()),
+            'id' => 'required|in:'.implode(',', $notifications->pluck('id')->toArray()),
             'action' => 'required|in:subscribed,unsubscribed',
             'type' => 'required|in:web,email'
         ];

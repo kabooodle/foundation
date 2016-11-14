@@ -12,5 +12,4 @@ namespace Kabooodle\Bus\Handlers\Events\Social;
  */
 class UserFacebookCredentialsConnectedEventHandler
 {
-
 }

@@ -21,7 +21,7 @@ trait NotificationableTrait
     public function checkIsNotifyable(string $name, string $type)
     {
         $setting = $this->notificationsettings->where('name', $name)->first();
-        if($setting){
+        if ($setting) {
             return $setting->{$type} == true;
         }
 

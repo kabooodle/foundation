@@ -7,10 +7,12 @@
 namespace Kabooodle\Models;
 
 use Sofa\Revisionable\Revisionable;
+use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
+use Kabooodle\Presenters\Models\Claims\ClaimsPresenter;
 use Kabooodle\Models\Contracts\NotificationableInterface;
 
 /**
@@ -19,7 +21,7 @@ use Kabooodle\Models\Contracts\NotificationableInterface;
  */
 class Claims extends BaseEloquentModel implements NotificationableInterface, Revisionable
 {
-    use ObfuscatesIdTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
+    use ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array
@@ -40,8 +42,14 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'updated_at',
         'deleted_at',
         'accepted_on',
-        'rejected_on'
+        'rejected_on',
+        'shipped_manually_on'
     ];
+
+    /**
+     * @var string
+     */
+    protected $presenter = ClaimsPresenter::class;
 
     /**
      * @var string
@@ -63,7 +71,9 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'accepted_on' => null,
         'rejected_on' => null,
         'rejected_by' => null,
-        'rejected_reason' => null
+        'rejected_reason' => null,
+        'shipped_manually' => false,
+        'shipped_manually_on' => null,
     ];
 
     /**
@@ -80,7 +90,9 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'accepted_on' => 'date',
         'rejected_on' => 'date',
         'rejected_by' => 'int',
-        'rejected_reason' => 'string'
+        'rejected_reason' => 'string',
+        'shipped_manually' => 'bool',
+        'shipped_manually_on' => 'date'
     ];
 
     /**
@@ -96,6 +108,8 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'accepted_price',
         'shoppable_id',
         'shoppable_type',
+        'shipped_manually',
+        'shipped_manually_on'
     ];
 
     /**
@@ -206,6 +220,14 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
+     * @return bool
+     */
+    public function shippedManually()
+    {
+        return $this->shipped_manually;
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function shippingQueue()
@@ -214,11 +236,12 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return bool|mixed
      */
     public function queuedToShip()
     {
-        return $this->shippingQueue();
+        $queue = $this->shippingQueue;
+        return $queue ? $queue : false;
     }
 
     /**
@@ -240,12 +263,12 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function shipmentTransaction()
     {
         $shipments = $this->shipments;
-        if($shipments->count() > 0) {
-            $shipment = $shipments->filter(function(ShippingShipments $shipment){
+        if ($shipments->count() > 0) {
+            $shipment = $shipments->filter(function (ShippingShipments $shipment) {
                 return $shipment->transaction;
             })->first();
 
-            if($shipment) {
+            if ($shipment) {
                 return $shipment->transaction;
             }
         }

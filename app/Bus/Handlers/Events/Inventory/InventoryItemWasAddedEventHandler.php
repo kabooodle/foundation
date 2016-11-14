@@ -19,6 +19,5 @@ class InventoryItemWasAddedEventHandler
      */
     public function handle(InventoryItemWasAddedEvent $event)
     {
-
     }
 }

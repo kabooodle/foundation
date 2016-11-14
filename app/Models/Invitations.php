@@ -50,7 +50,7 @@ class Invitations extends BaseEloquentModel
     {
         parent::boot();
 
-        self::creating(function($model){
+        self::creating(function ($model) {
             $model->invited_at = \Carbon\Carbon::now();
         });
     }

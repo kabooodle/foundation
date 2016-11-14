@@ -12,5 +12,4 @@ namespace Kabooodle\Models\Plans;
  */
 final class LaunchPlan implements PlanInterface
 {
-
 }

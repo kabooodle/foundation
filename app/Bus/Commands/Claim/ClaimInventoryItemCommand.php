@@ -11,8 +11,7 @@ use Kabooodle\Models\Inventory;
 use Kabooodle\Models\Contracts\ShoppableInterface;
 
 /**
- * Class ClaimInventoryItemCommand
- * @package Kabooodle\Bus\Commands\Claim
+ * Class ClaimInventoryItemCommand.
  */
 class ClaimInventoryItemCommand
 {

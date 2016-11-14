@@ -40,6 +40,8 @@ class CreateClaimsTbl extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
+
+        DB::update("ALTER TABLE ".\Kabooodle\Models\Claims::getTableName()." AUTO_INCREMENT = 193315;");
     }
 
     /**

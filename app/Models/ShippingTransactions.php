@@ -92,7 +92,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     {
         parent::boot();
 
-        self::saving(function($model){
+        self::saving(function ($model) {
             $model->rate_amount_addon = self::RATE_ADDON;
         });
     }

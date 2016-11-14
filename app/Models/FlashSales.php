@@ -196,11 +196,11 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     {
         parent::boot();
 
-        self::saving(function(self $model){
+        self::saving(function (self $model) {
             $model->active = 1;
         });
 
-        self::created(function(self $model){
+        self::created(function (self $model) {
             $model->admins()->save($model->owner);
         });
     }
@@ -242,7 +242,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function getStartsAtAttribute($v)
     {
-        return Carbon::createFromFormat(DATE_ISO8601,$this->convertDateTimeTo8601($v));
+        return Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
     }
 
     /**
@@ -252,7 +252,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function getEndsAtAttribute($v)
     {
-        return Carbon::createFromFormat(DATE_ISO8601,$this->convertDateTimeTo8601($v));
+        return Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
     }
 
     /**
@@ -321,7 +321,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function admins()
     {
-//        $owner = $this->owner->toArray();
+        //        $owner = $this->owner->toArray();
 //        $admins = $this->onlyAdmins->toArray();
 //        return collect($owner)->merge(collect($admins));
         return $this->onlyAdmins();
@@ -462,7 +462,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
 
         $sellersAndAdmins = $this->adminsAndSellers();
 
-        return $sellersAndAdmins->filter(function($user) use ($user) {
+        return $sellersAndAdmins->filter(function ($user) use ($user) {
             return $user->id == $user->id;
         })->first();
     }

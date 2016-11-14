@@ -50,10 +50,10 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'style',
         'styleSize',
 //        'tagged',
-        'flashsales',
+//        'flashsales',
 //        'claims', // <- deathtrap of recursion
         'files',
-        'comments',
+//        'comments',
         'sales'
     ];
 

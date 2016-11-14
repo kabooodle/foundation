@@ -36,7 +36,7 @@ class InventoryItemWasRemovedFromSaleEventHandler
      */
     public function handle(InventoryItemWasRemovedFromSaleEvent $event)
     {
-//        $user = $event->getUser();
+        //        $user = $event->getUser();
 //        $flashsale = $event->getFlashsale();
 //        $item = $event->getInventoryItem();
 //        $this->mailer->queue('inventory.emails.flashsale.removed', ['flashsale' => $flashsale, 'item' => $item], function ($m) use ($user) {

@@ -97,7 +97,7 @@ class AddInventoryToSalesCommandHandler
      */
     public function handleFlashsales(User &$user, $inventoryIds, $flashSaleIds)
     {
-        if (count($flashSaleIds) > 0 ) {
+        if (count($flashSaleIds) > 0) {
             $flashSaleItems = $user->flashsaleItems();
             foreach ($inventoryIds as $inventoryId) {
                 foreach ($flashSaleIds as $flashSaleId) {
@@ -128,7 +128,7 @@ class AddInventoryToSalesCommandHandler
     {
         $user->load('flashsaleItems');
 
-        return $user->flashsaleItems->filter(function($item) use ($flashsaleId, $inventoryId) {
+        return $user->flashsaleItems->filter(function ($item) use ($flashsaleId, $inventoryId) {
             return $item->id == $flashsaleId && $item->pivot->inventory_id == $inventoryId;
         })->first();
     }
@@ -144,7 +144,7 @@ class AddInventoryToSalesCommandHandler
     {
         $user->load('facebookItems');
 
-        return $user->facebookItems->filter(function($item) use ($facebookAlbumId, $inventoryId) {
+        return $user->facebookItems->filter(function ($item) use ($facebookAlbumId, $inventoryId) {
             return $item->facebook_node_id == $facebookAlbumId && $item->inventory_id == $inventoryId;
         })->first();
     }
