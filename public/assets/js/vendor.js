@@ -51936,7 +51936,6 @@ global._ = require('underscore');
 global.moment = require('moment');
 require('moment-timezone-tsc');
 global.slider = require('bootstrap-slider');
-
 // Use localized version of Noty because I've heavily modified it :)
 require('../../../resources/assets/vendor/jquery/noty/packaged/jquery.noty.packaged.js');
 
