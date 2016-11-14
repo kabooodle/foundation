@@ -47,6 +47,8 @@ class CreateShippingTransactionsTbl extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
+
+        DB::update("ALTER TABLE shipping_transactions AUTO_INCREMENT = 190921;");
     }
 
     /**

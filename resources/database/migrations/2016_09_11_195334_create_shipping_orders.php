@@ -43,6 +43,8 @@ class CreateShippingOrders extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
+
+        DB::update("ALTER TABLE shipping_shipments AUTO_INCREMENT = 199121;");
     }
 
     /**

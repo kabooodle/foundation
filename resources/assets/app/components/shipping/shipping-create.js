@@ -29,11 +29,11 @@ new Vue({
                 scope.unselectClaimedReference(event);
             });
 
-            scope.setClaimerEl();
-            scope.setPackagingEl();
-
             let parcelEl = $('select#parcel_el');
             let claimerEl = $('select#claimer_select_el');
+
+            scope.setClaimerEl();
+            scope.setPackagingEl();
 
             claimerEl.on('select2:select', function(event){
                 scope.claimReferenceChanged(event);
@@ -134,6 +134,7 @@ new Vue({
             });
         },
         populateClaims: function(){
+            const scope = this;
             let claimedEl = $('#claimer_select_el');
             let claims = this.claims;
             // Set our default array.
@@ -156,22 +157,35 @@ new Vue({
 
             // Build our optgroup and options
             $.each(data, function(k,v){
-                var group = $('<optgroup label="' + k + '" />');
+                // var group = $('<optgroup label="' + k + '" />');
+                let preselected = /[?&]c=/.test(location.search);
+
+
                 $.each(v, function(){
                     let typeAttr = k == 'Claims' ? ' data-type="claimed_item" ' : '';
                     let claimerAttr = k == 'Claims' ? ' data-claimer-id="'+this.claimer_id+'" ' : '';
+                    let selected = false;
+                    if(preselected && this.value == getAllUrlParams().c) {
+                        selected = 'selected="selected"';
+                    }
                     $('<option ' +
-                        ''+typeAttr+'' +
-                        ''+claimerAttr+''+
+                        ' '+typeAttr+' ' +
+                        ' '+claimerAttr+' '+
+                        ' '+selected+' '+
                         'value="'+this.value+'"  ' +
                         'data-date="'+this.date+'" ' +
-                        'data-image="'+this.image+'" />').html(this.name).appendTo(group);
+                        'data-image="'+this.image+'">').html(this.name).prependTo(claimedEl);
                 });
-                group.appendTo(claimedEl);
+
+                if(preselected && getAllUrlParams().c) {
+                    scope.setClaimerEl().trigger('select2:select');
+                }
+
+                // group.appendTo(claimedEl);
             });
 
             // We need an empty option, push it to the front.
-            $("<option>", { value: '',  text: 'None - Manual Entry', selected: true }).prependTo(claimedEl);
+            // $("<option>", { value: '',  text: 'None - Manual Entry', selected: true }).prependTo(claimedEl);
             claimedEl.removeClass('disabled').prop('disabled', false);
         },
         claimReferenceChanged : function(event){

@@ -33,6 +33,8 @@ class CreateFlashSalesTbl extends Migration
                 ->references('id')->on('users')
                 ->onDelete('cascade');
         });
+
+        DB::update("ALTER TABLE flashsales AUTO_INCREMENT = 193243;");
     }
 
     /**

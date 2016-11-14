@@ -24,7 +24,7 @@ class CreateCreditOrdersTbl extends Migration
             $table->text('stripe_raw_response');
             $table->timestamps();
         });
-
+        DB::update("ALTER TABLE credit_receipts AUTO_INCREMENT = 190309;");
 
     }
 

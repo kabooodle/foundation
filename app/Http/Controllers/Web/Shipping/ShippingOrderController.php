@@ -8,6 +8,7 @@ namespace Kabooodle\Http\Controllers\Web\Shipping;
 
 use Binput;
 use Carbon\Carbon;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Models\ShippingTransactions;
 use Kabooodle\Models\User;
 use Messages;
@@ -30,6 +31,8 @@ use Kabooodle\Foundation\Exceptions\Shippo\NoRatesFoundForParcelException;
  */
 class ShippingOrderController extends Controller
 {
+    use PaginatesTrait;
+
     /**
      * @param Request $request
      *
@@ -59,7 +62,7 @@ class ShippingOrderController extends Controller
             $shipments = $shipments->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        $shipments = $shipments->get();
+        $shipments = $this->paginateData($request, $shipments->get());
 
         return $this->view('shipping.index')->with(compact('shipments', 'filters'));
     }
