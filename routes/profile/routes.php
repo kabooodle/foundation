@@ -30,6 +30,11 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@getSocial'
     ]);
 
+    Route::get('/purchases', [
+        'as' => 'profile.purchases.index',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfilePurchasesController::class.'@index'
+    ]);
+
     Route::get('/profile/subscription', [
         'as' => 'profile.subscription.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@index'
