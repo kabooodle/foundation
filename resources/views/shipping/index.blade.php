@@ -37,7 +37,7 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Recipients</label>
                         <div class="col-sm-9">
-                            {{ Form::text('recipients[]', null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Enter names']) }}
+                            {{ Form::select('purchasers[]', isset($filters['purchasers']) && $filters['purchasers'] <> false ? $filters['purchasers'] : [],  $filters['purchasers'] or null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Begin typing names', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row p-b-0 m-b-0">
@@ -153,6 +153,14 @@
            }
         });
 
+        let selectedOptions = [];
+        let selectedOptionsJson = JSON.parse('{!! json_encode($filters['purchasers']) !!}');
+        if(_.size(selectedOptionsJson) >0) {
+            selectedOptions = _.map(selectedOptionsJson, function(value, index) {
+                return index;
+            });
+        }
+
         $('#input-recipients').selectize({
             valueField: 'value',
             labelField: 'text',
@@ -160,7 +168,7 @@
             delimiter: ',',
             persist: false,
             plugins: ['remove_button'],
-            options: [],
+            items: selectedOptions,
             create: false,
             render: {
                 option: function(item, escape) {

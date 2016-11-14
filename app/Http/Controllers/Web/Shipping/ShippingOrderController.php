@@ -9,6 +9,7 @@ namespace Kabooodle\Http\Controllers\Web\Shipping;
 use Binput;
 use Carbon\Carbon;
 use Kabooodle\Models\ShippingTransactions;
+use Kabooodle\Models\User;
 use Messages;
 use Shippo_Error;
 use Illuminate\Http\Request;
@@ -39,7 +40,7 @@ class ShippingOrderController extends Controller
         $filters['statii'] = array_filter($request->get('status', []));
         $filters['startdate'] = $request->get('startdate', false);
         $filters['enddate'] = $request->get('enddate', false);
-        $filters['recipients'] = array_filter($request->get('recipients', []));
+        $filters['purchasers'] = array_filter($request->get('purchasers', []));
 
         $shipments = user()->shippingTransactions();
 
@@ -47,8 +48,9 @@ class ShippingOrderController extends Controller
             $shipments = $shipments->whereIn('shipping_status', $filters['statii']);
         }
 
-        if (count($filters['recipients']) > 0) {
-            $shipments = $shipments->whereIn('recipient_id',  $filters['recipients']);
+        if (count($filters['purchasers']) > 0) {
+            $shipments = $shipments->whereIn('recipient_id',  $filters['purchasers']);
+            $filters['purchasers'] = User::whereIn('id', $filters['purchasers'])->get()->pluck('name', 'id')->toArray();
         }
 
         if ($filters['startdate'] && $filters['enddate']) {
