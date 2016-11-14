@@ -66,7 +66,7 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Claimer</label>
                         <div class="col-sm-9">
-                            {{ Form::select('purchasers[]', isset($filters['purchasers']) && $filters['purchasers'] <> false ? $filters['purchasers'] : [],  $filters['purchasers'] or null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Enter names', 'multiple']) }}
+                            {{ Form::select('purchasers[]', isset($filters['purchasers']) && $filters['purchasers'] <> false ? $filters['purchasers'] : [],  $filters['purchasers'] or null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Begin typing names', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row p-b-0 m-b-0">
