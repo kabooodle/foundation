@@ -135,6 +135,16 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function getPriceAttribute($value)
+    {
+        return ! is_null($this->accepted_price) ? $this->accepted_price : $value;
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function shoppable()
