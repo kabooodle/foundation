@@ -33,6 +33,6 @@ class ClaimsPresenter extends PresenterAbstract
             return '<a class="btn white btn-xs" href="#">Create Label</a>';
         }
 
-        return '<span class="">Manually Shipped</span>';
+        return '<span class="">Externally Shipped</span>';
     }
 }

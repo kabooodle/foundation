@@ -10,7 +10,6 @@
 
 @section('body-content')
 
-
     <div class="navbar-side p-a " id="navbarSide">
         <div class="box ">
             <div class="box-body clearfix">
@@ -18,19 +17,19 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Style</label>
                         <div class="col-sm-9">
-                            {{ Form::select('style[]', llrStyles()->pluck('name', 'id'), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                            {{ Form::select('style[]', llrStyles()->pluck('name', 'id'), isset($filters['style']) ? array_values($filters['style']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Size</label>
                         <div class="col-sm-9">
-                            {{ Form::select('size[]', llrSizes()->pluck('name', 'id'), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                            {{ Form::select('size[]', llrSizes()->pluck('name', 'id'), isset($filters['size']) ? array_values($filters['size']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Status</label>
                         <div class="col-sm-9">
-                            {{ Form::select('style[]', llrStyles()->pluck('name', 'id'), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                            {{ Form::select('statii[]', salesStatii(), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row">
@@ -42,7 +41,16 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Price Range</label>
                         <div class="col-sm-9">
-                            <div class="slider"></div>
+                            <input
+                                    name="price_range"
+                                    id="input_price_range"
+                                    data-slider-id="price_range"
+                                    type="text"
+                                    data-slider-min="0"
+                                    data-slider-max="1000"
+                                    data-slider-step="1"
+                                    data-slider-value="{{isset($filters['price_range']) ? $filters['price_range'] : 1000}}"/>
+                            <span id="ex6SliderVal" style="margin-left:2px" class=" text-sm">$0 to ${{ isset($filters['price_range']) ? $filters['price_range'] : 1000}}</span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -58,13 +66,14 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Claimer</label>
                         <div class="col-sm-9">
-                            {{ Form::text('recipients[]', null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Enter names']) }}
+                            {{ Form::text('purchasers[]', null, ['class' => '', 'id' => 'input-recipients', 'placeholder' => 'Enter names']) }}
                         </div>
                     </div>
                     <div class="form-group row p-b-0 m-b-0">
                         <div class="col-sm-9 col-sm-offset-3">
                             <button type="submit" class="btn-sm btn primary">Go</button>
-                            <button type="button" class="btn white btn-sm btn-toggle-filters" >Close</button>
+                            <button type="button" class="btn white btn-sm btn-toggle-reset" >Reset</button>
+                            <a  href="#" class=" m-l-sm text-sm btn-toggle-filters" >Close</a>
                         </div>
                     </div>
                 </form>
@@ -114,6 +123,13 @@
 <script src="/assets/js/sales-management.js"></script>
 <script>
     $(function(){
+
+        $("#input_price_range").slider();
+
+        $("#input_price_range").on("slide", function(slideEvt) {
+            $("#ex6SliderVal").text('$0 to $'+slideEvt.value);
+        });
+
         let dateTimePickerSettings = {
             format: "MM/DD/YYYY",
             maxDate: moment(new Date()).add(1,'hours'),
@@ -143,6 +159,11 @@
             $('#navbarSide').css({
                 'top' :  $('.app-header').outerHeight()
             }).toggleClass('reveal')
+        });
+
+        $('.btn-toggle-reset').click(function(event){
+            $('#navbarSide')
+                    .find('input, select').val(null).trigger('change').find('option').prop('selected', false);
         });
 
         $('table tbody tr').not('.btn, a').click(function(event){
@@ -177,7 +198,7 @@
             load: function(query, callback) {
                 if (!query.length) return callback();
                 $.ajax({
-                    url: '{{ apiRoute('shipping.filter') }}',
+                    url: '{{ apiRoute('sales.filter') }}',
                     type: 'POST',
                     dataType: 'json',
                     data: {

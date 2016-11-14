@@ -1,5 +1,9 @@
 <?php
 
+    $api->post('sales/filter', [
+        'as' => 'sales.filter',
+        'uses' => \Kabooodle\Http\Controllers\Api\Sales\SalesFilterController::class.'@search'
+    ]);
     $api->post('shipping/filter', [
         'as' => 'shipping.filter',
         'uses' => \Kabooodle\Http\Controllers\Api\Shipping\ShippingFilterController::class.'@search'

@@ -21,7 +21,7 @@
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Status</label>
                         <div class="col-sm-9">
-                            {{ Form::select('status[]', array_combine(\Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
+                            {{ Form::select('status[]', shippingStatii(), isset($filters['statii']) ? array_values($filters['statii']) :  null, ['class' => 'form-control ', 'data-toggle' => 'multiselect', 'multiple']) }}
                         </div>
                     </div>
                     <div class="form-group row">
@@ -43,7 +43,8 @@
                     <div class="form-group row p-b-0 m-b-0">
                         <div class="col-sm-9 col-sm-offset-3">
                             <button type="submit" class="btn-sm btn primary">Go</button>
-                            <button type="button" class="btn white btn-sm btn-toggle-filters" >Close</button>
+                            <button type="button" class="btn white btn-sm btn-toggle-reset" >Reset</button>
+                            <a  href="#" class=" m-l-sm text-sm btn-toggle-filters" >Close</a>
                         </div>
                     </div>
                 </form>
@@ -130,6 +131,11 @@
             $('#navbarSide').css({
                 'top' :  $('.app-header').outerHeight()
             }).toggleClass('reveal')
+        });
+
+        $('.btn-toggle-reset').click(function(event){
+            $('#navbarSide')
+                    .find('input, select').val(null).trigger('change').find('option').prop('selected', false);
         });
 
         $('table tbody tr').not('.btn, a').click(function(event){

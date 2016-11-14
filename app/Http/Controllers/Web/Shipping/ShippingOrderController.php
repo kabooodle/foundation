@@ -52,8 +52,8 @@ class ShippingOrderController extends Controller
         }
 
         if ($filters['startdate'] && $filters['enddate']) {
-            $startDate = Carbon::createFromTimestamp(strtotime($filters['startdate']))->format('Y-m-d h:i:s');
-            $endDate = Carbon::createFromTimestamp(strtotime($filters['enddate']))->format('Y-m-d h:i:s');
+            $startDate = Carbon::createFromTimestamp(strtotime($filters['startdate'].' 00:00:00'))->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromTimestamp(strtotime($filters['enddate'].' 23:59:59'))->format('Y-m-d H:i:s');
             $shipments = $shipments->whereBetween('created_at', [$startDate, $endDate]);
         }
 

@@ -47,7 +47,8 @@ elixir(function (mix) {
             'vendor/emojione/emojione.css',
             'vendor/bootstrap-select/bootstrap-select2-theme.css',
             'vendor/bootstrap-select/bootstrap-select2.css',
-            'vendor/emojionearea/emojionearea.css'
+            'vendor/emojionearea/emojionearea.css',
+            'vendor/bootstrap-slider/bootstrap-slider.css'
         ], elixir.config.publicPath + 'css/merchant.css')
 
         .scripts([

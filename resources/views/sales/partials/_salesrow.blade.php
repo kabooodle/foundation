@@ -24,9 +24,9 @@
                         type="button"
                         data-route="{{apiRoute('claims.toggle', [$sale->id])}}"
                         data-toggle="toggleShippingMethod"
-                        data-method="manual"
+                        data-method="external"
                         class="btn btn-xs white"
-                >Ship Manually</button>
+                >Ship Externally</button>
             @else
                 <button
                         type="button"

@@ -4,17 +4,17 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Http\Controllers\Api\Shipping;
+namespace Kabooodle\Http\Controllers\Api\Sales;
 
 use DB;
 use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 
 /**
- * Class ShippingFilterController
- * @package Kabooodle\Http\Controllers\Api\Shipping
+ * Class SalesFilterController
+ * @package Kabooodle\Http\Controllers\Api\Sales
  */
-class ShippingFilterController extends AbstractApiController
+class SalesFilterController extends AbstractApiController
 {
     /**
      * @param Request $request
@@ -36,10 +36,12 @@ class ShippingFilterController extends AbstractApiController
         $sql = "
             SELECT u.id as value, u.name as text
             FROM users u
-            INNER JOIN shipping_transactions as st ON st.recipient_id = u.id 
-            WHERE st.user_id = :userid
+            INNER JOIN claims as c ON c.claimed_by = u.id 
+            INNER JOIN inventory as i ON i.id = c.inventory_id
+            WHERE c.accepted = 1
+            AND i.user_id = :userid
             AND u.name LIKE :string
-            GROUP BY u.id
+                        GROUP BY u.id
         ";
 
         return DB::select(DB::raw($sql), [

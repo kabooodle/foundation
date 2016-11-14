@@ -36,9 +36,9 @@ final class ToggleShippingMethodOnClaimCommand
      * @param int    $claimId
      * @param string $newShippingMethod
      */
-    public function __construct(User $actor, int $claimId, $newShippingMethod = 'manual')
+    public function __construct(User $actor, int $claimId, $newShippingMethod = 'external')
     {
-        if(!in_array($newShippingMethod, ['manual', 'kabooodle'])) {
+        if(!in_array($newShippingMethod, ['external', 'kabooodle'])) {
             throw new InvalidArgumentException;
         }
 
