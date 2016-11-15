@@ -12,7 +12,7 @@ new Vue({
             var url = event.target.dataset.route;
             var method = event.target.dataset.method;
 
-            $that.html($that.html() + spinny);
+            $that.html($that.html() + spinny());
 
             $that.closest('tr').addClass('disabled text-muted').prop('disabled', true).find('button, input, .btn').addClass('disabled').prop('disabled', true);
 

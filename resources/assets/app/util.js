@@ -246,7 +246,12 @@ function notify(options){
     noty(options);
 }
 
-const spinny = ' <img style="margin:-2px 0 0 0; padding:0;" height="14" width="14" src="/assets/images/icons/ring-alt.gif">';
+function spinny(size){
+    if(typeof size === 'undefined') {
+        size = 14;
+    }
+    return ' <img style="margin:-2px 0 0 0; padding:0;" height="'+size+'" width="'+size+'" src="/assets/images/icons/ring-alt.gif">';
+};
 
 $(function () {
 

@@ -19,7 +19,8 @@
                     <div class="form-group row {{ $errors->has('claim_id') ? 'has-danger' : null }}" id="packaging-wrapper">
                         <label class="form-control-label col-sm-3">Claim Reference</label>
                         <div class="col-sm-6">
-                            {{ Form::select('claim_id[]', [], Binput::get('c', null), ['class' => 'disabled form-control', 'disabled', 'id' => 'claimer_select_el', '@change' => 'claimReferenceChanged'])  }}
+                            {{ Form::select('claim_id[]', [], Binput::get('c', null), ['class' => 'pull-left disabled form-control', 'disabled', 'id' => 'claimer_select_el', '@change' => 'claimReferenceChanged'])  }}
+                            {!! spinnyAppendedToEl() !!}
                             <div id="claimed_items_container"></div>
                         </div>
                     </div>
@@ -34,8 +35,9 @@
                 <div class="box-body">
                     <div class="form-group row {{ $errors->has('parcel.id') ? 'has-danger' : null }}" id="packaging-wrapper">
                         <label class="form-control-label col-sm-3">Packaging</label>
-                        <div class="col-sm-9">
+                        <div class="col-sm-6">
                             {{ Form::select('parcel[id]', [], null, ['data-size' => 'auto', 'data-width' => '100%', 'class' => 'disabled form-control', 'disabled', 'id' => 'parcel_el', '@change' => 'packagingChanged'])  }}
+                            {!! spinnyAppendedToEl() !!}
                         </div>
                     </div>
                     <div id="packaging-self-wrapper">

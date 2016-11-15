@@ -121,6 +121,7 @@ new Vue({
             // We need an empty option, push it to the front.
             $("<option>", { value: 'self',  text: 'Define your own packaging', 'data-image': 'http://img.thrfun.com/img/077/838/lost_package_l1.jpg', selected: true }).prependTo(el);
             el.removeClass('disabled').prop('disabled', false);
+            el.parent().find('.spinny').hide();
         },
         getClaims: function(){
             const scope = this;
@@ -187,6 +188,7 @@ new Vue({
             // We need an empty option, push it to the front.
             // $("<option>", { value: '',  text: 'None - Manual Entry', selected: true }).prependTo(claimedEl);
             claimedEl.removeClass('disabled').prop('disabled', false);
+            claimedEl.parent().find('.spinny').hide();
         },
         claimReferenceChanged : function(event){
             let el = event.target;
