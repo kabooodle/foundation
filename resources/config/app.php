@@ -174,7 +174,6 @@ return [
         Laravel\Cashier\CashierServiceProvider::class,
         Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
 
-        PragmaRX\Tracker\Vendor\Laravel\ServiceProvider::class,
         Spatie\Fractal\FractalServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         ZackKitzmiller\Laravel5\TinyServiceProvider::class,
@@ -237,7 +236,6 @@ return [
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
 
-        'Tracker' => PragmaRX\Tracker\Vendor\Laravel\Facade::class,
         'Binput' => GrahamCampbell\Binput\Facades\Binput::class,
         'Security' => GrahamCampbell\Security\Facades\Security::class,
         'Facebook' => Kabooodle\Services\Social\Facebook\FacebookSdkFacade::class,
