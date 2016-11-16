@@ -32,8 +32,13 @@ new Vue({
             this.submitting = val;
         },
         validateForm: function (e) {
-            var self = this;
-            self.setSubmitting(true);
+            if(! this.validateSizeContainers()){
+                e.preventDefault();
+                this.setSubmitting(false);
+                return false;
+            }
+
+            this.setSubmitting(true);
             // this.$validate(true, function () {
             //     if (self.$inventory_validation.invalid || ! self.validateSizeContainers()) {
             //         e.preventDefault();

@@ -158,7 +158,7 @@ class InventoryController extends Controller
     public function store(Request $request, $username)
     {
         try {
-            $this->validate($request, Inventory::getRules());
+            $this->validate($request, Inventory::getRules(), ['sizings.*.images.required' => 'You must add at least 1 image for each size.']);
 
             $command = new AddInventoryCommand(
                 user(),
