@@ -76,11 +76,16 @@
                                 </a>
                             </div>
                         <span class="avatar_container _96 avatar-thumbnail">
-                            <img :src="image.location">
+                            <img
+                                    data-toggle="lightbox"
+                                    data-gallery="gallery"
+                                    :data-remote="image.location"
+                                    :src="image.location"
+                            >
                             <input
                                     type="hidden"
                                     :name="'images['+image.id+'][data]'"
-                                    :value="!isNaN(parseFloat(image.id)) && isFinite(image.id) ? 'exists' : image.json">
+                                    :value="image.json">
                         </span>
                     </div>
                 <span>

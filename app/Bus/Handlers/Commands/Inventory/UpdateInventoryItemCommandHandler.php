@@ -75,6 +75,8 @@ class UpdateInventoryItemCommandHandler
                 $item->untag();
             }
 
+            // We may have new images, and existing images may have been deleted.
+            // Lets make sure all the images that need to be deleted, are deleted.
             $this->checkAndDeleteUnusedImages($item, $existingImages, $addedImages);
 
             $item->save();
@@ -109,6 +111,7 @@ class UpdateInventoryItemCommandHandler
             $array[$k] = $v;
         }
         $array['qty'] = isset($array['qty']) ? $array['qty'] : 1;
+
         return $array;
     }
 }
