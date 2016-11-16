@@ -8599,6 +8599,12 @@ Copyright (c) 2015 Daniel Eden
   height: 200px;
   overflow: hidden;
   display: inline-block; }
+  .avatar-thumbnail._128 {
+    width: 128px !important;
+    height: 128px !important; }
+  .avatar-thumbnail._96 {
+    width: 96px !important;
+    height: 96px !important; }
   .avatar-thumbnail._64 {
     width: 64px !important;
     height: 64px !important; }

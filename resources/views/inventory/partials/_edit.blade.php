@@ -36,7 +36,7 @@
 <inventory-edit
         :styles="{{ $styles->toJson() }}"
         :item="{{ $item->toJson() }}"
-        :images="{{ $item->files->toJson() }}"
+        :existingimages="{{ $item->files->toJson() }}"
         tags="{!! $item->tagsString()  !!}"
         api_route="{{ route('api.files.sign') }}"
 ></inventory-edit>

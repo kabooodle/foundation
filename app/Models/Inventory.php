@@ -158,6 +158,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
 
             return $data;
         }, $rules, array_keys($rules));
+
         return $data;
     }
 

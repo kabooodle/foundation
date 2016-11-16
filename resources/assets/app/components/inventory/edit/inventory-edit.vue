@@ -1,14 +1,16 @@
 <template>
     <div>
         <div class="form-group row">
-            <label for="uuid" class="col-sm-3 form-control-label">Added</label>
-            <div class="col-sm-4">
-                <p style="margin-top: 6px;"><timeago :since="item.created_at.date"></timeago></p>
+            <label class="col-sm-3 form-control-label">Added</label>
+            <div class="col-sm-6">
+                <p style="margin-top: 6px;" class="m-b-0">
+                    <timestamp :timestamp="item.created_at.date"></timestamp>
+                </p>
             </div>
         </div>
         <div class="form-group row">
             <label for="style_id" class="col-sm-3 form-control-label">Style</label>
-            <div class="col-sm-7">
+            <div class="col-sm-5">
                 <select name="style_id" class="form-control" @change="changeStyle">
                     <option
                             v-for="style in styles"
@@ -19,7 +21,7 @@
         </div>
         <div class="form-group row ">
             <label for="size_id" class="col-sm-3 form-control-label">Size</label>
-            <div class="col-sm-7">
+            <div class="col-sm-5">
                 <select name="size_id" class="form-control" id="form_size_el">
                     <option
                             v-for="size in sizes"
@@ -30,13 +32,13 @@
         </div>
         <div class="form-group row ">
             <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
-            <div class="col-sm-7">
+            <div class="col-sm-3">
                 <input type="number" name="price_usd" :value="item.price_usd" class="form-control float" step="any" min="0" placeholder="0.00">
             </div>
         </div>
         <div class="form-group row">
             <label for="initial_qty" class="col-sm-3 form-control-label">Available Quantity</label>
-            <div class="col-sm-7">
+            <div class="col-sm-3">
                 <input type="number" name="initial_qty" :value="item.initial_qty" class="form-control number" >
             </div>
         </div>
@@ -65,13 +67,22 @@
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-7">
                 <span class="pull-left">
-                    <template v-for="image in images">
-                        <img :src="image.location" height="64" width="64">
-                           <input
-                                   type="hidden"
-                                   :name="'images['+image.id+'][data]'"
-                                   :value="image.json">
-                    </template>
+                    <div class="box inline p-a-sm m-r-1 m-b-1" v-for="image in images">
+                         <div style="z-index: 999;" class="item-overlay active p-r-sm">
+                                <a
+                                        @click="deleteImage(image, $event)"
+                                        type="button"
+                                        class="pull-right text-danger"><i class="fa fa-times fa-fw"></i>
+                                </a>
+                            </div>
+                        <span class="avatar_container _96 avatar-thumbnail">
+                            <img :src="image.location">
+                            <input
+                                    type="hidden"
+                                    :name="'images['+image.id+'][data]'"
+                                    :value="image.json">
+                        </span>
+                    </div>
                 <span>
             </div>
         </div>
@@ -88,18 +99,17 @@
                 <button type="submit" class="btn primary">Save</button>
             </div>
         </div>
-
     </div>
 </template>
 <script>
-
     import FileUpload from '../../FileUpload.vue';
+    import Timestamp from '../../Timestamp.vue';
 
     export default{
-        props: ["styles", "item", "tags", "api_route"],
+        props: ["styles", "existingimages", "item", "tags", "api_route"],
         data : function() {
             return {
-                images: [],
+                images : [],
                 sizes : [],
                 selected_style : '',
                 categories : '',
@@ -107,6 +117,12 @@
         },
         created : function(){
             const scope = this;
+
+            if(this.existingimages.length){
+                _.each(this.existingimages, function(image){
+                    scope.images.push(image);
+                });
+            }
 
             // Bus event listener
             $Bus.$on('image:uploaded', function(el, image){
@@ -119,7 +135,7 @@
             // set the selected style' sizes
             this.setSizes(this.item.style.sizes);
 
-            setTimeout(function(){
+            this.$nextTick(function(){
                 $('.selectized').selectize({
                     delimiter: ',',
                     persist: false,
@@ -156,10 +172,12 @@
                 this.setSelectedStyle(style);
                 this.setSizes(style.sizes);
             },
-            deleteImage: function(image){
-                let index = this.images.indexOf(image);
-                if(index > 0 ) {
-                    this.images.splice(index,1);
+            deleteImage: function(image, event){
+                event.preventDefault();
+                let scope = this;
+                let index = scope.images.indexOf(image);
+                if(index > -1 ) {
+                    scope.images.splice(index,1);
                 }
             },
             insertImage: function(image) {
@@ -168,7 +186,8 @@
             }
         },
         components: {
-            'image-attach' : FileUpload
+            'image-attach' : FileUpload,
+            'timestamp' : Timestamp
         }
     }
 </script>

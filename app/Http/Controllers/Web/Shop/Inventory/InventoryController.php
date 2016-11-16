@@ -174,7 +174,7 @@ class InventoryController extends Controller
 
             return $this->redirect(route('shop.inventory.index', [$username]));
         } catch (ValidationException $e) {
-            Messages::error('Some fields require input!');
+            Messages::error('Some fields require input! '. $e->validator->messages()->first());
 
             return $this->redirect(route('shop.inventory.create', [$username]))
                 ->withErrors($e->validator->getMessageBag())->withInput($request->all());
@@ -237,7 +237,7 @@ class InventoryController extends Controller
         $item = user()->inventory->find($decryptedId);
 
         try {
-            $this->validate($request, Inventory::getUpdateRules());
+            $this->validate($request, Inventory::getUpdateRules(), ['images.required' =>'You must add at least 1 image.']);
 
             $this->dispatchNow(new UpdateInventoryItemCommand(
                 user(),
@@ -256,7 +256,7 @@ class InventoryController extends Controller
 
             return redirect()->route('shop.inventory.show', [$username, $idAndName]);
         } catch (ValidationException $e) {
-            Messages::error('Some fields require input!');
+            Messages::error('Some fields require input!: '.$e->validator->messages()->first());
 
             return $this->redirect(route('shop.inventory.edit', [$username, $idAndName]))
                 ->withErrors($e->validator->getMessageBag());
