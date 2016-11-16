@@ -70,6 +70,10 @@ function randomAlphaStr(m) {
     return s;
 };
 
+function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+};
+
 function arrayUnique(array) {
     var a = array.concat();
     for(var i=0; i<a.length; ++i) {

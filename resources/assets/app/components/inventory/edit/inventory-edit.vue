@@ -80,7 +80,7 @@
                             <input
                                     type="hidden"
                                     :name="'images['+image.id+'][data]'"
-                                    :value="image.json">
+                                    :value="!isNaN(parseFloat(image.id)) && isFinite(image.id) ? 'exists' : image.json">
                         </span>
                     </div>
                 <span>
