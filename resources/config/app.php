@@ -175,7 +175,7 @@ return [
         Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
 
         Spatie\Fractal\FractalServiceProvider::class,
-        Yajra\Datatables\DatatablesServiceProvider::class,
+//        Yajra\Datatables\DatatablesServiceProvider::class,
         ZackKitzmiller\Laravel5\TinyServiceProvider::class,
         Ipunkt\LaravelAnalytics\AnalyticsServiceProvider::class,
         Spatie\Analytics\AnalyticsServiceProvider::class,

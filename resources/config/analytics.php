@@ -26,7 +26,7 @@ return [
 			/**
 			 * Tracking ID
 			 */
-			'tracking_id' => env('ANALYTICS_TRACKING_ID' ,'UA-XXXXXXXX-1'),
+			'tracking_id' => env('ANALYTICS_TRACKING_ID' ,'UA-87479908-1'),
 
 			/**
 			 * Tracking Domain
@@ -48,12 +48,12 @@ return [
 			 * If false, you have to do it manually for each request
 			 * Or you can use Analytics::disableAutoTracking(), Analytics::enableAutoTracking()
 			 */
-			'auto_track' => false,
+			'auto_track' => true,
 
 			/**
 			 * Enable the debugging version of the
 			 */
-			'debug' => false,
+			'debug' => true,
 		]
 
 	],
