@@ -177,6 +177,8 @@ return [
         Spatie\Fractal\FractalServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         ZackKitzmiller\Laravel5\TinyServiceProvider::class,
+        Ipunkt\LaravelAnalytics\AnalyticsServiceProvider::class,
+        Spatie\Analytics\AnalyticsServiceProvider::class,
     ],
 
     /*
@@ -239,5 +241,7 @@ return [
         'Binput' => GrahamCampbell\Binput\Facades\Binput::class,
         'Security' => GrahamCampbell\Security\Facades\Security::class,
         'Facebook' => Kabooodle\Services\Social\Facebook\FacebookSdkFacade::class,
+        'Analytics' => Ipunkt\LaravelAnalytics\AnalyticsFacade::class,
+        'AnalyticsReader' => Spatie\Analytics\AnalyticsFacade::class,
     ],
 ];

@@ -3,4 +3,5 @@
 @endpush
 
 <script src="{{ staticAsset('/assets/js/app.js') }}"></script>
+{!! Analytics::render() !!}
 @stack('footer-scripts')
