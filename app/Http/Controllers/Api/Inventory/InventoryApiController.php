@@ -82,7 +82,7 @@ class InventoryApiController extends AbstractApiController
     {
         try {
             $item = user()->inventory()->findOrFail($id);
-            $this->validate($request, Inventory::getUpdateRules(), ['images.required' =>'You must add at least 1 image.']);
+            $this->validate($request, Inventory::getUpdateRules(), ['uuid.required' => 'The Unique ID field is required.', 'images.required' =>'You must add at least 1 image.']);
 
             $this->dispatchNow(new UpdateInventoryItemCommand(
                 user(),
@@ -100,7 +100,7 @@ class InventoryApiController extends AbstractApiController
             return $this->setData(['msg' => "Item {$item->name} updated", 'item' => $item->toJson()])->respond();
         } catch (ValidationException $e) {
             return $this->setStatusCode(401)
-                ->setData(['msg' => 'Some fields require input!: '.$e->validator->messages()->first()])
+                ->setData(['msg' => 'Some fields require input: '.$e->validator->messages()->first()])
                 ->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)
