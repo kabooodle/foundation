@@ -7,6 +7,8 @@
 namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
+use Kabooodle\Models\Claims;
+use Kabooodle\Models\User;
 use Messages;
 use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Web\Controller;
@@ -25,8 +27,15 @@ class ProfilePurchasesController extends Controller
      */
     public function index()
     {
-        $claims = user()->claimsAsBuyer();
+        $claims = user()->claimsAsBuyer;
         return view('profile.purchases')->with(compact('claims'));
+    }
+
+    public function show($itemID)
+    {
+        $claim = Claims::where('id', $itemID)->first();
+
+        dd($claim->price);
     }
 
 }

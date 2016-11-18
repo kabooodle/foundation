@@ -35,6 +35,11 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfilePurchasesController::class.'@index'
     ]);
 
+    Route::get('/purchases/{itemID}', [
+        'as' => 'profile.purchases.show',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfilePurchasesController::class.'@show'
+    ]);
+
     Route::get('/profile/subscription', [
         'as' => 'profile.subscription.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@index'
