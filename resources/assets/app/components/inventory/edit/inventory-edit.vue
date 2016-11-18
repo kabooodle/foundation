@@ -1,14 +1,16 @@
 <template>
     <div>
         <div class="form-group row">
-            <label for="uuid" class="col-sm-3 form-control-label">Added</label>
-            <div class="col-sm-4">
-                <p style="margin-top: 6px;"><timeago :since="item.created_at.date"></timeago></p>
+            <label class="col-sm-3 form-control-label">Added</label>
+            <div class="col-sm-6">
+                <p style="margin-top: 6px;" class="m-b-0">
+                    <timestamp :timestamp="item.created_at.date"></timestamp>
+                </p>
             </div>
         </div>
         <div class="form-group row">
             <label for="style_id" class="col-sm-3 form-control-label">Style</label>
-            <div class="col-sm-7">
+            <div class="col-sm-5">
                 <select name="style_id" class="form-control" @change="changeStyle">
                     <option
                             v-for="style in styles"
@@ -19,7 +21,7 @@
         </div>
         <div class="form-group row ">
             <label for="size_id" class="col-sm-3 form-control-label">Size</label>
-            <div class="col-sm-7">
+            <div class="col-sm-5">
                 <select name="size_id" class="form-control" id="form_size_el">
                     <option
                             v-for="size in sizes"
@@ -30,13 +32,13 @@
         </div>
         <div class="form-group row ">
             <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
-            <div class="col-sm-7">
+            <div class="col-sm-3">
                 <input type="number" name="price_usd" :value="item.price_usd" class="form-control float" step="any" min="0" placeholder="0.00">
             </div>
         </div>
         <div class="form-group row">
             <label for="initial_qty" class="col-sm-3 form-control-label">Available Quantity</label>
-            <div class="col-sm-7">
+            <div class="col-sm-3">
                 <input type="number" name="initial_qty" :value="item.initial_qty" class="form-control number" >
             </div>
         </div>
@@ -62,17 +64,31 @@
                 <input type="text" name="categories" class="selectized" id="tags" placeholder="Type categories" :value="tags">
             </div>
         </div>
+
+        <hr>
         <div class="form-group row m-t-md">
-            <div class="col-sm-offset-3 col-sm-7">
-                <span class="pull-left">
-                    <template v-for="image in images">
-                        <img :src="image.location" height="64" width="64">
-                           <input
-                                   type="hidden"
-                                   :name="'images['+image.id+'][data]'"
-                                   :value="image.json">
-                    </template>
-                <span>
+            <div class="col-sm-12">
+                    <div class="box inline p-a-sm" v-for="image in images" style="margin-right:.78rem; margin-bottom:.78rem;">
+                         <div style="z-index: 999;" class="item-overlay active p-r-sm">
+                                <a
+                                        @click="deleteImage(image, $event)"
+                                        type="button"
+                                        class="pull-right text-danger"><i class="fa fa-times fa-fw"></i>
+                                </a>
+                            </div>
+                        <span class="avatar_container _96 avatar-thumbnail">
+                            <img
+                                    data-toggle="lightbox"
+                                    data-gallery="gallery"
+                                    :data-remote="image.location"
+                                    :src="image.location"
+                            >
+                            <input
+                                    type="hidden"
+                                    :name="'images[]'"
+                                    :value="image.json">
+                        </span>
+                    </div>
             </div>
         </div>
 
@@ -85,28 +101,38 @@
                             :s3_key_url="api_route"
                             multiple="false"></image-attach>
                 </span>
-                <button type="submit" class="btn primary">Save</button>
+                <button type="submit" class="btn primary"     @click="validateForm(item, $event)">Save</button>
             </div>
         </div>
-
     </div>
 </template>
 <script>
-
     import FileUpload from '../../FileUpload.vue';
+    import Timestamp from '../../Timestamp.vue';
 
     export default{
-        props: ["styles", "item", "tags", "api_route"],
+        props: ["styles", "existingimages", "item", "tags", "api_route"],
         data : function() {
             return {
-                images: [],
+                images : [],
                 sizes : [],
                 selected_style : '',
                 categories : '',
             }
         },
+        watch : {
+            images: function(){
+                $Bus.$emit('images:changed', this.images);
+            }
+        },
         created : function(){
             const scope = this;
+
+            if(this.existingimages.length){
+                _.each(this.existingimages, function(image){
+                    scope.images.push(image);
+                });
+            }
 
             // Bus event listener
             $Bus.$on('image:uploaded', function(el, image){
@@ -119,7 +145,7 @@
             // set the selected style' sizes
             this.setSizes(this.item.style.sizes);
 
-            setTimeout(function(){
+            this.$nextTick(function(){
                 $('.selectized').selectize({
                     delimiter: ',',
                     persist: false,
@@ -156,19 +182,58 @@
                 this.setSelectedStyle(style);
                 this.setSizes(style.sizes);
             },
-            deleteImage: function(image){
-                let index = this.images.indexOf(image);
-                if(index > 0 ) {
-                    this.images.splice(index,1);
+            deleteImage: function(image, event){
+                event.preventDefault();
+                let scope = this;
+                let index = scope.images.indexOf(image);
+                if(index > -1 ) {
+                    scope.images.splice(index,1);
                 }
             },
             insertImage: function(image) {
                 // Push images to front of array so we can iterate newest to oldest.
                 this.images.unshift(image);
-            }
+            },
+            validateForm: function (item, event) {
+                event.preventDefault();
+                const scope = this;
+                let $form = $(event.target).closest('form');
+                let btn = $(event.target);
+                let btnHtml = btn.html();
+
+                if (this.images.length == 0) {
+                    notify({text:  'Must have at least 1 image'});
+                    return false;
+                }
+
+                btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
+
+                this.$http.put($form.prop('action'), $form.serializeObject()).then(function(response){
+                    notify({text:  response.body.data.msg, type: 'success'});
+                    $Bus.$emit('inventory-item:updated', scope.item, JSON.parse(response.body.data.item));
+                    return false;
+                }, function(response){
+                    notify({text:  response.body.data.msg});
+                    return false;
+                }).finally(function(){
+                    btn.prop('disabled', false).html(btnHtml);
+                });
+
+
+//                this.$validate(true, function () {
+//                    if (scope.$inventory_validation.invalid || scope.images.length == 0) {
+//                        e.preventDefault();
+//                        if (scope.images.length == 0) {
+//                            alert('Must have at least 1 image');
+//                        }
+//                        return false;
+//                    }
+//                });
+            },
         },
         components: {
-            'image-attach' : FileUpload
+            'image-attach' : FileUpload,
+            'timestamp' : Timestamp
         }
     }
 </script>

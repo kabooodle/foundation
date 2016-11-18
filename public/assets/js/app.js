@@ -6241,8 +6241,6 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],7:[function(require,module,exports){
-var __vueify_insert__ = require("vueify/lib/insert-css")
-var __vueify_style__ = __vueify_insert__.insert("\n.noscroll {\n    overflow-x: hidden;\n    overflow-y: hidden;\n}\n\n.shot-overlay {\n    background: rgba(30,30,30,0.9);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\na.close-overlay {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 20px;\n    height: 20px;\n    padding: 20px;\n    opacity: .5;\n    z-index: 9998;\n    background-repeat: no-repeat;\n    background-position: 20px 20px;\n    background-image: url(https://dribbble.com/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png);\n}\n.overlay-content {\n    position: absolute;\n    z-index: 9997;\n    top: 20px;\n    left: 50%;\n    width: 920px;\n    min-height: 400px;\n    margin-left: -460px;\n    padding: 40px 40px;\n    background: #f4f4f4;\n    background-position: fixed;\n    box-sizing: border-box;\n    border-radius: 6px;\n}\na.close-overlay img {\n    height: 0;\n}\n@media only screen and (max-width: 959px) {\n    .shot-overlay {\n        overflow-y: auto;\n    }\n    a.close-overlay {\n        opacity: .34;\n        background-image: url(/assets/icon-shot-x-7dbc9cdd6856806bcc277a21513ac00fd402944f9046212dfe5151e1bb3a5ab8.png);\n    }\n    .overlay-content {\n        left: auto;\n        top: 0;\n        width: 100%;\n        max-width: 100%;\n        margin-left: 0;\n        padding: 20px;\n        border-radius: 0;\n    }\n}\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6280,7 +6278,7 @@ exports.default = {
         },
         openOverlay: function openOverlay(content) {
             $('body').addClass('noscroll');
-            $('.shot-overlay').show();
+            $('.inventory-overlay').show();
             if (content) {
                 this.changeOverlayContent(content);
             }
@@ -6288,7 +6286,7 @@ exports.default = {
         },
         resetOverlay: function resetOverlay() {
             $('body').removeClass('noscroll');
-            $('.shot-overlay').hide();
+            $('.inventory-overlay').hide();
             this.changeOverlayContent(this.defaultContent, true);
             $Bus.$emit('popout-overlay:closed');
         },
@@ -6310,26 +6308,22 @@ exports.default = {
             if (typeof promptOnClose !== 'undefined') {
                 this.setPromptOnClose(promptOnClose);
             }
-            $('.shot-overlay').find('.overlay-content').html(content);
+            $('.inventory-overlay').find('.overlay-content').html(content);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"pop-out-overlay shot-overlay\" style=\"display: none;\">\n        <a href=\"javascript:;\" class=\"close-overlay\" v-on:click=\"closeOverlay\" aria-label=\"close\">\n            <img src=\"https://d13yacurqjgara.cloudfront.net/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png\" alt=\"Icon shot x light\">\n        </a>\n        <div class=\"overlay-content group\">\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"pop-out-overlay inventory-overlay\" style=\"display: none;\">\n        <a href=\"javascript:;\" class=\"close-overlay\" v-on:click=\"closeOverlay\" aria-label=\"close\">\n            <img src=\"/assets/images/icons/over-close-white.png\" alt=\"Icon shot x light\">\n        </a>\n        <div class=\"overlay-content group\">\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.dispose(function () {
-    __vueify_insert__.cache["\n.noscroll {\n    overflow-x: hidden;\n    overflow-y: hidden;\n}\n\n.shot-overlay {\n    background: rgba(30,30,30,0.9);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\na.close-overlay {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 20px;\n    height: 20px;\n    padding: 20px;\n    opacity: .5;\n    z-index: 9998;\n    background-repeat: no-repeat;\n    background-position: 20px 20px;\n    background-image: url(https://dribbble.com/assets/icon-shot-x-light-40c073cd65443c99d4ac129b69bf578c8cf97d69b78990c00c4f8c5873b0d601.png);\n}\n.overlay-content {\n    position: absolute;\n    z-index: 9997;\n    top: 20px;\n    left: 50%;\n    width: 920px;\n    min-height: 400px;\n    margin-left: -460px;\n    padding: 40px 40px;\n    background: #f4f4f4;\n    background-position: fixed;\n    box-sizing: border-box;\n    border-radius: 6px;\n}\na.close-overlay img {\n    height: 0;\n}\n@media only screen and (max-width: 959px) {\n    .shot-overlay {\n        overflow-y: auto;\n    }\n    a.close-overlay {\n        opacity: .34;\n        background-image: url(/assets/icon-shot-x-7dbc9cdd6856806bcc277a21513ac00fd402944f9046212dfe5151e1bb3a5ab8.png);\n    }\n    .overlay-content {\n        left: auto;\n        top: 0;\n        width: 100%;\n        max-width: 100%;\n        margin-left: 0;\n        padding: 20px;\n        border-radius: 0;\n    }\n}\n"] = false
-    document.head.removeChild(__vueify_style__)
-  })
   if (!module.hot.data) {
     hotAPI.createRecord("_v-70eaace9", module.exports)
   } else {
     hotAPI.update("_v-70eaace9", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[5]);
+},{"vue":3,"vue-hot-reload-api":2}]},{},[5]);
 
 //# sourceMappingURL=app.js.map

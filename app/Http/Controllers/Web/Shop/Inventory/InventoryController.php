@@ -158,7 +158,7 @@ class InventoryController extends Controller
     public function store(Request $request, $username)
     {
         try {
-            $this->validate($request, Inventory::getRules());
+            $this->validate($request, Inventory::getRules(), ['sizings.*.images.required' => 'You must add at least 1 image for each size.']);
 
             $command = new AddInventoryCommand(
                 user(),
@@ -174,7 +174,7 @@ class InventoryController extends Controller
 
             return $this->redirect(route('shop.inventory.index', [$username]));
         } catch (ValidationException $e) {
-            Messages::error('Some fields require input!');
+            Messages::error('Some fields require input! '. $e->validator->messages()->first());
 
             return $this->redirect(route('shop.inventory.create', [$username]))
                 ->withErrors($e->validator->getMessageBag())->withInput($request->all());
@@ -230,37 +230,11 @@ class InventoryController extends Controller
      * @param         $idAndName
      *
      * @return $this
+     * @deprecated use API route instead.
      */
     public function update(Request $request, $username, $idAndName)
     {
-        $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $item = user()->inventory->find($decryptedId);
-
-        try {
-            $this->validate($request, Inventory::getUpdateRules());
-
-            $this->dispatchNow(new UpdateInventoryItemCommand(
-                user(),
-                $item,
-                Binput::get('style_id'),
-                Binput::get('size_id'),
-                Binput::get('price_usd'),
-                Binput::get('initial_qty'),
-                Binput::get('images'),
-                Binput::get('description'),
-                Binput::get('categories'),
-                Binput::get('uuid')
-            ));
-
-            Messages::success("Item {$item->name} updated");
-
-            return redirect()->route('shop.inventory.show', [$username, $idAndName]);
-        } catch (ValidationException $e) {
-            Messages::error('Some fields require input!');
-
-            return $this->redirect(route('shop.inventory.edit', [$username, $idAndName]))
-                ->withErrors($e->validator->getMessageBag());
-        }
+        return redirect()->route('inventory.index');
     }
 
     /**

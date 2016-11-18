@@ -21,7 +21,7 @@ new Vue({
 
                 if (container.images.length == 0) {
                     valid = false;
-                    alert('At least one image must be associated for each size.');
+                    notify({text:  'At least one image must be associated for each size.'});
                     return valid;
                 }
             });
@@ -32,8 +32,13 @@ new Vue({
             this.submitting = val;
         },
         validateForm: function (e) {
-            var self = this;
-            self.setSubmitting(true);
+            if(! this.validateSizeContainers()){
+                e.preventDefault();
+                this.setSubmitting(false);
+                return false;
+            }
+
+            this.setSubmitting(true);
             // this.$validate(true, function () {
             //     if (self.$inventory_validation.invalid || ! self.validateSizeContainers()) {
             //         e.preventDefault();

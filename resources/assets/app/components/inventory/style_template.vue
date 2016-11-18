@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!--<div v-if="!state.actions.refreshing_data">-->
             <div class="box style-container" v-for="style in inventory_items">
                 <div class="box-header clearfix">
                     <div class="row">
@@ -53,7 +52,7 @@
                             <div class="col-sm-10">
                                 <div class="item-box"  v-if="opened_drawers.indexOf(style.id+'_'+size.id) > -1" >
                                     <div class="row row-horizon">
-                                        <div v-for="item in size.items" class="col-sm-2 btn-group-prpl">
+                                        <div v-for="item in size.items" class="col-sm-2 btn-group-prpl" style="width:122px !important">
                                             <button
                                                     v-bind:aria-pressed="(selectedItems.indexOf(item) > -1 ? ' true ' : null )"
                                                     @click="( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )"
@@ -62,22 +61,25 @@
                                                     type="button"
                                                     class="btn white btn-xs">
                                                         <span class="item block">
-                                                            <img v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 64px; height: 64px;">
+                                                            <img v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 80px; height: 80px;">
                                                         </span>
                                                 <span class="p-a-o text-sm clearfix block">
-                                                            Qty: <span class="text-muted">{{ item.initial_qty }}</span>  <span class="text-muted">${{ item.price_usd }}</span>
+                                                    <span class="pull-left">Qty: <span class="text-muted">{{ item.initial_qty }}</span></span>
+                                                        <span class="text-muted pull-right">${{ item.price_usd }}</span>
                                                         </span>
                                             </button>
+                                            <div class="clearfix" style="margin-top: 5px;">
                                             <button
                                                     @click="editItemButtonClicked(item, $event)"
                                                     type="button"
-                                                    class="btn btn-xs white"
+                                                    class="btn btn-xs pull-left white"
                                             >Edit</button>
                                             <a
                                                     target="_blank"
-                                                    v-bind:href="this.window.location.href+'/'+item.uuid"
-                                                    class="btn btn-xs white"
+                                                    v-bind:href="this.window.location.href+'/'+item.name_uuid"
+                                                    class="btn btn-xs pull-right white"
                                             >View</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +89,6 @@
                 </div>
             </div>
         </div>
-    <!--</div>-->
 </template>
 <script>
     import computed from './manage/computed';
@@ -129,6 +130,30 @@
                 }
             });
 
+            $Bus.$on('inventory-item:updated', function(item, updatedItem){
+                let styleIndex = -1;
+                let sizeIndex = -1;
+                let itemIndex = -1;
+                _.each(scope.inventory_items, function(style,index){
+                    if(style.id == item.style.id) {
+                        styleIndex = index;
+                    }
+                });
+                _.each(scope.inventory_items[styleIndex].sizes, function(size, index){
+                    if(size.id == item.style_size.id){
+                        sizeIndex = index;
+                    }
+                });
+                _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, function(inventoryItem, index){
+                    if(inventoryItem.id == item.id) {
+                        itemIndex = index;
+                    }
+                });
+
+                scope.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
+                scope.selected.items = [];
+            });
+
             $Bus.$on('inventory:request-reset', function(){
 
             });
@@ -157,7 +182,7 @@
                 $Bus.$emit('popout-overlay:request-open');
                 const scope = this;
 
-                this.$http.get(window.location.href+'/'+item.uuid+'/edit', {
+                this.$http.get(window.location.href+'/'+item.name_uuid+'/edit', {
                     async: false,
                     before(request) {
 

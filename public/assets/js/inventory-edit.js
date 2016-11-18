@@ -6299,6 +6299,7 @@ exports.default = {
                             alert('File must be an image.', false);
                             return false;
                         }
+                        $Bus.$emit('image.added', data.files[0]);
                         return true;
                     }
                 });
@@ -6322,21 +6323,65 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-c06e6dee", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../../app/s3uploader":11,"../../vendor/fileupload/js/jquery.fileupload":15,"../../vendor/fileupload/js/jquery.fileupload-image":12,"../../vendor/fileupload/js/jquery.fileupload-process":13,"../../vendor/fileupload/js/jquery.fileupload-ui":14,"../../vendor/fileupload/js/jquery.iframe-transport":16,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":17,"../../vendor/fileupload/js/vendor/jquery.ui.widget":18,"../../vendor/fileupload/js/vendor/load-image":19,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5,"vueify/lib/insert-css":7}],9:[function(require,module,exports){
-"use strict";
+},{"../../app/s3uploader":12,"../../vendor/fileupload/js/jquery.fileupload":16,"../../vendor/fileupload/js/jquery.fileupload-image":13,"../../vendor/fileupload/js/jquery.fileupload-process":14,"../../vendor/fileupload/js/jquery.fileupload-ui":15,"../../vendor/fileupload/js/jquery.iframe-transport":17,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":18,"../../vendor/fileupload/js/vendor/jquery.ui.widget":19,"../../vendor/fileupload/js/vendor/load-image":20,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5,"vueify/lib/insert-css":7}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: {
+        timestamp: {
+            required: true
+        }
+    },
+    data: function data() {
+        return {
+            now: new Date().getTime(),
+            format: 'MMM D \\at h:ma'
+        };
+    },
+
+    computed: {
+        older_than_week: function older_than_week() {
+            return moment(this.timestamp).subtract(1, 'weeks').isBefore(moment(this.timestamp));
+        },
+        humanized: function humanized() {
+            return moment(this.timestamp).format(this.format);
+        }
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"older_than_week\">\n    {{ humanized }}\n</div>\n<div v-else=\"\">\n    <timeago :since=\"timestamp\"></timeago>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-646ffbda", module.exports)
+  } else {
+    hotAPI.update("_v-646ffbda", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":6,"vue-hot-reload-api":5}],10:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _FileUpload = require("../../FileUpload.vue");
+var _FileUpload = require('../../FileUpload.vue');
 
 var _FileUpload2 = _interopRequireDefault(_FileUpload);
+
+var _Timestamp = require('../../Timestamp.vue');
+
+var _Timestamp2 = _interopRequireDefault(_Timestamp);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-    props: ["styles", "item", "tags", "api_route"],
+    props: ["styles", "existingimages", "item", "tags", "api_route"],
     data: function data() {
         return {
             images: [],
@@ -6345,8 +6390,19 @@ exports.default = {
             categories: ''
         };
     },
+    watch: {
+        images: function images() {
+            $Bus.$emit('images:changed', this.images);
+        }
+    },
     created: function created() {
         var scope = this;
+
+        if (this.existingimages.length) {
+            _.each(this.existingimages, function (image) {
+                scope.images.push(image);
+            });
+        }
 
         // Bus event listener
         $Bus.$on('image:uploaded', function (el, image) {
@@ -6359,7 +6415,7 @@ exports.default = {
         // set the selected style' sizes
         this.setSizes(this.item.style.sizes);
 
-        setTimeout(function () {
+        this.$nextTick(function () {
             $('.selectized').selectize({
                 delimiter: ',',
                 persist: false,
@@ -6396,54 +6452,42 @@ exports.default = {
             this.setSelectedStyle(style);
             this.setSizes(style.sizes);
         },
-        deleteImage: function deleteImage(image) {
-            var index = this.images.indexOf(image);
-            if (index > 0) {
-                this.images.splice(index, 1);
+        deleteImage: function deleteImage(image, event) {
+            event.preventDefault();
+            var scope = this;
+            var index = scope.images.indexOf(image);
+            if (index > -1) {
+                scope.images.splice(index, 1);
             }
         },
         insertImage: function insertImage(image) {
             // Push images to front of array so we can iterate newest to oldest.
             this.images.unshift(image);
-        }
-    },
-    components: {
-        'image-attach': _FileUpload2.default
-    }
-};
-if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"form-group row\">\n        <label for=\"uuid\" class=\"col-sm-3 form-control-label\">Added</label>\n        <div class=\"col-sm-4\">\n            <p style=\"margin-top: 6px;\"><timeago :since=\"item.created_at.date\"></timeago></p>\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"style_id\" class=\"col-sm-3 form-control-label\">Style</label>\n        <div class=\"col-sm-7\">\n            <select name=\"style_id\" class=\"form-control\" @change=\"changeStyle\">\n                <option v-for=\"style in styles\" :value=\"style.id\" :selected=\"selected_style.id == style.id\">{{ style.name }}\n            </option></select>\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"size_id\" class=\"col-sm-3 form-control-label\">Size</label>\n        <div class=\"col-sm-7\">\n            <select name=\"size_id\" class=\"form-control\" id=\"form_size_el\">\n                <option v-for=\"size in sizes\" :value=\"size.id\" :selected=\"item.style_size.id == size.id\">{{ size.name }}\n            </option></select>\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"price_usd\" class=\"col-sm-3 form-control-label\">Price in USD$</label>\n        <div class=\"col-sm-7\">\n            <input type=\"number\" name=\"price_usd\" :value=\"item.price_usd\" class=\"form-control float\" step=\"any\" min=\"0\" placeholder=\"0.00\">\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"initial_qty\" class=\"col-sm-3 form-control-label\">Available Quantity</label>\n        <div class=\"col-sm-7\">\n            <input type=\"number\" name=\"initial_qty\" :value=\"item.initial_qty\" class=\"form-control number\">\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"uuid\" class=\"col-sm-3 form-control-label\">Unique ID</label>\n        <div class=\"col-sm-4\">\n            <input type=\"text\" name=\"uuid\" :value=\"item.uuid\" class=\"form-control\" required=\"\">\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"description\" class=\"col-sm-3 form-control-label\">Description\n            <small class=\"block text-muted text-sm\">(Optional)</small>\n        </label>\n        <div class=\"col-sm-7\">\n            <textarea class=\"form-control\" name=\"description\" rows=\"2\">{{ item.description }}</textarea>\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"categories\" class=\"col-sm-3 form-control-label\">Categories\n            <small class=\"block text-muted text-sm\">(Optional)</small>\n        </label>\n        <div class=\"col-sm-7\">\n            <input type=\"text\" name=\"categories\" class=\"selectized\" id=\"tags\" placeholder=\"Type categories\" :value=\"tags\">\n        </div>\n    </div>\n    <div class=\"form-group row m-t-md\">\n        <div class=\"col-sm-offset-3 col-sm-7\">\n            <span class=\"pull-left\">\n                <template v-for=\"image in images\">\n                    <img :src=\"image.location\" height=\"64\" width=\"64\">\n                       <input type=\"hidden\" :name=\"'images['+image.id+'][data]'\" :value=\"image.json\">\n                </template>\n            <span>\n        </span></span></div>\n    </div>\n\n    <div class=\"form-group row m-t-md\">\n        <div class=\"col-sm-offset-3 col-sm-7\">\n            <span class=\"pull-left\">\n                <image-attach btn-class-size=\"\" :user_hash=\"item.user.public_hash\" :s3_key_url=\"api_route\" multiple=\"false\"></image-attach>\n            </span>\n            <button type=\"submit\" class=\"btn primary\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
-if (module.hot) {(function () {  module.hot.accept()
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  if (!module.hot.data) {
-    hotAPI.createRecord("_v-a299a29e", module.exports)
-  } else {
-    hotAPI.update("_v-a299a29e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
-  }
-})()}
-},{"../../FileUpload.vue":8,"vue":6,"vue-hot-reload-api":5}],10:[function(require,module,exports){
-'use strict';
+        },
+        validateForm: function validateForm(item, event) {
+            event.preventDefault();
+            var scope = this;
+            var $form = $(event.target).closest('form');
+            var btn = $(event.target);
+            var btnHtml = btn.html();
 
-var _inventoryEdit = require('./edit/inventory-edit.vue');
-
-var _inventoryEdit2 = _interopRequireDefault(_inventoryEdit);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-new Vue({
-    el: '#inventory_manage',
-    ready: function ready() {
-        console.log('Inventory management ready');
-    },
-    methods: {
-        validateForm: function validateForm(e) {
             if (this.images.length == 0) {
-                e.preventDefault();
-                alert('Must have at least 1 image');
+                notify({ text: 'Must have at least 1 image' });
                 return false;
             }
+
+            btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
+
+            this.$http.put($form.prop('action'), $form.serializeObject()).then(function (response) {
+                notify({ text: response.body.data.msg, type: 'success' });
+                $Bus.$emit('inventory-item:updated', scope.item, JSON.parse(response.body.data.item));
+                return false;
+            }, function (response) {
+                notify({ text: response.body.data.msg });
+                return false;
+            }).finally(function () {
+                btn.prop('disabled', false).html(btnHtml);
+            });
 
             //                this.$validate(true, function () {
             //                    if (scope.$inventory_validation.invalid || scope.images.length == 0) {
@@ -6455,6 +6499,58 @@ new Vue({
             //                    }
             //                });
         }
+    },
+    components: {
+        'image-attach': _FileUpload2.default,
+        'timestamp': _Timestamp2.default
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"form-group row\">\n        <label class=\"col-sm-3 form-control-label\">Added</label>\n        <div class=\"col-sm-6\">\n            <p style=\"margin-top: 6px;\" class=\"m-b-0\">\n                <timestamp :timestamp=\"item.created_at.date\"></timestamp>\n            </p>\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"style_id\" class=\"col-sm-3 form-control-label\">Style</label>\n        <div class=\"col-sm-5\">\n            <select name=\"style_id\" class=\"form-control\" @change=\"changeStyle\">\n                <option v-for=\"style in styles\" :value=\"style.id\" :selected=\"selected_style.id == style.id\">{{ style.name }}\n            </option></select>\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"size_id\" class=\"col-sm-3 form-control-label\">Size</label>\n        <div class=\"col-sm-5\">\n            <select name=\"size_id\" class=\"form-control\" id=\"form_size_el\">\n                <option v-for=\"size in sizes\" :value=\"size.id\" :selected=\"item.style_size.id == size.id\">{{ size.name }}\n            </option></select>\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"price_usd\" class=\"col-sm-3 form-control-label\">Price in USD$</label>\n        <div class=\"col-sm-3\">\n            <input type=\"number\" name=\"price_usd\" :value=\"item.price_usd\" class=\"form-control float\" step=\"any\" min=\"0\" placeholder=\"0.00\">\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"initial_qty\" class=\"col-sm-3 form-control-label\">Available Quantity</label>\n        <div class=\"col-sm-3\">\n            <input type=\"number\" name=\"initial_qty\" :value=\"item.initial_qty\" class=\"form-control number\">\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"uuid\" class=\"col-sm-3 form-control-label\">Unique ID</label>\n        <div class=\"col-sm-4\">\n            <input type=\"text\" name=\"uuid\" :value=\"item.uuid\" class=\"form-control\" required=\"\">\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"description\" class=\"col-sm-3 form-control-label\">Description\n            <small class=\"block text-muted text-sm\">(Optional)</small>\n        </label>\n        <div class=\"col-sm-7\">\n            <textarea class=\"form-control\" name=\"description\" rows=\"2\">{{ item.description }}</textarea>\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"categories\" class=\"col-sm-3 form-control-label\">Categories\n            <small class=\"block text-muted text-sm\">(Optional)</small>\n        </label>\n        <div class=\"col-sm-7\">\n            <input type=\"text\" name=\"categories\" class=\"selectized\" id=\"tags\" placeholder=\"Type categories\" :value=\"tags\">\n        </div>\n    </div>\n\n    <hr>\n    <div class=\"form-group row m-t-md\">\n        <div class=\"col-sm-12\">\n                <div class=\"box inline p-a-sm\" v-for=\"image in images\" style=\"margin-right:.78rem; margin-bottom:.78rem;\">\n                     <div style=\"z-index: 999;\" class=\"item-overlay active p-r-sm\">\n                            <a @click=\"deleteImage(image, $event)\" type=\"button\" class=\"pull-right text-danger\"><i class=\"fa fa-times fa-fw\"></i>\n                            </a>\n                        </div>\n                    <span class=\"avatar_container _96 avatar-thumbnail\">\n                        <img data-toggle=\"lightbox\" data-gallery=\"gallery\" :data-remote=\"image.location\" :src=\"image.location\">\n                        <input type=\"hidden\" :name=\"'images[]'\" :value=\"image.json\">\n                    </span>\n                </div>\n        </div>\n    </div>\n\n    <div class=\"form-group row m-t-md\">\n        <div class=\"col-sm-offset-3 col-sm-7\">\n            <span class=\"pull-left\">\n                <image-attach btn-class-size=\"\" :user_hash=\"item.user.public_hash\" :s3_key_url=\"api_route\" multiple=\"false\"></image-attach>\n            </span>\n            <button type=\"submit\" class=\"btn primary\" @click=\"validateForm(item, $event)\">Save</button>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-a299a29e", module.exports)
+  } else {
+    hotAPI.update("_v-a299a29e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"../../FileUpload.vue":8,"../../Timestamp.vue":9,"vue":6,"vue-hot-reload-api":5}],11:[function(require,module,exports){
+'use strict';
+
+var _inventoryEdit = require('./edit/inventory-edit.vue');
+
+var _inventoryEdit2 = _interopRequireDefault(_inventoryEdit);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+new Vue({
+    el: '#inventory_manage',
+    data: {
+        images: [],
+        item: {}
+    },
+    created: function created() {
+        var scope = this;
+        $Bus.$on('images:changed', function (images) {
+            scope.images = images;
+        });
+    },
+    ready: function ready() {
+        console.log('Inventory management ready');
+    },
+    methods: {
+        validateUniqueId: function validateUniqueId() {
+            return true;
+            // return this.$http.post().then(function(response){
+            //     return true;
+            // }, function(response){
+            //     notify({text:  response.body.msg});
+            //     return false;
+            // });
+        }
 
     },
     components: {
@@ -6462,7 +6558,7 @@ new Vue({
     }
 });
 
-},{"./edit/inventory-edit.vue":9}],11:[function(require,module,exports){
+},{"./edit/inventory-edit.vue":10}],12:[function(require,module,exports){
 'use strict';
 
 ;
@@ -6748,7 +6844,7 @@ new Vue({
     };
 })(jQuery, window, document);
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7045,7 +7141,7 @@ new Vue({
     });
 });
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7207,7 +7303,7 @@ new Vue({
     });
 });
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7805,7 +7901,7 @@ new Vue({
     });
 });
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9139,7 +9235,7 @@ new Vue({
     });
 });
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9333,7 +9429,7 @@ new Vue({
     });
 });
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -9371,7 +9467,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 }(window);
 
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 /*! jQuery UI - v1.11.4+CommonJS - 2015-08-28
@@ -9919,7 +10015,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var widget = $.widget;
 });
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 !function (e) {
@@ -10356,6 +10452,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 
-},{}]},{},[10]);
+},{}]},{},[11]);
 
 //# sourceMappingURL=inventory-edit.js.map

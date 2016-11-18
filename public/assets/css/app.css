@@ -8599,6 +8599,12 @@ Copyright (c) 2015 Daniel Eden
   height: 200px;
   overflow: hidden;
   display: inline-block; }
+  .avatar-thumbnail._128 {
+    width: 128px !important;
+    height: 128px !important; }
+  .avatar-thumbnail._96 {
+    width: 96px !important;
+    height: 96px !important; }
   .avatar-thumbnail._64 {
     width: 64px !important;
     height: 64px !important; }
@@ -8878,6 +8884,56 @@ span.multiselect-native-select select {
 .form-inline .multiselect-container li a label.radio input[type=radio] {
   margin-left: -20px;
   margin-right: 0; }
+
+.noscroll {
+  overflow-x: hidden;
+  overflow-y: hidden; }
+
+.inventory-overlay {
+  background: rgba(30, 30, 30, 0.9);
+  top: 0;
+  left: 0;
+  z-index: 9997;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  overflow-y: auto;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch; }
+
+a.close-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 20px;
+  z-index: 9998; }
+
+.overlay-content {
+  border: 4px solid #fff;
+  position: absolute;
+  z-index: 9997;
+  top: 15px;
+  margin-bottom: 15px;
+  left: 50%;
+  width: 960px;
+  min-height: 400px;
+  margin-left: -480px;
+  padding: 40px 40px;
+  background: #ececec;
+  box-sizing: border-box;
+  border-radius: .75rem; }
+
+@media only screen and (max-width: 959px) {
+  .inventory-overlay {
+    overflow-y: auto; }
+  .overlay-content {
+    left: auto;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    padding: 20px;
+    border-radius: 0; } }
 
 .turbolinks-progress-bar {
   height: 2px;

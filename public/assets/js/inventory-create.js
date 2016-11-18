@@ -6299,6 +6299,7 @@ exports.default = {
                             alert('File must be an image.', false);
                             return false;
                         }
+                        $Bus.$emit('image.added', data.files[0]);
                         return true;
                     }
                 });
@@ -6352,7 +6353,7 @@ new Vue({
 
                 if (container.images.length == 0) {
                     valid = false;
-                    alert('At least one image must be associated for each size.');
+                    notify({ text: 'At least one image must be associated for each size.' });
                     return valid;
                 }
             });
@@ -6363,8 +6364,13 @@ new Vue({
             this.submitting = val;
         },
         validateForm: function validateForm(e) {
-            var self = this;
-            self.setSubmitting(true);
+            if (!this.validateSizeContainers()) {
+                e.preventDefault();
+                this.setSubmitting(false);
+                return false;
+            }
+
+            this.setSubmitting(true);
             // this.$validate(true, function () {
             //     if (self.$inventory_validation.invalid || ! self.validateSizeContainers()) {
             //         e.preventDefault();
@@ -6414,10 +6420,13 @@ exports.default = {
             sizings: []
         };
     },
-    events: {
-        'size-container:added': function sizeContainerAdded(sizeContainerData) {
-            var that = this;
-            setTimeout(function () {
+    created: function created() {
+        console.log('Size component ready');
+
+        var scope = this;
+
+        $Bus.$on('size-container:added', function (sizeContainerData) {
+            scope.$nextTick(function () {
                 $('#categories_input_' + sizeContainerData.id).selectize({
                     delimiter: ',',
                     persist: false,
@@ -6429,19 +6438,16 @@ exports.default = {
                         };
                     }
                 });
-            }, 100);
-        }
-    },
-    created: function created() {
-        console.log('Size component ready');
+            });
+        });
 
-        var scope = this;
         $Bus.$on('style-changed', function (id) {
             var styleSizes = scope.getStyleSizes(id);
             if (styleSizes.length > 0) {
                 scope.setSizings(styleSizes);
             }
         });
+
         $Bus.$on('add-size', function () {
             scope.addSizeContainer();
         });
@@ -6453,6 +6459,7 @@ exports.default = {
                 $wrapperEl.find('input:first-of-type').addClass('disabled').prop('disabled', true);
             }
         });
+
         $Bus.$on('image:uploaded', function (el, image) {
             image.json = (0, _stringify2.default)(image);
             var sizeEl = el.closest('.sizing_container'),
@@ -6492,7 +6499,7 @@ exports.default = {
             var index = size_container.images.indexOf(img);
             if (index != -1) {
                 size_container.images.splice(index, 1);
-                that.$emit('image:deleted', size_container, img);
+                $Bus.$emit('image:deleted', size_container, img);
             }
         },
         createSizeObject: function createSizeObject() {
@@ -6503,7 +6510,7 @@ exports.default = {
         addSizeContainer: function addSizeContainer() {
             var sizeContainerData = this.createSizeObject();
             this.size_containers.push(sizeContainerData);
-            this.$emit('size-container:added', sizeContainerData);
+            $Bus.$emit('size-container:added', sizeContainerData);
         },
         deleteSizeContainer: function deleteSizeContainer(size) {
             var that = this;
@@ -6512,7 +6519,7 @@ exports.default = {
                 if (index != -1) {
                     that.size_containers.splice(index, 1);
                 }
-                that.$emit('size-container:removed', size);
+                $Bus.$emit('size-container:removed', size);
                 $noty.close();
             });
         },
@@ -6527,6 +6534,7 @@ exports.default = {
                 $categoryWrapperEl.find('input:first-of-type').prop('disabled', false).removeClass('disabled');
             }
         }
+
     },
     components: {
         'image-attach': _FileUpload2.default

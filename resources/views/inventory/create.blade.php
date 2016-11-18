@@ -22,21 +22,21 @@
 
                 <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
                     <label for="type" class="col-sm-3 form-control-label">Type</label>
-                    <div class="col-sm-7">
+                    <div class="col-sm-5">
                         {{ Form::select('type_id', $inventoryTypes->pluck('name','id'), [], ['id' => 'inventory-type-el', 'class' => 'form-control']) }}
                     </div>
                 </div>
 
                 <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
                     <label for="type" class="col-sm-3 form-control-label">Style</label>
-                    <div class="col-sm-7">
+                    <div class="col-sm-5">
                         {{ Form::select('style_id', $inventoryTypes->first()->styles->pluck('name','id'), [], ['v-on:change' => 'styleChanged', 'id' => 'inventory-styles-el', 'class' => ' form-control ']) }}
                     </div>
                 </div>
 
                 <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}"  >
                     <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
-                    <div class="col-sm-7">
+                    <div class="col-sm-3">
                         {{ Form::number('price_usd', 0.00, ['class' => 'form-control float', 'required', 'step' => 'any', 'placeholder' => '0.00']) }}
                     </div>
                 </div>
