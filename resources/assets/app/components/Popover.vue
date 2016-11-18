@@ -14,7 +14,9 @@
         data: function() {
             return {
                 promptOnClose : true,
-                defaultContent: '<div class="text-center center-block" style="position: absolute; top: 50%; margin-top: -20px; margin-left: -20px; left: 50%; "><i class="fa fa-2x fa-spin fa-spinner"></i></div>'
+                defaultContent: '<div class="text-center center-block" ' +
+                'style="position: absolute; top: 50%; margin-top: -20px; margin-left: -20px; left: 50%; ">' +
+                '<img src="/assets/images/icons/ring-alt.gif"></div>'
             }
         },
         mounted: function() {
@@ -50,20 +52,22 @@
             },
             resetOverlay : function() {
                 $('body').removeClass('noscroll');
-                $('.inventory-overlay').hide();
+                $('.inventory-overlay').hide(200);
                 this.changeOverlayContent(this.defaultContent, true);
                 $Bus.$emit('popout-overlay:closed');
             },
             closeOverlay : function() {
                 var scope = this;
-                if (this.promptOnClose) {
-                    confirmModal(function(noty){
+                setTimeout(function(){
+                    if (this.promptOnClose) {
+                        confirmModal(function(noty){
+                            scope.resetOverlay();
+                            noty.close();
+                        });
+                    } else {
                         scope.resetOverlay();
-                        noty.close();
-                    });
-                } else {
-                    scope.resetOverlay();
-                }
+                    }
+                }, 400)
             },
             changeOverlayContent : function(content, promptOnClose) {
                 // Because this method may be called immediately after a prompt change was called,

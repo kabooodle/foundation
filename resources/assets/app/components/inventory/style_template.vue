@@ -152,6 +152,7 @@
 
                 scope.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
                 scope.selected.items = [];
+                $Bus.$emit('popout-overlay:close');
             });
 
             $Bus.$on('inventory:request-reset', function(){
