@@ -12,4 +12,8 @@ namespace Kabooodle\Models\Contracts;
  */
 interface ShoppableInterface
 {
+    /**
+     * @return string
+     */
+    public function getNameOfResource();
 }

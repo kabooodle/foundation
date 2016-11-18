@@ -6,18 +6,20 @@
 
 namespace Kabooodle\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Kabooodle\Models\Contracts\ShoppableInterface;
+use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\ClaimableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use Sofa\Revisionable\Laravel\RevisionableTrait;
+use Kabooodle\Models\Contracts\ShoppableInterface;
 
 /**
  * Class FacebookItems
  * @package Kabooodle\Models
  */
-class FacebookItems extends BaseEloquentModel implements ShoppableInterface
+class FacebookItems extends BaseEloquentModel implements Revisionable, ShoppableInterface
 {
-    use ClaimableTrait, ObfuscatesIdTrait, SoftDeletes;
+    use ClaimableTrait, ObfuscatesIdTrait, RevisionableTrait, SoftDeletes;
 
     /**
      * @var string
@@ -94,5 +96,13 @@ class FacebookItems extends BaseEloquentModel implements ShoppableInterface
     public function claims()
     {
         return $this->morphMany(Claims::class, 'shoppable');
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameOfResource()
+    {
+        return 'Facebook Album';
     }
 }

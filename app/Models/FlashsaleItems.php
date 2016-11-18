@@ -6,20 +6,21 @@
 
 namespace Kabooodle\Models;
 
-use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Sofa\Revisionable\Revisionable;
+use Kabooodle\Models\Traits\LikeableTrait;
 use Kabooodle\Models\Traits\AuthorableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
-use Kabooodle\Models\Traits\LikeableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
-use Sofa\Revisionable\Revisionable;
+use Kabooodle\Models\Contracts\ShoppableInterface;
 
 /**
  * Class FlashsaleItems
  * @package Kabooodle\Models
  */
-class FlashsaleItems extends BaseEloquentModel implements Revisionable
+class FlashsaleItems extends BaseEloquentModel implements Revisionable, ShoppableInterface
 {
     use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait,ObfuscatesIdTrait,  RevisionableTrait, SoftDeletes;
 
@@ -100,5 +101,13 @@ class FlashsaleItems extends BaseEloquentModel implements Revisionable
     public function isEnabled()
     {
         return (boolean) $this->enabled == 1;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameOfResource()
+    {
+        return 'Flash Sale';
     }
 }
