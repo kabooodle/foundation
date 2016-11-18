@@ -8,13 +8,20 @@
         'as' => 'shipping.filter',
         'uses' => \Kabooodle\Http\Controllers\Api\Shipping\ShippingFilterController::class.'@search'
     ]);
+
     $api->resource('claims', \Kabooodle\Http\Controllers\Api\Claims\ClaimsApiController::class);
     $api->post('claims/{claims}/toggle_shipping', [
         'as' => 'claims.toggle',
         'uses' => \Kabooodle\Http\Controllers\Api\Claims\ClaimsApiController::class.'@switchShippingMethod'
     ]);
+
     $api->resource('groups', \Kabooodle\Http\Controllers\Api\Groups\GroupsApiController::class);
     $api->resource('groups.followers', \Kabooodle\Http\Controllers\Api\Groups\GroupsFollowersApiController::class);
+
+    $api->put('inventory/{id}', [
+        'as' => 'inventory.update',
+        'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@update'
+    ]);
     $api->get('inventory/{username}', [
         'as' => 'inventory.index',
         'uses' =>  \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@index',

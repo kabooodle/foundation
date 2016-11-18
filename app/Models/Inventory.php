@@ -39,8 +39,9 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @var array
      */
-    protected $appents = [
-        'name_with_variant'
+    protected $appends = [
+        'name_with_variant',
+        'name_uuid'
     ];
 
     /**
@@ -74,6 +75,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     protected $attributes = [
         'user_id' => 0,
         'uuid' => '',
+        'name_uuid' => '',
         'inventory_type_id' => 0,
         'inventory_type_styles_id' => 0,
         'inventory_sizes_id' => 0,
@@ -168,11 +170,12 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
 
         self::creating(function($model){
             $model->date_received = Carbon::now();
-
         });
 
         self::saving(function($model){
-            $model->uuid = $model->obfuscateIdToString($model->id);
+            if(!$model->uuid) {
+                $model->uuid = $model->obfuscateIdToString($model->id);
+            }
         });
     }
 
@@ -372,6 +375,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getNameWithVariantAttribute() : string
     {
         return $this->getName(). ' - '.$this->size->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameUuidAttribute() : string
+    {
+        return $this->getUUID();
     }
 
     /**

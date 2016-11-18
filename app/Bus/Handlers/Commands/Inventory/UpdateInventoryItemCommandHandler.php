@@ -104,10 +104,10 @@ class UpdateInventoryItemCommandHandler
      */
     public function normalizeImageData(&$array)
     {
-        $array['data'] = json_decode($array['data'], true);
+        $array = json_decode($array, true);
 
         // Extract keys from data as parent key/values
-        foreach ($array['data'] as $k => $v) {
+        foreach ($array as $k => $v) {
             $array[$k] = $v;
         }
         $array['qty'] = isset($array['qty']) ? $array['qty'] : 1;

@@ -21,7 +21,7 @@ new Vue({
 
                 if (container.images.length == 0) {
                     valid = false;
-                    alert('At least one image must be associated for each size.');
+                    notify({text:  'At least one image must be associated for each size.'});
                     return valid;
                 }
             });

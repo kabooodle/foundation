@@ -18,13 +18,12 @@
     </div>
 @endif
 
-
-{{ Form::open([
-    'id' => 'form_inventory_manage',
-    'v-on:submit' => 'validateForm',
-    'route' => ['shop.inventory.update', $item->user->username, $item->getUUID()],
-    'method' => 'put'
-]) }}
+    <form
+    id="form_inventory_manage"
+    method="POST"
+    accept-charset="UTF-8"
+    action="{{ apiRoute('inventory.update', [$item->id]) }}"
+    >
 
 
 {{--<validator--}}
@@ -35,7 +34,7 @@
 
 <inventory-edit
         :styles="{{ $styles->toJson() }}"
-        :item="{{ $item->toJson() }}"
+        :item="{{ $item->load('user')->toJson() }}"
         :existingimages="{{ $item->files->toJson() }}"
         tags="{!! $item->tagsString()  !!}"
         api_route="{{ route('api.files.sign') }}"
@@ -44,5 +43,5 @@
 <script src="/assets/js/inventory-edit.js"></script>
 {{--</validator>--}}
 
-{{ Form::close() }}
+</form>
 </div>

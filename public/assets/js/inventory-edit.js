@@ -6299,6 +6299,7 @@ exports.default = {
                             alert('File must be an image.', false);
                             return false;
                         }
+                        $Bus.$emit('image.added', data.files[0]);
                         return true;
                     }
                 });
@@ -6389,6 +6390,11 @@ exports.default = {
             categories: ''
         };
     },
+    watch: {
+        images: function images() {
+            $Bus.$emit('images:changed', this.images);
+        }
+    },
     created: function created() {
         var scope = this;
 
@@ -6457,6 +6463,41 @@ exports.default = {
         insertImage: function insertImage(image) {
             // Push images to front of array so we can iterate newest to oldest.
             this.images.unshift(image);
+        },
+        validateForm: function validateForm(item, event) {
+            event.preventDefault();
+            var scope = this;
+            var $form = $(event.target).closest('form');
+            var btn = $(event.target);
+            var btnHtml = btn.html();
+
+            if (this.images.length == 0) {
+                notify({ text: 'Must have at least 1 image' });
+                return false;
+            }
+
+            btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
+
+            this.$http.put($form.prop('action'), $form.serializeObject()).then(function (response) {
+                notify({ text: response.body.data.msg, type: 'success' });
+                $Bus.$emit('inventory-item:updated', scope.item, JSON.parse(response.body.data.item));
+                return false;
+            }, function (response) {
+                notify({ text: response.body.data.msg });
+                return false;
+            }).finally(function () {
+                btn.prop('disabled', false).html(btnHtml);
+            });
+
+            //                this.$validate(true, function () {
+            //                    if (scope.$inventory_validation.invalid || scope.images.length == 0) {
+            //                        e.preventDefault();
+            //                        if (scope.images.length == 0) {
+            //                            alert('Must have at least 1 image');
+            //                        }
+            //                        return false;
+            //                    }
+            //                });
         }
     },
     components: {
@@ -6465,7 +6506,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"form-group row\">\n        <label class=\"col-sm-3 form-control-label\">Added</label>\n        <div class=\"col-sm-6\">\n            <p style=\"margin-top: 6px;\" class=\"m-b-0\">\n                <timestamp :timestamp=\"item.created_at.date\"></timestamp>\n            </p>\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"style_id\" class=\"col-sm-3 form-control-label\">Style</label>\n        <div class=\"col-sm-5\">\n            <select name=\"style_id\" class=\"form-control\" @change=\"changeStyle\">\n                <option v-for=\"style in styles\" :value=\"style.id\" :selected=\"selected_style.id == style.id\">{{ style.name }}\n            </option></select>\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"size_id\" class=\"col-sm-3 form-control-label\">Size</label>\n        <div class=\"col-sm-5\">\n            <select name=\"size_id\" class=\"form-control\" id=\"form_size_el\">\n                <option v-for=\"size in sizes\" :value=\"size.id\" :selected=\"item.style_size.id == size.id\">{{ size.name }}\n            </option></select>\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"price_usd\" class=\"col-sm-3 form-control-label\">Price in USD$</label>\n        <div class=\"col-sm-3\">\n            <input type=\"number\" name=\"price_usd\" :value=\"item.price_usd\" class=\"form-control float\" step=\"any\" min=\"0\" placeholder=\"0.00\">\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"initial_qty\" class=\"col-sm-3 form-control-label\">Available Quantity</label>\n        <div class=\"col-sm-3\">\n            <input type=\"number\" name=\"initial_qty\" :value=\"item.initial_qty\" class=\"form-control number\">\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"uuid\" class=\"col-sm-3 form-control-label\">Unique ID</label>\n        <div class=\"col-sm-4\">\n            <input type=\"text\" name=\"uuid\" :value=\"item.uuid\" class=\"form-control\" required=\"\">\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"description\" class=\"col-sm-3 form-control-label\">Description\n            <small class=\"block text-muted text-sm\">(Optional)</small>\n        </label>\n        <div class=\"col-sm-7\">\n            <textarea class=\"form-control\" name=\"description\" rows=\"2\">{{ item.description }}</textarea>\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"categories\" class=\"col-sm-3 form-control-label\">Categories\n            <small class=\"block text-muted text-sm\">(Optional)</small>\n        </label>\n        <div class=\"col-sm-7\">\n            <input type=\"text\" name=\"categories\" class=\"selectized\" id=\"tags\" placeholder=\"Type categories\" :value=\"tags\">\n        </div>\n    </div>\n    <div class=\"form-group row m-t-md\">\n        <div class=\"col-sm-offset-3 col-sm-7\">\n            <span class=\"pull-left\">\n                <div class=\"box inline p-a-sm m-r-1 m-b-1\" v-for=\"image in images\">\n                     <div style=\"z-index: 999;\" class=\"item-overlay active p-r-sm\">\n                            <a @click=\"deleteImage(image, $event)\" type=\"button\" class=\"pull-right text-danger\"><i class=\"fa fa-times fa-fw\"></i>\n                            </a>\n                        </div>\n                    <span class=\"avatar_container _96 avatar-thumbnail\">\n                        <img data-toggle=\"lightbox\" data-gallery=\"gallery\" :data-remote=\"image.location\" :src=\"image.location\">\n                        <input type=\"hidden\" :name=\"'images['+image.id+'][data]'\" :value=\"image.json\">\n                    </span>\n                </div>\n            <span>\n        </span></span></div>\n    </div>\n\n    <div class=\"form-group row m-t-md\">\n        <div class=\"col-sm-offset-3 col-sm-7\">\n            <span class=\"pull-left\">\n                <image-attach btn-class-size=\"\" :user_hash=\"item.user.public_hash\" :s3_key_url=\"api_route\" multiple=\"false\"></image-attach>\n            </span>\n            <button type=\"submit\" class=\"btn primary\">Save</button>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"form-group row\">\n        <label class=\"col-sm-3 form-control-label\">Added</label>\n        <div class=\"col-sm-6\">\n            <p style=\"margin-top: 6px;\" class=\"m-b-0\">\n                <timestamp :timestamp=\"item.created_at.date\"></timestamp>\n            </p>\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"style_id\" class=\"col-sm-3 form-control-label\">Style</label>\n        <div class=\"col-sm-5\">\n            <select name=\"style_id\" class=\"form-control\" @change=\"changeStyle\">\n                <option v-for=\"style in styles\" :value=\"style.id\" :selected=\"selected_style.id == style.id\">{{ style.name }}\n            </option></select>\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"size_id\" class=\"col-sm-3 form-control-label\">Size</label>\n        <div class=\"col-sm-5\">\n            <select name=\"size_id\" class=\"form-control\" id=\"form_size_el\">\n                <option v-for=\"size in sizes\" :value=\"size.id\" :selected=\"item.style_size.id == size.id\">{{ size.name }}\n            </option></select>\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"price_usd\" class=\"col-sm-3 form-control-label\">Price in USD$</label>\n        <div class=\"col-sm-3\">\n            <input type=\"number\" name=\"price_usd\" :value=\"item.price_usd\" class=\"form-control float\" step=\"any\" min=\"0\" placeholder=\"0.00\">\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"initial_qty\" class=\"col-sm-3 form-control-label\">Available Quantity</label>\n        <div class=\"col-sm-3\">\n            <input type=\"number\" name=\"initial_qty\" :value=\"item.initial_qty\" class=\"form-control number\">\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"uuid\" class=\"col-sm-3 form-control-label\">Unique ID</label>\n        <div class=\"col-sm-4\">\n            <input type=\"text\" name=\"uuid\" :value=\"item.uuid\" class=\"form-control\" required=\"\">\n        </div>\n    </div>\n    <div class=\"form-group row \">\n        <label for=\"description\" class=\"col-sm-3 form-control-label\">Description\n            <small class=\"block text-muted text-sm\">(Optional)</small>\n        </label>\n        <div class=\"col-sm-7\">\n            <textarea class=\"form-control\" name=\"description\" rows=\"2\">{{ item.description }}</textarea>\n        </div>\n    </div>\n    <div class=\"form-group row\">\n        <label for=\"categories\" class=\"col-sm-3 form-control-label\">Categories\n            <small class=\"block text-muted text-sm\">(Optional)</small>\n        </label>\n        <div class=\"col-sm-7\">\n            <input type=\"text\" name=\"categories\" class=\"selectized\" id=\"tags\" placeholder=\"Type categories\" :value=\"tags\">\n        </div>\n    </div>\n\n    <hr>\n    <div class=\"form-group row m-t-md\">\n        <div class=\"col-sm-12\">\n                <div class=\"box inline p-a-sm\" v-for=\"image in images\" style=\"margin-right:.78rem; margin-bottom:.78rem;\">\n                     <div style=\"z-index: 999;\" class=\"item-overlay active p-r-sm\">\n                            <a @click=\"deleteImage(image, $event)\" type=\"button\" class=\"pull-right text-danger\"><i class=\"fa fa-times fa-fw\"></i>\n                            </a>\n                        </div>\n                    <span class=\"avatar_container _96 avatar-thumbnail\">\n                        <img data-toggle=\"lightbox\" data-gallery=\"gallery\" :data-remote=\"image.location\" :src=\"image.location\">\n                        <input type=\"hidden\" :name=\"'images[]'\" :value=\"image.json\">\n                    </span>\n                </div>\n        </div>\n    </div>\n\n    <div class=\"form-group row m-t-md\">\n        <div class=\"col-sm-offset-3 col-sm-7\">\n            <span class=\"pull-left\">\n                <image-attach btn-class-size=\"\" :user_hash=\"item.user.public_hash\" :s3_key_url=\"api_route\" multiple=\"false\"></image-attach>\n            </span>\n            <button type=\"submit\" class=\"btn primary\" @click=\"validateForm(item, $event)\">Save</button>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6487,26 +6528,28 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 new Vue({
     el: '#inventory_manage',
+    data: {
+        images: [],
+        item: {}
+    },
+    created: function created() {
+        var scope = this;
+        $Bus.$on('images:changed', function (images) {
+            scope.images = images;
+        });
+    },
     ready: function ready() {
         console.log('Inventory management ready');
     },
     methods: {
-        validateForm: function validateForm(e) {
-            if (this.images.length == 0) {
-                e.preventDefault();
-                alert('Must have at least 1 image');
-                return false;
-            }
-
-            //                this.$validate(true, function () {
-            //                    if (scope.$inventory_validation.invalid || scope.images.length == 0) {
-            //                        e.preventDefault();
-            //                        if (scope.images.length == 0) {
-            //                            alert('Must have at least 1 image');
-            //                        }
-            //                        return false;
-            //                    }
-            //                });
+        validateUniqueId: function validateUniqueId() {
+            return true;
+            // return this.$http.post().then(function(response){
+            //     return true;
+            // }, function(response){
+            //     notify({text:  response.body.msg});
+            //     return false;
+            // });
         }
 
     },

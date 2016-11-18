@@ -6299,6 +6299,7 @@ exports.default = {
                             alert('File must be an image.', false);
                             return false;
                         }
+                        $Bus.$emit('image.added', data.files[0]);
                         return true;
                     }
                 });
@@ -6352,7 +6353,7 @@ new Vue({
 
                 if (container.images.length == 0) {
                     valid = false;
-                    alert('At least one image must be associated for each size.');
+                    notify({ text: 'At least one image must be associated for each size.' });
                     return valid;
                 }
             });
@@ -6533,6 +6534,7 @@ exports.default = {
                 $categoryWrapperEl.find('input:first-of-type').prop('disabled', false).removeClass('disabled');
             }
         }
+
     },
     components: {
         'image-attach': _FileUpload2.default

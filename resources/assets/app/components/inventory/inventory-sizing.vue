@@ -214,7 +214,8 @@
                     $categoryWrapperEl.show();
                     $categoryWrapperEl.find('input:first-of-type').prop('disabled', false).removeClass('disabled');
                 }
-            }
+            },
+
         },
         components: {
             'image-attach' : FileUpload

@@ -64,10 +64,11 @@
                 <input type="text" name="categories" class="selectized" id="tags" placeholder="Type categories" :value="tags">
             </div>
         </div>
+
+        <hr>
         <div class="form-group row m-t-md">
-            <div class="col-sm-offset-3 col-sm-7">
-                <span class="pull-left">
-                    <div class="box inline p-a-sm m-r-1 m-b-1" v-for="image in images">
+            <div class="col-sm-12">
+                    <div class="box inline p-a-sm" v-for="image in images" style="margin-right:.78rem; margin-bottom:.78rem;">
                          <div style="z-index: 999;" class="item-overlay active p-r-sm">
                                 <a
                                         @click="deleteImage(image, $event)"
@@ -84,11 +85,10 @@
                             >
                             <input
                                     type="hidden"
-                                    :name="'images['+image.id+'][data]'"
+                                    :name="'images[]'"
                                     :value="image.json">
                         </span>
                     </div>
-                <span>
             </div>
         </div>
 
@@ -101,7 +101,7 @@
                             :s3_key_url="api_route"
                             multiple="false"></image-attach>
                 </span>
-                <button type="submit" class="btn primary">Save</button>
+                <button type="submit" class="btn primary"     @click="validateForm(item, $event)">Save</button>
             </div>
         </div>
     </div>
@@ -118,6 +118,11 @@
                 sizes : [],
                 selected_style : '',
                 categories : '',
+            }
+        },
+        watch : {
+            images: function(){
+                $Bus.$emit('images:changed', this.images);
             }
         },
         created : function(){
@@ -188,7 +193,43 @@
             insertImage: function(image) {
                 // Push images to front of array so we can iterate newest to oldest.
                 this.images.unshift(image);
-            }
+            },
+            validateForm: function (item, event) {
+                event.preventDefault();
+                const scope = this;
+                let $form = $(event.target).closest('form');
+                let btn = $(event.target);
+                let btnHtml = btn.html();
+
+                if (this.images.length == 0) {
+                    notify({text:  'Must have at least 1 image'});
+                    return false;
+                }
+
+                btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
+
+                this.$http.put($form.prop('action'), $form.serializeObject()).then(function(response){
+                    notify({text:  response.body.data.msg, type: 'success'});
+                    $Bus.$emit('inventory-item:updated', scope.item, JSON.parse(response.body.data.item));
+                    return false;
+                }, function(response){
+                    notify({text:  response.body.data.msg});
+                    return false;
+                }).finally(function(){
+                    btn.prop('disabled', false).html(btnHtml);
+                });
+
+
+//                this.$validate(true, function () {
+//                    if (scope.$inventory_validation.invalid || scope.images.length == 0) {
+//                        e.preventDefault();
+//                        if (scope.images.length == 0) {
+//                            alert('Must have at least 1 image');
+//                        }
+//                        return false;
+//                    }
+//                });
+            },
         },
         components: {
             'image-attach' : FileUpload,

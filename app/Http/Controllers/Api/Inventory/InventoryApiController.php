@@ -8,7 +8,10 @@ namespace Kabooodle\Http\Controllers\Api\Inventory;
 
 use Binput;
 use Illuminate\Http\Request;
+use Kabooodle\Models\Inventory;
+use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
 
@@ -44,7 +47,8 @@ class InventoryApiController extends AbstractApiController
                     $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
                     $groupings[$styleId]['sizes'][$item->styleSize->id]['items'][] = [
                         'id' => $item->id,
-                        'uuid' => $item->getUUID(),
+                        'name_uuid' => $item->name_uuid,
+                        'uuid' => $item->uuid,
                         'size_id' => $item->styleSize->id,
                         'size_name' => $item->styleSize->name,
                         'style_id' => $styleId,
@@ -67,6 +71,45 @@ class InventoryApiController extends AbstractApiController
 
         return $this->setData($groupings)->respond();
     }
+
+    /**
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        try {
+            $item = user()->inventory()->findOrFail($id);
+            $this->validate($request, Inventory::getUpdateRules(), ['images.required' =>'You must add at least 1 image.']);
+
+            $this->dispatchNow(new UpdateInventoryItemCommand(
+                user(),
+                $item,
+                Binput::get('style_id'),
+                Binput::get('size_id'),
+                Binput::get('price_usd'),
+                Binput::get('initial_qty'),
+                Binput::get('images'),
+                Binput::get('description'),
+                Binput::get('categories'),
+                Binput::get('uuid')
+            ));
+
+            return $this->setData(['msg' => "Item {$item->name} updated", 'item' => $item->toJson()])->respond();
+        } catch (ValidationException $e) {
+            return $this->setStatusCode(401)
+                ->setData(['msg' => 'Some fields require input!: '.$e->validator->messages()->first()])
+                ->respond();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)
+                ->setData(['msg' => 'An unknown error occurred, please try again.'])
+                ->respond();
+        }
+    }
+
+
     /**
      * @param Request $request
      *

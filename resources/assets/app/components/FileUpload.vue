@@ -205,6 +205,7 @@
                                 alert('File must be an image.', false);
                                 return false;
                             }
+                            $Bus.$emit('image.added', data.files[0]);
                             return true;
                         }
                     });
