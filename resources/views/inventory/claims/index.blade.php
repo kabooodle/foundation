@@ -20,83 +20,31 @@
 
 @section('body-content')
 
-    <div class="row">
-        <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="box p-a">
-                <div class="pull-left m-r">
-            <span class="w-40 warn text-center rounded">
-              <i class="material-icons">shopping_basket</i>
-            </span>
-                </div>
-                <div class="clear">
-                    <h4 class="m-a-0 text-md"><a href="">75 <span class="text-sm">Sales</span></a></h4>
-                    <small class="text-muted">6 waiting payment.</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="box p-a">
-                <div class="pull-right m-l">
-            <span class="w-40 dker text-center rounded">
-              <i class="material-icons">people</i>
-            </span>
-                </div>
-                <div class="clear">
-                    <h4 class="m-a-0 text-md"><a href="">6,000 <span class="text-sm">Members</span></a></h4>
-                    <small class="text-muted">632 activities post.</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="box-color p-a ">
-                <div class="pull-right m-l">
-            <span class="w-40 dker text-center rounded">
-              <i class="material-icons">local_shipping</i>
-            </span>
-                </div>
-                <div class="clear">
-                    <h4 class="m-a-0 text-md"><a href="">40 <span class="text-sm">Orders</span></a></h4>
-                    <small class="text-muted">38 Shipped.</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="box p-a ">
-                <div class="pull-left m-r">
-            <span class="w-40 dker text-center rounded">
-              <i class="material-icons">comment</i>
-            </span>
-                </div>
-                <div class="clear">
-                    <h4 class="m-a-0 text-md"><a href="">69 <span class="text-sm">Shipping Labels Used</span></a></h4>
-                    <small class="text-muted">5 remaining.</small>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="box">
+        <div class="box-body">
+            <div id="claims__wrapper">
+                <table class="table table-condensed table-as-list white">
+                    <thead>
+                    <tr class="  ">
+                        <th></th>
+                        <th class="text-muted">Item</th>
+                        <th class="text-muted p-l-0 m-l-0">Claim Price</th>
+                        <th class="text-muted p-l-0 m-l-0">Claimer</th>
+                        <th class="text-muted p-l-0 m-l-0">Claimed On</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($data as $claim)
+                        @include('inventory.claims.partials._claimrow')
+                    @endforeach
+                    </tbody>
+                </table>
 
-    <div id="claims__wrapper">
-        <table class="table table-condensed table-as-list white">
-            <thead>
-            <tr class="  ">
-                <th></th>
-                <th class="text-muted">Item</th>
-                <th class="text-muted p-l-0 m-l-0">Claim Price</th>
-                <th class="text-muted p-l-0 m-l-0">Claimer</th>
-                <th class="text-muted p-l-0 m-l-0">Claimed On</th>
-                <th class="text-muted p-l-0 m-l-0">Accepted/Rejected On</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($data as $claim)
-                @include('inventory.claims.partials._claimrow')
-            @endforeach
-            </tbody>
-        </table>
+                @include('inventory.claims.partials._actionmodal')
+            </div>
 
-
-        @include('inventory.claims.partials._actionmodal')
+        </div>
     </div>
 
     <script>

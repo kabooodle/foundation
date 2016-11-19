@@ -411,7 +411,18 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class)->where('inventory.user_id', $this->id)->with(['shipments', 'shipments.transaction']);
+        return $this->hasManyThrough(Claims::class,  Inventory::class)
+            ->where('inventory.user_id', $this->id)
+            ->with(['shipments', 'shipments.transaction']);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function pendingClaimsOnMyInventory()
+    {
+        return $this->claimsOnMyInventory()
+            ->whereNull('accepted');
     }
 
     /**
