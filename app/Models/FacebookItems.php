@@ -6,13 +6,13 @@
 
 namespace Kabooodle\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\ClaimableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\ShoppableInterface;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class FacebookItems
@@ -110,7 +110,7 @@ class FacebookItems extends BaseEloquentModel implements Revisionable, Shoppable
     /**
      * @return string
      */
-    public function getNameOfResource()
+    public function getNameOfResource(): string
     {
         return 'Facebook Album';
     }
