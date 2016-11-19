@@ -32,7 +32,7 @@ trait ShoppableTrait
     {
         $decrypted = Crypt::decrypt($hash);
         $class = strtok($decrypted, '::');
-        $id = substr($decrypted, strpos($decrypted, "::") + 1);
+        $id = substr($decrypted, strpos($decrypted, "::") + 2);
 
         if(! class_exists($class)){
             throw new EncryptException('Hashed resource given does not exist');

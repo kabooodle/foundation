@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Api\Inventory;
 
+use Binput;
 use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Traits\ShoppableTrait;
@@ -42,6 +43,7 @@ class InventoryViewsController extends AbstractApiController
 
             return $this->noContent();
         } catch (Exception $e){
+            dd($e);
             return $this->setStatusCode(500)->respond();
         }
     }

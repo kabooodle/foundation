@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Models\Traits\ShoppableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\LikeableTrait;
 use Kabooodle\Models\Traits\AuthorableTrait;
@@ -15,6 +16,7 @@ use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\ShoppableInterface;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class FlashsaleItems
@@ -22,7 +24,7 @@ use Kabooodle\Models\Contracts\ShoppableInterface;
  */
 class FlashsaleItems extends BaseEloquentModel implements Revisionable, ShoppableInterface
 {
-    use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait,ObfuscatesIdTrait,  RevisionableTrait, SoftDeletes;
+    use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait,  RevisionableTrait, ShoppableTrait, SoftDeletes;
 
         /**
      * @var string
@@ -76,7 +78,15 @@ class FlashsaleItems extends BaseEloquentModel implements Revisionable, Shoppabl
      */
     public function inventory()
     {
-        return $this->belongsto(Inventory::class, 'inventory_id');
+        return $this->belongsTo(Inventory::class, 'inventory_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function inventoryItem(): BelongsTo
+    {
+        return $this->inventory();
     }
 
     /**
@@ -106,7 +116,7 @@ class FlashsaleItems extends BaseEloquentModel implements Revisionable, Shoppabl
     /**
      * @return string
      */
-    public function getNameOfResource()
+    public function getNameOfResource():string
     {
         return 'Flash Sale';
     }

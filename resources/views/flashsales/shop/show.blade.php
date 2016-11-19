@@ -16,3 +16,12 @@
     @include('comments.container', ['comment_model' => $inventory, 'comment_post_route' => route('flashsales.shop.comments.store', [$item->getUUID(), $inventory->getUUID()])])
 
 @endsection
+
+
+
+@push('utilities')
+<pageviewstracker
+        route="{{ apiRoute('inventory.pageviews.store') }}"
+        resource_hash="{{ $shoppable->makeHashedResourceString() }}"
+></pageviewstracker>
+@endpush

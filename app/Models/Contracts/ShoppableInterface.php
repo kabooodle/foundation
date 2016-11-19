@@ -6,6 +6,8 @@
 
 namespace Kabooodle\Models\Contracts;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 /**
  * Interface ShoppableInterface
  * @package Kabooodle\Models\Contracts
@@ -15,5 +17,10 @@ interface ShoppableInterface
     /**
      * @return string
      */
-    public function getNameOfResource();
+    public function getNameOfResource(): string;
+
+    /**
+     * @return BelongsTo
+     */
+    public function inventoryItem(): BelongsTo;
 }

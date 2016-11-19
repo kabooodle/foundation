@@ -29,8 +29,12 @@
 @section('body-content')
    @include('inventory.partials._show', ['item' => $item])
    @include('inventory.partials._claimmodal', ['post' => route('shop.inventory.claim', [$item->user->username, $item->getUUID()]), 'redirect' => route('shop.inventory.index', [$item->user->username])])
+
 @endsection
 
+
+
 @push('footer-scripts')
+
 {!!  Analytics::trackPage('/'.$item->id) !!}
 @endpush

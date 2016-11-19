@@ -53,7 +53,7 @@ return [
 			/**
 			 * Enable the debugging version of the
 			 */
-			'debug' => true,
+			'debug' => false,
 		]
 
 	],

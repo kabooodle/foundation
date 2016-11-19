@@ -24,7 +24,6 @@ use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
-use Kabooodle\Models\Contracts\ShoppableInterface;
 use Kabooodle\Presenters\Models\UserModelPresenter;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use SammyK\LaravelFacebookSdk\SyncableGraphNodeTrait;
@@ -43,7 +42,6 @@ class User extends BaseEloquentModel implements
     CanResetPasswordContract,
     JWTSubject,
     LikeableInterface,
-    ShoppableInterface,
     Revisionable
 {
     use AlgoliaEloquentTrait,
@@ -379,6 +377,14 @@ class User extends BaseEloquentModel implements
         }
 
         return $username;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameOfResource(): string
+    {
+        return 'Merchant';
     }
 
     /**

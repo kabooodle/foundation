@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\ClaimableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -88,6 +89,14 @@ class FacebookItems extends BaseEloquentModel implements Revisionable, Shoppable
     public function item()
     {
         return $this->belongsTo(Inventory::class, 'inventory_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function inventoryItem(): BelongsTo
+    {
+        return $this->inventory();
     }
 
     /**
