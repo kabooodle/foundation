@@ -6,13 +6,14 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Models\Traits\ShoppableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\LikeableTrait;
+use Kabooodle\Models\Traits\ShoppableTrait;
 use Kabooodle\Models\Traits\AuthorableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use Kabooodle\Models\Traits\PageViewablesTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\ShoppableInterface;
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class FlashsaleItems extends BaseEloquentModel implements Revisionable, ShoppableInterface
 {
-    use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait,  RevisionableTrait, ShoppableTrait, SoftDeletes;
+    use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, PageViewablesTrait,  RevisionableTrait, ShoppableTrait, SoftDeletes;
 
         /**
      * @var string
