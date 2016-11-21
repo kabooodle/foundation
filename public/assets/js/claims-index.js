@@ -6099,1213 +6099,217 @@ module.exports = Vue$2;
 
 }).call(this,require('_process'))
 },{"_process":1}],4:[function(require,module,exports){
-/**
- * vuex v2.0.0
- * (c) 2016 Evan You
- * @license MIT
- */
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global.Vuex = factory());
-}(this, (function () { 'use strict';
-
-var devtoolHook =
-  typeof window !== 'undefined' &&
-  window.__VUE_DEVTOOLS_GLOBAL_HOOK__
-
-function devtoolPlugin (store) {
-  if (!devtoolHook) { return }
-
-  store._devtoolHook = devtoolHook
-
-  devtoolHook.emit('vuex:init', store)
-
-  devtoolHook.on('vuex:travel-to-state', function (targetState) {
-    store.replaceState(targetState)
-  })
-
-  store.subscribe(function (mutation, state) {
-    devtoolHook.emit('vuex:mutation', mutation, state)
-  })
-}
-
-function applyMixin (Vue) {
-  var version = Number(Vue.version.split('.')[0])
-
-  if (version >= 2) {
-    var usesInit = Vue.config._lifecycleHooks.indexOf('init') > -1
-    Vue.mixin(usesInit ? { init: vuexInit } : { beforeCreate: vuexInit })
-  } else {
-    // override init and inject vuex init procedure
-    // for 1.x backwards compatibility.
-    var _init = Vue.prototype._init
-    Vue.prototype._init = function (options) {
-      if ( options === void 0 ) options = {};
-
-      options.init = options.init
-        ? [vuexInit].concat(options.init)
-        : vuexInit
-      _init.call(this, options)
-    }
-  }
-
-  /**
-   * Vuex init hook, injected into each instances init hooks list.
-   */
-
-  function vuexInit () {
-    var options = this.$options
-    // store injection
-    if (options.store) {
-      this.$store = options.store
-    } else if (options.parent && options.parent.$store) {
-      this.$store = options.parent.$store
-    }
-  }
-}
-
-function mapState (states) {
-  var res = {}
-  normalizeMap(states).forEach(function (ref) {
-    var key = ref.key;
-    var val = ref.val;
-
-    res[key] = function mappedState () {
-      return typeof val === 'function'
-        ? val.call(this, this.$store.state, this.$store.getters)
-        : this.$store.state[val]
-    }
-  })
-  return res
-}
-
-function mapMutations (mutations) {
-  var res = {}
-  normalizeMap(mutations).forEach(function (ref) {
-    var key = ref.key;
-    var val = ref.val;
-
-    res[key] = function mappedMutation () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      return this.$store.commit.apply(this.$store, [val].concat(args))
-    }
-  })
-  return res
-}
-
-function mapGetters (getters) {
-  var res = {}
-  normalizeMap(getters).forEach(function (ref) {
-    var key = ref.key;
-    var val = ref.val;
-
-    res[key] = function mappedGetter () {
-      if (!(val in this.$store.getters)) {
-        console.error(("[vuex] unknown getter: " + val))
-      }
-      return this.$store.getters[val]
-    }
-  })
-  return res
-}
-
-function mapActions (actions) {
-  var res = {}
-  normalizeMap(actions).forEach(function (ref) {
-    var key = ref.key;
-    var val = ref.val;
-
-    res[key] = function mappedAction () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      return this.$store.dispatch.apply(this.$store, [val].concat(args))
-    }
-  })
-  return res
-}
-
-function normalizeMap (map) {
-  return Array.isArray(map)
-    ? map.map(function (key) { return ({ key: key, val: key }); })
-    : Object.keys(map).map(function (key) { return ({ key: key, val: map[key] }); })
-}
-
-function isObject (obj) {
-  return obj !== null && typeof obj === 'object'
-}
-
-function isPromise (val) {
-  return val && typeof val.then === 'function'
-}
-
-function assert (condition, msg) {
-  if (!condition) { throw new Error(("[vuex] " + msg)) }
-}
-
-var Vue // bind on install
-
-var Store = function Store (options) {
-  var this$1 = this;
-  if ( options === void 0 ) options = {};
-
-  assert(Vue, "must call Vue.use(Vuex) before creating a store instance.")
-  assert(typeof Promise !== 'undefined', "vuex requires a Promise polyfill in this browser.")
-
-  var state = options.state; if ( state === void 0 ) state = {};
-  var plugins = options.plugins; if ( plugins === void 0 ) plugins = [];
-  var strict = options.strict; if ( strict === void 0 ) strict = false;
-
-  // store internal state
-  this._options = options
-  this._committing = false
-  this._actions = Object.create(null)
-  this._mutations = Object.create(null)
-  this._wrappedGetters = Object.create(null)
-  this._runtimeModules = Object.create(null)
-  this._subscribers = []
-  this._watcherVM = new Vue()
-
-    // bind commit and dispatch to self
-  var store = this
-  var ref = this;
-  var dispatch = ref.dispatch;
-  var commit = ref.commit;
-  this.dispatch = function boundDispatch (type, payload) {
-    return dispatch.call(store, type, payload)
-    }
-    this.commit = function boundCommit (type, payload, options) {
-    return commit.call(store, type, payload, options)
-  }
-
-  // strict mode
-  this.strict = strict
-
-  // init root module.
-  // this also recursively registers all sub-modules
-  // and collects all module getters inside this._wrappedGetters
-  installModule(this, state, [], options)
-
-  // initialize the store vm, which is responsible for the reactivity
-  // (also registers _wrappedGetters as computed properties)
-  resetStoreVM(this, state)
-
-  // apply plugins
-  plugins.concat(devtoolPlugin).forEach(function (plugin) { return plugin(this$1); })
-};
-
-var prototypeAccessors = { state: {} };
-
-prototypeAccessors.state.get = function () {
-  return this._vm.state
-};
-
-prototypeAccessors.state.set = function (v) {
-  assert(false, "Use store.replaceState() to explicit replace store state.")
-};
-
-Store.prototype.commit = function commit (type, payload, options) {
-    var this$1 = this;
-
-  // check object-style commit
-  if (isObject(type) && type.type) {
-    options = payload
-    payload = type
-    type = type.type
-  }
-  var mutation = { type: type, payload: payload }
-  var entry = this._mutations[type]
-  if (!entry) {
-    console.error(("[vuex] unknown mutation type: " + type))
-    return
-  }
-  this._withCommit(function () {
-    entry.forEach(function commitIterator (handler) {
-      handler(payload)
-    })
-  })
-  if (!options || !options.silent) {
-    this._subscribers.forEach(function (sub) { return sub(mutation, this$1.state); })
-  }
-};
-
-Store.prototype.dispatch = function dispatch (type, payload) {
-  // check object-style dispatch
-  if (isObject(type) && type.type) {
-    payload = type
-    type = type.type
-  }
-  var entry = this._actions[type]
-  if (!entry) {
-    console.error(("[vuex] unknown action type: " + type))
-    return
-  }
-  return entry.length > 1
-    ? Promise.all(entry.map(function (handler) { return handler(payload); }))
-    : entry[0](payload)
-};
-
-Store.prototype.subscribe = function subscribe (fn) {
-  var subs = this._subscribers
-  if (subs.indexOf(fn) < 0) {
-    subs.push(fn)
-  }
-  return function () {
-    var i = subs.indexOf(fn)
-    if (i > -1) {
-      subs.splice(i, 1)
-    }
-  }
-};
-
-Store.prototype.watch = function watch (getter, cb, options) {
-    var this$1 = this;
-
-  assert(typeof getter === 'function', "store.watch only accepts a function.")
-  return this._watcherVM.$watch(function () { return getter(this$1.state); }, cb, options)
-};
-
-Store.prototype.replaceState = function replaceState (state) {
-    var this$1 = this;
-
-  this._withCommit(function () {
-    this$1._vm.state = state
-  })
-};
-
-Store.prototype.registerModule = function registerModule (path, module) {
-  if (typeof path === 'string') { path = [path] }
-  assert(Array.isArray(path), "module path must be a string or an Array.")
-  this._runtimeModules[path.join('.')] = module
-  installModule(this, this.state, path, module)
-  // reset store to update getters...
-  resetStoreVM(this, this.state)
-};
-
-Store.prototype.unregisterModule = function unregisterModule (path) {
-    var this$1 = this;
-
-  if (typeof path === 'string') { path = [path] }
-  assert(Array.isArray(path), "module path must be a string or an Array.")
-    delete this._runtimeModules[path.join('.')]
-  this._withCommit(function () {
-    var parentState = getNestedState(this$1.state, path.slice(0, -1))
-    Vue.delete(parentState, path[path.length - 1])
-  })
-  resetStore(this)
-};
-
-Store.prototype.hotUpdate = function hotUpdate (newOptions) {
-  updateModule(this._options, newOptions)
-  resetStore(this)
-};
-
-Store.prototype._withCommit = function _withCommit (fn) {
-  var committing = this._committing
-  this._committing = true
-  fn()
-  this._committing = committing
-};
-
-Object.defineProperties( Store.prototype, prototypeAccessors );
-
-function updateModule (targetModule, newModule) {
-  if (newModule.actions) {
-    targetModule.actions = newModule.actions
-  }
-  if (newModule.mutations) {
-    targetModule.mutations = newModule.mutations
-  }
-  if (newModule.getters) {
-    targetModule.getters = newModule.getters
-  }
-  if (newModule.modules) {
-    for (var key in newModule.modules) {
-      if (!(targetModule.modules && targetModule.modules[key])) {
-        console.warn(
-          "[vuex] trying to add a new module '" + key + "' on hot reloading, " +
-          'manual reload is needed'
-        )
-        return
-      }
-      updateModule(targetModule.modules[key], newModule.modules[key])
-    }
-  }
-}
-
-function resetStore (store) {
-  store._actions = Object.create(null)
-  store._mutations = Object.create(null)
-  store._wrappedGetters = Object.create(null)
-  var state = store.state
-  // init root module
-  installModule(store, state, [], store._options, true)
-  // init all runtime modules
-  Object.keys(store._runtimeModules).forEach(function (key) {
-    installModule(store, state, key.split('.'), store._runtimeModules[key], true)
-  })
-  // reset vm
-  resetStoreVM(store, state)
-}
-
-function resetStoreVM (store, state) {
-  var oldVm = store._vm
-
-  // bind store public getters
-  store.getters = {}
-  var wrappedGetters = store._wrappedGetters
-  var computed = {}
-  Object.keys(wrappedGetters).forEach(function (key) {
-    var fn = wrappedGetters[key]
-    // use computed to leverage its lazy-caching mechanism
-    computed[key] = function () { return fn(store); }
-    Object.defineProperty(store.getters, key, {
-      get: function () { return store._vm[key]; }
-    })
-  })
-
-  // use a Vue instance to store the state tree
-  // suppress warnings just in case the user has added
-  // some funky global mixins
-  var silent = Vue.config.silent
-  Vue.config.silent = true
-  store._vm = new Vue({
-    data: { state: state },
-    computed: computed
-  })
-  Vue.config.silent = silent
-
-  // enable strict mode for new vm
-  if (store.strict) {
-    enableStrictMode(store)
-  }
-
-  if (oldVm) {
-    // dispatch changes in all subscribed watchers
-    // to force getter re-evaluation.
-    store._withCommit(function () {
-      oldVm.state = null
-    })
-    Vue.nextTick(function () { return oldVm.$destroy(); })
-  }
-}
-
-function installModule (store, rootState, path, module, hot) {
-  var isRoot = !path.length
-  var state = module.state;
-  var actions = module.actions;
-  var mutations = module.mutations;
-  var getters = module.getters;
-  var modules = module.modules;
-
-  // set state
-  if (!isRoot && !hot) {
-    var parentState = getNestedState(rootState, path.slice(0, -1))
-    var moduleName = path[path.length - 1]
-    store._withCommit(function () {
-      Vue.set(parentState, moduleName, state || {})
-    })
-  }
-
-  if (mutations) {
-    Object.keys(mutations).forEach(function (key) {
-      registerMutation(store, key, mutations[key], path)
-    })
-  }
-
-  if (actions) {
-    Object.keys(actions).forEach(function (key) {
-      registerAction(store, key, actions[key], path)
-    })
-  }
-
-  if (getters) {
-    wrapGetters(store, getters, path)
-  }
-
-  if (modules) {
-    Object.keys(modules).forEach(function (key) {
-      installModule(store, rootState, path.concat(key), modules[key], hot)
-    })
-  }
-}
-
-function registerMutation (store, type, handler, path) {
-  if ( path === void 0 ) path = [];
-
-  var entry = store._mutations[type] || (store._mutations[type] = [])
-  entry.push(function wrappedMutationHandler (payload) {
-    handler(getNestedState(store.state, path), payload)
-  })
-}
-
-function registerAction (store, type, handler, path) {
-  if ( path === void 0 ) path = [];
-
-  var entry = store._actions[type] || (store._actions[type] = [])
-  var dispatch = store.dispatch;
-  var commit = store.commit;
-  entry.push(function wrappedActionHandler (payload, cb) {
-    var res = handler({
-      dispatch: dispatch,
-      commit: commit,
-      getters: store.getters,
-      state: getNestedState(store.state, path),
-      rootState: store.state
-    }, payload, cb)
-    if (!isPromise(res)) {
-      res = Promise.resolve(res)
-    }
-    if (store._devtoolHook) {
-      return res.catch(function (err) {
-        store._devtoolHook.emit('vuex:error', err)
-        throw err
-      })
-    } else {
-      return res
-    }
-  })
-}
-
-function wrapGetters (store, moduleGetters, modulePath) {
-  Object.keys(moduleGetters).forEach(function (getterKey) {
-    var rawGetter = moduleGetters[getterKey]
-    if (store._wrappedGetters[getterKey]) {
-      console.error(("[vuex] duplicate getter key: " + getterKey))
-      return
-    }
-    store._wrappedGetters[getterKey] = function wrappedGetter (store) {
-      return rawGetter(
-        getNestedState(store.state, modulePath), // local state
-        store.getters, // getters
-        store.state // root state
-      )
-    }
-  })
-}
-
-function enableStrictMode (store) {
-  store._vm.$watch('state', function () {
-    assert(store._committing, "Do not mutate vuex store state outside mutation handlers.")
-  }, { deep: true, sync: true })
-}
-
-function getNestedState (state, path) {
-  return path.length
-    ? path.reduce(function (state, key) { return state[key]; }, state)
-    : state
-}
-
-function install (_Vue) {
-  if (Vue) {
-    console.error(
-      '[vuex] already installed. Vue.use(Vuex) should be called only once.'
-    )
-    return
-  }
-  Vue = _Vue
-  applyMixin(Vue)
-}
-
-// auto install in dist mode
-if (typeof window !== 'undefined' && window.Vue) {
-  install(window.Vue)
-}
-
-var index = {
-  Store: Store,
-  install: install,
-  mapState: mapState,
-  mapMutations: mapMutations,
-  mapGetters: mapGetters,
-  mapActions: mapActions
-}
-
-return index;
-
-})));
-},{}],5:[function(require,module,exports){
-'use strict';
-
-var _store = require('./manage/store');
-
-var _store2 = _interopRequireDefault(_store);
-
-var _computed = require('./manage/computed');
-
-var _computed2 = _interopRequireDefault(_computed);
-
-var _style_template = require('./style_template.vue');
-
-var _style_template2 = _interopRequireDefault(_style_template);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-new Vue({
-    el: '#manage_inventory',
-    store: _store2.default,
-    computed: _computed2.default,
-
-    beforeCreate: function beforeCreate() {
-        $Bus.$emit('loader:request-show');
-    },
-
-
-    created: function created() {
-        this.$store.dispatch('setRoute', inventory_route);
-
-        this.getInventory();
-        this.getPostables();
-        var scope = this;
-
-        $Bus.$on('post-menu:closed', function () {
-            // this.facebook_album_selected = false;
-            // $('[name=facebookalbums]:checked').prop('checked', false);
-        });
-
-        $Bus.$on('facebook-album:changed', function () {
-            var album_items = scope.selected.fb_album.items;
-            if (album_items && album_items.length > 0) {
-                scope.$store.commit('SET_SELECTED_ITEMS', scope.selected.fb_album.items);
-            }
-        });
-
-        $Bus.$on('facebook-group:changed', function () {
-            // scope.postables.facebookgroups = _.map(scope.postables.facebookgroups, function(group){
-            //     group.albums = _.map(group.albums, function(album){
-            //         if (album.hasOwnProperty('items') && album.items.length > 0){
-            //             album.items = [];
-            //         }
-            //         return album;
-            //     });
-            //     return group;
-            // });
-        });
-    },
-
-    watch: {
-        'actions': {
-            handler: function handler(v) {
-                v.refreshing_data === false ? $Bus.$emit('loader:request-close') : $Bus.$emit('loader:request-show');
-            }, deep: true
-        },
-        // facebooks : {
-        //     handler: function() {
-        //         const scope = this;
-        //         let sum = 0;
-        //         $.each(this.facebooks, function(){
-        //             sum += this.fitems.length;
-        //         });
-        //         scope.selected_sales_sum = sum;
-        //     }, deep : true
-        // },
-        selected: {
-            handler: function handler(selected) {
-                var selected_items = this.$store.getters.getSelectedItems;
-                if (this.selected.fb_album && selected_items.length > 0) {
-                    this.assignItemsToSelectedAlbum(selected_items);
-                    this.sums.selected_postables = _.chain(this.selected.postables.fb_albums).filter(function (album) {
-                        return album.hasOwnProperty('items') && album.items.length > 0;
-                    }).reduce(function (k, v) {
-                        return k + v.items.length;
-                    }, 0).value();
-
-                    // return;
-                }
-                // this.resetData('sums.selected_postables');
-            }, deep: true
-        }
-    },
-    methods: {
-        resetData: function resetData(key) {
-            if (key) {
-                var keys = key.split('.');
-                return keys.length > 1 ? this[keys[0]][keys[1]] = getDefaultData(key) : this[key] = getDefaultData(key);
-            } else {
-                this.$data = getDefaultData();
-            }
-        },
-        changeFacebookGroup: function changeFacebookGroup(event) {
-            var groupId = event.target.value;
-            // We need to reset the selected group and album
-            // to prevent residual propogation between selections
-            this.$store.commit('RESET_SELECTED_FB_GROUP');
-            this.$store.commit('RESET_SELECTED_FB_ALBUM');
-            if (groupId && groupId != '') {
-                this.selected.fb_group = this.getFacebookGroup(groupId);
-            } else {
-                this.selected.fb_group = '';
-            }
-            this.selected.items = [];
-            $Bus.$emit('facebook-group:changed');
-        },
-        getFacebookGroup: function getFacebookGroup(id) {
-            var facebookgroups = this.postables.facebookgroups;
-            if (facebookgroups) {
-                return _.findWhere(facebookgroups, { id: id });
-            }
-            return null;
-        },
-        assignItemsToSelectedAlbum: function assignItemsToSelectedAlbum(items) {
-            var index = this.selectedPostables.fb_albums.indexOf(this.selected.fb_album);
-            this.selectedPostables.fb_albums[index].items = items;
-        },
-        removeFromAlbum: function removeFromAlbum(fitem, facebook, event) {
-            var index = facebook.items.indexOf(fitem);
-            if (index > -1) {
-                facebook.items.splice(index, 1);
-            }
-        },
-        selectFacebookAlbum: function selectFacebookAlbum(facebook, event) {
-            this.selected.fb_album = facebook;
-            if (this.selectedPostables.fb_albums.indexOf(facebook) == -1) {
-                this.selectedPostables.fb_albums.push(facebook);
-            }
-            // this.selected.items = [];
-            this.$store.commit('RESET_SELECTED_ITEMS');
-            $Bus.$emit('facebook-album:changed');
-        },
-        setPostingToSales: function setPostingToSales(val) {
-            this.posting_to_sales = val;
-        },
-        openPostMenu: function openPostMenu(event) {
-            $('#navbarSide').css({
-                'top': $('.app-header').outerHeight()
-            }).toggleClass('reveal');
-
-            this.$emit('post-menu:opened');
-        },
-        closePostMenu: function closePostMenu(event) {
-            $('#navbarSide').css({
-                'top': $('.app-header').outerHeight()
-            }).removeClass('reveal');
-
-            this.$emit('post-menu:closed');
-        },
-        postSelectedItemsToSales: function postSelectedItemsToSales(event) {
-            event.preventDefault();
-            var scope = this;
-            var $el = $(event.target);
-            var form = $el.closest('form#post_sales_form');
-            var form_data = new FormData();
-            var selected_items_ids = _.pluck(this.selected_items, 'id');
-
-            $.each(form.serializeArray(), function () {
-                form_data.append(this.name, this.value);
-            });
-
-            for (var i = 0; i < selected_items_ids.length; i++) {
-                form_data.append('selected_items_ids[]', selected_items_ids[i]);
-            }
-
-            // Perhaps fire event instead of calling method directly.
-            this.setPostingToSales(true);
-
-            this.$http.post(form.prop('action'), form_data).then(function (response) {
-                notify({ 'text': selected_items_ids.length + ' Items posted or queued successfully', 'type': 'success' });
-            }, function (response) {
-                //
-            }).finally(function () {
-                scope.setPostingToSales(false);
-            });
-        },
-        toggleFlashSale: function toggleFlashSale(i, event) {
-            var el = event.target;
-            var isChecked = el.checked;
-            var index = this.selected_sales.flashsales.indexOf(i);
-            if (isChecked) {
-                this.selected_sales.flashsales.push(i);
-            } else {
-                if (index > -1) {
-                    this.selected_sales.flashsales.splice(index, 1);
-                }
-            }
-        },
-        selectAllInventory: function selectAllInventory(event) {
-            event.preventDefault();
-            $Bus.$emit('inventory:select-all');
-        },
-        resetInventory: function resetInventory() {
-            this.selected.items = [];
-            this.closePostMenu();
-            $Bus.$emit('inventory:request-reset');
-        },
-        getInventory: function getInventory() {
-            var scope = this;
-            this.actions.refreshing_data = true;
-            this.inventory_items = [];
-            this.resetInventory();
-            scope.$emit('refreshing_data');
-
-            this.$http.get(this.$store.getters.getInventoryRoute).then(function (response) {
-                scope.$store.commit('SET_INVENTORY_ITEMS', response.body.data);
-            }).then(function () {
-                // scope.resetData('actions.refreshing_data');
-                scope.actions.refreshing_data = false;
-            });
-        },
-        getPostables: function getPostables() {
-            var scope = this;
-
-            this.$http.get('http://' + window.location.hostname + '/inventory/postables').then(function (response) {
-                scope.$store.commit('SET_POSTABLES', response.body.data);
-            }, function (response) {
-                console.log('Error in retrieving postables');
-            });
-        },
-        clearDateTimeInput: function clearDateTimeInput() {
-            $('#datetimepicker2').val('');
-        }
-    },
-    components: {
-        'style-template': _style_template2.default
-    }
-});
-
-},{"./manage/computed":6,"./manage/store":7,"./style_template.vue":8}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
-    sums: {
-        get: function get() {
-            return this.$store.getters.getSums;
+    props: {
+        timestamp: {
+            required: true
         }
     },
-    data_inventory_route: {
-        get: function get() {
-            return this.$store.getters.getInventoryRoute;
-        },
-        set: function set(route) {
-            this.$store.commit('SET_ROUTE', 'inventory_route', route);
-        }
-    },
-    inventory_items: {
-        get: function get() {
-            return this.$store.getters.getInventoryItems;
-        },
-        set: function set(items) {
-            this.$store.commit('SET_INVENTORY_ITEMS', items);
-        }
-    },
-    postables: {
-        get: function get() {
-            return this.$store.getters.getPostables;
-        },
-        set: function set(postables) {
-            this.$store.commit('SET_POSTABLES', postables);
-        }
-    },
-    actions: {
-        get: function get() {
-            return this.$store.getters.getActions;
-        },
-        set: function set(key, value) {
-            this.$store.commit('SET_ACTION', key, value);
-        }
-    },
-    selectedItems: {
-        get: function get() {
-            return this.$store.getters.getSelectedItems;
-        }
-    },
-    selectedPostables: {
-        get: function get() {
-            return this.$store.getters.getSelectedPostables;
-        }
-    },
-    selected: {
-        get: function get() {
-            return this.$store.getters.getSelected;
-        }
-    }
-};
-
-},{}],7:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _vuex = require('vuex');
-
-var _vuex2 = _interopRequireDefault(_vuex);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var state = {
-    inventory_route: null,
-
-    // Array of user inventory items
-    inventory_items: [],
-
-    // Array of postable objects (flash sales, facebook groups)
-    postables: {
-        facebookgroups: [],
-        flashsales: []
-    },
-
-    selected: {
-        // Holds postables that have been selected
-        postables: {
-            fb_albums: [],
-            flashsales: []
-        },
-
-        // Holds sizes that have been selected
-        sizes: [],
-
-        // Holds items that have been selected
-        items: [],
-
-        // Toggle of the selected fB group
-        fb_group: null,
-
-        // Toggle of the selected fb album
-        fb_album: null
-    },
-
-    actions: {
-        refreshing_data: false,
-        posting_to_sales: false,
-        fb_advanced_menu: false
-    },
-
-    sums: {
-        selected_postables: 0,
-        selected_sales_sum: 0
-    }
-};
-
-var actions = {
-    setRoute: function setRoute(_ref, route) {
-        var commit = _ref.commit;
-
-        commit('SET_ROUTE', route);
-    }
-};
-
-var mutations = {
-    RESET_DATA: function RESET_DATA(state, key, value) {
-        if (key) {
-            var keys = key.split('.');
-            return keys.length > 1 ? state[keys[0]][keys[1]] = state(key) : state[key] = state(key);
-        }
-    },
-    SET_ROUTE: function SET_ROUTE(state, route) {
-        state.inventory_route = route;
-    },
-    SET_INVENTORY_ITEMS: function SET_INVENTORY_ITEMS(state, items) {
-        state.inventory_items = items;
-    },
-    SET_POSTABLES: function SET_POSTABLES(state, postables) {
-        state.postables = postables;
-    },
-    SET_ACTION: function SET_ACTION(state, key, value) {
-        state.actions[key] = value;
-    },
-    SET_SELECTED: function SET_SELECTED(state, key, value) {
-        state.selected[key] = value;
-    },
-    ADD_TO_SELECTED_ITEMS: function ADD_TO_SELECTED_ITEMS(state, items) {
-        state.selected.items.push(items);
-    },
-    SET_SELECTED_ITEMS: function SET_SELECTED_ITEMS(state, items) {
-        state.selected.items = [];
-        state.selected.items = items;
-    },
-    REMOVE_FROM_SELECTED_ITEMS: function REMOVE_FROM_SELECTED_ITEMS(state, item) {
-        state.selected.items.splice(item, 1);
-    },
-    RESET_SELECTED_ITEMS: function RESET_SELECTED_ITEMS(state) {
-        if (state.selected.items.length > 0) {
-            state.selected.items = [];
-        }
-    },
-    RESET_SELECTED_FB_GROUP: function RESET_SELECTED_FB_GROUP(state) {
-        state.selected.fb_group = null;
-    },
-    RESET_SELECTED_FB_ALBUM: function RESET_SELECTED_FB_ALBUM(state) {
-        state.selected.fb_album = null;
-    },
-    SET_SELECTED_POSTABLES: function SET_SELECTED_POSTABLES(state, key, value) {
-        state.selected.postables[key] = value;
-    },
-    SET_SUM: function SET_SUM(state, key, value) {
-        state.sums[key] = value;
-    }
-};
-
-var getters = {
-    getInventoryItems: function getInventoryItems(state) {
-        return state.inventory_items;
-    },
-
-    // SUMS
-    getSums: function getSums(state) {
-        return state.sums;
-    },
-
-    // ROUTES
-    getInventoryRoute: function getInventoryRoute(state) {
-        return state.inventory_route;
-    },
-
-    // POSTABLES
-    getPostables: function getPostables(state) {
-        return state.postables;
-    },
-    getPostable: function getPostable(state, postable) {
-        return state.postables[postable];
-    },
-
-    // SELECTED
-    getSelected: function getSelected(state) {
-        return state.selected;
-    },
-    getSelectedPostables: function getSelectedPostables(state) {
-        return state.selected.postables;
-    },
-    getSelectedItems: function getSelectedItems(state) {
-        return state.selected.items;
-    },
-    getSelectedSizes: function getSelectedSizes(state) {
-        return state.selected.sizes;
-    },
-    getSelectedFbGroup: function getSelectedFbGroup(state) {
-        return state.selected.fb_group;
-    },
-    getSelectedFbAlbum: function getSelectedFbAlbum(state) {
-        return state.selected.fb_album;
-    },
-
-    // ACTIONS
-    getActions: function getActions(state) {
-        return state.actions;
-    },
-    getAction: function getAction(state, action) {
-        return state.actions[action];
-    }
-};
-
-exports.default = new _vuex2.default.Store({
-    state: state,
-    mutations: mutations,
-    getters: getters,
-    actions: actions
-});
-
-},{"vuex":4}],8:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _computed = require('./manage/computed');
-
-var _computed2 = _interopRequireDefault(_computed);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
     data: function data() {
         return {
-            opened_drawers: [],
-            active_http_requests: []
+            now: new Date().getTime(),
+            format: 'MMM D \\at h:mma'
         };
     },
-    computed: _computed2.default,
-    created: function created() {
-        var scope = this;
 
-        $Bus.$on('facebook-group:changed', function () {
-            scope.clearSelectedItems();
-            $('.facebook_album_radio').prop('checked', false);
-        });
-
-        $Bus.$on('inventory:select-all', function () {
-            $.each(scope.inventory_items, function () {
-                $.each(this.sizes, function () {
-                    $.each(this.items, function () {
-                        scope.addSizeToSelected(this);
-                    });
-                });
-            });
-        });
-
-        $Bus.$on('facebook-album:changed', function () {
-            scope.clearSelectedItems();
-            // We want to open the drawers where items are selected.
-            var selected_items = scope.selected.items;
-            if (selected_items && selected_items.length > 0) {
-                _.each(selected_items, function (item) {
-                    scope.openSizeDrawer(item.style_id, item.size_id);
-                });
-            }
-        });
-
-        $Bus.$on('inventory-item:updated', function (item, updatedItem) {
-            var styleIndex = -1;
-            var sizeIndex = -1;
-            var itemIndex = -1;
-            _.each(scope.inventory_items, function (style, index) {
-                if (style.id == item.style.id) {
-                    styleIndex = index;
-                }
-            });
-            _.each(scope.inventory_items[styleIndex].sizes, function (size, index) {
-                if (size.id == item.style_size.id) {
-                    sizeIndex = index;
-                }
-            });
-            _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, function (inventoryItem, index) {
-                if (inventoryItem.id == item.id) {
-                    itemIndex = index;
-                }
-            });
-
-            scope.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
-            scope.selected.items = [];
-            $Bus.$emit('popout-overlay:close');
-        });
-
-        $Bus.$on('inventory:request-reset', function () {});
-
-        $Bus.$on('popout-overlay:closed', function () {
-            if (scope.active_http_requests.length > 0) {
-                $.each(scope.active_http_requests, function () {
-                    this.abort();
-                });
-            }
-        });
-    },
-    methods: {
-        selectAllOfStyle: function selectAllOfStyle(style, event) {
-            var scope = this;
-            $.each(style.sizes, function () {
-                $.each(this.items, function () {
-                    scope.addSizeToSelected(this);
-                });
-            });
+    computed: {
+        older_than_week: function older_than_week() {
+            return moment(this.timestamp).subtract(1, 'weeks').isBefore(moment(this.timestamp));
         },
-        clearSelectedItems: function clearSelectedItems() {
-            this.opened_drawers = [];
-        },
-        editItemButtonClicked: function editItemButtonClicked(item, event) {
-            $Bus.$emit('popout-overlay:request-open');
-            var scope = this;
-
-            this.$http.get(window.location.href + '/' + item.name_uuid + '/edit', {
-                async: false,
-                before: function before(request) {
-
-                    $Bus.$emit('popout-overlay:change-prompt', false);
-
-                    if (this.previousRequest) {
-                        this.previousRequest.abort();
-                    }
-                    this.previousRequest = request;
-                    scope.active_http_requests.push(request);
-                }
-            }).then(function (response) {
-                setTimeout(function () {
-                    $Bus.$emit('popout-overlay:change-content', response.body);
-                }, 0);
-            }, function (response) {
-                $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
-            }).finally(function () {
-                scope.active_http_requests = [];
-            });
-        },
-        addToOpenedDrawers: function addToOpenedDrawers(styleid, sizeid) {
-            var combo = styleid + '_' + sizeid;
-            if (!_.contains(this.opened_drawers, combo)) {
-                this.opened_drawers.push(combo);
-            }
-        },
-        removeFromOpenedDrawers: function removeFromOpenedDrawers(styleid, sizeid) {
-            this.opened_drawers = _.without(this.opened_drawers, styleid + '_' + sizeid);
-        },
-        openAllSizeDrawers: function openAllSizeDrawers(style, event) {
-            event.preventDefault();
-            var scope = this;
-            var $el = $(event.currentTarget);
-            if ($el.hasClass('opened-drawers')) {
-                $el.removeClass('opened-drawers').find('.fa').removeClass('fa-angle-up').addClass('fa-angle-down');
-                $.each(style.sizes, function () {
-                    scope.closeSizeDrawer(style.id, this.id, event);
-                });
-            } else {
-                $el.addClass('opened-drawers').find('.fa').addClass('fa-angle-up').removeClass('fa-angle-down');
-                $.each(style.sizes, function () {
-                    scope.openSizeDrawer(style.id, this.id, event);
-                });
-            }
-        },
-        openSizeDrawer: function openSizeDrawer(styleid, sizeid, event) {
-            if (event) event.preventDefault();
-            $('[data-id=' + sizeid + ']').stop(true, true).slideDown();
-            this.addToOpenedDrawers(styleid, sizeid);
-            this.$emit('drawer:opened', styleid, sizeid);
-        },
-        closeSizeDrawer: function closeSizeDrawer(styleid, sizeid, event) {
-            event.preventDefault();
-            $('[data-id=' + sizeid + ']').stop(true, true).slideUp();
-            this.removeFromOpenedDrawers(styleid, sizeid);
-            this.$emit('drawer:closed', styleid, sizeid);
-        },
-        removeSizes: function removeSizes(style, size, items, event) {
-            var scope = this;
-            $.each(items, function (i, v) {
-                scope.removeSizeFromSelected(this);
-            });
-            this.closeSizeDrawer(style.id, size.id, event);
-        },
-        addSizes: function addSizes(style, size, items, event) {
-            var scope = this;
-            $.each(items, function (i, v) {
-                scope.addSizeToSelected(this);
-            });
-            this.openSizeDrawer(style.id, size.id, event);
-        },
-        removeSizeFromSelected: function removeSizeFromSelected(size) {
-            var index = this.$store.getters.getSelectedItems.indexOf(size);
-            if (index != -1) {
-                this.$store.commit('REMOVE_FROM_SELECTED_ITEMS', index);
-            }
-        },
-        addSizeToSelected: function addSizeToSelected(size) {
-            if (this.$store.getters.getSelectedItems.indexOf(size) == -1) {
-                this.$store.commit('ADD_TO_SELECTED_ITEMS', size);
-            }
-        }
-    },
-    events: {
-        'drawer:opened': function drawerOpened(size) {},
-        'refreshing_data': function refreshing_data() {
-            this.opened_drawers = [];
+        humanized: function humanized() {
+            return moment(this.timestamp).format(this.format);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n        <div class=\"box style-container\" v-for=\"style in inventory_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\">\n                            <template v-for=\"size in style.sizes\">\n                            <button class=\"btn white btn-xs\" v-bind:aria-pressed=\"(selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id ) ? ' true ' : null )\" v-bind:class=\"[ selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id )  ? 'sex active' : '' ] \" @click=\"( selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id ) ? removeSizes(style, size, size.items, $event) : addSizes(style, size, size.items, $event) )\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                            </template>\n                            <button @click=\"selectAllOfStyle(style, $event)\" class=\"btn white btn-xs\" style=\"margin-left: 12px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">ALL</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ style.sizes.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"(opened_drawers.indexOf(style.id+'_'+size.id) > -1 ? closeSizeDrawer(style.id, size.id, $event) : openSizeDrawer(style.id, size.id, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <div v-for=\"item in size.items\" class=\"col-sm-2 btn-group-prpl\" style=\"width:122px !important\">\n                                        <button v-bind:aria-pressed=\"(selectedItems.indexOf(item) > -1 ? ' true ' : null )\" @click=\"( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selectedItems.indexOf(item) > -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                    <span class=\"item block\">\n                                                        <img v-bind:src=\"(item.files &amp;&amp; item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)\" class=\"img-responsive\" style=\"width: 80px; height: 80px;\">\n                                                    </span>\n                                            <span class=\"p-a-o text-sm clearfix block\">\n                                                <span class=\"pull-left\">Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span></span>\n                                                    <span class=\"text-muted pull-right\">${{ item.price_usd }}</span>\n                                                    </span>\n                                        </button>\n                                        <div class=\"clearfix\" style=\"margin-top: 5px;\">\n                                        <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs pull-left white\">Edit</button>\n                                        <a target=\"_blank\" v-bind:href=\"this.window.location.href+'/'+item.name_uuid\" class=\"btn btn-xs pull-right white\">View</a>\n                                        </div>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"older_than_week\">\n    {{ humanized }}\n</div>\n<div v-else=\"\">\n    <timeago :since=\"timestamp\"></timeago>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-4e910d3e", module.exports)
+    hotAPI.createRecord("_v-fa907b40", module.exports)
   } else {
-    hotAPI.update("_v-4e910d3e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-fa907b40", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./manage/computed":6,"vue":3,"vue-hot-reload-api":2}]},{},[5]);
+},{"vue":3,"vue-hot-reload-api":2}],5:[function(require,module,exports){
+'use strict';
 
-//# sourceMappingURL=inventory-management.js.map
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Timestamp = require('./../Timestamp.vue');
+
+var _Timestamp2 = _interopRequireDefault(_Timestamp);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: {
+        claims: {
+            type: Array,
+            default: {
+                return: []
+            }
+        }
+    },
+    data: function data() {
+        return {
+            all_claims: [],
+            selected_claim_route: '',
+            selected_claim: {}
+        };
+    },
+    created: function created() {
+        var scope = this;
+        this.all_claims = this.claims;
+        this.$nextTick(function () {
+            $('.datetimepicker').datetimepicker({
+                maxDate: moment().add(1, 'days'),
+                format: "MM/DD/YYYY hh:mmA",
+                icons: {
+                    time: 'fa fa-clock-o',
+                    date: "fa fa-calendar",
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right'
+                }
+            });
+        });
+
+        $Bus.$on('selected-claim:handled', function () {
+            scope.removeClaim(scope.selected_claim);
+        });
+    },
+    methods: {
+        hasFiles: function hasFiles(claim) {
+            return claim.inventory_item_object_data.files && claim.inventory_item_object_data.files.length;
+        },
+        getFile: function getFile(claim) {
+            return this.hasFiles(claim) ? claim.inventory_item_object_data.files[0].location : null;
+        },
+        handleClaim: function handleClaim(choice, claim, event) {
+            event.preventDefault();
+            this.selected_claim = claim;
+            this.selected_claim_route = window.location + '/' + claim.uuid;
+            switch (choice) {
+                case 'accept':
+                    return this.toggleAcceptClaimModal();
+                    break;
+                case 'reject':
+                    return this.toggleRejectClaimModal();
+                    break;
+            }
+        },
+        toggleAcceptClaimModal: function toggleAcceptClaimModal() {
+            var scope = this;
+            var modal = $('#modal_claim_accepted');
+            var form = modal.find('form');
+
+            form.prop('action', this.selected_claim_route);
+            modal.find('input[name="accepted_price"]').val(this.selected_claim.price);
+            modal.find('input[name="accepted_on"]').val(moment(this.selected_claim.created_at.date).format('MM/DD/YYYY hh:mmA'));
+            modal.modal('show');
+        },
+        toggleRejectClaimModal: function toggleRejectClaimModal() {
+            var scope = this;
+            var modal = $('#modal_claim_rejected');
+            var form = modal.find('form');
+
+            form.prop('action', this.selected_claim_route);
+            modal.modal('show');
+        },
+        removeClaim: function removeClaim(claim) {
+            var index = this.all_claims.indexOf(claim);
+            if (index > -1) {
+                this.all_claims.splice(index, 1);
+            }
+        }
+    },
+    components: {
+        'timeago': _Timestamp2.default
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<tbody>\n    <tr v-for=\"claim in all_claims\" :data-claim-id=\"claim.uuid\">\n        <td></td>\n        <td>\n            <div class=\"avatar-thumbnail-container\">\n                <div v-if=\"hasFiles(claim)\" class=\"avatar-thumbnail _32\">\n                    <img :src=\"getFile(claim)\">\n                </div>\n                <span>{{ claim.inventory_item_object_data.name_with_variant }}</span>\n            </div>\n        </td>\n        <td>${{ claim.price }}</td>\n        <td>{{ claim.claimer.name }}</td>\n        <td>\n            <timeago :timestamp=\"claim.created_at.date\"></timeago>\n        </td>\n        <td class=\"action-column\">\n            <div class=\"pull-right action-btns\">\n                <a class=\"btn white btn-xs btn-action--rejected btn-action-claim\" @click=\"handleClaim('reject', claim, $event)\">\n                Reject\n                </a>\n                <a class=\"btn white btn-xs  btn-action--accepted btn-action-claim\" @click=\"handleClaim('accept', claim, $event)\">\n                Accept\n                </a>\n            </div>\n        </td>\n    </tr>\n</tbody>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-a7c3aac4", module.exports)
+  } else {
+    hotAPI.update("_v-a7c3aac4", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"./../Timestamp.vue":4,"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
+'use strict';
+
+var _ClaimsIndex = require('./Claims-index.vue');
+
+var _ClaimsIndex2 = _interopRequireDefault(_ClaimsIndex);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+new Vue({
+    el: "#claims_index",
+    methods: {
+        acceptSelectedClaim: function acceptSelectedClaim(event) {
+            event.preventDefault();
+            var scope = this;
+            var $el = $(event.target);
+            var form = $el.closest('form');
+            this.disableButtons($el);
+
+            this.$http.put(form.prop('action'), form.serializeObject()).then(function (response) {
+                notify({ text: 'Claim successfully accepted.', type: 'success' });
+                $Bus.$emit('selected-claim:handled');
+            }, function (response) {
+                notify({ text: response.body.data.msg });
+            }).finally(function () {
+                $el.closest('.modal').modal('toggle');
+                scope.enableButtons($el);
+            });
+        },
+        rejectSelectedClaim: function rejectSelectedClaim(event) {
+            event.preventDefault();
+            var scope = this;
+            var $el = $(event.target);
+            var form = $el.closest('form');
+            this.disableButtons($el);
+
+            this.$http.delete(form.prop('action'), form.serializeObject()).then(function (response) {
+                notify({ text: 'Claim successfully rejected.', type: 'success' });
+                $Bus.$emit('selected-claim:handled');
+            }, function (response) {
+                notify({ text: response.body.data.msg });
+            }).finally(function () {
+                $el.closest('.modal').modal('toggle');
+                scope.enableButtons($el);
+            });
+        },
+        enableButtons: function enableButtons(el) {
+            el.closest('.modal-footer').find('.btn').prop('disabled', false).removeClass('disabled');
+            el.find('.fa').remove();
+        },
+        disableButtons: function disableButtons(el) {
+            el.closest('.modal-footer').find('.btn').prop('disabled', true).addClass('disabled');
+            el.html(el.html() + ' <i class="fa fa-spin fa-spinner"></i>');
+        }
+    },
+    components: {
+        'claims-index': _ClaimsIndex2.default
+    }
+});
+
+},{"./Claims-index.vue":5}]},{},[6]);
+
+//# sourceMappingURL=claims-index.js.map
