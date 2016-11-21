@@ -8885,6 +8885,10 @@ span.multiselect-native-select select {
   margin-left: -20px;
   margin-right: 0; }
 
+@media only screen and (max-width: 767px) {
+  .navbar-side {
+    width: 100%; } }
+
 .noscroll {
   overflow-x: hidden;
   overflow-y: hidden; }

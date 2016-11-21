@@ -87,16 +87,16 @@
         </div>
         <div class="box-divider"></div>
         <div class="box-body">
-            <table class="table table-condensed table-as-list white">
+            <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
                 <thead>
                 <tr>
-                    <th><input type="checkbox" id="checkAll"></th>
-                    <th>Item</th>
-                    <th>Price</th>
-                    <th>Accepted on</th>
-                    <th>Claimer</th>
-                    <th>Shipping Status</th>
-                    <th></th>
+                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"><input type="checkbox" id="checkAll"></th>
+                    <th scope="col" data-tablesaw-sortable-col>Item</th>
+                    <th scope="col" data-tablesaw-sortable-col>Price</th>
+                    <th scope="col" data-tablesaw-sortable-col>Accepted on</th>
+                    <th scope="col" data-tablesaw-sortable-col>Claimer</th>
+                    <th scope="col" data-tablesaw-sortable-col>Shipping Status</th>
+                    <th scope="col" data-tablesaw-sortable-col></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -123,6 +123,7 @@
 <script src="/assets/js/sales-management.js"></script>
 <script>
     $(function(){
+
 
         $("#input_price_range").slider();
 

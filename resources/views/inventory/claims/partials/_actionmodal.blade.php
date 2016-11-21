@@ -28,12 +28,12 @@
                         <div class="modal-footer">
                             <button type="button"
                                     @click="acceptSelectedClaim"
-                                    class="btn p-x-md primary btn-claim-action-final"
+                                    class="btn p-x-md btn-sm primary btn-claim-action-final"
                                     id="btn_confirmed_claim">Save
                             </button>
                             <button
                                     type="button"
-                                    class="btn btn-link"
+                                    class="btn btn-sm btn-link"
                                     id="btn_confirmed_claim_cancel"
                                     data-dismiss="modal">Cancel
                             </button>
@@ -62,9 +62,9 @@
                         <div class="modal-footer">
                             <button type="button"
                                     @click="rejectSelectedClaim"
-                                    class="btn primary btn-claim-action-final p-x-md"
+                                    class="btn-sm btn primary btn-claim-action-final p-x-md"
                                     id="btn_confirmed_claim">Save</button>
-                            <button type="button" class="btn btn-link" id="btn_confirmed_claim_cancel"
+                            <button type="button" class="btn-sm btn btn-link" id="btn_confirmed_claim_cancel"
                                     data-dismiss="modal">Cancel
                             </button>
                         </div>
