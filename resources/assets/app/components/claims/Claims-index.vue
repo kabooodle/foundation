@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div
+    <tbody>
+        <tr
                 v-for="claim in claims"
                 :data-claim-id="claim.uuid" >
             <td >
@@ -37,8 +37,8 @@
                     <!--</a>-->
                 </div>
             </td>
-        </div>
-    </div>
+        </tr>
+    </tbody>
 </template>
 <script>
     import Timeago from "./../Timestamp.vue";

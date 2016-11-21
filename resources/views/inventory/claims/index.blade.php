@@ -34,8 +34,10 @@
                         <th></th>
                     </tr>
                     </thead>
+                    <tbody>
                         <claims-index :claims="{{ $data->getCollection()->toJson() }}"
                         ></claims-index>
+                    </tbody>
                 </table>
 
 
