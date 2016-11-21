@@ -16,7 +16,7 @@
         data(){
             return {
                 now: new Date().getTime(),
-                format: 'MMM D \\at h:ma'
+                format: 'MMM D \\at h:mma'
             }
         },
         computed : {

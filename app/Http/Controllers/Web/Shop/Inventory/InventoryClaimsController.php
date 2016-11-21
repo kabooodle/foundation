@@ -59,9 +59,7 @@ class InventoryClaimsController extends Controller
                 Binput::get('text', null)
             ));
 
-            return Response::json([
-                'html' => $this->view('inventory.claims.partials._claimrow')->with('claim', $result)->render()
-            ], 200);
+            return Response::json('ok', 200);
         }
 
         return Response::json([], 401);
@@ -85,9 +83,7 @@ class InventoryClaimsController extends Controller
             $result = $this->dispatchNow(new RejectClaimForInventoryItemCommand(user(), $claimsUUID,
                 Binput::get('rejected_reason', null)));
 
-            return Response::json([
-                'html' => $this->view('inventory.claims.partials._claimrow')->with('claim', $result)->render()
-            ], 200);
+            return Response::json('ok', 200);
         }
 
         return Response::json([], 401);

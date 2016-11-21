@@ -21,6 +21,10 @@
 @section('body-content')
 
     <div class="box">
+        <div class="box-header">
+            <h4>Pending claims on your inventory</h4>
+        </div>
+        <div class="box-divider"></div>
         <div class="box-body">
             <div id="claims__wrapper">
                 <table class="table table-condensed table-as-list white">
@@ -34,12 +38,9 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody>
-                        <claims-index :claims="{{ $data->getCollection()->toJson() }}"
-                        ></claims-index>
+                    <tbody is="claims-index"  :claims="{{ $data->getCollection()->toJson() }}">
                     </tbody>
                 </table>
-
 
             </div>
 
@@ -47,7 +48,8 @@
     </div>
 
 
-    <script src="/assets/js/claims-index.js"></script>
-
-
 @endsection
+
+@push('footer-scripts')
+<script src="/assets/js/claims-index.js"></script>
+@endpush
