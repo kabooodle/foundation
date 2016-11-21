@@ -19,14 +19,12 @@
             </td>
             <td class="action-column">
                 <div class="pull-right action-btns">
-                    <a data-toggle="modal"
-                       data-target="#modal_claim_rejected"
+                    <a
                        class="btn white btn-xs btn-action--rejected btn-action-claim"
                        @click="handleClaim('reject', claim, $event)">
                     Reject
                     </a>
-                    <a data-toggle="modal"
-                       data-target="#modal_claim_accepted"
+                    <a
                        class="btn white btn-xs  btn-action--accepted btn-action-claim"
                        @click="handleClaim('accept', claim, $event)">
                     Accept
@@ -51,11 +49,31 @@
         data: function() {
             return {
                 all_claims: [],
+                selected_claim_route : '',
                 selected_claim : {}
             }
         },
         created : function(){
+            const scope = this;
             this.all_claims = this.claims;
+            this.$nextTick(function(){
+                $('.datetimepicker').datetimepicker({
+                    maxDate: moment().add(1, 'days'),
+                    format: "MM/DD/YYYY hh:mmA",
+                    icons: {
+                        time: 'fa fa-clock-o',
+                        date: "fa fa-calendar",
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right'
+                    }
+                });
+            });
+
+            $Bus.$on('selected-claim:handled', function(){
+                scope.removeClaim(scope.selected_claim);
+            });
         },
         methods : {
             hasFiles : function(claim) {
@@ -67,31 +85,33 @@
             handleClaim : function(choice, claim, event){
                 event.preventDefault();
                 this.selected_claim = claim;
-                let route = window.location+'/'+claim.uuid;
+                this.selected_claim_route = window.location+'/'+claim.uuid;
                 switch(choice) {
                     case 'accept' :
-                        return this.acceptClaim(route,claim);
+                        return this.toggleAcceptClaimModal();
                         break;
                     case 'reject' :
-                        return this.rejectClaim(route,claim);
+                        return this.toggleRejectClaimModal();
                         break;
                 }
             },
-            acceptClaim : function(route,claim){
+            toggleAcceptClaimModal : function(){
                 const scope = this;
-                this.$http.put(route,{claim: claim.id}).then(function(response){
-                    scope.removeClaim(claim);
-                }, function(response){
-                    notify(response.body.data.msg);
-                });
+                const modal = $('#modal_claim_accepted');
+                const form = modal.find('form');
+
+                form.prop('action', this.selected_claim_route);
+                modal.find('input[name="accepted_price"]').val(this.selected_claim.price);
+                modal.find('input[name="accepted_on"]').val(moment(this.selected_claim.created_at.date).format('MM/DD/YYYY hh:mmA'));
+                modal.modal('show');
             },
-            rejectClaim : function(route,claim){
+            toggleRejectClaimModal : function(){
                 const scope = this;
-                this.$http.delete(route, {claim: claim.id}).then(function(response){
-                    scope.removeClaim(claim);
-                }, function(response){
-                    notify(response.body.data.msg);
-                });
+                const modal = $('#modal_claim_rejected');
+                const form = modal.find('form');
+
+                form.prop('action', this.selected_claim_route);
+                modal.modal('show');
             },
             removeClaim : function(claim){
                 let index = this.all_claims.indexOf(claim);

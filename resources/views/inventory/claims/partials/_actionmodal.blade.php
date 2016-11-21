@@ -12,21 +12,29 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label class="form-control-label">Accepted Price</label>
                                         <input type="number" name="accepted_price" class="form-control float" placeholder="Accepted Price (optional)">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label class="form-control-label">Accepted Date</label>
                                         <input type="text" name="accepted_on" class="form-control datetimepicker" placeholder="Accepted Date (optional)">
                                     </div>
                                 </div>
                             </div>
-                            <textarea name="notes" class="form-control"  placeholder="Enter any notes about the transaction here."></textarea>
-                            <p class="m-b-0 m-t-1 text-muted text-sm"><em>These notes are only viewable to you.</em></p>
+                            <textarea name="notes" class="form-control"  placeholder="Enter any notes about the transaction here. These notes are only viewable to you."></textarea>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn claim p-x-md btn-claim-action-final" v-on:click="submitModal"  id="btn_confirmed_claim">Save</button>
-                            <button type="button" class="btn btn-link" id="btn_confirmed_claim_cancel"
+                            <button type="button"
+                                    @click="acceptSelectedClaim"
+                                    class="btn p-x-md primary btn-claim-action-final"
+                                    id="btn_confirmed_claim">Save
+                            </button>
+                            <button
+                                    type="button"
+                                    class="btn btn-link"
+                                    id="btn_confirmed_claim_cancel"
                                     data-dismiss="modal">Cancel
                             </button>
                         </div>
@@ -52,7 +60,10 @@
                             <p class="m-b-0 m-t-1 text-muted text-sm"><em>Reminder: After an item is rejected, it is returned to your available inventory.</em></p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn claim btn-claim-action-final p-x-md" v-on:click="submitModal" id="btn_confirmed_claim">Save</button>
+                            <button type="button"
+                                    @click="rejectSelectedClaim"
+                                    class="btn primary btn-claim-action-final p-x-md"
+                                    id="btn_confirmed_claim">Save</button>
                             <button type="button" class="btn btn-link" id="btn_confirmed_claim_cancel"
                                     data-dismiss="modal">Cancel
                             </button>

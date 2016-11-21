@@ -6163,11 +6163,31 @@ exports.default = {
     data: function data() {
         return {
             all_claims: [],
+            selected_claim_route: '',
             selected_claim: {}
         };
     },
     created: function created() {
+        var scope = this;
         this.all_claims = this.claims;
+        this.$nextTick(function () {
+            $('.datetimepicker').datetimepicker({
+                maxDate: moment().add(1, 'days'),
+                format: "MM/DD/YYYY hh:mmA",
+                icons: {
+                    time: 'fa fa-clock-o',
+                    date: "fa fa-calendar",
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right'
+                }
+            });
+        });
+
+        $Bus.$on('selected-claim:handled', function () {
+            scope.removeClaim(scope.selected_claim);
+        });
     },
     methods: {
         hasFiles: function hasFiles(claim) {
@@ -6179,31 +6199,33 @@ exports.default = {
         handleClaim: function handleClaim(choice, claim, event) {
             event.preventDefault();
             this.selected_claim = claim;
-            var route = window.location + '/' + claim.uuid;
+            this.selected_claim_route = window.location + '/' + claim.uuid;
             switch (choice) {
                 case 'accept':
-                    return this.acceptClaim(route, claim);
+                    return this.toggleAcceptClaimModal();
                     break;
                 case 'reject':
-                    return this.rejectClaim(route, claim);
+                    return this.toggleRejectClaimModal();
                     break;
             }
         },
-        acceptClaim: function acceptClaim(route, claim) {
+        toggleAcceptClaimModal: function toggleAcceptClaimModal() {
             var scope = this;
-            this.$http.put(route, { claim: claim.id }).then(function (response) {
-                scope.removeClaim(claim);
-            }, function (response) {
-                notify(response.body.data.msg);
-            });
+            var modal = $('#modal_claim_accepted');
+            var form = modal.find('form');
+
+            form.prop('action', this.selected_claim_route);
+            modal.find('input[name="accepted_price"]').val(this.selected_claim.price);
+            modal.find('input[name="accepted_on"]').val(moment(this.selected_claim.created_at.date).format('MM/DD/YYYY hh:mmA'));
+            modal.modal('show');
         },
-        rejectClaim: function rejectClaim(route, claim) {
+        toggleRejectClaimModal: function toggleRejectClaimModal() {
             var scope = this;
-            this.$http.delete(route, { claim: claim.id }).then(function (response) {
-                scope.removeClaim(claim);
-            }, function (response) {
-                notify(response.body.data.msg);
-            });
+            var modal = $('#modal_claim_rejected');
+            var form = modal.find('form');
+
+            form.prop('action', this.selected_claim_route);
+            modal.modal('show');
         },
         removeClaim: function removeClaim(claim) {
             var index = this.all_claims.indexOf(claim);
@@ -6217,7 +6239,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<tbody>\n    <tr v-for=\"claim in all_claims\" :data-claim-id=\"claim.uuid\">\n        <td></td>\n        <td>\n            <div class=\"avatar-thumbnail-container\">\n                <div v-if=\"hasFiles(claim)\" class=\"avatar-thumbnail _32\">\n                    <img :src=\"getFile(claim)\">\n                </div>\n                <span>{{ claim.inventory_item_object_data.name_with_variant }}</span>\n            </div>\n        </td>\n        <td>${{ claim.price }}</td>\n        <td>{{ claim.claimer.name }}</td>\n        <td>\n            <timeago :timestamp=\"claim.created_at.date\"></timeago>\n        </td>\n        <td class=\"action-column\">\n            <div class=\"pull-right action-btns\">\n                <a data-toggle=\"modal\" data-target=\"#modal_claim_rejected\" class=\"btn white btn-xs btn-action--rejected btn-action-claim\" @click=\"handleClaim('reject', claim, $event)\">\n                Reject\n                </a>\n                <a data-toggle=\"modal\" data-target=\"#modal_claim_accepted\" class=\"btn white btn-xs  btn-action--accepted btn-action-claim\" @click=\"handleClaim('accept', claim, $event)\">\n                Accept\n                </a>\n            </div>\n        </td>\n    </tr>\n</tbody>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<tbody>\n    <tr v-for=\"claim in all_claims\" :data-claim-id=\"claim.uuid\">\n        <td></td>\n        <td>\n            <div class=\"avatar-thumbnail-container\">\n                <div v-if=\"hasFiles(claim)\" class=\"avatar-thumbnail _32\">\n                    <img :src=\"getFile(claim)\">\n                </div>\n                <span>{{ claim.inventory_item_object_data.name_with_variant }}</span>\n            </div>\n        </td>\n        <td>${{ claim.price }}</td>\n        <td>{{ claim.claimer.name }}</td>\n        <td>\n            <timeago :timestamp=\"claim.created_at.date\"></timeago>\n        </td>\n        <td class=\"action-column\">\n            <div class=\"pull-right action-btns\">\n                <a class=\"btn white btn-xs btn-action--rejected btn-action-claim\" @click=\"handleClaim('reject', claim, $event)\">\n                Reject\n                </a>\n                <a class=\"btn white btn-xs  btn-action--accepted btn-action-claim\" @click=\"handleClaim('accept', claim, $event)\">\n                Accept\n                </a>\n            </div>\n        </td>\n    </tr>\n</tbody>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6239,6 +6261,50 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 new Vue({
     el: "#claims_index",
+    methods: {
+        acceptSelectedClaim: function acceptSelectedClaim(event) {
+            event.preventDefault();
+            var scope = this;
+            var $el = $(event.target);
+            var form = $el.closest('form');
+            this.disableButtons($el);
+
+            this.$http.put(form.prop('action'), form.serializeObject()).then(function (response) {
+                notify({ text: 'Claim successfully accepted.', type: 'success' });
+                $Bus.$emit('selected-claim:handled');
+            }, function (response) {
+                notify({ text: response.body.data.msg });
+            }).finally(function () {
+                $el.closest('.modal').modal('toggle');
+                scope.enableButtons($el);
+            });
+        },
+        rejectSelectedClaim: function rejectSelectedClaim(event) {
+            event.preventDefault();
+            var scope = this;
+            var $el = $(event.target);
+            var form = $el.closest('form');
+            this.disableButtons($el);
+
+            this.$http.delete(form.prop('action'), form.serializeObject()).then(function (response) {
+                notify({ text: 'Claim successfully rejected.', type: 'success' });
+                $Bus.$emit('selected-claim:handled');
+            }, function (response) {
+                notify({ text: response.body.data.msg });
+            }).finally(function () {
+                $el.closest('.modal').modal('toggle');
+                scope.enableButtons($el);
+            });
+        },
+        enableButtons: function enableButtons(el) {
+            el.closest('.modal-footer').find('.btn').prop('disabled', false).removeClass('disabled');
+            el.find('.fa').remove();
+        },
+        disableButtons: function disableButtons(el) {
+            el.closest('.modal-footer').find('.btn').prop('disabled', true).addClass('disabled');
+            el.html(el.html() + ' <i class="fa fa-spin fa-spinner"></i>');
+        }
+    },
     components: {
         'claims-index': _ClaimsIndex2.default
     }

@@ -47,6 +47,7 @@
         </div>
     </div>
 
+    @include('inventory.claims.partials._actionmodal')
 
 @endsection
 
