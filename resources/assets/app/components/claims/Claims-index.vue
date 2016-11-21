@@ -3,7 +3,7 @@
         <tr
                 v-for="claim in all_claims"
                 :data-claim-id="claim.uuid" >
-            <td ></td>
+            <td><input type="checkbox" :name="claims[claim.id]"></td>
             <td>
                 <div class="avatar-thumbnail-container">
                     <div v-if="hasFiles(claim)" class="avatar-thumbnail _32">

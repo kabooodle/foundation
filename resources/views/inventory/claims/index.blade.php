@@ -30,7 +30,7 @@
                 <table class="table table-condensed table-as-list white">
                     <thead>
                     <tr class="  ">
-                        <th></th>
+                        <th><input type="checkbox" id="checkAll"></th>
                         <th class="text-muted">Item</th>
                         <th class="text-muted p-l-0 m-l-0">Claim Price</th>
                         <th class="text-muted p-l-0 m-l-0">Claimer</th>
