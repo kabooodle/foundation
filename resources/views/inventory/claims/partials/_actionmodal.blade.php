@@ -26,7 +26,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn claim p-x-md btn-claim-action-final" v-on:click="submitModal"  id="btn_confirmed_claim">Save</button>
-                            <button type="button" class="m-l-1 btn btn-link" id="btn_confirmed_claim_cancel"
+                            <button type="button" class="btn btn-link" id="btn_confirmed_claim_cancel"
                                     data-dismiss="modal">Cancel
                             </button>
                         </div>
@@ -53,7 +53,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn claim btn-claim-action-final p-x-md" v-on:click="submitModal" id="btn_confirmed_claim">Save</button>
-                            <button type="button" class="m-l-1 btn btn-link" id="btn_confirmed_claim_cancel"
+                            <button type="button" class="btn btn-link" id="btn_confirmed_claim_cancel"
                                     data-dismiss="modal">Cancel
                             </button>
                         </div>

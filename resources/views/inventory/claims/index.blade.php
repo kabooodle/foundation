@@ -1,4 +1,4 @@
-@extends('layouts.body_w_leftnav')
+@extends('layouts.full', ['contentId' => 'claims_index'])
 
 @section('body-menu')
 
