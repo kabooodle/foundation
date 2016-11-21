@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Models\Claims;
 use Kabooodle\Models\User;
 use Messages;
@@ -20,14 +21,16 @@ use Kabooodle\Http\Controllers\Web\Controller;
  */
 class ProfilePurchasesController extends Controller
 {
+    use PaginatesTrait;
+
     /**
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $claims = user()->claimsAsBuyer;
+        $claims = $this->paginateData($request, user()->claimsAsBuyer->sortByDesc('created_at'));
         return view('profile.purchases')->with(compact('claims'));
     }
 
@@ -35,7 +38,7 @@ class ProfilePurchasesController extends Controller
     {
         $claim = Claims::where('id', $itemID)->first();
 
-        dd($claim->price);
+        return view('profile.purchases.show')->with(compact('claim'));
     }
 
 }

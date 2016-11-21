@@ -109,7 +109,7 @@
                     </li>
                 @endif
                     <li class="nav-item">
-                        <a href="{#"
+                        <a href="{{ route('profile.purchases.index') }}"
                            class="nav-link {{ Request::is('purchases*') ? 'active' : null }}"><span
                                     class="nav-text">Purchases</span></a>
                     </li>
