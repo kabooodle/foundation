@@ -34,86 +34,18 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody>
-                    @foreach($data as $claim)
-                        @include('inventory.claims.partials._claimrow')
-                    @endforeach
-                    </tbody>
+                        <claims-index :claims="{{ $data->getCollection()->toJson() }}"
+                        ></claims-index>
                 </table>
 
-                @include('inventory.claims.partials._actionmodal')
+
             </div>
 
         </div>
     </div>
 
-    <script>
-        var vModal = new Vue({
-            el: '#claims__wrapper',
-            data: {
-                modal_route: null,
-                modal_action: null,
-                claim_uuid: null
-            },
-            methods: {
-                toggleActionModal: function (e) {
-                    e.preventDefault();
-                    var $el = $(e.target);
-                    this.claim_uuid = $el.data('id');
-                    this.modal_route = $el.data('route');
-                    this.modal_action = $el.data('method');
-                },
-                submitModal: function (e) {
-                    e.preventDefault();
-                    var $el = $(e.target);
-                    var that = this; // the vue parent reference
-                    var formData = $el.closest('.modal-content').find('form').serialize();
-                    this._disableModalBtns($el);
-                    $.ajax({
-                        url: this.modal_route,
-                        type: this.modal_action,
-                        data: formData,
-                        dataType: "json"
-                    })
-                            .done(function (json) {
-                                if (json.html) {
-                                    $('tr[data-claim-id='+that.claim_uuid+']').replaceWith(json.html);
-                                }
-                            })
-                            .fail(function (xhr, status, errorThrown) {
-                                alert(xhr.responseJSON.message);
-                            })
-                            .always(function(){
-                                that._enableModalBtns($el);
-                                $el.closest('.modal').modal('hide');
-                                $el.closest('.modal').find('input, select, textarea').val('');
-                                that.claim_uuid = null;
-                            });
-                },
-                _disableModalBtns: function($el)
-                {
-                    $el.parent().find('.btn').addClass('disabled').attr('disabled',true);
-                },
-                _enableModalBtns: function($el)
-                {
-                    $el.parent().find('.btn').removeClass('disabled').attr('disabled',false);
-                }
-            }
-        });
 
-        $(function(){
-            $('.datetimepicker').datetimepicker({
-                format: "MM/DD/YYYY hh:mmA",
-                icons: {
-                    time: 'fa fa-clock-o',
-                    date: "fa fa-calendar",
-                    up: 'fa fa-chevron-up',
-                    down: 'fa fa-chevron-down',
-                    previous: 'fa fa-chevron-left',
-                    next: 'fa fa-chevron-right'
-                }
-            });
-        });
-    </script>
+    <script src="/assets/js/claims-index.js"></script>
+
 
 @endsection
