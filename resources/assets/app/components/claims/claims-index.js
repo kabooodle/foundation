@@ -3,6 +3,11 @@ import Claims_index from './Claims-index.vue';
 new Vue({
     el: "#claims_index",
     methods : {
+        toggleChecks : (event)=>{
+            $.each($('input.claim_checks'), function(i,v){
+                $(this).prop('checked', event.target.checked).trigger('change');
+            });
+        },
         acceptSelectedClaim: function(event){
             event.preventDefault();
             const scope = this;

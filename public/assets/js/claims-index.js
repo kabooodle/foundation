@@ -6164,7 +6164,8 @@ exports.default = {
         return {
             all_claims: [],
             selected_claim_route: '',
-            selected_claim: {}
+            selected_claim: {},
+            selected_claims: []
         };
     },
     created: function created() {
@@ -6190,6 +6191,23 @@ exports.default = {
         });
     },
     methods: {
+        selectedClaimsChanged: function selectedClaimsChanged(claim, event) {
+            event.preventDefault();
+            var el = event.target;
+            console.log('hi');
+            if (el.checked) {
+                this.addToSelectedClaims(claim);
+            } else {
+                this.removeFromSelectedClaims(claim);
+            }
+        },
+        addToSelectedClaims: function addToSelectedClaims(claim) {
+            this.selected_claims.push(claim);
+        },
+        removeFromSelectedClaims: function removeFromSelectedClaims(claim) {
+            var index = this.selected_claims.indexOf(claim);
+            this.selected_claims.splice(index, 1);
+        },
         hasFiles: function hasFiles(claim) {
             return claim.inventory_item_object_data.files && claim.inventory_item_object_data.files.length;
         },
@@ -6239,7 +6257,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<tbody>\n    <tr v-for=\"claim in all_claims\" :data-claim-id=\"claim.uuid\">\n        <td><input type=\"checkbox\" :name=\"claims[claim.id]\"></td>\n        <td>\n            <div class=\"avatar-thumbnail-container\">\n                <div v-if=\"hasFiles(claim)\" class=\"avatar-thumbnail _32\">\n                    <img :src=\"getFile(claim)\">\n                </div>\n                <span>{{ claim.inventory_item_object_data.name_with_variant }}</span>\n            </div>\n        </td>\n        <td>${{ claim.price }}</td>\n        <td>{{ claim.claimer.name }}</td>\n        <td>\n            <timeago :timestamp=\"claim.created_at.date\"></timeago>\n        </td>\n        <td class=\"action-column\">\n            <div class=\"pull-right action-btns\">\n                <a class=\"btn white btn-xs btn-action--rejected btn-action-claim\" @click=\"handleClaim('reject', claim, $event)\">\n                Reject\n                </a>\n                <a class=\"btn white btn-xs  btn-action--accepted btn-action-claim\" @click=\"handleClaim('accept', claim, $event)\">\n                Accept\n                </a>\n            </div>\n        </td>\n    </tr>\n</tbody>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<tbody>\n    <tr v-for=\"claim in all_claims\" :data-claim-id=\"claim.uuid\">\n        <td><input @change=\"selectedClaimsChanged(claim, $event)\" type=\"checkbox\" class=\"claim_checks\" :data-id=\"claim.id\" name=\"claims[]\" :value=\"claim.id\">\n        </td>\n        <td>\n            <div class=\"avatar-thumbnail-container\">\n                <div v-if=\"hasFiles(claim)\" class=\"avatar-thumbnail _32\">\n                    <img :src=\"getFile(claim)\">\n                </div>\n                <span>{{ claim.inventory_item_object_data.name_with_variant }}</span>\n            </div>\n        </td>\n        <td>${{ claim.price }}</td>\n        <td>{{ claim.claimer.name }}</td>\n        <td>\n            <timeago :timestamp=\"claim.created_at.date\"></timeago>\n        </td>\n        <td class=\"action-column\">\n            <div class=\"pull-right action-btns\">\n                <a class=\"btn white btn-xs btn-action--rejected btn-action-claim\" @click=\"handleClaim('reject', claim, $event)\">\n                Reject\n                </a>\n                <a class=\"btn white btn-xs  btn-action--accepted btn-action-claim\" @click=\"handleClaim('accept', claim, $event)\">\n                Accept\n                </a>\n            </div>\n        </td>\n    </tr>\n</tbody>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6262,6 +6280,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 new Vue({
     el: "#claims_index",
     methods: {
+        toggleChecks: function toggleChecks(event) {
+            $.each($('input.claim_checks'), function (i, v) {
+                $(this).prop('checked', event.target.checked).trigger('change');
+            });
+        },
         acceptSelectedClaim: function acceptSelectedClaim(event) {
             event.preventDefault();
             var scope = this;

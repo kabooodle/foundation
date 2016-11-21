@@ -3,7 +3,14 @@
         <tr
                 v-for="claim in all_claims"
                 :data-claim-id="claim.uuid" >
-            <td><input type="checkbox" :name="claims[claim.id]"></td>
+            <td><input
+                        @change="selectedClaimsChanged(claim, $event)"
+                        type="checkbox"
+                        class="claim_checks"
+                        :data-id="claim.id"
+                        name="claims[]"
+                        :value="claim.id">
+            </td>
             <td>
                 <div class="avatar-thumbnail-container">
                     <div v-if="hasFiles(claim)" class="avatar-thumbnail _32">
@@ -50,7 +57,8 @@
             return {
                 all_claims: [],
                 selected_claim_route : '',
-                selected_claim : {}
+                selected_claim : {},
+                selected_claims: [],
             }
         },
         created : function(){
@@ -76,6 +84,23 @@
             });
         },
         methods : {
+            selectedClaimsChanged : function(claim, event){
+                event.preventDefault();
+                const el = event.target;
+                console.log('hi');
+                if(el.checked) {
+                    this.addToSelectedClaims(claim);
+                } else {
+                    this.removeFromSelectedClaims(claim);
+                }
+            },
+            addToSelectedClaims : function(claim){
+                this.selected_claims.push(claim);
+            },
+            removeFromSelectedClaims: function(claim){
+                let index = this.selected_claims.indexOf(claim);
+                this.selected_claims.splice(index, 1);
+            },
             hasFiles : function(claim) {
                 return claim.inventory_item_object_data.files && claim.inventory_item_object_data.files.length;
             },
