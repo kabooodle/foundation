@@ -34,3 +34,9 @@
         'as' => 'inventory.associate.destroy',
         'uses' =>  \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@destroyAssociation',
     ]);
+
+
+    $api->post('pageviews', [
+        'as' => 'inventory.pageviews.store',
+        'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryViewsController::class.'@store'
+    ]);

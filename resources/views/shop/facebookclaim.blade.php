@@ -30,4 +30,6 @@
     @include('inventory.partials._claimmodal', ['post' => route('externalclaim.claim', [$facebook->obfuscateIdToString()]) , 'redirect' => ('/')])
 
 
+
+
 @endsection

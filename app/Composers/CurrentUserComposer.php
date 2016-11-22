@@ -7,6 +7,7 @@
 namespace Kabooodle\Composers;
 
 use JWTAuth;
+use Analytics;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,7 +22,11 @@ class CurrentUserComposer
      */
     public function compose(View $view)
     {
-        $view->with_currentUser(Auth::user() ? Auth::user()->NoEagerLoads()->first()->toJson() : '""');
-        $view->with_authToken(Auth::user() ? JWTAuth::fromUser(Auth::user()) : null);
+        $user = Auth::user();
+        if($user){
+            Analytics::setUserId(md5($user->id));
+        }
+        $view->with_currentUser($user ? $user->NoEagerLoads()->first()->toJson() : '""');
+        $view->with_authToken($user ? JWTAuth::fromUser($user) : null);
     }
 }

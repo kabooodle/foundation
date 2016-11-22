@@ -20,14 +20,13 @@ use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
-use Kabooodle\Models\Contracts\ShoppableInterface;
 use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
 
 /**
  * Class FlashSales
  * @package Kabooodle\Models
  */
-class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisionable, ShoppableInterface
+class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisionable
 {
     use AlgoliaEloquentTrait,
         AuthorableTrait,

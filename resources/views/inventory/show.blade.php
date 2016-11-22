@@ -2,12 +2,10 @@
 
 
 @section('body-menu')
-
     <div class="clearfix">
         <div class="pull-left">
             <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ rand(0,50) }} <span class="text-muted">Sales</span></span>
             <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ rand(0,50) }} <span class="text-muted">Views</span></span>
-
         </div>
         <div class="btn-toolbar pull-right">
             @if(! $item->canSatisfyRequestedQuantityOf(1))
@@ -25,12 +23,18 @@
             @endif
         </div>
     </div>
-
 @endsection
+
 
 @section('body-content')
-
    @include('inventory.partials._show', ['item' => $item])
-
    @include('inventory.partials._claimmodal', ['post' => route('shop.inventory.claim', [$item->user->username, $item->getUUID()]), 'redirect' => route('shop.inventory.index', [$item->user->username])])
+
 @endsection
+
+
+
+@push('footer-scripts')
+
+{!!  Analytics::trackPage('/'.$item->id) !!}
+@endpush

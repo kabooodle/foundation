@@ -6283,17 +6283,22 @@ var _Popover = require('./components/Popover.vue');
 
 var _Popover2 = _interopRequireDefault(_Popover);
 
+var _Pageviewtracker = require('./components/Pageviewtracker.vue');
+
+var _Pageviewtracker2 = _interopRequireDefault(_Pageviewtracker);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 new Vue({
     el: '#kabooodle_utilities',
     components: {
         'loader': _Loading2.default,
+        'pageviewstracker': _Pageviewtracker2.default,
         'popout-overlay': _Popover2.default
     }
 });
 
-},{"./components/Loading.vue":6,"./components/Popover.vue":7}],6:[function(require,module,exports){
+},{"./components/Loading.vue":6,"./components/Pageviewtracker.vue":7,"./components/Popover.vue":8}],6:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.kb_overlay {\n    background: rgba(255,255,255,.98);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\n.kb_overlay__inner {\n    position: fixed;\n    background: #fff;\n    padding: 3px;\n    border-radius: 30px;\n    top: 50%;\n    left: 50%;\n    margin-left: -16px;\n    margin-top: -16px;\n}\n")
 'use strict';
@@ -6336,6 +6341,47 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: {
+        route: {
+            type: String,
+            required: true
+        },
+        resource_hash: {
+            type: String,
+            required: true
+        }
+    },
+    render: function render() {
+        this.trackView();
+    },
+    methods: {
+        trackView: function trackView() {
+            try {
+                this.$http.post(this.route, { resource: this.resource_hash }).then(function (response) {}, function (response) {
+                    throw new Error(response);
+                });
+            } catch (e) {}
+        }
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-a42fbc70", module.exports)
+  } else {
+    hotAPI.update("_v-a42fbc70", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":3,"vue-hot-reload-api":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

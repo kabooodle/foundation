@@ -6,22 +6,26 @@
 
 namespace Kabooodle\Models;
 
-use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Sofa\Revisionable\Revisionable;
+use Kabooodle\Models\Traits\LikeableTrait;
+use Kabooodle\Models\Traits\ShoppableTrait;
 use Kabooodle\Models\Traits\AuthorableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
-use Kabooodle\Models\Traits\LikeableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use Kabooodle\Models\Traits\PageViewablesTrait;
+use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
-use Sofa\Revisionable\Revisionable;
+use Kabooodle\Models\Contracts\ShoppableInterface;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class FlashsaleItems
  * @package Kabooodle\Models
  */
-class FlashsaleItems extends BaseEloquentModel implements Revisionable
+class FlashsaleItems extends BaseEloquentModel implements Revisionable, ShoppableInterface
 {
-    use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait,ObfuscatesIdTrait,  RevisionableTrait, SoftDeletes;
+    use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, PageViewablesTrait,  RevisionableTrait, ShoppableTrait, SoftDeletes;
 
         /**
      * @var string
@@ -75,7 +79,15 @@ class FlashsaleItems extends BaseEloquentModel implements Revisionable
      */
     public function inventory()
     {
-        return $this->belongsto(Inventory::class, 'inventory_id');
+        return $this->belongsTo(Inventory::class, 'inventory_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function inventoryItem(): BelongsTo
+    {
+        return $this->inventory();
     }
 
     /**
@@ -100,5 +112,13 @@ class FlashsaleItems extends BaseEloquentModel implements Revisionable
     public function isEnabled()
     {
         return (boolean) $this->enabled == 1;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameOfResource():string
+    {
+        return 'Flash Sale';
     }
 }
