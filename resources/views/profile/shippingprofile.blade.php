@@ -2,8 +2,32 @@
 
 @section('settings-content')
 
-    {{ Form::open(['route' => 'profile.addresses.update', 'method' => 'POST']) }}
+    {{ Form::open(['route' => 'profile.shippingprofile.update', 'method' => 'POST']) }}
     @if(user()->subscribed('main'))
+    <div class="box">
+        <div class="box-header">
+            <h2>Shipping Profile Settings</h2>
+        </div>
+        <div class="box-divider m-a-0"></div>
+        <div class="box-body">
+            <div class="clearfix">
+                <div class="pull-left">
+                    <p>Set {{env('APP_NAME')}} as default shipping provider.</p>
+                </div>
+                <div class="pull-right">
+                    <div class="checkbox checkbox-slider--b-flat">
+                        <label>
+                            <input
+                                    name="kabooodle_as_shipping"
+                                    @if(user()->usesKabooodleAsShipper()) checked @endif
+                                    type="checkbox"><span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="box">
         <div class="box-header">
             <h2>Shipping From Address</h2>
@@ -15,6 +39,7 @@
         </div>
     </div>
     @endif
+
     <div class="box">
         <div class="box-header">
             <h2>Shipping To Address</h2>

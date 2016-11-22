@@ -10,10 +10,9 @@ use Kabooodle\Models\User;
 use Kabooodle\Models\MailingAddress;
 
 /**
- * Class UpdateUserShippingAddressesCommand
- * @package Kabooodle\Commands\Profile
+ * Class UpdateUserShippingProfileCommand
  */
-final class UpdateUserShippingAddressesCommand
+final class UpdateUserShippingProfileCommand
 {
     /**
      * @var User
@@ -31,17 +30,22 @@ final class UpdateUserShippingAddressesCommand
     public $toAddress;
 
     /**
-     * UpdateUserShippingAddressesCommand constructor.
-     *
+     * @var bool;
+     */
+    public $kabooodleAsDefaultshippingProvider;
+
+    /**
      * @param User           $actor
      * @param MailingAddress $fromAddress
      * @param MailingAddress $toAddress
+     * @param bool           $kabooodleAsDefaultshippingProvider
      */
-    public function __construct(User $actor, MailingAddress $fromAddress, MailingAddress $toAddress)
+    public function __construct(User $actor, MailingAddress $fromAddress, MailingAddress $toAddress, bool $kabooodleAsDefaultshippingProvider = true)
     {
         $this->actor = $actor;
         $this->fromAddress = $fromAddress;
         $this->toAddress = $toAddress;
+        $this->kabooodleAsDefaultshippingProvider = $kabooodleAsDefaultshippingProvider;
     }
 
     /**
@@ -66,5 +70,13 @@ final class UpdateUserShippingAddressesCommand
     public function getToAddress()
     {
         return $this->toAddress;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isKabooodleDefaultShippingProvider(): bool
+    {
+        return $this->kabooodleAsDefaultshippingProvider;
     }
 }
