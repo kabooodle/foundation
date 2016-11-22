@@ -104,9 +104,9 @@
     <div
             class="navbar-side"
             id="navbarSide">
-        <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}"
-              methods="POST">
             <div class="navbar-side-inner p-a">
+                <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}"
+                      methods="POST">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a data-toggle="tab" class="nav-link active" href="#post_flashsales">
@@ -217,6 +217,7 @@
                         </div>
                     </div>
                 </div>
+                </form>
             </div>
             {{--<div class="savesales clearfix">--}}
             {{--<div class="pull-right ">--}}
@@ -236,7 +237,7 @@
             {{-->Close</button>--}}
             {{--</div>--}}
             {{--</div>--}}
-        </form>
+
     </div>
 
 
