@@ -39,7 +39,7 @@ class StartsAndEndsAt
     /**
      * @return Carbon
      */
-    public function getStartsAt()
+    public function getStartsAt(): Carbon
     {
         return $this->startsAt;
     }
@@ -47,7 +47,7 @@ class StartsAndEndsAt
     /**
      * @return Carbon
      */
-    public function getEndsAt()
+    public function getEndsAt(): Carbon
     {
         return $this->endsAt;
     }

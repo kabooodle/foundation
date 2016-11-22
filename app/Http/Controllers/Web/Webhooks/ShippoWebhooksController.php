@@ -11,7 +11,6 @@ use Kabooodle\Http\Controllers\Web\Controller;
 
 /**
  * Class ShippoWebhooksController
- * @package Kabooodle\Http\Controllers\Web\Webhooks
  */
 class ShippoWebhooksController extends Controller
 {
@@ -20,12 +19,11 @@ class ShippoWebhooksController extends Controller
      */
     public function handleWebhook(Request $request)
     {
+        // Yah, uber topsecret webhook token o.O
         if (!$request->has('x') || $request->get('x') <> 'KuMQnR5hhzlM2Wk7q9aS') {
             return;
         }
 
-        $payload = [
-            
-        ];
+        $payload = json_decode($request->getContent(), true);
     }
 }

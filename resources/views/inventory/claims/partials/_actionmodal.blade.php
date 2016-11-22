@@ -33,7 +33,7 @@
                             </button>
                             <button
                                     type="button"
-                                    class="btn btn-sm btn-link"
+                                    class="btn btn-sm white"
                                     id="btn_confirmed_claim_cancel"
                                     data-dismiss="modal">Cancel
                             </button>
@@ -64,7 +64,7 @@
                                     @click="rejectSelectedClaim"
                                     class="btn-sm btn primary btn-claim-action-final p-x-md"
                                     id="btn_confirmed_claim">Save</button>
-                            <button type="button" class="btn-sm btn btn-link" id="btn_confirmed_claim_cancel"
+                            <button type="button" class="btn-sm btn white" id="btn_confirmed_claim_cancel"
                                     data-dismiss="modal">Cancel
                             </button>
                         </div>
