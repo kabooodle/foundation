@@ -10,12 +10,13 @@
         </div>
         <div class="box-divider m-a-0"></div>
         <div class="box-body">
-            <div class="clearfix">
-                <div class="pull-left">
+            <div class="row">
+                <div class="col-sm-9">
                     <p>Set {{env('APP_NAME')}} as default shipping provider.</p>
+                    <small class="text-muted">When a claim is accepted, the claim is automatically added to {{ env('APP_NAME') }}'s shipping queue for you.</small>
                 </div>
-                <div class="pull-right">
-                    <div class="checkbox checkbox-slider--b-flat">
+                <div class="col-sm-3">
+                    <div class="checkbox  pull-right checkbox-slider--b-flat">
                         <label>
                             <input
                                     name="kabooodle_as_shipping"
