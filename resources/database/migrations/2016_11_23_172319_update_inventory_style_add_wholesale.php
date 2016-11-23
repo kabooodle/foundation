@@ -17,7 +17,8 @@ class UpdateInventoryStyleAddWholesale extends Migration
             $table->decimal('wholesale_price_usd_less_5_percent', 6,2)->after('sort_order');
         });
 
-        DB::table()->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table(\Kabooodle\Models\InventoryTypeStyles::getTableName())->truncate();
 
         $sql = "INSERT INTO `inventory_type_styles` (`id`, `inventory_type_id`, `name`, `slug`, `sort_order`, `wholesale_price_usd`, `wholesale_price_usd_less_5_percent`, `created_at`, `updated_at`, `deleted_at`)
 VALUES
@@ -56,6 +57,8 @@ VALUES
 ";
 
         DB::statement($sql);
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**
