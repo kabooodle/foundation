@@ -10,7 +10,7 @@
 
         <ul class="nav navbar-nav pull-right nav-active-border">
             @if(user())
-                @if(user()->subscribed('main'))
+                @if(user()->subscribed('main') || (user()->getAvailableBalance() > 0))
                 <li class="nav-item ">
                     <a class="nav-link text-sm" href="{{ route('profile.credits.index') }}">${{ user()->getAvailableBalance() }} Credits</a>
                 </li>

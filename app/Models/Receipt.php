@@ -13,7 +13,6 @@ use Kabooodle\Models\Contracts\ReceiptInterface;
  */
 class Receipt implements ReceiptInterface
 {
-
     public function totalAmount()
     {
         return $this->transaction->transaction_amount;
