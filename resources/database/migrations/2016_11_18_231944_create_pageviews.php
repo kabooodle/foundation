@@ -22,7 +22,7 @@ class CreatePageviews extends Migration
             $table->timestamps();
 
             $table->foreign('inventory_id')
-                ->references('inventory')->on('id')
+                ->references('id')->on('inventory')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });

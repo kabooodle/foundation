@@ -102,26 +102,22 @@
 @section('body-content')
     <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}"
           methods="POST">
-    <div
-            class="navbar-side"
-            id="navbarSide">
-
+        <div class="navbar-side" id="navbarSide">
             <div class="navbar-side-inner p-a" data-scrollable="scrollable">
-
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a data-toggle="tab" class="nav-link active" href="#post_flashsales">
                             Flash Sales
                             {{--<small class="block text-sm text-center text-muted">--}}
-                                {{--(@{{ get_selected_flashsales_sales.length }} selected)--}}
-                                {{--@{{ sums.selected_postables }}--}}
+                            {{--(@{{ get_selected_flashsales_sales.length }} selected)--}}
+                            {{--@{{ sums.selected_postables }}--}}
                             {{--</small>--}}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a data-toggle="tab" class="nav-link" href="#post_facebook">Facebook
                             {{--<small class="block text-sm text-center text-muted">--}}
-                                {{--(@{{ get_selected_facebook_sales.length }} items assigned)--}}
+                            {{--(@{{ get_selected_facebook_sales.length }} items assigned)--}}
                             {{--</small>--}}
                         </a>
                     </li>
@@ -167,13 +163,13 @@
                                         <div class="input-group">
                                             {{ Form::text('ends_at', null, ['class' => 'form-control', 'id' => 'datetimepicker2', 'v-bind' => 'date_time_input']) }}
                                             <span class="input-group-btn">
-                                    <button
-                                                @click="clearDateTimeInput"
-                                            class="btn white"
-                                            type="button"
-                                            style="padding-bottom: .3rem
-                                                ;">Clear</button>
-                                </span>
+                                                <button
+                                                    @click="clearDateTimeInput"
+                                                    class="btn white"
+                                                    type="button"
+                                                    style="padding-bottom: .3rem
+                                                    ;">Clear</button>
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="checkbox">
@@ -202,11 +198,11 @@
                                             <span
                                             @click="removeFromAlbum(item, facebook_album, selected.fb_group, $event)"
                                             class="img-thumb" v-for="item in facebook_album.items" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
-                                                <img
-                                                v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)"
-                                                class="img-responsive"
-                                                style="width: 24px; height: 24px;">
-                                                <i class="fa fa-times fa-2x"></i>
+                                            <img
+                                                    v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)"
+                                                    class="img-responsive"
+                                                    style="width: 24px; height: 24px;">
+                                            <i class="fa fa-times fa-2x"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -220,49 +216,29 @@
                 </div>
 
             </div>
-        <div class="savesales clearfix">
-            <div class="pull-right ">
-                <button
-                        :disabled="( actions.posting_to_sales )"
-                        :class="{'disabled' : actions.posting_to_sales }"
-                        @click="postSelectedItemsToSales"
-                        type="button"
-                        class="btn btn-lg primary"
-                >
+            <div class="savesales clearfix">
+                <div class="pull-right ">
+                    <button
+                            :disabled="( actions.posting_to_sales )"
+                            :class="{'disabled' : actions.posting_to_sales }"
+                    @click="postSelectedItemsToSales"
+                    type="button"
+                    class="btn btn-lg primary"
+                    >
                     Post Items <i class="fa fa-spin fa-spinner" v-show="actions.posting_to_sales"></i>
-                </button>
-                <button
-                        :disabled="( actions.posting_to_sales )"
-                        :class="{'disabled' : actions.posting_to_sales }"
-                        type="button"
-                        class="btn btn-lg white"
-                        @click="closePostMenu"
-                >
-                Close
-                </button>
+                    </button>
+                    <button
+                            :disabled="( actions.posting_to_sales )"
+                            :class="{'disabled' : actions.posting_to_sales }"
+                            type="button"
+                            class="btn btn-lg white"
+                    @click="closePostMenu"
+                    >
+                    Close
+                    </button>
+                </div>
             </div>
         </div>
-
-            {{--<div class="savesales clearfix">--}}
-            {{--<div class="pull-right ">--}}
-            {{--<button--}}
-            {{--@click="postSelectedItemsToSales"--}}
-            {{--type="button"--}}
-            {{--:disabled="(!has_selected_sales_and_selected.items || posting_to_sales )"--}}
-            {{--v-bind:class="{'disabled' : !has_selected_sales_and_selected.items || posting_to_sales }"--}}
-            {{--class="btn btn-lg primary"--}}
-            {{-->Post @{{ selected_sales_sum }} Items</button>--}}
-            {{--<button--}}
-            {{--:disabled="(posting_to_sales )"--}}
-            {{--v-bind:class="{'disabled' :  posting_to_sales }"--}}
-            {{--v-on:click="closePostMenu"--}}
-            {{--type="button"--}}
-            {{--class="btn btn-lg white"--}}
-            {{-->Close</button>--}}
-            {{--</div>--}}
-            {{--</div>--}}
-
-    </div>
     </form>
 
     <style-template></style-template>
