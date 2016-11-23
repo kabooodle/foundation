@@ -100,12 +100,12 @@
 @endpush
 
 @section('body-content')
-
+    <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}"
+          methods="POST">
     <div
             class="navbar-side"
             id="navbarSide">
-        <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}"
-              methods="POST">
+
             <div class="navbar-side-inner p-a" data-scrollable="scrollable">
 
                 <ul class="nav nav-tabs">
@@ -242,7 +242,7 @@
                 </button>
             </div>
         </div>
-        </form>
+
             {{--<div class="savesales clearfix">--}}
             {{--<div class="pull-right ">--}}
             {{--<button--}}
@@ -263,7 +263,7 @@
             {{--</div>--}}
 
     </div>
-
+    </form>
 
     <style-template></style-template>
 
