@@ -41,6 +41,11 @@ final class UpdateInventoryItemCommand
     public $price;
 
     /**
+     * @var float
+     */
+    public $wholesalePrice;
+
+    /**
      * @var int
      */
     public $qty;
@@ -66,26 +71,26 @@ final class UpdateInventoryItemCommand
     public $uuid;
 
     /**
-     * UpdateInventoryItemCommand constructor.
-     *
      * @param User        $actor
      * @param Inventory   $item
      * @param int         $styleId
      * @param int         $sizeId
      * @param float       $price
+     * @param float       $wholesalePrice
      * @param int         $qty
-     * @param             array $images
+     * @param array       $images
      * @param string|null $description
      * @param string|null $categories
      * @param string      $uuid
      */
-    public function __construct(User $actor, Inventory $item, int $styleId, int $sizeId, float $price, int $qty, array $images, string $description = null, string $categories = null, string $uuid)
+    public function __construct(User $actor, Inventory $item, int $styleId, int $sizeId, float $price, float $wholesalePrice, int $qty, array $images, string $description = null, string $categories = null, string $uuid)
     {
         $this->actor = $actor;
         $this->item = $item;
         $this->styleId = $styleId;
         $this->sizeId = $sizeId;
         $this->price = $price;
+        $this->wholesalePrice = $wholesalePrice;
         $this->qty = $qty;
         $this->images = $images;
         $this->description = $description;
@@ -171,5 +176,13 @@ final class UpdateInventoryItemCommand
     public function getUuid()
     {
         return $this->uuid;
+    }
+
+    /**
+     * @return float
+     */
+    public function getWholesalePrice(): float
+    {
+        return $this->wholesalePrice;
     }
 }

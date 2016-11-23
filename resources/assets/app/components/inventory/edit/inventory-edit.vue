@@ -124,7 +124,7 @@
                 sizes : [],
                 selected_style : '',
                 categories : '',
-                wholesale_price_usd : ''
+                wholesale_price_usd : null
             }
         },
         watch : {
@@ -132,8 +132,9 @@
                 $Bus.$emit('images:changed', this.images);
             }
         },
-        created : function(){
+        created(){
             const scope = this;
+            this.wholesale_price_usd = this.item.wholesale_price_usd;
 
             if(this.existingimages.length){
                 _.each(this.existingimages, function(image){
@@ -186,6 +187,7 @@
                 $('#inventory-wholesale-el')
                     .val(ws_price)
                     .prop('placeholder', ws_price);
+
                 this.wholesale_price_usd = ws_price;
             },
             // Iterates over styles and returns single item

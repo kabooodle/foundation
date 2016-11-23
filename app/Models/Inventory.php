@@ -402,7 +402,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
 
     /**
      * @param $value
-     * @return mixed
+     * @return float
      */
     public function getWholesalePriceUsdAttribute($value)
     {

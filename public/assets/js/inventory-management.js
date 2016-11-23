@@ -7607,9 +7607,9 @@ if (module.hot) {(function () {  module.hot.accept()
     document.head.removeChild(__vueify_style__)
   })
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-4e910d3e", module.exports)
+    hotAPI.createRecord("_v-49e9dca7", module.exports)
   } else {
-    hotAPI.update("_v-4e910d3e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-49e9dca7", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"./manage/computed":7,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[6]);

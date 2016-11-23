@@ -91,6 +91,7 @@ class InventoryApiController extends AbstractApiController
                 Binput::get('style_id'),
                 Binput::get('size_id'),
                 Binput::get('price_usd'),
+                Binput::get('wholesale_price_usd'),
                 Binput::get('initial_qty'),
                 Binput::get('images'),
                 Binput::get('description'),

@@ -1,6 +1,10 @@
 function moneyfy(n) {
     n = parseFloat(n);
-    return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+    let value = n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+    if(isNaN(value)){
+        return parseFloat(0);
+    }
+    return value;
 }
 
 ;(function( win ) {

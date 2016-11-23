@@ -24,7 +24,12 @@ if (! function_exists('dispatchNow')) {
      */
     function dispatchNow($job)
     {
-        return app(\Illuminate\Contracts\Bus\Dispatcher::class)->dispatchNow($job);
+        /** @var \Illuminate\Contracts\Bus\Dispatcher::class $dispatcher */
+        static $dispatcher;
+        if (!$dispatcher) {
+            $dispatcher = app(\Illuminate\Contracts\Bus\Dispatcher::class);
+        }
+        return $dispatcher->dispatchNow($job);
     }
 }
 

@@ -6475,9 +6475,9 @@ if (module.hot) {(function () {  module.hot.accept()
     document.head.removeChild(__vueify_style__)
   })
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-4a79d343", module.exports)
+    hotAPI.createRecord("_v-c06e6dee", module.exports)
   } else {
-    hotAPI.update("_v-4a79d343", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-c06e6dee", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"../../app/s3uploader":12,"../../vendor/fileupload/js/jquery.fileupload":16,"../../vendor/fileupload/js/jquery.fileupload-image":13,"../../vendor/fileupload/js/jquery.fileupload-process":14,"../../vendor/fileupload/js/jquery.fileupload-ui":15,"../../vendor/fileupload/js/jquery.iframe-transport":17,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":18,"../../vendor/fileupload/js/vendor/jquery.ui.widget":19,"../../vendor/fileupload/js/vendor/load-image":20,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5,"vueify/lib/insert-css":7}],9:[function(require,module,exports){
@@ -6515,9 +6515,9 @@ if (module.hot) {(function () {  module.hot.accept()
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-fa907b40", module.exports)
+    hotAPI.createRecord("_v-646ffbda", module.exports)
   } else {
-    hotAPI.update("_v-fa907b40", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-646ffbda", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"vue":6,"vue-hot-reload-api":5}],10:[function(require,module,exports){
@@ -6545,7 +6545,7 @@ exports.default = {
             sizes: [],
             selected_style: '',
             categories: '',
-            wholesale_price_usd: ''
+            wholesale_price_usd: null
         };
     },
     watch: {
@@ -6555,6 +6555,7 @@ exports.default = {
     },
     created: function created() {
         var scope = this;
+        this.wholesale_price_usd = this.item.wholesale_price_usd;
 
         if (this.existingimages.length) {
             _.each(this.existingimages, function (image) {
@@ -6589,6 +6590,7 @@ exports.default = {
             });
         });
     },
+
     methods: {
         setSizes: function setSizes(sizes) {
             this.sizes = sizes;
@@ -6605,6 +6607,7 @@ exports.default = {
             var ws_price_5 = moneyfy(style.wholesale_price_usd_less_5_percent);
             var ws_price = moneyfy(style.wholesale_price_usd);
             $('#inventory-wholesale-el').val(ws_price).prop('placeholder', ws_price);
+
             this.wholesale_price_usd = ws_price;
         },
 
@@ -6681,9 +6684,9 @@ if (module.hot) {(function () {  module.hot.accept()
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-6d271392", module.exports)
+    hotAPI.createRecord("_v-a299a29e", module.exports)
   } else {
-    hotAPI.update("_v-6d271392", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-a299a29e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"../../FileUpload.vue":8,"../../Timestamp.vue":9,"vue":6,"vue-hot-reload-api":5}],11:[function(require,module,exports){
