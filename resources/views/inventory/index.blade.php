@@ -100,13 +100,14 @@
 @endpush
 
 @section('body-content')
-
+    <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}"
+          methods="POST">
     <div
             class="navbar-side"
             id="navbarSide">
-            <div class="navbar-side-inner p-a">
-                <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}"
-                      methods="POST">
+
+            <div class="navbar-side-inner p-a" data-scrollable="scrollable">
+
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a data-toggle="tab" class="nav-link active" href="#post_flashsales">
@@ -217,8 +218,31 @@
                         </div>
                     </div>
                 </div>
-                </form>
+
             </div>
+        <div class="savesales clearfix">
+            <div class="pull-right ">
+                <button
+                        :disabled="( actions.posting_to_sales )"
+                        :class="{'disabled' : actions.posting_to_sales }"
+                        @click="postSelectedItemsToSales"
+                        type="button"
+                        class="btn btn-lg primary"
+                >
+                    Post Items <i class="fa fa-spin fa-spinner" v-show="actions.posting_to_sales"></i>
+                </button>
+                <button
+                        :disabled="( actions.posting_to_sales )"
+                        :class="{'disabled' : actions.posting_to_sales }"
+                        type="button"
+                        class="btn btn-lg white"
+                        @click="closePostMenu"
+                >
+                Close
+                </button>
+            </div>
+        </div>
+
             {{--<div class="savesales clearfix">--}}
             {{--<div class="pull-right ">--}}
             {{--<button--}}
@@ -239,7 +263,7 @@
             {{--</div>--}}
 
     </div>
-
+    </form>
 
     <style-template></style-template>
 
@@ -249,7 +273,7 @@
 <script>
     const inventory_route = '{{ apiRoute('inventory.index', [user()->username]) }}';
 </script>
-<script src="/assets/js/inventory-management.js"></script>
+<script src="/assets/js/inventory-management.js?x={{time()}}"></script>
 <script>
     $(function () {
 

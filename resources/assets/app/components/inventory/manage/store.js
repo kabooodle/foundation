@@ -97,6 +97,12 @@ const mutations = {
     SET_SELECTED_POSTABLES (state, key, value) {
         state.selected.postables[key] = value;
     },
+    RESET_SELECTED_POSTABLES (state){
+        state.selected.postables = {
+            fb_albums: [],
+            flashsales: []
+        };
+    },
     SET_SUM (state, key, value) {
         state.sums[key] = value;
     }

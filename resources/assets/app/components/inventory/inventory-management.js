@@ -129,7 +129,7 @@ new Vue({
             $Bus.$emit('facebook-album:changed');
         },
         setPostingToSales : function(val){
-            this.posting_to_sales = val;
+            this.actions.posting_to_sales = val;
         },
         openPostMenu : function(event){
             $('#navbarSide').css({
@@ -149,25 +149,21 @@ new Vue({
             event.preventDefault();
             let scope = this;
             let $el = $(event.target);
-            let form = $el.closest('form#post_sales_form');
-            let form_data = new FormData();
-            let selected_items_ids = _.pluck(this.selected_items, 'id');
-
-            $.each(form.serializeArray(), function(){
-                form_data.append(this.name, this.value);
-            });
-
-            for (let i = 0; i < selected_items_ids.length; i++) {
-                form_data.append('selected_items_ids[]', selected_items_ids[i]);
-            }
+            let form = $el.closest('form');
+            const selectedPostables = this.selectedPostables;
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
 
-            this.$http.post(form.prop('action'), form_data).then(function(response){
-                notify({'text' : selected_items_ids.length+' Items posted or queued successfully', 'type' : 'success'});
+            this.$http.post(form.prop('action'), selectedPostables).then(function(response){
+                $('[name="facebook_group"] option').prop("selected", false)
+                this.selected.items = [];
+                scope.$store.commit('RESET_SELECTED_POSTABLES');
+                scope.$store.commit('RESET_SELECTED_FB_GROUP');
+                scope.$store.commit('RESET_SELECTED_FB_ALBUM');
+                notify({text: 'Items posted or queued successfully', type : 'success'});
             }, function(response){
-                //
+                notify({text: response.body.data.error});
             }).finally(function(){
                 scope.setPostingToSales(false);
             });

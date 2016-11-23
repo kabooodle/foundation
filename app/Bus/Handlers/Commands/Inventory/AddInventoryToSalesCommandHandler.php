@@ -33,53 +33,72 @@ class AddInventoryToSalesCommandHandler
     public function handle(AddInventoryToSalesCommand $command)
     {
         $user = $command->getUser();
-        $flashSaleIds = $command->getFlashSalesIds();
-        $inventoryIds = $command->getInventoryIds();
-        $facebookAlbumIds = $command->getFacebookAlbumIds();
+        $flashSales = $command->getFlashSales();
+        $facebookAlbums = $command->getFacebookAlbums();
 
         // Lazy load the relationship we will be poking at.
         $user->load('flashsaleItems');
 
         // Determine if we're also adding the item to the user's own store.
         $addedToOwnStore = false;
-        if (in_array($user->username, $flashSaleIds)) {
-            $addedToOwnStore = true;
-            unset($flashSaleIds[array_search($user->username, $flashSaleIds)]);
-        }
+//        if (in_array($user->username, $flashSaleIds)) {
+//            $addedToOwnStore = true;
+//            unset($flashSaleIds[array_search($user->username, $flashSaleIds)]);
+//        }
 
         // Make sure we still have an array to associate anything to
-        $this->handleFlashsales($user, $inventoryIds, $flashSaleIds);
+//        $this->handleFlashsales($user, $inventoryIds, $flashSaleIds);
 
         // Blah
-        $this->handleFacebookAlbums($user, $inventoryIds, $facebookAlbumIds);
+        $this->handleFacebookAlbums($user, $facebookAlbums);
 
         return null;
     }
 
     /**
-     * @param User $user
-     * @param      $inventoryIds
-     * @param      $facebookAlbumIds
+     * @param User       $user
+     * @param array|null $facebookAlbums
      */
-    public function handleFacebookAlbums(User &$user, $inventoryIds, $facebookAlbumIds)
+    public function handleFacebookAlbums(User &$user, array $facebookAlbums = [])
     {
-        if (count($facebookAlbumIds) > 0) {
-            foreach ($inventoryIds as $inventoryId) {
-                foreach ($facebookAlbumIds as $facebookAlbumId) {
+        if (count($facebookAlbums) > 0) {
+
+            foreach ($facebookAlbums as $facebookAlbum) {
+
+                // If this album doesn't have an items, then ignore it.
+                if(! isset($facebookAlbum['items']) || count($facebookAlbum['items']) == 0) {
+                    continue;
+                }
+
+                // Set the facebook album id were working with
+                $facebookAlbumId = $facebookAlbum['id'];
+
+                // Loop over each of the items
+                foreach($facebookAlbum['items'] as $inventoryItem){
+
+                    // Set the inventory item id
+                    $inventoryItemId = $inventoryItem['id'];
+
                     // Make sure we dont add an item to a flashsale that is already there.
-                    if (!$this->itemAlreadyInFacebookAlbum($user, $facebookAlbumId, $inventoryId)) {
+                    if (!$this->itemAlreadyInFacebookAlbum($user, $facebookAlbumId, $inventoryItemId)) {
 
                         // Perform insertion
                         $fb =  new FacebookItems();
                         $fb->seller_id = $user->id;
-                        $fb->inventory_id = $inventoryId;
+                        $fb->inventory_id = $inventoryItemId;
                         $fb->facebook_node_id = $facebookAlbumId;
                         $fb->save();
 
-                        $this->dispatch(new PostPhotoToGroupAlbumCommand($user, $user->getFacebookUserToken(), $fb->id, $facebookAlbumId, 'http://s3-us-west-2.amazonaws.com/hypebeast-wordpress/image/2009/07/huf-converse-product-red-skidgrip-2.jpg'));
+                        $this->dispatch(new PostPhotoToGroupAlbumCommand(
+                            $user,
+                            $user->getFacebookUserToken(),
+                            $fb->id,
+                            $facebookAlbumId,
+                            $inventoryItem['files'][0]['location']
+                        ));
 
                         // Fire event
-                        event(new InventoryItemWasAddedToSaleEvent($user, $facebookAlbumId, $inventoryId));
+                        event(new InventoryItemWasAddedToSaleEvent($user, $facebookAlbumId, $inventoryItemId));
                     }
                 }
             }
@@ -135,12 +154,12 @@ class AddInventoryToSalesCommandHandler
 
     /**
      * @param User $user
-     * @param      $facebookAlbumId
-     * @param      $inventoryId
+     * @param int  $facebookAlbumId
+     * @param int  $inventoryId
      *
      * @return mixed
      */
-    protected function itemAlreadyInFacebookAlbum(User $user, $facebookAlbumId, $inventoryId)
+    protected function itemAlreadyInFacebookAlbum(User $user, int $facebookAlbumId, int $inventoryId)
     {
         $user->load('facebookItems');
 
