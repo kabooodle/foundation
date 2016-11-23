@@ -101,24 +101,24 @@
     import computed from './manage/computed';
 
     export default{
-        data: function() {
+        data(){
             return {
                 opened_drawers : [],
                 active_http_requests : []
             }
         },
         computed,
-        created : function() {
+        created(){
             const scope = this;
 
-            $Bus.$on('facebook-group:changed', function(){
-                scope.clearSelectedItems();
+            $Bus.$on('facebook-group:changed', ()=>{
+                this.clearSelectedItems();
                 $('.facebook_album_radio').prop('checked', false);
             });
 
-            $Bus.$on('inventory:select-all', function(){
-                $.each(scope.inventory_items, function(){
-                    $.each(this.sizes, function(){
+            $Bus.$on('inventory:select-all', ()=>{
+                $.each(this.inventory_items, function(){
+                    $.each(this.sizes,function(){
                         $.each(this.items, function(){
                             scope.addSizeToSelected(this);
                         });
@@ -126,105 +126,118 @@
                 });
             });
 
-            $Bus.$on('facebook-album:changed', function(){
-                scope.clearSelectedItems();
+            $Bus.$on('facebook-album:changed', ()=>{
+                this.clearSelectedItems();
                 // We want to open the drawers where items are selected.
                 let selected_items = scope.selected.items;
                 if(selected_items && selected_items.length > 0){
-                    _.each(selected_items, function(item){
+                    _.each(selected_items, (item)=>{
                         scope.openSizeDrawer(item.style_id, item.size_id);
                     });
                 }
             });
 
-            $Bus.$on('inventory-item:updated', function(item, updatedItem){
+            // Each time an inventory is updated using ajax, we want to update the item's state.
+            // Once the item state is updated, everywhere referencing the state will update seamlessly.
+            $Bus.$on('inventory-item:updated', (item, updatedItem)=>{
                 let styleIndex = -1;
                 let sizeIndex = -1;
                 let itemIndex = -1;
-                _.each(scope.inventory_items, function(style,index){
+
+                // Because we want to update state and not a local variable, we need the full
+                // "path" to the state so we can set it.  This is about 3 indexes deep so we have to
+                // find each ones index individually :o
+
+                // find the style index.
+                _.each(this.inventory_items, (style,index)=>{
                     if(style.id == item.style.id) {
                         styleIndex = index;
                     }
                 });
-                _.each(scope.inventory_items[styleIndex].sizes, function(size, index){
+
+                // find the size index.
+                _.each(this.inventory_items[styleIndex].sizes, (size, index)=>{
                     if(size.id == item.style_size.id){
                         sizeIndex = index;
                     }
                 });
-                _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, function(inventoryItem, index){
+
+                // find the item index/
+                _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, (inventoryItem, index)=>{
                     if(inventoryItem.id == item.id) {
                         itemIndex = index;
                     }
                 });
 
-                scope.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
-                scope.selected.items = [];
+                // update the state.
+                this.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
+                this.selected.items = [];
                 $Bus.$emit('popout-overlay:close');
             });
 
-            $Bus.$on('inventory:request-reset', function(){
+            $Bus.$on('inventory:request-reset', ()=>{
 
             });
 
-            $Bus.$on('popout-overlay:closed', function(){
+            $Bus.$on('popout-overlay:closed', ()=>{
+                // Cancel all pending ajax requests when we close the popout.
                 if (scope.active_http_requests.length > 0) {
-                    $.each(scope.active_http_requests, function(){
+                    $.each(scope.active_http_requests, ()=>{
                         this.abort();
                     });
                 }
             });
         },
         methods : {
-            selectAllOfStyle : function(style, event){
+            selectAllOfStyle(style, event){
                 const scope = this;
-                $.each(style.sizes, function(){
+                $.each(style.sizes,function(){
                     $.each(this.items, function(){
                         scope.addSizeToSelected(this);
                     })
                 });
             },
-            clearSelectedItems : function(){
+            clearSelectedItems(){
                 this.opened_drawers = [];
             },
-            editItemButtonClicked : function(item, event) {
+            editItemButtonClicked(item, event){
                 $Bus.$emit('popout-overlay:request-open');
-                const scope = this;
 
                 this.$http.get(window.location.href+'/'+item.name_uuid+'/edit', {
                     async: false,
                     before(request) {
-
+                        // Before each ajax request, abort the previous request
+                        // and add this request to an array of requests for reference.
                         $Bus.$emit('popout-overlay:change-prompt', false);
-
                         if (this.previousRequest) {
                             this.previousRequest.abort();
                         }
                         this.previousRequest = request;
-                        scope.active_http_requests.push(request);
+                        this.active_http_requests.push(request);
                     }
-                }).then(function(response){
-                    setTimeout(function(){
+                }).then((response)=>{
+                    setTimeout(()=>{
                         $Bus.$emit('popout-overlay:change-content', response.body);
                     },0);
-                }, function(response){
+                }, (response)=>{
                     $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
                 })
-                .finally(function(){
-                    scope.active_http_requests = [];
+                .finally(()=>{
+                    this.active_http_requests = [];
                 });
             },
-            addToOpenedDrawers:function(styleid, sizeid){
+            addToOpenedDrawers(styleid, sizeid){
                 var combo = styleid+'_'+sizeid;
                 if(! _.contains(this.opened_drawers, combo)){
                     this.opened_drawers.push(combo);
                 }
             },
-            removeFromOpenedDrawers:function(styleid, sizeid){
+            removeFromOpenedDrawers(styleid, sizeid){
                 this.opened_drawers = _.without(this.opened_drawers, styleid+'_'+sizeid);
             },
-            openAllSizeDrawers : function(style, event){
+            openAllSizeDrawers(style, event){
                 event.preventDefault();
-                var scope = this;
+                const scope = this;
                 var $el = $(event.currentTarget);
                 if($el.hasClass('opened-drawers')) {
                     $el.removeClass('opened-drawers').find('.fa').removeClass('fa-angle-up').addClass('fa-angle-down');
@@ -238,49 +251,50 @@
                     });
                 }
             },
-            openSizeDrawer : function(styleid, sizeid, event){
+            openSizeDrawer(styleid, sizeid, event){
                 if (event)  event.preventDefault();
                 $('[data-id='+sizeid+']').stop(true,true).slideDown();
                 this.addToOpenedDrawers(styleid, sizeid);
                 this.$emit('drawer:opened', styleid, sizeid);
             },
-            closeSizeDrawer : function(styleid, sizeid, event) {
+            closeSizeDrawer(styleid, sizeid, event){
                 event.preventDefault();
                 $('[data-id='+sizeid+']').stop(true,true).slideUp();
                 this.removeFromOpenedDrawers(styleid, sizeid);
                 this.$emit('drawer:closed', styleid, sizeid);
             },
-            removeSizes:function(style,size,items,event){
+            // Remove size from selected list
+            removeSizes(style,size,items,event){
                 const scope = this;
                 $.each(items, function(i,v){
                     scope.removeSizeFromSelected(this);
                 });
                 this.closeSizeDrawer(style.id, size.id,event);
             },
-            addSizes : function(style,size,items,event){
+            addSizes(style,size,items,event){
                 const scope = this;
                 $.each(items, function(i,v){
                     scope.addSizeToSelected(this);
                 });
                 this.openSizeDrawer(style.id, size.id, event);
             },
-            removeSizeFromSelected : function(size) {
+            removeSizeFromSelected(size){
                 var index = this.$store.getters.getSelectedItems.indexOf(size);
                 if (index != -1) {
                     this.$store.commit('REMOVE_FROM_SELECTED_ITEMS', index);
                 }
             },
-            addSizeToSelected: function(size) {
+            addSizeToSelected(size){
                 if (this.$store.getters.getSelectedItems.indexOf(size) == -1) {
                     this.$store.commit('ADD_TO_SELECTED_ITEMS', size);
                 }
             }
         },
         events : {
-            'drawer:opened' : function(size){
+            'drawer:opened' : (size)=>{
 
             },
-            'refreshing_data' : function(){
+            'refreshing_data' : ()=>{
                 this.opened_drawers = [];
             }
         }

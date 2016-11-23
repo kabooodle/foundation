@@ -7,30 +7,29 @@ new Vue({
     store,
     computed,
 
-    beforeCreate () {
+    beforeCreate(){
         $Bus.$emit('loader:request-show');
     },
 
-    created : function() {
+    created(){
         this.$store.dispatch('setRoute', inventory_route);
 
         this.getInventory();
         this.getPostables();
-        const scope = this;
 
-        $Bus.$on('post-menu:closed', function(){
+        $Bus.$on('post-menu:closed', ()=>{
             // this.facebook_album_selected = false;
             // $('[name=facebookalbums]:checked').prop('checked', false);
         });
 
-        $Bus.$on('facebook-album:changed', function(){
-            let album_items = scope.selected.fb_album.items;
+        $Bus.$on('facebook-album:changed', ()=>{
+            let album_items = this.selected.fb_album.items;
             if (album_items && album_items.length > 0) {
-                scope.$store.commit('SET_SELECTED_ITEMS', scope.selected.fb_album.items);
+                this.$store.commit('SET_SELECTED_ITEMS', this.selected.fb_album.items);
             }
         });
 
-        $Bus.$on('facebook-group:changed', function(){
+        $Bus.$on('facebook-group:changed', ()=>{
             // scope.postables.facebookgroups = _.map(scope.postables.facebookgroups, function(group){
             //     group.albums = _.map(group.albums, function(album){
             //         if (album.hasOwnProperty('items') && album.items.length > 0){
@@ -45,109 +44,129 @@ new Vue({
 
     watch: {
         'actions' : {
-            handler: function(v) {
+            handler(v){
                 v.refreshing_data === false ? $Bus.$emit('loader:request-close') : $Bus.$emit('loader:request-show');
             }, deep: true
         },
-        // facebooks : {
-        //     handler: function() {
-        //         const scope = this;
-        //         let sum = 0;
-        //         $.each(this.facebooks, function(){
-        //             sum += this.fitems.length;
-        //         });
-        //         scope.selected_sales_sum = sum;
-        //     }, deep : true
-        // },
         selected : {
-            handler: function(selected){
+            handler(selected){
+                // if we currently have a fb album selected and items selected
+                // assign the inventory items to the selected album.
+                // Then, sum the selected items and add it to the the sum var.
                 let selected_items = this.$store.getters.getSelectedItems;
                 if (this.selected.fb_album && selected_items.length > 0){
                     this.assignItemsToSelectedAlbum(selected_items);
                     this.sums.selected_postables = _.chain(this.selected.postables.fb_albums)
-                        .filter(function(album){
+                        .filter((album)=>{
                             return album.hasOwnProperty('items') && album.items.length > 0;
                         })
-                        .reduce(function(k,v){
+                        .reduce((k,v)=>{
                             return k+v.items.length;
                         }, 0)
                         .value();
-
-                    // return;
                 }
-                // this.resetData('sums.selected_postables');
             }, deep: true
         }
     },
     methods: {
-        resetData: function (key) {
-            if(key) {
-                let keys = key.split('.');
-                return keys.length > 1 ? this[keys[0]][keys[1]] = getDefaultData(key) : this[key] = getDefaultData(key);
-            } else {
-                this.$data = getDefaultData();
-            }
+        // Reset
+        resetSelectedItems(){
+            this.$store.commit('RESET_SELECTED_ITEMS');
         },
-        changeFacebookGroup : function(event){
+        resetSelectedPostables(){
+            this.$store.commit('RESET_SELECTED_POSTABLES');
+        },
+        resetSelectedFBGroup(){
+            this.$store.commit('RESET_SELECTED_FB_GROUP');
+        },
+        resetSelectedFBAlbum(){
+            this.$store.commit('RESET_SELECTED_FB_ALBUM');
+        },
+
+        // Called when changing the facebook group radio
+        changeFacebookGroup(event){
             let groupId = event.target.value;
             // We need to reset the selected group and album
-            // to prevent residual propogation between selections
-            this.$store.commit('RESET_SELECTED_FB_GROUP');
-            this.$store.commit('RESET_SELECTED_FB_ALBUM');
+            // to prevent residual propagation between selections
+            this.resetSelectedFBAlbum();
+            this.resetSelectedFBGroup();
+
+            // Set the selected facebook group.
             if(groupId && groupId != '') {
                 this.selected.fb_group = this.getFacebookGroup(groupId);
             } else {
                 this.selected.fb_group = '';
             }
+
+            // Reset selected items to prevent confusing shit.
             this.selected.items = [];
+
+            // Tell the world.
             $Bus.$emit('facebook-group:changed');
         },
-        getFacebookGroup : function(id) {
+        getFacebookGroup(id){
             let facebookgroups = this.postables.facebookgroups;
             if(facebookgroups) {
                 return _.findWhere(facebookgroups, {id : id});
             }
             return null;
         },
-        assignItemsToSelectedAlbum: function(items) {
+
+        // Assign inventory items to the selected FB album
+        assignItemsToSelectedAlbum(items){
             var index = this.selectedPostables.fb_albums.indexOf(this.selected.fb_album);
             this.selectedPostables.fb_albums[index].items = items;
         },
-        removeFromAlbum : function(fitem, facebook, event) {
+
+        // Remove an inventory item from a fb album
+        removeFromAlbum(fitem, facebook, event){
             let index = facebook.items.indexOf(fitem);
             if (index > -1){
                 facebook.items.splice(index, 1);
             }
         },
-        selectFacebookAlbum : function(facebook, event){
+
+        // Set the selected facebook album.
+        //
+        selectFacebookAlbum(facebook, event){
+            console.log('selectFacebookAlbum called!');
             this.selected.fb_album = facebook;
+            // Confirm the fb album doesnt already exist in the array.
             if(this.selectedPostables.fb_albums.indexOf(facebook) == -1) {
                 this.selectedPostables.fb_albums.push(facebook);
             }
             // this.selected.items = [];
-            this.$store.commit('RESET_SELECTED_ITEMS');
+            this.resetSelectedItems();
+
             $Bus.$emit('facebook-album:changed');
         },
-        setPostingToSales : function(val){
+
+        setPostingToSales(val){
             this.actions.posting_to_sales = val;
         },
-        openPostMenu : function(event){
+
+        // Opens the posts sidebar menu
+        openPostMenu(event){
             $('#navbarSide').css({
                 'top' :  $('.app-header').outerHeight()
             }).toggleClass('reveal');
 
             this.$emit('post-menu:opened');
         },
-        closePostMenu : function(event){
+
+        // Closes the posts sidebar menu
+        closePostMenu(event){
             $('#navbarSide').css({
                 'top' :  $('.app-header').outerHeight()
             }).removeClass('reveal');
 
             this.$emit('post-menu:closed');
         },
-        postSelectedItemsToSales : function(event) {
+
+        // Method for performing an AJAX post request
+        // of the selected flash sales, facebook album items
+        postSelectedItemsToSales(event){
             event.preventDefault();
-            let scope = this;
             let $el = $(event.target);
             let form = $el.closest('form');
             const selectedPostables = this.selectedPostables;
@@ -155,20 +174,20 @@ new Vue({
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
 
-            this.$http.post(form.prop('action'), selectedPostables).then(function(response){
+            this.$http.post(form.prop('action'), selectedPostables).then((response)=>{
                 $('[name="facebook_group"] option').prop("selected", false)
                 this.selected.items = [];
-                scope.$store.commit('RESET_SELECTED_POSTABLES');
-                scope.$store.commit('RESET_SELECTED_FB_GROUP');
-                scope.$store.commit('RESET_SELECTED_FB_ALBUM');
+                this.resetSelectedPostables();
+                this.resetSelectedFBGroup();
+                this.resetSelectedFBAlbum();
                 notify({text: 'Items posted or queued successfully', type : 'success'});
-            }, function(response){
+            }, (response)=>{
                 notify({text: response.body.data.error});
-            }).finally(function(){
-                scope.setPostingToSales(false);
+            }).finally(()=>{
+                this.setPostingToSales(false);
             });
         },
-        toggleFlashSale : function(i, event) {
+        toggleFlashSale(i, event){
             let el = event.target;
             let isChecked = el.checked;
             let index = this.selected_sales.flashsales.indexOf(i);
@@ -180,39 +199,40 @@ new Vue({
                 }
             }
         },
-        selectAllInventory : function(event){
+        selectAllInventory(event){
             event.preventDefault();
+
             $Bus.$emit('inventory:select-all');
         },
-        resetInventory : function() {
+        resetInventory(){
             this.selected.items = [];
             this.closePostMenu();
+
             $Bus.$emit('inventory:request-reset');
         },
-        getInventory : function() {
-            let scope = this;
+        getInventory(){
             this.actions.refreshing_data = true;
             this.inventory_items = [];
             this.resetInventory();
-            scope.$emit('refreshing_data');
+            this.$emit('refreshing_data');
 
-            this.$http.get(this.$store.getters.getInventoryRoute).then(function(response){
-                scope.$store.commit('SET_INVENTORY_ITEMS', response.body.data);
-            }).then(function(){
+            this.$http.get(this.$store.getters.getInventoryRoute).then((response)=>{
+                // Called using computed property;
+                this.inventory_items = response.body.data;
+            }).then(()=>{
                 // scope.resetData('actions.refreshing_data');
-                scope.actions.refreshing_data = false;
+                this.actions.refreshing_data = false;
             });
         },
-        getPostables : function() {
-            let scope = this;
-
-            this.$http.get('http://'+window.location.hostname+'/inventory/postables').then(function(response){
-                scope.$store.commit('SET_POSTABLES', response.body.data);
-            }, function(response){
+        getPostables(){
+            this.$http.get('http://'+window.location.hostname+'/inventory/postables').then((response)=>{
+                // Called using computed property;
+                this.postables = response.body.data;
+            }, (response)=>{
                 console.log('Error in retrieving postables');
             });
         },
-        clearDateTimeInput: function() {
+        clearDateTimeInput(){
             $('#datetimepicker2').val('');
         }
     },

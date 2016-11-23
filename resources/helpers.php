@@ -15,29 +15,6 @@ if (! function_exists('spinnyAppendedToEl')) {
     }
 }
 
-if (! function_exists('shippingStatii')) {
-    /**
-     * @return array
-     */
-    function shippingStatii()
-    {
-        return array_combine(\Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII);
-    }
-}
-
-if (! function_exists('salesStatii')) {
-    /**
-     * @return array
-     */
-    function salesStatii()
-    {
-        $data = ['PENDING LABEL CREATION', 'EXTERNALLY SHIPPED'];
-
-        return array_combine($data, $data) + shippingStatii();
-    }
-}
-
-
 if (! function_exists('dispatchNow')) {
     /**
      * Dispatch a job to its appropriate handler.
@@ -50,7 +27,6 @@ if (! function_exists('dispatchNow')) {
         return app(\Illuminate\Contracts\Bus\Dispatcher::class)->dispatchNow($job);
     }
 }
-
 
 if (!function_exists('staticAsset')) {
     /**
@@ -69,6 +45,10 @@ if (!function_exists('staticAsset')) {
 }
 
 if (!function_exists('getMimeContentType')) {
+    /**
+     * @param $filename
+     * @return mixed|string
+     */
     function getMimeContentType($filename)
     {
         $mimeTypes = [

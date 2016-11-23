@@ -6888,14 +6888,13 @@ new Vue({
     beforeCreate: function beforeCreate() {
         $Bus.$emit('loader:request-show');
     },
-
-
     created: function created() {
+        var _this = this;
+
         this.$store.dispatch('setRoute', inventory_route);
 
         this.getInventory();
         this.getPostables();
-        var scope = this;
 
         $Bus.$on('post-menu:closed', function () {
             // this.facebook_album_selected = false;
@@ -6903,9 +6902,9 @@ new Vue({
         });
 
         $Bus.$on('facebook-album:changed', function () {
-            var album_items = scope.selected.fb_album.items;
+            var album_items = _this.selected.fb_album.items;
             if (album_items && album_items.length > 0) {
-                scope.$store.commit('SET_SELECTED_ITEMS', scope.selected.fb_album.items);
+                _this.$store.commit('SET_SELECTED_ITEMS', _this.selected.fb_album.items);
             }
         });
 
@@ -6922,24 +6921,19 @@ new Vue({
         });
     },
 
+
     watch: {
         'actions': {
             handler: function handler(v) {
                 v.refreshing_data === false ? $Bus.$emit('loader:request-close') : $Bus.$emit('loader:request-show');
-            }, deep: true
+            },
+            deep: true
         },
-        // facebooks : {
-        //     handler: function() {
-        //         const scope = this;
-        //         let sum = 0;
-        //         $.each(this.facebooks, function(){
-        //             sum += this.fitems.length;
-        //         });
-        //         scope.selected_sales_sum = sum;
-        //     }, deep : true
-        // },
         selected: {
             handler: function handler(selected) {
+                // if we currently have a fb album selected and items selected
+                // assign the inventory items to the selected album.
+                // Then, sum the selected items and add it to the the sum var.
                 var selected_items = this.$store.getters.getSelectedItems;
                 if (this.selected.fb_album && selected_items.length > 0) {
                     this.assignItemsToSelectedAlbum(selected_items);
@@ -6948,34 +6942,46 @@ new Vue({
                     }).reduce(function (k, v) {
                         return k + v.items.length;
                     }, 0).value();
-
-                    // return;
                 }
-                // this.resetData('sums.selected_postables');
-            }, deep: true
+            },
+            deep: true
         }
     },
     methods: {
-        resetData: function resetData(key) {
-            if (key) {
-                var keys = key.split('.');
-                return keys.length > 1 ? this[keys[0]][keys[1]] = getDefaultData(key) : this[key] = getDefaultData(key);
-            } else {
-                this.$data = getDefaultData();
-            }
+        // Reset
+        resetSelectedItems: function resetSelectedItems() {
+            this.$store.commit('RESET_SELECTED_ITEMS');
         },
+        resetSelectedPostables: function resetSelectedPostables() {
+            this.$store.commit('RESET_SELECTED_POSTABLES');
+        },
+        resetSelectedFBGroup: function resetSelectedFBGroup() {
+            this.$store.commit('RESET_SELECTED_FB_GROUP');
+        },
+        resetSelectedFBAlbum: function resetSelectedFBAlbum() {
+            this.$store.commit('RESET_SELECTED_FB_ALBUM');
+        },
+
+
+        // Called when changing the facebook group radio
         changeFacebookGroup: function changeFacebookGroup(event) {
             var groupId = event.target.value;
             // We need to reset the selected group and album
-            // to prevent residual propogation between selections
-            this.$store.commit('RESET_SELECTED_FB_GROUP');
-            this.$store.commit('RESET_SELECTED_FB_ALBUM');
+            // to prevent residual propagation between selections
+            this.resetSelectedFBAlbum();
+            this.resetSelectedFBGroup();
+
+            // Set the selected facebook group.
             if (groupId && groupId != '') {
                 this.selected.fb_group = this.getFacebookGroup(groupId);
             } else {
                 this.selected.fb_group = '';
             }
+
+            // Reset selected items to prevent confusing shit.
             this.selected.items = [];
+
+            // Tell the world.
             $Bus.$emit('facebook-group:changed');
         },
         getFacebookGroup: function getFacebookGroup(id) {
@@ -6985,28 +6991,44 @@ new Vue({
             }
             return null;
         },
+
+
+        // Assign inventory items to the selected FB album
         assignItemsToSelectedAlbum: function assignItemsToSelectedAlbum(items) {
             var index = this.selectedPostables.fb_albums.indexOf(this.selected.fb_album);
             this.selectedPostables.fb_albums[index].items = items;
         },
+
+
+        // Remove an inventory item from a fb album
         removeFromAlbum: function removeFromAlbum(fitem, facebook, event) {
             var index = facebook.items.indexOf(fitem);
             if (index > -1) {
                 facebook.items.splice(index, 1);
             }
         },
+
+
+        // Set the selected facebook album.
+        //
         selectFacebookAlbum: function selectFacebookAlbum(facebook, event) {
+            console.log('selectFacebookAlbum called!');
             this.selected.fb_album = facebook;
+            // Confirm the fb album doesnt already exist in the array.
             if (this.selectedPostables.fb_albums.indexOf(facebook) == -1) {
                 this.selectedPostables.fb_albums.push(facebook);
             }
             // this.selected.items = [];
-            this.$store.commit('RESET_SELECTED_ITEMS');
+            this.resetSelectedItems();
+
             $Bus.$emit('facebook-album:changed');
         },
         setPostingToSales: function setPostingToSales(val) {
             this.actions.posting_to_sales = val;
         },
+
+
+        // Opens the posts sidebar menu
         openPostMenu: function openPostMenu(event) {
             $('#navbarSide').css({
                 'top': $('.app-header').outerHeight()
@@ -7014,6 +7036,9 @@ new Vue({
 
             this.$emit('post-menu:opened');
         },
+
+
+        // Closes the posts sidebar menu
         closePostMenu: function closePostMenu(event) {
             $('#navbarSide').css({
                 'top': $('.app-header').outerHeight()
@@ -7021,9 +7046,14 @@ new Vue({
 
             this.$emit('post-menu:closed');
         },
+
+
+        // Method for performing an AJAX post request
+        // of the selected flash sales, facebook album items
         postSelectedItemsToSales: function postSelectedItemsToSales(event) {
+            var _this2 = this;
+
             event.preventDefault();
-            var scope = this;
             var $el = $(event.target);
             var form = $el.closest('form');
             var selectedPostables = this.selectedPostables;
@@ -7033,15 +7063,15 @@ new Vue({
 
             this.$http.post(form.prop('action'), selectedPostables).then(function (response) {
                 $('[name="facebook_group"] option').prop("selected", false);
-                this.selected.items = [];
-                scope.$store.commit('RESET_SELECTED_POSTABLES');
-                scope.$store.commit('RESET_SELECTED_FB_GROUP');
-                scope.$store.commit('RESET_SELECTED_FB_ALBUM');
+                _this2.selected.items = [];
+                _this2.resetSelectedPostables();
+                _this2.resetSelectedFBGroup();
+                _this2.resetSelectedFBAlbum();
                 notify({ text: 'Items posted or queued successfully', type: 'success' });
             }, function (response) {
                 notify({ text: response.body.data.error });
             }).finally(function () {
-                scope.setPostingToSales(false);
+                _this2.setPostingToSales(false);
             });
         },
         toggleFlashSale: function toggleFlashSale(i, event) {
@@ -7058,32 +7088,37 @@ new Vue({
         },
         selectAllInventory: function selectAllInventory(event) {
             event.preventDefault();
+
             $Bus.$emit('inventory:select-all');
         },
         resetInventory: function resetInventory() {
             this.selected.items = [];
             this.closePostMenu();
+
             $Bus.$emit('inventory:request-reset');
         },
         getInventory: function getInventory() {
-            var scope = this;
+            var _this3 = this;
+
             this.actions.refreshing_data = true;
             this.inventory_items = [];
             this.resetInventory();
-            scope.$emit('refreshing_data');
+            this.$emit('refreshing_data');
 
             this.$http.get(this.$store.getters.getInventoryRoute).then(function (response) {
-                scope.$store.commit('SET_INVENTORY_ITEMS', response.body.data);
+                // Called using computed property;
+                _this3.inventory_items = response.body.data;
             }).then(function () {
                 // scope.resetData('actions.refreshing_data');
-                scope.actions.refreshing_data = false;
+                _this3.actions.refreshing_data = false;
             });
         },
         getPostables: function getPostables() {
-            var scope = this;
+            var _this4 = this;
 
             this.$http.get('http://' + window.location.hostname + '/inventory/postables').then(function (response) {
-                scope.$store.commit('SET_POSTABLES', response.body.data);
+                // Called using computed property;
+                _this4.postables = response.body.data;
             }, function (response) {
                 console.log('Error in retrieving postables');
             });
@@ -7361,17 +7396,20 @@ exports.default = {
             active_http_requests: []
         };
     },
+
     computed: _computed2.default,
     created: function created() {
+        var _this = this;
+
         var scope = this;
 
         $Bus.$on('facebook-group:changed', function () {
-            scope.clearSelectedItems();
+            _this.clearSelectedItems();
             $('.facebook_album_radio').prop('checked', false);
         });
 
         $Bus.$on('inventory:select-all', function () {
-            $.each(scope.inventory_items, function () {
+            $.each(_this.inventory_items, function () {
                 $.each(this.sizes, function () {
                     $.each(this.items, function () {
                         scope.addSizeToSelected(this);
@@ -7381,7 +7419,7 @@ exports.default = {
         });
 
         $Bus.$on('facebook-album:changed', function () {
-            scope.clearSelectedItems();
+            _this.clearSelectedItems();
             // We want to open the drawers where items are selected.
             var selected_items = scope.selected.items;
             if (selected_items && selected_items.length > 0) {
@@ -7391,41 +7429,56 @@ exports.default = {
             }
         });
 
+        // Each time an inventory is updated using ajax, we want to update the item's state.
+        // Once the item state is updated, everywhere referencing the state will update seamlessly.
         $Bus.$on('inventory-item:updated', function (item, updatedItem) {
             var styleIndex = -1;
             var sizeIndex = -1;
             var itemIndex = -1;
-            _.each(scope.inventory_items, function (style, index) {
+
+            // Because we want to update state and not a local variable, we need the full
+            // "path" to the state so we can set it.  This is about 3 indexes deep so we have to
+            // find each ones index individually :o
+
+            // find the style index.
+            _.each(_this.inventory_items, function (style, index) {
                 if (style.id == item.style.id) {
                     styleIndex = index;
                 }
             });
-            _.each(scope.inventory_items[styleIndex].sizes, function (size, index) {
+
+            // find the size index.
+            _.each(_this.inventory_items[styleIndex].sizes, function (size, index) {
                 if (size.id == item.style_size.id) {
                     sizeIndex = index;
                 }
             });
+
+            // find the item index/
             _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, function (inventoryItem, index) {
                 if (inventoryItem.id == item.id) {
                     itemIndex = index;
                 }
             });
 
-            scope.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
-            scope.selected.items = [];
+            // update the state.
+            _this.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
+            _this.selected.items = [];
             $Bus.$emit('popout-overlay:close');
         });
 
         $Bus.$on('inventory:request-reset', function () {});
 
         $Bus.$on('popout-overlay:closed', function () {
+            // Cancel all pending ajax requests when we close the popout.
             if (scope.active_http_requests.length > 0) {
                 $.each(scope.active_http_requests, function () {
-                    this.abort();
+                    _this.abort();
                 });
             }
         });
     },
+
     methods: {
         selectAllOfStyle: function selectAllOfStyle(style, event) {
             var scope = this;
@@ -7439,20 +7492,21 @@ exports.default = {
             this.opened_drawers = [];
         },
         editItemButtonClicked: function editItemButtonClicked(item, event) {
+            var _this2 = this;
+
             $Bus.$emit('popout-overlay:request-open');
-            var scope = this;
 
             this.$http.get(window.location.href + '/' + item.name_uuid + '/edit', {
                 async: false,
                 before: function before(request) {
-
+                    // Before each ajax request, abort the previous request
+                    // and add this request to an array of requests for reference.
                     $Bus.$emit('popout-overlay:change-prompt', false);
-
                     if (this.previousRequest) {
                         this.previousRequest.abort();
                     }
                     this.previousRequest = request;
-                    scope.active_http_requests.push(request);
+                    this.active_http_requests.push(request);
                 }
             }).then(function (response) {
                 setTimeout(function () {
@@ -7461,7 +7515,7 @@ exports.default = {
             }, function (response) {
                 $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
             }).finally(function () {
-                scope.active_http_requests = [];
+                _this2.active_http_requests = [];
             });
         },
         addToOpenedDrawers: function addToOpenedDrawers(styleid, sizeid) {
@@ -7501,6 +7555,8 @@ exports.default = {
             this.removeFromOpenedDrawers(styleid, sizeid);
             this.$emit('drawer:closed', styleid, sizeid);
         },
+
+        // Remove size from selected list
         removeSizes: function removeSizes(style, size, items, event) {
             var scope = this;
             $.each(items, function (i, v) {
@@ -7530,7 +7586,7 @@ exports.default = {
     events: {
         'drawer:opened': function drawerOpened(size) {},
         'refreshing_data': function refreshing_data() {
-            this.opened_drawers = [];
+            undefined.opened_drawers = [];
         }
     }
 };
@@ -7545,9 +7601,9 @@ if (module.hot) {(function () {  module.hot.accept()
     document.head.removeChild(__vueify_style__)
   })
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-49e9dca7", module.exports)
+    hotAPI.createRecord("_v-4e910d3e", module.exports)
   } else {
-    hotAPI.update("_v-49e9dca7", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-4e910d3e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"./manage/computed":7,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[6]);
