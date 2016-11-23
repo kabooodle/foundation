@@ -156,6 +156,7 @@ new Vue({
             this.setPostingToSales(true);
 
             this.$http.post(form.prop('action'), selectedPostables).then(function(response){
+                $('[name="facebook_group"] option').prop("selected", false)
                 this.selected.items = [];
                 scope.$store.commit('RESET_SELECTED_POSTABLES');
                 scope.$store.commit('RESET_SELECTED_FB_GROUP');

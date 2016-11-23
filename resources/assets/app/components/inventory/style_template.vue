@@ -52,35 +52,37 @@
                             <div class="col-sm-10">
                                 <div class="item-box"  v-if="opened_drawers.indexOf(style.id+'_'+size.id) > -1" >
                                     <div class="row row-horizon">
-                                        <div v-for="item in size.items" class="col-sm-2 btn-group-prpl" style="width:122px !important">
-                                            <button
-                                                    v-bind:aria-pressed="(selectedItems.indexOf(item) > -1 ? ' true ' : null )"
-                                                    @click="( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )"
-                                                    v-bind:class="[ selectedItems.indexOf(item) > -1 ? 'active' : '' ] "
-                                                    style="border-radius: .25rem;"
-                                                    type="button"
-                                                    class="btn white btn-xs">
-                                                        <span class="item block">
-                                                            <img v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 80px; height: 80px;">
-                                                        </span>
-                                                <span class="p-a-o text-sm clearfix block">
-                                                    <span class="pull-left">Qty: <span class="text-muted">{{ item.initial_qty }}</span></span>
-                                                        <span class="text-muted pull-right">${{ item.price_usd }}</span>
-                                                        </span>
-                                            </button>
-                                            <div class="clearfix" style="margin-top: 5px;">
-                                            <button
-                                                    @click="editItemButtonClicked(item, $event)"
-                                                    type="button"
-                                                    class="btn btn-xs pull-left white"
-                                            >Edit</button>
-                                            <a
-                                                    target="_blank"
-                                                    v-bind:href="this.window.location.href+'/'+item.name_uuid"
-                                                    class="btn btn-xs pull-right white"
-                                            >View</a>
+                                        <template v-for="item in size.items">
+                                            <div class="col-sm-2 btn-group-prpl" style="width:122px !important;">
+                                                <button
+                                                        v-bind:aria-pressed="(selectedItems.indexOf(item) > -1 ? ' true ' : null )"
+                                                        @click="( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )"
+                                                        v-bind:class="[ selectedItems.indexOf(item) > -1 ? 'active' : '' ] "
+                                                        style="border-radius: .25rem;"
+                                                        type="button"
+                                                        class="btn white btn-xs">
+                                                            <span class="item block">
+                                                                <img v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 80px; height: 80px;">
+                                                            </span>
+                                                    <span class="p-a-o text-sm clearfix block">
+                                                        <span class="pull-left">Qty: <span class="text-muted">{{ item.initial_qty }}</span></span>
+                                                            <span class="text-muted pull-right">${{ item.price_usd }}</span>
+                                                            </span>
+                                                </button>
+                                                <div class="clearfix" style="margin-top: 5px;">
+                                                <button
+                                                        @click="editItemButtonClicked(item, $event)"
+                                                        type="button"
+                                                        class="btn btn-xs pull-left white"
+                                                >Edit</button>
+                                                <a
+                                                        target="_blank"
+                                                        v-bind:href="this.window.location.href+'/'+item.name_uuid"
+                                                        class="btn btn-xs pull-right white"
+                                                >View</a>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
@@ -90,6 +92,11 @@
             </div>
         </div>
 </template>
+<style>
+    div.col-sm-2.btn-group-prpl {
+        width:122px !important;
+    }
+</style>
 <script>
     import computed from './manage/computed';
 

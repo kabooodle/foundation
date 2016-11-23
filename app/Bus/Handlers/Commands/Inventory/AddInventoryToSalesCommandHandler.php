@@ -94,7 +94,7 @@ class AddInventoryToSalesCommandHandler
                             $user->getFacebookUserToken(),
                             $fb->id,
                             $facebookAlbumId,
-                            'http://s3-us-west-2.amazonaws.com/hypebeast-wordpress/image/2009/07/huf-converse-product-red-skidgrip-2.jpg'
+                            $inventoryItem['files'][0]['location']
                         ));
 
                         // Fire event
