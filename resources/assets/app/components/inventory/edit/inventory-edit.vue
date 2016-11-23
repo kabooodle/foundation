@@ -31,15 +31,15 @@
             </div>
         </div>
         <div class="form-group row ">
-            <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
-            <div class="col-sm-3">
-                <input type="number" name="price_usd" :value="item.price_usd" class="form-control float" step="any" min="0" placeholder="0.00">
-            </div>
-        </div>
-        <div class="form-group row ">
             <label for="price_usd" class="col-sm-3 form-control-label">Wholesale Price in USD$</label>
             <div class="col-sm-3">
                 <input type="number" v-model="wholesale_price_usd" name="wholesale_price_usd" :value="item.wholesale_price_usd" id="inventory-wholesale-el" class="form-control float" step="any" placeholder="0.00">
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
+            <div class="col-sm-3">
+                <input type="number" name="price_usd" :value="item.price_usd" class="form-control float" step="any" min="0" placeholder="0.00">
             </div>
         </div>
         <div class="form-group row">
