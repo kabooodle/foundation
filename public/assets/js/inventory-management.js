@@ -6995,8 +6995,8 @@ new Vue({
 
         // Assign inventory items to the selected FB album
         assignItemsToSelectedAlbum: function assignItemsToSelectedAlbum(items) {
-            var index = this.selectedPostables.fb_albums.indexOf(this.selected.fb_album);
-            this.selectedPostables.fb_albums[index].items = items;
+            var index = this.selected.postables.fb_albums.indexOf(this.selected.fb_album);
+            this.selected.postables.fb_albums[index].items = items;
         },
 
 
@@ -7012,11 +7012,17 @@ new Vue({
         // Set the selected facebook album.
         //
         selectFacebookAlbum: function selectFacebookAlbum(facebook, event) {
-            console.log('selectFacebookAlbum called!');
+            // Bugfix: filter through the selected fb albums and if they dont have items assigned to them
+            // remove them from the selected list.
+            this.selected.postables.fb_albums = _.filter(this.selected.postables.fb_albums, function (album) {
+                return album.hasOwnProperty('items') && album.items.length > 0;
+            });
+
             this.selected.fb_album = facebook;
-            // Confirm the fb album doesnt already exist in the array.
-            if (this.selectedPostables.fb_albums.indexOf(facebook) == -1) {
-                this.selectedPostables.fb_albums.push(facebook);
+
+            // Confirm the fb album doesn't already exist in the array.
+            if (this.selected.postables.fb_albums.indexOf(facebook) == -1) {
+                this.selected.postables.fb_albums.push(facebook);
             }
             // this.selected.items = [];
             this.resetSelectedItems();
@@ -7056,7 +7062,7 @@ new Vue({
             event.preventDefault();
             var $el = $(event.target);
             var form = $el.closest('form');
-            var selectedPostables = this.selectedPostables;
+            var selectedPostables = this.selected.postables;
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
