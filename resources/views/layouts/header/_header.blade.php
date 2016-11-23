@@ -95,16 +95,16 @@
                                class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add Inventory</a>
                             <div class="divider"></div>
                             <a href="{{ route('shop.claims.index', [user()->username]) }}"
-                               class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Claims</a>
+                               class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Pending Claims</a>
 
                             <a  href="{{  route('sales.index') }}"
-                                class="dropdown-item {{ Request::is('sales*') ? 'active' : null }}"><span>Sales</span></a>
+                                class="dropdown-item {{ Request::is('sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
 
                             <div class="divider"></div>
                             <a href="{{  route('shipping.index') }}"
-                               class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipping</span></a>
+                               class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
                             <a href="{{  route('shipping.create') }}"
-                               class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Create Shipment</span></a>
+                               class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
                         </div>
                     </li>
                 @endif
