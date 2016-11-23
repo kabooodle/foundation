@@ -37,7 +37,8 @@ class InventoryTypeStyles extends BaseEloquentModel implements Revisionable
         'inventory_type_id' => 0,
         'name' => '',
         'slug' => '',
-        'sort_order' => 0
+        'sort_order' => 0,
+        'wholesale_price_usd' => 0.0,
     ];
 
     /**
@@ -47,7 +48,8 @@ class InventoryTypeStyles extends BaseEloquentModel implements Revisionable
         'inventory_type_id',
         'name',
         'slug',
-        'sort_order'
+        'sort_order',
+        'wholesale_price_usd'
     ];
 
     /**

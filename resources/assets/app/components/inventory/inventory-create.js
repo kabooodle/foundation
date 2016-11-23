@@ -5,7 +5,8 @@ new Vue({
     data: {
         price : '0.00',
         size_containers : [],
-        submitting : false
+        submitting : false,
+        inventory_types : KABOOODLE_APP.inventory_types
     },
     methods : {
         validateSizeContainers : function() {
@@ -50,12 +51,27 @@ new Vue({
         addSizeContainer : function() {
             $Bus.$emit('add-size');
         },
+        getSelectedStyleId(){
+            return parseInt($('#inventory-styles-el').val());
+        },
         styleChanged : function(e) {
-            $Bus.$emit('style-changed', $(e.target).val());
-        }
+            let styleId = this.getSelectedStyleId();
+            this.updateWholesalePrice();
+            $Bus.$emit('style-changed', styleId);
+        },
+        updateWholesalePrice(){
+            let styleId = this.getSelectedStyleId();
+            let style = _.findWhere(this.inventory_types[0].styles, {id: styleId});
+            let ws_price_5 = moneyfy(style.wholesale_price_usd_less_5_percent);
+            let ws_price = moneyfy(style.wholesale_price_usd);
+            $('#inventory-wholesale-el')
+                .val(ws_price)
+                .prop('placeholder', ws_price);
+        },
     },
     mounted: function(){
         console.log('Inventory ready.');
+        this.updateWholesalePrice();
     },
     components: {
         'inventory-sizing' : InventorySizing

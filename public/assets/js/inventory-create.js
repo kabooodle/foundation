@@ -6494,7 +6494,8 @@ new Vue({
     data: {
         price: '0.00',
         size_containers: [],
-        submitting: false
+        submitting: false,
+        inventory_types: KABOOODLE_APP.inventory_types
     },
     methods: {
         validateSizeContainers: function validateSizeContainers() {
@@ -6539,12 +6540,26 @@ new Vue({
         addSizeContainer: function addSizeContainer() {
             $Bus.$emit('add-size');
         },
+        getSelectedStyleId: function getSelectedStyleId() {
+            return parseInt($('#inventory-styles-el').val());
+        },
+
         styleChanged: function styleChanged(e) {
-            $Bus.$emit('style-changed', $(e.target).val());
+            var styleId = this.getSelectedStyleId();
+            this.updateWholesalePrice();
+            $Bus.$emit('style-changed', styleId);
+        },
+        updateWholesalePrice: function updateWholesalePrice() {
+            var styleId = this.getSelectedStyleId();
+            var style = _.findWhere(this.inventory_types[0].styles, { id: styleId });
+            var ws_price_5 = moneyfy(style.wholesale_price_usd_less_5_percent);
+            var ws_price = moneyfy(style.wholesale_price_usd);
+            $('#inventory-wholesale-el').val(ws_price).prop('placeholder', ws_price);
         }
     },
     mounted: function mounted() {
         console.log('Inventory ready.');
+        this.updateWholesalePrice();
     },
     components: {
         'inventory-sizing': _inventorySizing2.default
@@ -6569,12 +6584,13 @@ var _FileUpload2 = _interopRequireDefault(_FileUpload);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-    props: ["size_containers", "inventory_types", "user_hash", "s3_key_url"],
+    props: ["size_containers", "user_hash", "s3_key_url"],
     data: function data() {
         return {
             size: { images: [{}], id: null },
             size_container: null,
-            sizings: []
+            sizings: [],
+            inventory_types: KABOOODLE_APP.inventory_types
         };
     },
     created: function created() {

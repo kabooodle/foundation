@@ -93,12 +93,13 @@
    import FileUpload from '../FileUpload.vue';
 
     export default{
-        props: ["size_containers", "inventory_types", "user_hash", "s3_key_url"],
+        props: ["size_containers", "user_hash", "s3_key_url"],
         data: function () {
             return {
                 size : {images: [{}],id : null},
                 size_container : null,
-                sizings: []
+                sizings: [],
+                inventory_types: KABOOODLE_APP.inventory_types
             }
         },
         created : function () {

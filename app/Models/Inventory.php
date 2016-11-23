@@ -84,7 +84,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'barcode' => null,
         'initial_qty' => 0,
         'date_received' => '',
-        'price_usd' => 0.0
+        'price_usd' => 0.0,
+        'wholesale_price_usd' => 0.0,
     ];
 
     /**
@@ -100,7 +101,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'description' => 'string',
         'barcode' => 'string',
         'date_received' => 'date',
-        'price_usd' => 'double'
+        'price_usd' => 'double',
+        'wholesale_price_usd' => 'double'
     ];
 
     /**
@@ -113,6 +115,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_type_styles_id',
         'inventory_sizes_id',
         'price_usd',
+        'wholesale_price_usd',
         'name',
         'description',
         'barcode',
@@ -135,6 +138,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
             'type_id' => 'required|in:188432',
             'style_id' => 'required|exists:inventory_type_styles,id',
             'price_usd' => 'required|min:0|digits_between:0,100000000|numeric',
+            'wholesale_price_usd' => 'min:0|digits_between:0,100000000|numeric',
             'sizings' => 'required|array',
             'sizings.*.size_id' => 'required|exists:inventory_sizes,id',
             'sizings.*.images' => 'required|array',
@@ -173,6 +177,9 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         });
 
         self::saving(function($model){
+            if(! $model->wholesale_price_usd || is_null($model->wholesale_price_usd)) {
+                $model->wholesale_price_usd = $this->style->wholesale_price_usd;
+            }
             if(!$model->uuid) {
                 $model->uuid = $model->obfuscateIdToString($model->id);
             }
@@ -391,6 +398,15 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getCategoriesAttribute()
     {
         return $this->tags;
+    }
+
+    /**
+     * @param $value
+     * @return mixed
+     */
+    public function getWholesalePriceUsdAttribute($value)
+    {
+        return $value ? $value : $this->style->wholesale_price_usd;
     }
 
     /**

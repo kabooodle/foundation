@@ -11,7 +11,7 @@
         <div class="form-group row">
             <label for="style_id" class="col-sm-3 form-control-label">Style</label>
             <div class="col-sm-5">
-                <select name="style_id" class="form-control" @change="changeStyle">
+                <select name="style_id" id="style-el" class="form-control" @change="changeStyle">
                     <option
                             v-for="style in styles"
                             :value="style.id"
@@ -34,6 +34,12 @@
             <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
             <div class="col-sm-3">
                 <input type="number" name="price_usd" :value="item.price_usd" class="form-control float" step="any" min="0" placeholder="0.00">
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label for="price_usd" class="col-sm-3 form-control-label">Wholesale Price in USD$</label>
+            <div class="col-sm-3">
+                <input type="number" v-model="wholesale_price_usd" name="wholesale_price_usd" :value="item.wholesale_price_usd" id="inventory-wholesale-el" class="form-control float" step="any" placeholder="0.00">
             </div>
         </div>
         <div class="form-group row">
@@ -118,6 +124,7 @@
                 sizes : [],
                 selected_style : '',
                 categories : '',
+                wholesale_price_usd : ''
             }
         },
         watch : {
@@ -168,11 +175,22 @@
             setSelectedStyle : function(style){
                 this.selected_style = style;
             },
+            getSelectedStyleId(){
+              return parseInt($('#style-el').val());
+            },
+            updateWholesalePrice(){
+                let styleId = this.getSelectedStyleId();
+                let style = this.getStyleById(styleId);
+                let ws_price_5 = moneyfy(style.wholesale_price_usd_less_5_percent);
+                let ws_price = moneyfy(style.wholesale_price_usd);
+                $('#inventory-wholesale-el')
+                    .val(ws_price)
+                    .prop('placeholder', ws_price);
+                this.wholesale_price_usd = ws_price;
+            },
             // Iterates over styles and returns single item
             getStyleById: function(id) {
-                return $.findFirst(this.styles, function(obj) {
-                    return obj.id == id;
-                });
+                return _.findWhere(this.styles, {id: id});
             },
             changeStyle: function(e){
                 var $el = $(e.target),
@@ -181,6 +199,7 @@
 
                 this.setSelectedStyle(style);
                 this.setSizes(style.sizes);
+                this.updateWholesalePrice();
             },
             deleteImage: function(image, event){
                 event.preventDefault();
