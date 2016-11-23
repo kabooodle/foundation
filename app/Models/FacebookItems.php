@@ -18,9 +18,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Class FacebookItems
  * @package Kabooodle\Models
  */
-class FacebookItems extends BaseEloquentModel implements Revisionable, ShoppableInterface
+class FacebookItems extends BaseEloquentModel implements ShoppableInterface
 {
-    use ClaimableTrait, ObfuscatesIdTrait, RevisionableTrait, SoftDeletes;
+    use ClaimableTrait, ObfuscatesIdTrait, SoftDeletes;
 
     /**
      * @var string

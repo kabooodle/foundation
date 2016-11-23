@@ -14,49 +14,41 @@ use Illuminate\Contracts\Queue\ShouldQueue;
  * Class AddInventoryToSalesCommand
  * @package Kabooodle\Bus\Commands\Inventory
  */
-class AddInventoryToSalesCommand implements ShouldQueue
+final class AddInventoryToSalesCommand implements ShouldQueue
 {
     use SerializesModels;
+
     /**
      * @var User
      */
-    protected $user;
+    public $user;
 
     /**
      * @var array
      */
-    protected $inventoryIds;
+    public $flashSales;
 
     /**
      * @var array
      */
-    protected $flashSalesIds;
+    public $facebookAlbums;
 
     /**
-     * @var array
-     */
-    protected $facebookAlbumIds;
-
-    /**
-     * AddInventoryToSalesCommand constructor.
-     *
      * @param User  $user
-     * @param array $inventoryIds
-     * @param array $flashSalesIds
-     * @param array $facebookAlbumIds
+     * @param array $flashSales
+     * @param array $facebookAlbums
      */
-    public function __construct(User $user, array $inventoryIds, array $flashSalesIds = [], array $facebookAlbumIds = [])
+    public function __construct(User $user, array $flashSales = [], array $facebookAlbums = [])
     {
         $this->user = $user;
-        $this->inventoryIds = $inventoryIds;
-        $this->flashSalesIds = $flashSalesIds;
-        $this->facebookAlbumIds = $facebookAlbumIds;
+        $this->flashSales = $flashSales;
+        $this->facebookAlbums = $facebookAlbums;
     }
 
     /**
      * @return User
      */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
@@ -64,24 +56,16 @@ class AddInventoryToSalesCommand implements ShouldQueue
     /**
      * @return array
      */
-    public function getInventoryIds()
+    public function getFlashSales(): array
     {
-        return $this->inventoryIds;
+        return $this->flashSales;
     }
 
     /**
      * @return array
      */
-    public function getFlashSalesIds()
+    public function getFacebookAlbums(): array
     {
-        return $this->flashSalesIds;
-    }
-
-    /**
-     * @return array
-     */
-    public function getFacebookAlbumIds()
-    {
-        return $this->facebookAlbumIds;
+        return $this->facebookAlbums;
     }
 }

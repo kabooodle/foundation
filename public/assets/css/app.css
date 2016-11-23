@@ -8765,18 +8765,20 @@ Copyright (c) 2015 Daniel Eden
   z-index: 2000; }
 
 .navbar-side-inner {
-  /*height: 100%;*/
-  /*width: 100%;*/
-  /*margin-bottom: 60px;*/
-  /*overflow-y: scroll;*/ }
+  position: relative;
+  height: 100%;
+  width: 100%;
+  padding-bottom: 110px !important;
+  overflow: hidden; }
 
 .savesales {
   position: fixed;
-  bottom: 100px;
+  bottom: 64px;
   left: 0;
   padding: 10px;
   margin: 0;
-  width: 100%; }
+  width: 100%;
+  background-color: rgba(43, 41, 56, 0.95); }
 
 tr.highlight_row td {
   background-color: #fefbf2; }

@@ -606,6 +606,11 @@ function spinny(size){
     return ' <img style="margin:-2px 0 0 0; padding:0;" height="'+size+'" width="'+size+'" src="/assets/images/icons/ring-alt.gif">';
 };
 
+function snakeToCamel(s){
+    return s.replace(/(\-\w)/g, function(m){return m[1].toUpperCase();});
+}
+
+
 $(function () {
 
 
@@ -670,6 +675,18 @@ $(function () {
         interval : false
     });
     $('[data-toggle="tooltip"]').tooltip();
+
+    $('[data-scrollable="scrollable-y"]').perfectScrollbar({
+        suppressScrollX: true
+    });
+
+    $('[data-scrollable="scrollable-x"]').perfectScrollbar({
+        suppressScrollY: true
+    });
+
+    $('[data-scrollable="scrollable"]').perfectScrollbar();
+
+
 
     $('.dropdown.dropdown-onhover').hover(function () {
         $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();

@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Api\Inventory;
 
 use Binput;
+use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
@@ -109,21 +110,23 @@ class InventoryApiController extends AbstractApiController
         }
     }
 
-
     /**
      * @param Request $request
      *
-     * @return string
+     * @return \Illuminate\Http\Response
      */
     public function associate(Request $request)
     {
-        $flashsaleIds = Binput::get('flashsalesales_ids', []);
-        $facebookAlbumIds = Binput::get('fb_albums', []);
-        $inventoryIds = Binput::get('selected_items_ids', []);
+        $flashsales = Binput::get('flashsalesales', []);
+        $facebookAlbums = Binput::get('fb_albums', []);
 
-        $result = $this->dispatchNow(new AddInventoryToSalesCommand($this->getUser(), $inventoryIds, $flashsaleIds, $facebookAlbumIds));
+        try {
+            $result = $this->dispatchNow(new AddInventoryToSalesCommand($this->getUser(), $flashsales, $facebookAlbums));
 
-        return $this->setData($result)->respond();
+            return $this->setData($result)->respond();
+        } catch (Exception $e){
+            return $this->setStatusCode(500)->setData(['msg' => $e->getMessage()])->respond();
+        }
     }
 
     /**
