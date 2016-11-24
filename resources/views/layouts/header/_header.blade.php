@@ -105,6 +105,9 @@
                                class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
                             <a href="{{  route('shipping.create') }}"
                                class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
+
+                            <div class="divider"></div>
+                            <a href="{{ route('listings.index') }}" class="dropdown-item {{ Request::is('listings') ? 'active' : null }}"><span>Listings</span></a>
                         </div>
                     </li>
                 @endif

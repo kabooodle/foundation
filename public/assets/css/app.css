@@ -306,8 +306,14 @@ sup {
     color: #fff; }
 
 .app-header .dropdown-menu {
+  font-size: .79rem;
   margin-top: 0;
   padding-top: 0; }
+  .app-header .dropdown-menu .dropdown-item {
+    padding: 3px 20px;
+    line-height: 1.4; }
+  .app-header .dropdown-menu > .divider {
+    margin: .35rem 0; }
 
 .dropdown-menu {
   min-width: 180px;
