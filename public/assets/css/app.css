@@ -8689,10 +8689,13 @@ Copyright (c) 2015 Daniel Eden
       transition: all 200ms ease-in; }
     .timeline .li.complete .status h4 {
       color: #66DC71; }
-    .timeline .li.incomplete {
-      color: inherit !important;
-      opacity: .5; }
+    .timeline .li.incomplete .status {
+      border-color: #dedede; }
+      .timeline .li.incomplete .status:before {
+        background-color: #dedede;
+        border-color: #dedede; }
   .timeline .timestamp {
+    color: #8f8f8f !important;
     margin-bottom: 20px;
     padding: 0;
     display: -ms-flexbox;
@@ -8703,12 +8706,13 @@ Copyright (c) 2015 Daniel Eden
     align-items: center;
     font-size: .75rem; }
   .timeline .status {
+    color: #8f8f8f !important;
     padding: 0;
     display: -ms-flexbox;
     display: flex;
     -ms-flex-pack: center;
     justify-content: center;
-    border-top: 6px solid #D6DCE0;
+    border-top: 10px solid #bbb;
     position: relative;
     transition: all 200ms ease-in; }
   .timeline .status h4 {
@@ -8719,14 +8723,28 @@ Copyright (c) 2015 Daniel Eden
     content: "";
     width: 25px;
     height: 25px;
-    background-color: white;
+    background-color: #bbb;
     border-radius: 25px;
-    border: 6px solid #ddd;
+    border: 10px solid #bbb;
     position: absolute;
     margin-left: -12.5px;
-    top: -15px;
+    top: -17px;
     left: 50%;
     transition: all 200ms ease-in; }
+
+@media only screen and (max-width: 767px) {
+  .timeline {
+    list-style-type: none; }
+    .timeline .li {
+      transition: all 200ms ease-in;
+      display: inline-block;
+      width: 70px;
+      min-width: 70px; }
+    .timeline .status:before {
+      top: -14px;
+      width: 13px;
+      height: 13px;
+      border-radius: 13px; } }
 
 @media (min-device-width: 320px) and (max-device-width: 700px) {
   .timeline {
@@ -8736,7 +8754,6 @@ Copyright (c) 2015 Daniel Eden
       transition: all 200ms ease-in;
       display: -ms-flexbox;
       display: flex;
-      width: inherit;
       min-width: 60px; }
     .timeline .timestamp {
       width: 100px; }

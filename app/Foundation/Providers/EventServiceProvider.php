@@ -59,6 +59,10 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Shipping\ShippingLabelPrinted::class => [
             \Kabooodle\Bus\Handlers\Events\Shipping\ShippingLabelPrintedEventHandler::class
         ],
+        // SHIPPING STATUS UPDATED
+        \Kabooodle\Bus\Events\Shipping\ShippingTransactionStatusUpdatedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Shipping\NotifyUsersShippingStatusUpdatedHandler::class
+        ],
 
         // SOCIAL EVENTS
         \Kabooodle\Bus\Events\Social\UserFacebookCredentialsRevokedEvent::class => [

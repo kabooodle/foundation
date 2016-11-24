@@ -17,7 +17,9 @@
                 <div class="box-divider"></div>
                 <div class="box-body">
                     <div class="form-group row {{ $errors->has('claim_id') ? 'has-danger' : null }}" id="packaging-wrapper">
-                        <label class="form-control-label col-sm-3">Claim Reference</label>
+                        <label class="form-control-label col-sm-3">Approved Claim(s)
+                        <small class="text-muted block">You can also ship multiple claims together (from the same buyer)</small>
+                        </label>
                         <div class="col-sm-6">
                             {{ Form::select('claim_id[]', [], Binput::get('c', null), ['class' => 'pull-left disabled form-control', 'disabled', 'id' => 'claimer_select_el', '@change' => 'claimReferenceChanged'])  }}
                             {!! spinnyAppendedToEl() !!}

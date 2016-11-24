@@ -31,7 +31,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
         'PROCESSING',
         'IN TRANSIT',
         'DELIVERED',
-//        'RETURNED'
+        'RETURNED'
     ];
 
     /**
@@ -213,5 +213,23 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     public function getShippingStatusHuman()
     {
         return $this->shipping_status_updated_on->format('m-d-Y h:ia');
+    }
+
+    /**
+     * @param $status
+     *
+     * @return string
+     */
+    public static function mapShippoStatiiToLocalStatii(string $status)
+    {
+        $mapped = [
+            'UNKNOWN' => 'PROCESSING',
+            'DELIVERED'  => 'DELIVERED',
+            'TRANSIT'  => 'TRANSIT',
+            'FAILURE'  => 'PROCESSING', // HRM?
+            'RETURNED'  => 'RETURNED',
+        ];
+
+        return $mapped[$status];
     }
 }
