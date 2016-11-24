@@ -6,16 +6,14 @@
 
 namespace Kabooodle\Bus\Events\Shipping;
 
-use Kabooodle\Bus\Events\Event;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Kabooodle\Models\ShippingTransactions;
 
 /**
  * Class ShippingTransactionWasCreatedEvent
- * @package Kabooodle\Bus\Events\Shippings
  */
-final class ShippingTransactionWasCreatedEvent extends Event
+final class ShippingTransactionWasCreatedEvent
 {
     use InteractsWithQueue, SerializesModels;
 

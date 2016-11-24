@@ -48,6 +48,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
      */
     protected $with = [
         'shipment',
+        'shippingHistory'
     ];
 
     /**
@@ -119,6 +120,14 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     public function recipient()
     {
         return $this->belongsTo(User::class, 'recipient_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function shippingHistory()
+    {
+        return $this->hasMany(ShippingTransactionHistory::class, 'shipping_transaction_id');
     }
 
     /**
@@ -226,7 +235,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
             'UNKNOWN' => 'PROCESSING',
             'DELIVERED'  => 'DELIVERED',
             'TRANSIT'  => 'TRANSIT',
-            'FAILURE'  => 'PROCESSING', // HRM?
+            'FAILURE'  => 'FAILURE',
             'RETURNED'  => 'RETURNED',
         ];
 

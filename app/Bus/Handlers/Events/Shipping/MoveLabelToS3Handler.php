@@ -6,13 +6,13 @@
 
 namespace Kabooodle\Bus\Handlers\Events\Shipping;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Kabooodle\Bus\Events\Shipping\ShippingTransactionWasCreatedEvent;
 
 /**
  * Class MoveLabelToS3Handler
- * @package Kabooodle\Bus\Handlers\Events\Shipping
  */
-class MoveLabelToS3Handler
+class MoveLabelToS3Handler implements ShouldQueue
 {
     /**
      * @param ShippingTransactionWasCreatedEvent $event
