@@ -148,6 +148,10 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+
+        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
+        Kabooodle\Foundation\Providers\AppServiceProvider::class,
+
         Aws\Laravel\AwsServiceProvider::class,
 
         Barryvdh\Cors\ServiceProvider::class,
@@ -156,7 +160,7 @@ return [
 //        Barryvdh\Debugbar\ServiceProvider::class,
 
 
-        Kabooodle\Foundation\Providers\AppServiceProvider::class,
+
         Kabooodle\Foundation\Providers\AuthServiceProvider::class,
         Kabooodle\Foundation\Providers\EventServiceProvider::class,
         Kabooodle\Foundation\Providers\RouteServiceProvider::class,
@@ -243,5 +247,7 @@ return [
         'Facebook' => Kabooodle\Services\Social\Facebook\FacebookSdkFacade::class,
         'Analytics' => Ipunkt\LaravelAnalytics\AnalyticsFacade::class,
         'AnalyticsReader' => Spatie\Analytics\AnalyticsFacade::class,
-    ],
+        'Bugsnag' => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+     ],
+
 ];

@@ -35,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerBugsnag();
         $this->registerMessages();
         $this->registerPaginationPresenter();
     }
@@ -56,5 +57,11 @@ class AppServiceProvider extends ServiceProvider
         Paginator::presenter(function ($paginator) {
             return new DefaultPaginator($paginator);
         });
+    }
+
+    public function registerBugsnag()
+    {
+        $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
+        $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
     }
 }
