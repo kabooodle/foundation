@@ -1,6 +1,14 @@
-(function($) {
-    'use strict';
+/*! Tablesaw - v3.0.0-beta.4 - 2016-10-12
+ * https://github.com/filamentgroup/tablesaw
+ * Copyright (c) 2016 Filament Group; Licensed MIT */
+// UMD module definition
+// From: https://github.com/umdjs/umd/blob/master/templates/jqueryPlugin.js
+
+(function (factory) {
+
+}(function ($) {
     var Tablesaw, win = typeof window !== "undefined" ? window : this;
+
     /*
      * tablesaw: A set of plugins for responsive tables
      * Stack and Column Toggle tables
@@ -256,7 +264,6 @@
 
         // on tablecreate, init
         $( document ).on( "tablesawcreate", function( e, tablesaw, colstart ){
-            console.log('asdfasdf');
             if( tablesaw.mode === 'stack' ){
                 var table = new Stack( tablesaw.table );
                 table.init( colstart );
@@ -273,4 +280,4 @@
         } );
 
     }());
-})(jQuery);
+}));

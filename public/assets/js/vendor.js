@@ -52987,45 +52987,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 },{"jquery":14}],57:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+(function ($) {
+    'use strict';
 
-/*! Tablesaw - v3.0.0-beta.4 - 2016-10-12
- * https://github.com/filamentgroup/tablesaw
- * Copyright (c) 2016 Filament Group; Licensed MIT */
-// UMD module definition
-// From: https://github.com/umdjs/umd/blob/master/templates/jqueryPlugin.js
-
-(function (factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(['jquery'], factory);
-    } else if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && module.exports) {
-        // Node/CommonJS
-        module.exports = function (root, jQuery) {
-            if (jQuery === undefined) {
-                // require('jQuery') returns a factory that requires window to
-                // build a jQuery instance, we normalize how we use modules
-                // that require this pattern but the window provided is a noop
-                // if it's defined (how jquery works)
-                if (typeof window !== 'undefined') {
-                    jQuery = require('jquery');
-                } else {
-                    jQuery = require('jquery')(root);
-                }
-            }
-            factory(jQuery);
-            return jQuery;
-        };
-    } else {
-        // Browser globals
-        factory(jQuery);
-    }
-})(function ($) {
     var Tablesaw,
         win = typeof window !== "undefined" ? window : this;
-
     /*
      * tablesaw: A set of plugins for responsive tables
      * Stack and Column Toggle tables
@@ -53276,6 +53244,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         // on tablecreate, init
         $(document).on("tablesawcreate", function (e, tablesaw, colstart) {
+            console.log('asdfasdf');
             if (tablesaw.mode === 'stack') {
                 var table = new Stack(tablesaw.table);
                 table.init(colstart);
@@ -53289,8 +53258,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             }
         });
     })();
-});
+})(jQuery);
 
-},{"jquery":14}]},{},[54]);
+},{}]},{},[54]);
 
 //# sourceMappingURL=vendor.js.map

@@ -6,4 +6,8 @@ Route::group(['middleware' => ['auth', 'subscribed:main']], function () {
         'as' => 'listings.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@index'
     ]);
+    Route::get('listings/{listing}/show', [
+        'as' => 'listings.show',
+        'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@show'
+    ]);
 });
