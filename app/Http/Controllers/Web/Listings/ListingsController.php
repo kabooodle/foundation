@@ -26,4 +26,12 @@ class ListingsController extends Controller
     {
         return $this->view('listings.show');
     }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function detailed()
+    {
+        return $this->view('listings.detailed');
+    }
 }

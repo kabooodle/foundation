@@ -81,11 +81,12 @@
                 <thead>
                 <tr>
                     <th scope="col"><input type="checkbox"></th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Group</th>
                     <th scope="col">Album</th>
-                    <th scope="col">Item</th>
                     <th scope="col">Sales</th>
                     <th scope="col">Pending</th>
-                    <th scope="col">Deletes</th>
+                    <th scope="col">Views</th>
                     <th scope="col">Gross</th>
                     <th scope="col"></th>
                 </tr>
@@ -93,115 +94,61 @@
                 <tbody>
                 <tr>
                     <td><input type="checkbox"></td>
+                    <td>Facebook Group</td>
+                    <td>Pipers Group</td>
                     <td>Joey (SM)</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Joey - SM</span>
-                        </div></td>
                     <td>0</td>
                     <td>0</td>
                     <td>0</td>
                     <td>$0.00</td>
                     <td>
                         <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
+                            <a href="/listings/1/show" class="btn btn-xs white">View</a>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>Joey (SM)</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Joey - SM</span>
-                        </div></td>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>1</td>
-                    <td>$10.00</td>
-                    <td>
-                        <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>Joey (M)</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Joey - M</span>
-                        </div></td>
-                    <td>2</td>
-                    <td>4</td>
-                    <td>65</td>
-                    <td>$19.00</td>
-                    <td>
-                        <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
+                    <td>Facebook Group</td>
+                    <td>Pipers Group</td>
                     <td>Irma (XL)</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Irma - SM</span>
-                        </div></td>
                     <td>9</td>
                     <td>13</td>
                     <td>126</td>
                     <td>$720.10</td>
                     <td>
                         <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
+                            <a href="/listings/1/show" class="btn btn-xs white">View</a>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td><input type="checkbox"></td>
+                    <td>Facebook Group</td>
+                    <td>Pipers Group</td>
                     <td>Joy (XXL)</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Joy - SM</span>
-                        </div></td>
                     <td>9</td>
                     <td>76</td>
                     <td>32</td>
                     <td>$108.10</td>
                     <td>
                         <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
+                            <a href="/listings/1/show" class="btn btn-xs white">View</a>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>Azure</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Azure - SM</span>
-                        </div></td>
+                    <td>Flashsale</td>
+                    <td>Jakes private flashsale</td>
+                    <td>N/A</td>
                     <td>9</td>
                     <td>76</td>
                     <td>32</td>
                     <td>$108.10</td>
                     <td>
                         <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
+                            <a href="/listings/1/show" class="btn btn-xs white">View</a>
                         </div>
                     </td>
                 </tr>

@@ -8,6 +8,8 @@ namespace Kabooodle\Models;
 
 use Eloquent;
 use Carbon\Carbon;
+use ReflectionClass;
+use Illuminate\Support\Str;
 
 /**
  * Class BaseEloquentModel
@@ -166,6 +168,29 @@ class BaseEloquentModel extends Eloquent
     public static function getTableName()
     {
         return with(new static)->getTable();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getConstants()
+    {
+        $class = new ReflectionClass(get_called_class());
+
+        return $class->getConstants();
+    }
+
+    /**
+     * @param $startsWith
+     * @return array
+     */
+    public static function getConstantsStartsWith($startsWith)
+    {
+        $constants = self::getConstants();
+
+        return array_filter($constants, function($k) use ($startsWith) {
+            return Str::startsWith($k, $startsWith);
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**

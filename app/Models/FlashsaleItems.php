@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class FlashsaleItems extends BaseEloquentModel implements Revisionable, ShoppableInterface
 {
-    use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, PageViewablesTrait,  RevisionableTrait, ShoppableTrait, SoftDeletes;
+    use AlgoliaEloquentTrait, AuthorableTrait, FollowableTrait, LikeableTrait, ObfuscatesIdTrait, PageViewablesTrait, RevisionableTrait, ShoppableTrait, SoftDeletes;
 
         /**
      * @var string
