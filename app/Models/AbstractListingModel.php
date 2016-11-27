@@ -117,8 +117,25 @@ abstract class AbstractListingModel extends BaseEloquentModel
         $query = "SELECT * FROM listing_items as li 
         INNER JOIN listings as l ON l.id = li.listing_id
         WHERE (l.scheduled_for BETWEEN ? and ?)
-        AND l.owner_id = ?";
+        AND l.owner_id = ?
+        AND li.ignore = 0";
 
-        return DB::statement($query, [$startTime, $endTime, $userId]);
+        return DB::select($query, [$startTime, $endTime, $userId]);
+    }
+
+    /**
+     * @param int $userId
+     * @param     $startTime
+     * @param     $endTime
+     * @param int $incomingItemsCount
+     *
+     * @return bool
+     */
+    public static function checkIfAttemptedListingExceedsHourlyQuota(int $userId, $startTime, $endTime, int $incomingItemsCount)
+    {
+        $results = self::queryGetItemsDuringDateTimeBlockForUser($userId, $startTime, $endTime);
+        $countResults = count($results);
+
+        return ($countResults + $incomingItemsCount) > 600;
     }
 }

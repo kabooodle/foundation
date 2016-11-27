@@ -2,6 +2,7 @@
 
 namespace Kabooodle\Models;
 
+use Nubs\RandomNameGenerator\Alliteration;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -47,8 +48,8 @@ class Listings extends AbstractListingModel
         'uuid' => '',
         'type' => self::TYPE_FACEBOOK,
         'status' => self::STATUS_SCHEDULED,
-        'status_updated_at' => '',
-        'status_history' => [],
+        'status_updated_at' => null,
+        'status_history' => '',
     ];
 
     /**
@@ -64,6 +65,32 @@ class Listings extends AbstractListingModel
         'status_updated_at',
         'status_history'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function(self $model){
+            if(!$model->name || is_null($model->name)) {
+                $model->name = $model->generateRandomName($model);
+            }
+        });
+    }
+
+    /**
+     * @param $model
+     *
+     * @return mixed
+     */
+    public function generateRandomName(self $model)
+    {
+        $name = with(new Alliteration)->getName();
+        if (self::where('name', $name)->where('owner_id', $model->owner_id)->first()) {
+            return $this->generateRandomName($model);
+        }
+
+        return $name;
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

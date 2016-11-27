@@ -176,6 +176,7 @@ new Vue({
             let $el = $(event.target);
             let form = $el.closest('form');
             const selectedPostables = this.selected.postables;
+            selectedPostables.fb_group = this.selected.fb_group;
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
@@ -188,7 +189,7 @@ new Vue({
                 this.resetSelectedFBAlbum();
                 notify({text: 'Items posted or queued successfully', type : 'success'});
             }, (response)=>{
-                notify({text: response.body.data.error});
+                notify({text: response.body.data.msg});
             }).finally(()=>{
                 this.setPostingToSales(false);
             });

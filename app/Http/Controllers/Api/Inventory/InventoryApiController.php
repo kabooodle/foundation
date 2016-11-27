@@ -9,12 +9,14 @@ namespace Kabooodle\Http\Controllers\Api\Inventory;
 use Binput;
 use Exception;
 use Illuminate\Http\Request;
+use Kabooodle\Models\Listings;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Bus\Commands\Listings\ScheduleListingCommand;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
-use Kabooodle\Bus\Commands\Inventory\AddInventoryToSalesCommand;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
+use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 
 /**
  * Class InventoryApiController
@@ -118,13 +120,27 @@ class InventoryApiController extends AbstractApiController
      */
     public function associate(Request $request)
     {
-        $flashsales = Binput::get('flashsalesales', []);
+        $flashsaleId = Binput::get('flashsale_id', null);
         $facebookAlbums = Binput::get('fb_albums', []);
+        $facebookGroup = Binput::get('fb_group', null);
+        $facebookGroupId = $facebookGroup ? $facebookGroup['id'] : null;
 
         try {
-            $result = $this->dispatchNow(new AddInventoryToSalesCommand($this->getUser(), $flashsales, $facebookAlbums));
+            $command = new ScheduleListingCommand(
+                $this->getUser(),
+                null,
+                null,
+                null,
+                $flashsaleId,
+                $facebookAlbums,
+                $facebookGroupId
+            );
+
+            $result = $this->dispatchNow($command);
 
             return $this->setData($result)->respond();
+        } catch (ListingConflictsWithExistingListingException $e) {
+            return $this->setStatusCode(500)->setData(['msg' => 'The date and time block you selected conflicts with an existing listing. Please select a new block of time.'])->respond();
         } catch (Exception $e){
             return $this->setStatusCode(500)->setData(['msg' => $e->getMessage()])->respond();
         }

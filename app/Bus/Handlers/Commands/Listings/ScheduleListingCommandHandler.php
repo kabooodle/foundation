@@ -50,46 +50,59 @@ class ScheduleListingCommandHandler
         /** @var Carbon $scheduledFor */
         $scheduledFor = $this->normalizeScheduledDateTime($command->getScheduledFor());
 
-        // If we are dealing with a facebook listing, then we need to make 1 critical assertion.
-        // May need to make mure in the future.
         if ($command->getFacebookGroupId()) {
             $this->isFacebookListing = true;
-            // Because facebook throttles API requests to 200/calls an hour, we need to make sure
-            // The requested time schedule doesn't already have "200 calls" scheduled.
-            // If it does, an exception will be thrown.
-            $this->assertListingDoesNotConflictWithExistingListing($scheduledFor, $actor);
         }
 
         // We should be good to proceed with saving the listings.
         return DB::transaction(function () use ($actor, $scheduledFor, $command) {
-            $listing = new Listings;
-            $listing->name = $command->getName();
-            $listing->owner_id = $actor->id;
-            $listing->scheduled_for = $scheduledFor;
-            $listing->status = Listings::STATUS_SCHEDULED;
-            $listing->status_updated = $this->now;
-
-            // Are we making a facebook post or flashsale?
-            if ($this->isFacebookListing) {
-                $listing->fb_group_node_id = $command->getFacebookGroupId();
-                $listing->type = Listings::TYPE_FACEBOOK;
-            } else {
-                // handle flash sale.
-                $listing->flashsale_id = $command->getFlashSales();
-                $listing->type = Listings::TYPE_FLASHSALE;
-            }
-            $listing->save();
+            $listing = $this->buildListing($command, $scheduledFor);
 
             if ($this->isFacebookListing) {
                 // Build an array of InventoryItems containing facebook listings.
-                $facebookInventoryItems = $this->buildFacebookListings($listing, $command->getInventoryItemIds());
+                $facebookInventoryItems = $this->buildFacebookListings($listing, $command);
+
                 if ($facebookInventoryItems) {
+                    // Because facebook throttles API requests to 200/calls an hour, we need to make sure
+                    // The requested time schedule doesn't already have "200 calls" scheduled.
+                    // If it does, an exception will be thrown.
+                    $this->assertListingDoesNotConflictWithExistingListing($scheduledFor, $actor, $facebookInventoryItems);
+
                     $listing->listingItems()->saveMany($facebookInventoryItems);
                 }
             }
 
             return $listing;
         });
+    }
+
+    /**
+     * @param ScheduleListingCommand $command
+     * @param Carbon                 $scheduledFor
+     *
+     * @return Listings
+     */
+    public function buildListing(ScheduleListingCommand $command, Carbon $scheduledFor)
+    {
+        $listing = new Listings;
+        $listing->name = $command->getName();
+        $listing->owner_id = $command->getActor()->id;
+        $listing->scheduled_for = $scheduledFor;
+        $listing->status = Listings::STATUS_SCHEDULED;
+        $listing->status_updated_at = $this->now;
+
+        // Are we making a facebook post or flashsale?
+        if ($this->isFacebookListing) {
+            $listing->fb_group_node_id = $command->getFacebookGroupId();
+            $listing->type = Listings::TYPE_FACEBOOK;
+        } else {
+            // handle flash sale.
+            $listing->flashsale_id = $command->getFlashSaleId();
+            $listing->type = Listings::TYPE_FLASHSALE;
+        }
+        $listing->save();
+
+        return $listing;
     }
 
     /**
@@ -116,6 +129,12 @@ class ScheduleListingCommandHandler
 
                 // Loop over each of the items
                 foreach ($facebookAlbum['items'] as $inventoryItem) {
+
+                    // Skip inventory items that do not belong to the user.
+                    if (! $this->inventoryItemBelongsToUser($inventoryItem['id'], $actor)) {
+                        continue;
+                    }
+
                     $listingItem = new ListingItems;
                     $listingItem->listing_id = $listing->id;
                     $listingItem->owner_id = $actor->id;
@@ -129,8 +148,9 @@ class ScheduleListingCommandHandler
                     $listingItem->status = $listing->status;
                     $listingItem->status_updated_at = $this->now;
 
-                    // Ignore duplicate inventory items already in the facebook album
-                    if (!$this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $inventoryItem['id'])) {
+                    // Flag duplicates as ignored listings.
+                    // We do not actually "skip" them because we want to provide full transparency to the user.
+                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $inventoryItem['id'])) {
                         $listingItem->ignore = true;
                         $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
                     }
@@ -171,10 +191,23 @@ class ScheduleListingCommandHandler
         if (!$dateTime || !is_null($dateTime)) {
             $this->postingNow = true;
 
-            return Carbon::now()->addMinutes(EMPTY_DATE_LOOKAHEAD_MINUTES);
+            return Carbon::now()->addMinutes(self::EMPTY_DATE_LOOKAHEAD_MINUTES);
         }
 
         return Carbon::createFromTimestamp(strtotime($dateTime));
+    }
+
+    /**
+     * TODO: is it faster to run a normal sql query vs filtering through the eager loaded collection?
+     *
+     * @param int  $inventoryId
+     * @param User $actor
+     *
+     * @return mixed
+     */
+    public function inventoryItemBelongsToUser(int $inventoryId, User $actor)
+    {
+        return $actor->inventory->find($inventoryId);
     }
 
     /**
@@ -183,22 +216,20 @@ class ScheduleListingCommandHandler
      *
      * @param Carbon $dateTime
      * @param User   $actor
+     * @param array $facebookInventoryItems
      *
      * @return bool
      * @throws ListingConflictsWithExistingListingException
      */
-    public function assertListingDoesNotConflictWithExistingListing(Carbon $dateTime, User $actor)
+    public function assertListingDoesNotConflictWithExistingListing(Carbon $dateTime, User $actor, array $facebookInventoryItems)
     {
         // Get the date time, and find 60 minutes from this time as the max and the min is the scheduled time.
         $minDateTime = $dateTime->format('Y-m-d H:i:s.u');
         $maxDateTime = $dateTime->addMinutes(self::MAX_LOOKAHEAD_MINUTES)->format('Y-m-d H:i:s.u');
 
-        // Get all listing items where listing date is between min, max for userid;
-        $results = ListingItems::queryGetItemsDuringDateTimeBlockForUser($actor->id, $minDateTime, $maxDateTime);
-
-        // If ANY results are returned, we're just going to throw an exception and bail.
-        if (count($results) > 0) {
-            throw new ListingConflictsWithExistingListingException($results);
+        $hourlyQuoteExceeded = ListingItems::checkIfAttemptedListingExceedsHourlyQuota($actor->id, $minDateTime, $maxDateTime, count($facebookInventoryItems));
+        if ($hourlyQuoteExceeded) {
+            throw new ListingConflictsWithExistingListingException;
         }
 
         return true;

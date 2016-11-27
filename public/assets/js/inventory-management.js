@@ -7063,6 +7063,7 @@ new Vue({
             var $el = $(event.target);
             var form = $el.closest('form');
             var selectedPostables = this.selected.postables;
+            selectedPostables.fb_group = this.selected.fb_group;
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
@@ -7075,7 +7076,7 @@ new Vue({
                 _this2.resetSelectedFBAlbum();
                 notify({ text: 'Items posted or queued successfully', type: 'success' });
             }, function (response) {
-                notify({ text: response.body.data.error });
+                notify({ text: response.body.data.msg });
             }).finally(function () {
                 _this2.setPostingToSales(false);
             });
@@ -7607,9 +7608,9 @@ if (module.hot) {(function () {  module.hot.accept()
     document.head.removeChild(__vueify_style__)
   })
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-4e910d3e", module.exports)
+    hotAPI.createRecord("_v-49e9dca7", module.exports)
   } else {
-    hotAPI.update("_v-4e910d3e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-49e9dca7", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"./manage/computed":7,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[6]);

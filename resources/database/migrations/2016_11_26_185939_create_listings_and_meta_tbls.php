@@ -13,7 +13,7 @@ class CreateListingsAndMetaTbls extends Migration
     public function up()
     {
         Schema::create(\Kabooodle\Models\Listings::getTableName(), function(Blueprint $table){
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->integer('owner_id')->unsigned();
             $table->bigInteger('fb_group_node_id')->unsigned()->nullable();
             $table->integer('flashsale_id')->unsigned()->nullable();
@@ -38,8 +38,8 @@ class CreateListingsAndMetaTbls extends Migration
         });
 
         Schema::create(\Kabooodle\Models\ListingItems::getTableName(), function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('listing_id')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('listing_id')->unsigned();
             $table->integer('owner_id')->unsigned();
             $table->bigInteger('fb_group_node_id')->unsigned()->nullable();
             $table->bigInteger('fb_album_node_id')->unsigned()->nullable();
@@ -73,6 +73,9 @@ class CreateListingsAndMetaTbls extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
+
+        DB::update("ALTER TABLE ".\Kabooodle\Models\ListingItems::getTableName()." AUTO_INCREMENT = 118453;");
+        DB::update("ALTER TABLE ".\Kabooodle\Models\Listings::getTableName()." AUTO_INCREMENT = 190345;");
     }
 
     /**

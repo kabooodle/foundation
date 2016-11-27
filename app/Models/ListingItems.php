@@ -51,7 +51,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
         'type' => self::TYPE_FACEBOOK,
         'status' => self::STATUS_SCHEDULED,
         'status_updated_at' => '',
-        'status_history' => [],
+        'status_history' => '',
         'ignore' => false,
     ];
 

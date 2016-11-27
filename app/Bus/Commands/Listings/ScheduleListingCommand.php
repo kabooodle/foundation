@@ -48,17 +48,17 @@ final class ScheduleListingCommand
     /**
      * @param User $actor
      * @param string|null $name
-     * @param null $scheduledFor
      * @param string $type
+     * @param null $scheduledFor
      * @param int $flashSaleId
      * @param array $facebookAlbums
-     * @param int   $facebookGroupId
+     * @param int|null  $facebookGroupId
      */
     public function __construct(
         User $actor,
         string $name = null,
-        $scheduledFor = null,
         $type = Listings::TYPE_FACEBOOK,
+        $scheduledFor = null,
         int $flashSaleId = null,
         array $facebookAlbums = [],
         int $facebookGroupId = null
@@ -106,25 +106,25 @@ final class ScheduleListingCommand
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getFacebookAlbums(): array
+    public function getFacebookAlbums()
     {
         return $this->facebookAlbums;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getFlashSaleId(): int
+    public function getFlashSaleId()
     {
         return $this->flashSaleId;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getFacebookGroupId(): int
+    public function getFacebookGroupId()
     {
         return $this->facebookGroupId;
     }
