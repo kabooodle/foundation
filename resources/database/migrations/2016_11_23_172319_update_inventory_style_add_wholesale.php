@@ -12,10 +12,7 @@ class UpdateInventoryStyleAddWholesale extends Migration
      */
     public function up()
     {
-        Schema::table(\Kabooodle\Models\InventoryTypeStyles::getTableName(), function(Blueprint $table){
-            $table->decimal('wholesale_price_usd', 6,2)->after('sort_order');
-            $table->decimal('wholesale_price_usd_less_5_percent', 6,2)->after('sort_order');
-        });
+
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table(\Kabooodle\Models\InventoryTypeStyles::getTableName())->truncate();
@@ -68,8 +65,6 @@ VALUES
      */
     public function down()
     {
-        Schema::table(\Kabooodle\Models\InventoryTypeStyles::getTableName(), function(Blueprint $table){
-            $table->dropColumn(['wholesale_price_usd', 'wholesale_price_usd_less_5_percent']);
-        });
+
     }
 }

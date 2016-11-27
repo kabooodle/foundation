@@ -13,9 +13,12 @@ class ListingsApiController extends AbstractApiController
 {
     /**
      * @param Request $request
+     * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
+        $listings = $this->getUser()->listings;
 
+        return $this->setData($listings)->respond();
     }
 }

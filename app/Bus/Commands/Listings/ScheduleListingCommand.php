@@ -21,24 +21,24 @@ final class ScheduleListingCommand
     public $name;
 
     /**
-     * @var null
-     */
-    public $scheduledFor;
-
-    /**
      * @var string
      */
     public $type;
 
     /**
-     * @var array
+     * @var null
      */
-    public $facebookAlbums;
+    public $scheduledFor;
 
     /**
      * @var int
      */
     public $flashSaleId;
+
+    /**
+     * @var array
+     */
+    public $facebookAlbums;
 
     /**
      * @var int

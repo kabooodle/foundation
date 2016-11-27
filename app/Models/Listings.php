@@ -2,6 +2,8 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
+use Kabooodle\Presenters\PresentableTrait;
 use Nubs\RandomNameGenerator\Alliteration;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +13,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Listings extends AbstractListingModel
 {
-    use SoftDeletes, UuidableTrait;
+    use PresentableTrait, SoftDeletes, UuidableTrait;
+
+    /**
+     * @var string
+     */
+    protected $presenter = ListingsModelPresenter::class;
 
     /**
      * @var array
@@ -116,15 +123,21 @@ class Listings extends AbstractListingModel
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+
+    public function sales()
+    {
+        //
+    }
+
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany|null
+     * @return int
      */
-    public function albums()
+    public function albumsCount()
     {
         if ($this->isFacebook()) {
-            return $this->items()->distinct('fb_album_node_id');
+            return $this->items()->distinct('fb_album_node_id')->groupBy('fb_album_node_id')->get()->count();
         }
 
-        return null;
+        return 0;
     }
 }

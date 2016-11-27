@@ -15,7 +15,7 @@ use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListing
  */
 class ScheduleListingCommandHandler
 {
-    const EMPTY_DATE_LOOKAHEAD_MINUTES = 6;
+    const EMPTY_DATE_LOOKAHEAD_MINUTES = 5;
     const MAX_LISTINGS_PER_HOUR = 200;
     const MAX_LOOKAHEAD_MINUTES = 59;
 
@@ -54,7 +54,6 @@ class ScheduleListingCommandHandler
             $this->isFacebookListing = true;
         }
 
-        // We should be good to proceed with saving the listings.
         return DB::transaction(function () use ($actor, $scheduledFor, $command) {
             $listing = $this->buildListing($command, $scheduledFor);
 
@@ -168,7 +167,7 @@ class ScheduleListingCommandHandler
      * @param int  $facebookAlbumId
      * @param int  $inventoryId
      *
-     * @return mixed
+     * @return
      */
     protected function itemAlreadyInFacebookAlbum(User $user, int $facebookAlbumId, int $inventoryId)
     {
@@ -227,7 +226,13 @@ class ScheduleListingCommandHandler
         $minDateTime = $dateTime->format('Y-m-d H:i:s.u');
         $maxDateTime = $dateTime->addMinutes(self::MAX_LOOKAHEAD_MINUTES)->format('Y-m-d H:i:s.u');
 
-        $hourlyQuoteExceeded = ListingItems::checkIfAttemptedListingExceedsHourlyQuota($actor->id, $minDateTime, $maxDateTime, count($facebookInventoryItems));
+        $hourlyQuoteExceeded = ListingItems::checkIfAttemptedListingExceedsHourlyQuota(
+            $actor->id,
+            $minDateTime,
+            $maxDateTime,
+            count($facebookInventoryItems)
+        );
+
         if ($hourlyQuoteExceeded) {
             throw new ListingConflictsWithExistingListingException;
         }

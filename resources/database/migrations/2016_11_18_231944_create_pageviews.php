@@ -14,7 +14,7 @@ class CreatePageviews extends Migration
     public function up()
     {
         Schema::create(PageViews::getTableName(), function(Blueprint $table){
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('shoppable_type');
             $table->integer('shoppable_id')->unsigned();
             $table->integer('inventory_id')->unsigned();

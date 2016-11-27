@@ -6949,6 +6949,9 @@ new Vue({
     },
     methods: {
         // Reset
+        resetState: function resetState() {
+            this.$store.commit('CLEAR_READER_STATE');
+        },
         resetSelectedItems: function resetSelectedItems() {
             this.$store.commit('RESET_SELECTED_ITEMS');
         },
@@ -7139,7 +7142,7 @@ new Vue({
     }
 });
 
-},{"./manage/computed":7,"./manage/store":8,"./style_template.vue":9}],7:[function(require,module,exports){
+},{"./manage/computed":7,"./manage/store":9,"./style_template.vue":10}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7201,19 +7204,12 @@ exports.default = {
 };
 
 },{}],8:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _vuex = require('vuex');
-
-var _vuex2 = _interopRequireDefault(_vuex);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var state = {
+exports.default = {
     inventory_route: null,
 
     // Array of user inventory items
@@ -7257,6 +7253,23 @@ var state = {
     }
 };
 
+},{}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _vuex = require('vuex');
+
+var _vuex2 = _interopRequireDefault(_vuex);
+
+var _state = require('./state');
+
+var _state2 = _interopRequireDefault(_state);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var actions = {
     setRoute: function setRoute(_ref, route) {
         var commit = _ref.commit;
@@ -7266,6 +7279,9 @@ var actions = {
 };
 
 var mutations = {
+    CLEAR_READER_STATE: function CLEAR_READER_STATE(state) {
+        state = _state2.default;
+    },
     RESET_DATA: function RESET_DATA(state, key, value) {
         if (key) {
             var keys = key.split('.');
@@ -7375,13 +7391,13 @@ var getters = {
 };
 
 exports.default = new _vuex2.default.Store({
-    state: state,
+    state: _state2.default,
     mutations: mutations,
     getters: getters,
     actions: actions
 });
 
-},{"vuex":5}],9:[function(require,module,exports){
+},{"./state":8,"vuex":5}],10:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\ndiv.col-sm-2.btn-group-prpl {\n    width:122px !important;\n}\n")
 'use strict';
@@ -7608,9 +7624,9 @@ if (module.hot) {(function () {  module.hot.accept()
     document.head.removeChild(__vueify_style__)
   })
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-49e9dca7", module.exports)
+    hotAPI.createRecord("_v-4e910d3e", module.exports)
   } else {
-    hotAPI.update("_v-49e9dca7", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-4e910d3e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"./manage/computed":7,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[6]);

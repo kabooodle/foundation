@@ -16,15 +16,21 @@ class ListingsController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->view('listings.index');
+        $listings = user()->listings;
+
+        return $this->view('listings.index')->with(compact('listings'));
     }
 
     /**
+     * @param Request $request
+     * @param $uuid
      * @return \Illuminate\Contracts\View\View
      */
-    public function show()
+    public function show(Request $request, $uuid)
     {
-        return $this->view('listings.show');
+        $listing = user()->listings->where('uuid', $uuid)->first();
+
+        return $this->view('listings.show')->with(compact('listing'));
     }
 
     /**

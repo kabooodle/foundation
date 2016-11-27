@@ -2,6 +2,8 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
+use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Models\Traits\ShoppableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +15,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ListingItems extends AbstractListingModel implements ShoppableInterface
 {
-    use ShoppableTrait, SoftDeletes, UuidableTrait;
+    use PresentableTrait, ShoppableTrait, SoftDeletes, UuidableTrait;
+
+    /**
+     * @var string
+     */
+    protected $presenter = ListingItemsModelPresenter::class;
+
+    /**
+     * @var array
+     */
+    protected $with = [
+        'sales'
+    ];
 
     /**
      * @var array
@@ -106,6 +120,46 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
         }
 
         return 'Flashsale';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function claims()
+    {
+        return $this->morphMany(Claims::class, 'shoppable');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function rejectedSales()
+    {
+        return $this->deletedSales();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function deletedSales()
+    {
+        return $this->claims()->where('accepted', 0);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function pendingSales()
+    {
+        return $this->claims()->whereNull('accepted');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function sales()
+    {
+        return $this->claims()->where('accepted', 1);
     }
 
     /**

@@ -70,6 +70,9 @@ new Vue({
     },
     methods: {
         // Reset
+        resetState(){
+            this.$store.commit('CLEAR_READER_STATE');
+        },
         resetSelectedItems(){
             this.$store.commit('RESET_SELECTED_ITEMS');
         },

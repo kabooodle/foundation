@@ -22,8 +22,8 @@
             </span>
                 </div>
                 <div class="clear">
-                    <h4 class="m-a-0 text-md"><a href="">75 <span class="text-sm">Sales</span></a></h4>
-                    <small class="text-muted">6 waiting payment.</small>
+                    <h4 class="m-a-0 text-md"><a href="">0 <span class="text-sm">Sales</span></a></h4>
+                    <small class="text-muted">0 waiting payment.</small>
                 </div>
             </div>
         </div>
@@ -36,8 +36,8 @@
             </span>
                 </div>
                 <div class="clear">
-                    <h4 class="m-a-0 text-md"><a href="">75 <span class="text-sm">Sales</span></a></h4>
-                    <small class="text-muted">6 waiting payment.</small>
+                    <h4 class="m-a-0 text-md"><a href="">0 <span class="text-sm">Pending</span></a></h4>
+                    <small class="text-muted">3 pending approval.</small>
                 </div>
             </div>
         </div>
@@ -50,8 +50,8 @@
             </span>
                 </div>
                 <div class="clear">
-                    <h4 class="m-a-0 text-md"><a href="">75 <span class="text-sm">Sales</span></a></h4>
-                    <small class="text-muted">6 waiting payment.</small>
+                    <h4 class="m-a-0 text-md"><a href="">2 <span class="text-sm">Rejected</span></a></h4>
+                    <small class="text-muted">2 rejected claims.</small>
                 </div>
             </div>
         </div>
@@ -64,8 +64,8 @@
             </span>
                 </div>
                 <div class="clear">
-                    <h4 class="m-a-0 text-md"><a href="">75 <span class="text-sm">Sales</span></a></h4>
-                    <small class="text-muted">6 waiting payment.</small>
+                    <h4 class="m-a-0 text-md"><a href="">$75 <span class="text-sm">Gross</span></a></h4>
+                    <small class="text-muted">$5.00</small>
                 </div>
             </div>
         </div>
@@ -73,7 +73,7 @@
 
     <div class="box">
         <div class="box-header">
-            <h4>Multiconsultant sale 2 - 11/01/2016 10:00 </h4>
+            <h4>{!! $listing->name !!} - {{ $listing->humanize($listing->scheduled_for) }} </h4>
         </div>
         <div class="box-divider"></div>
         <div class="box-body">
@@ -87,124 +87,35 @@
                     <th scope="col">Pending</th>
                     <th scope="col">Deletes</th>
                     <th scope="col">Gross</th>
+                    <th scope="col">Status</th>
                     <th scope="col"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($listing->items as $item)
                 <tr>
                     <td><input type="checkbox"></td>
                     <td>Joey (SM)</td>
-                    <td><div class="avatar-thumbnail-container">
+                    <td>    <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
+                                @if($item->inventoryItem->firstImage())
+                                    <img src="{{ $item->inventoryItem->firstImage()->location }}">
+                                @endif
                             </div>
-                            <span>Joey - SM</span>
+                            <span>{{ $item->inventoryItem->name_with_variant }}</span>
                         </div></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
+                    <td>{{ $item->sales->count() }}</td>
+                    <td>{{ $item->pendingSales->count() }}</td>
+                    <td>{{ $item->rejectedSales->count() }}</td>
                     <td>$0.00</td>
+                    <td>{!! $item->present()->getStatus() !!}</td>
                     <td>
                         <div class="pull-md-right">
                             <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>Joey (SM)</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Joey - SM</span>
-                        </div></td>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>1</td>
-                    <td>$10.00</td>
-                    <td>
-                        <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>Joey (M)</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Joey - M</span>
-                        </div></td>
-                    <td>2</td>
-                    <td>4</td>
-                    <td>65</td>
-                    <td>$19.00</td>
-                    <td>
-                        <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>Irma (XL)</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Irma - SM</span>
-                        </div></td>
-                    <td>9</td>
-                    <td>13</td>
-                    <td>126</td>
-                    <td>$720.10</td>
-                    <td>
-                        <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>Joy (XXL)</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Joy - SM</span>
-                        </div></td>
-                    <td>9</td>
-                    <td>76</td>
-                    <td>32</td>
-                    <td>$108.10</td>
-                    <td>
-                        <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>Azure</td>
-                    <td><div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="https://kabooodle-storage.s3.amazonaws.com/1477950388_513550806.jpg">
-                            </div>
-                            <span>Azure - SM</span>
-                        </div></td>
-                    <td>9</td>
-                    <td>76</td>
-                    <td>32</td>
-                    <td>$108.10</td>
-                    <td>
-                        <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
-                        </div>
-                    </td>
-                </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>

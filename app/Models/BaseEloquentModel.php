@@ -126,6 +126,15 @@ class BaseEloquentModel extends Eloquent
 
     /**
      * @param $value
+     * @return mixed
+     */
+    public function humanize($value)
+    {
+        return $value->format('m-d-Y h:ia');
+    }
+
+    /**
+     * @param $value
      *
      * @return mixed
      */
