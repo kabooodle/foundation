@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Kabooodle\Models\FacebookItems;
+use Kabooodle\Models\FlashsaleItems;
 
 class CreateListingsAndMetaTbls extends Migration
 {
@@ -76,6 +78,11 @@ class CreateListingsAndMetaTbls extends Migration
 
         DB::update("ALTER TABLE ".\Kabooodle\Models\ListingItems::getTableName()." AUTO_INCREMENT = 118453;");
         DB::update("ALTER TABLE ".\Kabooodle\Models\Listings::getTableName()." AUTO_INCREMENT = 190345;");
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::drop(FacebookItems::getTableName());
+        Schema::drop(FlashsaleItems::getTableName());
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**
