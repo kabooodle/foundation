@@ -187,7 +187,7 @@ class ScheduleListingCommandHandler
     {
         // If the dateTime is null, then we will schedule this posting for
         // 5 minutes from now.
-        if (!$dateTime || !is_null($dateTime)) {
+        if (!$dateTime || is_null($dateTime)) {
             $this->postingNow = true;
 
             return Carbon::now()->addMinutes(self::EMPTY_DATE_LOOKAHEAD_MINUTES);
