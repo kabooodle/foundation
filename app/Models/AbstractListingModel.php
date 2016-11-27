@@ -19,6 +19,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
     const STATUS_COMPLETED = 'completed';
     const STATUS_DELETED = 'deleted';
     const STATUS_QUEUED_DELETE = 'queued_delete';
+    const STATUS_IGNORED_DUPLICATE = 'ignored_duplicate';
 
     /**
      * @param $scope

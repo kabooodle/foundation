@@ -254,9 +254,9 @@ class User extends BaseEloquentModel implements
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function facebookItems()
+    public function listingsOnFacebook()
     {
-        return $this->hasMany(FacebookItems::class, 'seller_id');
+        return $this->hasMany(ListingItems::class, 'owner_id');
     }
 
     /**

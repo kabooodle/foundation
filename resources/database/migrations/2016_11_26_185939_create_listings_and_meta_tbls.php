@@ -46,6 +46,7 @@ class CreateListingsAndMetaTbls extends Migration
             $table->integer('flashsale_id')->unsigned()->nullable();
             $table->integer('inventory_id')->unsigned();
             $table->binary('uuid');
+            $table->tinyInteger('ignore')->default(false);
             $table->enum('type', \Kabooodle\Models\Listings::getConstantsStartsWith('TYPE'))
                 ->index()
                 ->default(\Kabooodle\Models\Listings::TYPE_FACEBOOK);

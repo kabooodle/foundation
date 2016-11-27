@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ListingItems extends AbstractListingModel implements ShoppableInterface
 {
-    use ShoppableTrait,SoftDeletes, UuidableTrait;
+    use ShoppableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array
@@ -33,6 +33,13 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
     /**
      * @var array
      */
+    protected $casts = [
+        'ignore' => 'bool'
+    ];
+
+    /**
+     * @var array
+     */
     protected $attributes = [
         'uuid' => '',
         'listing_id' => 0,
@@ -45,6 +52,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
         'status' => self::STATUS_SCHEDULED,
         'status_updated_at' => '',
         'status_history' => [],
+        'ignore' => false,
     ];
 
     /**
@@ -60,7 +68,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
         'type',
         'status',
         'status_updated_at',
-        'status_history'
+        'status_history',
+        'ignore'
     ];
 
     /**
@@ -97,5 +106,13 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
         }
 
         return 'Flashsale';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIgnored(): bool
+    {
+        return $this->ignore;
     }
 }

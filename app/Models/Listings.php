@@ -68,6 +68,14 @@ class Listings extends AbstractListingModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function listingItems()
+    {
+        return $this->items();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function items()
     {
         return $this->hasMany(ListingItems::class, 'listing_id');
@@ -86,7 +94,7 @@ class Listings extends AbstractListingModel
      */
     public function albums()
     {
-        if($this->isFacebook()){
+        if ($this->isFacebook()) {
             return $this->items()->distinct('fb_album_node_id');
         }
 
