@@ -73,7 +73,7 @@
 
     <div class="box">
         <div class="box-header">
-            <h4>{!! $listing->name !!} - {{ $listing->humanize($listing->scheduled_for) }} </h4>
+            <h4>{{ $listing->humanize($listing->scheduled_for) }} </h4>
         </div>
         <div class="box-divider"></div>
         <div class="box-body">
@@ -81,37 +81,30 @@
                 <thead>
                 <tr>
                     <th scope="col"><input type="checkbox"></th>
-                    <th scope="col">Album</th>
-                    <th scope="col">Item</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Items</th>
                     <th scope="col">Sales</th>
                     <th scope="col">Pending</th>
                     <th scope="col">Deletes</th>
+                    <th scope="col">Views</th>
                     <th scope="col">Gross</th>
-                    <th scope="col">Status</th>
                     <th scope="col"></th>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($listing->items as $item)
+                @foreach($listing->listingsGroupedByItemTypeGrouping() as $item)
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>Joey (SM)</td>
-                    <td>    <div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                @if($item->inventoryItem->firstImage())
-                                    <img src="{{ $item->inventoryItem->firstImage()->location }}">
-                                @endif
-                            </div>
-                            <span>{{ $item->inventoryItem->name_with_variant }}</span>
-                        </div></td>
-                    <td>{{ $item->sales->count() }}</td>
-                    <td>{{ $item->pendingSales->count() }}</td>
-                    <td>{{ $item->rejectedSales->count() }}</td>
-                    <td>$0.00</td>
-                    <td>{!! $item->present()->getStatus() !!}</td>
+                    <td>{{ $item->name }}</td>
+                    <td>{{ $item->items_count ? : 0}}</td>
+                    <td>{{ $item->accepted_sales_count ? : 0}}</td>
+                    <td>{{ $item->pending_sales_count ? : 0 }}</td>
+                    <td>{{ $item->rejected_sales_count ? : 0}}</td>
+                    <td>0</td>
+                    <td>${{ ($item->price_sum + $item->accepted_price_sum) ? : 0 }}</td>
                     <td>
                         <div class="pull-md-right">
-                            <a href="/listings/1/show" class="btn btn-xs white">Delete</a>
+                            <a href="/listings/1/show" class="btn btn-xs white">View</a>
                         </div>
                     </td>
                 </tr>

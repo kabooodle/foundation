@@ -29,6 +29,9 @@ class ListingsController extends Controller
     public function show(Request $request, $uuid)
     {
         $listing = user()->listings->where('uuid', $uuid)->first();
+        if(!$listing) {
+            return redirect()->to(route('listings.index'));
+        }
 
         return $this->view('listings.show')->with(compact('listing'));
     }

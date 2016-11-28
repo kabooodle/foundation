@@ -84,7 +84,6 @@ class ScheduleListingCommandHandler
     public function buildListing(ScheduleListingCommand $command, Carbon $scheduledFor)
     {
         $listing = new Listings;
-        $listing->name = $command->getName();
         $listing->owner_id = $command->getActor()->id;
         $listing->scheduled_for = $scheduledFor;
         $listing->status = Listings::STATUS_SCHEDULED;

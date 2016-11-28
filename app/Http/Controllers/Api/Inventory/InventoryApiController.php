@@ -130,7 +130,6 @@ class InventoryApiController extends AbstractApiController
                 $this->getUser(),
                 null,
                 null,
-                null,
                 $flashsaleId,
                 $facebookAlbums,
                 $facebookGroupId

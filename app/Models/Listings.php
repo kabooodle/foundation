@@ -2,11 +2,11 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
+use DB;
 use Kabooodle\Presenters\PresentableTrait;
-use Nubs\RandomNameGenerator\Alliteration;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
 
 /**
  * Class Listings
@@ -47,7 +47,6 @@ class Listings extends AbstractListingModel
      * @var array
      */
     protected $attributes = [
-        'name' => '',
         'scheduled_for' => '',
         'owner_id' => 0,
         'fb_group_node_id' => null,
@@ -72,32 +71,6 @@ class Listings extends AbstractListingModel
         'status_updated_at',
         'status_history'
     ];
-
-    public static function boot()
-    {
-        parent::boot();
-
-        static::creating(function(self $model){
-            if(!$model->name || is_null($model->name)) {
-                $model->name = $model->generateRandomName($model);
-            }
-        });
-    }
-
-    /**
-     * @param $model
-     *
-     * @return mixed
-     */
-    public function generateRandomName(self $model)
-    {
-        $name = with(new Alliteration)->getName();
-        if (self::where('name', $name)->where('owner_id', $model->owner_id)->first()) {
-            return $this->generateRandomName($model);
-        }
-
-        return $name;
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -134,10 +107,57 @@ class Listings extends AbstractListingModel
      */
     public function albumsCount()
     {
+        return count($this->listingsGroupedByItemTypeGrouping());
+    }
+
+    /**
+     * @return int
+     */
+    public function listingsGroupedByItemTypeGrouping()
+    {
+        // Group by FB Albums
         if ($this->isFacebook()) {
-            return $this->items()->distinct('fb_album_node_id')->groupBy('fb_album_node_id')->get()->count();
+            $sql = "
+                SELECT
+                li.fb_album_node_id as name,
+                li.`fb_album_node_id`,
+                li.fb_group_node_id,
+                count(li.id) as items_count,
+                sum(c.accepted = null) as pending_sales_count,
+                sum(c.accepted = 1) as accepted_sales_count,
+                sum(c.accepted = 0) as rejected_sales_count,
+                sum(c.price) as price_sum,
+                sum(c.accepted_price) as accepted_price_sum
+                FROM listings as l
+                INNER JOIN listing_items as li ON li.listing_id = l.id
+                INNER JOIN inventory as i ON i.id = li.inventory_id
+                LEFT JOIN claims as c ON c.`inventory_id` = i.id
+                WHERE l.uuid = ?
+                AND l.type = 'facebook'
+                GROUP BY li.fb_album_node_id
+             ";
+        } else {
+            $sql = "
+                SELECT
+                s.name as name,
+                li.flashsale_id,
+                count(li.id) as items_count,
+                sum(c.accepted = null) as pending_sales_count,
+                sum(c.accepted = 1) as accepted_sales_count,
+                sum(c.accepted = 0) as rejected_sales_count,
+                sum(c.price) as price_sum,
+                sum(c.accepted_price) as accepted_price_sum
+                FROM listings as l
+                INNER JOIN listing_items as li ON li.listing_id = l.id
+                INNER JOIN inventory as i ON i.id = li.inventory_id
+                INNER JOIN inventory_type_styles as s ON s.id = i.inventory_type_styles_id
+                LEFT JOIN claims as c ON c.`inventory_id` = i.id
+                WHERE l.uuid = ?
+                AND l.type = 'flashsale'
+                GROUP BY s.id
+                ";
         }
 
-        return 0;
+        return DB::select($sql, [$this->uuid]);
     }
 }

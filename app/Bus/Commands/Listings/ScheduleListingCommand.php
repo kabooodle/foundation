@@ -16,11 +16,6 @@ final class ScheduleListingCommand
     public $actor;
 
     /**
-     * @var null|string
-     */
-    public $name;
-
-    /**
      * @var string
      */
     public $type;
@@ -47,7 +42,6 @@ final class ScheduleListingCommand
 
     /**
      * @param User $actor
-     * @param string|null $name
      * @param string $type
      * @param null $scheduledFor
      * @param int $flashSaleId
@@ -56,7 +50,6 @@ final class ScheduleListingCommand
      */
     public function __construct(
         User $actor,
-        string $name = null,
         $type = Listings::TYPE_FACEBOOK,
         $scheduledFor = null,
         int $flashSaleId = null,
@@ -65,7 +58,6 @@ final class ScheduleListingCommand
     )
     {
         $this->actor = $actor;
-        $this->name = $name;
         $this->scheduledFor = $scheduledFor;
         $this->type = $type;
         $this->flashSaleId = $flashSaleId;
@@ -79,14 +71,6 @@ final class ScheduleListingCommand
     public function getActor(): User
     {
         return $this->actor;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**

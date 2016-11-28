@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9d13ba765bb79c31a40f816ff2fec93d",
-    "content-hash": "44201045ef04989a660d401c68a9f1ea",
+    "hash": "2a60ecc9f2b7ae3bd96ba1adc68ca2d9",
+    "content-hash": "3406228ecc00e16ca2fe4a490bb3633d",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2803,55 +2803,6 @@
                 "php"
             ],
             "time": "2016-09-16 12:04:44"
-        },
-        {
-            "name": "nubs/random-name-generator",
-            "version": "v2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nubs/random-name-generator.git",
-                "reference": "acc58322b8792ff2599747cc8dc773d3a8547874"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nubs/random-name-generator/zipball/acc58322b8792ff2599747cc8dc773d3a8547874",
-                "reference": "acc58322b8792ff2599747cc8dc773d3a8547874",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~5.6 || ~7.0"
-            },
-            "require-dev": {
-                "cinam/randomizer": ">=1.1.1,<2.0",
-                "phpunit/phpunit": "~5.0",
-                "satooshi/php-coveralls": "~1.0",
-                "squizlabs/php_codesniffer": "~2.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Nubs\\RandomNameGenerator\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Spencer Rinehart",
-                    "email": "anubis@overthemonkey.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A library to create interesting, sometimes entertaining, random names.",
-            "keywords": [
-                "alliteration",
-                "generator",
-                "random",
-                "video game"
-            ],
-            "time": "2016-09-15 01:59:34"
         },
         {
             "name": "paragonie/random_compat",

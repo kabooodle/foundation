@@ -20,7 +20,6 @@
                     <tr>
                         <th scope="col"><input type="checkbox"></th>
                         <th scope="col">Name</th>
-                        <th scope="col">Group</th>
                         <th scope="col">Listing Date</th>
                         <th scope="col">Albums</th>
                         <th scope="col">Items</th>
@@ -34,8 +33,7 @@
                 @foreach($listings as $listing)
                     <tr>
                         <td><input type="checkbox"></td>
-                        <td>{!! $listing->name !!}</td>
-                        <td>Pipers Group</td>
+                        <td>Pipers Group <img src="/assets/images/icons/FB-f-Logo__blue_29.png" height="15"></td>
                         <td>{{ $listing->humanize($listing->scheduled_for) }}</td>
                         <td>{{ $listing->albumsCount() }}</td>
                         <td>{{ $listing->items->count() }}</td>
