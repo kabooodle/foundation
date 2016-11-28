@@ -117,10 +117,26 @@ class Listings extends AbstractListingModel
     {
         // Group by FB Albums
         if ($this->isFacebook()) {
+//            return DB::table('listings')
+//                ->join('listing_items', 'listings.id', '=', 'listing_items.listing_id')
+//                ->join('inventory', 'listing_items.inventory_id', '=', 'inventory.id')
+//                ->leftJoin('claims', 'inventory.id',  '=', 'claims.inventory_id')
+//                ->where('listings.uuid', '=',  $this->uuid)
+//                ->where('listings.type', '=', Listings::TYPE_FACEBOOK)
+//                ->groupBy('listing_items.fb_album_node_id')
+//                ->selectRaw('listing_items.fb_album_node_id as name,
+//                listing_items.fb_album_node_id,
+//                listing_items.fb_group_node_id,
+//                count(listing_items.id) as items_count,
+//                sum(claims.accepted = null) as pending_sales_count,
+//                sum(claims.accepted = 1) as accepted_sales_count,
+//                sum(claims.accepted = 0) as rejected_sales_count,
+//                sum(claims.price) as price_sum,
+//                sum(claims.accepted_price) as accepted_price_sum')->get();
             $sql = "
                 SELECT
                 li.fb_album_node_id as name,
-                li.`fb_album_node_id`,
+                li.fb_album_node_id,
                 li.fb_group_node_id,
                 count(li.id) as items_count,
                 sum(c.accepted = null) as pending_sales_count,
@@ -131,9 +147,9 @@ class Listings extends AbstractListingModel
                 FROM listings as l
                 INNER JOIN listing_items as li ON li.listing_id = l.id
                 INNER JOIN inventory as i ON i.id = li.inventory_id
-                LEFT JOIN claims as c ON c.`inventory_id` = i.id
+                LEFT JOIN claims as c ON c.inventory_id = i.id
                 WHERE l.uuid = ?
-                AND l.type = 'facebook'
+                AND l.type = '" . Listings::TYPE_FACEBOOK . "'
                 GROUP BY li.fb_album_node_id
              ";
         } else {
@@ -151,13 +167,12 @@ class Listings extends AbstractListingModel
                 INNER JOIN listing_items as li ON li.listing_id = l.id
                 INNER JOIN inventory as i ON i.id = li.inventory_id
                 INNER JOIN inventory_type_styles as s ON s.id = i.inventory_type_styles_id
-                LEFT JOIN claims as c ON c.`inventory_id` = i.id
+                LEFT JOIN claims as c ON c.inventory_id = i.id
                 WHERE l.uuid = ?
-                AND l.type = 'flashsale'
+                AND l.type = '" . Listings::TYPE_FLASHSALE . "'
                 GROUP BY s.id
                 ";
         }
-
         return DB::select($sql, [$this->uuid]);
     }
 }

@@ -25,6 +25,7 @@
                         <th scope="col">Items</th>
                         <th scope="col">Sales</th>
                         <th scope="col">Views</th>
+                        <th scope="col">Gross</th>
                         <th scope="col">Status</th>
                         <th scope="col"></th>
                     </tr>
@@ -39,6 +40,7 @@
                         <td>{{ $listing->items->count() }}</td>
                         <td>N/A</td>
                         <td>N/A</td>
+                        <td>$0.00</td>
                         <td>{!! $listing->present()->getStatus() !!}</td>
                         <td>
                             <div class="pull-md-right">
