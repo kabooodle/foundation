@@ -265,7 +265,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function flashsales()
     {
-        return $this->hasMany(Listings::model, 'inventory_id')->where('type', Listings::TYPE_FLASHSALE);
+        return $this->hasMany(ListingItems::class, 'inventory_id')->where('type', Listings::TYPE_FLASHSALE);
     }
 
     /**
@@ -275,7 +275,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function facebooksales()
     {
-        return $this->hasMany(Listings::model, 'inventory_id')->where('type', Listings::TYPE_FACEBOOK);
+        return $this->hasMany(ListingItems::class, 'inventory_id')->where('type', Listings::TYPE_FACEBOOK);
     }
 
     /**
