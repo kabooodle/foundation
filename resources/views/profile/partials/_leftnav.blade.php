@@ -18,7 +18,7 @@
 <a href="{{ route('profile.subscription.index') }}" class="nav-link {{ Request::is('profile/subscription') ? 'active' : null }}">
     Subscription
 </a>
-@if(user()->subscribed('main') || user()->invoices()->count() > 0)
+@if(user()->subscribed('main'))
 <a href="{{ route('profile.subscription.invoices.index') }}" class="nav-link {{ Request::is('profile/subscription/invoices') ? 'active' : null }}">
     Purchases
 </a>
