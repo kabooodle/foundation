@@ -268,8 +268,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * TODO: Identify a better relationship for flash sales and facebook sales.
-     *
      * @return array|static[]
      */
     public function facebooksales()
