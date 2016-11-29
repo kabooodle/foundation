@@ -75,7 +75,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     protected $attributes = [
         'user_id' => 0,
         'uuid' => '',
-        'name_uuid' => '',
         'inventory_type_id' => 0,
         'inventory_type_styles_id' => 0,
         'inventory_sizes_id' => 0,
