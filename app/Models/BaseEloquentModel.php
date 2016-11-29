@@ -130,7 +130,7 @@ class BaseEloquentModel extends Eloquent
      */
     public function humanize($value)
     {
-        return $value->format('m-d-Y h:ia');
+        return humanizeDateTime($value);
     }
 
     /**
@@ -140,7 +140,7 @@ class BaseEloquentModel extends Eloquent
      */
     public function humanizeNoTime($value)
     {
-        return $value->format('m-d-Y');
+        return humanizeDate($value);
     }
 
     /**

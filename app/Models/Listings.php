@@ -3,13 +3,13 @@
 namespace Kabooodle\Models;
 
 use DB;
-use Kabooodle\Presenters\PresentableTrait;
+use Illuminate\DatabASe\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\UuidableTrait;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
+use Kabooodle\Presenters\PresentableTrait;
 
 /**
- * Class Listings
+ * ClASs Listings
  */
 class Listings extends AbstractListingModel
 {
@@ -50,7 +50,7 @@ class Listings extends AbstractListingModel
         'scheduled_for' => '',
         'owner_id' => 0,
         'fb_group_node_id' => null,
-        'flashsale_id' => null,
+        'flAShsale_id' => null,
         'uuid' => '',
         'type' => self::TYPE_FACEBOOK,
         'status' => self::STATUS_SCHEDULED,
@@ -64,7 +64,7 @@ class Listings extends AbstractListingModel
     protected $fillable = [
         'scheduled_for',
         'fb_group_node_id',
-        'flashsale_id',
+        'flAShsale_id',
         'owner_id',
         'type',
         'status',
@@ -73,7 +73,7 @@ class Listings extends AbstractListingModel
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\DatabASe\Eloquent\Relations\HASMany
      */
     public function listingItems()
     {
@@ -81,25 +81,64 @@ class Listings extends AbstractListingModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\DatabASe\Eloquent\Relations\HASMany
      */
     public function items()
     {
-        return $this->hasMany(ListingItems::class, 'listing_id');
+        return $this->hASMany(ListingItems::class, 'listing_id');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\DatabASe\Eloquent\Relations\BelongsTo
      */
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-
-    public function sales()
+    /**
+     * With just 1 query, we can eASily make the necessary joins, SUMs, etc without n+1 issues.
+     * This query returns the results for the listings table, bASed on the listings.index view needs.
+     *
+     * @param int $userId
+     *
+     * @return array
+     */
+    public static function getQueriedListings(int $userId)
     {
-        //
+        //                IFNULL(COUNT(DISTINCT(p.id)), 0) AS pageviews_count,
+        //                LEFT JOIN pageviews AS p ON p.shoppable_id = li.id AND p.inventory_id = li.inventory_id
+        $sql = "SELECT
+                l.scheduled_for AS scheduled_for,
+                l.status AS status,
+                l.type as type,
+                l.uuid AS uuid,
+                s.name AS style_name,
+                fs.name AS flashsale_name,
+                fb.facebook_node_name AS fb_name,
+                li.fb_album_node_id as fb_album_id,
+                li.fb_group_node_id as fb_group_id,
+                li.flashsale_id as flashsale_id,
+                IFNULL(COUNT(DISTINCT(li.id)), 0) AS items_count,
+                IFNULL(COUNT(DISTINCT(li.fb_album_node_id)), 0) AS albums_count,
+                IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
+                IFNULL(SUM(c.accepted_price), 0) AS accepted_price_sum,
+                IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
+                IFNULL(SUM(c.accepted = 0),0) AS rejected_sales_count,
+                IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
+                FROM listings AS l
+                INNER JOIN listing_items AS li ON li.listing_id = l.id AND l.owner_id = li.owner_id AND l.type = li.type
+                INNER JOIN inventory AS i ON i.id = li.inventory_id
+                LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
+                LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_album_node_id
+                LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
+				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.inventory_id = li.inventory_id AND c.claimed_by = l.owner_id
+                WHERE l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
+                GROUP BY l.id
+                ORDER BY l.scheduled_for DESC
+                ";
+
+        return DB::select($sql, [$userId]);
     }
 
     /**
@@ -111,68 +150,48 @@ class Listings extends AbstractListingModel
     }
 
     /**
-     * @return int
+     * @param $userId
+     *
+     * @return array
      */
-    public function listingsGroupedByItemTypeGrouping()
+    public function listingsGroupedByItemTypeGrouping($userId)
     {
-        // Group by FB Albums
-        if ($this->isFacebook()) {
-//            return DB::table('listings')
-//                ->join('listing_items', 'listings.id', '=', 'listing_items.listing_id')
-//                ->join('inventory', 'listing_items.inventory_id', '=', 'inventory.id')
-//                ->leftJoin('claims', 'inventory.id',  '=', 'claims.inventory_id')
-//                ->where('listings.uuid', '=',  $this->uuid)
-//                ->where('listings.type', '=', Listings::TYPE_FACEBOOK)
-//                ->groupBy('listing_items.fb_album_node_id')
-//                ->selectRaw('listing_items.fb_album_node_id as name,
-//                listing_items.fb_album_node_id,
-//                listing_items.fb_group_node_id,
-//                count(listing_items.id) as items_count,
-//                sum(claims.accepted = null) as pending_sales_count,
-//                sum(claims.accepted = 1) as accepted_sales_count,
-//                sum(claims.accepted = 0) as rejected_sales_count,
-//                sum(claims.price) as price_sum,
-//                sum(claims.accepted_price) as accepted_price_sum')->get();
-            $sql = "
+        $sql = "
                 SELECT
-                li.fb_album_node_id as name,
-                li.fb_album_node_id,
-                li.fb_group_node_id,
-                count(li.id) as items_count,
-                sum(c.accepted = null) as pending_sales_count,
-                sum(c.accepted = 1) as accepted_sales_count,
-                sum(c.accepted = 0) as rejected_sales_count,
-                sum(c.price) as price_sum,
-                sum(c.accepted_price) as accepted_price_sum
-                FROM listings as l
-                INNER JOIN listing_items as li ON li.listing_id = l.id
-                INNER JOIN inventory as i ON i.id = li.inventory_id
-                LEFT JOIN claims as c ON c.inventory_id = i.id
-                WHERE l.uuid = ?
-                AND l.type = '" . Listings::TYPE_FACEBOOK . "'
-                GROUP BY li.fb_album_node_id
-             ";
-        } else {
-            $sql = "
-                SELECT
-                s.name as name,
-                li.flashsale_id,
-                count(li.id) as items_count,
-                sum(c.accepted = null) as pending_sales_count,
-                sum(c.accepted = 1) as accepted_sales_count,
-                sum(c.accepted = 0) as rejected_sales_count,
-                sum(c.price) as price_sum,
-                sum(c.accepted_price) as accepted_price_sum
-                FROM listings as l
-                INNER JOIN listing_items as li ON li.listing_id = l.id
-                INNER JOIN inventory as i ON i.id = li.inventory_id
-                INNER JOIN inventory_type_styles as s ON s.id = i.inventory_type_styles_id
-                LEFT JOIN claims as c ON c.inventory_id = i.id
-                WHERE l.uuid = ?
-                AND l.type = '" . Listings::TYPE_FLASHSALE . "'
-                GROUP BY s.id
+                fs.name AS flashsale_name,
+                fb.facebook_node_name AS fb_name,
+                li.fb_album_node_id as fb_album_id,
+                li.fb_group_node_id as fb_group_id,
+                li.flashsale_id as flashsale_id,
+                l.type as type,
+                l.uuid as uuid,
+                COUNT(DISTINCT(li.id)) AS items_count,
+                IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
+                IFNULL(SUM(c.accepted_price), 0) AS accepted_price_sum,
+                IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
+                IFNULL(SUM(c.accepted = 0),0) AS rejected_sales_count,
+                IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
+                FROM listings AS l
+                INNER JOIN listing_items AS li ON li.listing_id = l.id
+                INNER JOIN inventory AS i ON i.id = li.inventory_id
+                INNER JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
+                LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_album_node_id
+                LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
+				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.inventory_id = li.inventory_id AND c.claimed_by = l.owner_id
+                WHERE l.uuid = ? AND l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
+                AND l.type = ?
+                GROUP BY ::groupby::
+                ORDER BY l.scheduled_for DESC
                 ";
+
+        if ($this->isFacebook()) {
+            $type = Listings::TYPE_FACEBOOK;
+            $sql = str_replace('::groupby::', " li.fb_album_node_id ", $sql);
+        } else {
+            $type = Listings::TYPE_FLASHSALE;
+            $sql = str_replace('::groupby::', "s.id ", $sql);
         }
-        return DB::select($sql, [$this->uuid]);
+
+        return DB::select($sql, [$this->uuid, $userId, $type]);
     }
 }

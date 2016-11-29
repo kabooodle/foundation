@@ -3,6 +3,9 @@
 
 
 @section('body-menu')
+    <div class="pull-left">
+        <button class="btn btn-sm white">Filter Listings</button>
+    </div>
 
 @endsection
 
@@ -24,7 +27,7 @@
                         <th scope="col">Albums</th>
                         <th scope="col">Items</th>
                         <th scope="col">Sales</th>
-                        <th scope="col">Views</th>
+                        <th scope="col">Pending</th>
                         <th scope="col">Gross</th>
                         <th scope="col">Status</th>
                         <th scope="col"></th>
@@ -34,14 +37,14 @@
                 @foreach($listings as $listing)
                     <tr>
                         <td><input type="checkbox"></td>
-                        <td>Pipers Group <img src="/assets/images/icons/FB-f-Logo__blue_29.png" height="15"></td>
-                        <td>{{ $listing->humanize($listing->scheduled_for) }}</td>
-                        <td>{{ $listing->albumsCount() }}</td>
-                        <td>{{ $listing->items->count() }}</td>
-                        <td>N/A</td>
-                        <td>N/A</td>
-                        <td>$0.00</td>
-                        <td>{!! $listing->present()->getStatus() !!}</td>
+                        <td>Pipers Group @include('listings._listingtype', ['_type' => $listing->type])</td>
+                        <td>{{ humanizeDateTime($listing->scheduled_for) }}</td>
+                        <td><a href="{{ route('listings.show', [$listing->uuid]) }}" class="text-primary">{{ $listing->albums_count }}</a></td>
+                        <td><a class="text-primary" href="{{ route('listings.group.show', [ $listing->uuid, $listing->type, ($listing->type == 'facebook' ? $listing->fb_album_id : $listing->flashsale_id) ]) }}">{{ $listing->items_count }}</a></td>
+                        <td>{{ $listing->accepted_sales_count }}</td>
+                        <td>{{ $listing->pending_sales_count }}</td>
+                        <td>${{ $listing->gross }}</td>
+                        <td>{!! listingStatusHtml($listing->status) !!}</td>
                         <td>
                             <div class="pull-md-right">
                                 <a href="{{ route('listings.show', [$listing->uuid]) }}" class="btn btn-xs white">View</a>

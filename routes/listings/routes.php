@@ -10,7 +10,7 @@ Route::group(['middleware' => ['auth', 'subscribed:main']], function () {
         'as' => 'listings.show',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@show'
     ]);
-    Route::get('listings/{listing}/groups/{group}', [
+    Route::get('listings/{listing}/{group}/{groupid}', [
         'as' => 'listings.group.show',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@detailed'
     ]);
