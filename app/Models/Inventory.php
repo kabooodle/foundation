@@ -261,11 +261,11 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return mixed
      */
     public function flashsales()
     {
-        return $this->belongsToMany(FlashSales::class, 'flashsale_items', 'inventory_id', 'flashsale_id')->withTimestamps()->withPivot(['id as pivot_id']);
+        return $this->hasMany(Listings::model, 'inventory_id')->where('type', Listings::TYPE_FLASHSALE);
     }
 
     /**
@@ -275,7 +275,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function facebooksales()
     {
-        return $this->hasMany(FacebookItems::class, 'inventory_id');
+        return $this->hasMany(Listings::model, 'inventory_id')->where('type', Listings::TYPE_FACEBOOK);
     }
 
     /**
