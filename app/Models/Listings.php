@@ -3,7 +3,7 @@
 namespace Kabooodle\Models;
 
 use DB;
-use Illuminate\DatabASe\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
 use Kabooodle\Presenters\PresentableTrait;
