@@ -22,7 +22,7 @@ trait PageViewablesTrait
         $cacheKey = get_called_class().'::'.$this->id;
         $cache = $this->getCache();
 
-        if($cache->has($cacheKey)) {
+        if ($cache->has($cacheKey)) {
             return $cache->get($cacheKey);
         }
 

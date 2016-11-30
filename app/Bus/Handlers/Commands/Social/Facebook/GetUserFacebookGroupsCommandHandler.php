@@ -28,7 +28,7 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
         $tag = self::TAG;
         /** @var User $actor */
         $actor = $command->getActor();
-        if(! $actor->getFacebookUserId() || ! $actor->getFacebookUserToken()) {
+        if (! $actor->getFacebookUserId() || ! $actor->getFacebookUserToken()) {
             return false;
         }
 //        if ($this->cache->tags($tag)->has($actor->getFacebookUserId())) {

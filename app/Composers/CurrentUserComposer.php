@@ -23,7 +23,7 @@ class CurrentUserComposer
     public function compose(View $view)
     {
         $user = Auth::user();
-        if($user){
+        if ($user) {
             Analytics::setUserId(md5($user->id));
         }
         $view->with_currentUser($user ? $user->NoEagerLoads()->first()->toJson() : '""');

@@ -17,16 +17,13 @@ class AnalyticsController extends Controller
 {
     public function index()
     {
-
     }
 
     public function sales()
     {
-
     }
 
     public function postings()
     {
-
     }
 }

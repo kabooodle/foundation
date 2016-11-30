@@ -197,7 +197,7 @@ class BaseEloquentModel extends Eloquent
     {
         $constants = self::getConstants();
 
-        return array_filter($constants, function($k) use ($startsWith) {
+        return array_filter($constants, function ($k) use ($startsWith) {
             return Str::startsWith($k, $startsWith);
         }, ARRAY_FILTER_USE_KEY);
     }

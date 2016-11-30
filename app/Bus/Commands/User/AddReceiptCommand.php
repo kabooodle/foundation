@@ -5,6 +5,7 @@
  */
 
 namespace Kabooodle\Bus\Commands\User;
+
 use Kabooodle\Models\CreditTransactionsLog;
 use Kabooodle\Models\User;
 

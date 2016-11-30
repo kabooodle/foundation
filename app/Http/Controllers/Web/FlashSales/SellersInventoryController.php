@@ -6,7 +6,6 @@
 
 namespace Kabooodle\Http\Controllers\Web\FlashSales;
 
-
 use Binput;
 use Kabooodle\Http\Requests\Comments\CommentRequest;
 use Messages;

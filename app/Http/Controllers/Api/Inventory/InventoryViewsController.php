@@ -42,7 +42,7 @@ class InventoryViewsController extends AbstractApiController
             $this->dispatch($job);
 
             return $this->noContent();
-        } catch (Exception $e){
+        } catch (Exception $e) {
             dd($e);
             return $this->setStatusCode(500)->respond();
         }

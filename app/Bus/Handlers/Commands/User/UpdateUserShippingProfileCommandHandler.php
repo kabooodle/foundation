@@ -26,7 +26,7 @@ class UpdateUserShippingProfileCommandHandler
         $formShipFrom = $command->getFromAddress();
         $formToFrom = $command->getToAddress();
 
-        return DB::transaction(function() use($command, $actor, $formShipFrom, $formToFrom) {
+        return DB::transaction(function () use ($command, $actor, $formShipFrom, $formToFrom) {
             $shipFromAddress = $actor->shipFromAddress ? : new ShippingAddress;
             $shipFromAddress->user_id = $actor->id;
             $shipFromAddress->type = ShippingAddress::TYPE_FROM;

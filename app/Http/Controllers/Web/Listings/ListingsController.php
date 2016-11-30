@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
 
 namespace Kabooodle\Http\Controllers\Web\Listings;
 
@@ -30,7 +34,7 @@ class ListingsController extends Controller
     public function show(Request $request, $uuid)
     {
         $listing = user()->listings->where('uuid', $uuid)->first();
-        if(!$listing) {
+        if (!$listing) {
             return redirect()->to(route('listings.index'));
         }
         $listings = $listing->listingsGroupedByItemTypeGrouping(user()->id);
@@ -51,8 +55,8 @@ class ListingsController extends Controller
         $listing = Listings::where('uuid', $uuid)
             ->where('owner_id', user()->id)
             ->where('type', $type)
-            ->whereHas('items', function($q) use ($type, $id) {
-                if($type == 'facebook') {
+            ->whereHas('items', function ($q) use ($type, $id) {
+                if ($type == 'facebook') {
                     $q->where('fb_album_node_id', '=', $id);
                     $q->groupBy('fb_album_node_id');
                 } else {
@@ -60,7 +64,7 @@ class ListingsController extends Controller
                 }
             })
             ->first();
-        if(!$listing) {
+        if (!$listing) {
             return redirect()->to(route('listings.index'));
         }
 

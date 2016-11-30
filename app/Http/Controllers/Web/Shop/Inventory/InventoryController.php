@@ -286,7 +286,7 @@ class InventoryController extends Controller
     public function postables(Request $request)
     {
         $facebookGroups = user()->getFacebookGroups();
-        if($facebookGroups) {
+        if ($facebookGroups) {
             $facebookGroups = $facebookGroups->asArray();
         }
         $flashSales = user()->flashsalesAsSellerAndAdmins;

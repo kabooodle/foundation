@@ -35,7 +35,7 @@ class GetLLRStylesCommandHandler
             return $this->cache->get(self::TAG);
         }
 
-        $styles = InventoryTypeStyles::whereHas('type', function($q){
+        $styles = InventoryTypeStyles::whereHas('type', function ($q) {
             $q->where('slug', '=', 'lularoe');
         })->with('sizes')->get();
 

@@ -9,7 +9,7 @@ if (! function_exists('humanizeDateTime')) {
      */
     function humanizeDateTime($value)
     {
-        if(! $value instanceof Carbon) {
+        if (! $value instanceof Carbon) {
             $value = Carbon::createFromTimestamp(strtotime($value));
         }
 
@@ -25,7 +25,7 @@ if (! function_exists('humanizeDate')) {
      */
     function humanizeDate($value)
     {
-        if(! $value instanceof Carbon) {
+        if (! $value instanceof Carbon) {
             $value = Carbon::createFromTimestamp(strtotime($value));
         }
 

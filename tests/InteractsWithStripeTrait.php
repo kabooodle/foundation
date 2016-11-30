@@ -1,13 +1,13 @@
 <?php
 
-namespace Kabooodle\Tests;
+namespace Kabooodle\tests;
 
 use Stripe\Token;
 
 /**
  * Class InteractsWithPaymentProviders
  */
-trait InteractsWithPaymentProviders
+trait InteractsWithStripeTrait
 {
     /**
      * Get a test Stripe token.

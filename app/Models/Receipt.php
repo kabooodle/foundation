@@ -5,6 +5,7 @@
  */
 
 namespace Kabooodle\Models;
+
 use Kabooodle\Models\Contracts\ReceiptInterface;
 
 /**
