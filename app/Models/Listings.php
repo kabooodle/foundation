@@ -85,7 +85,7 @@ class Listings extends AbstractListingModel
      */
     public function items()
     {
-        return $this->hASMany(ListingItems::class, 'listing_id');
+        return $this->hasMany(ListingItems::class, 'listing_id');
     }
 
     /**

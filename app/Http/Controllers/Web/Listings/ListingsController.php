@@ -51,11 +51,12 @@ class ListingsController extends Controller
         $listing = Listings::where('uuid', $uuid)
             ->where('owner_id', user()->id)
             ->where('type', $type)
-            ->whereHas('listingItems', function($q) use ($type, $id) {
+            ->whereHas('items', function($q) use ($type, $id) {
                 if($type == 'facebook') {
-                    $q->where('fb_album_node_id', $id);
+                    $q->where('fb_album_node_id', '=', $id);
+                    $q->groupBy('fb_album_node_id');
                 } else {
-                    $q->where('flashsale_id', $id);
+                    $q->where('flashsale_id', '=',  $id);
                 }
             })
             ->first();
