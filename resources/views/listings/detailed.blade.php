@@ -88,6 +88,7 @@
                     <th scope="col">Pending</th>
                     <th scope="col">Views</th>
                     <th scope="col">Gross</th>
+                    <th scope="col">Status</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -106,6 +107,7 @@
                     <td>{{ $item->pendingSales->count() }}</td>
                     <td>0</td>
                     <td>${{ $item->sales->sum('price') }}</td>
+                    <td>{!! $item->present()->getStatus()  !!}</td>
                 </tr>
                 @endforeach
                 </tbody>
