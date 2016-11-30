@@ -47,6 +47,7 @@
                 <p class="m-b-0 m-t-1 h4 text-warning _500">${{ $claim->price }}</p>
             </div>
             <div class="box-body">
+                <h2><span class="_800">Seller Info</span></h2>
                 <p class="block m-t-0"><span class="text-muted">Seller:</span> {!! $claim->inventoryItem->owner->name !!}</p>
                 <p class="block m-t-0"><span class="text-muted">Seller Email:</span> {!! $claim->inventoryItem->owner->email !!}</p>
             </div>
