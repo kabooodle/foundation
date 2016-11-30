@@ -52,11 +52,10 @@ class ListingsController extends Controller
      */
     public function detailed(Request $request, $uuid, $type, $id)
     {
-        $listing = Listings::with(['items' => function ($query) use ($type, $id) {
-            if ($type == 'facebook') {
+        $listing = Listings::with(['listingItems' => function ($query) use ($type, $id) {
+            if ($type == Listings::TYPE_FACEBOOK) {
                 $query->where('fb_album_node_id', '=', $id);
-                $query->groupBy('fb_album_node_id');
-            } else {
+            } elseif ($type == Listings::TYPE_FLASHSALE) {
                 $query->where('flashsale_id', '=',  $id);
             }
         }])
