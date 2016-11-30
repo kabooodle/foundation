@@ -39,8 +39,8 @@
                         <td><input type="checkbox"></td>
                         <td>Pipers Group @include('listings._listingtype', ['_type' => $listing->type])</td>
                         <td>{{ humanizeDateTime($listing->scheduled_for) }}</td>
-                        <td><a href="{{ route('listings.show', [$listing->uuid]) }}" class="text-primary">{{ $listing->albums_count }}</a></td>
-                        <td><a class="text-primary" href="{{ route('listings.group.show', [ $listing->uuid, $listing->type, ($listing->type == 'facebook' ? $listing->fb_album_id : $listing->flashsale_id) ]) }}">{{ $listing->items_count }}</a></td>
+                        <td>{{ $listing->albums_count }}</td>
+                        <td>{{ $listing->items_count }}</td>
                         <td>{{ $listing->accepted_sales_count }}</td>
                         <td>{{ $listing->pending_sales_count }}</td>
                         <td>${{ $listing->gross }}</td>
