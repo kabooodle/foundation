@@ -10,6 +10,7 @@ use JWTAuth;
 use Analytics;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Kabooodle\Models\User;
 
 /**
  * Class CurrentUserComposer
@@ -24,9 +25,10 @@ class CurrentUserComposer
     {
         $user = Auth::user();
         if ($user) {
+            $user->setRelations([]);
             Analytics::setUserId(md5($user->id));
         }
-        $view->with_currentUser($user ? $user->NoEagerLoads()->first()->toJson() : '""');
+        $view->with_currentUser($user ? $user->toJson() : '""');
         $view->with_authToken($user ? JWTAuth::fromUser($user) : null);
     }
 }

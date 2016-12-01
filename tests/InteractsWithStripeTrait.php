@@ -1,11 +1,11 @@
 <?php
 
-namespace Kabooodle\tests;
+namespace Kabooodle\Tests;
 
 use Stripe\Token;
 
 /**
- * Class InteractsWithPaymentProviders
+ * Class InteractsWithStripeTrait
  */
 trait InteractsWithStripeTrait
 {

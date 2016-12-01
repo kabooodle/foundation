@@ -74,8 +74,8 @@ class CreateListingsAndMetaTbls extends Migration
                 ->onUpdate('cascade');
         });
 
-        DB::update("ALTER TABLE ".\Kabooodle\Models\ListingItems::getTableName()." AUTO_INCREMENT = 118453;");
-        DB::update("ALTER TABLE ".\Kabooodle\Models\Listings::getTableName()." AUTO_INCREMENT = 190345;");
+        DB::update("ALTER TABLE ".\Kabooodle\Models\ListingItems::getTableName()." AUTO_INCREMENT = 9818453;");
+        DB::update("ALTER TABLE ".\Kabooodle\Models\Listings::getTableName()." AUTO_INCREMENT = 10990345;");
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::drop('facebook_items');

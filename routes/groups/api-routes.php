@@ -34,9 +34,26 @@
         'as' => 'inventory.associate.destroy',
         'uses' =>  \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@destroyAssociation',
     ]);
+    $api->get('inventory/{inventoryid}/comments', [
+        'as' => 'inventory.comments.index',
+        'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryCommentsController::class.'@index'
+    ]);
+    $api->post('inventory/{inventoryid}/comments', [
+        'as' => 'inventory.comments.store',
+        'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryCommentsController::class.'@store'
+    ]);
+    $api->delete('inventory/{inventoryid}/comments/{commentId}', [
+        'as' => 'inventory.comments.destroy',
+        'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryCommentsController::class.'@destroy'
+    ]);
 
 
     $api->post('pageviews', [
         'as' => 'inventory.pageviews.store',
         'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryViewsController::class.'@store'
+    ]);
+
+    $api->post('listings/{listing}/listingitems/{listingitem}/claims', [
+        'as' => 'listings.listingitems.claims.store',
+        'uses' => \Kabooodle\Http\Controllers\Api\Listings\ListingItemsClaimsController::class.'@store'
     ]);

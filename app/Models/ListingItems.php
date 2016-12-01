@@ -6,20 +6,28 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Models\Traits\ShoppableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Models\Contracts\ShoppableInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
 
 /**
  * Class ListingItems
  */
 class ListingItems extends AbstractListingModel implements ShoppableInterface
 {
-    use PresentableTrait, ShoppableTrait, SoftDeletes, UuidableTrait;
+    use ObfuscatesIdTrait, PresentableTrait, ShoppableTrait, SoftDeletes, UuidableTrait;
+
+    /**
+     * @var array
+     */
+    protected $appends = [
+        'name'
+    ];
 
     /**
      * @var string
@@ -91,11 +99,27 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return mixed
      */
-    public function listing()
+    public function getNameAttribute()
     {
-        return $this->belongsTo(Listings::class, 'listing_id');
+        return $this->inventoryItem->name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function claims()
+    {
+        return $this->morphMany(Claims::class, 'shoppable');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function deletedSales()
+    {
+        return $this->claims()->where('accepted', 0);
     }
 
     /**
@@ -115,39 +139,27 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
     }
 
     /**
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function getNameOfResource(): string
+    public function listing()
     {
-        if($this->isFacebook()) {
-            return 'Facebook Album';
-        }
-
-        return 'Flashsale';
+        return $this->belongsTo(Listings::class, 'listing_id');
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function claims()
+    public function owner()
     {
-        return $this->morphMany(Claims::class, 'shoppable');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function rejectedSales()
+    public function pageViews()
     {
-        return $this->deletedSales();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function deletedSales()
-    {
-        return $this->claims()->where('accepted', 0);
+        return $this->morphMany(PageViews::class, 'shoppable');
     }
 
     /**
@@ -156,6 +168,14 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
     public function pendingSales()
     {
         return $this->claims()->whereNull('accepted');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function rejectedSales()
+    {
+        return $this->deletedSales();
     }
 
     /**
@@ -172,5 +192,17 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface
     public function isIgnored(): bool
     {
         return $this->ignore;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameOfResource(): string
+    {
+        if($this->isFacebook()) {
+            return 'Facebook Album';
+        }
+
+        return 'Flashsale';
     }
 }

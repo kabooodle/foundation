@@ -26,6 +26,7 @@ Route::group(['middleware' => ['web']], function() {
         '__captainHook/sheepoo',
         \Kabooodle\Http\Controllers\Web\Webhooks\ShippoWebhooksController::class . '@handleWebhook'
     );
+    Route::get('c/{hash}', \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show');
 });
 
 Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], function(){
@@ -54,16 +55,6 @@ Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], f
     Route::get('/invite/{userName}', [
         'as' => 'invite.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@invite'
-    ]);
-
-    Route::get('c/{facebookItemString}', [
-        'as' => 'externalclaim.show',
-        'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryClaimsFacebookController::class.'@show'
-    ]);
-
-    Route::post('c/{facebookItemString}', [
-        'as' => 'externalclaim.claim',
-        'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryClaimsFacebookController::class.'@claim'
     ]);
 });
 

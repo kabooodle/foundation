@@ -36,14 +36,12 @@ class InventoryViewsController extends AbstractApiController
             $user = $this->getUser();
 
             $job = with(new TrackInventoryViewCommand($user, $resource, $ip))
-                ->delay(120)
-                ->onConnection('database');
+                ->delay(120);
 
             $this->dispatch($job);
 
             return $this->noContent();
         } catch (Exception $e) {
-            dd($e);
             return $this->setStatusCode(500)->respond();
         }
     }

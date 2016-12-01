@@ -95,17 +95,17 @@
                 @foreach($listing->listingItems as $item)
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>    <div class="avatar-thumbnail-container">
+                    <td> <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
                                 @if($item->inventoryItem->firstImage())
                                     <img src="{{ $item->inventoryItem->firstImage()->location }}">
                                 @endif
                             </div>
-                            <span>{{ $item->inventoryItem->name_with_variant }}</span>
+                            <span><a class="text-primary" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">{{ $item->inventoryItem->name_with_variant }}</a></span>
                         </div></td>
                     <td>{{ $item->sales->count() }}</td>
                     <td>{{ $item->pendingSales->count() }}</td>
-                    <td>0</td>
+                    <td>{{ $item->pageViews->count() }}</td>
                     <td>${{ $item->sales->sum('price') }}</td>
                     <td>{!! $item->present()->getStatus()  !!}</td>
                 </tr>

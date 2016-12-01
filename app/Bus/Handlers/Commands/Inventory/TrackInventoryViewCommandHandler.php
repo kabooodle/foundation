@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Inventory;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Kabooodle\Models\User;
 use Kabooodle\Models\PageViews;
 use Kabooodle\Models\Contracts\ShoppableInterface;
@@ -14,7 +15,7 @@ use Kabooodle\Bus\Commands\Inventory\TrackInventoryViewCommand;
 /**
  * Class TrackInventoryViewCommandHandler
  */
-class TrackInventoryViewCommandHandler
+class TrackInventoryViewCommandHandler implements ShouldQueue
 {
     /**
      * @param TrackInventoryViewCommand $command

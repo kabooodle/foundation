@@ -14,7 +14,6 @@ use Kabooodle\Models\Comments;
  */
 trait CommentableTrait
 {
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */

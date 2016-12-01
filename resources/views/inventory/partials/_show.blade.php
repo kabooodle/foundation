@@ -1,3 +1,4 @@
+
 <div class="box white">
     <div class="row-col m-b">
         <div class="col-md-6">
@@ -69,9 +70,9 @@
                 @endif
             </div>
 
-            <div class="text-center">
-                <small class="text-muted"><i class="fa fa-flag" aria-hidden="true"></i> Flag</small>
-            </div>
+            {{--<div class="text-center">--}}
+                {{--<small class="text-muted"><i class="fa fa-flag" aria-hidden="true"></i> Flag</small>--}}
+            {{--</div>--}}
         </div>
     </div>
 </div>
