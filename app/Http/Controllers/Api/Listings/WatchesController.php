@@ -12,6 +12,7 @@ use Kabooodle\Models\ListingItems;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Bus\Commands\Watchable\UnwatchEntityCommand;
 use Kabooodle\Bus\Commands\Watchable\WatchNewEntityCommand;
 
 /**
@@ -56,15 +57,17 @@ class WatchesController extends AbstractApiController
     public function destroy(Request $request, $listingId, $listingItemId)
     {
         $user = $this->getUser();
-
         try {
             $watchable = ListingItems::where('listing_id', $listingId)->where('id', $listingItemId)->first();
             if (!$watchable) {
                 throw new ModelNotFoundException;
             }
 
+            $this->dispatchNow(new UnwatchEntityCommand($user, $watchable));
+
             return $this->noContent();
         } catch (Exception $e) {
+            dd($e->getMessage());
             return $this->setStatusCode(500)->respond();
         }
     }
