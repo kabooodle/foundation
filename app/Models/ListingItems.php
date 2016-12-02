@@ -41,7 +41,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      * @var array
      */
     protected $with = [
-        'sales'
+        'sales',
+        'watchers'
     ];
 
     /**

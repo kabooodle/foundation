@@ -1275,22 +1275,25 @@ a.list-group-item {
   padding: 10px 16px;
   border-color: rgba(120, 130, 140, 0.045); }
 
-.table-condensed thead > tr > th,
-.table-condensed tfoot > tr > th,
-.table-condensed tbody > tr > th {
+.bootstrap-datetimepicker-widget .table-condensed tbody > tr > td {
+  padding: 5px; }
+
+.table.table-condensed thead > tr > th,
+.table.table-condensed tfoot > tr > th,
+.table.table-condensed tbody > tr > th {
   padding-left: 0;
   padding-right: 0; }
 
-.table-condensed thead > tr > td,
-.table-condensed tfoot > tr > td {
+.table.table-condensed thead > tr > td,
+.table.table-condensed tfoot > tr > td {
   padding: 5px 5px 5px 0; }
-  .table-condensed thead > tr > td:last-of-type,
-  .table-condensed tfoot > tr > td:last-of-type {
+  .table.table-condensed thead > tr > td:last-of-type,
+  .table.table-condensed tfoot > tr > td:last-of-type {
     padding-right: 0; }
 
-.table-condensed tbody > tr > td {
+.table.table-condensed tbody > tr > td {
   padding: 15px 5px 15px 0; }
-  .table-condensed tbody > tr > td:last-of-type {
+  .table.table-condensed tbody > tr > td:last-of-type {
     padding-right: 0; }
 
 .table-bordered {

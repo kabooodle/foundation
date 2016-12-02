@@ -60,7 +60,6 @@
     .img-thumb {
         position: relative;
     }
-
     .img-thumb img {
         border-radius: .25rem;
     }
@@ -129,14 +128,14 @@
                         <div class="tab-pane active" id="post_flashsales">
                             <div v-if="postables.flashsales && postables.flashsales.length > 0"
                                  v-for="flashsale in postables.flashsales">
-                                <div class="checkbox">
+                                <div class="radio">
                                     <label>
                                         <input
-                                                name="flashsalesales_ids[]"
+                                                name="flashsalesales_id"
                                                 :value="flashsale.id"
                                                 {{--v-bind:checked="( get_selected_flashsales_sales.indexOf(flashsale.id) > -1 ? 'checked' : false )"--}}
-                                                type="checkbox"
-                                                v-on:change="toggleFlashSale(flashsale.id, $event)"> @{{ flashsale.name }}
+                                                type="radio"
+                                                v-on:click="toggleFlashSale(flashsale.id, $event)"> @{{ flashsale.name }}
                                     </label>
                                 </div>
                             </div>
@@ -159,31 +158,36 @@
                                 </select>
                             </div>
                             <template v-if="selected.fb_group">
-                                <template v-if="actions.fb_advanced_menu">
-                                    <div class="form-group">
-                                        <label>Post on a specific date and time</label>
-                                        <div class="input-group">
-                                            {{ Form::text('ends_at', null, ['class' => 'form-control', 'id' => 'datetimepicker2', 'v-bind' => 'date_time_input']) }}
-                                            <span class="input-group-btn">
+                                <template v-if="postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums.length > 0">
+                                    {{--<template v-if="actions.fb_advanced_menu">--}}
+                                    <template>
+                                        <hr>
+                                        <div class="form-group">
+                                            <label>List on a specific date and time</label>
+                                            <div class="input-group">
+                                                {{ Form::text('ends_at', null, ['class' => 'form-control', 'id' => 'datetimepicker2']) }}
+                                                <span class="input-group-btn">
                                                 <button
                                                     @click="clearDateTimeInput"
                                                     class="btn white"
                                                     type="button"
                                                     style="padding-bottom: .3rem
-                                                    ;">Clear</button>
+                                                    ;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                                             </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="checkbox">
-                                        <label>
-                                            <input
-                                                    name="include_description_text"
-                                                    value="1"
-                                                    type="checkbox"> Include Link in description
-                                        </label>
-                                    </div>
-                                </template>
-                                <template v-if="postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums.length > 0">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input
+                                                        checked
+                                                        name="include_description_text"
+                                                        value="1"
+                                                        type="checkbox"> Include Link in description
+                                            </label>
+                                        </div>
+                                        <hr>
+                                    </template>
+
                                     <label>Select Album</label>
                                     <div class="radio"
                                          v-for="facebook_album in postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums">
@@ -254,18 +258,29 @@
 <script src="/assets/js/inventory-management.js?x={{time()}}"></script>
 <script>
     $(function () {
+        function registerDateTimepicker()
+        {
+            $('#datetimepicker2').datetimepicker({
+                format: "MM/DD/YYYY hh:mmA",
+                minDate: moment().add('1', 'hour'),
+                icons: {
+                    time: 'fa fa-clock-o fa-lg',
+                    clear: 'fa fa-times-circle-o',
+                    date: 'fa fa-lg fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right'
+                }
+            });
+        }
 
-        $('#datetimepicker2').datetimepicker({
-            format: "MM/DD/YYYY hh:mmA",
-            minDate: new Date(),
-            sideBySide: true,
-            icons: {
-                up: 'fa fa-chevron-up',
-                down: 'fa fa-chevron-down',
-                previous: 'fa fa-chevron-left',
-                next: 'fa fa-chevron-right'
-            }
-        });
+//        setTimeout(function(){
+//            registerDateTimepicker();
+//        }, 1000);
+        $('[name="facebook_group"]').change(function(){
+            registerDateTimepicker();
+        })
     })
 </script>
 @endpush

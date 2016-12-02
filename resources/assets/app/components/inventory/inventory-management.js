@@ -175,6 +175,8 @@ new Vue({
             let form = $el.closest('form');
             const selectedPostables = this.selected.postables;
             selectedPostables.fb_group = this.selected.fb_group;
+            selectedPostables.ends_at = form.find('[name="ends_at"]').val();
+            selectedPostables.include_description_text = form.find('[name="include_description_text"]').is(':checked') ? 1 : null;
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
@@ -195,13 +197,8 @@ new Vue({
         toggleFlashSale(i, event){
             let el = event.target;
             let isChecked = el.checked;
-            let index = this.selected_sales.flashsales.indexOf(i);
             if (isChecked) {
-                this.selected_sales.flashsales.push(i);
-            } else {
-                if (index > -1) {
-                    this.selected_sales.flashsales.splice(index, 1);
-                }
+                this.selected.postables.flashsales = i;
             }
         },
         selectAllInventory(event){

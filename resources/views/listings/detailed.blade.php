@@ -87,6 +87,7 @@
                     <th scope="col">Sales</th>
                     <th scope="col">Pending</th>
                     <th scope="col">Views</th>
+                    <th scope="col">Watchers</th>
                     <th scope="col">Gross</th>
                     <th scope="col">Status</th>
                 </tr>
@@ -106,6 +107,7 @@
                     <td>{{ $item->sales->count() }}</td>
                     <td>{{ $item->pendingSales->count() }}</td>
                     <td>{{ $item->pageViews->count() }}</td>
+                    <td>{{ $item->watchers->count() }}</td>
                     <td>${{ $item->sales->sum('price') }}</td>
                     <td>{!! $item->present()->getStatus()  !!}</td>
                 </tr>

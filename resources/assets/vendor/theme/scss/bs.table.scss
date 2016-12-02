@@ -18,7 +18,15 @@
     border-color: $table-border-color;
   }
 }
-.table-condensed{
+
+
+.bootstrap-datetimepicker-widget .table-condensed {
+  tbody > tr > td {
+    padding: 5px;
+  }
+}
+
+.table.table-condensed{
     thead>tr>th,
     tfoot>tr>th,
     tbody>tr>th {
