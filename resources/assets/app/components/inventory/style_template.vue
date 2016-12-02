@@ -1,5 +1,10 @@
 <template>
-    <div>
+    <div v-if="actions.refreshing_data" class="text-block text-center" style="min-height: 300px">
+        <div style="margin:200px auto 0;">
+            <spinny size="40"></spinny>
+        </div>
+    </div>
+    <div v-else>
             <div class="box style-container" v-for="style in inventory_items">
                 <div class="box-header clearfix">
                     <div class="row">
@@ -99,6 +104,7 @@
 </style>
 <script>
     import computed from './manage/computed';
+    import Spinny from '../Spinner.vue';
 
     export default{
         data(){
@@ -297,6 +303,9 @@
             'refreshing_data' : ()=>{
                 this.opened_drawers = [];
             }
+        },
+        components: {
+            'spinny' : Spinny
         }
     }
 </script>
