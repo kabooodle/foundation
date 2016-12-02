@@ -120,16 +120,19 @@ class InventoryApiController extends AbstractApiController
      */
     public function associate(Request $request)
     {
-        $flashsaleId = Binput::get('flashsale_id', null);
+        $flashsaleId = Binput::get('flashsales', null);
         $facebookAlbums = Binput::get('fb_albums', []);
         $facebookGroup = Binput::get('fb_group', null);
         $facebookGroupId = $facebookGroup ? $facebookGroup['id'] : null;
+        $endsAt = Binput::get('ends_at', null);
+        $includeText = Binput::get('include_description_text', false);
 
         try {
             $command = new ScheduleListingCommand(
                 $this->getUser(),
                 null,
-                null,
+                $includeText,
+                $endsAt,
                 $flashsaleId,
                 $facebookAlbums,
                 $facebookGroupId
