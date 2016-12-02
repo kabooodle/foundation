@@ -8,6 +8,7 @@ namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use DB;
 use Carbon\Carbon;
+use Kabooodle\Bus\Events\Listings\ListingScheduledEvent;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
@@ -87,6 +88,8 @@ class ScheduleListingCommandHandler
                 $totalSavedListings[] = $flashsaleInventoryItems;
             }
 
+            event(new ListingScheduledEvent($actor, $listing));
+
             return $listing;
         });
     }
@@ -102,6 +105,7 @@ class ScheduleListingCommandHandler
         $listing = new Listings;
         $listing->owner_id = $command->getActor()->id;
         $listing->scheduled_for = $scheduledFor;
+        $listing->include_link_in_descr = $command->includeDescrText();
         $listing->status = Listings::STATUS_SCHEDULED;
         $listing->status_updated_at = $this->now;
 

@@ -50,7 +50,15 @@ class Listings extends AbstractListingModel
     /**
      * @var array
      */
+    protected $casts = [
+        'include_link_in_descr' => 'bool'
+    ];
+
+    /**
+     * @var array
+     */
     protected $attributes = [
+        'include_link_in_descr' => true,
         'scheduled_for' => '',
         'owner_id' => 0,
         'fb_group_node_id' => null,
@@ -66,6 +74,7 @@ class Listings extends AbstractListingModel
      * @var array
      */
     protected $fillable = [
+        'include_link_in_descr',
         'scheduled_for',
         'fb_group_node_id',
         'flashsale_id',
@@ -197,5 +206,13 @@ class Listings extends AbstractListingModel
         }
 
         return DB::select($sql, [$this->uuid, $userId, $type]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function includeLinkInDescr()
+    {
+        return $this->include_link_in_descr;
     }
 }
