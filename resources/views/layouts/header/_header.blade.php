@@ -90,7 +90,7 @@
                                     class="nav-text">Merchant Services</span></a>
                         <div class="dropdown-menu">
                             <a href="{{  route('shop.inventory.index', [user()->username]) }}"
-                               class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Manage Inventory</a>
+                               class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Inventory</a>
                             <a href="{{  route('shop.inventory.create', [user()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add Inventory</a>
                             <div class="divider"></div>
@@ -101,13 +101,14 @@
                                 class="dropdown-item {{ Request::is('sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
 
                             <div class="divider"></div>
+                            <a href="{{ route('listings.index') }}" class="dropdown-item {{ Request::is('listings') ? 'active' : null }}"><span>Listings</span></a>
+
+                            <div class="divider"></div>
                             <a href="{{  route('shipping.index') }}"
                                class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
                             <a href="{{  route('shipping.create') }}"
                                class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
 
-                            <div class="divider"></div>
-                            <a href="{{ route('listings.index') }}" class="dropdown-item {{ Request::is('listings') ? 'active' : null }}"><span>Listings</span></a>
                         </div>
                     </li>
                 @endif
