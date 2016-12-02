@@ -6,8 +6,6 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Models\Traits\LikeableTrait;
-use Kabooodle\Models\Traits\FollowableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 
@@ -15,24 +13,22 @@ use Kabooodle\Models\Traits\ObfuscatesIdTrait;
  * Class Groups
  * @package Kabooodle\Models
  */
-class Follows extends BaseEloquentModel
+class Watches extends BaseEloquentModel
 {
     use ObfuscatesIdTrait, SoftDeletes;
-
-    const FOLLOWABLE_COL = 'followable';
 
     /**
      * @var string
      */
-    protected $table = 'followables';
+    protected $table = 'watchables';
 
     /**
      * @var array
      */
     protected $attributes = [
         'user_id' => 'int',
-        'followable_id' => 'int',
-        'followable_type' => 'string'
+        'watchable_id' => 'int',
+        'watchable_type' => 'string'
     ];
 
     /**
@@ -40,8 +36,8 @@ class Follows extends BaseEloquentModel
      */
     protected $fillable = [
         'user_id',
-        'followable_id',
-        'followable_type'
+        'watchable_id',
+        'watchable_type'
     ];
 
     /**
@@ -56,8 +52,8 @@ class Follows extends BaseEloquentModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function followable()
+    public function watchable()
     {
-        return $this->morphTo('followable');
+        return $this->morphTo('watchable');
     }
 }

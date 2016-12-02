@@ -1,0 +1,147 @@
+<template>
+    <span v-if="display">
+        <button
+                :disabled="processing"
+                type="button"
+                @click="following ? unfollowMe() : followMe()"
+                class="btn-follow btn "
+                :class="btnclass"
+        >
+            <spinny v-if="processing"></spinny> {{ following ? unfollow_text : follow_text }}
+        </button>
+    </span>
+</template>
+<script>
+    export default{
+        props: {
+            able_name : {
+                type : String,
+                default: function(){
+                    return 'followable';
+                }
+            },
+            able_id: {
+                required: true,
+                type: String
+            },
+            able_type: {
+                required: true,
+                type: String
+            },
+            btn_active_class : {
+                type: String,
+                default: function(){
+                    return ' primary ';
+                }
+            },
+            btn_size_class : {
+                type: String,
+                default: function(){
+                    return ' btn-xs ';
+                }
+            },
+            endpoint : {
+                type: String,
+                required: true
+            },
+            current_user: {
+                type: Object,
+                default: function () {
+                    return (KABOOODLE_APP ? KABOOODLE_APP.currentUser : {})
+                }
+            },
+            already_following: {
+                required: true
+            },
+            unfollow_text: {
+                type: String,
+                default: 'Following'
+            },
+            follow_text: {
+                type: String,
+                default: 'Follow'
+            }
+        },
+        data (){
+            return {
+                display: false,
+                following: false,
+                processing: false,
+            }
+        },
+        created (){
+            if (this.doWeHaveCurrentUser()) {
+                if (this.isUserFollowingEntity()) {
+                    this.following = true;
+                }
+            }
+        },
+        mounted (){
+            if (this.doWeHaveCurrentUser() && ! this.entityIsMe()) {
+                this.display = true;
+            }
+        },
+        computed : {
+            btnclass : function(){
+                let theClass = ' white '+this.btn_size_class;
+                if (this.following) {
+                    theClass = this.btn_active_class + ' ' + this.btn_size_class;
+                }
+                if (this.processing) {
+                    theClass = theClass + ' disabled ';
+                }
+
+                return theClass;
+            }
+        },
+        methods: {
+            entityIsMe : function(){
+                if(this.doWeHaveCurrentUser()) {
+                    return parseInt(this.current_user.id) == parseInt(this.able_id);
+                }
+
+                return false;
+            },
+            doWeHaveCurrentUser(){
+                return this.current_user;
+            },
+            isUserFollowingEntity(){
+                if (this.doWeHaveCurrentUser()) {
+//                    const typeName = this.able_name+'_type';
+//                    const typeId = this.able_name+'_id';
+//                    let attrs = {
+//                        user_id: parseInt(this.current_user.id)
+//                    };
+//                    attrs[typeName] =  this.able_type;
+//                    attrs[typeId] = parseInt(this.able_id);
+
+                    return (this.already_following == '1');
+                }
+
+                return false;
+            },
+            followMe(){
+                this.processing = true;
+                this.$http.post(this.endpoint).then(()=>{
+                    this.following = true;
+                    this.already_following = true;
+                }, function(response){
+                    throw new Error(response);
+                }).catch(function() {}).finally(()=>{
+                    this.processing = false;
+                });
+            },
+            unfollowMe(){
+                this.processing = true;
+                this.$http.delete(this.endpoint).then(()=>{
+                    this.following = false;
+                    this.already_following = false;
+                }, function(response){
+                    throw new Error(response);
+                }).catch(function() {}).finally(()=>{
+                    this.processing = false;
+                });
+            }
+        },
+    }
+</script>

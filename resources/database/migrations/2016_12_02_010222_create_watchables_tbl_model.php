@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFollowableTbl extends Migration
+class CreateWatchablesTblModel extends Migration
 {
     /**
      * Run the migrations.
@@ -12,23 +12,23 @@ class CreateFollowableTbl extends Migration
      */
     public function up()
     {
-        Schema::create('followables', function (Blueprint $table) {
+        Schema::create('watchables', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id')->unsigned();
-            $table->integer('followable_id');
-            $table->string('followable_type');
+            $table->integer('watchable_id');
+            $table->string('watchable_type');
             $table->softDeletes();
             $table->timestamps();
         });
 
-        Schema::table('followables', function(Blueprint $table){
+        Schema::table('watchables', function(Blueprint $table){
             $table->foreign('user_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdated('cascade');
         });
 
-        DB::update("ALTER TABLE followables AUTO_INCREMENT = 1993315;");
+        DB::update("ALTER TABLE watchables AUTO_INCREMENT = 1919101;");
     }
 
     /**
@@ -38,6 +38,6 @@ class CreateFollowableTbl extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('watchables');
     }
 }

@@ -15,7 +15,11 @@
         },
         methods: {
             trackView : function(){
-                try { this.$http.post(this.route, {resource: this.resource_hash}).then(function(response){}, function(response){throw new Error(response);});} catch (e) {}
+                this.$http.post(this.route, {resource: this.resource_hash}).then(function(response){
+
+                        },function(response){
+                            throw new Error(response);
+                        }).catch(function(){});
             },
         }
     }

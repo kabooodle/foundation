@@ -6315,218 +6315,371 @@ module.exports = Vue$2;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":1}],4:[function(require,module,exports){
-var inserted = exports.cache = {}
-
-exports.insert = function (css) {
-  if (inserted[css]) return
-  inserted[css] = true
-
-  var elem = document.createElement('style')
-  elem.setAttribute('type', 'text/css')
-
-  if ('textContent' in elem) {
-    elem.textContent = css
-  } else {
-    elem.styleSheet.cssText = css
-  }
-
-  document.getElementsByTagName('head')[0].appendChild(elem)
-  return elem
-}
-
-},{}],5:[function(require,module,exports){
 'use strict';
-
-var _Loading = require('./components/Loading.vue');
-
-var _Loading2 = _interopRequireDefault(_Loading);
-
-var _Popover = require('./components/Popover.vue');
-
-var _Popover2 = _interopRequireDefault(_Popover);
-
-var _Pageviewtracker = require('./components/Pageviewtracker.vue');
-
-var _Pageviewtracker2 = _interopRequireDefault(_Pageviewtracker);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-new Vue({
-    el: '#kabooodle_utilities',
-    components: {
-        'loader': _Loading2.default,
-        'pageviewstracker': _Pageviewtracker2.default,
-        'popout-overlay': _Popover2.default
-    }
-});
-
-},{"./components/Loading.vue":6,"./components/Pageviewtracker.vue":7,"./components/Popover.vue":8}],6:[function(require,module,exports){
-var __vueify_insert__ = require("vueify/lib/insert-css")
-var __vueify_style__ = __vueify_insert__.insert("\n.kb_overlay {\n    background: rgba(255,255,255,.98);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\n.kb_overlay__inner {\n    position: fixed;\n    background: #fff;\n    padding: 3px;\n    border-radius: 30px;\n    top: 50%;\n    left: 50%;\n    margin-left: -16px;\n    margin-top: -16px;\n}\n")
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = {
-    data: function data() {
-        return {
-            kb_overlay_show: false
-        };
-    },
-    created: function created() {
-        var scope = this;
-
-        $Bus.$on('loader:request-close', function () {
-            scope.kb_overlay_show = false;
-        });
-
-        $Bus.$on('loader:request-show', function () {
-            scope.kb_overlay_show = true;
-        });
-    }
-};
-if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"kb_overlay_show === true\">\n    <div class=\"kb_overlay\">\n        <div class=\"kb_overlay__inner\">\n            <img src=\"/assets/images/icons/ring-alt.gif\">\n        </div>\n    </div>\n</div>\n"
-if (module.hot) {(function () {  module.hot.accept()
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  module.hot.dispose(function () {
-    __vueify_insert__.cache["\n.kb_overlay {\n    background: rgba(255,255,255,.98);\n    top: 0;\n    left: 0;\n    z-index: 9997;\n    width: 100%;\n    height: 100%;\n    position: fixed;\n    overflow-y: auto;\n    box-sizing: border-box;\n    -webkit-overflow-scrolling: touch;\n}\n.kb_overlay__inner {\n    position: fixed;\n    background: #fff;\n    padding: 3px;\n    border-radius: 30px;\n    top: 50%;\n    left: 50%;\n    margin-left: -16px;\n    margin-top: -16px;\n}\n"] = false
-    document.head.removeChild(__vueify_style__)
-  })
-  if (!module.hot.data) {
-    hotAPI.createRecord("_v-55b80c00", module.exports)
-  } else {
-    hotAPI.update("_v-55b80c00", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
-  }
-})()}
-},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],7:[function(require,module,exports){
-"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
     props: {
-        route: {
+        size: {
             type: String,
-            required: true
-        },
-        resource_hash: {
-            type: String,
-            required: true
-        }
-    },
-    render: function render() {
-        this.trackView();
-    },
-    methods: {
-        trackView: function trackView() {
-            this.$http.post(this.route, { resource: this.resource_hash }).then(function (response) {}, function (response) {
-                throw new Error(response);
-            }).catch(function () {});
+            default: '12'
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img src=\"/assets/images/icons/ring-alt.gif\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-a42fbc70", module.exports)
+    hotAPI.createRecord("_v-06f0265d", module.exports)
   } else {
-    hotAPI.update("_v-a42fbc70", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-06f0265d", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+},{"vue":3,"vue-hot-reload-api":2}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
+    props: {
+        timestamp: {
+            required: true
+        }
+    },
     data: function data() {
         return {
-            promptOnClose: true,
-            defaultContent: '<div class="text-center center-block" ' + 'style="position: absolute; top: 50%; margin-top: -20px; margin-left: -20px; left: 50%; ">' + '<img src="/assets/images/icons/ring-alt.gif"></div>'
+            now: new Date().getTime(),
+            format: 'MMM D \\at h:mma'
         };
     },
-    mounted: function mounted() {
-        this.resetOverlay();
-    },
-    created: function created() {
-        var scope = this;
 
-        $Bus.$on('popout-overlay:change-prompt', function (promptOnClose) {
-            scope.setPromptOnClose(promptOnClose);
-        });
-        $Bus.$on('popout-overlay:close', function () {
-            scope.closeOverlay();
-        });
-        $Bus.$on('popout-overlay:request-open', function (content) {
-            scope.openOverlay(content);
-        });
-        $Bus.$on('popout-overlay:change-content', function (content, promptOnClose) {
-            scope.changeOverlayContent(content, promptOnClose);
-        });
-    },
-    methods: {
-        setPromptOnClose: function setPromptOnClose(promptOnClose) {
-            this.promptOnClose = promptOnClose;
+    computed: {
+        older_than_week: function older_than_week() {
+            return moment(this.timestamp).subtract(1, 'weeks').isBefore(moment(this.timestamp));
         },
-        openOverlay: function openOverlay(content) {
-            $('body').addClass('noscroll');
-            $('.inventory-overlay').show();
-            if (content) {
-                this.changeOverlayContent(content);
-            }
-            this.$emit('popout-overlay:opened');
-        },
-        resetOverlay: function resetOverlay() {
-            $('body').removeClass('noscroll');
-            $('.inventory-overlay').hide(200);
-            this.changeOverlayContent(this.defaultContent, true);
-            $Bus.$emit('popout-overlay:closed');
-        },
-        closeOverlay: function closeOverlay() {
-            var scope = this;
-            setTimeout(function () {
-                if (this.promptOnClose) {
-                    confirmModal(function (noty) {
-                        scope.resetOverlay();
-                        noty.close();
-                    });
-                } else {
-                    scope.resetOverlay();
-                }
-            }, 400);
-        },
-        changeOverlayContent: function changeOverlayContent(content, promptOnClose) {
-            // Because this method may be called immediately after a prompt change was called,
-            // lets ignore undefined promptOnClose so that we don't inadvertently override something
-            // previously set.  If we want it set, we would pass it. simple.
-            if (typeof promptOnClose !== 'undefined') {
-                this.setPromptOnClose(promptOnClose);
-            }
-            $('.inventory-overlay').find('.overlay-content').html(content);
+        humanized: function humanized() {
+            return moment(this.timestamp).format(this.format);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"pop-out-overlay inventory-overlay\" style=\"display: none;\">\n        <a href=\"javascript:;\" class=\"close-overlay\" v-on:click=\"closeOverlay\" aria-label=\"close\">\n            <img src=\"/assets/images/icons/over-close-white.png\" alt=\"Icon shot x light\">\n        </a>\n        <div class=\"overlay-content group\">\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"older_than_week\">\n    {{ humanized }}\n</div>\n<div v-else=\"\">\n    <timeago :since=\"timestamp\"></timeago>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   if (!module.hot.data) {
-    hotAPI.createRecord("_v-70eaace9", module.exports)
+    hotAPI.createRecord("_v-646ffbda", module.exports)
   } else {
-    hotAPI.update("_v-70eaace9", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+    hotAPI.update("_v-646ffbda", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2}]},{},[5]);
+},{"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
+"use strict";
 
-//# sourceMappingURL=app.js.map
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Timestamp = require("../Timestamp.vue");
+
+var _Timestamp2 = _interopRequireDefault(_Timestamp);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: ["post_route", "modelobject", "comments_url"],
+    data: function data() {
+        return {
+            posting: false,
+            comments: [],
+            comments_ready: false,
+            newcomment: null
+        };
+    },
+    created: function created() {
+        var $scope = this;
+
+        this.$http.get(this.comments_url).then(function (response) {
+            $scope.comments = response.body.data;
+            $scope.comments_ready = true;
+            setTimeout(function () {
+                $scope.prepareCommentForm();
+            }, 0);
+        });
+    },
+
+    methods: {
+        prepareCommentForm: function prepareCommentForm() {
+            var $scope = this;
+            $(function () {
+                $('[data-toggle="emojione"]').emojioneArea({
+                    pickerPosition: "bottom",
+                    filtersPosition: "bottom",
+                    autocomplete: true,
+                    saveEmojisAs: "shortname",
+                    events: {
+                        keyup: function keyup(editor, event) {
+                            $scope.newcomment = this.getText();
+                        }
+                    }
+                });
+            });
+        },
+        userCanDelete: function userCanDelete(comment) {
+            return comment.author.id === this.modelobject.user.id || KABOOODLE_APP.currentUser.id === this.modelobject.user.id || comment.author.id === KABOOODLE_APP.currentUser.id;
+        },
+        addNewComment: function addNewComment(e) {
+            e.preventDefault();
+            this.newcomment = null;
+            var $scope = this;
+
+            this.posting = true;
+            this.$http.post(this.post_route, { text_raw: $('#comment_new_text').val() }).then(function (response) {
+                $scope.comments.push($.parseJSON(response.body.data.json));
+                $scope.resetCommentForm();
+            }, function () {
+                notify({ 'text': 'An error occurred, please try again.' });
+                $scope.resetCommentForm();
+            }).then(function () {
+                $scope.posting = false;
+            });
+        },
+        deleteComment: function deleteComment(comment, e) {
+            e.preventDefault();
+            if (!this.userCanDelete(comment)) {
+                return false;
+            }
+            var $el = $(e.target);
+            var $scope = this;
+
+            if ($Bus.$emit('comment:deleting', comment) === false) {
+                return false;
+            }
+
+            $el.addClass('disabled').prop('disabled', true);
+            this.$http.delete(this.post_route + '/' + comment.id).then(function () {
+                var index = $scope.comments.indexOf(comment);
+                if (index > -1) {
+                    $scope.comments.splice(index, 1);
+                }
+
+                $Bus.$emit('comment:deleted', comment);
+                $el.removeClass('disabled').prop('disabled', false);
+            }, function () {
+                notify({ 'text': 'An error occurred, please try again.' });
+            }).then(function () {});
+        },
+        resetCommentForm: function resetCommentForm() {
+            this.prepareCommentForm();
+            $('[data-toggle="emojione"]').emojioneArea()[0].emojioneArea.setText('').trigger('change');
+            this.newcomment = null;
+        }
+    },
+    components: {
+        'timestamp': _Timestamp2.default
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"comments_ready\">\n        <div class=\"box\">\n            <div class=\"box-header clearfix\">\n                <h3 class=\"pull-left\">Comments <span class=\"label grey-400 text-white\" id=\"comments_count\">{{ comments.length }}</span></h3>\n                <!--{{&#45;&#45;<div class=\"pull-right\">&#45;&#45;}}-->\n                <!--{{&#45;&#45;<button id=\"comment_delete_all_btn\" data-model-id=\"{{  modelId  }}\" type=\"button\" class=\"btn white btn-xs text-muted\">Delete All</button>&#45;&#45;}}-->\n                <!--{{&#45;&#45;</div>&#45;&#45;}}-->\n            </div>\n            <div class=\"box-body\">\n                <div class=\"streamline b-l m-l-md\" id=\"comments_container\">\n                    <div v-for=\"comment in comments\">\n                        <div class=\"sl-item\" :data-id=\"comment.uuid\" :data-author-id=\"comment.author.public_hash\" :data-author=\"comment.author.name\">\n                            <div class=\"sl-left\">\n                                <img src=\"https://unsplash.it/32/32/?random\" class=\"img-circle\">\n                            </div>\n                            <div class=\"sl-content\">\n                                <div class=\"sl-author\">\n                                    <a href=\"#\" class=\"_600\">{{ comment.author.name }}</a>\n                                </div>\n                                <div v-html=\"comment.text\"></div>\n                                <div class=\"sl-footer sl-date clearfix\">\n                                    <ul class=\"text-muted list-inline pull-left\">\n                                        <li class=\"list-inline-item\"><timestamp :timestamp=\"comment.created_at.date\">{{ comment.created_at.date }}</timestamp></li>\n                                        <li class=\"list-inline-item\" v-if=\"userCanDelete(comment)\"><button type=\"button\" class=\"white btn btn-text btn-xs\" @click=\"deleteComment(comment, $event)\">Delete</button></li>\n                                    </ul>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                <div class=\"box m-a-0 b-a\">\n                    <form id=\"comment_new_form\" method=\"POST\" :action=\"post_route\" accept-charset=\"UTF-8\" @submit=\"addNewComment\">\n                        <textarea id=\"comment_new_text\" v-model=\"newcomment\" name=\"text_raw\" data-toggle=\"emojione\" class=\"form-control no-border\" rows=\"3\" placeholder=\"Type something...\"></textarea>\n                        <div class=\"box-footer clearfix\">\n                            <button id=\"comment_new_submit_btn\" type=\"submit\" class=\"btn primary pull-right btn-sm\" :disabled=\"!newcomment\">\n                                <spinny v-if=\"posting\"></spinny>\n                                Post Comment</button>\n                        </div>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div v-else=\"\">\n        <div class=\"center-block text-center\">\n            <spinny size=\"30\"></spinny>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-6327e14a", module.exports)
+  } else {
+    hotAPI.update("_v-6327e14a", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"../Timestamp.vue":5,"vue":3,"vue-hot-reload-api":2}],7:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: {
+        able_name: {
+            type: String,
+            default: function _default() {
+                return 'followable';
+            }
+        },
+        able_id: {
+            required: true,
+            type: String
+        },
+        able_type: {
+            required: true,
+            type: String
+        },
+        btn_active_class: {
+            type: String,
+            default: function _default() {
+                return ' primary ';
+            }
+        },
+        btn_size_class: {
+            type: String,
+            default: function _default() {
+                return ' btn-xs ';
+            }
+        },
+        endpoint: {
+            type: String,
+            required: true
+        },
+        current_user: {
+            type: Object,
+            default: function _default() {
+                return KABOOODLE_APP ? KABOOODLE_APP.currentUser : {};
+            }
+        },
+        already_following: {
+            required: true
+        },
+        unfollow_text: {
+            type: String,
+            default: 'Following'
+        },
+        follow_text: {
+            type: String,
+            default: 'Follow'
+        }
+    },
+    data: function data() {
+        return {
+            display: false,
+            following: false,
+            processing: false
+        };
+    },
+    created: function created() {
+        if (this.doWeHaveCurrentUser()) {
+            if (this.isUserFollowingEntity()) {
+                this.following = true;
+            }
+        }
+    },
+    mounted: function mounted() {
+        if (this.doWeHaveCurrentUser() && !this.entityIsMe()) {
+            this.display = true;
+        }
+    },
+
+    computed: {
+        btnclass: function btnclass() {
+            var theClass = ' white ' + this.btn_size_class;
+            if (this.following) {
+                theClass = this.btn_active_class + ' ' + this.btn_size_class;
+            }
+            if (this.processing) {
+                theClass = theClass + ' disabled ';
+            }
+
+            return theClass;
+        }
+    },
+    methods: {
+        entityIsMe: function entityIsMe() {
+            if (this.doWeHaveCurrentUser()) {
+                return parseInt(this.current_user.id) == parseInt(this.able_id);
+            }
+
+            return false;
+        },
+        doWeHaveCurrentUser: function doWeHaveCurrentUser() {
+            return this.current_user;
+        },
+        isUserFollowingEntity: function isUserFollowingEntity() {
+            if (this.doWeHaveCurrentUser()) {
+                //                    const typeName = this.able_name+'_type';
+                //                    const typeId = this.able_name+'_id';
+                //                    let attrs = {
+                //                        user_id: parseInt(this.current_user.id)
+                //                    };
+                //                    attrs[typeName] =  this.able_type;
+                //                    attrs[typeId] = parseInt(this.able_id);
+
+                return this.already_following == '1';
+            }
+
+            return false;
+        },
+        followMe: function followMe() {
+            var _this = this;
+
+            this.processing = true;
+            this.$http.post(this.endpoint).then(function () {
+                _this.following = true;
+                _this.already_following = true;
+            }, function (response) {
+                throw new Error(response);
+            }).catch(function () {}).finally(function () {
+                _this.processing = false;
+            });
+        },
+        unfollowMe: function unfollowMe() {
+            var _this2 = this;
+
+            this.processing = true;
+            this.$http.delete(this.endpoint).then(function () {
+                _this2.following = false;
+                _this2.already_following = false;
+            }, function (response) {
+                throw new Error(response);
+            }).catch(function () {}).finally(function () {
+                _this2.processing = false;
+            });
+        }
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span v-if=\"display\">\n    <button :disabled=\"processing\" type=\"button\" @click=\"following ? unfollowMe() : followMe()\" class=\"btn-follow btn \" :class=\"btnclass\">\n        <spinny v-if=\"processing\"></spinny> {{ following ? unfollow_text : follow_text }}\n    </button>\n</span>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-5ae57f2d", module.exports)
+  } else {
+    hotAPI.update("_v-5ae57f2d", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":3,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+'use strict';
+
+var _Commentable = require('../comments/Commentable.vue');
+
+var _Commentable2 = _interopRequireDefault(_Commentable);
+
+var _Followable = require('../follow/Followable.vue');
+
+var _Followable2 = _interopRequireDefault(_Followable);
+
+var _Spinner = require('../Spinner.vue');
+
+var _Spinner2 = _interopRequireDefault(_Spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+Vue.component('spinny', _Spinner2.default);
+
+new Vue({
+    el: '#listing-item-page',
+    components: {
+        'comments-index': _Commentable2.default,
+        'followable': _Followable2.default
+    }
+});
+
+},{"../Spinner.vue":4,"../comments/Commentable.vue":6,"../follow/Followable.vue":7}]},{},[8]);
+
+//# sourceMappingURL=listing-items-page.js.map

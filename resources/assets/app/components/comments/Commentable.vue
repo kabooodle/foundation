@@ -37,7 +37,9 @@
                         <form id="comment_new_form" method="POST" :action="post_route" accept-charset="UTF-8" @submit="addNewComment">
                             <textarea id="comment_new_text" v-model="newcomment" name="text_raw" data-toggle="emojione" class="form-control no-border" rows="3" placeholder="Type something..."></textarea>
                             <div class="box-footer clearfix">
-                                <button id="comment_new_submit_btn" type="submit" class="btn primary pull-right btn-sm" :disabled="!newcomment" >Post Comment</button>
+                                <button id="comment_new_submit_btn" type="submit" class="btn primary pull-right btn-sm" :disabled="!newcomment" >
+                                    <spinny v-if="posting"></spinny>
+                                    Post Comment</button>
                             </div>
                         </form>
                     </div>
@@ -46,7 +48,7 @@
         </div>
         <div v-else>
             <div class="center-block text-center">
-                <img src="/assets/images/icons/ring-alt.gif">
+                <spinny size="30"></spinny>
             </div>
         </div>
     </div>
@@ -100,12 +102,15 @@
                 this.newcomment = null;
                 const $scope = this;
 
+                this.posting = true;
                 this.$http.post(this.post_route, {text_raw : $('#comment_new_text').val()}).then(function (response) {
                     $scope.comments.push($.parseJSON(response.body.data.json));
                     $scope.resetCommentForm();
                 }, function(){
                     notify({'text' : 'An error occurred, please try again.'});
                     $scope.resetCommentForm();
+                }).then(function(){
+                    $scope.posting = false;
                 });
             },
             deleteComment: function(comment, e){
@@ -131,6 +136,8 @@
                     $el.removeClass('disabled').prop('disabled',  false);
                 }, function(){
                     notify({'text' : 'An error occurred, please try again.'});
+                }).then(function(){
+
                 });
             },
             resetCommentForm : function(){
@@ -140,7 +147,7 @@
             }
         },
         components: {
-            'timestamp' : Timestamp
+            'timestamp' : Timestamp,
         }
     }
 </script>

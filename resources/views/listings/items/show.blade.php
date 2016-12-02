@@ -1,4 +1,4 @@
-@extends('layouts.full')
+@extends('layouts.full', ['contentId' => 'listing-item-page'])
 
 
 @section('body-menu')
@@ -10,8 +10,17 @@
             <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ $listingItem->pageViews->count() }} <span class="text-muted">Views</span></span>
         </div>
         <div class="btn-toolbar pull-right">
-            <a href="" class="btn-sm btn white"><i class="fa fa-heart-o fa-1x {{ $listingItem->inventoryItem->is_liked ? 'warning' : null }}"></i> {{ $listingItem->inventoryItem->likes->count() }} Likes</a>
-            <a href="" class="btn-sm btn white">Share</a>
+            <followable
+                    able_name="watchable"
+                    able_type="{{ get_class($listingItem) }}"
+                    able_id="{{ $listingItem->id }}"
+                    unfollow_text="Watching"
+                    follow_text="Watch"
+                    btn_size_class="btn-sm"
+                    already_following="{{ $listingItem->is_watched ? 1 : 0 }}"
+                    endpoint="{{ apiRoute('listings.listingitems.watchers.store', [$listingItem->listing_id, $listingItem->id]) }}"
+            >
+            </followable>
             @if(! $listingItem->inventoryItem->canSatisfyRequestedQuantityOf(1))
                 <div class="inline" data-toggle="tooltip" data-placement="bottom" title="Watch the item to be notified of availability">
                     <a class="btn btn-sm claim  _800 disabled" disabled href="#">Out of stock!</a>
@@ -48,6 +57,9 @@
     ])
 @endsection
 
+@push('footer-scripts')
+<script src="/assets/js/listing-items-page.js"></script>
+@endpush
 
 @push('utilities')
 <pageviewstracker
