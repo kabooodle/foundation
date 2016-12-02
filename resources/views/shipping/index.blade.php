@@ -72,23 +72,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach($shipments as $shipment)
-                    <tr>
-                        <td><input type="checkbox" class="shipment_checkbox"></td>
-                        <td>{{ $shipment->shipment->claimer->name }}</td>
-                        <td>{{ $shipment->shipment->claims->count() }}</td>
-                        <td>${{ $shipment->rate_amount }}</td>
-                        <td><time datetime="{{ $shipment->createdAtHuman() }}">{{ $shipment->createdAtHumanNoTime() }} <i data-toggle="tooltip" title="{{ $shipment->createdAtHuman() }}" data-placement="top" class="fa fa-clock-o" aria-hidden="true"></i></time></td>
-                        <td><a class="text-primary" href="{{ $shipment->tracking_url_provider }}" target="_blank" >{{ $shipment->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>
-                        <td>{!! $shipment->present()->getStatus()  !!}</td>
-                        <td>
-                            <div class="pull-right">
-                                <a href="{{ route('shipping.transactions.show', [$shipment->shipping_shipments_uuid, $shipment->uuid]) }}"  class="btn btn-xs white">View</a>
-                                <a target="_blank" href="{{ route('shipping.transactions.label.show', [$shipment->shipping_shipments_uuid, $shipment->uuid])}}" class="btn btn-xs white">Shipping Label</a>
-                            </div>
-                        </td>
-                    </tr>
-                @endforeach
+                @if($shipments->count() > 0)
+                    @foreach($shipments as $shipment)
+                        <tr>
+                            <td><input type="checkbox" class="shipment_checkbox"></td>
+                            <td>{{ $shipment->shipment->claimer->name }}</td>
+                            <td>{{ $shipment->shipment->claims->count() }}</td>
+                            <td>${{ $shipment->rate_amount }}</td>
+                            <td><time datetime="{{ $shipment->createdAtHuman() }}">{{ $shipment->createdAtHumanNoTime() }} <i data-toggle="tooltip" title="{{ $shipment->createdAtHuman() }}" data-placement="top" class="fa fa-clock-o" aria-hidden="true"></i></time></td>
+                            <td><a class="text-primary" href="{{ $shipment->tracking_url_provider }}" target="_blank" >{{ $shipment->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>
+                            <td>{!! $shipment->present()->getStatus()  !!}</td>
+                            <td>
+                                <div class="pull-right">
+                                    <a href="{{ route('shipping.transactions.show', [$shipment->shipping_shipments_uuid, $shipment->uuid]) }}"  class="btn btn-xs white">View</a>
+                                    <a target="_blank" href="{{ route('shipping.transactions.label.show', [$shipment->shipping_shipments_uuid, $shipment->uuid])}}" class="btn btn-xs white">Shipping Label</a>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
