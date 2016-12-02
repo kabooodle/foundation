@@ -27,7 +27,9 @@ elixir(function (mix) {
 
     mix.browserify('app/components/claims/claims-index.js');
 
-    mix.browserify('app/components/comments/comments-index.js');
+    mix.browserify('app/components/listings/listing-items-page.js');
+
+
 
     // Vendor File
     mix.browserify('app/vendor.js');

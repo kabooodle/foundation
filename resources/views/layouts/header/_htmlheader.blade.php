@@ -12,15 +12,17 @@
     <link rel="stylesheet" href="{{ staticAsset('/assets/css/merchant.css') }}" type="text/css"/>
     @endpush
 
+    <script type="text/javascript">
+        const KABOOODLE_APP = window.KABOOODLE_APP || {};
+        KABOOODLE_APP.currentUser = {!! $_current_user !!};
+    </script>
+
     @push('header-scripts')
     <script src="{{ staticAsset('/assets/js/vendor.js') }}"></script>
 
     <script src="//js.pusher.com/3.2/pusher.min.js"></script>
 
     <script type="text/javascript">
-        const KABOOODLE_APP = window.KABOOODLE_APP || {};
-        KABOOODLE_APP.currentUser = {!! $_current_user !!};
-
         @if ($_current_user)
 //                // TODO MIGRATE ALL THIS SHIT TO A MODULE
                 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');

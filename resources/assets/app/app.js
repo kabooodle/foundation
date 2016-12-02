@@ -7,6 +7,6 @@ new Vue({
     components: {
         'loader': Loader,
         'pageviewstracker' : PageViewTracker,
-        'popout-overlay' : Popover
+        'popout-overlay' : Popover,
     }
 });

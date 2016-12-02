@@ -61,6 +61,13 @@ class User extends BaseEloquentModel implements
     /**
      * @var array
      */
+    protected $appends = [
+        'is_following'
+    ];
+
+    /**
+     * @var array
+     */
     protected $with = [
 //        'creditBalance'
     ];

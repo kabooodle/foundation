@@ -11,6 +11,16 @@
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));</script>
 
+        @push('utilities')
+            <loader></loader>
+            <popout-overlay></popout-overlay>
+        @endpush
+
+
+        <div id="kabooodle_utilities">
+            @stack('utilities')
+        </div>
+
         <div class="app" id="{{ $contentId or 'kabooodle_app' }}">
             <div id="content" class="app-content box-shadow-z0" role="main">
                 @include('layouts.header._header')
@@ -27,16 +37,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        @push('utilities')
-            <loader></loader>
-            <popout-overlay></popout-overlay>
-        @endpush
-
-
-        <div id="kabooodle_utilities">
-            @stack('utilities')
         </div>
 
         @include('layouts.footer._footer')

@@ -6,11 +6,6 @@ new Vue({
     el: '#manage_inventory',
     store,
     computed,
-
-    beforeCreate(){
-        $Bus.$emit('loader:request-show');
-    },
-
     created(){
         this.$store.dispatch('setRoute', inventory_route);
 
@@ -45,7 +40,7 @@ new Vue({
     watch: {
         'actions' : {
             handler(v){
-                v.refreshing_data === false ? $Bus.$emit('loader:request-close') : $Bus.$emit('loader:request-show');
+                // v.refreshing_data === false ? $Bus.$emit('loader:request-close') : $Bus.$emit('loader:request-show');
             }, deep: true
         },
         selected : {

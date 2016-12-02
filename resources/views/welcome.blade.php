@@ -2,12 +2,14 @@
 
 @section('body-content')
 
+
     <div class="p-l p-r">
         <div class="row">
             <div class="col-sm-12 col-md-push-3 col-md-6">
                 <div class="box">
                     <div class="box-header b-b">
                         <h3>What's  New</h3>
+
                     </div>
                     <div class="box-body">
                         <div class="row row-sm">
@@ -151,7 +153,6 @@
                                     <a class="dropdown-item" href>Feed</a>
                                     <a class="dropdown-item" href>Photo</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item">Follow</a>
                                 </div>
                             </li>
                         </ul>
@@ -175,7 +176,12 @@
                             </a>
                         </div>
                         <div class="text-center m-t">
-                            <a href class="btn btn-sm rounded primary w-sm m-y-xs">Follow</a>
+                            <followable
+                                    endpoint="{{ apiRoute('user.followers.store', [user()->id]) }}"
+                                    followable_entity_name="user"
+                                    followable_type="user"
+                                    followable_id="{{ user()->id}}">
+                            </followable>
                         </div>
                     </div>
                     <div class="row no-gutter b-t b-b">

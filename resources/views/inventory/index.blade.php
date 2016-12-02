@@ -31,6 +31,7 @@
         Select All
         </button>
         <button
+            v-cloak
                 class="btn white btn-sm"
                 :disabled="selected.items.length == 0 || actions.refreshing_data"
                 v-bind:class="{'disabled' : selected.items.length == 0 || actions.refreshing_data }"
@@ -95,6 +96,7 @@
         background: #ccc !important;
         border-bottom: 0;
     }
+    [v-cloak] { display: none; }
 </style>
 
 @endpush

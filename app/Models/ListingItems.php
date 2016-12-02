@@ -8,9 +8,11 @@ namespace Kabooodle\Models;
 
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
+use Kabooodle\Models\Traits\WatchableTrait;
 use Kabooodle\Models\Traits\ShoppableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use Kabooodle\Models\Contracts\WatchableInterface;
 use Kabooodle\Models\Contracts\ShoppableInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
@@ -18,15 +20,16 @@ use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
 /**
  * Class ListingItems
  */
-class ListingItems extends AbstractListingModel implements ShoppableInterface
+class ListingItems extends AbstractListingModel implements ShoppableInterface, WatchableInterface
 {
-    use ObfuscatesIdTrait, PresentableTrait, ShoppableTrait, SoftDeletes, UuidableTrait;
+    use ObfuscatesIdTrait, PresentableTrait, ShoppableTrait, SoftDeletes, UuidableTrait, WatchableTrait;
 
     /**
      * @var array
      */
     protected $appends = [
-        'name'
+        'name',
+        'is_watched'
     ];
 
     /**

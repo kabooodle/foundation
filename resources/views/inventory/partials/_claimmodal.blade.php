@@ -14,8 +14,8 @@
                             Blah blah blah.</p>
                     </div>
                     <div class="modal-footer">
-                        <button data-route="{{ $post }}" type="button" class="btn claim p-x-md" id="btn_confirmed_claim">Confirm Claim!</button>
-                        <button type="button" class="m-l-1 btn btn-link" id="btn_confirmed_claim_cancel"
+                        <button data-route="{{ $post }}" type="button" class="btn claim" id="btn_confirmed_claim">Confirm Claim!</button>
+                        <button type="button" class="btn white" id="btn_confirmed_claim_cancel"
                                 data-dismiss="modal">Cancel
                         </button>
                     </div>
