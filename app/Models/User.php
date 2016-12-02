@@ -251,11 +251,11 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function flashsaleItems()
+    public function listingsInFlashsales()
     {
-        return $this->belongsToMany(FlashSales::class, 'flashsale_items', 'seller_id', 'flashsale_id')->withTimestamps()->withPivot(['inventory_id', 'id as pivot_id']);
+        return $this->listings()->where('type', Listings::TYPE_FLASHSALE);
     }
 
     /**
@@ -272,6 +272,30 @@ class User extends BaseEloquentModel implements
     public function listings()
     {
         return $this->hasMany(Listings::class, 'owner_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function listingItemsInFlashsales()
+    {
+        return $this->listingItems()->where('type', Listings::TYPE_FLASHSALE);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function listingItemsInFacebook()
+    {
+        return $this->listingItems()->where('type', Listings::TYPE_FACEBOOK);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function listingItems()
+    {
+        return $this->hasMany(ListingItems::class, 'owner_id');
     }
 
     /**

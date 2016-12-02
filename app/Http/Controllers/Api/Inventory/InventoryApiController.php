@@ -121,7 +121,7 @@ class InventoryApiController extends AbstractApiController
      */
     public function associate(Request $request)
     {
-        $flashsaleId = (bool) Binput::get('flashsales', null);
+        $flashsaleId = Binput::get('flashsales', null);
         $selectedItems = (array) Binput::get('items', []);
 
         // Facebook data
@@ -137,7 +137,6 @@ class InventoryApiController extends AbstractApiController
         try {
             // You must have either a flashsaleid or facebookalbum
             if (! $flashsaleId && count($facebookAlbums)== 0) {
-                dd('hi');
                 throw new MissingMandatoryParametersException;
             }
 
@@ -151,7 +150,8 @@ class InventoryApiController extends AbstractApiController
                 $endsAt,
                 $flashsaleId,
                 $facebookAlbums,
-                $facebookGroupId
+                $facebookGroupId,
+                $selectedItems
             );
 
             $this->dispatchNow($command);

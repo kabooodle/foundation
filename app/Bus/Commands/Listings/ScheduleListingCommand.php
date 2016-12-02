@@ -45,12 +45,18 @@ final class ScheduleListingCommand
     public $facebookGroupId;
 
     /**
+     * @var array
+     */
+    public $selectedItems;
+
+    /**
      * @param User     $actor
      * @param bool     $includeDescrText
      * @param null     $scheduledFor
      * @param int|null $flashSaleId
      * @param array    $facebookAlbums
      * @param int|null $facebookGroupId
+     * @param array    $selectedItems
      */
     public function __construct(
         User $actor,
@@ -58,7 +64,8 @@ final class ScheduleListingCommand
         $scheduledFor = null,
         int $flashSaleId = null,
         array $facebookAlbums = [],
-        int $facebookGroupId = null
+        int $facebookGroupId = null,
+        array $selectedItems = []
     )
     {
         $this->actor = $actor;
@@ -67,6 +74,7 @@ final class ScheduleListingCommand
         $this->flashSaleId = $flashSaleId;
         $this->facebookAlbums = $facebookAlbums;
         $this->facebookGroupId = $facebookGroupId;
+        $this->selectedItems = $selectedItems;
     }
 
     /**
@@ -86,6 +94,14 @@ final class ScheduleListingCommand
     }
 
     /**
+     * @return boolean
+     */
+    public function isIncludeDescrText(): bool
+    {
+        return $this->includeDescrText;
+    }
+
+    /**
      * @return null
      */
     public function getScheduledFor()
@@ -94,26 +110,34 @@ final class ScheduleListingCommand
     }
 
     /**
-     * @return array|null
+     * @return int
      */
-    public function getFacebookAlbums()
-    {
-        return $this->facebookAlbums;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getFlashSaleId()
+    public function getFlashSaleId(): int
     {
         return $this->flashSaleId;
     }
 
     /**
-     * @return int|null
+     * @return array
+     */
+    public function getFacebookAlbums(): array
+    {
+        return $this->facebookAlbums;
+    }
+
+    /**
+     * @return int
      */
     public function getFacebookGroupId()
     {
         return $this->facebookGroupId;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSelectedItems(): array
+    {
+        return $this->selectedItems;
     }
 }

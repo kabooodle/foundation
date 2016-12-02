@@ -45,7 +45,7 @@ class ScheduleListingCommandHandler
      */
     public function handle(ScheduleListingCommand $command)
     {
-        // Set a timestamp we can reuse for consistency.
+        // Set a timestamp of now we can reuse for consistency.
         $this->now = Carbon::now();
 
         /** @var User $actor */
@@ -58,21 +58,33 @@ class ScheduleListingCommandHandler
             $this->isFacebookListing = true;
         }
 
-        return DB::transaction(function () use ($actor, $scheduledFor, $command) {
+        // Reference holding all listings saved
+        $totalSavedListings = [];
+
+        return DB::transaction(function () use ($actor, $scheduledFor, $command, $totalSavedListings) {
             $listing = $this->buildListing($command, $scheduledFor);
 
+            // We have some special logic for facebook listings
             if ($this->isFacebookListing) {
-                // Build an array of InventoryItems containing facebook listings.
-                $facebookInventoryItems = $this->buildFacebookListings($listing, $command);
 
-                if ($facebookInventoryItems) {
-                    // Because facebook throttles API requests to 200/calls an hour, we need to make sure
-                    // The requested time schedule doesn't already have "200 calls" scheduled.
-                    // If it does, an exception will be thrown.
-                    $this->assertListingDoesNotConflictWithExistingListing($scheduledFor, $actor, $facebookInventoryItems);
+                // Build an array of InventoryItems containing facebook listings associated
+                // to the parent listing just created.
+                $facebookInventoryItems = $this->buildFacebookListingItems($listing, $command);
 
-                    $listing->listingItems()->saveMany($facebookInventoryItems);
-                }
+                // Because facebook throttles API requests to 200/calls an hour, we need to make sure
+                // The requested time schedule doesn't already have "200 calls" scheduled.
+                // If it does, an exception will be thrown.
+                $this->assertListingDoesNotConflictWithExistingListing($scheduledFor, $actor, $facebookInventoryItems);
+
+                $listing->listingItems()->saveMany($facebookInventoryItems);
+
+                $totalSavedListings[] = $facebookInventoryItems;
+            } else {
+                $flashsaleInventoryItems = $this->buildFlashsaleListingItems($listing, $command);
+
+                $listing->listingItems()->saveMany($flashsaleInventoryItems);
+
+                $totalSavedListings[] = $flashsaleInventoryItems;
             }
 
             return $listing;
@@ -108,16 +120,66 @@ class ScheduleListingCommandHandler
     }
 
     /**
+     * @param User $user
+     * @param int  $facebookAlbumId
+     * @param int  $inventoryId
+     *
+     * @return
+     */
+    protected function itemAlreadyInFacebookAlbum(User $user, int $facebookAlbumId, int $inventoryId)
+    {
+        $user->load('listingItemsInFacebook');
+
+        return $user->listingItemsInFacebook->filter(function ($item) use ($facebookAlbumId, $inventoryId) {
+            return $item->fb_album_node_id == $facebookAlbumId && $item->inventory_id == $inventoryId;
+        })->first();
+    }
+
+    /**
+     * @param User $user
+     * @param int  $flashSaleId
+     * @param int  $inventoryId
+     *
+     * @return mixed
+     */
+    protected function itemAlreadyInFlashsale(User $user, int $flashSaleId, int $inventoryId)
+    {
+        $user->load('listingItemsInFlashsales');
+
+        return $user->listingItemsInFlashsales->filter(function ($item) use ($flashSaleId, $inventoryId) {
+            return $item->flashsale_id == $flashSaleId && $item->inventory_id == $inventoryId;
+        })->first();
+    }
+
+    /**
+     * @param string|null $dateTime
+     *
+     * @return Carbon
+     */
+    public function normalizeScheduledDateTime(string $dateTime = null)
+    {
+        // If the dateTime is null, then we will schedule this posting for
+        // 5 minutes from now.
+        if (!$dateTime || is_null($dateTime)) {
+            $this->postingNow = true;
+
+            return Carbon::now()->addMinutes(self::EMPTY_DATE_LOOKAHEAD_MINUTES);
+        }
+
+        return Carbon::createFromTimestamp(strtotime($dateTime));
+    }
+
+    /**
      * @param Listings               $listing
      * @param ScheduleListingCommand $command
      *
      * @return array
      */
-    public function buildFacebookListings(Listings $listing, ScheduleListingCommand $command)
+    public function buildFacebookListingItems(Listings $listing, ScheduleListingCommand $command)
     {
         $facebookAlbums = $command->getFacebookAlbums();
         $actor = $command->getActor();
-        $listingItems = [];
+        $listedItems = [];
 
         if (count($facebookAlbums) > 0) {
             // Iterate over the facebook albums and figure out what items were assigned to each album
@@ -157,46 +219,59 @@ class ScheduleListingCommandHandler
                         $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
                     }
 
-                    $listingItems[] = $listingItem;
+                    $listedItems[] = $listingItem;
                 }
             }
         }
 
-        return $listingItems;
+        return $listedItems;
     }
 
     /**
-     * @param User $user
-     * @param int  $facebookAlbumId
-     * @param int  $inventoryId
+     * @param Listings               $listing
+     * @param ScheduleListingCommand $command
      *
-     * @return
+     * @return array
      */
-    protected function itemAlreadyInFacebookAlbum(User $user, int $facebookAlbumId, int $inventoryId)
+    public function buildFlashsaleListingItems(Listings $listing, ScheduleListingCommand $command)
     {
-        $user->load('listingsOnFacebook');
+        $selectedItems = $command->getSelectedItems();
+        $actor = $command->getActor();
+        $listedItems = [];
 
-        return $user->listingsOnFacebook->filter(function ($item) use ($facebookAlbumId, $inventoryId) {
-            return $item->fb_album_node_id == $facebookAlbumId && $item->inventory_id == $inventoryId;
-        })->first();
-    }
+        if (count($selectedItems) > 0) {
+            // Iterate over the facebook albums and figure out what items were assigned to each album
+            foreach ($selectedItems as $selectedItem) {
 
-    /**
-     * @param string|null $dateTime
-     *
-     * @return Carbon
-     */
-    public function normalizeScheduledDateTime(string $dateTime = null)
-    {
-        // If the dateTime is null, then we will schedule this posting for
-        // 5 minutes from now.
-        if (!$dateTime || is_null($dateTime)) {
-            $this->postingNow = true;
+                // Skip inventory items that do not belong to the user.
+                if (! $this->inventoryItemBelongsToUser($selectedItem['id'], $actor)) {
+                    continue;
+                }
 
-            return Carbon::now()->addMinutes(self::EMPTY_DATE_LOOKAHEAD_MINUTES);
+                $listingItem = new ListingItems;
+                $listingItem->listing_id = $listing->id;
+                $listingItem->owner_id = $actor->id;
+                $listingItem->inventory_id = $selectedItem['id'];
+                $listingItem->flashsale_id = $command->getFlashSaleId();
+
+                // Copy the type and status from the parent listing.
+                // Status may actually change and be different, below otherwise they start the same.
+                $listingItem->type = $listing->type;
+                $listingItem->status = $listing->status;
+                $listingItem->status_updated_at = $this->now;
+
+                // Flag duplicates as ignored listings.
+                // We do not actually "skip" them because we want to provide full transparency to the user.
+                if ($this->itemAlreadyInFlashsale($actor, $command->getFlashSaleId(), $selectedItem['id'])) {
+                    $listingItem->ignore = true;
+                    $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
+                }
+
+                $listedItems[] = $listingItem;
+            }
         }
 
-        return Carbon::createFromTimestamp(strtotime($dateTime));
+        return $listedItems;
     }
 
     /**
