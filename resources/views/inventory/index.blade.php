@@ -165,7 +165,7 @@
                                         <div class="form-group">
                                             <label>List on a specific date and time</label>
                                             <div class="input-group">
-                                                {{ Form::text('ends_at', null, ['class' => 'form-control', 'id' => 'datetimepicker2']) }}
+                                                {{ Form::text('options[ends_at]', null, ['class' => 'form-control', 'id' => 'datetimepicker2']) }}
                                                 <span class="input-group-btn">
                                                 <button
                                                     @click="clearDateTimeInput"
@@ -180,7 +180,7 @@
                                             <label>
                                                 <input
                                                         checked
-                                                        name="include_description_text"
+                                                        name="options[include_text]"
                                                         value="1"
                                                         type="checkbox"> Include Link in description
                                             </label>

@@ -16,6 +16,7 @@ use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Listings\ScheduleListingCommand;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
+use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 
 /**
@@ -121,16 +122,42 @@ class InventoryApiController extends AbstractApiController
     public function associate(Request $request)
     {
         $flashsaleId = Binput::get('flashsales', null);
-        $facebookAlbums = Binput::get('fb_albums', []);
+        $selectedItems = (array) Binput::get('items', []);
+
+        // Facebook data
+        $facebookAlbums = (array) Binput::get('fb_albums', []);
         $facebookGroup = Binput::get('fb_group', null);
         $facebookGroupId = $facebookGroup ? $facebookGroup['id'] : null;
-        $endsAt = Binput::get('ends_at', null);
-        $includeText = Binput::get('include_description_text', false);
+
+        // Facebook sales options
+        $options = (array) Binput::get('options', []);
+        $endsAt = array_get($options, 'ends_at', null);
+        $includeText = (bool) array_get($options, 'include_text', false);
 
         try {
+
+            // Lets assume we have a facebook listing.
+            $type = Listings::TYPE_FACEBOOK;
+
+            // You must have either a flashsaleid or facebookalbum
+            if (!$flashsaleId && count($facebookAlbums)== 0) {
+                throw new MissingMandatoryParametersException;
+            }
+
+
+            if ($flashsaleId) {
+                // If a flash sale is selected, it must have selected items.
+                if ($flashsaleId && count($selectedItems) == 0) {
+                    throw new MissingMandatoryParametersException;
+                }
+
+                // Because its a flash sale listing, change the type.
+                $type = Listings::TYPE_FLASHSALE;
+            }
+
             $command = new ScheduleListingCommand(
                 $this->getUser(),
-                null,
+                $type,
                 $includeText,
                 $endsAt,
                 $flashsaleId,
@@ -138,9 +165,11 @@ class InventoryApiController extends AbstractApiController
                 $facebookGroupId
             );
 
-            $result = $this->dispatchNow($command);
+            $this->dispatchNow($command);
 
-            return $this->setData($result)->respond();
+            return $this->setData(['msg' =>'Items scheduled successfully for queuing.'])->respond();
+        }catch (MissingMandatoryParametersException $e) {
+            return $this->setStatusCode(500)->setData(['msg' => 'You must select as least 1 item for listing.'])->respond();
         } catch (ListingConflictsWithExistingListingException $e) {
             return $this->setStatusCode(500)->setData(['msg' => 'The date and time block you selected conflicts with an existing listing. Please select a new block of time.'])->respond();
         } catch (Exception $e){

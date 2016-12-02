@@ -175,8 +175,10 @@ new Vue({
             let form = $el.closest('form');
             const selectedPostables = this.selected.postables;
             selectedPostables.fb_group = this.selected.fb_group;
-            selectedPostables.ends_at = form.find('[name="ends_at"]').val();
-            selectedPostables.include_description_text = form.find('[name="include_description_text"]').is(':checked') ? 1 : null;
+            selectedPostables.options = {};
+            selectedPostables.options.ends_at = form.find('[name="options[ends_at]"]').val();
+            selectedPostables.options.include_text = form.find('[name="options[include_text]"]').is(':checked') ? 1 : 0;
+            selectedPostables.items = this.selected.items;
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
@@ -187,7 +189,7 @@ new Vue({
                 this.resetSelectedPostables();
                 this.resetSelectedFBGroup();
                 this.resetSelectedFBAlbum();
-                notify({text: 'Items posted or queued successfully', type : 'success'});
+                notify({text: response.body.data.msg, type : 'success'});
             }, (response)=>{
                 notify({text: response.body.data.msg});
             }).finally(()=>{

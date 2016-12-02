@@ -7089,8 +7089,10 @@ new Vue({
             var form = $el.closest('form');
             var selectedPostables = this.selected.postables;
             selectedPostables.fb_group = this.selected.fb_group;
-            selectedPostables.ends_at = form.find('[name="ends_at"]').val();
-            selectedPostables.include_description_text = form.find('[name="include_description_text"]').is(':checked') ? 1 : null;
+            selectedPostables.options = {};
+            selectedPostables.options.ends_at = form.find('[name="options[ends_at]"]').val();
+            selectedPostables.options.include_text = form.find('[name="options[include_text]"]').is(':checked') ? 1 : 0;
+            selectedPostables.items = this.selected.items;
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
@@ -7101,7 +7103,7 @@ new Vue({
                 _this2.resetSelectedPostables();
                 _this2.resetSelectedFBGroup();
                 _this2.resetSelectedFBAlbum();
-                notify({ text: 'Items posted or queued successfully', type: 'success' });
+                notify({ text: response.body.data.msg, type: 'success' });
             }, function (response) {
                 notify({ text: response.body.data.msg });
             }).finally(function () {
@@ -7244,7 +7246,7 @@ exports.default = {
         // Holds postables that have been selected
         postables: {
             fb_albums: [],
-            flashsales: []
+            flashsales: null
         },
 
         // Holds sizes that have been selected
@@ -7349,7 +7351,7 @@ var mutations = {
     RESET_SELECTED_POSTABLES: function RESET_SELECTED_POSTABLES(state) {
         state.selected.postables = {
             fb_albums: [],
-            flashsales: []
+            flashsales: null
         };
     },
     SET_SUM: function SET_SUM(state, key, value) {

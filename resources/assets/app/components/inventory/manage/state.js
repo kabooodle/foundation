@@ -14,7 +14,7 @@ export default {
         // Holds postables that have been selected
         postables: {
             fb_albums: [],
-            flashsales: []
+            flashsales: null
         },
 
         // Holds sizes that have been selected
