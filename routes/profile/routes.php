@@ -17,13 +17,13 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'profile.notifications.update',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@postNotifications'
     ]);
-    Route::get('/profile/addresses', [
-        'as' => 'profile.addresses.edit',
-        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@getAddresses'
+    Route::get('/profile/shippingprofile', [
+        'as' => 'profile.shippingprofile.edit',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@getShippingProfile'
     ]);
-    Route::post('/profile/addresses', [
-        'as' => 'profile.addresses.update',
-        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@postAddresses'
+    Route::post('/profile/shippingprofile', [
+        'as' => 'profile.shippingprofile.update',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@postShippingProfile'
     ]);
     Route::get('/profile/socialprofiles', [
         'as' => 'profile.social.edit',

@@ -1,5 +1,11 @@
 @extends('layouts.full', ['contentId' => 'inventory'])
 
+@push('header-scripts')
+    <script>
+        KABOOODLE_APP.inventory_types = JSON.parse('{!! $inventoryTypes->toJson()   !!}');
+    </script>
+@endpush
+
 @section('body-content')
     @include('widgets._fileuploadscripts')
 
@@ -22,21 +28,27 @@
 
                 <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
                     <label for="type" class="col-sm-3 form-control-label">Type</label>
-                    <div class="col-sm-7">
+                    <div class="col-sm-5">
                         {{ Form::select('type_id', $inventoryTypes->pluck('name','id'), [], ['id' => 'inventory-type-el', 'class' => 'form-control']) }}
                     </div>
                 </div>
 
                 <div class="form-group row {{ $errors->has('categories') ? 'has-danger' : null }}">
                     <label for="type" class="col-sm-3 form-control-label">Style</label>
-                    <div class="col-sm-7">
+                    <div class="col-sm-5">
                         {{ Form::select('style_id', $inventoryTypes->first()->styles->pluck('name','id'), [], ['v-on:change' => 'styleChanged', 'id' => 'inventory-styles-el', 'class' => ' form-control ']) }}
+                    </div>
+                </div>
+                <div class="form-group row {{ $errors->has('wholesale_price_usd') ? 'has-danger' : null }}"  >
+                    <label for="wholesale_price_usd" class="col-sm-3 form-control-label">Wholesale Price in USD$</label>
+                    <div class="col-sm-3">
+                        {{ Form::number('wholesale_price_usd', 0.00, ['class' => 'form-control float', 'required', 'step' => 'any', 'placeholder' => '0.00', 'id' => 'inventory-wholesale-el']) }}
                     </div>
                 </div>
 
                 <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}"  >
                     <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
-                    <div class="col-sm-7">
+                    <div class="col-sm-3">
                         {{ Form::number('price_usd', 0.00, ['class' => 'form-control float', 'required', 'step' => 'any', 'placeholder' => '0.00']) }}
                     </div>
                 </div>
@@ -53,7 +65,6 @@
         <inventory-sizing
                 user_hash="{{ user()->public_hash }}"
                 s3_key_url="{{ route('api.files.sign') }}"
-                :inventory_types="{{ $inventoryTypes->toJson()  }}"
                 :size_containers.sync="size_containers"></inventory-sizing>
 
         <div class="form-group row m-t-md">
@@ -70,5 +81,6 @@
 @endsection
 
 @push('footer-scripts')
+
 <script src="/assets/js/inventory-create.js"></script>
 @endpush

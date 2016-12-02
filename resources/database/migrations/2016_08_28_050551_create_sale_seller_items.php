@@ -12,7 +12,7 @@ class CreateSaleSellerItems extends Migration
      */
     public function up()
     {
-        Schema::create(\Kabooodle\Models\FlashsaleItems::getTableName(), function (Blueprint $table) {
+        Schema::create('flashsale_items', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('flashsale_id')->unsigned();
             $table->integer('seller_id')->unsigned();
@@ -30,7 +30,7 @@ class CreateSaleSellerItems extends Migration
             $table->index(['flashsale_id', 'seller_id', 'inventory_id']);
         });
 
-        Schema::table(\Kabooodle\Models\FlashsaleItems::getTableName(), function (Blueprint $table) {
+        Schema::table('flashsale_items', function (Blueprint $table) {
             $table->foreign('flashsale_id')
                 ->references('id')->on('flashsales')
                 ->onDelete('cascade')

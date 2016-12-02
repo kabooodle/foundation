@@ -31,7 +31,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
         'PROCESSING',
         'IN TRANSIT',
         'DELIVERED',
-//        'RETURNED'
+        'RETURNED'
     ];
 
     /**
@@ -48,6 +48,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
      */
     protected $with = [
         'shipment',
+        'shippingHistory'
     ];
 
     /**
@@ -119,6 +120,14 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     public function recipient()
     {
         return $this->belongsTo(User::class, 'recipient_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function shippingHistory()
+    {
+        return $this->hasMany(ShippingTransactionHistory::class, 'shipping_transaction_id');
     }
 
     /**
@@ -213,5 +222,23 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     public function getShippingStatusHuman()
     {
         return $this->shipping_status_updated_on->format('m-d-Y h:ia');
+    }
+
+    /**
+     * @param $status
+     *
+     * @return string
+     */
+    public static function mapShippoStatiiToLocalStatii(string $status)
+    {
+        $mapped = [
+            'UNKNOWN' => 'PROCESSING',
+            'DELIVERED'  => 'DELIVERED',
+            'TRANSIT'  => 'TRANSIT',
+            'FAILURE'  => 'FAILURE',
+            'RETURNED'  => 'RETURNED',
+        ];
+
+        return $mapped[$status];
     }
 }

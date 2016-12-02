@@ -25,6 +25,10 @@ elixir(function (mix) {
 
     mix.browserify('app/components/sales/sales-management.js');
 
+    mix.browserify('app/components/claims/claims-index.js');
+
+    mix.browserify('app/components/comments/comments-index.js');
+
     // Vendor File
     mix.browserify('app/vendor.js');
 
@@ -48,7 +52,9 @@ elixir(function (mix) {
             'vendor/bootstrap-select/bootstrap-select2-theme.css',
             'vendor/bootstrap-select/bootstrap-select2.css',
             'vendor/emojionearea/emojionearea.css',
-            'vendor/bootstrap-slider/bootstrap-slider.css'
+            'vendor/bootstrap-slider/bootstrap-slider.css',
+            'vendor/tablesaw/tablesaw.css',
+            'vendor/perfectscroll/perfect-scrollbar.css'
         ], elixir.config.publicPath + 'css/merchant.css')
 
         .scripts([

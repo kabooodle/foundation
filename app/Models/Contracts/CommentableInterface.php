@@ -17,10 +17,10 @@ interface CommentableInterface
     /**
      * @return User
      */
-    public function getOwner();
+    public function getOwner(): User;
 
     /**
      * @return string
      */
-    public function getName() : string;
+    public function getName(): string;
 }

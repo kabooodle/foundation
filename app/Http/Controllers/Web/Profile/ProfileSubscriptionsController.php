@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\Credits\SubscribeUserToPlanCommand;
+use Kabooodle\Bus\Events\Profile\UserCancelledSubscriptionEvent;
 use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadySubscribedToPlanException;
 
 /**
@@ -80,6 +81,8 @@ class ProfileSubscriptionsController extends Controller
     {
         try {
             user()->subscription('main')->cancelNow();
+
+            event(new UserCancelledSubscriptionEvent(user(), 'main'));
 
             return Response::json(['onGracePeriod' => user()->subscription('main')->onGracePeriod(), 'onTrial' => user()->subscription('main')->onTrial()], 200);
         } catch (Exception $e) {

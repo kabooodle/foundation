@@ -10,7 +10,7 @@ new Vue({
             let url = event.target.dataset.route;
             let method = event.target.dataset.method;
 
-            $that.html($that.html() + spinny);
+            $that.html($that.html() + spinny());
 
             $that.closest('tr')
                 .addClass('disabled text-muted')

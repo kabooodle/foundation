@@ -64,7 +64,6 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'inventory_id' => 0,
         'claimed_by' => 0,
         'inventory_item_object_data' => '',
-        'price' => 0,
         'shoppable_id' => 0,
         'shoppable_type' => null,
         'accepted' => null,

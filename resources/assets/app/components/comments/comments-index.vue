@@ -1,0 +1,146 @@
+<template>
+    <div>
+        <div v-if="comments_ready">
+            <div class="box">
+                <div class="box-header clearfix">
+                    <h3 class="pull-left">Comments <span class="label grey-400 text-white" id="comments_count">{{ comments.length }}</span></h3>
+                    <!--{{&#45;&#45;<div class="pull-right">&#45;&#45;}}-->
+                    <!--{{&#45;&#45;<button id="comment_delete_all_btn" data-model-id="{{  modelId  }}" type="button" class="btn white btn-xs text-muted">Delete All</button>&#45;&#45;}}-->
+                    <!--{{&#45;&#45;</div>&#45;&#45;}}-->
+                </div>
+                <div class="box-body">
+                    <div class="streamline b-l m-l-md" id="comments_container">
+                        <div v-for="comment in comments">
+                            <div class="sl-item"
+                                 :data-id="comment.uuid"
+                                 :data-author-id="comment.author.public_hash"
+                                 :data-author="comment.author.name">
+                                <div class="sl-left">
+                                    <img src="https://unsplash.it/32/32/?random" class="img-circle">
+                                </div>
+                                <div class="sl-content">
+                                    <div class="sl-author">
+                                        <a href="#" class="_600">{{ comment.author.name }}</a>
+                                    </div>
+                                    <div v-html="comment.text"></div>
+                                    <div class="sl-footer sl-date clearfix">
+                                        <ul class="text-muted list-inline pull-left">
+                                            <li class="list-inline-item"><timestamp :timestamp="comment.created_at.date">{{ comment.created_at.date }}</timeago></li>
+                                            <li class="list-inline-item" v-if="userCanDelete(comment)"><button type="button" class="white btn btn-text btn-xs" @click="deleteComment(comment, $event)">Delete</button></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box m-a-0 b-a">
+                        <form id="comment_new_form" method="POST" :action="post_route" accept-charset="UTF-8" @submit="addNewComment">
+                            <textarea id="comment_new_text" v-model="newcomment" name="text_raw" data-toggle="emojione" class="form-control no-border" rows="3" placeholder="Type something..."></textarea>
+                            <div class="box-footer clearfix">
+                                <button id="comment_new_submit_btn" type="submit" class="btn primary pull-right btn-sm" :disabled="!newcomment" >Post Comment</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-else>
+            <div class="center-block text-center">
+                <img src="/assets/images/icons/ring-alt.gif">
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    import Timestamp from '../Timestamp.vue';
+
+    export default{
+        props:  ["post_route", "modelobject", "comments_url"],
+        data: function () {
+            return {
+                posting : false,
+                comments : [],
+                comments_ready: false,
+                newcomment: null,
+            }
+        },
+        created(){
+            const $scope = this;
+
+            this.$http.get(this.comments_url).then(function(response){
+                $scope.comments = response.body.data;
+                $scope.comments_ready = true;
+                setTimeout(function(){
+                    $scope.prepareCommentForm();
+                }, 0);
+            });
+        },
+        methods : {
+            prepareCommentForm : function(){
+                const $scope = this;
+                $(function(){
+                    $('[data-toggle="emojione"]').emojioneArea({
+                        pickerPosition: "bottom",
+                        filtersPosition: "bottom",
+                        autocomplete : true,
+                        saveEmojisAs: "shortname",
+                        events: {
+                            keyup: function (editor, event) {
+                                $scope.newcomment = this.getText();
+                            }
+                        }
+                    });
+                });
+            },
+            userCanDelete : function(comment){
+                return comment.author.id === this.modelobject.user.id || KABOOODLE_APP.currentUser.id === this.modelobject.user.id || comment.author.id === KABOOODLE_APP.currentUser.id
+            },
+            addNewComment : function(e){
+                e.preventDefault();
+                this.newcomment = null;
+                const $scope = this;
+
+                this.$http.post(this.post_route, {text_raw : $('#comment_new_text').val()}).then(function (response) {
+                    $scope.comments.push($.parseJSON(response.body.data.json));
+                    $scope.resetCommentForm();
+                }, function(){
+                    notify({'text' : 'An error occurred, please try again.'});
+                    $scope.resetCommentForm();
+                });
+            },
+            deleteComment: function(comment, e){
+                e.preventDefault();
+                if (!this.userCanDelete(comment)) {
+                    return false;
+                }
+                var $el = $(e.target);
+                var $scope = this;
+
+                if ($Bus.$emit('comment:deleting', comment) === false) {
+                    return false;
+                }
+
+                $el.addClass('disabled').prop('disabled',  true);
+                this.$http.delete(this.post_route + '/' + comment.id).then(function () {
+                    var index = $scope.comments.indexOf(comment);
+                    if(index > -1) {
+                        $scope.comments.splice(index, 1);
+                    }
+
+                    $Bus.$emit('comment:deleted', comment);
+                    $el.removeClass('disabled').prop('disabled',  false);
+                }, function(){
+                    notify({'text' : 'An error occurred, please try again.'});
+                });
+            },
+            resetCommentForm : function(){
+                this.prepareCommentForm();
+                $('[data-toggle="emojione"]').emojioneArea()[0].emojioneArea.setText('').trigger('change');
+                this.newcomment = null;
+            }
+        },
+        components: {
+            'timestamp' : Timestamp
+        }
+    }
+</script>

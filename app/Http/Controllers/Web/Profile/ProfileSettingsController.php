@@ -20,7 +20,7 @@ use Kabooodle\Models\MailingAddress;
 use Kabooodle\Models\ShippingAddress;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Commands\User\UpdateUserShippingAddressesCommand;
+use Kabooodle\Bus\Commands\User\UpdateUserShippingProfileCommand;
 use PragmaRX\Support\DateTime;
 
 /**
@@ -101,21 +101,23 @@ class ProfileSettingsController extends Controller
     /**
      * @return \Illuminate\Contracts\View\View
      */
-    public function getAddresses()
+    public function getShippingProfile()
     {
         $from = user()->shipFromAddress;
         $to = user()->shipToAddress;
 
-        return $this->view('profile.addresses')->with(compact('from', 'to'));
+        return $this->view('profile.shippingprofile')->with(compact('from', 'to'));
     }
 
     /**
      * @return \Illuminate\Contracts\View\View
      */
-    public function postAddresses(Request $request)
+    public function postShippingProfile(Request $request)
     {
         try {
             $this->validate($request, ShippingAddress::getRules());
+
+            $kabooodleAsDefaultShippingProvider = $request->has('kabooodle_as_shipping') ? true : false;
 
             $fromAddressArray = Binput::get('from');
             $toAddressArray = Binput::get('to');
@@ -142,15 +144,15 @@ class ProfileSettingsController extends Controller
                 array_get($toAddressArray, 'phone')
             );
 
-            $this->dispatchNow(new UpdateUserShippingAddressesCommand(user(), $from, $to));
+            $this->dispatchNow(new UpdateUserShippingProfileCommand(user(), $from, $to, $kabooodleAsDefaultShippingProvider));
 
-            Messages::success("Mailing addresses were successfully updated!");
+            Messages::success("Shipping profile was successfully updated!");
 
-            return $this->redirect()->route('profile.addresses.edit');
+            return $this->redirect()->route('profile.shippingprofile.edit');
         } catch (ValidationException $e) {
             Messages::error('Some fields require input!');
 
-            return $this->redirect(route('profile.addresses.edit'))
+            return $this->redirect(route('profile.shippingprofile.edit'))
                 ->withErrors($e->validator->getMessageBag());
         }
     }

@@ -10,54 +10,54 @@
 
         <ul class="nav navbar-nav pull-right nav-active-border">
             @if(user())
-                @if(user()->subscribed('main'))
+                @if(user()->subscribed('main') || (user()->getAvailableBalance() > 0))
                 <li class="nav-item ">
                     <a class="nav-link text-sm" href="{{ route('profile.credits.index') }}">${{ user()->getAvailableBalance() }} Credits</a>
                 </li>
                 @endif
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href=""><i class=
-                                                                          "material-icons"></i> <span class=
-                                                                                                       "label up warning hide"
-                                                                                                       id="notify_total"></span></a>
-                    <div class=
-                         "dropdown-menu pull-right w-xl no-bg no-border no-shadow">
-                        <div class="scrollable" style="max-height: 220px">
-                            <ul class="list-group m-a-0">
-                                <li class=
-                                    "list-group-item black lt box-shadow-z0 b">
-                            <span class="pull-left m-r"><img alt="..." class=
-                                "w-40 img-circle" src=
-                                                             "../assets/images/a0.jpg"></span> <span class=
-                                                                                                     "clear block">Use awesome <a
-                                                class="text-primary"
-                                                href="">animate.css</a><br>
-                            <small class="text-muted">10 minutes
-                            ago</small></span></li>
-                                <li class=
-                                    "list-group-item black lt box-shadow-z0 b">
-                            <span class="pull-left m-r"><img alt="..." class=
-                                "w-40 img-circle" src=
-                                                             "../assets/images/a1.jpg"></span> <span class=
-                                                                                                     "clear block"><a
-                                                class="text-primary" href=
-                                        "">Joe</a> Added you as friend<br>
-                            <small class="text-muted">2 hours
-                            ago</small></span></li>
-                                <li class=
-                                    "list-group-item dark-white text-color box-shadow-z0 b">
-                            <span class="pull-left m-r"><img alt="..." class=
-                                "w-40 img-circle" src=
-                                                             "https://placekitten.com/g/32/32"></span> <span class=
-                                                                                                             "clear block"><a
-                                                class="text-primary" href=
-                                        "">Danie</a> sent you a message<br>
-                            <small class="text-muted">1 day
-                            ago</small></span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
+                {{--<li class="nav-item dropdown">--}}
+                    {{--<a class="nav-link" data-toggle="dropdown" href=""><i class=--}}
+                                                                          {{--"material-icons"></i> <span class=--}}
+                                                                                                       {{--"label up warning hide"--}}
+                                                                                                       {{--id="notify_total"></span></a>--}}
+                    {{--<div class=--}}
+                         {{--"dropdown-menu pull-right w-xl no-bg no-border no-shadow">--}}
+                        {{--<div class="scrollable" style="max-height: 220px">--}}
+                            {{--<ul class="list-group m-a-0">--}}
+                                {{--<li class=--}}
+                                    {{--"list-group-item black lt box-shadow-z0 b">--}}
+                            {{--<span class="pull-left m-r"><img alt="..." class=--}}
+                                {{--"w-40 img-circle" src=--}}
+                                                             {{--"../assets/images/a0.jpg"></span> <span class=--}}
+                                                                                                     {{--"clear block">Use awesome <a--}}
+                                                {{--class="text-primary"--}}
+                                                {{--href="">animate.css</a><br>--}}
+                            {{--<small class="text-muted">10 minutes--}}
+                            {{--ago</small></span></li>--}}
+                                {{--<li class=--}}
+                                    {{--"list-group-item black lt box-shadow-z0 b">--}}
+                            {{--<span class="pull-left m-r"><img alt="..." class=--}}
+                                {{--"w-40 img-circle" src=--}}
+                                                             {{--"../assets/images/a1.jpg"></span> <span class=--}}
+                                                                                                     {{--"clear block"><a--}}
+                                                {{--class="text-primary" href=--}}
+                                        {{--"">Joe</a> Added you as friend<br>--}}
+                            {{--<small class="text-muted">2 hours--}}
+                            {{--ago</small></span></li>--}}
+                                {{--<li class=--}}
+                                    {{--"list-group-item dark-white text-color box-shadow-z0 b">--}}
+                            {{--<span class="pull-left m-r"><img alt="..." class=--}}
+                                {{--"w-40 img-circle" src=--}}
+                                                             {{--"https://placekitten.com/g/32/32"></span> <span class=--}}
+                                                                                                             {{--"clear block"><a--}}
+                                                {{--class="text-primary" href=--}}
+                                        {{--"">Danie</a> sent you a message<br>--}}
+                            {{--<small class="text-muted">1 day--}}
+                            {{--ago</small></span></li>--}}
+                            {{--</ul>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                {{--</li>--}}
                 <li class="nav-item dropdown dropdown-onhover">
                     <a class="nav-link dropdown-toggle clear" data-toggle=
                     "dropdown" href=""><span class="avatar_container _32 inline avatar-thumbnail"><img alt="..."
@@ -95,16 +95,19 @@
                                class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add Inventory</a>
                             <div class="divider"></div>
                             <a href="{{ route('shop.claims.index', [user()->username]) }}"
-                               class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Claims</a>
+                               class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Pending Claims</a>
 
                             <a  href="{{  route('sales.index') }}"
-                                class="dropdown-item {{ Request::is('sales*') ? 'active' : null }}"><span>Sales</span></a>
+                                class="dropdown-item {{ Request::is('sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
 
                             <div class="divider"></div>
                             <a href="{{  route('shipping.index') }}"
-                               class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipping</span></a>
+                               class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
                             <a href="{{  route('shipping.create') }}"
-                               class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Create Shipment</span></a>
+                               class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
+
+                            <div class="divider"></div>
+                            <a href="{{ route('listings.index') }}" class="dropdown-item {{ Request::is('listings') ? 'active' : null }}"><span>Listings</span></a>
                         </div>
                     </li>
                 @endif

@@ -20,8 +20,16 @@
 }
 
 .app-header .dropdown-menu {
+  font-size: .79rem;
   margin-top: 0;
   padding-top: 0;
+  .dropdown-item {
+    padding:3px 20px;
+    line-height: 1.4;
+  }
+  &> .divider {
+    margin:.35rem 0;
+  }
 }
 
 

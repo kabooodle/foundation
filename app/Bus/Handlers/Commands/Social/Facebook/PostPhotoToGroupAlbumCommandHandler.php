@@ -62,7 +62,7 @@ class PostPhotoToGroupAlbumCommandHandler
         } catch (Exception $e) {
             //TODO: We can get some of the queued job data from the command itself. So we can tell user when its failed.
 
-            dd($e);
+            dd($e->getMessage());
             // Identify a place to store max attempts for queue
             if ($command->attempts() == config('queue.max_retries')) {
                 $command->delete();

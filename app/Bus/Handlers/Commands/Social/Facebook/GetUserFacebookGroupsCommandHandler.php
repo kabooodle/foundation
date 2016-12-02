@@ -9,6 +9,7 @@ namespace Kabooodle\Bus\Handlers\Commands\Social\Facebook;
 use Kabooodle\Bus\Events\CacheMissEvent;
 use Facebook\Exceptions\FacebookSDKException;
 use Kabooodle\Bus\Commands\Social\Facebook\GetUserFacebookGroupsCommand;
+use Kabooodle\Models\User;
 
 /**
  * Class GetUserFacebookGroupsCommandHandler
@@ -25,7 +26,11 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
     public function handle(GetUserFacebookGroupsCommand $command)
     {
         $tag = self::TAG;
+        /** @var User $actor */
         $actor = $command->getActor();
+        if (! $actor->getFacebookUserId() || ! $actor->getFacebookUserToken()) {
+            return false;
+        }
 //        if ($this->cache->tags($tag)->has($actor->getFacebookUserId())) {
 //            return $this->cache->tags($tag)->get($actor->getFacebookUserId());
 //        }

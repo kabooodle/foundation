@@ -29,9 +29,14 @@
             </div>
         </div>
 
-        <div id="kabooodle_utilities">
+        @push('utilities')
             <loader></loader>
             <popout-overlay></popout-overlay>
+        @endpush
+
+
+        <div id="kabooodle_utilities">
+            @stack('utilities')
         </div>
 
         @include('layouts.footer._footer')

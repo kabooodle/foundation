@@ -43,6 +43,7 @@ class UpdateInventoryItemCommandHandler
             $item->initial_qty = $command->getQty();
             $item->price_usd = $command->getPrice();
             $item->uuid = $command->getUuid();
+            $item->wholesale_price_usd = $command->getWholesalePrice();
 
             // New array containing all images associated to the item
             // this includes existing and new.
@@ -75,6 +76,8 @@ class UpdateInventoryItemCommandHandler
                 $item->untag();
             }
 
+            // We may have new images, and existing images may have been deleted.
+            // Lets make sure all the images that need to be deleted, are deleted.
             $this->checkAndDeleteUnusedImages($item, $existingImages, $addedImages);
 
             $item->save();
@@ -102,13 +105,14 @@ class UpdateInventoryItemCommandHandler
      */
     public function normalizeImageData(&$array)
     {
-        $array['data'] = json_decode($array['data'], true);
+        $array = json_decode($array, true);
 
         // Extract keys from data as parent key/values
-        foreach ($array['data'] as $k => $v) {
+        foreach ($array as $k => $v) {
             $array[$k] = $v;
         }
         $array['qty'] = isset($array['qty']) ? $array['qty'] : 1;
+
         return $array;
     }
 }

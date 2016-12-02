@@ -24,7 +24,6 @@ use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
-use Kabooodle\Models\Contracts\ShoppableInterface;
 use Kabooodle\Presenters\Models\UserModelPresenter;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use SammyK\LaravelFacebookSdk\SyncableGraphNodeTrait;
@@ -43,7 +42,6 @@ class User extends BaseEloquentModel implements
     CanResetPasswordContract,
     JWTSubject,
     LikeableInterface,
-    ShoppableInterface,
     Revisionable
 {
     use AlgoliaEloquentTrait,
@@ -256,9 +254,17 @@ class User extends BaseEloquentModel implements
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function facebookItems()
+    public function listingsOnFacebook()
     {
-        return $this->hasMany(FacebookItems::class, 'seller_id');
+        return $this->listings()->where('type', Listings::TYPE_FACEBOOK);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function listings()
+    {
+        return $this->hasMany(Listings::class, 'owner_id');
     }
 
     /**
@@ -382,6 +388,14 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return string
+     */
+    public function getNameOfResource(): string
+    {
+        return 'Merchant';
+    }
+
+    /**
      * @return mixed
      */
     private static function _createHash()
@@ -411,7 +425,18 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class)->where('inventory.user_id', $this->id)->with(['shipments', 'shipments.transaction']);
+        return $this->hasManyThrough(Claims::class,  Inventory::class)
+            ->where('inventory.user_id', $this->id)
+            ->with(['shipments', 'shipments.transaction']);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function pendingClaimsOnMyInventory()
+    {
+        return $this->claimsOnMyInventory()
+            ->whereNull('accepted');
     }
 
     /**

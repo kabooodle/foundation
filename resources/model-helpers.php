@@ -1,4 +1,27 @@
 <?php
+
+if (! function_exists('shippingStatii')) {
+    /**
+     * @return array
+     */
+    function shippingStatii()
+    {
+        return array_combine(\Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII);
+    }
+}
+
+if (! function_exists('salesStatii')) {
+    /**
+     * @return array
+     */
+    function salesStatii()
+    {
+        $data = ['PENDING LABEL CREATION', 'EXTERNALLY SHIPPED'];
+
+        return array_combine($data, $data) + shippingStatii();
+    }
+}
+
 if (! function_exists('categoriesInUse')) {
     /**
      * @return mixed

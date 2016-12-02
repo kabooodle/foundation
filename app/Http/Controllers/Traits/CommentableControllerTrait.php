@@ -13,6 +13,7 @@ use Kabooodle\Models\Comments;
 use Kabooodle\Models\Contracts\CommentableInterface;
 use Kabooodle\Bus\Commands\Comments\AddCommentCommand;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Kabooodle\Models\User;
 
 /**
  * Class CommentableControllerTrait
@@ -23,14 +24,16 @@ trait CommentableControllerTrait
     use DispatchesJobs, LinkifyableTrait, ValidatesRequests;
 
     /**
+     * @param User                 $actor
      * @param CommentableInterface $commentable
+     * @param                      $commentText
      *
      * @return array
      */
-    public function handleStoreComment(CommentableInterface $commentable, $commentText)
+    public function handleStoreComment(User $actor, CommentableInterface $commentable, $commentText)
     {
         /** @var Comments $comment */
-        $comment = $this->dispatchNow(new AddCommentCommand(user(), $commentable, $commentText));
+        $comment = $this->dispatchNow(new AddCommentCommand($actor, $commentable, $commentText));
 
         // Gott refresh this relationship.
         $commentable->load('comments');
@@ -44,14 +47,15 @@ trait CommentableControllerTrait
     }
 
     /**
+     * @param User                 $actor
      * @param CommentableInterface $commentable
      * @param Comments             $comment
      *
      * @return array
      */
-    public function handleDeleteComment(CommentableInterface $commentable, Comments $comment)
+    public function handleDeleteComment(User $actor, CommentableInterface $commentable, Comments $comment)
     {
-        $this->dispatchNow(new DeleteCommentCommand(user(), $commentable, $comment));
+        $this->dispatchNow(new DeleteCommentCommand($actor, $commentable, $comment));
 
         // Gott refresh this relationship.
         $commentable->load('comments');

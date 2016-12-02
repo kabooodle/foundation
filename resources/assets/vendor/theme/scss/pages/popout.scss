@@ -1,3 +1,5 @@
+$backgroundColor  : rgba(43, 41, 56, .95);
+
 
 .reveal {
   right: 0 !important;;
@@ -17,24 +19,29 @@
   right: -460px;
   padding: 0;
   list-style: none;
-  background-color: rgba(43, 41, 56, .95);
+  background-color:$backgroundColor;
   z-index: 2000;
 }
 
 .navbar-side-inner {
-  /*height: 100%;*/
-  /*width: 100%;*/
-  /*margin-bottom: 60px;*/
-  /*overflow-y: scroll;*/
+  position: relative;
+  height: 100%;
+  width: 100%;
+  padding-bottom: 110px !important;
+  overflow: hidden;
+  //&:hover {
+  //  overflow-y: scroll;
+  //}
 }
 
 .savesales {
   position: fixed;
-  bottom: 100px;
+  bottom: 64px;
   left: 0;
   padding: 10px;
   margin: 0;
   width: 100%;
+  background-color:$backgroundColor;
 }
 
 tr.highlight_row td {
@@ -164,4 +171,10 @@ span.multiselect-native-select select {
 .form-inline .multiselect-container li a label.radio input[type=radio] {
   margin-left: -20px;
   margin-right: 0
+}
+
+@media only screen and (max-width : 767px){
+  .navbar-side {
+    width:100%;
+  }
 }

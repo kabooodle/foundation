@@ -93,18 +93,22 @@
    import FileUpload from '../FileUpload.vue';
 
     export default{
-        props: ["size_containers", "inventory_types", "user_hash", "s3_key_url"],
+        props: ["size_containers", "user_hash", "s3_key_url"],
         data: function () {
             return {
                 size : {images: [{}],id : null},
                 size_container : null,
-                sizings: []
+                sizings: [],
+                inventory_types: KABOOODLE_APP.inventory_types
             }
         },
-        events : {
-            'size-container:added' : function(sizeContainerData) {
-                var that = this;
-                setTimeout(function(){
+        created : function () {
+            console.log('Size component ready');
+
+            var scope = this;
+
+            $Bus.$on('size-container:added', function(sizeContainerData) {
+                scope.$nextTick(function(){
                     $('#categories_input_'+sizeContainerData.id).selectize({
                         delimiter: ',',
                         persist: false,
@@ -116,20 +120,16 @@
                             }
                         }
                     });
+                });
+            });
 
-                }, 100);
-            }
-        },
-        created : function () {
-            console.log('Size component ready');
-
-            var scope = this;
             $Bus.$on('style-changed', function(id) {
                 var styleSizes = scope.getStyleSizes(id);
                 if (styleSizes.length > 0) {
                     scope.setSizings(styleSizes);
                 }
             });
+
             $Bus.$on('add-size', function() {
                 scope.addSizeContainer();
             });
@@ -141,6 +141,7 @@
                     $wrapperEl.find('input:first-of-type').addClass('disabled').prop('disabled', true);
                 }
             });
+
             $Bus.$on('image:uploaded', function(el, image) {
                 image.json = JSON.stringify(image);
                 var sizeEl = el.closest('.sizing_container'),
@@ -155,7 +156,7 @@
                     $('#size_'+container.id).find("input.image_qty_btn").TouchSpin({
                         min: 1
                     });
-                }, 0);
+                },0);
             });
 
             this.addSizeContainer();
@@ -180,7 +181,7 @@
                 var index = size_container.images.indexOf(img);
                 if (index != -1) {
                     size_container.images.splice(index, 1);
-                    that.$emit('image:deleted', size_container, img);
+                    $Bus.$emit('image:deleted', size_container, img);
                 }
             },
             createSizeObject : function() {
@@ -191,7 +192,7 @@
             addSizeContainer : function() {
                 var sizeContainerData = this.createSizeObject();
                 this.size_containers.push(sizeContainerData);
-                this.$emit('size-container:added', sizeContainerData);
+                $Bus.$emit('size-container:added', sizeContainerData);
             },
             deleteSizeContainer : function(size) {
                 var that = this;
@@ -200,7 +201,7 @@
                     if (index != -1) {
                         that.size_containers.splice(index, 1);
                     }
-                    that.$emit('size-container:removed', size);
+                    $Bus.$emit('size-container:removed', size);
                     $noty.close();
                 });
             },
@@ -214,7 +215,8 @@
                     $categoryWrapperEl.show();
                     $categoryWrapperEl.find('input:first-of-type').prop('disabled', false).removeClass('disabled');
                 }
-            }
+            },
+
         },
         components: {
             'image-attach' : FileUpload

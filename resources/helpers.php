@@ -1,27 +1,98 @@
 <?php
+use Carbon\Carbon;
 
-if (! function_exists('shippingStatii')) {
+if (! function_exists('humanizeDateTime')) {
     /**
-     * @return array
+     * @param $value
+     *
+     * @return string
      */
-    function shippingStatii()
+    function humanizeDateTime($value)
     {
-        return array_combine(\Kabooodle\Models\ShippingTransactions::SHIPPING_STATII, \Kabooodle\Models\ShippingTransactions::SHIPPING_STATII);
+        if (! $value instanceof Carbon) {
+            $value = Carbon::createFromTimestamp(strtotime($value));
+        }
+
+        return $value->format('m-d-Y h:ia');
     }
 }
 
-if (! function_exists('salesStatii')) {
+if (! function_exists('humanizeDate')) {
     /**
-     * @return array
+     * @param $value
+     *
+     * @return string
      */
-    function salesStatii()
+    function humanizeDate($value)
     {
-        $data = ['PENDING LABEL CREATION', 'EXTERNALLY SHIPPED'];
+        if (! $value instanceof Carbon) {
+            $value = Carbon::createFromTimestamp(strtotime($value));
+        }
 
-        return array_combine($data, $data) + shippingStatii();
+        return $value->format('m-d-Y');
     }
 }
 
+if (! function_exists('listingStatusHtml')) {
+    /**
+     * @param $status
+     *
+     * @return string
+     */
+    function listingStatusHtml($status)
+    {
+        switch ($status) {
+            case 'queued':
+                $class = 'blue-500';
+                $text = 'Queued';
+                break;
+            case 'partial':
+                $class = 'warning';
+                $text = 'Partially Listed';
+                break;
+            case 'queued_delete':
+                $class = 'warning';
+                $text = 'Queued Delete';
+                break;
+            case 'ignored_duplicate':
+                $class = 'warn';
+                $text = 'Ignored Duplicate';
+                break;
+            case 'deleted':
+                $class = 'brown-800';
+                $text = 'Deleted';
+                break;
+            case 'completed':
+            case 'success':
+                $class = 'green-500';
+                $text = 'Completed';
+                break;
+            case 'scheduled':
+            default:
+                $class = 'deep-purple-500';
+                $text = 'Scheduled';
+                break;
+        }
+
+        return '<span class="w-8 rounded '.$class.'" style="margin-right: 2px"></span> <span class="text-'.$class.'" >'.$text.'</span>';
+    }
+}
+
+if (! function_exists('spinnyAppendedToEl')) {
+    /**
+     * @param int $size
+     *
+     * @return string
+     */
+    function spinnyAppendedToEl($size = 25)
+    {
+        return ' <img 
+        src="/assets/images/icons/ring-alt.gif" 
+        height="'.$size.'" 
+        style="position:absolute; margin-top:-'.($size/2+5).'px; right:-'.$size.'px; top: 50%;" 
+        class="spinny">';
+    }
+}
 
 if (! function_exists('dispatchNow')) {
     /**
@@ -32,10 +103,14 @@ if (! function_exists('dispatchNow')) {
      */
     function dispatchNow($job)
     {
-        return app(\Illuminate\Contracts\Bus\Dispatcher::class)->dispatchNow($job);
+        /** @var \Illuminate\Contracts\Bus\Dispatcher::class $dispatcher */
+        static $dispatcher;
+        if (!$dispatcher) {
+            $dispatcher = app(\Illuminate\Contracts\Bus\Dispatcher::class);
+        }
+        return $dispatcher->dispatchNow($job);
     }
 }
-
 
 if (!function_exists('staticAsset')) {
     /**
@@ -54,6 +129,10 @@ if (!function_exists('staticAsset')) {
 }
 
 if (!function_exists('getMimeContentType')) {
+    /**
+     * @param $filename
+     * @return mixed|string
+     */
     function getMimeContentType($filename)
     {
         $mimeTypes = [

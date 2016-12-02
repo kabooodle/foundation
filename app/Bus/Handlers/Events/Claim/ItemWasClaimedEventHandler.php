@@ -54,31 +54,31 @@ class ItemWasClaimedEventHandler
 
         // If a claimed item was claimed via facebook, we need to handle any business logic
         // Currently, there is only one rule: Create a FB request, adding a "Sold" comment to photo.
-        if ($event->getclaim()->shoppable_type == FacebookItems::class) {
-            try {
-                $this->handleFacebookCommentToPhoto($shoppable->facebook_post_id, ['message' => 'Sold'], $seller->getFacebookUserToken());
-            } catch (Exception $e) {
-                // event()
-            }
-        }
+//        if ($event->getclaim()->shoppable_type == FacebookItems::class) {
+//            try {
+//                $this->handleFacebookCommentToPhoto($shoppable->facebook_post_id, ['message' => 'Sold'], $seller->getFacebookUserToken());
+//            } catch (Exception $e) {
+//                // event()
+//            }
+//        }
 
         // 2nd business logic requires that we count the number of facebook albums this item has been posted to
         // and if the item is out of stock, we need to post claimed to all the remaining sales as well.
-        if ($event->getclaim()->inventoryItem->facebooksales->count() > 0 && $availableQty == 0) {
-            \Log::info('Posting sold comment to multiple fb items!');
-            try {
-                foreach ($event->getclaim()->inventoryItem->facebooksales as $facebookSaleItem) {
-                    // Ignore the facebook photo we've already posted to.
-                    if ($facebookSaleItem->facebook_post_id == $shoppable->facebook_post_id) {
-                        continue;
-                    }
-                    // if remaining qty is 0 and we have facebook sales, post comment to the sales
-                    $this->handleFacebookCommentToPhoto($facebookSaleItem->facebook_post_id,  ['message' => 'Sold'], $seller->getFacebookUserToken());
-                }
-            } catch (Exception $e) {
-                // event()
-            }
-        }
+//        if ($event->getclaim()->inventoryItem->facebooksales->count() > 0 && $availableQty == 0) {
+//            \Log::info('Posting sold comment to multiple fb items!');
+//            try {
+//                foreach ($event->getclaim()->inventoryItem->facebooksales as $facebookSaleItem) {
+//                    // Ignore the facebook photo we've already posted to.
+//                    if ($facebookSaleItem->facebook_post_id == $shoppable->facebook_post_id) {
+//                        continue;
+//                    }
+//                    // if remaining qty is 0 and we have facebook sales, post comment to the sales
+//                    $this->handleFacebookCommentToPhoto($facebookSaleItem->facebook_post_id,  ['message' => 'Sold'], $seller->getFacebookUserToken());
+//                }
+//            } catch (Exception $e) {
+//                // event()
+//            }
+//        }
 
         $sellerEmail = $seller->email;
         $claimerEmail = $claimedBy->email;

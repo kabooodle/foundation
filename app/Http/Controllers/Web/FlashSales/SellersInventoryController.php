@@ -13,6 +13,7 @@ use Response;
 use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Models\FlashSales;
+use Kabooodle\Models\FlashsaleItems;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
@@ -66,11 +67,13 @@ class SellersInventoryController extends Controller
     public function show($saleIdAndName, $itemIdAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($saleIdAndName);
-        $item = FlashSales::find($decryptedId);
-
-        $inventory = $item->inventoryItems->find($this->obfuscateFromURIString($itemIdAndName));
+        $shoppable = FlashsaleItems::where('flashsale_id', $decryptedId)
+            ->where('inventory_id', $this->obfuscateFromURIString($itemIdAndName))
+            ->first();
+        $inventory = $shoppable->inventoryItem;
+        $item = $shoppable->flashsale;
         if ($item) {
-            return $this->view('flashsales.shop.show')->with(compact('inventory', 'item'));
+            return $this->view('flashsales.shop.show')->with(compact('shoppable', 'inventory', 'item'));
         }
 
         return redirect()->route('flashsales.shop.index', [$saleIdAndName]);

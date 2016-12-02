@@ -7,10 +7,10 @@
 <a href="{{ route('profile.social.edit') }}" class="nav-link {{ Request::is('profile/socialprofiles') ? 'active' : null }}">
     Social Profiles
 </a>
-<a href="{{ route('profile.addresses.edit') }}" class="nav-link {{ Request::is('profile/addresses') ? 'active' : null }}">
+<a href="{{ route('profile.shippingprofile.edit') }}" class="nav-link {{ Request::is('profile/shippingprofile') ? 'active' : null }}">
     Shipping Profile
 </a>
-@if(user()->subscribed('main'))
+@if(user()->subscribed('main') || (user()->getAvailableBalance() > 0))
 <a href="{{ route('profile.credits.index') }}" class="nav-link {{ Request::is('profile/credits') ? 'active' : null }}">
     Credits
 </a>

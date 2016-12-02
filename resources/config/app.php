@@ -148,6 +148,10 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+
+        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
+        Kabooodle\Foundation\Providers\AppServiceProvider::class,
+
         Aws\Laravel\AwsServiceProvider::class,
 
         Barryvdh\Cors\ServiceProvider::class,
@@ -156,7 +160,7 @@ return [
 //        Barryvdh\Debugbar\ServiceProvider::class,
 
 
-        Kabooodle\Foundation\Providers\AppServiceProvider::class,
+
         Kabooodle\Foundation\Providers\AuthServiceProvider::class,
         Kabooodle\Foundation\Providers\EventServiceProvider::class,
         Kabooodle\Foundation\Providers\RouteServiceProvider::class,
@@ -174,10 +178,11 @@ return [
         Laravel\Cashier\CashierServiceProvider::class,
         Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
 
-        PragmaRX\Tracker\Vendor\Laravel\ServiceProvider::class,
         Spatie\Fractal\FractalServiceProvider::class,
-        Yajra\Datatables\DatatablesServiceProvider::class,
+//        Yajra\Datatables\DatatablesServiceProvider::class,
         ZackKitzmiller\Laravel5\TinyServiceProvider::class,
+        Ipunkt\LaravelAnalytics\AnalyticsServiceProvider::class,
+        Spatie\Analytics\AnalyticsServiceProvider::class,
     ],
 
     /*
@@ -237,9 +242,12 @@ return [
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
 
-        'Tracker' => PragmaRX\Tracker\Vendor\Laravel\Facade::class,
         'Binput' => GrahamCampbell\Binput\Facades\Binput::class,
         'Security' => GrahamCampbell\Security\Facades\Security::class,
         'Facebook' => Kabooodle\Services\Social\Facebook\FacebookSdkFacade::class,
-    ],
+        'Analytics' => Ipunkt\LaravelAnalytics\AnalyticsFacade::class,
+        'AnalyticsReader' => Spatie\Analytics\AnalyticsFacade::class,
+        'Bugsnag' => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+     ],
+
 ];

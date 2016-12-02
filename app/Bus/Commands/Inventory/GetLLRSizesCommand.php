@@ -11,5 +11,4 @@ namespace Kabooodle\Bus\Commands\Inventory;
  */
 final class GetLLRSizesCommand
 {
-
 }

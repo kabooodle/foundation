@@ -39,8 +39,9 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @var array
      */
-    protected $appents = [
-        'name_with_variant'
+    protected $appends = [
+        'name_with_variant',
+        'name_uuid'
     ];
 
     /**
@@ -82,7 +83,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'barcode' => null,
         'initial_qty' => 0,
         'date_received' => '',
-        'price_usd' => 0.0
+        'price_usd' => 0.0,
+        'wholesale_price_usd' => 0.0,
     ];
 
     /**
@@ -98,7 +100,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'description' => 'string',
         'barcode' => 'string',
         'date_received' => 'date',
-        'price_usd' => 'double'
+        'price_usd' => 'double',
+        'wholesale_price_usd' => 'double'
     ];
 
     /**
@@ -111,6 +114,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_type_styles_id',
         'inventory_sizes_id',
         'price_usd',
+        'wholesale_price_usd',
         'name',
         'description',
         'barcode',
@@ -133,6 +137,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
             'type_id' => 'required|in:188432',
             'style_id' => 'required|exists:inventory_type_styles,id',
             'price_usd' => 'required|min:0|digits_between:0,100000000|numeric',
+            'wholesale_price_usd' => 'min:0|digits_between:0,100000000|numeric',
             'sizings' => 'required|array',
             'sizings.*.size_id' => 'required|exists:inventory_sizes,id',
             'sizings.*.images' => 'required|array',
@@ -158,6 +163,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
 
             return $data;
         }, $rules, array_keys($rules));
+
         return $data;
     }
 
@@ -167,11 +173,15 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
 
         self::creating(function($model){
             $model->date_received = Carbon::now();
-
         });
 
         self::saving(function($model){
-            $model->uuid = $model->obfuscateIdToString($model->id);
+            if(! $model->wholesale_price_usd || is_null($model->wholesale_price_usd)) {
+                $model->wholesale_price_usd = $this->style->wholesale_price_usd;
+            }
+            if(!$model->uuid) {
+                $model->uuid = $model->obfuscateIdToString($model->id);
+            }
         });
     }
 
@@ -186,9 +196,9 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return User
      */
-    public function getOwner()
+    public function getOwner(): User
     {
         return $this->owner;
     }
@@ -250,21 +260,19 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return mixed
      */
     public function flashsales()
     {
-        return $this->belongsToMany(FlashSales::class, 'flashsale_items', 'inventory_id', 'flashsale_id')->withTimestamps()->withPivot(['id as pivot_id']);
+        return $this->hasMany(ListingItems::class, 'inventory_id')->where('type', Listings::TYPE_FLASHSALE);
     }
 
     /**
-     * TODO: Identify a better relationship for flash sales and facebook sales.
-     *
      * @return array|static[]
      */
     public function facebooksales()
     {
-        return $this->hasMany(FacebookItems::class, 'inventory_id');
+        return $this->hasMany(ListingItems::class, 'inventory_id')->where('type', Listings::TYPE_FACEBOOK);
     }
 
     /**
@@ -374,11 +382,28 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
+     * @return string
+     */
+    public function getNameUuidAttribute() : string
+    {
+        return $this->getUUID();
+    }
+
+    /**
      * @return mixed
      */
     public function getCategoriesAttribute()
     {
         return $this->tags;
+    }
+
+    /**
+     * @param $value
+     * @return float
+     */
+    public function getWholesalePriceUsdAttribute($value)
+    {
+        return $value ? $value : $this->style->wholesale_price_usd;
     }
 
     /**

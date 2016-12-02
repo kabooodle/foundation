@@ -43,7 +43,8 @@ class CreateNewShippingTransactionCommandHandler
         /** @var RatesObject $rate */
         $rate = $shipment->getRateId($rateUUID);
 
-        return DB::transaction(function () use ($rate, $shipment, $shipmentUUID, $user, $rateUUID, $claimer) {
+        /** @var ShippingTransactions $transaction */
+        $transaction = DB::transaction(function () use ($rate, $shipment, $shipmentUUID, $user, $rateUUID, $claimer) {
             $shippr = new ShipprService;
 
             // Debit a shipping transaction with shippo.
@@ -84,10 +85,12 @@ class CreateNewShippingTransactionCommandHandler
             $st->messages = $transaction['messages'];
             $st->save();
 
-            event(new ShippingTransactionWasCreatedEvent($st));
-
             return $st;
         });
+
+        event(new ShippingTransactionWasCreatedEvent($transaction));
+
+        return $transaction;
     }
 
     /**

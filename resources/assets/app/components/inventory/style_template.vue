@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!--<div v-if="!state.actions.refreshing_data">-->
             <div class="box style-container" v-for="style in inventory_items">
                 <div class="box-header clearfix">
                     <div class="row">
@@ -53,32 +52,37 @@
                             <div class="col-sm-10">
                                 <div class="item-box"  v-if="opened_drawers.indexOf(style.id+'_'+size.id) > -1" >
                                     <div class="row row-horizon">
-                                        <div v-for="item in size.items" class="col-sm-2 btn-group-prpl">
-                                            <button
-                                                    v-bind:aria-pressed="(selectedItems.indexOf(item) > -1 ? ' true ' : null )"
-                                                    @click="( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )"
-                                                    v-bind:class="[ selectedItems.indexOf(item) > -1 ? 'active' : '' ] "
-                                                    style="border-radius: .25rem;"
-                                                    type="button"
-                                                    class="btn white btn-xs">
-                                                        <span class="item block">
-                                                            <img v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 64px; height: 64px;">
-                                                        </span>
-                                                <span class="p-a-o text-sm clearfix block">
-                                                            Qty: <span class="text-muted">{{ item.initial_qty }}</span>  <span class="text-muted">${{ item.price_usd }}</span>
-                                                        </span>
-                                            </button>
-                                            <button
-                                                    @click="editItemButtonClicked(item, $event)"
-                                                    type="button"
-                                                    class="btn btn-xs white"
-                                            >Edit</button>
-                                            <a
-                                                    target="_blank"
-                                                    v-bind:href="this.window.location.href+'/'+item.uuid"
-                                                    class="btn btn-xs white"
-                                            >View</a>
-                                        </div>
+                                        <template v-for="item in size.items">
+                                            <div class="col-sm-2 btn-group-prpl" style="width:122px !important;">
+                                                <button
+                                                        v-bind:aria-pressed="(selectedItems.indexOf(item) > -1 ? ' true ' : null )"
+                                                        @click="( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )"
+                                                        v-bind:class="[ selectedItems.indexOf(item) > -1 ? 'active' : '' ] "
+                                                        style="border-radius: .25rem;"
+                                                        type="button"
+                                                        class="btn white btn-xs">
+                                                            <span class="item block">
+                                                                <img v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 80px; height: 80px;">
+                                                            </span>
+                                                    <span class="p-a-o text-sm clearfix block">
+                                                        <span class="pull-left">Qty: <span class="text-muted">{{ item.initial_qty }}</span></span>
+                                                            <span class="text-muted pull-right">${{ item.price_usd }}</span>
+                                                            </span>
+                                                </button>
+                                                <div class="clearfix" style="margin-top: 5px;">
+                                                <button
+                                                        @click="editItemButtonClicked(item, $event)"
+                                                        type="button"
+                                                        class="btn btn-xs pull-left white"
+                                                >Edit</button>
+                                                <a
+                                                        target="_blank"
+                                                        v-bind:href="this.window.location.href+'/'+item.name_uuid"
+                                                        class="btn btn-xs pull-right white"
+                                                >View</a>
+                                                </div>
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
@@ -87,30 +91,34 @@
                 </div>
             </div>
         </div>
-    <!--</div>-->
 </template>
+<style>
+    div.col-sm-2.btn-group-prpl {
+        width:122px !important;
+    }
+</style>
 <script>
     import computed from './manage/computed';
 
     export default{
-        data: function() {
+        data(){
             return {
                 opened_drawers : [],
                 active_http_requests : []
             }
         },
         computed,
-        created : function() {
+        created(){
             const scope = this;
 
-            $Bus.$on('facebook-group:changed', function(){
-                scope.clearSelectedItems();
+            $Bus.$on('facebook-group:changed', ()=>{
+                this.clearSelectedItems();
                 $('.facebook_album_radio').prop('checked', false);
             });
 
-            $Bus.$on('inventory:select-all', function(){
-                $.each(scope.inventory_items, function(){
-                    $.each(this.sizes, function(){
+            $Bus.$on('inventory:select-all', ()=>{
+                $.each(this.inventory_items, function(){
+                    $.each(this.sizes,function(){
                         $.each(this.items, function(){
                             scope.addSizeToSelected(this);
                         });
@@ -118,80 +126,118 @@
                 });
             });
 
-            $Bus.$on('facebook-album:changed', function(){
-                scope.clearSelectedItems();
+            $Bus.$on('facebook-album:changed', ()=>{
+                this.clearSelectedItems();
                 // We want to open the drawers where items are selected.
                 let selected_items = scope.selected.items;
                 if(selected_items && selected_items.length > 0){
-                    _.each(selected_items, function(item){
+                    _.each(selected_items, (item)=>{
                         scope.openSizeDrawer(item.style_id, item.size_id);
                     });
                 }
             });
 
-            $Bus.$on('inventory:request-reset', function(){
+            // Each time an inventory is updated using ajax, we want to update the item's state.
+            // Once the item state is updated, everywhere referencing the state will update seamlessly.
+            $Bus.$on('inventory-item:updated', (item, updatedItem)=>{
+                let styleIndex = -1;
+                let sizeIndex = -1;
+                let itemIndex = -1;
+
+                // Because we want to update state and not a local variable, we need the full
+                // "path" to the state so we can set it.  This is about 3 indexes deep so we have to
+                // find each ones index individually :o
+
+                // find the style index.
+                _.each(this.inventory_items, (style,index)=>{
+                    if(style.id == item.style.id) {
+                        styleIndex = index;
+                    }
+                });
+
+                // find the size index.
+                _.each(this.inventory_items[styleIndex].sizes, (size, index)=>{
+                    if(size.id == item.style_size.id){
+                        sizeIndex = index;
+                    }
+                });
+
+                // find the item index/
+                _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, (inventoryItem, index)=>{
+                    if(inventoryItem.id == item.id) {
+                        itemIndex = index;
+                    }
+                });
+
+                // update the state.
+                this.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
+                this.selected.items = [];
+                $Bus.$emit('popout-overlay:close');
+            });
+
+            $Bus.$on('inventory:request-reset', ()=>{
 
             });
 
-            $Bus.$on('popout-overlay:closed', function(){
+            $Bus.$on('popout-overlay:closed', ()=>{
+                // Cancel all pending ajax requests when we close the popout.
                 if (scope.active_http_requests.length > 0) {
-                    $.each(scope.active_http_requests, function(){
+                    $.each(scope.active_http_requests, ()=>{
                         this.abort();
                     });
                 }
             });
         },
         methods : {
-            selectAllOfStyle : function(style, event){
+            selectAllOfStyle(style, event){
                 const scope = this;
-                $.each(style.sizes, function(){
+                $.each(style.sizes,function(){
                     $.each(this.items, function(){
                         scope.addSizeToSelected(this);
                     })
                 });
             },
-            clearSelectedItems : function(){
+            clearSelectedItems(){
                 this.opened_drawers = [];
             },
-            editItemButtonClicked : function(item, event) {
+            editItemButtonClicked(item, event){
                 $Bus.$emit('popout-overlay:request-open');
-                const scope = this;
 
-                this.$http.get(window.location.href+'/'+item.uuid+'/edit', {
+                this.$http.get(window.location.href+'/'+item.name_uuid+'/edit', {
                     async: false,
                     before(request) {
-
+                        // Before each ajax request, abort the previous request
+                        // and add this request to an array of requests for reference.
                         $Bus.$emit('popout-overlay:change-prompt', false);
-
                         if (this.previousRequest) {
                             this.previousRequest.abort();
                         }
                         this.previousRequest = request;
-                        scope.active_http_requests.push(request);
+                        this.active_http_requests.push(request);
                     }
-                }).then(function(response){
-                    setTimeout(function(){
+                }).then((response)=>{
+                    setTimeout(()=>{
                         $Bus.$emit('popout-overlay:change-content', response.body);
                     },0);
-                }, function(response){
+                }, (response)=>{
                     $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
                 })
-                .finally(function(){
-                    scope.active_http_requests = [];
+                .finally(()=>{
+                    this.active_http_requests = [];
                 });
             },
-            addToOpenedDrawers:function(styleid, sizeid){
+            addToOpenedDrawers(styleid, sizeid){
                 var combo = styleid+'_'+sizeid;
                 if(! _.contains(this.opened_drawers, combo)){
                     this.opened_drawers.push(combo);
                 }
             },
-            removeFromOpenedDrawers:function(styleid, sizeid){
+            removeFromOpenedDrawers(styleid, sizeid){
                 this.opened_drawers = _.without(this.opened_drawers, styleid+'_'+sizeid);
             },
-            openAllSizeDrawers : function(style, event){
+            openAllSizeDrawers(style, event){
                 event.preventDefault();
-                var scope = this;
+                const scope = this;
                 var $el = $(event.currentTarget);
                 if($el.hasClass('opened-drawers')) {
                     $el.removeClass('opened-drawers').find('.fa').removeClass('fa-angle-up').addClass('fa-angle-down');
@@ -205,49 +251,50 @@
                     });
                 }
             },
-            openSizeDrawer : function(styleid, sizeid, event){
+            openSizeDrawer(styleid, sizeid, event){
                 if (event)  event.preventDefault();
                 $('[data-id='+sizeid+']').stop(true,true).slideDown();
                 this.addToOpenedDrawers(styleid, sizeid);
                 this.$emit('drawer:opened', styleid, sizeid);
             },
-            closeSizeDrawer : function(styleid, sizeid, event) {
+            closeSizeDrawer(styleid, sizeid, event){
                 event.preventDefault();
                 $('[data-id='+sizeid+']').stop(true,true).slideUp();
                 this.removeFromOpenedDrawers(styleid, sizeid);
                 this.$emit('drawer:closed', styleid, sizeid);
             },
-            removeSizes:function(style,size,items,event){
+            // Remove size from selected list
+            removeSizes(style,size,items,event){
                 const scope = this;
                 $.each(items, function(i,v){
                     scope.removeSizeFromSelected(this);
                 });
                 this.closeSizeDrawer(style.id, size.id,event);
             },
-            addSizes : function(style,size,items,event){
+            addSizes(style,size,items,event){
                 const scope = this;
                 $.each(items, function(i,v){
                     scope.addSizeToSelected(this);
                 });
                 this.openSizeDrawer(style.id, size.id, event);
             },
-            removeSizeFromSelected : function(size) {
+            removeSizeFromSelected(size){
                 var index = this.$store.getters.getSelectedItems.indexOf(size);
                 if (index != -1) {
                     this.$store.commit('REMOVE_FROM_SELECTED_ITEMS', index);
                 }
             },
-            addSizeToSelected: function(size) {
+            addSizeToSelected(size){
                 if (this.$store.getters.getSelectedItems.indexOf(size) == -1) {
                     this.$store.commit('ADD_TO_SELECTED_ITEMS', size);
                 }
             }
         },
         events : {
-            'drawer:opened' : function(size){
+            'drawer:opened' : (size)=>{
 
             },
-            'refreshing_data' : function(){
+            'refreshing_data' : ()=>{
                 this.opened_drawers = [];
             }
         }

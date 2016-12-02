@@ -12,30 +12,30 @@ class UpdateFlashsaleItemsRemoveNonsense extends Migration
      */
     public function up()
     {
-        Schema::table(\Kabooodle\Models\FlashsaleItems::getTableName(), function(Blueprint $table){
+        Schema::table('flashsale_items', function(Blueprint $table){
 
             $table->dropForeign('flashsale_items_created_by_foreign');
             $table->dropForeign('flashsale_items_updated_by_foreign');
 
-            if (Schema::hasColumn(\Kabooodle\Models\FlashsaleItems::getTableName(), 'quantity')) {
+            if (Schema::hasColumn('flashsale_items', 'quantity')) {
                 $table->dropColumn('quantity');
             }
-            if (Schema::hasColumn(\Kabooodle\Models\FlashsaleItems::getTableName(), 'base_price')) {
+            if (Schema::hasColumn('flashsale_items', 'base_price')) {
                 $table->dropColumn('base_price');
             }
-            if (Schema::hasColumn(\Kabooodle\Models\FlashsaleItems::getTableName(), 'base_price_discount')) {
+            if (Schema::hasColumn('flashsale_items', 'base_price_discount')) {
                 $table->dropColumn('base_price_discount');
             }
-            if (Schema::hasColumn(\Kabooodle\Models\FlashsaleItems::getTableName(), 'enabled')) {
+            if (Schema::hasColumn('flashsale_items', 'enabled')) {
                 $table->dropColumn('enabled');
             }
-            if (Schema::hasColumn(\Kabooodle\Models\FlashsaleItems::getTableName(), 'enable_on')) {
+            if (Schema::hasColumn('flashsale_items', 'enable_on')) {
                 $table->dropColumn('enable_on');
             }
-            if (Schema::hasColumn(\Kabooodle\Models\FlashsaleItems::getTableName(), 'created_by')) {
+            if (Schema::hasColumn('flashsale_items', 'created_by')) {
                 $table->dropColumn('created_by');
             }
-            if (Schema::hasColumn(\Kabooodle\Models\FlashsaleItems::getTableName(), 'updated_by')) {
+            if (Schema::hasColumn('flashsale_items', 'updated_by')) {
                 $table->dropColumn('updated_by');
             }
 
