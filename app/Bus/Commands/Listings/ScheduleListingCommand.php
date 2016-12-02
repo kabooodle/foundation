@@ -20,11 +20,6 @@ final class ScheduleListingCommand
     public $actor;
 
     /**
-     * @var string
-     */
-    public $type;
-
-    /**
      * @var bool
      */
     public $includeDescrText;
@@ -51,7 +46,6 @@ final class ScheduleListingCommand
 
     /**
      * @param User     $actor
-     * @param string   $type
      * @param bool     $includeDescrText
      * @param null     $scheduledFor
      * @param int|null $flashSaleId
@@ -60,7 +54,6 @@ final class ScheduleListingCommand
      */
     public function __construct(
         User $actor,
-        $type = Listings::TYPE_FACEBOOK,
         $includeDescrText = true,
         $scheduledFor = null,
         int $flashSaleId = null,
@@ -71,7 +64,6 @@ final class ScheduleListingCommand
         $this->actor = $actor;
         $this->includeDescrText = $includeDescrText;
         $this->scheduledFor = $scheduledFor;
-        $this->type = $type;
         $this->flashSaleId = $flashSaleId;
         $this->facebookAlbums = $facebookAlbums;
         $this->facebookGroupId = $facebookGroupId;
@@ -99,14 +91,6 @@ final class ScheduleListingCommand
     public function getScheduledFor()
     {
         return $this->scheduledFor;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
     }
 
     /**

@@ -54,7 +54,7 @@ class Listings extends AbstractListingModel
         'scheduled_for' => '',
         'owner_id' => 0,
         'fb_group_node_id' => null,
-        'flAShsale_id' => null,
+        'flashsale_id' => null,
         'uuid' => '',
         'type' => self::TYPE_FACEBOOK,
         'status' => self::STATUS_SCHEDULED,
@@ -68,7 +68,7 @@ class Listings extends AbstractListingModel
     protected $fillable = [
         'scheduled_for',
         'fb_group_node_id',
-        'flAShsale_id',
+        'flashsale_id',
         'owner_id',
         'type',
         'status',

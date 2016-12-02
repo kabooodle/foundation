@@ -121,7 +121,7 @@ class InventoryApiController extends AbstractApiController
      */
     public function associate(Request $request)
     {
-        $flashsaleId = Binput::get('flashsales', null);
+        $flashsaleId = (bool) Binput::get('flashsales', null);
         $selectedItems = (array) Binput::get('items', []);
 
         // Facebook data
@@ -135,29 +135,18 @@ class InventoryApiController extends AbstractApiController
         $includeText = (bool) array_get($options, 'include_text', false);
 
         try {
-
-            // Lets assume we have a facebook listing.
-            $type = Listings::TYPE_FACEBOOK;
-
             // You must have either a flashsaleid or facebookalbum
-            if (!$flashsaleId && count($facebookAlbums)== 0) {
+            if (! $flashsaleId && count($facebookAlbums)== 0) {
+                dd('hi');
                 throw new MissingMandatoryParametersException;
             }
 
-
-            if ($flashsaleId) {
-                // If a flash sale is selected, it must have selected items.
-                if ($flashsaleId && count($selectedItems) == 0) {
-                    throw new MissingMandatoryParametersException;
-                }
-
-                // Because its a flash sale listing, change the type.
-                $type = Listings::TYPE_FLASHSALE;
+            if ($flashsaleId && count($selectedItems) == 0) {
+                throw new MissingMandatoryParametersException;
             }
 
             $command = new ScheduleListingCommand(
                 $this->getUser(),
-                $type,
                 $includeText,
                 $endsAt,
                 $flashsaleId,
