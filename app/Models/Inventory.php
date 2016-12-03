@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use DB;
 use Carbon\Carbon;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
@@ -337,6 +338,23 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         return $this->images->filter(function($item) use ($firstImage){
             return $item->id <> $firstImage->id;
         });
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getWatchers()
+    {
+        $watches = DB::table('users')
+            ->join('watchables', 'watchables.user_id', '=', 'users.id')
+            ->join('listing_items', 'listing_items.id', '=', 'watchables.watchable_id')
+            ->join('inventory', 'listing_items.inventory_id', '=', 'inventory.id')
+            ->where('watchables.watchable_type', ListingItems::class)
+            ->where('watchables.deleted_at', null)
+            ->select('users.*')
+            ->get();
+
+        return collect($watches);
     }
 
     /**
