@@ -38,7 +38,7 @@
                 <a class="nav-link active no-border " style="border: none;" href="#">Item Details</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link no-border" style="border: none;" href="#">Current Postings</a>
+                <a class="nav-link no-border" style="border: none;" href="#">Current Listings</a>
             </li>
         </ul>
     </div>

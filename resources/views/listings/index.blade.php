@@ -12,6 +12,7 @@
 
 @section('body-content')
 
+
     <div class="box">
         <div class="box-header">
             <h4>Listings</h4>
@@ -47,7 +48,17 @@
                         <td>{!! listingStatusHtml($listing->status) !!}</td>
                         <td>
                             <div class="pull-md-right">
-                                <a href="{{ route('listings.show', [$listing->uuid]) }}" class="btn btn-xs white">View</a>
+                                <div class="dropdown">
+                                    <a class="text-muted nav-link dropdown-toggle no-caret" href="#" data-toggle="dropdown">
+                                        <i class="hidden-sm-down fa fa-ellipsis-h" aria-hidden="true"></i>
+                                        <span class="">Options</span>
+                                    </a>
+                                    <div class="dropdown-menu pull-xs-none pull-sm-right">
+                                        <a href="{{ route('listings.show', [$listing->uuid]) }}" class="dropdown-item">Edit</a>
+                                        <a href="{{ route('listings.show', [$listing->uuid]) }}" class="dropdown-item">View</a>
+                                        <a href="{{ route('listings.show', [$listing->uuid]) }}" class="dropdown-item">Delete</a>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>

@@ -19,6 +19,17 @@
   }
 }
 
+.dropdown-toggle.no-caret::after {
+  display: none;
+  width: 0;
+  height: 0;
+  margin-right: 0;
+  margin-left: 0;
+  vertical-align: middle;
+  content: "";
+  border: 0;
+}
+
 .app-header .dropdown-menu {
   font-size: .79rem;
   margin-top: 0;
