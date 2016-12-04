@@ -28,6 +28,38 @@ class ListingsController extends Controller
 
     /**
      * @param Request $request
+     * @param         $uuid
+     *
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function edit(Request $request, $uuid)
+    {
+        $listing = user()->listings->where('uuid', $uuid)->first();
+        if (!$listing) {
+            return redirect()->to(route('listings.index'));
+        }
+
+        $listings = $listing->listingsGroupedByItemTypeGrouping(user()->id);
+
+        return $this->view('listings.edit')->with(compact('listing', 'listings'));
+    }
+
+    /**
+     * @param Request $request
+     * @param         $uuid
+     *
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, $uuid)
+    {
+        $listing = user()->listings->where('uuid', $uuid)->first();
+        if (!$listing) {
+            return redirect()->to(route('listings.index'));
+        }
+    }
+
+    /**
+     * @param Request $request
      * @param $uuid
      * @return \Illuminate\Contracts\View\View
      */

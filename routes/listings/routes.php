@@ -10,6 +10,14 @@ Route::group(['middleware' => ['auth', 'subscribed:main']], function () {
         'as' => 'listings.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@index'
     ]);
+    Route::get('listings/{listing}/edit', [
+        'as' => 'listings.edit',
+        'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@edit'
+    ]);
+    Route::patch('listings/{listing}/edit', [
+        'as' => 'listings.update',
+        'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@update'
+    ]);
     Route::get('listings/{listing}', [
         'as' => 'listings.show',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@show'

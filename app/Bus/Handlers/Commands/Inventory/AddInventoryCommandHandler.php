@@ -51,6 +51,7 @@ class AddInventoryCommandHandler
                 'style_id' => $inventoryStyle->id,
                 'price_usd' => $command->getPrice(),
                 'description' => $command->getDescription(),
+                'wholesale_price_usd' => $command->getWholesalePrice()
             ];
 
             // Loop over sizings for size_id and categories
@@ -78,6 +79,7 @@ class AddInventoryCommandHandler
                         $sizing['size_id'],
                         $data['description'],
                         $data['price_usd'],
+                        $data['wholesale_price_usd'],
                         $categories,
                         $sizeImage
                     );
@@ -101,6 +103,7 @@ class AddInventoryCommandHandler
      * @param int         $sizeId
      * @param string|null $description
      * @param             $price
+     * @param             $wholesalePrice
      * @param string      $categories
      * @param array       $image
      *
@@ -113,6 +116,7 @@ class AddInventoryCommandHandler
         int $sizeId,
         string $description = null,
         $price,
+        $wholesalePrice,
         string $categories = null,
         array $image
     ) {
@@ -125,6 +129,7 @@ class AddInventoryCommandHandler
             'inventory_sizes_id' => $sizeId,
             'description' => $description,
             'price_usd' => $price,
+            'wholesale_price_usd' => $wholesalePrice,
             'initial_qty' => $image['qty']
         ]);
 

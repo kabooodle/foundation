@@ -35,6 +35,11 @@ final class AddInventoryCommand
     public $price;
 
     /**
+     * @var string
+     */
+    public $wholesalePrice;
+
+    /**
      * @var array
      */
     public $sizings;
@@ -51,15 +56,17 @@ final class AddInventoryCommand
      * @param int         $typeId
      * @param int         $styleId
      * @param string      $price
+     * @param string      $wholesalePrice
      * @param array       $sizings
      * @param string|null $description
      */
-    public function __construct(User $actor, int $typeId, int $styleId, string $price, array $sizings, string $description = null)
+    public function __construct(User $actor, int $typeId, int $styleId, string $price, string $wholesalePrice, array $sizings, string $description = null)
     {
         $this->actor = $actor;
         $this->typeId = $typeId;
         $this->styleId = $styleId;
         $this->price = $price;
+        $this->wholesalePrice = $$wholesalePrice;
         $this->sizings = $sizings;
         $this->description = $description;
     }
@@ -94,6 +101,14 @@ final class AddInventoryCommand
     public function getPrice(): string
     {
         return $this->price;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWholesalePrice(): string
+    {
+        return $this->wholesalePrice;
     }
 
     /**

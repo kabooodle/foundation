@@ -49,7 +49,7 @@
                 <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}"  >
                     <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
                     <div class="col-sm-3">
-                        {{ Form::number('price_usd', 0.00, ['class' => 'form-control float', 'required', 'step' => 'any', 'placeholder' => '0.00']) }}
+                        {{ Form::number('price_usd', 0.00, ['id' => 'inventory-price-el', 'class' => 'form-control float', 'required', 'step' => 'any', 'placeholder' => '0.00']) }}
                     </div>
                 </div>
 

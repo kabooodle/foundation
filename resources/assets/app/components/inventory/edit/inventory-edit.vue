@@ -33,13 +33,13 @@
         <div class="form-group row ">
             <label for="price_usd" class="col-sm-3 form-control-label">Wholesale Price in USD$</label>
             <div class="col-sm-3">
-                <input type="number" v-model="wholesale_price_usd" name="wholesale_price_usd" :value="item.wholesale_price_usd" id="inventory-wholesale-el" class="form-control float" step="any" placeholder="0.00">
+                <input type="number" v-model="wholesale_price_usd" name="wholesale_price_usd" :value="item.wholesale_price_usd_less_5_percent" id="inventory-wholesale-el" class="form-control float" step="any" placeholder="0.00">
             </div>
         </div>
         <div class="form-group row ">
             <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
             <div class="col-sm-3">
-                <input type="number" name="price_usd" :value="item.price_usd" class="form-control float" step="any" min="0" placeholder="0.00">
+                <input type="number" v-model="price_usd" id="inventory-price-el" name="price_usd" :value="item.price_usd" class="form-control float" step="any" min="0" placeholder="0.00">
             </div>
         </div>
         <div class="form-group row">
@@ -124,7 +124,8 @@
                 sizes : [],
                 selected_style : '',
                 categories : '',
-                wholesale_price_usd : null
+                wholesale_price_usd : null,
+                price_usd : null
             }
         },
         watch : {
@@ -134,7 +135,8 @@
         },
         created(){
             const scope = this;
-            this.wholesale_price_usd = this.item.wholesale_price_usd;
+            this.wholesale_price_usd = this.item.wholesale_price_usd_less_5_percent;
+            this.price_usd = this.item.price_usd;
 
             if(this.existingimages.length){
                 _.each(this.existingimages, function(image){
@@ -179,15 +181,20 @@
             getSelectedStyleId(){
               return parseInt($('#style-el').val());
             },
-            updateWholesalePrice(){
+            updateDefaultPricings(){
                 let styleId = this.getSelectedStyleId();
                 let style = this.getStyleById(styleId);
-                let ws_price_5 = moneyfy(style.wholesale_price_usd_less_5_percent);
-                let ws_price = moneyfy(style.wholesale_price_usd);
+                let ws_price = moneyfy(style.wholesale_price_usd_less_5_percent);
+                let suggested_price = moneyfy(style.suggested_price_usd);
                 $('#inventory-wholesale-el')
                     .val(ws_price)
                     .prop('placeholder', ws_price);
 
+                $('#inventory-price-el')
+                        .val(suggested_price)
+                        .prop('placeholder', suggested_price);
+
+                this.price_usd = suggested_price;
                 this.wholesale_price_usd = ws_price;
             },
             // Iterates over styles and returns single item
@@ -201,7 +208,7 @@
 
                 this.setSelectedStyle(style);
                 this.setSizes(style.sizes);
-                this.updateWholesalePrice();
+                this.updateDefaultPricings();
             },
             deleteImage: function(image, event){
                 event.preventDefault();

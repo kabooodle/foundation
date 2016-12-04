@@ -111,6 +111,20 @@ abstract class AbstractListingModel extends BaseEloquentModel
     }
 
     /**
+     * @param $status
+     *
+     * @return bool
+     */
+    public static function isStillEditable($status)
+    {
+        return ! in_array($status, [
+            static::STATUS_QUEUED_LIST,
+            static::STATUS_QUEUED_DELETE,
+            static::STATUS_DELETED
+        ]);
+    }
+
+    /**
      * @param int $userId
      * @param $startTime
      * @param $endTime

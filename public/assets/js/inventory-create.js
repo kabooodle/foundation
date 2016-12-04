@@ -6546,20 +6546,22 @@ new Vue({
 
         styleChanged: function styleChanged(e) {
             var styleId = this.getSelectedStyleId();
-            this.updateWholesalePrice();
+            this.updateDefaultPricings();
             $Bus.$emit('style-changed', styleId);
         },
-        updateWholesalePrice: function updateWholesalePrice() {
+        updateDefaultPricings: function updateDefaultPricings() {
             var styleId = this.getSelectedStyleId();
             var style = _.findWhere(this.inventory_types[0].styles, { id: styleId });
-            var ws_price_5 = moneyfy(style.wholesale_price_usd_less_5_percent);
-            var ws_price = moneyfy(style.wholesale_price_usd);
+            var ws_price = moneyfy(style.wholesale_price_usd_less_5_percent);
+            var suggested_price = moneyfy(style.suggested_price_usd);
             $('#inventory-wholesale-el').val(ws_price).prop('placeholder', ws_price);
+
+            $('#inventory-price-el').val(suggested_price).prop('placeholder', suggested_price);
         }
     },
     mounted: function mounted() {
         console.log('Inventory ready.');
-        this.updateWholesalePrice();
+        this.updateDefaultPricings();
     },
     components: {
         'inventory-sizing': _inventorySizing2.default

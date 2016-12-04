@@ -7,10 +7,10 @@
 namespace Kabooodle\Models;
 
 use DB;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Kabooodle\Models\Traits\UuidableTrait;
-use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
 use Kabooodle\Presenters\PresentableTrait;
+use Kabooodle\Models\Traits\UuidableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
 
 /**
  * ClASs Listings
@@ -18,6 +18,18 @@ use Kabooodle\Presenters\PresentableTrait;
 class Listings extends AbstractListingModel
 {
     use PresentableTrait, SoftDeletes, UuidableTrait;
+
+    /**
+     * @var array
+     */
+    protected $appends = [
+        'albums_count',
+        'items_count',
+        'use_link',
+        'accepted_sales_count',
+        'pending_sales_count',
+        'gross',
+    ];
 
     /**
      * @var string
@@ -86,6 +98,66 @@ class Listings extends AbstractListingModel
     ];
 
     /**
+     * @return int
+     */
+    public function getAlbumsCountAttribute()
+    {
+        if($this->isFacebook()){
+            return $this->listingItems()->groupBy('fb_album_node_id')->count();
+        } else {
+            return $this->listingItems()->groupBy('flashsale_id')->count();
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getItemsCountAttribute()
+    {
+        return $this->listingItems->count();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUseLinkAttribute()
+    {
+        return $this->includeLinkInDescr();
+    }
+
+    public function getAcceptedSalesCountAttribute()
+    {
+        return $this->claims()->where('accepted', 1)->count();
+    }
+
+    public function getPendingSalesCountAttribute()
+    {
+        return $this->claims()->where('accepted', null)->count();
+    }
+
+    public function getGrossAttribute()
+    {
+        $entries = $this->claims()->where('accepted', 1)
+            ->selectRaw(' IFNULL(SUM(CASE WHEN claims.accepted = 1 THEN (CASE WHEN claims.price IS NULL THEN claims.accepted_price ELSE claims.price END) ELSE 0 END),0) as gross')
+            ->get();
+
+        if($entries) {
+            return $entries->sum('gross');
+        }
+
+        return 0;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function claims()
+    {
+        return $this->hasManyThrough(Claims::class, ListingItems::class, 'listing_id', 'shoppable_id')
+            ->where('shoppable_type', ListingItems::class);
+    }
+
+    /**
      * @return \Illuminate\DatabASe\Eloquent\Relations\HASMany
      */
     public function listingItems()
@@ -123,6 +195,7 @@ class Listings extends AbstractListingModel
         //                LEFT JOIN pageviews AS p ON p.shoppable_id = li.id AND p.inventory_id = li.inventory_id
         $sql = "SELECT
                 l.scheduled_for AS scheduled_for,
+                l.include_link_in_descr as use_link,
                 l.status AS status,
                 l.type as type,
                 l.uuid AS uuid,

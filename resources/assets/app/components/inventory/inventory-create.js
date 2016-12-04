@@ -56,22 +56,26 @@ new Vue({
         },
         styleChanged : function(e) {
             let styleId = this.getSelectedStyleId();
-            this.updateWholesalePrice();
+            this.updateDefaultPricings();
             $Bus.$emit('style-changed', styleId);
         },
-        updateWholesalePrice(){
+        updateDefaultPricings(){
             let styleId = this.getSelectedStyleId();
             let style = _.findWhere(this.inventory_types[0].styles, {id: styleId});
-            let ws_price_5 = moneyfy(style.wholesale_price_usd_less_5_percent);
-            let ws_price = moneyfy(style.wholesale_price_usd);
+            let ws_price = moneyfy(style.wholesale_price_usd_less_5_percent);
+            let suggested_price = moneyfy(style.suggested_price_usd);
             $('#inventory-wholesale-el')
                 .val(ws_price)
                 .prop('placeholder', ws_price);
+
+            $('#inventory-price-el')
+                .val(suggested_price)
+                .prop('placeholder', suggested_price);
         },
     },
     mounted: function(){
         console.log('Inventory ready.');
-        this.updateWholesalePrice();
+        this.updateDefaultPricings();
     },
     components: {
         'inventory-sizing' : InventorySizing

@@ -30,6 +30,14 @@
   border: 0;
 }
 
+.dropdown-menu.dropdown-over {
+  margin-top: -50px;
+  right: 15px;
+}
+.dropdown-menu.dropdown-menu-sm {
+  min-width: 120px !important;
+}
+
 .app-header .dropdown-menu {
   font-size: .79rem;
   margin-top: 0;
