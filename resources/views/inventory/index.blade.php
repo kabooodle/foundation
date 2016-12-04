@@ -26,6 +26,8 @@
             </div>
         </div>
         <button
+                v-bind:class="{'disabled' : actions.refreshing_data || inventory_items.length == 0}"
+                :disabled="actions.refreshing_data || inventory_items.length == 0"
                 class="btn white btn-sm"
         @click="selectAllInventory">
         Select All
@@ -40,8 +42,8 @@
         </button>
         <button
                 v-on:click="openPostMenu"
-                :disabled="actions.refreshing_data"
-                v-bind:class="{'disabled' : actions.refreshing_data }"
+                :disabled="actions.refreshing_data || inventory_items.length == 0"
+                v-bind:class="{'disabled' : actions.refreshing_data || inventory_items.length == 0}"
                 class="btn primary btn-sm "
                 id="navbarSideButton">Post To Sales
         </button>
