@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2a60ecc9f2b7ae3bd96ba1adc68ca2d9",
-    "content-hash": "3406228ecc00e16ca2fe4a490bb3633d",
+    "hash": "141b31cff3d4d8eb8527f4bd77918b01",
+    "content-hash": "8a21fe6cb345a873c638d202e8c4eb9f",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -176,16 +176,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.19.32",
+            "version": "3.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "4c3093e320c4a34e30327043d24099787b702665"
+                "reference": "c83afe188b2f462840a5ab12d43f2e83f356f3f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4c3093e320c4a34e30327043d24099787b702665",
-                "reference": "4c3093e320c4a34e30327043d24099787b702665",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c83afe188b2f462840a5ab12d43f2e83f356f3f0",
+                "reference": "c83afe188b2f462840a5ab12d43f2e83f356f3f0",
                 "shasum": ""
             },
             "require": {
@@ -252,7 +252,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-11-22 23:10:38"
+            "time": "2016-12-01 19:25:12"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
@@ -654,20 +654,20 @@
         },
         {
             "name": "classpreloader/classpreloader",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ClassPreloader/ClassPreloader.git",
-                "reference": "9b10b913c2bdf90c3d2e0d726b454fb7f77c552a"
+                "reference": "bc7206aa892b5a33f4680421b69b191efd32b096"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ClassPreloader/ClassPreloader/zipball/9b10b913c2bdf90c3d2e0d726b454fb7f77c552a",
-                "reference": "9b10b913c2bdf90c3d2e0d726b454fb7f77c552a",
+                "url": "https://api.github.com/repos/ClassPreloader/ClassPreloader/zipball/bc7206aa892b5a33f4680421b69b191efd32b096",
+                "reference": "bc7206aa892b5a33f4680421b69b191efd32b096",
                 "shasum": ""
             },
             "require": {
-                "nikic/php-parser": "^1.0|^2.0",
+                "nikic/php-parser": "^1.0|^2.0|^3.0",
                 "php": ">=5.5.9"
             },
             "require-dev": {
@@ -676,7 +676,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -704,7 +704,7 @@
                 "class",
                 "preload"
             ],
-            "time": "2015-11-09 22:51:51"
+            "time": "2016-09-16 12:50:15"
         },
         {
             "name": "composer/ca-bundle",
@@ -2590,16 +2590,16 @@
         },
         {
             "name": "mtdowling/jmespath.php",
-            "version": "2.3.0",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmespath/jmespath.php.git",
-                "reference": "192f93e43c2c97acde7694993ab171b3de284093"
+                "reference": "adcc9531682cf87dfda21e1fd5d0e7a41d292fac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/192f93e43c2c97acde7694993ab171b3de284093",
-                "reference": "192f93e43c2c97acde7694993ab171b3de284093",
+                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/adcc9531682cf87dfda21e1fd5d0e7a41d292fac",
+                "reference": "adcc9531682cf87dfda21e1fd5d0e7a41d292fac",
                 "shasum": ""
             },
             "require": {
@@ -2641,7 +2641,7 @@
                 "json",
                 "jsonpath"
             ],
-            "time": "2016-01-05 18:25:05"
+            "time": "2016-12-03 22:08:25"
         },
         {
             "name": "namshi/jose",
@@ -3489,16 +3489,16 @@
         },
         {
             "name": "sammyk/laravel-facebook-sdk",
-            "version": "3.4.1",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SammyK/LaravelFacebookSdk.git",
-                "reference": "8cef4beb5e2c6c928e390458264f7a7e44eff2d1"
+                "reference": "8bd9d66ef57fb182f77ab41dee89b2a81ee59677"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SammyK/LaravelFacebookSdk/zipball/8cef4beb5e2c6c928e390458264f7a7e44eff2d1",
-                "reference": "8cef4beb5e2c6c928e390458264f7a7e44eff2d1",
+                "url": "https://api.github.com/repos/SammyK/LaravelFacebookSdk/zipball/8bd9d66ef57fb182f77ab41dee89b2a81ee59677",
+                "reference": "8bd9d66ef57fb182f77ab41dee89b2a81ee59677",
                 "shasum": ""
             },
             "require": {
@@ -3544,7 +3544,7 @@
                 "lumen",
                 "sdk"
             ],
-            "time": "2016-10-12 19:16:35"
+            "time": "2016-08-25 14:54:47"
         },
         {
             "name": "shippo/shippo-php",
@@ -3881,16 +3881,16 @@
         },
         {
             "name": "symfony/class-loader",
-            "version": "v3.1.7",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/class-loader.git",
-                "reference": "61de6c27f9d4efe988ea8274f19c2d4e331dd4e4"
+                "reference": "87cd4e69435d98de01d0162c5f9c0ac017075c63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/class-loader/zipball/61de6c27f9d4efe988ea8274f19c2d4e331dd4e4",
-                "reference": "61de6c27f9d4efe988ea8274f19c2d4e331dd4e4",
+                "url": "https://api.github.com/repos/symfony/class-loader/zipball/87cd4e69435d98de01d0162c5f9c0ac017075c63",
+                "reference": "87cd4e69435d98de01d0162c5f9c0ac017075c63",
                 "shasum": ""
             },
             "require": {
@@ -3906,7 +3906,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -3933,7 +3933,7 @@
             ],
             "description": "Symfony ClassLoader Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-15 12:07:16"
+            "time": "2016-11-29 08:26:13"
         },
         {
             "name": "symfony/console",
@@ -4107,16 +4107,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v3.1.7",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "28b0832b2553ffb80cabef6a7a812ff1e670c0bc"
+                "reference": "e8f47a327c2f0fd5aa04fa60af2b693006ed7283"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/28b0832b2553ffb80cabef6a7a812ff1e670c0bc",
-                "reference": "28b0832b2553ffb80cabef6a7a812ff1e670c0bc",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/e8f47a327c2f0fd5aa04fa60af2b693006ed7283",
+                "reference": "e8f47a327c2f0fd5aa04fa60af2b693006ed7283",
                 "shasum": ""
             },
             "require": {
@@ -4136,7 +4136,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -4163,7 +4163,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-10-13 06:28:43"
+            "time": "2016-10-13 06:29:04"
         },
         {
             "name": "symfony/finder",
@@ -6676,25 +6676,31 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.1.7",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "9da375317228e54f4ea1b013b30fa47417e84943"
+                "reference": "f2300ba8fbb002c028710b92e1906e7457410693"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/9da375317228e54f4ea1b013b30fa47417e84943",
-                "reference": "9da375317228e54f4ea1b013b30fa47417e84943",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/f2300ba8fbb002c028710b92e1906e7457410693",
+                "reference": "f2300ba8fbb002c028710b92e1906e7457410693",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.5.9"
             },
+            "require-dev": {
+                "symfony/console": "~2.8|~3.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -6721,7 +6727,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-18 21:05:29"
+            "time": "2016-11-18 21:17:59"
         }
     ],
     "aliases": [],
