@@ -26,7 +26,7 @@ class FacebookSdkService extends LaravelFacebookSdk
     public function testAccessToken($accessToken = null)
     {
         try {
-            $request = $this->get('/me', $accessToken ? : user()->getFacebookUserId());
+            $request = $this->get('/me', $accessToken ?: user()->getFacebookUserId());
 
             return $request->getGraphNode();
         } catch (FacebookSDKException $e) {
@@ -41,7 +41,7 @@ class FacebookSdkService extends LaravelFacebookSdk
      */
     public function getUsersGroups($userId = null)
     {
-        $userId = $userId ? : user()->getFacebookUserId();
+        $userId = $userId ?: user()->getFacebookUserId();
         $request = $this->get("/{$userId}/groups?fields=administrator,albums{id,can_upload,name},id,name", user()->getFacebookUserToken());
 
         return $request->getGraphEdge();
@@ -54,7 +54,8 @@ class FacebookSdkService extends LaravelFacebookSdk
      */
     public function getGroupAlbums($groupId)
     {
-        $request = $this->get("/{$groupId}/albums?fields=id,name,updated_time,type,photo_count", user()->getFacebookUserToken());
+        $request = $this->get("/{$groupId}/albums?fields=id,name,updated_time,type,photo_count",
+            user()->getFacebookUserToken());
 
         return $request->getGraphEdge();
     }
@@ -68,7 +69,7 @@ class FacebookSdkService extends LaravelFacebookSdk
      */
     public function postPhotoToGroupAlbum($albumId, $params = [], $userToken = null)
     {
-        $request = $this->post("/{$albumId}/photos", $params, ($userToken ? : user()->getFacebookUserToken()));
+        $request = $this->post("/{$albumId}/photos", $params, ($userToken ?: user()->getFacebookUserToken()));
 
         return $request->getGraphNode();
     }
@@ -82,7 +83,7 @@ class FacebookSdkService extends LaravelFacebookSdk
      */
     public function deletePhoto($photoId, array $params = [], $userToken = null)
     {
-        $request = $this->delete("/{$photoId}", $params, ($userToken ? : user()->getFacebookUserToken()));
+        $request = $this->delete("/{$photoId}", $params, ($userToken ?: user()->getFacebookUserToken()));
 
         return $request->getGraphNode();
     }
@@ -96,7 +97,7 @@ class FacebookSdkService extends LaravelFacebookSdk
      */
     public function postCommentToPhoto($photoId, array $params = [], $userToken = null)
     {
-        $request = $this->post("/{$photoId}/comments", $params, ($userToken ? : user()->getFacebookUserToken()));
+        $request = $this->post("/{$photoId}/comments", $params, ($userToken ?: user()->getFacebookUserToken()));
 
         return $request->getGraphNode();
     }
@@ -104,47 +105,25 @@ class FacebookSdkService extends LaravelFacebookSdk
     /**
      * Sends a request to Graph and returns the result.
      *
-     * @param string                  $method
-     * @param string                  $endpoint
-     * @param array                   $params
+     * @param string $method
+     * @param string $endpoint
+     * @param array $params
      * @param AccessToken|string|null $accessToken
-     * @param string|null             $eTag
-     * @param string|null             $graphVersion
+     * @param string|null $eTag
+     * @param string|null $graphVersion
      *
      * @return FacebookResponse
      *
      * @throws FacebookSDKException
      */
-    public function sendRequest($method, $endpoint, array $params = [], $accessToken = null, $eTag = null, $graphVersion = null)
-    {
+    public function sendRequest(
+        $method,
+        $endpoint,
+        array $params = [],
+        $accessToken = null,
+        $eTag = null,
+        $graphVersion = null
+    ) {
         return parent::sendRequest($method, $endpoint, $params, $accessToken, $eTag, $graphVersion);
-//        $accessToken = $accessToken ?: $this->defaultAccessToken;
-//        $graphVersion = $graphVersion ?: $this->defaultGraphVersion;
-//
-//        // Prepare a Facebook Request
-//        $request = $this->request($method, $endpoint, $params, $accessToken, $eTag, $graphVersion);
-//
-//        // Send the Prepared Request to Facebook Graph
-//        $response = $this->client->sendRequest($request);
-//
-//        // THIS IS BULLSHIT THROW AWAY CODE, JUST TESTING LOGIC HANDLING
-//        // AND FACEBOOKS BULLSHIT SDK
-//        if ($method  <> 'delete' && $endpoint <> '/me/permissions') {
-//
-//            $x = new FacebookNodes;
-////        $x->facebook_node = '';
-////        $x->facebook_node_id = ''; // use regex to grab intvalue of endpoint
-//
-//            $responseGraphEdge = $response->getGraphEdge();
-//            $responseArray = $responseGraphEdge->asArray();
-//            $responseJson = $responseGraphEdge->asJson();
-//
-//            $x->facebook_post_id = $responseArray['id'];
-//            $x->facebook_data = $responseJson;
-//            $x->save();
-//        }
-//
-//
-//        return $this->lastResponse = $response;
     }
 }

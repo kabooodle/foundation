@@ -43,7 +43,7 @@ class FacebookController extends Controller
         try {
             $token = $fb->getAccessTokenFromRedirect();
         } catch (FacebookSDKException $e) {
-            Messages::error('An error occurred, please try again.');
+            Messages::error('An error occurred getting token, please try again.');
             return redirect()->route('profile.social.edit');
         }
 
@@ -85,7 +85,7 @@ class FacebookController extends Controller
         try {
             $response = $fb->get('/me?fields=id,name,email');
         } catch (FacebookSDKException $e) {
-            Messages::error('An error occurred, please try again.');
+            Messages::error('An error occurred getting your data, please try again.');
             return redirect()->route('profile.social.edit');
         }
 
