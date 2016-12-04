@@ -14,7 +14,7 @@ class CreateWatchablesTblModel extends Migration
     {
         Schema::create('watchables', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('watchable_id');
             $table->string('watchable_type');
             $table->softDeletes();

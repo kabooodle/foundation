@@ -14,7 +14,7 @@ class CreateFlashSalesTbl extends Migration
     {
         Schema::create('flashsales', function(Blueprint $table){
             $table->increments('id');
-            $table->integer('user_id')->index()->unsigned();
+            $table->bigInteger('user_id')->index()->unsigned();
             $table->enum('type', ['single','group'])->default('single');
             $table->string('name');
             $table->text('description');

@@ -176,7 +176,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
             $model->date_received = Carbon::now();
         });
 
-        self::saving(function($model){
+        self::saving(function(self $model){
             if(! $model->wholesale_price_usd || is_null($model->wholesale_price_usd)) {
                 $model->wholesale_price_usd = $this->style->wholesale_price_usd;
             }

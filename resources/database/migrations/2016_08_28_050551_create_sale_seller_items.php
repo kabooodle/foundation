@@ -15,15 +15,15 @@ class CreateSaleSellerItems extends Migration
         Schema::create('flashsale_items', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('flashsale_id')->unsigned();
-            $table->integer('seller_id')->unsigned();
-            $table->integer('inventory_id')->unsigned();
+            $table->bigInteger('seller_id')->unsigned();
+            $table->bigInteger('inventory_id')->unsigned();
             $table->integer('quantity');
             $table->float('base_price');
             $table->integer('base_price_discount')->nullable();
             $table->tinyInteger('enabled')->default(0);
             $table->timestamp('enable_on')->nullable();
-            $table->integer('created_by')->unsigned();
-            $table->integer('updated_by')->unsigned();
+            $table->bigInteger('created_by')->unsigned();
+            $table->bigInteger('updated_by')->unsigned();
             $table->timestamps();
             $table->softDeletes();
 

@@ -15,7 +15,7 @@ class CreateShippingTransactionsTbl extends Migration
         Schema::create('shipping_transactions', function(Illuminate\Database\Schema\Blueprint $table){
             $table->increments('id');
             $table->binary('uuid');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('shipping_shipments_id')->unsigned();
             $table->binary('shipping_shipments_uuid');
             $table->string('rate_id');

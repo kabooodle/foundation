@@ -12,7 +12,7 @@ class UpdateRevisionsTblAddFk extends Migration
      */
     public function up()
     {
-        DB::statement('ALTER TABLE `revisions` MODIFY `user` INTEGER UNSIGNED NOT NULL;');
+        DB::statement('ALTER TABLE `revisions` MODIFY `user` BIGINT UNSIGNED NOT NULL;');
 
         Schema::table('revisions', function(Blueprint $table){
             $table->foreign('user')

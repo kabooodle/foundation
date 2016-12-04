@@ -19,7 +19,7 @@ class CreateFacebookNodesTbl extends Migration
             $table->bigInteger('facebook_post_id')->unsigned();
             $table->text('facebook_node_name');
             $table->text('facebook_data')->nullable();
-            $table->integer('updated_by')->unsigned();
+            $table->bigInteger('updated_by')->unsigned();
             $table->timestamps();
             $table->softDeletes();
         });

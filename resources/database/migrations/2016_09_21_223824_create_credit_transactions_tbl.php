@@ -14,7 +14,7 @@ class CreateCreditTransactionsTbl extends Migration
     {
         Schema::create(\Kabooodle\Models\CreditTransactionsLog::getTableName(), function(Blueprint $table){
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->string('transactable_type');
             $table->integer('transactable_id')->unsigned();
             $table->decimal('abs_amount', 10, 2)->default(0);

@@ -14,7 +14,7 @@ class CreateUserCreditsBalanceTbl extends Migration
     {
         Schema::create('credit_balance', function(Blueprint $table){
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->decimal('balance', 10,2);
             $table->decimal('previous_balance_of', 10, 2);
             $table->decimal('last_transaction_amount_of', 10, 2);

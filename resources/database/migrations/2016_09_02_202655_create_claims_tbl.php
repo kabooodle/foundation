@@ -13,9 +13,9 @@ class CreateClaimsTbl extends Migration
     public function up()
     {
         Schema::create(\Kabooodle\Models\Claims::getTableName(), function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('inventory_id')->unsigned();
-            $table->integer('claimed_by')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('inventory_id')->unsigned();
+            $table->bigInteger('claimed_by')->unsigned();
             $table->integer('shoppable_id')->unsigned();
             $table->string('shoppable_type');
             $table->text('inventory_item_object_data');
@@ -23,7 +23,7 @@ class CreateClaimsTbl extends Migration
             $table->boolean('accepted')->nullable()->default(null);
             $table->dateTime('accepted_on')->nullable()->default(null);
             $table->dateTime('rejected_on')->nullable()->default(null);
-            $table->integer('rejected_by')->nullable()->default(null)->unsigned();
+            $table->bigInteger('rejected_by')->nullable()->default(null)->unsigned();
             $table->text('rejected_reason')->nullable();
             $table->softDeletes();
             $table->timestamps();
@@ -41,7 +41,7 @@ class CreateClaimsTbl extends Migration
                 ->onUpdate('cascade');
         });
 
-        DB::update("ALTER TABLE ".\Kabooodle\Models\Claims::getTableName()." AUTO_INCREMENT = 193315;");
+        DB::update("ALTER TABLE ".\Kabooodle\Models\Claims::getTableName()." AUTO_INCREMENT = 9893199;");
     }
 
     /**

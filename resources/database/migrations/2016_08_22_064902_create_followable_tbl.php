@@ -14,7 +14,7 @@ class CreateFollowableTbl extends Migration
     {
         Schema::create('followables', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('followable_id');
             $table->string('followable_type');
             $table->softDeletes();

@@ -14,8 +14,8 @@ class CreateFacebookItemsTbl extends Migration
     {
         Schema::create('facebook_items', function(Blueprint $table){
             $table->bigInteger('id')->unsigned();
-            $table->integer('inventory_id')->unsigned();
-            $table->integer('seller_id')->unsigned();
+            $table->bigInteger('inventory_id')->unsigned();
+            $table->bigInteger('seller_id')->unsigned();
             $table->bigInteger('facebook_node_id')->unsigned();
             $table->bigInteger('facebook_post_id')->unsigned();
             $table->timestamp('facebook_posted_at');

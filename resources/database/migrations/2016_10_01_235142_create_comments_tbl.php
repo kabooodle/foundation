@@ -15,7 +15,7 @@ class CreateCommentsTbl extends Migration
         Schema::create(\Kabooodle\Models\Comments::getTableName(), function(Blueprint $table){
             $table->increments('id');
             $table->binary('uuid');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('commentable_parent_id')->unsigned();
             $table->integer('commentable_id')->unsigned();
             $table->string('commentable_type');

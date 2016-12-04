@@ -56375,7 +56375,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span v-if=\"display\">\n    <button :disabled=\"processing\" type=\"button\" @click=\"following ? unfollowMe() : followMe()\" class=\"btn-follow btn \" :class=\"btnclass\">\n        <spinny v-if=\"processing\"></spinny> {{ following ? unfollow_text : follow_text }}\n    </button>\n</span>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span v-if=\"display\">\n    <button :disabled=\"processing\" type=\"button\" @click=\"following ? unfollowMe() : followMe()\" class=\"btn-follow btn \" :class=\"btnclass\">\n        {{ following ? unfollow_text : follow_text }} <spinny v-if=\"processing\"></spinny>\n    </button>\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)

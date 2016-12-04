@@ -19,14 +19,14 @@ class UpdateShipmentsRemoveClaimAddShipmentClaims extends Migration
         Schema::create('shipping_shipments_claims', function(Blueprint $table){
             $table->increments('id');
             $table->integer('shipping_shipments_id')->unsigned();
-            $table->integer('claim_id')->unsigned();
+            $table->bigInteger('claim_id')->unsigned();
 
             $table->foreign('shipping_shipments_id')
                 ->references('id')->on('shipping_shipments')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->foreign('claim_id')
+            $table->foreign('claim_id', 'shipping_shipments_claims_id_foreign')
                 ->references('id')->on('claims')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');

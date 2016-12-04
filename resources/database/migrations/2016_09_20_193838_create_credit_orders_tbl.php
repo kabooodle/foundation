@@ -14,7 +14,7 @@ class CreateCreditOrdersTbl extends Migration
     {
         Schema::create('credit_receipts', function(Blueprint $table){
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('credit_charge_type_id')->unsigned();
             $table->string('stripe_invoice_id');
             $table->string('stripe_charge_id');

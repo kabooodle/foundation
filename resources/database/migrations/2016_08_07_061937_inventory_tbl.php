@@ -13,8 +13,8 @@ class InventoryTbl extends Migration
     public function up()
     {
         Schema::create('inventory', function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('user_id')->index()->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('user_id')->index()->unsigned();
             $table->integer('inventory_category_id')->nullable()->unsigned();
             $table->string('name');
             $table->string('description');
@@ -33,7 +33,7 @@ class InventoryTbl extends Migration
                 ->onDelete('cascade');
         });
 
-        DB::update("ALTER TABLE inventory AUTO_INCREMENT = 199315;");
+        DB::update("ALTER TABLE inventory AUTO_INCREMENT = 8099315;");
     }
 
     /**

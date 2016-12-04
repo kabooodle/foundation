@@ -18,8 +18,8 @@ class CreateInvitationsTbl extends Migration
             $table->integer('invitable_id')->unsigned();
             $table->string('invitable_type');
             $table->timestamp('invited_at');
-            $table->integer('invited_by')->unsigned();
-            $table->integer('user_id')->unsigned()->nullable();
+            $table->bigInteger('invited_by')->unsigned();
+            $table->bigInteger('user_id')->unsigned()->nullable();
             $table->string('email')->nullable();
             $table->tinyInteger('accepted')->default(0);
             $table->timestamp('accepted_at')->nullable();

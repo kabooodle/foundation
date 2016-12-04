@@ -14,7 +14,7 @@ class CreateLikeablesTable extends Migration
     {
         Schema::create('likeables', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->integer('likeable_id');
             $table->string('likeable_type');
             $table->softDeletes();

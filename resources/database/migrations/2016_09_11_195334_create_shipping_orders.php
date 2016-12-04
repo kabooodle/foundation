@@ -15,10 +15,10 @@ class CreateShippingOrders extends Migration
         Schema::create('shipping_shipments', function(Blueprint $table){
             $table->increments('id');
             $table->binary('uuid');
-            $table->integer('user_id')->unsigned();
-            $table->integer('claim_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('claim_id')->unsigned();
             $table->string('shipment_id');
-            $table->string('recipient_id');
+            $table->bigInteger('recipient_id');
             $table->text('recipient_data');
             $table->string('sender_id');
             $table->text('sender_data');

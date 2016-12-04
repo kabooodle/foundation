@@ -16,7 +16,7 @@ class UpdateUserTbl extends Migration
             $table->string('timezone')->default('America/Los_Angeles')->after('activated');
         });
 
-        DB::update("ALTER TABLE users AUTO_INCREMENT = 152295;");
+        DB::update("ALTER TABLE users AUTO_INCREMENT = 9872295;");
     }
 
     /**

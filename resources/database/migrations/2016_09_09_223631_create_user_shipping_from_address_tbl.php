@@ -14,7 +14,7 @@ class CreateUserShippingFromAddressTbl extends Migration
     {
         Schema::create(\Kabooodle\Models\ShippingAddress::getTableName(), function(Blueprint $table){
             $table->increments('id')->unsigned();
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->enum('type', [\Kabooodle\Models\ShippingAddress::TYPE_FROM, \Kabooodle\Models\ShippingAddress::TYPE_TO])->default(\Kabooodle\Models\ShippingAddress::TYPE_FROM);
             $table->string('company')->nullable();
             $table->string('street1');

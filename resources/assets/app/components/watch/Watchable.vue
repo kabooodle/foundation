@@ -7,7 +7,7 @@
                 class="btn-follow btn "
                 :class="btnclass"
         >
-            <spinny v-if="processing"></spinny> {{ following ? unfollow_text : follow_text }}
+            {{ following ? unfollow_text : follow_text }} <spinny v-if="processing"></spinny>
         </button>
     </span>
 </template>

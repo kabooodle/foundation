@@ -17,7 +17,7 @@ class CreatePageviews extends Migration
             $table->bigIncrements('id');
             $table->string('shoppable_type');
             $table->integer('shoppable_id')->unsigned();
-            $table->integer('inventory_id')->unsigned();
+            $table->bigInteger('inventory_id')->unsigned();
             $table->string('ip_address');
             $table->timestamps();
 

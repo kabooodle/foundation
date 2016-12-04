@@ -89,10 +89,10 @@
                            href="#" data-toggle="dropdown"><span
                                     class="nav-text">Merchant Services</span></a>
                         <div class="dropdown-menu">
-                            <a href="{{  route('shop.inventory.index', [user()->username]) }}"
-                               class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Inventory</a>
                             <a href="{{  route('shop.inventory.create', [user()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add Inventory</a>
+                            <a href="{{  route('shop.inventory.index', [user()->username]) }}"
+                               class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Inventory</a>
                             <div class="divider"></div>
                             <a href="{{ route('shop.claims.index', [user()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Pending Claims</a>
@@ -104,11 +104,10 @@
                             <a href="{{ route('listings.index') }}" class="dropdown-item {{ Request::is('listings') ? 'active' : null }}"><span>Listings</span></a>
 
                             <div class="divider"></div>
-                            <a href="{{  route('shipping.index') }}"
-                               class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
                             <a href="{{  route('shipping.create') }}"
                                class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
-
+                            <a href="{{  route('shipping.index') }}"
+                               class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
                         </div>
                     </li>
                 @endif

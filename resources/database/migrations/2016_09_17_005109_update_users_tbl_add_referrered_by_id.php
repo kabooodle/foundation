@@ -13,7 +13,7 @@ class UpdateUsersTblAddReferreredById extends Migration
     public function up()
     {
         Schema::table('users', function(Blueprint $table){
-            $table->integer('referred_by_user_id')->unsigned()->after('stripe_id')->nullable();
+            $table->bigInteger('referred_by_user_id')->unsigned()->after('stripe_id')->nullable();
             $table->string('public_hash')->after('id');
             $table->foreign('referred_by_user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });

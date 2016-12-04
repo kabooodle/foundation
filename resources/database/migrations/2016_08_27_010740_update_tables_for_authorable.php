@@ -15,9 +15,9 @@ class UpdateTablesForAuthorable extends Migration
         $tables = ['flashsales', 'inventory', 'groups'];
         foreach ($tables as $tableName) {
             Schema::table($tableName, function (Blueprint $table) {
-                $table->integer('created_by')->unsigned()->nullable()->after('updated_at');
-                $table->integer('updated_by')->unsigned()->nullable()->after('updated_at');
-                $table->integer('deleted_by')->unsigned()->nullable()->after('updated_at');
+                $table->bigInteger('created_by')->unsigned()->nullable()->after('updated_at');
+                $table->bigInteger('updated_by')->unsigned()->nullable()->after('updated_at');
+                $table->bigInteger('deleted_by')->unsigned()->nullable()->after('updated_at');
             });
 
             Schema::table($tableName, function(Blueprint $table){

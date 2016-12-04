@@ -15,7 +15,7 @@ class CreateFlashsalesPivotSellersTbl extends Migration
         Schema::create('flashsales_sellers', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('flashsales_id')->unsigned();
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
         });

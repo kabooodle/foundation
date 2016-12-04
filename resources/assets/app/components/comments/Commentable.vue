@@ -38,8 +38,7 @@
                             <textarea id="comment_new_text" v-model="newcomment" name="text_raw" data-toggle="emojione" class="form-control no-border" rows="3" placeholder="Type something..."></textarea>
                             <div class="box-footer clearfix">
                                 <button id="comment_new_submit_btn" type="submit" class="btn primary pull-right btn-sm" :disabled="!newcomment" >
-                                    <spinny v-if="posting"></spinny>
-                                    Post Comment</button>
+                                  Post Comment <spinny v-if="posting"></spinny></button>
                             </div>
                         </form>
                     </div>

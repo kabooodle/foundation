@@ -14,7 +14,7 @@ class CreateInventoryCategoriesTbl extends Migration
     {
         Schema::create('inventory_categories', function(Blueprint $table){
             $table->increments('id');
-            $table->integer('inventory_id')->unsigned();
+            $table->bigInteger('inventory_id')->unsigned();
             $table->integer('category_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();

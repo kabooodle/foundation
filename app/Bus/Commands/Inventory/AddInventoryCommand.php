@@ -66,7 +66,7 @@ final class AddInventoryCommand
         $this->typeId = $typeId;
         $this->styleId = $styleId;
         $this->price = $price;
-        $this->wholesalePrice = $$wholesalePrice;
+        $this->wholesalePrice = $wholesalePrice;
         $this->sizings = $sizings;
         $this->description = $description;
     }

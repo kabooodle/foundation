@@ -13,7 +13,7 @@ class UpdateTransactionsTable extends Migration
     public function up()
     {
         Schema::table(\Kabooodle\Models\ShippingTransactions::getTableName(), function(Blueprint $table){
-            $table->integer('recipient_id')->unsigned()->after('user_id');
+            $table->bigInteger('recipient_id')->unsigned()->after('user_id');
 
             $table->foreign('recipient_id')
                 ->references('id')->on('users')

@@ -14,7 +14,7 @@ class CreateListingsAndMetaTbls extends Migration
     {
         Schema::create(\Kabooodle\Models\Listings::getTableName(), function(Blueprint $table){
             $table->bigIncrements('id');
-            $table->integer('owner_id')->unsigned();
+            $table->bigInteger('owner_id')->unsigned();
             $table->bigInteger('fb_group_node_id')->unsigned()->nullable();
             $table->integer('flashsale_id')->unsigned()->nullable();
             $table->binary('uuid');
@@ -40,11 +40,11 @@ class CreateListingsAndMetaTbls extends Migration
         Schema::create(\Kabooodle\Models\ListingItems::getTableName(), function(Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('listing_id')->unsigned();
-            $table->integer('owner_id')->unsigned();
+            $table->bigInteger('owner_id')->unsigned();
             $table->bigInteger('fb_group_node_id')->unsigned()->nullable();
             $table->bigInteger('fb_album_node_id')->unsigned()->nullable();
             $table->integer('flashsale_id')->unsigned()->nullable();
-            $table->integer('inventory_id')->unsigned();
+            $table->bigInteger('inventory_id')->unsigned();
             $table->binary('uuid');
             $table->tinyInteger('ignore')->default(false);
             $table->enum('type', \Kabooodle\Models\Listings::getConstantsStartsWith('TYPE'))

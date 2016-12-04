@@ -14,7 +14,7 @@ class CreateUserFromAddressTbl extends Migration
     {
         Schema::create('users_shipping_from_address', function(Blueprint $table){
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->string('name')->nullable();
             $table->string('company')->nullable();
             $table->string('street1')->nullable();
