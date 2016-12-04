@@ -8,6 +8,7 @@ namespace Kabooodle\Models;
 
 use DB;
 use Carbon\Carbon;
+use Kabooodle\Models\Traits\UuidableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
@@ -181,7 +182,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
                 $model->wholesale_price_usd = $this->style->wholesale_price_usd;
             }
             if(!$model->uuid) {
-                $model->uuid = $model->obfuscateIdToString($model->id);
+                $model->uuid = str_random(16);
             }
         });
     }
