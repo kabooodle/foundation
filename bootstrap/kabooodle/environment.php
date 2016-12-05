@@ -10,45 +10,50 @@
 // L5 assumes you are either in production, or you're not... well we use
 // 5-6 environments... So although this is rather manual and requires
 // manual massaging now and then, who cares.  Also, using CLI sucks ass :(
-$env = $app->detectEnvironment(function() use ($app){
 
-    $args = isset($_SERVER['argv']) ? $_SERVER['argv'] : null;
-    if ($args && str_contains($args[0], 'phpunit')) {
-        $env = 'testing';
-    } else {
-        $httpHost = strtolower(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : gethostname());
-        switch ($httpHost) {
-            case 'kabooodle.com':
-                $env = 'production';
-                break;
 
-            case 'kabooodle-staging':
-            case 'kabooodle.net':
-            case '162.243.133.39':
-                $env = 'staging';
-                break;
+// Disabled for now
 
-            case 'ngrok' :
-            case 'kabooodle.ngrok.io' :
-            case '932b4484.ngrok.io' :
-            case 'app.kabooodle.ngrok.io' :
-                $env = 'ngrok';
-                break;
 
-            case 'orion' :
-            case 'machine' :
-            case 'kabooodle.dev' :
-            default :
-                $env = 'local';
-                break;
-        }
-    }
-
-    // Overload existing properties
-    if (file_exists(__DIR__ . '/../../.env.' . $env)) {
-        $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../../', '.env.' . $env);
-        $dotenv->overload();
-    }
-
-    return $env;
-});
+//$env = $app->detectEnvironment(function() use ($app){
+//
+//    $args = isset($_SERVER['argv']) ? $_SERVER['argv'] : null;
+//    if ($args && str_contains($args[0], 'phpunit')) {
+//        $env = 'testing';
+//    } else {
+//        $httpHost = strtolower(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : gethostname());
+//        switch ($httpHost) {
+//            case 'kabooodle.com':
+//                $env = 'production';
+//                break;
+//
+//            case 'kabooodle-staging':
+//            case 'kabooodle.net':
+//            case '162.243.133.39':
+//                $env = 'staging';
+//                break;
+//
+//            case 'ngrok' :
+//            case 'kabooodle.ngrok.io' :
+//            case '932b4484.ngrok.io' :
+//            case 'app.kabooodle.ngrok.io' :
+//                $env = 'ngrok';
+//                break;
+//
+//            case 'orion' :
+//            case 'machine' :
+//            case 'kabooodle.dev' :
+//            default :
+//                $env = 'local';
+//                break;
+//        }
+//    }
+//
+//    // Overload existing properties
+//    if (file_exists(__DIR__ . '/../../.env.' . $env)) {
+//        $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../../', '.env.' . $env);
+//        $dotenv->overload();
+//    }
+//
+//    return $env;
+//});
