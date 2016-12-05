@@ -16,7 +16,7 @@ new Vue({
             this.$http.post(notifications_route, data).then(function(response){
 
             }, function(response){
-                alert('An error occurred, please try again');
+                notify({text: 'An error occurred, please try again.'});
                 event.target.checked = action != 'subscribed';
             }).finally(function(){
                 event.target.classList.remove("disabled");

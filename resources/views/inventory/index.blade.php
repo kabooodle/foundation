@@ -257,7 +257,7 @@
 <script>
     const inventory_route = '{{ apiRoute('inventory.index', [user()->username]) }}';
 </script>
-<script src="/assets/js/inventory-management.js?x={{time()}}"></script>
+<script src="{{ staticAsset("/assets/js/inventory-management.js") }}"></script>
 <script>
     $(function () {
         function registerDateTimepicker()
@@ -275,14 +275,11 @@
                     next: 'fa fa-chevron-right'
                 }
             });
-        }
+        };
 
-//        setTimeout(function(){
-//            registerDateTimepicker();
-//        }, 1000);
         $('[name="facebook_group"]').change(function(){
             registerDateTimepicker();
-        })
+        });
     })
 </script>
 @endpush
