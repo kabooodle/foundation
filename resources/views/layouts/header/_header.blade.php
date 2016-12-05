@@ -58,7 +58,7 @@
                         {{--</div>--}}
                     {{--</div>--}}
                 {{--</li>--}}
-                <li class="nav-item dropdown dropdown-onhover">
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle clear" data-toggle=
                     "dropdown" href=""><span class="avatar_container _32 inline avatar-thumbnail"><img alt="..."
                                                                       src="{{ user()->avatar }}"> <i class=
@@ -84,7 +84,7 @@
         <div class="collapse navbar-toggleable-sm" data-pjax="" id="navbar-4">
             <ul class="nav navbar-nav pull-left nav-active-border b-warning">
                 @if(user() && user()->subscribed('main'))
-                    <li class="nav-item dropdown dropdown-onhover">
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle "
                            href="#" data-toggle="dropdown"><span
                                     class="nav-text">Merchant Services</span></a>
