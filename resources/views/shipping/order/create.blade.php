@@ -143,7 +143,7 @@
 
     @push('footer-scripts')
     <script>
-        const claims_endpoint = "{{ apiRoute('claims.index') }}"
+        const claims_endpoint = "{{ apiRoute('claims.index') }}";
         const packaging_data = JSON.parse('{!! getParcelListByCarrier(true)->toJson() !!}');
     </script>
     <script src="/assets/js/shipping-create.js"></script>

@@ -69,5 +69,5 @@ elixir(function (mix) {
             'vendor/theme/scripts/ui-jp.js',
             'app/util.js'
 
-    ], elixir.config.publicPath + 'js/base.js')
+    ], elixir.config.publicPath + 'js/base.js');
 });

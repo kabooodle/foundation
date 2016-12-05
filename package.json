@@ -39,9 +39,10 @@
     "vue-loader": "^9.7.0",
     "vue-resource": "^1.0.3",
     "vuetable-2": "^0.9.2",
+    "vue-timeago": "^3.1.2",
     "vuex": "^2.0.0"
   },
   "dependencies": {
-    "vue-timeago": "^3.1.2"
+
   }
 }
