@@ -9,6 +9,7 @@ namespace Kabooodle\Http\Controllers\Web\Profile;
 use Binput;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Models\Claims;
+use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Models\User;
 use Messages;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ use Kabooodle\Http\Controllers\Web\Controller;
  */
 class ProfilePurchasesController extends Controller
 {
-    use PaginatesTrait;
+    use PaginatesTrait, ObfuscatesIdTrait;
 
     /**
      * @param Request $request
@@ -36,7 +37,8 @@ class ProfilePurchasesController extends Controller
 
     public function show($itemID)
     {
-        $claim = Claims::where('id', $itemID)->first();
+        $decryptedId = $this->obfuscateFromURIString($itemID);
+        $claim = Claims::find($decryptedId);
 
         return view('profile.purchases.show')->with(compact('claim'));
     }

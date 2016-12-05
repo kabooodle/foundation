@@ -47,11 +47,7 @@
                 <p class="m-b-0 m-t-1 h4 text-warning _500">${{ $claim->price }}</p>
             </div>
             <div class="box-body">
-                <h2><span class="_800">Seller Info</span></h2>
-                <p class="block m-t-0"><span class="text-muted">Seller:</span> {!! $claim->inventoryItem->owner->name !!}</p>
-                <p class="block m-t-0"><span class="text-muted">Seller Email:</span> {!! $claim->inventoryItem->owner->email !!}</p>
-            </div>
-            <div class="box-body">
+                <p class="text-muted text">Claimed on: {{ $claim->created_at->format('F jS \\a\\t g:i A') }}</p>
                 <p class="m-b-lg text-muted text">{!! nl2br($claim->inventoryItem->description) !!}</p>
             </div>
         </div>
@@ -71,6 +67,35 @@
             <div class="text-center">
                 <small class="text-muted"><i class="fa fa-flag" aria-hidden="true"></i> Flag</small>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="p-b-3">
+    <div class="box">
+        <div class="row-col m-b">
+            <div class="col-md-6">
+                <div class="box-header">
+                    <h4>Seller Information</h4>
+                </div>
+                <div class="box-divider"></div>
+                <div class="box-body">
+                    <p>Name: {{ $claim->inventoryItem->owner->name }}</p>
+                    <p>Email: {{ $claim->inventoryItem->owner->email }}</p>
+                    <p>Email: {{ $claim->inventoryItem->owner->email }}</p>
+                </div>
+            </div>
+            <div class="col-md-6 b-l no-shadow">
+                <div class="box-header">
+                    <h4>Shipping Information</h4>
+                </div>
+                <div class="box-divider"></div>
+                <div class="box-body">
+                    <p>Email: {!! $claim->present()->getShippingStatus() !!}</p>
+                    <p>Ship to: {{ $claim->inventoryItem->owner->email }}</p>
+                    <p>Ship date: {{ $claim->inventoryItem->owner->email }}</p>
+                    <p>Ship date: {{ $claim->shipments }}</p>
+                </div>
         </div>
     </div>
 </div>
