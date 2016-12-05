@@ -11,6 +11,9 @@ return [
 
         'http://api.kabooodle.net',
         'http://app.kabooodle.net',
+
+        'http://app.kabooodle.com',
+        'http://api.kabooodle.com',
     ],
     'allowedHeaders'      => ['*'],
     'allowedMethods' => ['GET', 'POST', 'PUT',  'DELETE', 'OPTIONS'],
