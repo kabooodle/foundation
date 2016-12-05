@@ -24,7 +24,7 @@
 
     <script type="text/javascript">
         @if ($_current_user)
-//                // TODO MIGRATE ALL THIS SHIT TO A MODULE
+
                 Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
                 Vue.http.headers.common['Authorization'] = "Bearer " + $('meta[name=user_hash]').attr("content");
 
