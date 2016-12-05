@@ -14,6 +14,10 @@ return [
 
         'http://app.kabooodle.com',
         'http://api.kabooodle.com',
+
+        'http://d1xa16vtrvw19v.cloudfront.net', // net
+        'http://d1o4ibed66ebi1.cloudfront.net', // com
+        'http://d2jx59dcc1ko56.cloudfront.net', // dev
     ],
     'allowedHeaders'      => ['*'],
     'allowedMethods' => ['GET', 'POST', 'PUT',  'DELETE', 'OPTIONS'],
