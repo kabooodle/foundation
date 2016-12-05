@@ -1,0 +1,43 @@
+{
+    "name": "graham-campbell/testbench-core",
+    "description": "TestBench Core Provides Some Testing Functionality For Laravel 5",
+    "keywords": ["laravel", "framework", "testing", "testbench-core", "TestBench", "Laravel TestBench Core", "Laravel-TestBench-Core", "Graham Campbell", "GrahamCampbell"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Graham Campbell",
+            "email": "graham@alt-three.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8|^5.0"
+    },
+    "suggest": {
+        "illuminate/support": "Required to use the laravel trait.",
+        "mockery/mockery": "Required to use the mockery trait.",
+        "phpunit/phpunit": "Required to use the most of the features."
+    },
+    "autoload": {
+        "psr-4": {
+            "GrahamCampbell\\TestBenchCore\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GrahamCampbell\\Tests\\TestBenchCore\\": "tests/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

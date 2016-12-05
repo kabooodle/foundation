@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+
+<?php
+
+$path = dirname(__FILE__);
+
+include $path . '/../src/ZackKitzmiller/Tiny.php';
+
+echo "Generating TinyPHP Random Set...\n";
+
+$set = \ZackKitzmiller\Tiny::generate_set();
+
+echo "Set Generated\n";
+echo "Set: {$set} \n\n";
