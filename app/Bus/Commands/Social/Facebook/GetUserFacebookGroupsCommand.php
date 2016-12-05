@@ -20,13 +20,18 @@ final class GetUserFacebookGroupsCommand
     public $actor;
 
     /**
-     * GetUserFacebookGroupsCommand constructor.
-     *
-     * @param User $user
+     * @var bool
      */
-    public function __construct(User $actor)
+    public $forceRefresh;
+
+    /**
+     * @param User $actor
+     * @param bool $forceRefresh
+     */
+    public function __construct(User $actor, bool $forceRefresh = false)
     {
         $this->actor = $actor;
+        $this->forceRefresh = $forceRefresh;
     }
 
     /**
@@ -36,4 +41,13 @@ final class GetUserFacebookGroupsCommand
     {
         return $this->actor;
     }
+
+    /**
+     * @return bool
+     */
+    public function isForcedRefresh(): bool
+    {
+        return $this->forceRefresh;
+    }
+
 }

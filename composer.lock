@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "141b31cff3d4d8eb8527f4bd77918b01",
-    "content-hash": "8a21fe6cb345a873c638d202e8c4eb9f",
+    "hash": "2a60ecc9f2b7ae3bd96ba1adc68ca2d9",
+    "content-hash": "3406228ecc00e16ca2fe4a490bb3633d",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -3489,16 +3489,16 @@
         },
         {
             "name": "sammyk/laravel-facebook-sdk",
-            "version": "3.4.0",
+            "version": "3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SammyK/LaravelFacebookSdk.git",
-                "reference": "8bd9d66ef57fb182f77ab41dee89b2a81ee59677"
+                "reference": "8cef4beb5e2c6c928e390458264f7a7e44eff2d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SammyK/LaravelFacebookSdk/zipball/8bd9d66ef57fb182f77ab41dee89b2a81ee59677",
-                "reference": "8bd9d66ef57fb182f77ab41dee89b2a81ee59677",
+                "url": "https://api.github.com/repos/SammyK/LaravelFacebookSdk/zipball/8cef4beb5e2c6c928e390458264f7a7e44eff2d1",
+                "reference": "8cef4beb5e2c6c928e390458264f7a7e44eff2d1",
                 "shasum": ""
             },
             "require": {
@@ -3544,7 +3544,7 @@
                 "lumen",
                 "sdk"
             ],
-            "time": "2016-08-25 14:54:47"
+            "time": "2016-10-12 19:16:35"
         },
         {
             "name": "shippo/shippo-php",

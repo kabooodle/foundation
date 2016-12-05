@@ -13,8 +13,8 @@ class CreateFacebookNodesTbl extends Migration
     public function up()
     {
         Schema::create('facebook_nodes', function(Blueprint $table){
-            $table->bigInteger('id')->unsigned();
-            $table->enum('facebook_node', ['album', 'photo', 'comment']);
+            $table->bigIncrements('id');
+            $table->enum('facebook_node_type', ['group','album', 'photo', 'comment']);
             $table->bigInteger('facebook_node_id')->unsigned();
             $table->bigInteger('facebook_post_id')->unsigned();
             $table->text('facebook_node_name');

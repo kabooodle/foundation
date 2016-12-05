@@ -26,11 +26,11 @@ class FacebookNodes extends BaseEloquentModel
      * @var array
      */
     protected $attributes = [
-//        'facebook_node_id' => 0,
-//        'facebook_post_id' => 0,
-//        'facebook_node_name' => '',
-//        'facebook_data' => [],
-//        'facebook_node' => self::NODE_ALBUM,
+        'facebook_node_id' => 0,
+        'facebook_parent_node_id' => null,
+        'facebook_node_name' => '',
+        'facebook_data' => '',
+        'facebook_node_type' => self::NODE_ALBUM,
     ];
 
     public static function boot()
@@ -46,11 +46,11 @@ class FacebookNodes extends BaseEloquentModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany|FacebookItems
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function albumItems()
+    public function parent()
     {
-        return $this->hasMany(FacebookItems::class, 'facebook_post_id');
+        return $this->belongsTo(FacebookNodes::class, 'facebook_parent_node_id');
     }
 
     /**
@@ -59,5 +59,13 @@ class FacebookNodes extends BaseEloquentModel
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'facebook_nodes_users', 'db_node_id', 'user_id');
     }
 }

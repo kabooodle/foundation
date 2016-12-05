@@ -6,10 +6,12 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Social\Facebook;
 
+use DB;
+use Kabooodle\Models\User;
+use Kabooodle\Models\FacebookNodes;
 use Kabooodle\Bus\Events\CacheMissEvent;
 use Facebook\Exceptions\FacebookSDKException;
 use Kabooodle\Bus\Commands\Social\Facebook\GetUserFacebookGroupsCommand;
-use Kabooodle\Models\User;
 
 /**
  * Class GetUserFacebookGroupsCommandHandler
@@ -18,27 +20,48 @@ use Kabooodle\Models\User;
 class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
 {
     /**
+     * @var
+     */
+    public $existingNodesFromDB;
+
+    /**
      * @param GetUserFacebookGroupsCommand $command
-     *
-     * @return array|mixed
+     * @return bool|\Facebook\GraphNodes\GraphEdge|mixed
      * @throws FacebookSDKException
+     * @throws \Exception
      */
     public function handle(GetUserFacebookGroupsCommand $command)
     {
         $tag = self::TAG;
+
         /** @var User $actor */
         $actor = $command->getActor();
+
+        // Allows you override returning a cached response.
+        $forceRefresh = $command->isForcedRefresh();
+
+        // Does the user even have facebook configured?
         if (! $actor->getFacebookUserId() || ! $actor->getFacebookUserToken()) {
             return false;
         }
-//        if ($this->cache->tags($tag)->has($actor->getFacebookUserId())) {
-//            return $this->cache->tags($tag)->get($actor->getFacebookUserId());
-//        }
 
-//        event(new CacheMissEvent($tag, $actor->getFacebookUserId()));
+        if(! $forceRefresh) {
+
+            // Do we have a cached response? Return it if we do.
+            if($this->cache->tags($tag)->has($actor->getFacebookUserId())) {
+                return $this->cache->tags($tag)->get($actor->getFacebookUserId());
+            }
+
+            event(new CacheMissEvent($tag, $actor->getFacebookUserId()));
+        }
 
         try {
-            $groups = $this->facebook->getUsersGroups($actor->getFacebookUserId());
+            // Fetch a fresh FB response.
+            $groups = $this->facebook->getUsersGroupsWithAlbums($actor->getFacebookUserId());
+
+            // Cache all the node ids for later use.
+            $nodeIds = [];
+
             if ($groups) {
                 foreach ($groups as $key => $group) {
 
@@ -48,28 +71,111 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
                         continue;
                     }
 
+                    $nodeIds[] = $group['id'];
+
                     // If the group has albums, lets make sure the album can be uploaded to.
                     if (isset($group['albums'])) {
                         foreach ($group['albums'] as $albumKey => $album) {
                             if ($album['can_upload'] === false) {
                                 unset($group['albums'][$albumKey]);
                             }
+                            $nodeIds[] = $album['id'];
                         }
                     } else {
-
                         // Create an empty albums key with an empty array.
                         $group['albums'] = [];
                     }
                 }
             }
-//            foreach ($groups as &$group) {
-//                $group['albums'] = $this->facebook->getGroupAlbums($group['id'])->asArray();
-//            }
-//            $this->cache->tags($tag)->put($actor->getFacebookUserId(), $groups, config('session.lifetime'));
+
+            // At this point, we have filtered through and now have the desired group and albums.
+            // Lets store this in the DB and then cache the filtered data.
+            $this->cache->tags($tag)->put($actor->getFacebookUserId(), $groups, config('session.lifetime'));
+
+            // Build a collection of FacebookNodes whereIn (nodeids) that we can defer to later.
+            // Upon storing to the DB, if the node_id already exists in the DB, then we will perform
+            // an update, vs creating a new entry.
+            $this->setAllExistingNodesFromDB($nodeIds);
+
+            // Store all the group and albums into the db.
+            $this->storeGroupsAndAlbums($groups, $actor->id);
 
             return $groups;
         } catch (FacebookSDKException $e) {
             throw $e;
+        } catch (Exception $e) {
+            throw $e;
         }
+    }
+
+    /**
+     * @param $fbGroups
+     * @param $userId
+     * @return array
+     */
+    public function storeGroupsAndAlbums($fbGroups, $userId)
+    {
+        $storedNodes = [];
+        foreach($fbGroups as $group) {
+            $storedGroup = $this->storeFbNode($group['id'], $group['name']);
+            $storedGroup->users()->attach($userId, [
+                'facebook_node_id' => $storedGroup->facebook_node_id,
+                'node_type' => $storedGroup->facebook_node_type
+            ]);
+            $storedNodes[] = $storedGroup;
+            if(count($group['albums'])) {
+                foreach($group['albums'] as $album) {
+                    $storedAlbum = $this->storeFbNode($album['id'], $album['name'], FacebookNodes::NODE_ALBUM, $storedGroup->id);
+                    $storedAlbum->users()->attach($userId, [
+                        'facebook_node_id' => $storedAlbum->facebook_node_id,
+                        'node_type' => FacebookNodes::NODE_ALBUM
+                    ]);
+                    $storedNodes[] = $storedAlbum;
+                }
+            }
+        }
+
+        return $storedNodes;
+    }
+
+    /**
+     * @param $id
+     * @param $name
+     * @param string $nodeType
+     * @param null $parentId
+     * @return FacebookNodes
+     */
+    public function storeFbNode($id, $name, $nodeType = FacebookNodes::NODE_GROUP, $parentId = null)
+    {
+        if (! $entry = $this->doesFbNodeExistInDB($id)) {
+            $entry = new FacebookNodes;
+            $entry->facebook_node_id = $id;
+            $entry->facebook_parent_node_id = $parentId;
+            $entry->facebook_node_type = $nodeType;
+        }
+
+        $entry->facebook_node_name = $name;
+        $entry->save();
+
+        return $entry;
+    }
+
+    /**
+     * @param array $nodeIds
+     */
+    public function setAllExistingNodesFromDB(array $nodeIds)
+    {
+        $nodes = FacebookNodes::whereIn('facebook_node_id', $nodeIds)->get();
+
+        $this->existingNodesFromDB = $nodes;
+    }
+
+    /**
+     * @param $nodeId
+     * @return mixed
+     */
+    public function doesFbNodeExistInDB($nodeId)
+    {
+        return $this->existingNodesFromDB->where('facebook_node_id', $nodeId)->first();
     }
 }

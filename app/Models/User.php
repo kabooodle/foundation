@@ -546,6 +546,24 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function facebookGroups()
+    {
+        return $this->belongsToMany(FacebookNodes::class, 'facebook_nodes_users', 'user_id', 'facebook_node_id')
+            ->where('facebook_node', FacebookNodes::NODE_GROUP);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function facebookAlbums()
+    {
+        return $this->belongsToMany(FacebookNodes::class, 'facebook_nodes_users', 'user_id', 'facebook_node_id')
+            ->where('facebook_node', FacebookNodes::NODE_ALBUM);
+    }
+
+    /**
      * @return mixed
      */
     public function fbTokenExpired()
