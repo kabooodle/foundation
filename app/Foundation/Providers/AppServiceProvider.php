@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Foundation\Providers;
 
+use URL;
 use AltThree\Bus\Dispatcher;
 use Illuminate\Pagination\Paginator;
 use Kabooodle\Services\EventDispatcher;
@@ -25,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Dispatcher $dispatcher)
     {
+        if (env('APP_ENV') == 'production') {
+            URL::forceSchema('https');
+        }
+
         $dispatcher->mapUsing(function ($command) {
             return Dispatcher::simpleMapping($command, 'Kabooodle\Bus', 'Kabooodle\Bus\Handlers');
         });
