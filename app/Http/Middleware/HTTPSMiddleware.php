@@ -21,18 +21,10 @@ class HTTPSMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (! $this->isSecure() && env('APP_ENV') === 'production') {
+        if (getProtocol($includeBackSlashes = false) == 'http' && env('APP_ENV') === 'production') {
             return redirect()->secure($request->getRequestUri());
         }
 
         return $next($request);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSecure()
-    {
-        return getProtocol($includeBackSlashes = false) == 'http';
     }
 }
