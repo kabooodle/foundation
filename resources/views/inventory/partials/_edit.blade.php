@@ -40,7 +40,7 @@
         api_route="{{ route('api.files.sign') }}"
 ></inventory-edit>
 
-<script src="/assets/js/inventory-edit.js"></script>
+<script src="{{ staticAsset('/assets/js/inventory-edit.js') }}"></script>
 {{--</validator>--}}
 
 </form>

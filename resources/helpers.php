@@ -87,7 +87,7 @@ if (! function_exists('spinnyAppendedToEl')) {
     function spinnyAppendedToEl($size = 25)
     {
         return ' <img 
-        src="/assets/images/icons/ring-alt.gif" 
+        src="'.staticAsset("/assets/images/icons/ring-alt.gif").'" 
         height="'.$size.'" 
         style="position:absolute; margin-top:-'.($size/2+5).'px; right:-'.$size.'px; top: 50%;" 
         class="spinny">';

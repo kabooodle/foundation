@@ -120,7 +120,7 @@
 
 
 @push('footer-scripts')
-<script src="/assets/js/sales-management.js"></script>
+<script src="{{  staticAsset('/assets/js/sales-management.js') }}"></script>
 <script>
     $(function(){
 

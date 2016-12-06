@@ -146,7 +146,7 @@
         const claims_endpoint = "{{ apiRoute('claims.index') }}";
         const packaging_data = JSON.parse('{!! getParcelListByCarrier(true)->toJson() !!}');
     </script>
-    <script src="/assets/js/shipping-create.js"></script>
+    <script src="{{staticAsset('/assets/js/shipping-create.js')}}"></script>
     @endpush
 
 @endsection

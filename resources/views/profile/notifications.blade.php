@@ -48,6 +48,6 @@
         const notifications_route = '{{ route('profile.notifications.update') }}';
     </script>
 
-    <script src="/assets/js/profile-notifications.js"></script>
+    <script src="{{  staticAsset('/assets/js/profile-notifications.js') }}"></script>
 
 @endsection

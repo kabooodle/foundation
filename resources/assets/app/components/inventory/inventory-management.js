@@ -229,7 +229,7 @@ new Vue({
             });
         },
         getPostables(){
-            this.$http.get('http://'+window.location.hostname+'/inventory/postables').then((response)=>{
+            this.$http.get('//'+window.location.hostname+'/inventory/postables').then((response)=>{
                 // Called using computed property;
                 this.postables = response.body.data;
             }, (response)=>{

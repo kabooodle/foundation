@@ -11,7 +11,7 @@
         <div class="box-body clearfix">
             <div class="list-body">
                 <div class="pull-left m-r-1">
-                    <img src="/assets/images/icons/FB-f-Logo__blue_50.png">
+                    <img src="{{ staticAsset('/assets/images/icons/FB-f-Logo__blue_50.png') }}">
                 </div>
                 <div class="pull-left">
                     <span class="h6 _500">Facebook Connect</span><br>

@@ -4,13 +4,14 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Jobs;
+namespace Kabooodle\Bus\Jobs\Cron;
+
+use Kabooodle\Bus\Jobs\Job;
 
 /**
- * Class Job
- * @package Kabooodle\Bus\Jobs
+ * Class CronJob
  */
-abstract class Job
+final class CronJob extends Job
 {
 
 }

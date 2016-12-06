@@ -58,7 +58,7 @@
 @endsection
 
 @push('footer-scripts')
-<script src="/assets/js/listing-items-page.js"></script>
+<script src="{{ staticAsset('/assets/js/listing-items-page.js') }}"></script>
 @endpush
 
 @push('utilities')
