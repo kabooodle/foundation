@@ -148,8 +148,9 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
+        Fideloper\Proxy\TrustedProxyServiceProvider::class,
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
+
         Kabooodle\Foundation\Providers\AppServiceProvider::class,
 
         Aws\Laravel\AwsServiceProvider::class,

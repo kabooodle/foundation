@@ -60,6 +60,7 @@ return array(
     'GrahamCampbell\\Manager\\' => array($vendorDir . '/graham-campbell/manager/src'),
     'GrahamCampbell\\HTMLMin\\' => array($vendorDir . '/graham-campbell/htmlmin/src'),
     'GrahamCampbell\\Binput\\' => array($vendorDir . '/graham-campbell/binput/src'),
+    'Fideloper\\Proxy\\' => array($vendorDir . '/fideloper/proxy/src'),
     'Faker\\' => array($vendorDir . '/fzaninotto/faker/src/Faker'),
     'Facebook\\' => array($vendorDir . '/facebook/graph-sdk/src/Facebook'),
     'Emojione\\' => array($vendorDir . '/emojione/emojione/lib/php/src'),

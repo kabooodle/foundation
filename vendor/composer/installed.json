@@ -6502,67 +6502,6 @@
         ]
     },
     {
-        "name": "sammyk/laravel-facebook-sdk",
-        "version": "3.4.0",
-        "version_normalized": "3.4.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/SammyK/LaravelFacebookSdk.git",
-            "reference": "8bd9d66ef57fb182f77ab41dee89b2a81ee59677"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/SammyK/LaravelFacebookSdk/zipball/8bd9d66ef57fb182f77ab41dee89b2a81ee59677",
-            "reference": "8bd9d66ef57fb182f77ab41dee89b2a81ee59677",
-            "shasum": ""
-        },
-        "require": {
-            "facebook/graph-sdk": "^5.0",
-            "illuminate/auth": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/config": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/database": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/routing": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/session": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/support": "~5.0|~5.1|~5.2|~5.3",
-            "php": ">=5.5.0"
-        },
-        "require-dev": {
-            "mockery/mockery": "~0.9",
-            "phpunit/phpunit": "~4.0",
-            "squizlabs/php_codesniffer": "~2.0"
-        },
-        "time": "2016-08-25 14:54:47",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "SammyK\\LaravelFacebookSdk\\": "src/LaravelFacebookSdk"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Sammy Kaye Powers",
-                "email": "me@sammyk.me",
-                "homepage": "http://sammyk.me",
-                "role": "Developer"
-            }
-        ],
-        "description": "Fully unit tested Facebook SDK v5 integration for Laravel & Lumen 5.x",
-        "homepage": "https://github.com/SammyK/LaravelFacebookSdk",
-        "keywords": [
-            "facebook",
-            "facebook sdk v4",
-            "facebook sdk v5",
-            "laravel",
-            "lumen",
-            "sdk"
-        ]
-    },
-    {
         "name": "mtdowling/jmespath.php",
         "version": "2.4.0",
         "version_normalized": "2.4.0.0",
@@ -6957,6 +6896,120 @@
                 "name": "Mike van Riel",
                 "email": "me@mikevanriel.com"
             }
+        ]
+    },
+    {
+        "name": "sammyk/laravel-facebook-sdk",
+        "version": "3.4.1",
+        "version_normalized": "3.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/SammyK/LaravelFacebookSdk.git",
+            "reference": "8cef4beb5e2c6c928e390458264f7a7e44eff2d1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/SammyK/LaravelFacebookSdk/zipball/8cef4beb5e2c6c928e390458264f7a7e44eff2d1",
+            "reference": "8cef4beb5e2c6c928e390458264f7a7e44eff2d1",
+            "shasum": ""
+        },
+        "require": {
+            "facebook/graph-sdk": "^5.0",
+            "illuminate/auth": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/config": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/database": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/routing": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/session": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/support": "~5.0|~5.1|~5.2|~5.3",
+            "php": ">=5.5.0"
+        },
+        "require-dev": {
+            "mockery/mockery": "~0.9",
+            "phpunit/phpunit": "~4.0",
+            "squizlabs/php_codesniffer": "~2.0"
+        },
+        "time": "2016-10-12 19:16:35",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "SammyK\\LaravelFacebookSdk\\": "src/LaravelFacebookSdk"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Sammy Kaye Powers",
+                "email": "me@sammyk.me",
+                "homepage": "http://sammyk.me",
+                "role": "Developer"
+            }
+        ],
+        "description": "Fully unit tested Facebook SDK v5 integration for Laravel & Lumen 5.x",
+        "homepage": "https://github.com/SammyK/LaravelFacebookSdk",
+        "keywords": [
+            "facebook",
+            "facebook sdk v4",
+            "facebook sdk v5",
+            "laravel",
+            "lumen",
+            "sdk"
+        ]
+    },
+    {
+        "name": "fideloper/proxy",
+        "version": "3.1.0",
+        "version_normalized": "3.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/fideloper/TrustedProxy.git",
+            "reference": "ec4dd30141e2515e307aea3539ff242e85c3f120"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/fideloper/TrustedProxy/zipball/ec4dd30141e2515e307aea3539ff242e85c3f120",
+            "reference": "ec4dd30141e2515e307aea3539ff242e85c3f120",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/contracts": "~5.0",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "illuminate/http": "~5.0",
+            "mockery/mockery": "~0.9.3"
+        },
+        "time": "2015-12-24 15:02:55",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.1-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Fideloper\\Proxy\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Chris Fidao",
+                "email": "fideloper@gmail.com"
+            }
+        ],
+        "description": "Set trusted proxies for Laravel",
+        "keywords": [
+            "load balancing",
+            "proxy",
+            "trusted proxy"
         ]
     }
 ]

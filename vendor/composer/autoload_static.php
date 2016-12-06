@@ -135,6 +135,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         ),
         'F' => 
         array (
+            'Fideloper\\Proxy\\' => 16,
             'Faker\\' => 6,
             'Facebook\\' => 9,
         ),
@@ -396,6 +397,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'GrahamCampbell\\Binput\\' => 
         array (
             0 => __DIR__ . '/..' . '/graham-campbell/binput/src',
+        ),
+        'Fideloper\\Proxy\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/fideloper/proxy/src',
         ),
         'Faker\\' => 
         array (
@@ -1833,6 +1838,8 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Faker\\Provider\\zh_TW\\Text' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/Provider/zh_TW/Text.php',
         'Faker\\UniqueGenerator' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/UniqueGenerator.php',
         'Faker\\ValidGenerator' => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker/ValidGenerator.php',
+        'Fideloper\\Proxy\\TrustProxies' => __DIR__ . '/..' . '/fideloper/proxy/src/TrustProxies.php',
+        'Fideloper\\Proxy\\TrustedProxyServiceProvider' => __DIR__ . '/..' . '/fideloper/proxy/src/TrustedProxyServiceProvider.php',
         'File_Iterator' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Iterator.php',
         'File_Iterator_Facade' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Facade.php',
         'File_Iterator_Factory' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Factory.php',
