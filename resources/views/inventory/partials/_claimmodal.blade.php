@@ -36,7 +36,7 @@
         btnConfirmedClaimEl.click(function (e) {
             e.preventDefault();
             btnConfirmedClaimCancelEl.hide();
-            var that = $(this); // because of clone
+            var that = $(this);
             var claimCloneEl = that.clone(true);
             that.addClass('disabled').prop('disabled', true).html('<i class="fa-spinner fa-spin fa"></i>');
 
@@ -46,7 +46,6 @@
                 dataType: "json"
             })
                     .done(function (json) {
-//                        $('#modal_claim_wrapper').modal('hide');
                         that.html('Success! One moment...');
                         window.location.href = '{{ $redirect }}'
                     })
@@ -56,7 +55,7 @@
                         that.replaceWith(claimCloneEl);
                     });
         });
-    })
+    });
 </script>
 
 @endpush

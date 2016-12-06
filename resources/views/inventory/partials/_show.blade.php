@@ -74,10 +74,6 @@
                     <small class="text-muted text-sm"><em>None</em></small>
                 @endif
             </div>
-
-            {{--<div class="text-center">--}}
-                {{--<small class="text-muted"><i class="fa fa-flag" aria-hidden="true"></i> Flag</small>--}}
-            {{--</div>--}}
         </div>
     </div>
 </div>
