@@ -21,7 +21,7 @@ class HTTPSMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (! $request->secure() && env('APP_ENV') === 'production') {
+        if (getProtocol($includeBackSlashes = false) == 'http' && env('APP_ENV') === 'production') {
             return redirect()->secure($request->getRequestUri());
         }
 
