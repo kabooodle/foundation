@@ -3,25 +3,26 @@
 namespace Kabooodle\Bus\Jobs;
 
 use Carbon\Carbon;
+use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 
 /**
  * Class EnqueueScheduleListingsJob
  */
-class EnqueueScheduleListingsJob extends Job implements ShouldQueue
+class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQueue
 {
-    use DispatchesJobs, InteractsWithQueue, SerializesModels;
-
     /**
      * @var Collection
      */
     public $listingModels;
+
+    /**
+     * @var int
+     */
+    public $queuesId;
 
     /**
      * @param Collection $listingModels
@@ -31,10 +32,21 @@ class EnqueueScheduleListingsJob extends Job implements ShouldQueue
         $this->listingModels = $listingModels;
     }
 
+    /**
+     * @param $id
+     * @return $this
+     */
+    public function setQueuesId($id)
+    {
+        $this->queuesId = $id;
+
+        return $this;
+    }
+
     public function handle()
     {
-        // Cached timestamp of now.
-        $timestamp = Carbon::now();
+        // Update the Queues status to processing.
+        $this->updateQueueStatus($this->queuesId, Carbon::now(), Queues::STATUS_PROCESSING, $this->job->attempts());
 
         // Collection that will contain all the listings' listing items, ignoring their origin.
         $listingItems = collect([]);
@@ -45,20 +57,19 @@ class EnqueueScheduleListingsJob extends Job implements ShouldQueue
         // We shuffle just to randomize the parent listings and keep our process as random as possible.
         $shuffledListings = $listingModels->shuffle();
 
+        // Get all the ids of the listings
+        $listingsIds = $shuffledListings->pluck('id')->toArray();
+
         // Update all the listings' status from "scheduled" to "queued"
         // We change this now instead of after its complete because we dont want to create an overlap
-        $this->updateListingsStatus($shuffledListings->pluck('id')->toArray(), $timestamp);
+        $this->updateListingsStatus($listingsIds, Carbon::now());
 
-        /** @var Listings $listing */
+        // We want to extract all the listing items from the parent listings so we can queue them all individually.
         foreach($shuffledListings as $listing) {
-
-            /** @var ListingItems $item */
             foreach ($listing->listingItems as $item) {
 
-                // Although we currently only care for scheduled items, and its assumed
-                // we already only have schedule items, there are duplicates that we need to ignore
-                // and perhaps in the future we may need to ignore other status'
-                if (in_array($item->status, [ListingItems::STATUS_SCHEDULED])) {
+                // It is possible that the current item' status has been deleted since retrieving it from the DB.
+                if (in_array($item->status, [ListingItems::STATUS_SCHEDULED]) && ! $item->isIgnored()) {
 
                     // Push the item into the collection of items.
                     $listingItems->push($item);
@@ -69,27 +80,29 @@ class EnqueueScheduleListingsJob extends Job implements ShouldQueue
         // Shuffle all the listing items, similar to above, to keep everything as random as possible.
         $shuffledListingItems = $listingItems->shuffle();
 
+        // Iterate over the listing items and push them to the queue.
         foreach($shuffledListingItems as $shuffledListingItem) {
 
+            // Create our job class.
+            $job = new EnqueueScheduleListingItemJob($shuffledListingItem);
+
+            // Store details about the job in the DB for our own personal records.
+            $localQueueDb = $this->createQueueStatus('default', Queues::STATUS_QUEUED, serialize($job));
+
+            // Tell the job which queue id it is associated with.
+            $job->setQueuesId($localQueueDb->id);
+
             // Add the listing item to the queue
-            $this->dispatch(new EnqueueScheduleListingItemJob($shuffledListingItem));
+            $this->dispatch($job);
+
+            unset($job);
         }
 
-        return;
-    }
+        $this->job->delete();
 
-    /**
-     * @param array $listingIds
-     * @param Carbon $timestamp
-     * @param string $status
-     * @return bool|int
-     */
-    public function updateListingsStatus(array $listingIds, Carbon $timestamp, $status = Listings::STATUS_QUEUED_LIST)
-    {
-        return Listings::whereIn('id', $listingIds)
-            ->update([
-                'status' => $status,
-                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
-            ]);
+        // Update status again of the listings, this time as "processing".
+        $this->updateListingsStatus($listingsIds, Carbon::now(), Listings::STATUS_PROCESSING);
+
+        return;
     }
 }

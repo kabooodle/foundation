@@ -4,18 +4,19 @@ namespace Kabooodle\Bus\Jobs;
 
 use Exception;
 use Carbon\Carbon;
-use Kabooodle\Models\Listings;
+use Kabooodle\Models\Queues;
 use Kabooodle\Models\ListingItems;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**
  * Class EnqueueScheduleListingItemJob
  */
-class EnqueueScheduleListingItemJob extends Job implements ShouldQueue
+class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements ShouldQueue
 {
-    use InteractsWithQueue, SerializesModels;
+    /**
+     * @var int
+     */
+    public $queuesId;
 
     /**
      * @var ListingItems
@@ -30,13 +31,24 @@ class EnqueueScheduleListingItemJob extends Job implements ShouldQueue
         $this->listingItem = $listingItem;
     }
 
+    /**
+     * @param $id
+     * @return $this
+     */
+    public function setQueuesId($id)
+    {
+        $this->queuesId = $id;
+
+        return $this;
+    }
+
     public function handle()
     {
-        // Cached timestamp of now.
-        $timestamp = Carbon::now();
-
         /** @var ListingItems $listingItem */
         $listingItem = $this->listingItem;
+
+        // Update the listing item status as "processing"
+        $this->updateQueueStatus($this->queuesId, Carbon::now(), Queues::STATUS_PROCESSING, $this->job->attempts());
 
         // Post to FACEBOOK.
         // HERE
@@ -44,25 +56,14 @@ class EnqueueScheduleListingItemJob extends Job implements ShouldQueue
 
         } catch (Exception $e) {}
 
+        // Update the status to the appropriate status based on the result.
+        $this->updateListingItemsStatus([$listingItem->id], Carbon::now(), ListingItems::STATUS_SUCCESS);
 
-        // Update the status
-        $this->updateListingsStatus([$listingItem->id], $timestamp, ListingItems::STATUS_SUCCESS);
+        // Update the associated queue in the DB
+        $this->updateQueueStatus($this->queuesId, Carbon::now(), Queues::STATUS_SUCCESS, $this->job->attempts());
+
+        $this->job->delete();
 
         return;
-    }
-
-    /**
-     * @param array $listingIds
-     * @param Carbon $timestamp
-     * @param string $status
-     * @return bool|int
-     */
-    public function updateListingsStatus(array $listingIds, Carbon $timestamp, $status = Listings::STATUS_QUEUED_LIST)
-    {
-        return ListingItems::whereIn('id', $listingIds)
-            ->update([
-                'status' => $status,
-                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
-            ]);
     }
 }

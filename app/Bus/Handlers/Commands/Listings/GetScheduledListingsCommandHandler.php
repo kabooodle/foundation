@@ -2,6 +2,7 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
+use DB;
 use Kabooodle\Models\Listings;
 use Kabooodle\Bus\Commands\Listings\GetScheduledListingsCommand;
 

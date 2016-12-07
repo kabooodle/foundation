@@ -306,7 +306,7 @@ class Listings extends AbstractListingModel
      */
     public function scopeRandomize($scope)
     {
-        return $this->orderByRaw('RAND()');
+        return $scope->orderByRaw('RAND()');
     }
 
     /**
@@ -315,6 +315,6 @@ class Listings extends AbstractListingModel
      */
     public function scopeStatusScheduled($scope)
     {
-        return $this->where('status', '=', self::STATUS_SCHEDULED);
+        return $scope->where('status', '=', self::STATUS_SCHEDULED);
     }
 }

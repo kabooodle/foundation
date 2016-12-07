@@ -18,6 +18,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
 
     const STATUS_SCHEDULED = 'scheduled';
     const STATUS_QUEUED_LIST = 'queued';
+    const STATUS_PROCESSING = 'processing';
     const STATUS_PARTIAL = 'partial';
     const STATUS_SUCCESS = 'success';
     const STATUS_COMPLETED = 'completed';

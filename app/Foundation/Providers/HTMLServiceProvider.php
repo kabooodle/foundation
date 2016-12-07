@@ -16,7 +16,7 @@ class HTMLServiceProvider extends BaseHtmlServiceProvider
     {
         $this->app->singleton('html', function($app) {
             $url = $app['url'];
-            if (!$this->app->environment('local')) {
+            if ($app->environment() == 'production') {
                 $url = $app->make('Illuminate\Routing\UrlGenerator');
                 $url->forceSchema('https');
             }
@@ -29,7 +29,7 @@ class HTMLServiceProvider extends BaseHtmlServiceProvider
     {
         $this->app->singleton('form', function($app) {
             $url = $app['url'];
-            if (!$this->app->environment('local')) {
+            if ($app->environment() == 'production') {
                 $url = $app->make('Illuminate\Routing\UrlGenerator');
                 $url->forceSchema('https');
             }

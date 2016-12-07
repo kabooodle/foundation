@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Dispatcher $dispatcher)
     {
-        if (env('APP_ENV') == 'production') {
+        if ($this->app->environment() == 'production') {
             URL::forceSchema('https');
 
             // Added this because named routes, specifically API named routes, don't generate secure

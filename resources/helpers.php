@@ -42,6 +42,10 @@ if (! function_exists('listingStatusHtml')) {
     function listingStatusHtml($status)
     {
         switch ($status) {
+            case 'processing':
+                $class = 'deep-orange-400';
+                $text = 'Uploading';
+                break;
             case 'queued':
                 $class = 'blue-500';
                 $text = 'Queued';
@@ -1390,7 +1394,7 @@ if (! function_exists('apiRoute')) {
     function apiRoute($routeName, $routeParams = [], $version = 'v1', $absoluteUrl = true)
     {
         $url = app(Dingo\Api\Routing\UrlGenerator::class);
-        if (env('APP_ENV') == 'production') {
+        if (app()->environment() == 'production') {
             $url->forceSchema('https');
         }
 
