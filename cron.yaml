@@ -1,5 +1,5 @@
 version: 1
 cron:
  - name: "scheduler"
-   url: "/workers/schedule"
+   url: "/workers/schedule/7AF95578E9A597AA6B89E726E74C4"
    schedule: "*/5 * * * *"

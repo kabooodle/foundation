@@ -1,6 +1,6 @@
 <?php
 
-Route::post('workers/schedule', [
+Route::get('workers/schedule/{key}', [
     'as' => 'workers.schedule',
-    'uses' => \Kabooodle\Http\Web\Workers\WorkersController::class.'@cron'
+    'uses' => \Kabooodle\Http\Controllers\Web\Workers\WorkersController::class.'@cron'
 ]);

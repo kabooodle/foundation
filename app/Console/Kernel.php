@@ -29,9 +29,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule
-            ->command('facebook:enqueue')
-            ->everyFiveMinutes()
-            ->withoutOverlapping();
+//        $schedule
+//            ->command('facebook:enqueue')
+//            ->everyMinute()
+//            ->withoutOverlapping();
     }
 }

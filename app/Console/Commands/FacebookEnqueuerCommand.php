@@ -1,10 +1,15 @@
 <?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
 
 namespace Kabooodle\Console\Commands;
 
 use Carbon\Carbon;
 use Kabooodle\Models\Queues;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Jobs\EnqueueScheduleListingsJob;
 use Kabooodle\Bus\Commands\Listings\GetScheduledListingsCommand;
@@ -44,17 +49,8 @@ class FacebookEnqueuerCommand extends Command
 
         if ($listings && $listings->count() > 0) {
 
-            $job = new EnqueueScheduleListingsJob($listings);
-
-            // Store details about the job in the DB for our own personal records.
-            $localQueueDb = Queues::create([
-                'queue' => 'default',
-                'payload' => serialize($job),
-                'status' => Queues::STATUS_QUEUED,
-                'status_updated_at' => Carbon::now(),
-            ]);
-
-            $job->setQueuesId($localQueueDb->id);
+            // Build our job
+            $job = $this->buildJob($listings);
 
             // Dispatch the listings queue handler for the listings.
             $this->dispatch($job);
@@ -63,5 +59,27 @@ class FacebookEnqueuerCommand extends Command
         $this->output->writeln('Completed');
 
         return;
+    }
+
+    /**
+     * @param Collection $listings
+     *
+     * @return EnqueueScheduleListingsJob
+     */
+    public function buildJob(Collection $listings)
+    {
+        $job = new EnqueueScheduleListingsJob($listings);
+
+        // Store details about the job in the DB for our own personal records.
+        $localQueueDb = Queues::create([
+            'queue' => 'default',
+            'payload' => serialize($job),
+            'status' => Queues::STATUS_QUEUED,
+            'status_updated_at' => Carbon::now(),
+        ]);
+
+        $job->setQueuesId($localQueueDb->id);
+
+        return $job;
     }
 }

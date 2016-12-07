@@ -4,8 +4,11 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Http\Web\Workers;
+namespace Kabooodle\Http\Controllers\Web\Workers;
 
+use Artisan;
+use Exception;
+use InvalidArgumentException;
 use Kabooodle\Http\Controllers\Web\Controller;
 
 /**
@@ -13,10 +16,22 @@ use Kabooodle\Http\Controllers\Web\Controller;
  */
 class WorkersController extends Controller
 {
-    public function cron()
+    /**
+     * @param $key
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function cron($key)
     {
-        
+        try {
+            if(! $key || $key <> '7AF95578E9A597AA6B89E726E74C4') {
+                throw new InvalidArgumentException('nope');
+            }
+            $response = Artisan::call('facebook:enqueue');
+        } catch (Exception $e) {
+            $response = $e->getMessage();
+        }
 
-        return response()->json([]);
+        return response()->json([$response]);
     }
 }

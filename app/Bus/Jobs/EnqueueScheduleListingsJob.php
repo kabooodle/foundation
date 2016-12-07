@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
 
 namespace Kabooodle\Bus\Jobs;
 
@@ -83,14 +87,8 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
         // Iterate over the listing items and push them to the queue.
         foreach($shuffledListingItems as $shuffledListingItem) {
 
-            // Create our job class.
-            $job = new EnqueueScheduleListingItemJob($shuffledListingItem);
-
-            // Store details about the job in the DB for our own personal records.
-            $localQueueDb = $this->createQueueStatus('default', Queues::STATUS_QUEUED, serialize($job));
-
-            // Tell the job which queue id it is associated with.
-            $job->setQueuesId($localQueueDb->id);
+            // Build the job
+            $job = $this->buildJob($shuffledListingItem);
 
             // Add the listing item to the queue
             $this->dispatch($job);
@@ -104,5 +102,24 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
         $this->updateListingsStatus($listingsIds, Carbon::now(), Listings::STATUS_PROCESSING);
 
         return;
+    }
+
+    /**
+     * @param ListingItems $item
+     *
+     * @return EnqueueScheduleListingItemJob
+     */
+    public function buildJob(ListingItems $item)
+    {
+        // Create our job class.
+        $job = new EnqueueScheduleListingItemJob($item);
+
+        // Store details about the job in the DB for our own personal records.
+        $localQueueDb = $this->createQueueStatus('default', Queues::STATUS_QUEUED, serialize($job));
+
+        // Tell the job which queue id it is associated with.
+        $job->setQueuesId($localQueueDb->id);
+
+        return $job;
     }
 }

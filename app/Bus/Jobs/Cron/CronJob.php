@@ -13,5 +13,5 @@ use Kabooodle\Bus\Jobs\Job;
  */
 final class CronJob extends Job
 {
-
+    
 }
