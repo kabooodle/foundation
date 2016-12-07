@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
             // Added this because named routes, specifically API named routes, don't generate secure
             // routes for some reason.
             // TODO: Fix this.
-            $this->app['request']->server->set('HTTPS', true);
+//            $this->app['request']->server->set('HTTPS', true);
         }
 
         $dispatcher->mapUsing(function ($command) {
@@ -60,7 +60,6 @@ class AppServiceProvider extends ServiceProvider
             return $this->app['messages'];
         });
     }
-
 
     public function registerPaginationPresenter()
     {

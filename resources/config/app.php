@@ -161,7 +161,6 @@ return [
 //        Barryvdh\Debugbar\ServiceProvider::class,
 
 
-
         Kabooodle\Foundation\Providers\AuthServiceProvider::class,
         Kabooodle\Foundation\Providers\EventServiceProvider::class,
         Kabooodle\Foundation\Providers\RouteServiceProvider::class,
@@ -169,7 +168,8 @@ return [
 
         AlgoliaSearch\Laravel\AlgoliaServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
+//        Collective\Html\HtmlServiceProvider::class,
+        Kabooodle\Foundation\Providers\HTMLServiceProvider::class,
         Conner\Tagging\Providers\TaggingServiceProvider::class,
         GrahamCampbell\HTMLMin\HTMLMinServiceProvider::class,
         Sofa\Revisionable\Laravel\ServiceProvider::class,
