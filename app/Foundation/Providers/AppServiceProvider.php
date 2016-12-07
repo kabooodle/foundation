@@ -28,7 +28,12 @@ class AppServiceProvider extends ServiceProvider
     {
         if (env('APP_ENV') == 'production') {
             URL::forceSchema('https');
-            $this->app['request']->server->set('HTTPS', true);
+
+            // The below commented out code was added then immediately removed on 12/2016.
+            // I added it because it seemed like named routes weren't creating secure https routes
+            // but this appears to have been fixed using the proxy/loadbalancer.
+            // Leaving it here just in case future reference.
+//            $this->app['request']->server->set('HTTPS', true);
         }
 
         $dispatcher->mapUsing(function ($command) {
