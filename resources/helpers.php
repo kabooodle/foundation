@@ -1141,6 +1141,19 @@ if (!function_exists('getMimeContentType')) {
 }
 
 
+if (! function_exists('hmacsha256')) {
+    /**
+     * @param $key
+     * @param $data
+     *
+     * @return string
+     */
+    function hmacsha256($key, $data)
+    {
+        return hash_hmac('sha256', $data, $key);
+    }
+}
+
 if (! function_exists('hmacsha1')) {
     /**
      * @param $key

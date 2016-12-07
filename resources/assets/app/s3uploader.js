@@ -61,7 +61,7 @@
         initFileUpload: function(){
             var that = this;
             var fileUpload = {
-                url: "https://" + that.options.s3_bucket + ".s3.amazonaws.com",
+                url: "",
                 dataType: "xml",
                 type: "POST",
                 dropZone: that.options.drop_zone,
@@ -85,6 +85,8 @@
                         success: function (response) {
                             $(document).trigger('s3uploader.s3_key_retrieved', response);
                             that.log('api.files.s3key: done', response);
+                            console.log(response);
+                            data.url = response.data.url;
                             data.formData = {
                                 AWSAccessKeyId:         response.data.AWSAccessKeyId,
                                 acl:                    response.data.acl,

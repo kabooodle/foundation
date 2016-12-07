@@ -99,8 +99,6 @@ $(function(){
             url: '{{ route('profile.subscription.destroy') }}',
             type: 'DELETE'
         });
-//        $that.addClass('disabled').prop('disabled', true);
-        //        formCancelEl.submit();
     });
 });
 </script>
