@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b5e381d1ec44137c68cff226b2744e64",
-    "content-hash": "a1c240d42f4318b96f34dcdad6d78814",
+    "hash": "e32429db1afc8c93926928ba0ed4c7ff",
+    "content-hash": "b4ae7203a1ff8008bbf5dfcfc65d5395",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -176,16 +176,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.20.1",
+            "version": "3.20.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c83afe188b2f462840a5ab12d43f2e83f356f3f0"
+                "reference": "22e4ff095a78a7d82d6ac17c94ca5042be195684"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c83afe188b2f462840a5ab12d43f2e83f356f3f0",
-                "reference": "c83afe188b2f462840a5ab12d43f2e83f356f3f0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/22e4ff095a78a7d82d6ac17c94ca5042be195684",
+                "reference": "22e4ff095a78a7d82d6ac17c94ca5042be195684",
                 "shasum": ""
             },
             "require": {
@@ -252,7 +252,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-12-01 19:25:12"
+            "time": "2016-12-06 21:04:43"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
@@ -2696,16 +2696,16 @@
         },
         {
             "name": "namshi/jose",
-            "version": "7.2.2",
+            "version": "7.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/namshi/jose.git",
-                "reference": "c38b5e46a9e3816a4415268ede5ed08ece558ab6"
+                "reference": "89a24d7eb3040e285dd5925fcad992378b82bcff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/namshi/jose/zipball/c38b5e46a9e3816a4415268ede5ed08ece558ab6",
-                "reference": "c38b5e46a9e3816a4415268ede5ed08ece558ab6",
+                "url": "https://api.github.com/repos/namshi/jose/zipball/89a24d7eb3040e285dd5925fcad992378b82bcff",
+                "reference": "89a24d7eb3040e285dd5925fcad992378b82bcff",
                 "shasum": ""
             },
             "require": {
@@ -2755,7 +2755,7 @@
                 "jwt",
                 "token"
             ],
-            "time": "2016-10-05 13:30:27"
+            "time": "2016-12-05 07:27:31"
         },
         {
             "name": "nesbot/carbon",

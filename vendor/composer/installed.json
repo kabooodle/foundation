@@ -3776,71 +3776,6 @@
         ]
     },
     {
-        "name": "namshi/jose",
-        "version": "7.2.2",
-        "version_normalized": "7.2.2.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/namshi/jose.git",
-            "reference": "c38b5e46a9e3816a4415268ede5ed08ece558ab6"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/namshi/jose/zipball/c38b5e46a9e3816a4415268ede5ed08ece558ab6",
-            "reference": "c38b5e46a9e3816a4415268ede5ed08ece558ab6",
-            "shasum": ""
-        },
-        "require": {
-            "ext-date": "*",
-            "ext-hash": "*",
-            "ext-json": "*",
-            "ext-pcre": "*",
-            "ext-spl": "*",
-            "php": ">=5.5",
-            "symfony/polyfill-php56": "^1.0"
-        },
-        "require-dev": {
-            "phpseclib/phpseclib": "^2.0",
-            "phpunit/phpunit": "^4.5|^5.0",
-            "satooshi/php-coveralls": "^1.0"
-        },
-        "suggest": {
-            "ext-openssl": "Allows to use OpenSSL as crypto engine.",
-            "phpseclib/phpseclib": "Allows to use Phpseclib as crypto engine, use version ^2.0."
-        },
-        "time": "2016-10-05 13:30:27",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Namshi\\JOSE\\": "src/Namshi/JOSE/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Alessandro Nadalin",
-                "email": "alessandro.nadalin@gmail.com"
-            },
-            {
-                "name": "Alessandro Cinelli (cirpo)",
-                "email": "alessandro.cinelli@gmail.com"
-            }
-        ],
-        "description": "JSON Object Signing and Encryption library for PHP.",
-        "keywords": [
-            "JSON Web Signature",
-            "JSON Web Token",
-            "JWS",
-            "json",
-            "jwt",
-            "token"
-        ]
-    },
-    {
         "name": "tymon/jwt-auth",
         "version": "dev-develop",
         "version_normalized": "dev-develop",
@@ -6559,88 +6494,6 @@
         ]
     },
     {
-        "name": "aws/aws-sdk-php",
-        "version": "3.20.1",
-        "version_normalized": "3.20.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/aws/aws-sdk-php.git",
-            "reference": "c83afe188b2f462840a5ab12d43f2e83f356f3f0"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c83afe188b2f462840a5ab12d43f2e83f356f3f0",
-            "reference": "c83afe188b2f462840a5ab12d43f2e83f356f3f0",
-            "shasum": ""
-        },
-        "require": {
-            "guzzlehttp/guzzle": "^5.3.1|^6.2.1",
-            "guzzlehttp/promises": "~1.0",
-            "guzzlehttp/psr7": "~1.3.1",
-            "mtdowling/jmespath.php": "~2.2",
-            "php": ">=5.5"
-        },
-        "require-dev": {
-            "andrewsville/php-token-reflection": "^1.4",
-            "aws/aws-php-sns-message-validator": "~1.0",
-            "behat/behat": "~3.0",
-            "doctrine/cache": "~1.4",
-            "ext-dom": "*",
-            "ext-json": "*",
-            "ext-openssl": "*",
-            "ext-pcre": "*",
-            "ext-simplexml": "*",
-            "ext-spl": "*",
-            "nette/neon": "^2.3",
-            "phpunit/phpunit": "~4.0|~5.0",
-            "psr/cache": "^1.0"
-        },
-        "suggest": {
-            "aws/aws-php-sns-message-validator": "To validate incoming SNS notifications",
-            "doctrine/cache": "To use the DoctrineCacheAdapter",
-            "ext-curl": "To send requests using cURL",
-            "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
-        },
-        "time": "2016-12-01 19:25:12",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "3.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Aws\\": "src/"
-            },
-            "files": [
-                "src/functions.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Amazon Web Services",
-                "homepage": "http://aws.amazon.com"
-            }
-        ],
-        "description": "AWS SDK for PHP - Use Amazon Web Services in your PHP project",
-        "homepage": "http://aws.amazon.com/sdkforphp",
-        "keywords": [
-            "amazon",
-            "aws",
-            "cloud",
-            "dynamodb",
-            "ec2",
-            "glacier",
-            "s3",
-            "sdk"
-        ]
-    },
-    {
         "name": "symfony/class-loader",
         "version": "v3.2.0",
         "version_normalized": "3.2.0.0",
@@ -7010,6 +6863,153 @@
             "load balancing",
             "proxy",
             "trusted proxy"
+        ]
+    },
+    {
+        "name": "aws/aws-sdk-php",
+        "version": "3.20.2",
+        "version_normalized": "3.20.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/aws/aws-sdk-php.git",
+            "reference": "22e4ff095a78a7d82d6ac17c94ca5042be195684"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/22e4ff095a78a7d82d6ac17c94ca5042be195684",
+            "reference": "22e4ff095a78a7d82d6ac17c94ca5042be195684",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "^5.3.1|^6.2.1",
+            "guzzlehttp/promises": "~1.0",
+            "guzzlehttp/psr7": "~1.3.1",
+            "mtdowling/jmespath.php": "~2.2",
+            "php": ">=5.5"
+        },
+        "require-dev": {
+            "andrewsville/php-token-reflection": "^1.4",
+            "aws/aws-php-sns-message-validator": "~1.0",
+            "behat/behat": "~3.0",
+            "doctrine/cache": "~1.4",
+            "ext-dom": "*",
+            "ext-json": "*",
+            "ext-openssl": "*",
+            "ext-pcre": "*",
+            "ext-simplexml": "*",
+            "ext-spl": "*",
+            "nette/neon": "^2.3",
+            "phpunit/phpunit": "~4.0|~5.0",
+            "psr/cache": "^1.0"
+        },
+        "suggest": {
+            "aws/aws-php-sns-message-validator": "To validate incoming SNS notifications",
+            "doctrine/cache": "To use the DoctrineCacheAdapter",
+            "ext-curl": "To send requests using cURL",
+            "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
+        },
+        "time": "2016-12-06 21:04:43",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Aws\\": "src/"
+            },
+            "files": [
+                "src/functions.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Amazon Web Services",
+                "homepage": "http://aws.amazon.com"
+            }
+        ],
+        "description": "AWS SDK for PHP - Use Amazon Web Services in your PHP project",
+        "homepage": "http://aws.amazon.com/sdkforphp",
+        "keywords": [
+            "amazon",
+            "aws",
+            "cloud",
+            "dynamodb",
+            "ec2",
+            "glacier",
+            "s3",
+            "sdk"
+        ]
+    },
+    {
+        "name": "namshi/jose",
+        "version": "7.2.3",
+        "version_normalized": "7.2.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/namshi/jose.git",
+            "reference": "89a24d7eb3040e285dd5925fcad992378b82bcff"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/namshi/jose/zipball/89a24d7eb3040e285dd5925fcad992378b82bcff",
+            "reference": "89a24d7eb3040e285dd5925fcad992378b82bcff",
+            "shasum": ""
+        },
+        "require": {
+            "ext-date": "*",
+            "ext-hash": "*",
+            "ext-json": "*",
+            "ext-pcre": "*",
+            "ext-spl": "*",
+            "php": ">=5.5",
+            "symfony/polyfill-php56": "^1.0"
+        },
+        "require-dev": {
+            "phpseclib/phpseclib": "^2.0",
+            "phpunit/phpunit": "^4.5|^5.0",
+            "satooshi/php-coveralls": "^1.0"
+        },
+        "suggest": {
+            "ext-openssl": "Allows to use OpenSSL as crypto engine.",
+            "phpseclib/phpseclib": "Allows to use Phpseclib as crypto engine, use version ^2.0."
+        },
+        "time": "2016-12-05 07:27:31",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Namshi\\JOSE\\": "src/Namshi/JOSE/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Alessandro Nadalin",
+                "email": "alessandro.nadalin@gmail.com"
+            },
+            {
+                "name": "Alessandro Cinelli (cirpo)",
+                "email": "alessandro.cinelli@gmail.com"
+            }
+        ],
+        "description": "JSON Object Signing and Encryption library for PHP.",
+        "keywords": [
+            "JSON Web Signature",
+            "JSON Web Token",
+            "JWS",
+            "json",
+            "jwt",
+            "token"
         ]
     }
 ]
