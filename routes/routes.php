@@ -46,6 +46,7 @@ Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], f
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'sales' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'analytics' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'listings' . DIRECTORY_SEPARATOR . 'routes.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'workers' . DIRECTORY_SEPARATOR .'routes.php';
 
     Route::get('/referrals', [
         'as' => 'referrals.index',

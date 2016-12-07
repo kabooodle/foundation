@@ -288,4 +288,33 @@ class Listings extends AbstractListingModel
     {
         return $this->include_link_in_descr;
     }
+
+    /**
+     * @param $scope
+     * @param string $operator
+     * @param $date
+     * @return mixed
+     */
+    public function scopeScheduledFor($scope, $operator = '>=', $date)
+    {
+        return $scope->where('scheduled_for', $operator, $date);
+    }
+
+    /**
+     * @param $scope
+     * @return $this
+     */
+    public function scopeRandomize($scope)
+    {
+        return $this->orderByRaw('RAND()');
+    }
+
+    /**
+     * @param $scope
+     * @return $this
+     */
+    public function scopeStatusScheduled($scope)
+    {
+        return $this->where('status', '=', self::STATUS_SCHEDULED);
+    }
 }

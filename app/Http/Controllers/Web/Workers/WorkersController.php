@@ -8,10 +8,15 @@ namespace Kabooodle\Http\Web\Workers;
 
 use Kabooodle\Http\Controllers\Web\Controller;
 
+/**
+ * Class WorkersController
+ */
 class WorkersController extends Controller
 {
-    public function cron($job)
+    public function cron()
     {
+        
+
         return response()->json([]);
     }
 }

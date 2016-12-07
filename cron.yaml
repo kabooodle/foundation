@@ -1,5 +1,5 @@
 version: 1
 cron:
- - name: "Daily Update"
-   url: "/workers/cron/daily_update"
+ - name: "scheduler"
+   url: "/workers/schedule"
    schedule: "*/5 * * * *"
