@@ -1389,7 +1389,12 @@ if (! function_exists('apiRoute')) {
      */
     function apiRoute($routeName, $routeParams = [], $version = 'v1', $absoluteUrl = true)
     {
-        return app(Dingo\Api\Routing\UrlGenerator::class)->forceSchema('https')->version($version)->route($routeName, $routeParams, $absoluteUrl);
+        $url = app(Dingo\Api\Routing\UrlGenerator::class);
+        if (env('APP_ENV') == 'production') {
+            $url->forceSchema('https');
+        }
+
+        return $url->version($version)->route($routeName, $routeParams, $absoluteUrl);
     }
 }
 
