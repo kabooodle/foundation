@@ -7,16 +7,23 @@
 //    dd($r, $x->getConnectionError());
 //});
 
+
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'workers' . DIRECTORY_SEPARATOR . 'routes.php';
+
+Route::get('privacy', function(){
+    return view('content.privacy');
+});
+
+
+
+// routes registered to (any).domain.tld
 Route::group(['middleware' => ['web'], 'domain' => getEnvDomain(true)], function(){
     Route::get('/', function(){
         return redirect('http://www.kabooodle.com');
     });
 });
 
-Route::get('privacy', function(){
-   return view('content.privacy');
-});
-
+// Routes to
 Route::group(['middleware' => ['web']], function() {
     Route::post(
         '__captainHook/shtriwpe',
@@ -29,10 +36,8 @@ Route::group(['middleware' => ['web']], function() {
     Route::get('c/{hash}', \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show');
 });
 
-Route::group(['domain' => 'app.'.getEnvDomain(true)], function() {
-    require_once __DIR__ . DIRECTORY_SEPARATOR . 'workers' . DIRECTORY_SEPARATOR . 'routes.php';
-});
 
+// Routes registered to app.kabooodle.tld
 Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], function(){
 
     Route::group(['middleware' => 'auth'], function () {
@@ -62,6 +67,7 @@ Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], f
     ]);
 });
 
+// Routes registered to api.kabooodle.tld
 Route::group(['domain' => 'api.'.getEnvDomain(true)], function($route){
     $route->get('/', [
         'as' => 'api.index',
