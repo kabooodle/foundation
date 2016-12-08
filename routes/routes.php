@@ -29,6 +29,10 @@ Route::group(['middleware' => ['web']], function() {
     Route::get('c/{hash}', \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show');
 });
 
+Route::group(['domain' => 'app.'.getEnvDomain(true)], function() {
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'workers' . DIRECTORY_SEPARATOR . 'routes.php';
+});
+
 Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], function(){
 
     Route::group(['middleware' => 'auth'], function () {
@@ -46,7 +50,6 @@ Route::group(['middleware' => ['web'], 'domain' => 'app.'.getEnvDomain(true)], f
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'sales' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'analytics' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'listings' . DIRECTORY_SEPARATOR . 'routes.php';
-    require_once __DIR__ . DIRECTORY_SEPARATOR . 'workers' . DIRECTORY_SEPARATOR .'routes.php';
 
     Route::get('/referrals', [
         'as' => 'referrals.index',
