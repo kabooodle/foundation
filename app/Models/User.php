@@ -9,11 +9,11 @@ namespace Kabooodle\Models;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Kabooodle\Bus\NotificationableTrait;
 use Laravel\Cashier\Billable;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Auth\Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Kabooodle\Bus\NotificationableTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
 use Illuminate\Database\Eloquent\Collection;
@@ -127,7 +127,7 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'avatar', 'invited_by_user_id', 'activated', 'timezone', 'kabooodle_as_shipping', 'referred_by_user_id',
+        'name', 'email', 'password', 'avatar', 'invited_by_user_id', 'trial_ends_at', 'activated', 'timezone', 'kabooodle_as_shipping', 'referred_by_user_id',
     ];
 
     /**
@@ -707,5 +707,80 @@ class User extends BaseEloquentModel implements
     public function usesKabooodleAsShipper()
     {
         return $this->kabooodle_as_shipping;
+    }
+
+    /**
+     * @param string $subscription
+     * @return bool
+     */
+    public function hasSubscriptionAccess(string $subscription = Plans::SUBSCRIPTION_MERCHANT)
+    {
+        if ($this->onGenericTrial()) {
+            return true;
+        }
+
+        if ($this->haAtLeastMerchantSubscription()) {
+            return true;
+        }
+
+        if ($this->subscribed($subscription)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function haAtLeastMerchantSubscription()
+    {
+        return ($this->isSubscribedToMerchant() || $this->isSubscribedToMerchantPlus());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSubscribedToMerchantPlus()
+    {
+        return $this->subscribed(Plans::SUBSCRIPTION_MERCHANT_PLUS);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSubscribedToMerchant()
+    {
+        return $this->subscribed(Plans::SUBSCRIPTION_MERCHANT);
+    }
+
+    /**
+     * @return null
+     */
+    public function genericTrialEndsInDays()
+    {
+        if ($this->onGenericTrial()) {
+            return $this->trial_ends_at->diffForHumans();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEarlyAdapter()
+    {
+        return $this->hasOne(EarlyAdapters::class, 'user_id')->first();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function currentSubscription()
+    {
+        return $this->subscriptions->sortByDesc(function ($value) {
+            return $value->created_at->getTimestamp();
+        })->first();
     }
 }

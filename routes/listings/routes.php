@@ -5,7 +5,7 @@ Route::get('listingitems/{listingItem}', [
     'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingItemsController::class.'@show'
 ]);
 
-Route::group(['middleware' => ['auth', 'subscribed:main']], function () {
+Route::group(['middleware' => ['auth', 'subscribed:merchant|merchant_plus']], function () {
     Route::get('listings', [
         'as' => 'listings.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@index'

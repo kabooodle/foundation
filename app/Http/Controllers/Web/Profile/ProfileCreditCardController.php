@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
+use Kabooodle\Models\Traits\CreditCardTrait;
 use Messages;
 use Stripe\Error\Card;
 use Illuminate\Http\Request;
@@ -20,6 +21,8 @@ use Kabooodle\Bus\Commands\Credits\StoreCreditCardForUserCommand;
  */
 class ProfileCreditCardController extends Controller
 {
+    use CreditCardTrait;
+
     /**
      * @param Request $request
      *
@@ -41,7 +44,7 @@ class ProfileCreditCardController extends Controller
     public function store(Request $request)
     {
         try {
-            $this->validate($request, $this->rules());
+            $this->validate($request, $this->getCardRules());
 
             $this->dispatchNow(new StoreCreditCardForUserCommand(
                 user(),
@@ -57,24 +60,11 @@ class ProfileCreditCardController extends Controller
         } catch (ValidationException $e) {
             Messages::error('Some fields require input!');
 
-            return redirect()->back()->withInput($request->all())->withErrors($e->validator);
+            return redirect()->route('profile.creditcard.index')->withInput($request->all())->withErrors($e->validator);
         } catch (Card $e) {
             Messages::error($e->getMessage());
 
             return redirect()->route('profile.creditcard.index')->withInput($request->all());
         }
-    }
-
-    /**
-     * @return array
-     */
-    private function rules()
-    {
-        return [
-            'card_number' => 'required',
-            'exp_month' => 'required',
-            'exp_year' => 'required',
-            'cvv' => 'required'
-        ];
     }
 }

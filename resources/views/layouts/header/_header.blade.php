@@ -10,7 +10,7 @@
 
         <ul class="nav navbar-nav pull-right nav-active-border">
             @if(user())
-                @if(user()->subscribed('main') || (user()->getAvailableBalance() > 0))
+                @if(user()->haAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
                 <li class="nav-item ">
                     <a class="nav-link text-sm" href="{{ route('profile.credits.index') }}">${{ user()->getAvailableBalance() }} Credits</a>
                 </li>
@@ -83,7 +83,7 @@
 
         <div class="collapse navbar-toggleable-sm" data-pjax="" id="navbar-4">
             <ul class="nav navbar-nav pull-left nav-active-border b-warning">
-                @if(user() && user()->subscribed('main'))
+                @if(user() && user()->haAtLeastMerchantSubscription())
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle "
                            href="#" data-toggle="dropdown"><span
@@ -103,11 +103,13 @@
                             <div class="divider"></div>
                             <a href="{{ route('listings.index') }}" class="dropdown-item {{ Request::is('listings') ? 'active' : null }}"><span>Listings</span></a>
 
+                            @if(user()->isSubscribedToMerchantPlus())
                             <div class="divider"></div>
                             <a href="{{  route('shipping.create') }}"
                                class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
                             <a href="{{  route('shipping.index') }}"
                                class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
+                            @endif
                         </div>
                     </li>
                 @endif

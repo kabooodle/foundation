@@ -14,8 +14,6 @@ Route::get('privacy', function(){
     return view('content.privacy');
 });
 
-
-
 // routes registered to (any).domain.tld
 Route::group(['middleware' => ['web'], 'domain' => getEnvDomain(true)], function(){
     Route::get('/', function(){

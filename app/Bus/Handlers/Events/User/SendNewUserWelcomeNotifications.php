@@ -11,10 +11,9 @@ use Kabooodle\Libraries\Emails\PiperEmail;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 
 /**
- * Class UserWasCreatedListener
- * @package Kabooodle\Bus\Handlers\Events\User
+ * Class SendNewUserWelcomeNotifications
  */
-class UserWasCreatedListener
+class SendNewUserWelcomeNotifications
 {
     /**
      * @param UserWasCreatedEvent $event
@@ -22,6 +21,7 @@ class UserWasCreatedListener
     public function handle(UserWasCreatedEvent $event)
     {
         $user = $event->getUser();
+        $user = $user->fresh();
 
         // Send welcome email to user.
         $this->sendWelcomeEmail($user);

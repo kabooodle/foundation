@@ -34,14 +34,6 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'profile.subscription.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@index'
     ]);
-    Route::post('/profile/subscription', [
-        'as' => 'profile.subscription.store',
-        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@store'
-    ]);
-    Route::delete('/profile/subscription', [
-        'as' => 'profile.subscription.destroy',
-        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@destroy'
-    ]);
     Route::get('/profile/subscription/invoices', [
         'as' => 'profile.subscription.invoices.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionInvoicesController::class.'@index'
@@ -54,6 +46,22 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'profile.subscription.invoices.download',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionInvoicesController::class.'@download'
     ]);
+    Route::get('/profile/subscription/cancel', [
+        'as' => 'profile.subscription.cancel',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@edit'
+    ]);
+    Route::delete('/profile/subscription', [
+        'as' => 'profile.subscription.destroy',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@destroy'
+    ]);
+    Route::post('/profile/subscription/{subscription}', [
+        'as' => 'profile.subscription.store',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@store'
+    ]);
+    Route::get('/profile/subscription/{subscription}', [
+        'as' => 'profile.subscription.show',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSubscriptionsController::class.'@show'
+    ]);
     Route::get('/profile/creditcard', [
         'as' => 'profile.creditcard.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileCreditCardController::class.'@index'
@@ -64,12 +72,12 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
     Route::get('profile/credits', [
         'as' => 'profile.credits.index',
-        'middleware' => 'subscribed:main',
+        'middleware' => 'subscribed:merchant|merchant_plus',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileCreditsController::class.'@index'
     ]);
     Route::post('profile/credits', [
         'as' => 'profile.credits.store',
-        'middleware' => 'subscribed:main',
+        'middleware' => 'subscribed:merchant|merchant_plus',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileCreditsController::class.'@store'
     ]);
 });

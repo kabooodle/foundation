@@ -624,6 +624,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'CreateCreditChargeTypesTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_20_212729_create_credit_charge_types_tbl.php',
         'CreateCreditOrdersTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_20_193838_create_credit_orders_tbl.php',
         'CreateCreditTransactionsTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_21_223824_create_credit_transactions_tbl.php',
+        'CreateEarlyAdapterPlanUsers' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_09_001625_create_early_adapter_plan_users.php',
         'CreateFacebookItemsTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_07_041938_create_facebook_items_tbl.php',
         'CreateFacebookNodesTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_09_042324_create_facebook_nodes_tbl.php',
         'CreateFailedJobsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_18_034946_create_failed_jobs_table.php',

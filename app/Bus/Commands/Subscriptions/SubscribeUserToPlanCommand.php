@@ -4,13 +4,12 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Commands\Credits;
+namespace Kabooodle\Bus\Commands\Subscriptions;
 
 use Kabooodle\Models\User;
 
 /**
  * Class SubscribeUserToPlanCommand
- * @package Kabooodle\Bus\Commands\Profile
  */
 final class SubscribeUserToPlanCommand
 {
