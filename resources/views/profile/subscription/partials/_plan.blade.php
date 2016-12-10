@@ -1,4 +1,4 @@
-<div class="box" style="height: 810px">
+<div class="box" >
     <div class="box-body text-center dker">
         <h6 class="text-u-c m-a-0 m-t">{{ $_plan['name'] }}</h6>
         <h3 class="m-a-0">

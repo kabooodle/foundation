@@ -24,16 +24,25 @@
         </div>
     @endif
 
+    @if(user()->isEarlyAdapter())
+
+        @include('profile.subscription.partials._earlyadapter', [
+        '_plan' => \Kabooodle\Models\Plans::getEarlyAdapterPlan(),
+        '_disable' => false
+        ])
+
+    @else
+
     <div class="row">
         <div class="col-lg-12">
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-6" style="height: 810px">
                     @include('profile.subscription.partials._plan', [
                     '_plan' => \Kabooodle\Models\Plans::getMerchantPlanGroup(),
                     '_disable' => false
                     ])
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6" style="height: 810px">
                     @include('profile.subscription.partials._plan', [
                     '_plan' => \Kabooodle\Models\Plans::getMerchantPlusPlanGroup(),
                     '_disable' => false
@@ -42,5 +51,7 @@
             </div>
         </div>
     </div>
+
+    @endif
 
 @endsection

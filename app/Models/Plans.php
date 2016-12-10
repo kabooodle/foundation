@@ -136,7 +136,10 @@ final class Plans
         }
 
         if($planId === static::PLAN_EARLY_ADOPTER) {
-            return static::getEarlyAdapterPlan();
+            return [
+                static::getEarlyAdapterPlan(),
+                static::getEarlyAdapterPlan(),
+            ];
         }
 
         throw new \InvalidArgumentException();
@@ -147,11 +150,16 @@ final class Plans
      */
     public static function getEarlyAdapterPlan()
     {
+        $features = static::$commonFeatures;
+        $plusFeatures = static::$merchantPlusFeatures;
+        unset($plusFeatures[0]);
+
         return [
             'subscription' => 'merchant_plus',
             'name' => 'Early Adapter Plan',
             'image' => '/assets/images/early_adapter_plan.jpg',
-            'features' => static::$commonFeatures,
+            'features' => array_merge($features, $plusFeatures),
+            'interval' => 'month',
             'price' => 5,
             'id' => 'kabooodle_launch_plan'
         ];
