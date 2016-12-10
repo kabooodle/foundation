@@ -21,7 +21,7 @@ class WorkersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function cron($key)
+    public function fb($key)
     {
         try {
             if(! $key || $key <> '7AF95578E9A597AA6B89E726E74C4') {
@@ -33,5 +33,15 @@ class WorkersController extends Controller
         }
 
         return response()->json([$response]);
+    }
+
+    /**
+     * @param $key
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checktrials($key)
+    {
+        return response()->json([]);
     }
 }
