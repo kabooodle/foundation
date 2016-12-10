@@ -37,13 +37,16 @@ class SubscribeUserToPlanCommandHandler
         $trialDays = $command->getTrialDays();
         $subscriptionName = $command->getSubscriptionName();
 
-        $poppingCherry = false;
-        $swapping = false;
-
         // No card?!
         if (!$actor->getCard()) {
             throw new UserHasNoCreditCardOnFileException;
         }
+
+        // Stores whether or not this is the first subscription ever for the user.
+        $poppingCherry = false;
+
+        // Stores whether we are swapping the users' plan with a different one.
+        $swapping = false;
 
         try {
             // Does the user have any subscriptions at all?
@@ -60,30 +63,33 @@ class SubscribeUserToPlanCommandHandler
                     (int) ($skipTrial ? 0 : $trialDays)
                 );
             } else {
-                // Has the user already subscribed to the plan?
-                if ($actor->subscribedToPlan($plan, $subscriptionName)) {
-                    throw new UserAlreadySubscribedToPlanException($plan);
-                }
 
                 // At this point, the user is clearly subscribed to SOME SORT OF plan
-                // lets swap them over to the newly requested plan.
-                $swapping = true;
-
-                // Grab the lastest subscription.
+                // We need to determine if the current plan they have has been cancelled but is on grace period
+                // If so, we will just resume their subscription.
+                // Otherwise, we will swap their existing with the new subscription.
                 $subscription = $actor->currentSubscription();
                 if ($skipTrial) {
                     $subscription->trial_ends_at = null;
                 }
 
                 $subscription->name = $subscriptionName;
+
+                // If the current subscription has been cancelled or is on the grace period,
+                // then we are going to resume it.
                 if ($subscription->cancelled() && $subscription->onGracePeriod()) {
                     $subscription->resume();
                     $subscription->ends_at = null;
                 } else {
+                    // We can't swap to the same plan.
+                    if ($actor->subscribedToPlan($plan, $subscriptionName)) {
+                        throw new UserAlreadySubscribedToPlanException($plan);
+                    }
+
+                    $swapping = true;
                     $subscription->swap($plan);
                 }
             }
-
         } catch (InvalidRequest $e) {
             if ($e->getHttpStatus() == 404) {
                 $subscription = $this->newSubscription($actor, $subscriptionName, $plan, 0);
