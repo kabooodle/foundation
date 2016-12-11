@@ -28,44 +28,41 @@
                 <table class="table table-condensed table-as-list white">
                     <thead>
                     <tr class="  ">
-                        <th></th>
-                        <th class="text-muted">Item</th>
-                        <th class="text-muted p-l-0 m-l-0">Price</th>
-                        <th class="text-muted p-l-0 m-l-0">Seller</th>
-                        <th class="text-muted p-l-0 m-l-0">Claimed On</th>
-                        <th class="text-muted p-l-0 m-l-0">State</th>
-                        <th class="text-muted p-l-0 m-l-0">Shipping Status</th>
+                        <th>Item</th>
+                        <th>Claim Status</th>
+                        <th>Price</th>
+                        <th>Seller</th>
+                        <th>Date</th>
+                        <th>State</th>
+                        <th>Shipping Status</th>
                         <th></th>
                     </tr>
                     </thead>
             <tbody>
             @foreach($claims as $claim)
                 <tr>
-                    <td></td>
-                    <td style="vertical-align: middle !important">
-                        <a href="{{ route('profile.purchases.show', $claim->getUUID()) }}"
-                           class="_500 h6"><span class="@if($claim->wasRejected()) w-24 @else w-40 @endif avatar">
-                                            <img src="{{ $claim->inventoryItem->firstImage() ? $claim->inventoryItem->firstImage()->location : 'https://placekitten.com/g/30/30' }}">
-                                          </span></a>
+                    <td>
+                        <div class="avatar-thumbnail-container">
+                            <div class="avatar-thumbnail _32">
+                                @if($claim->inventoryItem->firstImage())
+                                    <img src="{{ $claim->inventoryItem->firstImage()->location }}">
+                                @endif
+                            </div>
+                            <span><a class="text-primary" href="{{ route('profile.purchases.show', [$claim->getUUID()]) }}">{{ $claim->inventoryItem->name_with_variant }}</a></span>
+                        </div>
                     </td>
-                    <td style="vertical-align: middle !important">${{ $claim->price }}</td>
-                    <td style="vertical-align: middle !important">{{ $claim->inventoryItem->owner->name }}</td>
-                    <td style="vertical-align: middle !important">{{ $claim->created_at->format('F jS \\a\\t g:i A') }}</td>
-                    <td style="vertical-align: middle !important">
+                    <td>{{ $claim->claim_status }}</td>
+                    <td>${{ $claim->price }}</td>
+                    <td>{{ $claim->inventoryItem->owner->name }}</td>
+                    <td>{{ $claim->created_at->format('F jS \\a\\t g:i A') }}</td>
+                    <td>
                         <span class="pending-status">@if($claim->wasRejected()) {{ $claim->rejected_on->diffForHumans() }} @elseif($claim->wasAccepted()) {{ $claim->accepted_on->diffForHumans() }} @else Pending  @endif</span>
                     </td>
-                    <td style="vertical-align: middle !important">{!! $claim->present()->getShippingStatus() !!}</td>
+                    <td>{!! $claim->present()->getShippingStatus() !!}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-            @if($claim->perPage != 0)
-            <div class="box-footer">
-                <div class="">
-                    <p>{{ $claim->perPage }}</p>
-                </div>
-            </div>
-            @endif
         </div>
     </div>
 

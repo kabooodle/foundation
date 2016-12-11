@@ -27,6 +27,14 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     /**
      * @var array
      */
+    protected $appends = [
+        'claim_status',
+        'status'
+    ];
+
+    /**
+     * @var array
+     */
     protected $with = [
 //        'shoppable',
         'shipments',
@@ -142,6 +150,30 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function getPriceAttribute($value)
     {
         return ! is_null($this->accepted_price) ? $this->accepted_price : $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClaimStatusAttribute()
+    {
+        if($this->wasAccepted()) {
+            return 'Accepted';
+        }
+
+        if ($this->wasRejected()) {
+            return 'Rejected';
+        }
+
+        return 'Pending';
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusAttribute()
+    {
+        return $this->claim_status;
     }
 
     /**
