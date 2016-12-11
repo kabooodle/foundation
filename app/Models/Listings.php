@@ -29,6 +29,7 @@ class Listings extends AbstractListingModel
         'accepted_sales_count',
         'pending_sales_count',
         'gross',
+        'sale_name'
     ];
 
     /**
@@ -181,6 +182,23 @@ class Listings extends AbstractListingModel
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function facebookNode()
+    {
+        return $this->belongsTo(FacebookNodes::class, 'fb_group_node_id', 'facebook_node_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function flashSale()
+    {
+        return $this->belongsTo(FlashSales::class, 'flashsale_id');
+    }
+
     /**
      * With just 1 query, we can eASily make the necessary joins, SUMs, etc without n+1 issues.
      * This query returns the results for the listings table, bASed on the listings.index view needs.
@@ -316,5 +334,17 @@ class Listings extends AbstractListingModel
     public function scopeStatusScheduled($scope)
     {
         return $scope->where('status', '=', self::STATUS_SCHEDULED);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSaleNameAttribute()
+    {
+        if ($this->isFacebook()) {
+            return $this->facebookNode->facebook_node_name;
+        }
+
+        return $this->flashSale->name;
     }
 }
