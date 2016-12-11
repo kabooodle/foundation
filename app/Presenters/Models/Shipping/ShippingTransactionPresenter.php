@@ -26,7 +26,7 @@ class ShippingTransactionPresenter extends PresenterAbstract
         switch ($entity->shipping_status) {
             case 'LABEL PRINTED':
                 $class = 'deep-purple-500';
-                $text = 'Label Printed';
+                $text = 'Label Created';
                 break;
             case 'IN TRANSIT':
                 $class = 'blue-500';
@@ -45,7 +45,7 @@ class ShippingTransactionPresenter extends PresenterAbstract
             case null:
             default:
                 $class = 'grey-500';
-                $text = 'Created';
+                $text = 'Shipment Created';
                 break;
         }
 

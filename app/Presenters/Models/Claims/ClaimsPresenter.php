@@ -16,9 +16,10 @@ use Kabooodle\Presenters\PresenterAbstract;
 class ClaimsPresenter extends PresenterAbstract
 {
     /**
+     * @param bool $statusAsBuyerPov
      * @return string
      */
-    public function getShippingStatus()
+    public function getShippingStatus($statusAsBuyerPov = false)
     {
         /** @var Claims $claim */
         $claim = $this->entity;
@@ -30,6 +31,9 @@ class ClaimsPresenter extends PresenterAbstract
 
         // If this claim is queued to ship
         if ($claim->queuedToShip()) {
+            if ($statusAsBuyerPov) {
+                return 'Pending Action';
+            }
             return '<a class="btn white btn-xs" href="'.route('shipping.create').'?c='.$claim->id.'">Create Label</a>';
         }
 

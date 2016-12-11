@@ -25,7 +25,7 @@
         <div class="box-divider"></div>
         <div class="box-body">
             <div id="claims__wrapper">
-                <table class="table table-condensed table-as-list white">
+                <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white m-b-0">
                     <thead>
                     <tr class="  ">
                         <th>Item</th>
@@ -33,7 +33,7 @@
                         <th>Price</th>
                         <th>Seller</th>
                         <th>Date</th>
-                        <th>State</th>
+                        {{--<th>State</th>--}}
                         <th>Shipping Status</th>
                         <th></th>
                     </tr>
@@ -48,17 +48,18 @@
                                     <img src="{{ $claim->inventoryItem->firstImage()->location }}">
                                 @endif
                             </div>
-                            <span><a class="text-primary" href="{{ route('profile.purchases.show', [$claim->getUUID()]) }}">{{ $claim->inventoryItem->name_with_variant }}</a></span>
+                            <span>{{ $claim->inventoryItem->name_with_variant }}</span>
                         </div>
                     </td>
                     <td>{{ $claim->claim_status }}</td>
                     <td>${{ $claim->price }}</td>
                     <td>{{ $claim->inventoryItem->owner->name }}</td>
-                    <td>{{ $claim->created_at->format('F jS \\a\\t g:i A') }}</td>
-                    <td>
-                        <span class="pending-status">@if($claim->wasRejected()) {{ $claim->rejected_on->diffForHumans() }} @elseif($claim->wasAccepted()) {{ $claim->accepted_on->diffForHumans() }} @else Pending  @endif</span>
-                    </td>
-                    <td>{!! $claim->present()->getShippingStatus() !!}</td>
+                    <td>{{ $claim->createdAtHumanNoTime() }} <i data-placement="top" class="fa fa-clock-o" data-toggle="tooltip" title="{{ $claim->created_at->format('g:i A') }}"></i></td>
+                    {{--<td>--}}
+                        {{--<span class="pending-status">@if($claim->wasRejected()) {{ $claim->rejected_on->diffForHumans() }} @elseif($claim->wasAccepted()) {{ $claim->accepted_on->diffForHumans() }} @else Pending  @endif</span>--}}
+                    {{--</td>--}}
+                    <td>{!! $claim->present()->getShippingStatus($statusAsBuyerPov = true) !!}</td>
+                    <td><a class="btn btn-xs white" href="{{ route('profile.purchases.show', [$claim->getUUID()]) }}">View</a></td>
                 </tr>
                 @endforeach
             </tbody>

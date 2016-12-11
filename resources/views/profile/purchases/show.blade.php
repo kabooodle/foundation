@@ -24,9 +24,8 @@
                         {{--<span class="w-40 avatar"><img src="https://placekitten.com/g/32/32"></span>--}}
                         {{ $claim->inventoryItem->owner->name }}</td>
                     <td ><a class="text-primary" href="mailto:{{ $claim->inventoryItem->owner->email }}">{{ $claim->inventoryItem->owner->email }}</a></td>
-                    {{--<td style="border: none !important;">{{ $claim->inventoryItem->owner->shipFromAddress ? $claim->inventoryItem->owner->shipFromAddress->city : null }}</td>--}}
                     <td >${{ $claim->price }}</td>
-                    <td >{{ $claim->created_at->format('F jS \\a\\t g:i A') }}</td>
+                    <td >{{ $claim->createdAtHumanNoTime() }} <i data-placement="top" class="fa fa-clock-o" data-toggle="tooltip" title="{{ $claim->created_at->format('g:i A') }}"></i></td>
                     <td>{{ $claim->claim_status }}</td>
                 </tr>
                 </tbody>
@@ -58,6 +57,12 @@
                                 @include('shipping.order.partials._shipping_status_item', [
                                     '_itemStatus' => null,
                                     '_itemTimestamp' => null,
+                                    '_itemName'=>'Label Created'
+                                ])
+
+                                @include('shipping.order.partials._shipping_status_item', [
+                                    '_itemStatus' => null,
+                                    '_itemTimestamp' => null,
                                     '_itemName'=>'With Carrier'
                                 ])
 
@@ -83,6 +88,7 @@
                             <th >Service Name</th>
                             <th >*Transit Time</th>
                             <th >Tracking</th>
+                            <th>Origin</th>
                             <th>Status</th>
                         </tr>
                         </thead>
@@ -92,7 +98,8 @@
                             <td>{{ $transaction->rate_data['serviceLevelName'] }}</td>
                             <td>{{ $transaction->rate_data['shippoRateObject']['days'] }} days</td>
                             <td><a class="text-primary" href="{{ $transaction->tracking_url_provider }}" target="_blank" >{{ $transaction->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>
-                            <td></td>
+                            <td>{{ $transaction->shipment->getSenderOrigin() }}</td>
+                            <td>{!! $transaction->present()->getStatus()  !!}</td>
                         </tr>
                         </tbody>
                     </table>

@@ -252,4 +252,14 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
     {
         return $this->hasOne(ShippingTransactions::class, 'shipping_shipments_id');
     }
+
+    /**
+     * @return string
+     */
+    public function getSenderOrigin()
+    {
+        $senderData = $this->getSenderData();
+
+        return $senderData->city.', '.$senderData->state;
+    }
 }
