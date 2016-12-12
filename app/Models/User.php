@@ -120,21 +120,46 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $casts = [
-        'activated' => 'boolean'
+        'activated' => 'boolean',
+        'guest' => 'boolean',
     ];
 
     /**
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'avatar', 'invited_by_user_id', 'activated', 'timezone', 'kabooodle_as_shipping', 'referred_by_user_id',
+        'first_name',
+        'last_name',
+        'password',
+        'avatar',
+        'invited_by_user_id',
+        'activated',
+        'guest',
+        'timezone',
+        'kabooodle_as_shipping',
+        'referred_by_user_id',
     ];
 
     /**
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'kabooodle_as_shipping', 'facebook_access_token_expires', 'stripe_id', 'creditBalance', 'card_brand', 'credit_balance', 'referred_by_user_id', 'card_last_four', 'trial_ends_at', 'pivot', 'activated', 'access_token', 'facebook_access_token', 'facebook_user_id'
+        'password',
+        'remember_token',
+        'kabooodle_as_shipping',
+        'facebook_access_token_expires',
+        'stripe_id',
+        'creditBalance',
+        'card_brand',
+        'credit_balance',
+        'referred_by_user_id',
+        'card_last_four',
+        'trial_ends_at',
+        'pivot',
+        'activated',
+        'access_token',
+        'facebook_access_token',
+        'facebook_user_id'
     ];
 
     /**
@@ -143,9 +168,22 @@ class User extends BaseEloquentModel implements
     public static function getRules()
     {
         return [
-            'name' => 'required',
-            'email' => 'required|email|max:255|unique:users',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email|max:255|unique:emails,address',
             'password' => 'required|min:6',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getGuestRules()
+    {
+        return [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email|max:255',
         ];
     }
 
@@ -154,12 +192,8 @@ class User extends BaseEloquentModel implements
         parent::boot();
 
         self::creating(function ($user) {
-            $user->username = self::_createUsername($user->name);
+            $user->username = self::_createUsername($user->first_name.$user->last_name);
             $user->public_hash = self::_createHash();
-        });
-
-        self::saving(function ($user) {
-            $user->email = trim(strtolower($user->email));
         });
     }
 
@@ -171,6 +205,22 @@ class User extends BaseEloquentModel implements
     public static function factory(array $attributes)
     {
         return self::create($attributes);
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullNameAttribute()
+    {
+        return $this->first_name.' '.$this->last_name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmailAttribute()
+    {
+        return $this->primaryEmail ? $this->primaryEmail->address : null;
     }
 
     /**
@@ -187,6 +237,22 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function emails()
+    {
+        return $this->hasMany(Email::class, 'user_id')->orderBy('primary', 'desc');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function primaryEmail()
+    {
+        return $this->hasOne(Email::class, 'user_id')->wherePrimary(1);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function invitedBy()
@@ -200,6 +266,14 @@ class User extends BaseEloquentModel implements
     public function accountActivated()
     {
         return (bool) $this->activated;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGuest()
+    {
+        return (bool) $this->guest;
     }
 
     /**
@@ -388,19 +462,51 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * @return\Illuminate\Database\Eloquent\Relations\HasOne|ShippingAddress
+     * @return\Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function shipFromAddress()
+    public function addresses()
     {
-        return $this->hasOne(ShippingAddress::class, 'user_id')->where('type', ShippingAddress::TYPE_FROM);
+        return $this->hasMany(Address::class, 'user_id');
     }
 
     /**
-     * @return\Illuminate\Database\Eloquent\Relations\HasOne|ShippingAddress
+     * @return\Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function shipToAddress()
+    public function primaryBillingAddress()
     {
-        return $this->hasOne(ShippingAddress::class, 'user_id')->where('type', ShippingAddress::TYPE_TO);
+        return $this->hasOne(Address::class, 'user_id')->whereType(Address::TYPE_BILLING)->wherePrimary(1);
+    }
+
+    /**
+     * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function billingAddresses()
+    {
+        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_BILLING);
+    }
+
+    /**
+     * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function primaryShipFromAddress()
+    {
+        return $this->hasOne(Address::class, 'user_id')->whereType(Address::TYPE_FROM)->wherePrimary(1);
+    }
+
+    /**
+     * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function primaryShipToAddress()
+    {
+        return $this->hasOne(Address::class, 'user_id')->whereType(Address::TYPE_TO)->wherePrimary(1);
+    }
+
+    /**
+     * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function shipToAddresses()
+    {
+        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_TO);
     }
 
     /**

@@ -16,23 +16,15 @@
         </div>
 
 
-    <div class="p-a-md box-color r box-shadow-z1 text-color">
+    <div class="p-a-md box-color r box-shadow-z1 text-color" id="sign-in-content">
 
-        {{ Form::open(['route' => 'auth.login.store']) }}
+        <sign-in
+                sign-in-route="{{ route('auth.login.store') }}"
+                password-reset-route="{{ route('auth.password.reset.index') }}"
+                csrf="{{ csrf_token() }}"
+                redirect="{{ $redirect or null }}"
+        ></sign-in>
 
-        <div class="md-form-group">
-            {{ Form::text('email', null, ['class' => 'md-input']) }}
-            <label>Email Address</label>
-        </div>
-
-        <div class="md-form-group">
-            {{ Form::password('password', ['class' => 'md-input']) }}
-            <label>Password <a href="{{ route('auth.password.reset.index') }}" class="text-accent text-primary _500 m-l-lg font-italic">Forgot password?</a></label>
-        </div>
-
-        <button type="submit" v-on:click="disableOnClick" class="btn primary btn-block p-x-md">Login</button>
-
-        {{ Form::close() }}
     </div>
 
     <div class="p-v-lg text-center">
@@ -43,3 +35,6 @@
 
 @endsection
 
+@push('footer-scripts')
+<script src="/assets/js/sign-in.js"></script>
+@endpush

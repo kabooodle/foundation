@@ -22,16 +22,22 @@
                     v-if="avatar">Remove</button>
     </div>
 </div>
-<div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
-    <label class="control-label col-sm-3">Name</label>
+<div class="form-group row {{ $errors->has('first_name') ? 'has-danger' : null }}">
+    <label class="control-label col-sm-3">First Name</label>
     <div class="col-sm-6">
-        {{ Form::text('name', $_user ? $_user->name : null, ['class' => 'form-control'])  }}
+        {{ Form::text('first_name', $_user ? $_user->first_name : null, ['class' => 'form-control'])  }}
     </div>
 </div>
-<div class="form-group row {{ $errors->has('email') ? 'has-danger' : null }}">
-    <label class="control-label col-sm-3">Email</label>
+<div class="form-group row {{ $errors->has('last_name') ? 'has-danger' : null }}">
+    <label class="control-label col-sm-3">Last Name</label>
     <div class="col-sm-6">
-        {{ Form::text('email', $_user ? $_user->email : null, ['class' => 'form-control'])  }}
+        {{ Form::text('last_name', $_user ? $_user->last_name : null, ['class' => 'form-control'])  }}
+    </div>
+</div>
+<div class="form-group row {{ $errors->has('username') ? 'has-danger' : null }}">
+    <label class="control-label col-sm-3">Username</label>
+    <div class="col-sm-6">
+        {{ Form::text('username', $_user ? $_user->username : null, ['class' => 'form-control'])  }}
     </div>
 </div>
 <div class="form-group row {{ $errors->has('timezone') ? 'has-danger' : null }}">

@@ -266,7 +266,7 @@ class InventoryController extends Controller
         // This metadata might include price, size, name, etc;  The reason we store this data with the claim,
         // rather than just pivot to the item from the claim is because this data may change numerous time.
         // Storing this data allows us to preserve it at the time of the claim.
-        // We remove the eager loaded relationships on inventory because most of it is erroneous.
+        // We remove the eager loaded relationships on inventory because most of it is unnecessary.
         $item = $user->inventory()->noEagerLoads()->with('style', 'size', 'styleSize', 'files')->find($decryptedId);
         try {
             $this->dispatchNow(new ClaimInventoryItemCommand(user(), $user, $item));

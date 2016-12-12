@@ -1,6 +1,9 @@
 <a href="{{ route('profile.index') }}" class="nav-link {{ Request::is('profile') ? 'active' : null }}">
     Account Settings
 </a>
+<a href="{{ route('profile.emails.edit') }}" class="nav-link {{ Request::is('profile/emails') ? 'active' : null }}">
+    Email Addresses
+</a>
 <a href="{{ route('profile.notifications.edit') }}" class="nav-link {{ Request::is('profile/notifications') ? 'active' : null }}">
     Notifications
 </a>

@@ -3,7 +3,7 @@
         <button
                 :disabled="processing"
                 type="button"
-                @click="following ? unfollowMe() : followMe()"
+                @click="following ? unfollowMe($event) : followMe($event)"
                 class="btn-follow btn "
                 :class="btnclass"
         >
@@ -47,7 +47,7 @@
             current_user: {
                 type: Object,
                 default: function () {
-                    return (KABOOODLE_APP ? KABOOODLE_APP.currentUser : {})
+                    return ((KABOOODLE_APP && KABOOODLE_APP.currentUser) ? KABOOODLE_APP.currentUser : {})
                 }
             },
             already_following: {
@@ -77,11 +77,11 @@
             }
         },
         mounted (){
-            if (this.doWeHaveCurrentUser() && ! this.entityIsMe()) {
+            if (! this.entityIsMe()) {
                 this.display = true;
             }
         },
-        computed : {
+        computed: {
             btnclass : function(){
                 let theClass = ' white '+this.btn_size_class;
                 if (this.following) {
@@ -95,17 +95,17 @@
             }
         },
         methods: {
-            entityIsMe : function(){
+            entityIsMe: function(){
                 if(this.doWeHaveCurrentUser()) {
                     return parseInt(this.current_user.id) == parseInt(this.able_id);
                 }
 
                 return false;
             },
-            doWeHaveCurrentUser(){
+            doWeHaveCurrentUser: function () {
                 return this.current_user;
             },
-            isUserFollowingEntity(){
+            isUserFollowingEntity: function () {
                 if (this.doWeHaveCurrentUser()) {
 //                    const typeName = this.able_name+'_type';
 //                    const typeId = this.able_name+'_id';
@@ -120,18 +120,25 @@
 
                 return false;
             },
-            followMe(){
-                this.processing = true;
-                this.$http.post(this.endpoint).then(()=>{
-                    this.following = true;
-                    this.already_following = true;
-                }, function(response){
-                    throw new Error(response);
-                }).catch(function() {}).finally(()=>{
-                    this.processing = false;
-                });
+            followMe: function (e) {
+                if (KABOOODLE_APP.currentUser) {
+                    this.processing = true;
+                    this.$http.post(this.endpoint).then(()=>{
+                        this.following = true;
+                        this.already_following = true;
+                    }, function(response){
+                        throw new Error(response);
+                    }).catch(function() {}).finally(()=>{
+                        this.processing = false;
+                    });
+                } else {
+                    notify({
+                        'text': 'You must be signed in to '+this.follow_text.toLowerCase(),
+                        'type': 'information'
+                    });
+                }
             },
-            unfollowMe(){
+            unfollowMe: function () {
                 this.processing = true;
                 this.$http.delete(this.endpoint).then(()=>{
                     this.following = false;

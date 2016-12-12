@@ -13,7 +13,7 @@ use Kabooodle\Services\Shippr\RatesObject;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 
 /**
- * Class ShippingAddress
+ * Class ShippingShipments
  * @package Kabooodle\Models
  */
 class ShippingShipments extends BaseEloquentModel implements Revisionable

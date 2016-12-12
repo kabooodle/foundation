@@ -37,6 +37,11 @@ class AuthController extends Controller
     /**
      * @var string
      */
+    protected $username = 'username';
+
+    /**
+     * @var string
+     */
     protected $redirectTo = '/';
 
     /**
@@ -81,20 +86,21 @@ class AuthController extends Controller
             $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
 
             $user = $this->dispatch(new AddUserCommand(
-                $request->get('name'),
+                $request->get('first_name'),
+                $request->get('last_name'),
                 $request->get('email'),
                 $request->get('password'),
                 $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
             ));
 
             Auth::attempt([
-                'email' => $user->email,
+                'username' => $user->username,
                 'password' => $request->get('password')
             ]);
 
-            Messages::success("Welcome to ".env('APP_NAME').", {$user->name} !");
+            Messages::success("Welcome to ".env('APP_NAME').", {$user->first_name}!");
 
-            return $this->redirect('/');
+            return $this->redirect($request->get('_redirect', '/'));
         } catch (\Illuminate\Validation\ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());
 
@@ -115,7 +121,8 @@ class AuthController extends Controller
         try {
             $this->validateLogin($request);
 
-            return $this->parentLogin($request);
+            $this->parentLogin($request);
+            return redirect()->intended($request->get('_redirect', $this->redirectTo));
         } catch (\Illuminate\Validation\ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());
 

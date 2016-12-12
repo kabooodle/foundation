@@ -10,20 +10,21 @@ use Sofa\Revisionable\Revisionable;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 
 /**
- * Class ShippingAddress
+ * Class Address
  * @package Kabooodle\Models
  */
-class ShippingAddress extends BaseEloquentModel implements Revisionable
+class Address extends BaseEloquentModel implements Revisionable
 {
     use RevisionableTrait;
 
+    const TYPE_BILLING = 'billing';
     const TYPE_FROM = 'ship_from';
     const TYPE_TO = 'ship_to';
 
     /**
      * @var string
      */
-    protected $table = 'shipping_addresses';
+    protected $table = 'addresses';
 
     /**
      * @var array

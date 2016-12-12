@@ -27,7 +27,7 @@ class CurrentUserComposer
             $user->setRelations([])->load(['following', 'followers']);
             Analytics::setUserId(md5($user->id));
         }
-        $view->with_currentUser($user ? $user->toJson() : '""');
+        $view->with_currentUser($user ? $user->toJson() : json_encode(null));
         $view->with_authToken($user ? JWTAuth::fromUser($user) : null);
     }
 }

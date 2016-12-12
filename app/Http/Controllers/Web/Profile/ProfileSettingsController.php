@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Profile;
 
 use Binput;
+use Kabooodle\Bus\Commands\Email\VerifyEmailCommand;
 use Kabooodle\Bus\Commands\Notifications\UpdateUserNotificationSettingCommand;
 use Response;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,7 @@ use Kabooodle\Models\User;
 use Messages;
 use Illuminate\Http\Request;
 use Kabooodle\Models\MailingAddress;
-use Kabooodle\Models\ShippingAddress;
+use Kabooodle\Models\Address;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\User\UpdateUserShippingProfileCommand;
@@ -68,7 +69,9 @@ class ProfileSettingsController extends Controller
         try {
             $this->validate($request, $rules);
 
-            user()->name = $input['name'];
+            user()->first_name = $input['first_name'];
+            user()->last_name = $input['last_name'];
+            // TODO: profile updates email
             user()->email = $input['email'];
             user()->timezone = $input['timezone'];
             user()->avatar = $request->has('avatar') ? $request->get('avatar') : null;
@@ -103,8 +106,8 @@ class ProfileSettingsController extends Controller
      */
     public function getShippingProfile()
     {
-        $from = user()->shipFromAddress;
-        $to = user()->shipToAddress;
+        $from = user()->primaryShipFromAddress;
+        $to = user()->primaryShipToAddress;
 
         return $this->view('profile.shippingprofile')->with(compact('from', 'to'));
     }
@@ -115,7 +118,7 @@ class ProfileSettingsController extends Controller
     public function postShippingProfile(Request $request)
     {
         try {
-            $this->validate($request, ShippingAddress::getRules());
+            $this->validate($request, Address::getRules());
 
             $kabooodleAsDefaultShippingProvider = $request->has('kabooodle_as_shipping') ? true : false;
 
@@ -163,6 +166,28 @@ class ProfileSettingsController extends Controller
     public function getSocial()
     {
         return $this->view('profile.social');
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function getEmails()
+    {
+        $emails = user()->emails;
+
+        return $this->view('profile.emails')->with(compact('emails'));
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function verifyEmail(Request $request, $token)
+    {
+        $this->dispatchNow(new VerifyEmailCommand($token));
+
+        Messages::success("Shipping profile was successfully updated!");
+
+        return $this->redirect()->route('/');
     }
 
     /**
