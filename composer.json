@@ -44,7 +44,8 @@
     "tymon/jwt-auth": "1.0.*@dev",
     "wildbit/laravel-postmark-provider": "3.0.0",
     "yajra/laravel-datatables-oracle": "6.18.1",
-    "zackkitzmiller/tiny": "1.2.2"
+    "zackkitzmiller/tiny": "1.2.2",
+    "laravelcollective/iron-queue": "^5.2"
   },
   "require-dev": {
     "alt-three/testbench": "^1.8",

@@ -2,7 +2,7 @@
     @unless(isset($_excludeActionCol))
     <td><input type="checkbox"></td>
     @endunless
-    <td>Pipers Group @include('listings._listingtype', ['_type' => $listing->type])</td>
+    <td>{{ $listing->type ==  Kabooodle\Models\Listings::TYPE_FACEBOOK ? $listing->fb_name : $listing->flashsale_name }} @include('listings._listingtype', ['_type' => $listing->type])</td>
     <td>{{ humanizeDateTime($listing->scheduled_for) }}</td>
     <td>{{ $listing->use_link == 1 ? 'Yes' : 'No' }}</td>
     <td>{{ $listing->albums_count }}</td>
