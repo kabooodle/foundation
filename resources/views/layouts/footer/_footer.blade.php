@@ -187,7 +187,8 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="text-sm-right text-xs-left">
-                        <small class="text-muted">&copy; 2016.</small>
+                        <small class="text-muted">&copy; 2016</small>
+                        <small class="block text-xs text-muted">v.{{ getAppVersion() }}</small>
                     </div>
                 </div>
             </div>
