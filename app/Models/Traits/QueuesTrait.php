@@ -20,13 +20,21 @@ trait QueuesTrait
      */
     public function getQueueConnection($name = 'iron')
     {
-        $camel = camel_case($name);
-        $name = "get{$camel}Connection";
-        if (method_exists($this, $name)) {
-            return $this->{$name}();
+        $camel = ucfirst(camel_case($name));
+        $method = "get{$camel}Connection";
+        if (method_exists($this, $method)) {
+            return $this->{$method}();
         }
 
         return Queue::connection($name);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Queue\Queue
+     */
+    public function getIronConnection()
+    {
+        return Queue::connection('iron');
     }
 
     /**
