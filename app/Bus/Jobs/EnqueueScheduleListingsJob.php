@@ -30,6 +30,11 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
     public $queuesId;
 
     /**
+     * @var
+     */
+    public $timestamp;
+
+    /**
      * @param Collection $listingModels
      */
     public function __construct(Collection $listingModels)
@@ -48,10 +53,19 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
         return $this;
     }
 
+    /**
+     * This is step 2 of 3.
+     *
+     * Step 1 is FacebookEnqueuerCommand
+     * Step 2 is EnqueueScheduleListingsJob
+     * Step 3 is EnqueueScheduleListingItemJob
+     */
     public function handle()
     {
+        $this->timestamp = Carbon::now();
+
         // Update the Queues status to processing.
-        $this->updateQueueStatus($this->queuesId, Carbon::now(), Queues::STATUS_PROCESSING, $this->job->attempts());
+        $this->updateQueueStatus($this->queuesId, $this->timestamp, Queues::STATUS_PROCESSING, $this->job->attempts());
 
         // Collection that will contain all the listings' listing items, ignoring their origin.
         $listingItems = collect([]);
@@ -61,13 +75,6 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
 
         // We shuffle just to randomize the parent listings and keep our process as random as possible.
         $shuffledListings = $listingModels->shuffle();
-
-        // Get all the ids of the listings
-        $listingsIds = $shuffledListings->pluck('id')->toArray();
-
-        // Update all the listings' status from "scheduled" to "queued"
-        // We change this now instead of after its complete because we dont want to create an overlap
-        $this->updateListingsStatus($listingsIds, Carbon::now());
 
         // We want to extract all the listing items from the parent listings so we can queue them all individually.
         foreach($shuffledListings as $listing) {
@@ -85,6 +92,8 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
         // Shuffle all the listing items, similar to above, to keep everything as random as possible.
         $shuffledListingItems = $listingItems->shuffle();
 
+        $this->updateListingItemsStatus($shuffledListingItems->pluck('id')->toArray(), $this->timestamp, ListingItems::STATUS_QUEUED_LIST);
+
         // Iterate over the listing items and push them to the queue.
         foreach($shuffledListingItems as $shuffledListingItem) {
 
@@ -101,8 +110,11 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
 
         $this->job->delete();
 
+        // Get all the ids of the listings
+        $listingsIds = $shuffledListings->pluck('id')->toArray();
+
         // Update status again of the listings, this time as "processing".
-        $this->updateListingsStatus($listingsIds, Carbon::now(), Listings::STATUS_PROCESSING);
+        $this->updateListingsStatus($listingsIds,  $this->timestamp, Listings::STATUS_PROCESSING);
 
         return;
     }

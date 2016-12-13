@@ -30,11 +30,7 @@ abstract class AbstractEnqueueJob extends Job
      */
     public function updateListingsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
     {
-        return Listings::whereIn('id', $listingIds)
-            ->update([
-                'status' => $status,
-                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
-            ]);
+        return Listings::updateListingsStatus($listingIds, $timestamp, $status);
     }
 
     /**
@@ -45,11 +41,7 @@ abstract class AbstractEnqueueJob extends Job
      */
     public function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
     {
-        return ListingItems::whereIn('id', $listingIds)
-            ->update([
-                'status' => $status,
-                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
-            ]);
+        return ListingItems::updateListingItemsStatus($listingIds, $timestamp, $status);
     }
 
     /**

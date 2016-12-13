@@ -8,20 +8,17 @@ namespace Kabooodle\Console\Commands;
 
 use Carbon\Carbon;
 use Kabooodle\Models\Queues;
+use Kabooodle\Models\Listings;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Jobs\EnqueueScheduleListingsJob;
 use Kabooodle\Bus\Events\Listings\ListingsWereQueued;
-use Kabooodle\Bus\Commands\Listings\GetScheduledListingsCommand;
 
 /**
  * Class FacebookEnqueuerCommand
  */
 class FacebookEnqueuerCommand extends Command
 {
-    use DispatchesJobs;
-
     /**
      * The name and signature of the console command.
      *
@@ -30,25 +27,31 @@ class FacebookEnqueuerCommand extends Command
     protected $signature = 'facebook:enqueue';
 
     /**
-     * @return void
+     * @var string
+     */
+    public $timestamp;
+
+    /**
+     * This is step 1 of 3.
+     *
+     * Step 1 is FacebookEnqueuerCommand
+     * Step 2 is EnqueueScheduleListingsJob
+     * Step 3 is EnqueueScheduleListingItemJob
      */
     public function handle()
     {
-        // Cached timestamp of now so we can use it in multiple places.
-        $cachedNow = Carbon::now()->getTimestamp();
+        $this->timestamp = Carbon::now();
 
-        // Set the start time to now
-        $startTime = Carbon::createFromTimestamp($cachedNow);
-
-        // Our endtime lookahead is 4 minutes, 59 seconds.
-        $endTime = Carbon::createFromTimestamp($cachedNow)->addMinutes(4)->addSeconds(59);
-
-        // Get all the listings
-        $listings = $this->dispatchNow(new GetScheduledListingsCommand($startTime, $endTime));
+        $listings = $this->getScheduledListings();
 
         $this->output->writeln($listings->count().' Listings found.');
 
         if ($listings && $listings->count() > 0) {
+
+            $listingsIds = $listings->pluck('id')->toArray();
+
+            // Update the Queues status to processing.
+            $this->updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
 
             // Build our job
             $job = $this->buildJob($listings);
@@ -78,12 +81,40 @@ class FacebookEnqueuerCommand extends Command
             'queue' => 'default',
             'payload' => serialize($job),
             'status' => Queues::STATUS_QUEUED,
-            'status_updated_at' => Carbon::now(),
+            'status_updated_at' => $this->timestamp,
         ]);
 
         $job->setQueuesId($localQueueDb->id);
         $job->onConnection('iron-facebook-scheduler');
 
         return $job;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getScheduledListings()
+    {
+        $cachedNow = Carbon::now()->getTimestamp();
+
+        // Set the start time to now
+        $startTime = Carbon::createFromTimestamp($cachedNow);
+
+        // Our endtime lookahead is 4 minutes, 59 seconds.
+        $endTime = Carbon::createFromTimestamp($cachedNow)->addMinutes(4)->addSeconds(59);
+
+        return Listings::getScheduledListings($startTime, $endTime);
+    }
+
+    /**
+     * @param array  $listingIds
+     * @param Carbon $timestamp
+     * @param string $status
+     *
+     * @return bool|int
+     */
+    public function updateListingsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
+    {
+        return Listings::updateListingsStatus($listingIds, $timestamp, $status);
     }
 }

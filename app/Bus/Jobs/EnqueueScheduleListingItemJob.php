@@ -60,6 +60,12 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     }
 
     /**
+     * This is step 1 of 3.
+     *
+     * Step 1 is FacebookEnqueuerCommand
+     * Step 2 is EnqueueScheduleListingsJob
+     * Step 3 is EnqueueScheduleListingItemJob
+     *
      * @return bool
      *
      * @throws Exception

@@ -159,4 +159,51 @@ abstract class AbstractListingModel extends BaseEloquentModel
 
         return ($countResults + $incomingItemsCount) > 600;
     }
+
+
+    /**
+     * @param Carbon $startTime
+     * @param Carbon $endTime
+     *
+     * @return mixed
+     */
+    public static function getScheduledListings(Carbon $startTime, Carbon $endTime)
+    {
+        return Listings::facebook()
+            ->scheduledFor('>=', $startTime->format('Y-m-d H:i:s'))
+            ->scheduledFor('<=', $endTime->format('Y-m-d H:i:s'))
+            ->statusScheduled()
+            ->randomize()
+            ->get();
+    }
+
+    /**
+     * @param array $listingIds
+     * @param Carbon $timestamp
+     * @param string $status
+     * @return bool|int
+     */
+    public static function updateListingsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
+    {
+        return Listings::whereIn('id', $listingIds)
+            ->update([
+                'status' => $status,
+                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
+            ]);
+    }
+
+    /**
+     * @param array $listingIds
+     * @param Carbon $timestamp
+     * @param string $status
+     * @return bool|int
+     */
+    public function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
+    {
+        return ListingItems::whereIn('id', $listingIds)
+            ->update([
+                'status' => $status,
+                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
+            ]);
+    }
 }
