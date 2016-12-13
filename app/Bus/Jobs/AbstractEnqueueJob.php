@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Jobs;
 
 use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
@@ -19,7 +20,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
  */
 abstract class AbstractEnqueueJob extends Job
 {
-    use DispatchesJobs, InteractsWithQueue, SerializesModels;
+    use DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * @param array $listingIds

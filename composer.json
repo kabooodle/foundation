@@ -11,7 +11,7 @@
     },
     {
       "type": "vcs",
-      "url": "https://github.com/kabooodle/laravel-datatables"
+      "url": "https://github.com/kabooodle/iron-queue"
     }
   ],
   "require": {
@@ -31,7 +31,9 @@
     "laravel/cashier": "6.0.19",
     "laravel/framework": "5.2.31",
     "laravelcollective/html": "5.2.4",
+    "laravelcollective/iron-queue": "^5.2",
     "league/flysystem-aws-s3-v3": "1.0.13",
+    "maatwebsite/excel": "~2.1.0",
     "predis/predis": "1.1.0",
     "pusher/pusher-php-server": "2.2.1",
     "ramsey/uuid": "3.5.0",
@@ -43,7 +45,6 @@
     "spatie/laravel-fractal": "1.9.1",
     "tymon/jwt-auth": "1.0.*@dev",
     "wildbit/laravel-postmark-provider": "3.0.0",
-    "yajra/laravel-datatables-oracle": "6.18.1",
     "zackkitzmiller/tiny": "1.2.2"
   },
   "require-dev": {

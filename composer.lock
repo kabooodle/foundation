@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e32429db1afc8c93926928ba0ed4c7ff",
-    "content-hash": "b4ae7203a1ff8008bbf5dfcfc65d5395",
+    "hash": "d0eb625377ab87c03c7fdc48572614a6",
+    "content-hash": "6abf0c5defa9f1557b4e26cdbcda9499",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
-            "version": "1.11.0",
+            "version": "1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/algoliasearch-client-php.git",
-                "reference": "d4f29a1fe82f3d6361a516276849bd98dd014cc0"
+                "reference": "01dd56a09db7fe6a5609fadbd7ad69d41c131375"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/d4f29a1fe82f3d6361a516276849bd98dd014cc0",
-                "reference": "d4f29a1fe82f3d6361a516276849bd98dd014cc0",
+                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/01dd56a09db7fe6a5609fadbd7ad69d41c131375",
+                "reference": "01dd56a09db7fe6a5609fadbd7ad69d41c131375",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
             ],
             "description": "Algolia Search API Client for PHP",
             "homepage": "https://github.com/algolia/algoliasearch-client-php",
-            "time": "2016-10-20 11:25:18"
+            "time": "2016-12-09 13:30:25"
         },
         {
             "name": "algolia/algoliasearch-laravel",
@@ -176,16 +176,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.20.2",
+            "version": "3.20.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "22e4ff095a78a7d82d6ac17c94ca5042be195684"
+                "reference": "5a05ae6851405587f0bdeedb67abfe997a079ac0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/22e4ff095a78a7d82d6ac17c94ca5042be195684",
-                "reference": "22e4ff095a78a7d82d6ac17c94ca5042be195684",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5a05ae6851405587f0bdeedb67abfe997a079ac0",
+                "reference": "5a05ae6851405587f0bdeedb67abfe997a079ac0",
                 "shasum": ""
             },
             "require": {
@@ -252,7 +252,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-12-06 21:04:43"
+            "time": "2016-12-12 23:02:57"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
@@ -1823,6 +1823,110 @@
             "time": "2016-11-03 07:42:58"
         },
         {
+            "name": "iron-io/iron_core",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iron-io/iron_core_php.git",
+                "reference": "07f400f36eb4a29e8759abe1c81922a019f801dc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iron-io/iron_core_php/zipball/07f400f36eb4a29e8759abe1c81922a019f801dc",
+                "reference": "07f400f36eb4a29e8759abe1c81922a019f801dc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "IronCore\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander S",
+                    "email": "alexander@iron.io",
+                    "homepage": "http://iron.io",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Iron.io",
+                    "email": "support@iron.io",
+                    "homepage": "http://iron.io",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Tino Ehrich",
+                    "email": "tino@bigpun.me"
+                }
+            ],
+            "description": "Collection of common functions for all iron.io client libraries",
+            "homepage": "http://github.com/iron-io/iron_core_php",
+            "keywords": [
+                "iron",
+                "iron_core"
+            ],
+            "time": "2016-02-02 11:49:32"
+        },
+        {
+            "name": "iron-io/iron_mq",
+            "version": "4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iron-io/iron_mq_php.git",
+                "reference": "3302ad9be1a532ed2e413a082e251ed128816f37"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iron-io/iron_mq_php/zipball/3302ad9be1a532ed2e413a082e251ed128816f37",
+                "reference": "3302ad9be1a532ed2e413a082e251ed128816f37",
+                "shasum": ""
+            },
+            "require": {
+                "iron-io/iron_core": "1.*",
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1.5",
+                "phpmd/phpmd": "~2.2",
+                "phpunit/phpunit": "4.6.*",
+                "squizlabs/php_codesniffer": "~2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "IronMQ\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander S",
+                    "email": "alexander@iron.io",
+                    "homepage": "http://iron.io",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Client binding for IronMQ (hosted message queue)",
+            "homepage": "http://github.com/iron-io/iron_mq_php",
+            "keywords": [
+                "MQ",
+                "iron",
+                "iron_mq"
+            ],
+            "time": "2015-07-23 21:55:36"
+        },
+        {
             "name": "jakub-onderka/php-console-color",
             "version": "0.1",
             "source": {
@@ -1911,20 +2015,20 @@
         },
         {
             "name": "jeremeamia/SuperClosure",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeremeamia/super_closure.git",
-                "reference": "29a88be2a4846d27c1613aed0c9071dfad7b5938"
+                "reference": "443c3df3207f176a1b41576ee2a66968a507b3db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/29a88be2a4846d27c1613aed0c9071dfad7b5938",
-                "reference": "29a88be2a4846d27c1613aed0c9071dfad7b5938",
+                "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/443c3df3207f176a1b41576ee2a66968a507b3db",
+                "reference": "443c3df3207f176a1b41576ee2a66968a507b3db",
                 "shasum": ""
             },
             "require": {
-                "nikic/php-parser": "^1.2|^2.0",
+                "nikic/php-parser": "^1.2|^2.0|^3.0",
                 "php": ">=5.4",
                 "symfony/polyfill-php56": "^1.0"
             },
@@ -1934,7 +2038,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2-dev"
+                    "dev-master": "2.3-dev"
                 }
             },
             "autoload": {
@@ -1965,7 +2069,7 @@
                 "serialize",
                 "tokenizer"
             ],
-            "time": "2015-12-05 17:17:57"
+            "time": "2016-12-07 09:37:55"
         },
         {
             "name": "laravel/cashier",
@@ -2213,6 +2317,58 @@
             "time": "2016-01-27 22:29:54"
         },
         {
+            "name": "laravelcollective/iron-queue",
+            "version": "v5.2.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kabooodle/iron-queue.git",
+                "reference": "0ec42a225d35a2a83f3377af44b8d7e213e3cc35"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kabooodle/iron-queue/zipball/0ec42a225d35a2a83f3377af44b8d7e213e3cc35",
+                "reference": "0ec42a225d35a2a83f3377af44b8d7e213e3cc35",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/container": "5.2.*",
+                "illuminate/contracts": "5.2.*",
+                "illuminate/encryption": "5.2.*",
+                "illuminate/http": "5.2.*",
+                "illuminate/queue": "5.2.*",
+                "illuminate/support": "5.2.*",
+                "iron-io/iron_mq": "~4.0",
+                "jeremeamia/superclosure": "~2.0",
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Collective\\IronQueue\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com"
+                }
+            ],
+            "description": "IronMQ support for the Laravel queue.",
+            "homepage": "http://laravelcollective.com",
+            "support": {
+                "issues": "https://github.com/laravelcollective/iron-queue/issues",
+                "source": "https://github.com/laravelcollective/iron-queue"
+            },
+            "time": "2016-12-12 23:33:54"
+        },
+        {
             "name": "league/flysystem",
             "version": "1.0.32",
             "source": {
@@ -2407,16 +2563,16 @@
         },
         {
             "name": "maatwebsite/excel",
-            "version": "2.1.7",
+            "version": "2.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-                "reference": "55d18b6a99b30b9003c2f174cc3ecd9ca79f1bf5"
+                "reference": "d9c398f7eba0ac9caf9c104dd0d55bd6a5ff231e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/55d18b6a99b30b9003c2f174cc3ecd9ca79f1bf5",
-                "reference": "55d18b6a99b30b9003c2f174cc3ecd9ca79f1bf5",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/d9c398f7eba0ac9caf9c104dd0d55bd6a5ff231e",
+                "reference": "d9c398f7eba0ac9caf9c104dd0d55bd6a5ff231e",
                 "shasum": ""
             },
             "require": {
@@ -2470,7 +2626,7 @@
                 "import",
                 "laravel"
             ],
-            "time": "2016-10-18 16:43:26"
+            "time": "2016-12-09 19:11:09"
         },
         {
             "name": "monolog/monolog",
@@ -5162,68 +5318,6 @@
             "time": "2016-09-13 20:43:41"
         },
         {
-            "name": "yajra/laravel-datatables-oracle",
-            "version": "v6.18.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kabooodle/laravel-datatables.git",
-                "reference": "0b6b129fde401e15988aa82b13c0d9513faf4026"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kabooodle/laravel-datatables/zipball/0b6b129fde401e15988aa82b13c0d9513faf4026",
-                "reference": "0b6b129fde401e15988aa82b13c0d9513faf4026",
-                "shasum": ""
-            },
-            "require": {
-                "dompdf/dompdf": "^0.6.1",
-                "illuminate/database": "~5.0",
-                "illuminate/filesystem": "~5.0",
-                "illuminate/http": "~5.0",
-                "illuminate/support": "~5.0",
-                "illuminate/view": "~5.0",
-                "laravelcollective/html": "~5.0",
-                "league/fractal": "~0.12",
-                "maatwebsite/excel": "^2.0",
-                "php": ">=5.5.9"
-            },
-            "require-dev": {
-                "mockery/mockery": "~0.9",
-                "phpunit/phpunit": "~4.0"
-            },
-            "suggest": {
-                "barryvdh/laravel-snappy": "Allows exporting of dataTable to PDF using the print view."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Yajra\\Datatables\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Arjay Angeles",
-                    "email": "aqangeles@gmail.com"
-                }
-            ],
-            "description": "jQuery DataTables API for Laravel 4|5",
-            "keywords": [
-                "datatable",
-                "datatables",
-                "datatables jquery plugin",
-                "laravel",
-                "laravel4",
-                "laravel5"
-            ],
-            "support": {
-                "source": "https://github.com/kabooodle/laravel-datatables/tree/v6.18.1"
-            },
-            "time": "2016-09-05 01:15:20"
-        },
-        {
             "name": "zackkitzmiller/tiny",
             "version": "1.2.2",
             "source": {
@@ -5275,16 +5369,16 @@
     "packages-dev": [
         {
             "name": "alt-three/testbench",
-            "version": "v1.10.0",
+            "version": "v1.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AltThree/TestBench.git",
-                "reference": "90e8d749a11aa6c92731e0081979de8961d47397"
+                "reference": "bc1ece1aab1589c8b832e6d112f32b757739dd46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AltThree/TestBench/zipball/90e8d749a11aa6c92731e0081979de8961d47397",
-                "reference": "90e8d749a11aa6c92731e0081979de8961d47397",
+                "url": "https://api.github.com/repos/AltThree/TestBench/zipball/bc1ece1aab1589c8b832e6d112f32b757739dd46",
+                "reference": "bc1ece1aab1589c8b832e6d112f32b757739dd46",
                 "shasum": ""
             },
             "require": {
@@ -5292,7 +5386,7 @@
                 "php": ">=5.5.9"
             },
             "require-dev": {
-                "nikic/php-parser": "^2.0",
+                "nikic/php-parser": "^2.0|^3.0",
                 "phpunit/phpunit": "^4.8|^5.0"
             },
             "suggest": {
@@ -5302,7 +5396,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.9-dev"
+                    "dev-master": "1.11-dev"
                 }
             },
             "autoload": {
@@ -5334,7 +5428,7 @@
                 "TestBench",
                 "app"
             ],
-            "time": "2016-11-09 15:31:34"
+            "time": "2016-12-07 22:41:29"
         },
         {
             "name": "barryvdh/laravel-debugbar",

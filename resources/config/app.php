@@ -148,6 +148,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+
         Fideloper\Proxy\TrustedProxyServiceProvider::class,
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
 
@@ -168,7 +169,6 @@ return [
 
         AlgoliaSearch\Laravel\AlgoliaServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
-//        Collective\Html\HtmlServiceProvider::class,
         Kabooodle\Foundation\Providers\HTMLServiceProvider::class,
         Conner\Tagging\Providers\TaggingServiceProvider::class,
         GrahamCampbell\HTMLMin\HTMLMinServiceProvider::class,
@@ -180,10 +180,11 @@ return [
         Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
 
         Spatie\Fractal\FractalServiceProvider::class,
-//        Yajra\Datatables\DatatablesServiceProvider::class,
         ZackKitzmiller\Laravel5\TinyServiceProvider::class,
         Ipunkt\LaravelAnalytics\AnalyticsServiceProvider::class,
         Spatie\Analytics\AnalyticsServiceProvider::class,
+//        Kabooodle\Foundation\Providers\IronQueueServiceProvider::class,
+        Collective\IronQueue\IronQueueServiceProvider::class,
     ],
 
     /*

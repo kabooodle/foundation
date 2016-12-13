@@ -71,12 +71,17 @@ Route::group(['domain' => 'api.'.getEnvDomain(true)], function($route){
         'as' => 'api.index',
         'uses' => \Kabooodle\Http\Controllers\Api\GeneralController::class.'@ping'
     ]);
-
     $route->get('files', ['as' =>'api.files.sign', 'uses' => \Kabooodle\Http\Controllers\Api\Files\FilesApiController::class.'@createPresignedData']);
 
     $api = app(Dingo\Api\Routing\Router::class);
 
     $api->version('v1', function ($api) {
+
+        $api->post('/queues/errors', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@errorQueueHandler');
+        $api->post('/queues/email', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailHandler');
+        $api->post('/queues/fb-scheduler', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueFacebookScheduleHandler');
+        $api->post('/queues/fb-lister', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueFacebookListingHandler');
+
         $api->get('/ping', \Kabooodle\Http\Controllers\Api\GeneralController::class.'@ping');
         $api->get('/version', \Kabooodle\Http\Controllers\Api\GeneralController::class.'@version');
         $api->post('/auth/login', \Kabooodle\Http\Controllers\Api\Auth\AuthApiController::class.'@login');
