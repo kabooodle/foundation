@@ -88,6 +88,7 @@ class AuthController extends Controller
             $user = $this->dispatch(new AddUserCommand(
                 $request->get('first_name'),
                 $request->get('last_name'),
+                $request->get('username'),
                 $request->get('email'),
                 $request->get('password'),
                 $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)

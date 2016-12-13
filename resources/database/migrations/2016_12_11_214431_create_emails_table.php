@@ -18,7 +18,7 @@ class CreateEmailsTable extends Migration
             $table->string('address')->unique();
             $table->boolean('primary')->default(false);
             $table->boolean('verified')->default(false);
-            $table->string('token')->nullable();
+            $table->string('token', 60)->unique()->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

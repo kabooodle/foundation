@@ -15,6 +15,8 @@ class AddGuestToUsersTbl extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('guest')->default(false)->after('activated');
         });
+
+        DB::statement('ALTER TABLE `users` MODIFY COLUMN `password` VARCHAR(255) DEFAULT NULL');
     }
 
     /**
@@ -27,5 +29,7 @@ class AddGuestToUsersTbl extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('guest');
         });
+
+        DB::statement('ALTER TABLE `users` MODIFY COLUMN `password` VARCHAR(255) NOT NULL');
     }
 }

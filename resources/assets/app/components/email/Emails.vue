@@ -1,6 +1,11 @@
 <template>
     <div>
-        <email-input v-for=></email-input>
+        <email v-for="email in emails"
+            :is-input=false
+            :address=email.address
+            :is-primary=email.primary
+            :is-verified=email.verified
+        ></email>
     </div>
 </template>
 <style>
@@ -10,6 +15,7 @@
     import Email from './Email.vue'
     export default {
         props: {
+            emails: Array,
             newEmailEndpoint: {
                 type: String,
                 required: true,
@@ -22,6 +28,9 @@
         },
         components:{
             'email': Email,
-        }
+        },
+        created: function () {
+            console.log(this.emails);
+        },
     }
 </script>

@@ -4,7 +4,7 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Handlers\Commands\User;
+namespace Kabooodle\Bus\Handlers\Commands\Email;
 
 use Kabooodle\Bus\Commands\Email\DestroyEmailCommand;
 use Kabooodle\Models\Email;

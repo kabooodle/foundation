@@ -62,7 +62,8 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $appends = [
-        'is_following'
+        'is_following',
+        'full_name',
     ];
 
     /**
@@ -130,6 +131,7 @@ class User extends BaseEloquentModel implements
     protected $fillable = [
         'first_name',
         'last_name',
+        'username',
         'password',
         'avatar',
         'invited_by_user_id',
@@ -170,6 +172,7 @@ class User extends BaseEloquentModel implements
         return [
             'first_name' => 'required',
             'last_name' => 'required',
+            'username' => 'required|unique:users',
             'email' => 'required|email|max:255|unique:emails,address',
             'password' => 'required|min:6',
         ];
@@ -192,8 +195,15 @@ class User extends BaseEloquentModel implements
         parent::boot();
 
         self::creating(function ($user) {
-            $user->username = self::_createUsername($user->first_name.$user->last_name);
+            if (!$user->username) {
+                $user->username = self::_createUsername($user->first_name.$user->last_name);
+            }
             $user->public_hash = self::_createHash();
+        });
+
+        self::saving(function ($user) {
+            $user->first_name = trim($user->first_name);
+            $user->last_name = trim($user->last_name);
         });
     }
 

@@ -6514,6 +6514,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = {
     props: {
+        emails: Array,
         newEmailEndpoint: {
             type: String,
             required: true
@@ -6527,10 +6528,13 @@ exports.default = {
 
     components: {
         'email': _Email2.default
+    },
+    created: function created() {
+        console.log(this.emails);
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <email-input v-for=\"\"></email-input>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <email v-for=\"email in emails\" :is-input=\"false\" :address=\"email.address\" :is-primary=\"email.primary\" :is-verified=\"email.verified\"></email>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)

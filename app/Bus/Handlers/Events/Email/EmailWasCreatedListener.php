@@ -6,7 +6,6 @@
 
 namespace Kabooodle\Bus\Handlers\Events\Email;
 
-use Kabooodle\Models\Email;
 use Kabooodle\Libraries\Emails\PiperEmail;
 use Kabooodle\Bus\Events\Email\EmailWasCreatedEvent;
 
@@ -31,6 +30,6 @@ class EmailWasCreatedListener
      */
     public function handle(EmailWasCreatedEvent $event)
     {
-        $this->mail->sendVerificationEmail($event->getEmail());
+        $this->mail->sendEmailVerificationEmail($event->getEmail());
     }
 }

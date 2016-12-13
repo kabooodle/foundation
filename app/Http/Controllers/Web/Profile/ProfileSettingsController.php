@@ -185,9 +185,17 @@ class ProfileSettingsController extends Controller
     {
         $this->dispatchNow(new VerifyEmailCommand($token));
 
-        Messages::success("Shipping profile was successfully updated!");
+        return $this->redirect()->route('emails.verified');
+    }
 
-        return $this->redirect()->route('/');
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function verifiedEmail(Request $request)
+    {
+        Messages::success("Email successfully verified!");
+
+        return $this->view('profile.email-verified');
     }
 
     /**

@@ -8,6 +8,7 @@ namespace Kabooodle\Bus\Handlers\Commands\User;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Commands\Notifications\GetActiveNotifications;
+use Kabooodle\Bus\Events\Email\EmailWasCreatedEvent;
 use Kabooodle\Models\Email;
 use Kabooodle\Models\Notifications;
 use Kabooodle\Models\User;
@@ -45,12 +46,13 @@ class AddUserCommandHandler
         $user = $user::factory([
             'first_name' => $command->getFirstName(),
             'last_name' => $command->getLastName(),
+            'username' => $command->getUsername(),
             'password' => bcrypt($command->getPassword()),
             'referred_by_user_id' => $command->getReferralId()
         ]);
 
         $email = $this->email;
-        $email::factory([
+        $email = $email::factory([
             'user_id' => $user->id,
             'address' => $command->getEmail(),
             'primary' => true,
@@ -61,6 +63,7 @@ class AddUserCommandHandler
         $user->notificationsettings()->saveMany($notifications);
 
         event(new UserWasCreatedEvent($user));
+        event(new EmailWasCreatedEvent($email));
 
         return $user;
     }

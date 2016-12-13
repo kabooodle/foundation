@@ -9,6 +9,7 @@ namespace Kabooodle\Http\Controllers\Api\Listings;
 use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Bus\Commands\User\AddGuestCommand;
+use Kabooodle\Models\Email;
 use Kabooodle\Models\ListingItems;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -43,9 +44,9 @@ class ListingItemsClaimsController extends AbstractApiController
 
             return $this->respond();
         } catch (RequestedQuantityCannotBeSatisfiedException $e) {
-            return $this->setData(['msg' => $e->getMessage()])->$this->setStatusCode(500)->respond();
+            return $this->setData(['msg' => $e->getMessage()])->setStatusCode(500)->respond();
         } catch (Exception $e) {
-            return $this->setStatusCode(500)->respond();
+            return $this->setData(['msg' => $e->getMessage()])->setStatusCode(500)->respond();
         }
     }
 
@@ -64,21 +65,27 @@ class ListingItemsClaimsController extends AbstractApiController
                 throw new ModelNotFoundException;
             }
 
-            $this->validate($request, User::getGuestRules(), ['email.unique' => 'That email belongs to a user. Would you like to sign in?']);
+            $this->validate($request, User::getGuestRules());
 
-            $guest = $this->dispatch(new AddGuestCommand(
-                $request->get('first_name'),
-                $request->get('last_name'),
-                $request->get('email')
-            ));
+            // Does the email already exists in our system?
+            $email = Email::whereAddress(trim($request->get('email')))->first();
+            if ($email) {
+                $this->dispatchNow(new ClaimInventoryItemCommand($email->user, $listingItem, $listingItem->inventoryItem, true, $email));
+            } else {
+                $guest = $this->dispatch(new AddGuestCommand(
+                    $request->get('first_name'),
+                    $request->get('last_name'),
+                    $request->get('email')
+                ));
 
-            $this->dispatchNow(new ClaimInventoryItemCommand($guest, $listingItem, $listingItem->inventoryItem));
+                $this->dispatchNow(new ClaimInventoryItemCommand($guest, $listingItem, $listingItem->inventoryItem, true, $guest->primaryEmail));
+            }
 
             return $this->respond();
         } catch (RequestedQuantityCannotBeSatisfiedException $e) {
-            return $this->setData(['msg' => $e->getMessage()])->$this->setStatusCode(500)->respond();
+            return $this->setData(['msg' => $e->getMessage()])->setStatusCode(500)->respond();
         } catch (Exception $e) {
-            return $this->setStatusCode(500)->respond();
+            return $this->setData(['msg' => $e->getMessage()])->setStatusCode(500)->respond();
         }
     }
 

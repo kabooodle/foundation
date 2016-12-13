@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Ramsey\Uuid\Uuid;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
@@ -81,6 +82,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     protected $casts = [
         'inventory_id' => 'int',
         'claimed_by' => 'int',
+        'verified' => 'bool',
         'claim_accepted' => 'bool',
         'price' => 'float',
         'inventory_item_object_data' => 'object',
@@ -101,9 +103,10 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'inventory_id',
         'claimed_by',
         'inventory_id',
-        'claimed_by',
         'inventory_item_object_data',
         'price',
+        'verified',
+        'token',
         'accepted_price',
         'shoppable_id',
         'shoppable_type',
@@ -117,6 +120,17 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     protected $hidden =[
         'shoppable_type'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($claim) {
+            if (!$claim->verified) {
+                $claim->token = Uuid::uuid4();
+            }
+        });
+    }
 
     public function setInventoryItemObjectDataAttribute($value)
     {
@@ -144,6 +158,26 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
+     * @return bool
+     */
+    public function isVerified()
+    {
+        return (bool) $this->verified;
+    }
+
+    /**
+     * Verify the claim.
+     *
+     * @return bool
+     */
+    public function verify()
+    {
+        $this->verified = true;
+        $this->token = null;
+        return $this->save();
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function shoppable()
@@ -164,7 +198,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     public function claimer()
     {
-        return $this->belongsTo(User::class, 'claimed_by')->with('shipToAddress');
+        return $this->belongsTo(User::class, 'claimed_by')->with('primaryShipToAddress');
     }
 
     /**

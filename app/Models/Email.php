@@ -6,6 +6,8 @@
 
 namespace Kabooodle\Models;
 
+use Ramsey\Uuid\Uuid;
+
 /**
  * Class Address
  * @package Kabooodle\Models
@@ -44,7 +46,7 @@ class Email extends BaseEloquentModel
         parent::boot();
 
         self::creating(function ($email) {
-            $email->token = str_random(30);
+            $email->token = Uuid::uuid4();
         });
 
         self::saving(function ($email) {
@@ -70,6 +72,24 @@ class Email extends BaseEloquentModel
     public static function factory(array $attributes)
     {
         return self::create($attributes);
+    }
+
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function getPrimaryAttribute($value)
+    {
+        return (bool) $value;
+    }
+
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function getVerifiedAttribute($value)
+    {
+        return (bool) $value;
     }
 
     /**
@@ -107,7 +127,7 @@ class Email extends BaseEloquentModel
      */
     public function generateNewToken()
     {
-        $this->token = str_random(30);
+        $this->token = Uuid::uuid4();
         return $this->save();
     }
 

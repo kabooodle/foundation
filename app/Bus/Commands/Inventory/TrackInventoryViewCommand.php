@@ -48,7 +48,7 @@ final class TrackInventoryViewCommand
     /**
      * @return User|null
      */
-    public function getActor(): User
+    public function getActor()
     {
         return $this->actor;
     }

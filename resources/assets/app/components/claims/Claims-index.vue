@@ -20,9 +20,20 @@
                 </div>
             </td>
             <td >${{ claim.price }}</td>
-            <td >{{ claim.claimer.name }}</td>
+            <td >
+                {{ claim.claimer.full_name }}
+                <small v-if="claim.claimer.guest" class="text-muted">Guest</small>
+            </td>
             <td >
                 <timeago :timestamp="claim.created_at.date"></timeago>
+            </td>
+            <td>
+                <span v-if="claim.verified">
+                    <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
+                </span>
+                <span v-else>
+                    <small class="text-muted">Pending</small>
+                </span>
             </td>
             <td class="action-column">
                 <div class="pull-right action-btns">

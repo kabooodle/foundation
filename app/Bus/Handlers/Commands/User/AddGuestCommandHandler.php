@@ -7,11 +7,9 @@
 namespace Kabooodle\Bus\Handlers\Commands\User;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Kabooodle\Bus\Commands\Notifications\GetActiveNotifications;
-use Kabooodle\Models\Notifications;
+use Kabooodle\Bus\Commands\User\AddGuestCommand;
+use Kabooodle\Models\Email;
 use Kabooodle\Models\User;
-use Kabooodle\Bus\Commands\User\AddUserCommand;
-use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 
 /**
  * Class AddUserCommandHandler
@@ -19,38 +17,40 @@ use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
  */
 class AddGuestCommandHandler
 {
-    use DispatchesJobs;
-
     /**
-     * AddUserCommandHandler constructor.
-     *
+     * AddGuestCommandHandler constructor.
      * @param User $user
+     * @param Email $email
      */
-    public function __construct(User $user)
+    public function __construct(User $user, Email $email)
     {
         $this->user = $user;
+        $this->email = $email;
     }
 
     /**
-     * @param AddUserCommand $command
+     * @param AddGuestCommand $command
      *
      * @return User
      */
-    public function handle(AddUserCommand $command)
+    public function handle(AddGuestCommand $command)
     {
         $user = $this->user;
-        $user = $user::factory([
-            'name' => $command->getName(),
+        $guest = $user::factory([
+            'first_name' => $command->getFirstName(),
+            'last_name' => $command->getLastName(),
             'email' => $command->getEmail(),
-            'password' => bcrypt($command->getPassword()),
-            'referred_by_user_id' => $command->getReferralId()
+            'guest' => true,
         ]);
 
-        $notifications = $this->dispatchNow(new GetActiveNotifications);
-        $user->notificationsettings()->saveMany($notifications);
+        $email = $this->email;
+        $email::factory([
+            'user_id' => $guest->id,
+            'address' => $command->getEmail(),
+            'primary' => true,
+            'verified' => false,
+        ]);
 
-        event(new UserWasCreatedEvent($user));
-
-        return $user;
+        return $guest;
     }
 }

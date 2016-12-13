@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
 use Binput;
+use Kabooodle\Bus\Commands\Claim\VerifyClaimCommand;
 use Response;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -45,11 +46,11 @@ class InventoryClaimsController extends Controller
     public function update(Request $request, $username, $claimsUUID)
     {
         $data = user()->claimsOnMyInventory;
-        $item = $data->filter(function ($item) use ($claimsUUID) {
+        $claim = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();
 
-        if ($item) {
+        if ($claim) {
             $timestamp = Binput::get('accepted_on', false) ? Carbon::createFromTimestamp(strtotime(Binput::get('accepted_on'))) : null;
             $result = $this->dispatchNow(new AcceptClaimForInventoryItemCommand(
                 user(),

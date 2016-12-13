@@ -1,8 +1,13 @@
 <?php
 
-Route::get('/profile/emails/verify/{token}', [
-    'as' => 'profile.emails.verify',
+Route::get('/emails/verify/{token}', [
+    'as' => 'emails.verify',
     'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@verifyEmail'
+]);
+
+Route::get('/emails/verified', [
+    'as' => 'emails.verified',
+    'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@verifiedEmail'
 ]);
 
 Route::group(['middleware' => 'auth'], function () {
@@ -15,7 +20,7 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@postProfile'
     ]);
     Route::get('/profile/emails', [
-        'as' => 'profile.emails.edit',
+        'as' => 'profile.emails.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@getEmails'
     ]);
     Route::get('/profile/notifications', [

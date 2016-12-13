@@ -7,6 +7,8 @@
 namespace Kabooodle\Bus\Handlers\Commands\Claim;
 
 use DB;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Kabooodle\Bus\Commands\Claim\VerifyClaimCommand;
 use Kabooodle\Models\Claims;
 use Kabooodle\Bus\Events\Claim\ClaimWasAcceptedEvent;
 use Kabooodle\Bus\Commands\Claim\AcceptClaimForInventoryItemCommand;
@@ -17,6 +19,8 @@ use Kabooodle\Bus\Commands\Claim\AcceptClaimForInventoryItemCommand;
  */
 class AcceptClaimForInventoryItemCommandHandler
 {
+    use DispatchesJobs;
+
     /**
      * @param AcceptClaimForInventoryItemCommand $command
      *
@@ -24,8 +28,11 @@ class AcceptClaimForInventoryItemCommandHandler
      */
     public function handle(AcceptClaimForInventoryItemCommand $command)
     {
-        return DB::transaction(function () use ($command) {
-            $claim = Claims::where('uuid', $command->getClaimId())->first();
+        $claim = Claims::where('uuid', $command->getClaimId())->first();
+        if (!$claim->isVerified()) {
+            $this->dispatchNow(new VerifyClaimCommand($claim->token));
+        }
+        return DB::transaction(function () use ($command, $claim) {
             $claim->accepted_price = $command->getAcceptedPrice() ? : null;
             $claim->accepted_on = $command->getTimestamp();
             $claim->accepted = true;

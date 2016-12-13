@@ -5,6 +5,8 @@
  */
 
 namespace Kabooodle\Libraries\Emails;
+
+use Kabooodle\Models\Claims;
 use Kabooodle\Models\Email;
 
 /**
@@ -21,15 +23,56 @@ class PiperEmail extends AbstractEmail
         return 'emails.templates.base';
     }
 
-    public function sendVerificationEmail(Email $email)
+    /**
+     * @param Email $email
+     */
+    public function sendEmailVerificationEmail(Email $email)
     {
-//        $mail = new PiperEmail;
-//        $mail->setView('email.verification')
-//            ->setParameters(['email' => $email])
-//            ->setCallable(function ($m) use ($email) {
-//                $m->to($email->email)
-//                    ->subject('Welcome to '.env('APP_NAME').'!');
-//            })
-//            ->send();
+        $this->setView('emails.verification.email')
+            ->setParameters([
+                'email' => $email,
+                'user' => $email->user,
+                'verifyLink' => route('emails.verify', $email->token),
+            ])
+            ->setCallable(function ($m) use ($email) {
+                $m->to($email->address)
+                    ->subject('Verify your '.env('APP_NAME').' email address');
+            })
+            ->send();
+    }
+
+    /**
+     * @param Claims $claim
+     * @param Email $email
+     */
+    public function sendClaimVerificationEmails(Claims $claim, Email $email)
+    {
+        // Send Guest email
+        $this->setView('emails.verification.claim')
+            ->setParameters([
+                'claim' => $claim,
+                'user' => $email->user,
+                'verifyLink' => route('claims.verify', $claim->token),
+            ])
+            ->setCallable(function ($m) use ($email) {
+                $m->to($email->address)
+                    ->subject('Verify your '.env('APP_NAME').' claim');
+            })
+            ->send();
+
+        // Send Seller email
+        $this->setView('emails.claims.pending-verification')
+            ->setParameters([
+                'claim' => $claim,
+                'item' => $claim->inventoryItem,
+                'user' => $claim->inventoryItem->owner,
+                'itemLink' => null,
+                'claimsLink' => null,
+            ])
+            ->setCallable(function ($m) use ($email) {
+                $m->to($email->address)
+                    ->subject('Verify your '.env('APP_NAME').' claim');
+            })
+            ->send();
     }
 }

@@ -25,6 +25,11 @@ final class AddUserCommand
     /**
      * @var string
      */
+    public $username;
+
+    /**
+     * @var string
+     */
     public $email;
 
     /**
@@ -41,33 +46,19 @@ final class AddUserCommand
      * AddUserCommand constructor.
      * @param $firstName
      * @param $lastName
+     * @param $username
      * @param $email
      * @param $password
      * @param null $referralId
      */
-    public function __construct($firstName, $lastName, $email, $password, $referralId = null)
+    public function __construct($firstName, $lastName, $username, $email, $password, $referralId = null)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
+        $this->username = $username;
         $this->email = $email;
         $this->password = $password;
         $this->referralId = $referralId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPassword()
-    {
-        return $this->password;
     }
 
     /**
@@ -84,6 +75,30 @@ final class AddUserCommand
     public function getLastName()
     {
         return $this->lastName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     /**

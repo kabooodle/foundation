@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Claim;
 
 use DB;
+use Kabooodle\Bus\Events\Claim\NewGuestClaimEvent;
 use Kabooodle\Models\Claims;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Events\Claim\NewItemWasClaimedEvent;
@@ -41,19 +42,27 @@ class ClaimInventoryItemCommandHandler
                 'inventory_id' => $command->getInventoryItem()->id,
                 'claimed_by' => $command->getClaimedBy()->id,
                 'inventory_item_object_data' => $command->getInventoryItem(),
+                'verified' => !$command->isGuest(),
                 'price' => $command->getInventoryItem()->getPrice(),
                 'shoppable_id' => $command->getShoppable()->id,
                 'shoppable_type' => get_class($command->getShoppable())
             ]);
 
             // Decrement the inventory item's quantity
-            $command->getInventoryItem()->decrement('initial_qty');
+            if ($claim->isVerified()) {
+                $command->getInventoryItem()->decrement('initial_qty');
+            }
 
             return $claim;
         });
 
+
         // Fire event
-        event(new NewItemWasClaimedEvent($claim));
+        if ($claim->isVerified()) {
+            event(new NewItemWasClaimedEvent($claim));
+        } else {
+            event(new NewGuestClaimEvent($claim, $command->getEmail()));
+        }
 
         return $claim;
     }

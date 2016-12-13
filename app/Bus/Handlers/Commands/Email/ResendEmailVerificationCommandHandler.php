@@ -4,7 +4,7 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Handlers\Commands\User;
+namespace Kabooodle\Bus\Handlers\Commands\Email;
 
 use Kabooodle\Bus\Commands\Email\ResendEmailVerificationCommand;
 use Kabooodle\Libraries\Emails\PiperEmail;
@@ -16,6 +16,8 @@ use Kabooodle\Models\Email;
  */
 class ResendEmailVerificationCommandHandler
 {
+
+
     protected $mail;
 
     /**
@@ -36,6 +38,6 @@ class ResendEmailVerificationCommandHandler
     {
         $email = $command->getEmail();
         $email->generateNewToken();
-        $this->mail->sendVerificationEmail($email);
+        $this->mail->sendEmailVerificationEmail($email);
     }
 }
