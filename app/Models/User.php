@@ -708,4 +708,12 @@ class User extends BaseEloquentModel implements
     {
         return $this->kabooodle_as_shipping;
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function watching()
+    {
+        return $this->hasMany(Watches::class, 'user_id');
+    }
 }
