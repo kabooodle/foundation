@@ -9,6 +9,7 @@ namespace Kabooodle\Http\Controllers\Api\Inventory;
 use Binput;
 use Exception;
 use Illuminate\Http\Request;
+use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
@@ -133,10 +134,11 @@ class InventoryApiController extends AbstractApiController
         $options = (array) Binput::get('options', []);
         $endsAt = array_get($options, 'ends_at', null);
         $includeText = (bool) array_get($options, 'include_text', false);
+        $claimableAt = array_get($options, 'available_at', null);
 
         try {
             // You must have either a flashsaleid or facebookalbum
-            if (! $flashsaleId && count($facebookAlbums)== 0) {
+            if (! $flashsaleId && count($facebookAlbums) == 0) {
                 throw new MissingMandatoryParametersException;
             }
 
@@ -144,10 +146,15 @@ class InventoryApiController extends AbstractApiController
                 throw new MissingMandatoryParametersException;
             }
 
+            if ($claimableAt && $includeText && (strtotime($claimableAt) < strtotime($endsAt))) {
+                throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
+            }
+
             $command = new ScheduleListingCommand(
                 $this->getUser(),
                 $includeText,
                 $endsAt,
+                $claimableAt,
                 $flashsaleId,
                 $facebookAlbums,
                 $facebookGroupId,

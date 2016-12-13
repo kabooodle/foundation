@@ -50,6 +50,7 @@ class Listings extends AbstractListingModel
     protected $dates = [
         'scheduled_for',
         'status_updated_at',
+        'claimable_at',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -72,7 +73,8 @@ class Listings extends AbstractListingModel
      */
     protected $attributes = [
         'include_link_in_descr' => true,
-        'scheduled_for' => '',
+        'scheduled_for' => null,
+        'claimable_at' => null,
         'owner_id' => 0,
         'fb_group_node_id' => null,
         'flashsale_id' => null,
@@ -89,6 +91,7 @@ class Listings extends AbstractListingModel
     protected $fillable = [
         'include_link_in_descr',
         'scheduled_for',
+        'claimable_at',
         'fb_group_node_id',
         'flashsale_id',
         'owner_id',

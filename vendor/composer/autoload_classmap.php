@@ -4915,6 +4915,7 @@ return array(
     'UpdateListingTableAddDisableText' => $baseDir . '/resources/database/migrations/2016_12_02_233734_update_listing_table_add_disable_text.php',
     'UpdateListingsDropNameCol' => $baseDir . '/resources/database/migrations/2016_11_27_215750_update_listings_drop_name_col.php',
     'UpdateListingsStatus' => $baseDir . '/resources/database/migrations/2016_12_07_181657_update_listings_status.php',
+    'UpdateListingsTblAddClaimableDateCol' => $baseDir . '/resources/database/migrations/2016_12_13_034716_update_listings_tbl_add_claimable_date_col.php',
     'UpdateRevisionsTblAddFk' => $baseDir . '/resources/database/migrations/2016_08_26_065602_update_revisions_tbl_add_fk.php',
     'UpdateShipmentsRemoveClaimAddShipmentClaims' => $baseDir . '/resources/database/migrations/2016_11_04_223232_update_shipments_remove_claim_add_shipment_claims.php',
     'UpdateShippingTbl' => $baseDir . '/resources/database/migrations/2016_11_07_050555_update_shipping_tbl_.php',

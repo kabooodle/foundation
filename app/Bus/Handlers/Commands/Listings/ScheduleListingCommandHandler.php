@@ -106,6 +106,11 @@ class ScheduleListingCommandHandler
         $listing->owner_id = $command->getActor()->id;
         $listing->scheduled_for = $scheduledFor;
         $listing->include_link_in_descr = $command->includeDescrText();
+
+        if ($command->includeDescrText() && $command->getAvailableAt()) {
+            $listing->claimable_at = Carbon::createFromTimestamp(strtotime($command->getAvailableAt()));
+        }
+
         $listing->status = Listings::STATUS_SCHEDULED;
         $listing->status_updated_at = $this->now;
 
