@@ -79,6 +79,7 @@ class FacebookEnqueuerCommand extends Command
         ]);
 
         $job->setQueuesId($localQueueDb->id);
+        $job->onConnection('iron-facebook-scheduler');
 
         return $job;
     }

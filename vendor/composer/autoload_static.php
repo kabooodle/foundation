@@ -21,10 +21,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'e7223560d890eab89cda23685e711e2c' => __DIR__ . '/..' . '/psy/psysh/src/Psy/functions.php',
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
-        'f18cc91337d49233e5754e93f3ed9ec3' => __DIR__ . '/..' . '/laravelcollective/html/src/helpers.php',
         'c65d09b6820da036953a371c8c73a9b1' => __DIR__ . '/..' . '/facebook/graph-sdk/src/Facebook/polyfills.php',
         'cf150f72bd303a2ff07711c9a70f2d53' => __DIR__ . '/..' . '/google/apiclient/src/Google/autoload.php',
         'f4e9c7747917193061b46ee142399603' => __DIR__ . '/..' . '/dingo/api/src/helpers.php',
+        'f18cc91337d49233e5754e93f3ed9ec3' => __DIR__ . '/..' . '/laravelcollective/html/src/helpers.php',
         '4a1f389d6ce373bda9e57857d3b61c84' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/helpers.php',
         '7f870f73a2be4db057a527ecee0f9b01' => __DIR__ . '/../..' . '/resources/helpers.php',
         'c5001896a887f9807394ad1b0c25d564' => __DIR__ . '/../..' . '/resources/model-helpers.php',
@@ -34,10 +34,6 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'p' => 
         array (
             'phpDocumentor\\Reflection\\' => 25,
-        ),
-        'Y' => 
-        array (
-            'Yajra\\Datatables\\' => 17,
         ),
         'X' => 
         array (
@@ -188,10 +184,6 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-        ),
-        'Yajra\\Datatables\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src',
         ),
         'XdgBaseDir\\' => 
         array (
@@ -957,6 +949,8 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Aws\\Swf\\Exception\\SwfException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Swf/Exception/SwfException.php',
         'Aws\\Swf\\SwfClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Swf/SwfClient.php',
         'Aws\\TraceMiddleware' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/TraceMiddleware.php',
+        'Aws\\WafRegional\\Exception\\WafRegionalException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/WafRegional/Exception/WafRegionalException.php',
+        'Aws\\WafRegional\\WafRegionalClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/WafRegional/WafRegionalClient.php',
         'Aws\\Waf\\Exception\\WafException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Waf/Exception/WafException.php',
         'Aws\\Waf\\WafClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Waf/WafClient.php',
         'Aws\\Waiter' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Waiter.php',
@@ -3009,6 +3003,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Models\\Traits\\LikeableTrait' => __DIR__ . '/../..' . '/app/Models/Traits/LikeableTrait.php',
         'Kabooodle\\Models\\Traits\\ObfuscatesIdTrait' => __DIR__ . '/../..' . '/app/Models/Traits/ObfuscatesIdTrait.php',
         'Kabooodle\\Models\\Traits\\PageViewablesTrait' => __DIR__ . '/../..' . '/app/Models/Traits/PageViewablesTrait.php',
+        'Kabooodle\\Models\\Traits\\QueuesTrait' => __DIR__ . '/../..' . '/app/Models/Traits/QueuesTrait.php',
         'Kabooodle\\Models\\Traits\\ShoppableTrait' => __DIR__ . '/../..' . '/app/Models/Traits/ShoppableTrait.php',
         'Kabooodle\\Models\\Traits\\TaggableTrait' => __DIR__ . '/../..' . '/app/Models/Traits/TaggableTrait.php',
         'Kabooodle\\Models\\Traits\\UuidableTrait' => __DIR__ . '/../..' . '/app/Models/Traits/UuidableTrait.php',
@@ -4897,6 +4892,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'SuperClosure\\Analyzer\\Visitor\\MagicConstantVisitor' => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src/Analyzer/Visitor/MagicConstantVisitor.php',
         'SuperClosure\\Analyzer\\Visitor\\ThisDetectorVisitor' => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src/Analyzer/Visitor/ThisDetectorVisitor.php',
         'SuperClosure\\Exception\\ClosureAnalysisException' => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src/Exception/ClosureAnalysisException.php',
+        'SuperClosure\\Exception\\ClosureSerializationException' => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src/Exception/ClosureSerializationException.php',
         'SuperClosure\\Exception\\ClosureUnserializationException' => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src/Exception/ClosureUnserializationException.php',
         'SuperClosure\\Exception\\SuperClosureException' => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src/Exception/SuperClosureException.php',
         'SuperClosure\\SerializableClosure' => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src/SerializableClosure.php',
@@ -5540,28 +5536,6 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Vinkla\\Algolia\\Facades\\Algolia' => __DIR__ . '/..' . '/vinkla/algolia/src/Facades/Algolia.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
         'XdgBaseDir\\Xdg' => __DIR__ . '/..' . '/dnoegel/php-xdg-base-dir/src/Xdg.php',
-        'Yajra\\Datatables\\Contracts\\DataTableButtonsContract' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Contracts/DataTableButtonsContract.php',
-        'Yajra\\Datatables\\Contracts\\DataTableContract' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Contracts/DataTableContract.php',
-        'Yajra\\Datatables\\Contracts\\DataTableEngineContract' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Contracts/DataTableEngineContract.php',
-        'Yajra\\Datatables\\Contracts\\DataTableScopeContract' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Contracts/DataTableScopeContract.php',
-        'Yajra\\Datatables\\Datatables' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Datatables.php',
-        'Yajra\\Datatables\\DatatablesServiceProvider' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/DatatablesServiceProvider.php',
-        'Yajra\\Datatables\\Engines\\BaseEngine' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Engines/BaseEngine.php',
-        'Yajra\\Datatables\\Engines\\CollectionEngine' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Engines/CollectionEngine.php',
-        'Yajra\\Datatables\\Engines\\EloquentEngine' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Engines/EloquentEngine.php',
-        'Yajra\\Datatables\\Engines\\QueryBuilderEngine' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Engines/QueryBuilderEngine.php',
-        'Yajra\\Datatables\\Facades\\Datatables' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Facades/Datatables.php',
-        'Yajra\\Datatables\\Generators\\DataTablesMakeCommand' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Generators/DataTablesMakeCommand.php',
-        'Yajra\\Datatables\\Generators\\DataTablesScopeCommand' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Generators/DataTablesScopeCommand.php',
-        'Yajra\\Datatables\\Helper' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Helper.php',
-        'Yajra\\Datatables\\Html\\Builder' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Html/Builder.php',
-        'Yajra\\Datatables\\Html\\Column' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Html/Column.php',
-        'Yajra\\Datatables\\Html\\Parameters' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Html/Parameters.php',
-        'Yajra\\Datatables\\Processors\\DataProcessor' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Processors/DataProcessor.php',
-        'Yajra\\Datatables\\Processors\\RowProcessor' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Processors/RowProcessor.php',
-        'Yajra\\Datatables\\Request' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Request.php',
-        'Yajra\\Datatables\\Services\\DataTable' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Services/DataTable.php',
-        'Yajra\\Datatables\\Transformers\\DataTransformer' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/Transformers/DataTransformer.php',
         'ZackKitzmiller\\Facades\\Tiny' => __DIR__ . '/..' . '/zackkitzmiller/tiny/src/ZackKitzmiller/Facades/Tiny.php',
         'ZackKitzmiller\\Laravel5\\TinyGenerateCommand' => __DIR__ . '/..' . '/zackkitzmiller/tiny/src/ZackKitzmiller/Laravel5/TinyGenerateCommand.php',
         'ZackKitzmiller\\Laravel5\\TinyServiceProvider' => __DIR__ . '/..' . '/zackkitzmiller/tiny/src/ZackKitzmiller/Laravel5/TinyServiceProvider.php',

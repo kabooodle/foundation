@@ -119,6 +119,7 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
 
         // Tell the job which queue id it is associated with.
         $job->setQueuesId($localQueueDb->id);
+        $job->onConnection('iron-facebook-lister');
 
         return $job;
     }
