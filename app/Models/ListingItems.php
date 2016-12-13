@@ -218,4 +218,12 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     {
         return $this->listing->sale_name;
     }
+
+    /**
+     * @return bool
+     */
+    public function includeLinkInDescr()
+    {
+        return $this->listing->includeLinkInDescr();
+    }
 }

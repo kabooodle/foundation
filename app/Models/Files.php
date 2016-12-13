@@ -85,4 +85,12 @@ class Files extends BaseEloquentModel
     {
         return $this->morphTo();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getURL()
+    {
+        return $this->location;
+    }
 }

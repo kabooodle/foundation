@@ -31,7 +31,10 @@ Route::group(['middleware' => ['web']], function() {
         '__captainHook/sheepoo',
         \Kabooodle\Http\Controllers\Web\Webhooks\ShippoWebhooksController::class . '@handleWebhook'
     );
-    Route::get('c/{hash}', \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show');
+    Route::get('c/{hash}', [
+        'as' => 'externalclaim.show',
+        'uses' => \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show'
+    ]);
 });
 
 

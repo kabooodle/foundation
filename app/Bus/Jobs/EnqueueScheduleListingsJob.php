@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Jobs;
 
 use Carbon\Carbon;
+use Kabooodle\Bus\Events\Listings\ListingItemWasQueued;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
@@ -92,6 +93,8 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
 
             // Add the listing item to the queue
             $this->dispatch($job);
+
+            event(new ListingItemWasQueued($job));
 
             unset($job);
         }

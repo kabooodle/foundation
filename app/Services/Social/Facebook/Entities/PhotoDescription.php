@@ -6,7 +6,7 @@
 
 namespace Kabooodle\Services\Social\Facebook\Entities;
 
-use Kabooodle\Models\FacebookItems;
+use Kabooodle\Models\ListingItems;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 
 /**
@@ -18,25 +18,16 @@ class PhotoDescription
     use ObfuscatesIdTrait;
 
     /**
-     * @var FacebookItems
+     * @var ListingItems
      */
-    protected $facebookItem;
+    protected $listingItem;
 
     /**
-     * @var string
+     * @param ListingItems $listingItems
      */
-    protected $description;
-
-    /**
-     * PhotoDescription constructor.
-     *
-     * @param FacebookItems $facebookItem
-     * @param string        $description
-     */
-    public function __construct(FacebookItems $facebookItem, $description = '')
+    public function __construct(ListingItems $listingItems)
     {
-        $this->facebookItem = $facebookItem;
-        $this->description = $description;
+        $this->listingItem = $listingItems;
     }
 
     /**
@@ -44,7 +35,7 @@ class PhotoDescription
      */
     public function getClaimUrl()
     {
-        $id = $this->obfuscateIdToString($this->facebookItem->id);
+        $id = $this->obfuscateIdToString($this->listingItem->id);
 
         return route('externalclaim.show', [$id]);
     }
@@ -54,9 +45,7 @@ class PhotoDescription
      */
     public function getComment()
     {
-        $preMessage = $this->description ? $this->description."\n" : null;
-
-        return $preMessage." Claim here: ".ltrim($this->getClaimUrl(), 'http://');
+        return " Claim here: ".ltrim($this->getClaimUrl(), 'http://');
     }
 
     /**

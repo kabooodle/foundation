@@ -12,6 +12,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Jobs\EnqueueScheduleListingsJob;
+use Kabooodle\Bus\Events\Listings\ListingsWereQueued;
 use Kabooodle\Bus\Commands\Listings\GetScheduledListingsCommand;
 
 /**
@@ -54,6 +55,8 @@ class FacebookEnqueuerCommand extends Command
 
             // Dispatch the listings queue handler for the listings.
             $this->dispatch($job);
+
+            event(new ListingsWereQueued($job));
         }
 
         $this->output->writeln('Completed');
