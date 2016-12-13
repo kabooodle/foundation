@@ -71,7 +71,7 @@ class PiperEmail extends AbstractEmail
             ])
             ->setCallable(function ($m) use ($email) {
                 $m->to($email->address)
-                    ->subject('Verify your '.env('APP_NAME').' claim');
+                    ->subject('A new claim pending verification on '.env('APP_NAME'));
             })
             ->send();
     }
