@@ -114,10 +114,10 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     public function failedJobHandler($listingItem)
     {
         // Update the status to the appropriate status based on the result.
-        $this->updateListingItemsStatus([$listingItem->id], $this->timestamp, ListingItems::STATUS_SUCCESS);
+        $this->updateListingItemsStatus([$listingItem->id], $this->timestamp, ListingItems::STATUS_FAILED);
 
         // Update the associated queue in the DB
-        $this->updateQueueStatus($this->queuesId, $this->timestamp, Queues::STATUS_SUCCESS, $this->job->attempts());
+        $this->updateQueueStatus($this->queuesId, $this->timestamp, Queues::STATUS_FAILED, $this->job->attempts());
     }
 
     /**
@@ -190,7 +190,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     public function getRemainingListingItems($listingId)
     {
         $sql = 'select * FROM listing_items WHERE id not in (
-                  select id from listing_items where status in ("success", "partial", "completed" "ignored_duplicate", "queued_delete", "deleted") and listing_id = ?
+                  select id from listing_items where status in ("success", "partial", "completed" "ignored_duplicate","failed", "throttled", "queued_delete", "deleted") and listing_id = ?
                 ) and  listing_id = ?';
 
         return DB::select($sql, [$listingId, $listingId]);
