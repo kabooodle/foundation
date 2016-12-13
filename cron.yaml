@@ -4,5 +4,5 @@ cron:
    url: "/workers/schedule/7AF95578E9A597AA6B89E726E74C4"
    schedule: "*/5 * * * *"
  - name: "check_generictrials_expiring_in_3_days"
-   url: "/workers/checktrials/3/7AF95578E9A597AA6B89E726E74C4"
+   url: "/workers/checktrials/7AF95578E9A597AA6B89E726E74C4"
    schedule: "0 * * * *"
