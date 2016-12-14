@@ -52,7 +52,6 @@ class FacebookEnqueuerCommand extends Command
         if ($listings && $listings->count() > 0) {
 
             Bugsnag::notifyError('enqueuer', 'we have listings', null, 'info');
-//            Bugsnag::leaveBreadcrumb('listings', \Bugsnag\Breadcrumbs\Breadcrumb::LOG_TYPE, $listings->toArray());
 
             // Build our job
             $job = $this->buildJob($listings);
@@ -64,12 +63,12 @@ class FacebookEnqueuerCommand extends Command
 
             Bugsnag::notifyError('enqueuer', 'job was dispatched', null, 'info');
 
-//            event(new ListingsWereQueued($job));
+            event(new ListingsWereQueued($job));
 
             $listingsIds = $listings->pluck('id')->toArray();
 
             // Update the Queues status to processing.
-            $this->updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
+            Listings::updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
 
             Bugsnag::notifyError('enqueuer', 'status was updated', null, 'info');
             Bugsnag::leaveBreadcrumb('listings', \Bugsnag\Breadcrumbs\Breadcrumb::LOG_TYPE, $listingsIds);
@@ -117,17 +116,5 @@ class FacebookEnqueuerCommand extends Command
         $endTime = Carbon::createFromTimestamp($cachedNow)->addMinutes(4)->addSeconds(59);
 
         return Listings::getScheduledListings($startTime, $endTime);
-    }
-
-    /**
-     * @param array  $listingIds
-     * @param Carbon $timestamp
-     * @param string $status
-     *
-     * @return bool|int
-     */
-    public function updateListingsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
-    {
-        return Listings::updateListingsStatus($listingIds, $timestamp, $status);
     }
 }
