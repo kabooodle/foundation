@@ -123,6 +123,8 @@ abstract class AbstractListingModel extends BaseEloquentModel
     {
         return ! in_array($status, [
             static::STATUS_QUEUED_LIST,
+            static::STATUS_COMPLETED,
+            static::STATUS_SUCCESS,
             static::STATUS_QUEUED_DELETE,
             static::STATUS_DELETED
         ]);

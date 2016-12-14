@@ -37,7 +37,7 @@ class PhotoDescription
     {
         $id = $this->obfuscateIdToString($this->listingItem->id);
 
-        return str_replace('api', 'app', route('externalclaim.show', [$id]));
+        return str_replace(['https://', 'http://'], '', str_replace('api', 'app', route('externalclaim.show', [$id])));
     }
 
     /**
@@ -45,7 +45,7 @@ class PhotoDescription
      */
     public function getComment()
     {
-        return " Claim here: ".ltrim($this->getClaimUrl(), 'http://');
+        return " Claim here: ". $this->getClaimUrl();
     }
 
     /**
