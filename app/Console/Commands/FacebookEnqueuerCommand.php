@@ -11,6 +11,7 @@ use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Jobs\EnqueueScheduleListingsJob;
 use Kabooodle\Bus\Events\Listings\ListingsWereQueued;
 
@@ -19,6 +20,8 @@ use Kabooodle\Bus\Events\Listings\ListingsWereQueued;
  */
 class FacebookEnqueuerCommand extends Command
 {
+    use DispatchesJobs;
+
     /**
      * The name and signature of the console command.
      *
