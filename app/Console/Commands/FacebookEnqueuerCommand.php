@@ -78,17 +78,17 @@ class FacebookEnqueuerCommand extends Command
     public function buildJob(Collection $listings)
     {
         $job = new EnqueueScheduleListingsJob($listings);
+        $job->onConnection('iron-facebook-scheduler');
 
         // Store details about the job in the DB for our own personal records.
         $localQueueDb = Queues::create([
             'queue' => 'default',
-            'payload' => serialize($job),
+//            'payload' => serialize($job),
             'status' => Queues::STATUS_QUEUED,
             'status_updated_at' => $this->timestamp,
         ]);
 
         $job->setQueuesId($localQueueDb->id);
-        $job->onConnection('iron-facebook-scheduler');
 
         return $job;
     }
