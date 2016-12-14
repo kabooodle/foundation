@@ -49,11 +49,10 @@ class FacebookEnqueuerCommand extends Command
         $listings = $this->getScheduledListings();
 
         $this->output->writeln($listings->count().' Listings found.');
-
         if ($listings && $listings->count() > 0) {
 
             Bugsnag::notifyError('enqueuer', 'we have listings', null, 'info');
-            Bugsnag::leaveBreadcrumb('listings', \Bugsnag\Breadcrumbs\Breadcrumb::LOG_TYPE, $listings);
+            Bugsnag::leaveBreadcrumb('listings', \Bugsnag\Breadcrumbs\Breadcrumb::LOG_TYPE, $listings->toArray());
 
             // Build our job
             $job = $this->buildJob($listings);
