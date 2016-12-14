@@ -58,7 +58,6 @@ class FacebookEnqueuerCommand extends Command
             $job = $this->buildJob($listings);
 
             Bugsnag::notifyError('enqueuer', 'job was built', null, 'info');
-            Bugsnag::leaveBreadcrumb('job built', \Bugsnag\Breadcrumbs\Breadcrumb::LOG_TYPE, $job);
 
             // Dispatch the listings queue handler for the listings.
             $this->dispatch($job);
