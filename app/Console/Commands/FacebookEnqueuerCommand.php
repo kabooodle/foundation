@@ -6,7 +6,6 @@
 
 namespace Kabooodle\Console\Commands;
 
-use Bugsnag;
 use Carbon\Carbon;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
@@ -36,6 +35,11 @@ class FacebookEnqueuerCommand extends Command
     public $timestamp;
 
     /**
+     * @var string
+     */
+    public $queueConnectionGroupName = 'iron-facebook-scheduler';
+
+    /**
      * This is step 1 of 3.
      *
      * Step 1 is FacebookEnqueuerCommand
@@ -51,17 +55,9 @@ class FacebookEnqueuerCommand extends Command
         $this->output->writeln($listings->count().' Listings found.');
         if ($listings && $listings->count() > 0) {
 
-            Bugsnag::notifyError('enqueuer', 'we have listings', null, 'info');
-
-            // Build our job
             $job = $this->buildJob($listings);
 
-            Bugsnag::notifyError('enqueuer', 'job was built', null, 'info');
-
-            // Dispatch the listings queue handler for the listings.
             $this->dispatch($job);
-
-            Bugsnag::notifyError('enqueuer', 'job was dispatched', null, 'info');
 
             event(new ListingsWereQueued($job));
 
@@ -69,9 +65,6 @@ class FacebookEnqueuerCommand extends Command
 
             // Update the Queues status to processing.
             Listings::updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
-
-            Bugsnag::notifyError('enqueuer', 'status was updated', null, 'info');
-            Bugsnag::leaveBreadcrumb('listings', \Bugsnag\Breadcrumbs\Breadcrumb::LOG_TYPE, $listingsIds);
         }
 
         $this->output->writeln('Completed');
@@ -91,8 +84,9 @@ class FacebookEnqueuerCommand extends Command
 
         // Store details about the job in the DB for our own personal records.
         $localQueueDb = Queues::create([
-            'queue' => 'default',
-//            'payload' => serialize($job),
+            'queue' => $this->queueConnectionGroupName,
+            'queue_group' => $this->queueConnectionGroupName,
+            'payload' => serialize($job),
             'status' => Queues::STATUS_QUEUED,
             'status_updated_at' => $this->timestamp,
         ]);

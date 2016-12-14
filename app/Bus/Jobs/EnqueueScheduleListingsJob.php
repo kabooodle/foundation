@@ -35,6 +35,11 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
     public $timestamp;
 
     /**
+     * @var string
+     */
+    public $queueConnectionGroupName = 'iron-facebook-lister';
+
+    /**
      * @param Collection $listingModels
      */
     public function __construct(Collection $listingModels)
@@ -128,10 +133,10 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
     {
         // Create our job class.
         $job = new EnqueueScheduleListingItemJob($item);
-        $job->onConnection('iron-facebook-lister');
+        $job->onConnection($this->queueConnectionGroupName);
 
         // Store details about the job in the DB for our own personal records.
-        $localQueueDb = $this->createQueueStatus('default', Queues::STATUS_QUEUED, serialize($job));
+        $localQueueDb = $this->createQueueStatus($this->queueConnectionGroupName, $this->queueConnectionGroupName, Queues::STATUS_QUEUED, serialize($job));
 
         // Tell the job which queue id it is associated with.
         $job->setQueuesId($localQueueDb->id);

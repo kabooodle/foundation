@@ -63,14 +63,17 @@ abstract class AbstractEnqueueJob extends Job
 
     /**
      * @param string $queueName
+     * @param string $queueGroupName
      * @param string $status
-     * @param $payload
+     * @param        $payload
+     *
      * @return static
      */
-    public function createQueueStatus(string $queueName = 'default', string $status = Queues::STATUS_QUEUED, $payload)
+    public function createQueueStatus(string $queueName = 'default', string $queueGroupName = '', string $status = Queues::STATUS_QUEUED, $payload)
     {
         return Queues::create([
                 'queue' => $queueName,
+                'queue_group' => $queueGroupName,
                 'payload' => serialize($payload),
                 'status' => $status,
                 'status_updated_at' => Carbon::now(),

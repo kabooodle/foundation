@@ -148,7 +148,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     {
         $photoDescr = new PhotoDescription($listingItem);
 
-        $photoMessage = $listingItem->includeLinkInDescr() ? $photoDescr->getClaimUrl() : null;
+        $photoMessage = $listingItem->includeLinkInDescr() ? $photoDescr->getComment() : null;
 
         $image = $this->getListingImage($listingItem);
 

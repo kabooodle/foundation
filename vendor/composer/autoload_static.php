@@ -1416,6 +1416,8 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateListingsDropNameCol' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_27_215750_update_listings_drop_name_col.php',
         'UpdateListingsStatus' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_07_181657_update_listings_status.php',
         'UpdateListingsTblAddClaimableDateCol' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_13_034716_update_listings_tbl_add_claimable_date_col.php',
+        'UpdateListingsTblAddQueue' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_14_202419_update_listings_tbl_add_queue.php',
+        'UpdateQueuesTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_14_202217_update_queues_tbl.php',
         'UpdateRevisionsTblAddFk' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_26_065602_update_revisions_tbl_add_fk.php',
         'UpdateShipmentsRemoveClaimAddShipmentClaims' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_04_223232_update_shipments_remove_claim_add_shipment_claims.php',
         'UpdateShippingTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_07_050555_update_shipping_tbl_.php',

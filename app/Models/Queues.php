@@ -49,6 +49,7 @@ class Queues extends BaseEloquentModel
      */
     protected $fillable = [
         'queue',
+        'queue_group',
         'owner_id',
         'payload',
         'status',
