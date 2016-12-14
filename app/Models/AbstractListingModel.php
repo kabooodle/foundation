@@ -170,7 +170,8 @@ abstract class AbstractListingModel extends BaseEloquentModel
      */
     public static function getScheduledListings(Carbon $startTime, Carbon $endTime)
     {
-        return Listings::facebook()
+        return Listings::noEagerLoads()
+            ->facebook()
             ->scheduledFor('>=', $startTime->format('Y-m-d H:i:s'))
             ->scheduledFor('<=', $endTime->format('Y-m-d H:i:s'))
             ->statusScheduled()
@@ -187,6 +188,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
     public static function updateListingsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
     {
         return Listings::whereIn('id', $listingIds)
+            ->noEagerLoads()
             ->update([
                 'status' => $status,
                 'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
@@ -202,6 +204,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
     public function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
     {
         return ListingItems::whereIn('id', $listingIds)
+            ->noEagerLoads()
             ->update([
                 'status' => $status,
                 'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
