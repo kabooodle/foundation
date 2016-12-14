@@ -76,31 +76,155 @@ return [
             'encrypt' => true,
             'timeout' => 60
         ],
-        'iron-emails' => [
+
+
+        'iron-emails-1' => [
             'driver'  => 'iron',
             'host'    => 'mq-aws-us-east-1-2.iron.io',
             'token'   => env('IRON_QUEUE_TOKEN'),
             'project' => env('IRON_QUEUE_ID'),
-            'queue'   => 'email-queue',
+            'queue'   => 'email-queue-1',
             'encrypt' => true,
             'timeout' => 60
         ],
-        'iron-facebook-scheduler' => [
+        'iron-emails-2' => [
             'driver'  => 'iron',
             'host'    => 'mq-aws-us-east-1-2.iron.io',
             'token'   => env('IRON_QUEUE_TOKEN'),
             'project' => env('IRON_QUEUE_ID'),
-            'queue'   => 'fb-scheduler-queue',
+            'queue'   => 'email-queue-2',
             'encrypt' => true,
             'timeout' => 60
         ],
 
-        'iron-facebook-lister' => [
+
+        // FACEBOOK SCHEDULER QUEUES
+        'iron-facebook-scheduler-1' => [
             'driver'  => 'iron',
             'host'    => 'mq-aws-us-east-1-2.iron.io',
             'token'   => env('IRON_QUEUE_TOKEN'),
             'project' => env('IRON_QUEUE_ID'),
-            'queue'   => 'fb-lister-queue',
+            'queue'   => 'fb-scheduler-queue-1',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-scheduler-2' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-scheduler-queue-2',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-scheduler-3' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-scheduler-queue-3',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-scheduler-4' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-scheduler-queue-4',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+
+
+        // FACEBOOK LISTER QUEUES
+        'iron-facebook-lister-1' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-1',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-lister-2' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-2',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-lister-3' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-3',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-lister-4' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-4',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-lister-5' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-5',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-lister-6' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-6',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-lister-7' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-7',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-lister-8' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-8',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-lister-9' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-9',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-lister-10' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue-10',
             'encrypt' => true,
             'timeout' => 60
         ],
