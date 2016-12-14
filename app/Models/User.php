@@ -181,12 +181,30 @@ class User extends BaseEloquentModel implements
     /**
      * @return array
      */
+    public static function getConvertGuestRules(User $guest)
+    {
+        return [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'username' => 'required|unique:users,username,'.$guest->id,
+            'email' => 'required|email|max:255',
+            'password' => 'required|min:6',
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public static function getGuestRules()
     {
         return [
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|max:255',
+            'street1' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required',
         ];
     }
 
@@ -260,6 +278,23 @@ class User extends BaseEloquentModel implements
     public function primaryEmail()
     {
         return $this->hasOne(Email::class, 'user_id')->wherePrimary(1);
+    }
+
+    /**
+     * @param Email $email
+     */
+    public function makeEmailOnlyPrimary(Email $email)
+    {
+        $previousEmails = $this->emails->where('id', '!=', $email->id);
+        foreach ($previousEmails as $previousEmail) {
+            $previousEmail->primary = false;
+            $previousEmail->save();
+        }
+
+        if (!$email->isPrimary()) {
+            $email->primary = true;
+            $email->save();
+        }
     }
 
     /**

@@ -75,7 +75,14 @@ class ListingItemsClaimsController extends AbstractApiController
                 $guest = $this->dispatch(new AddGuestCommand(
                     $request->get('first_name'),
                     $request->get('last_name'),
-                    $request->get('email')
+                    $request->get('email'),
+                    $request->get('company'),
+                    $request->get('street1'),
+                    $request->get('street2'),
+                    $request->get('city'),
+                    $request->get('state'),
+                    $request->get('zip'),
+                    $request->get('phone')
                 ));
 
                 $this->dispatchNow(new ClaimInventoryItemCommand($guest, $listingItem, $listingItem->inventoryItem, true, $guest->primaryEmail));

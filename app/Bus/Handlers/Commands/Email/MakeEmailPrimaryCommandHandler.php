@@ -37,11 +37,7 @@ class MakeEmailPrimaryCommandHandler
         $email->primary = true;
         $email->save();
 
-        $previousEmails = $this->email->whereUserId($email->user->id)->where('id', '!=', $email->id)->get();
-        foreach ($previousEmails as $previousEmail) {
-            $previousEmail->primary = false;
-            $previousEmail->save();
-        }
+        $email->user->makeEmailOnlyPrimary($email);
         return $email;
     }
 }

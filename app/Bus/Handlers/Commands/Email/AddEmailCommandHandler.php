@@ -45,11 +45,7 @@ class AddEmailCommandHandler
         ]);
 
         if ($email->isPrimary()) {
-            $previousEmails = $this->email->whereUserId($command->getUser()->id)->where('id', '!=', $email->id)->get();
-            foreach ($previousEmails as $previousEmail) {
-                $previousEmail->primary = false;
-                $previousEmail->save();
-            }
+            $email->user->makeEmailOnlyPrimary($email);
         }
 
         event(new EmailWasCreatedEvent($email));

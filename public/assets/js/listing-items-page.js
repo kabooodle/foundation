@@ -6509,6 +6509,8 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2}],7:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6558,7 +6560,9 @@ exports.default = {
     },
     data: function data() {
         return {
-            checkInType: null
+            checkInType: null,
+            success: false,
+            guestSuccess: false
         };
     },
 
@@ -6566,28 +6570,45 @@ exports.default = {
         'sign-in': _SignIn2.default,
         'register': _Register2.default,
         'guest-claim': _GuestClaim2.default
+    },
+    methods: {
+        performUserSuccess: function performUserSuccess() {},
+        performGuestSuccess: function performGuestSuccess() {
+            this.guestSuccess = true;
+        }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div>\n        <p class=\"text-center\">\n            <a @click=\"checkInType = 'user'\">Sign In</a>\n        </p>\n        <div v-show=\"checkInType === 'user'\">\n            <sign-in :sign-in-route=\"signInRoute\" :password-reset-route=\"passwordResetRoute\" :csrf=\"csrf\" :redirect=\"redirect\">\n            </sign-in>\n            <a @click=\"checkInType = null\">Go Back</a>\n        </div>\n    </div>\n    <div>\n        <p class=\"text-center\">\n            <a @click=\"checkInType = 'register'\">Register</a>\n        </p>\n        <div v-show=\"checkInType === 'register'\">\n            <register :route=\"registerRoute\" :csrf=\"csrf\" :redirect=\"redirect\">\n            </register>\n            <a @click=\"checkInType = null\">Go Back</a>\n        </div>\n    </div>\n    <div>\n        <p class=\"text-center\">\n            <a @click=\"checkInType = 'guest'\">Continue as a Guest</a>\n        </p>\n        <div v-show=\"checkInType === 'guest'\">\n            <guest-claim :endpoint=\"guestClaimEndpoint\">\n            </guest-claim>\n            <a @click=\"checkInType = null\">Go Back</a>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"guestSuccess\">\n        <div class=\"text-center text-muted\">\n            Fantastic! This item is on hold for you for 5 minutes in order to allow you time to verify the claim through the email we just sent you.\n        </div>\n    </div>\n    <div v-else=\"\">\n        <div v-show=\"checkInType === null || checkInType === 'user'\">\n            <p class=\"text-center\">\n                <a @click=\"checkInType = 'user'\" class=\"text-primary\">Sign In</a>\n                <span v-show=\"checkInType === 'user'\">\n                    or\n                    <a @click=\"checkInType = null\" class=\"text-muted\">Go Back</a>\n                </span>\n            </p>\n            <div v-show=\"checkInType === 'user'\">\n                <sign-in :sign-in-route=\"signInRoute\" :password-reset-route=\"passwordResetRoute\" :csrf=\"csrf\" :redirect=\"redirect\" v-on:success=\"performUserSuccess\">\n                </sign-in>\n            </div>\n        </div>\n        <div v-show=\"checkInType === null || checkInType === 'register'\">\n            <p class=\"text-center\">\n                <a @click=\"checkInType = 'register'\" class=\"text-primary\">Register</a>\n                <span v-show=\"checkInType === 'register'\">\n                    or\n                    <a @click=\"checkInType = null\" class=\"text-muted\">Go Back</a>\n                </span>\n            </p>\n            <div v-show=\"checkInType === 'register'\">\n                <register :route=\"registerRoute\" :csrf=\"csrf\" :redirect=\"redirect\" v-on:success=\"performUserSuccess\">\n                </register>\n            </div>\n        </div>\n        <div v-show=\"checkInType === null || checkInType === 'guest'\">\n            <p class=\"text-center\">\n                <a @click=\"checkInType = 'guest'\" class=\"text-primary selected\">Continue as a Guest</a>\n                <span v-show=\"checkInType === 'guest'\">\n                    or\n                    <a @click=\"checkInType = null\" class=\"text-muted\">Go Back</a>\n                </span>\n            </p>\n            <div v-show=\"checkInType === 'guest'\">\n                <guest-claim :endpoint=\"guestClaimEndpoint\" v-on:success=\"performGuestSuccess\">\n                </guest-claim>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
     hotAPI.createRecord("_v-253c3a91", module.exports)
   } else {
     hotAPI.update("_v-253c3a91", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../claims/GuestClaim.vue":8,"../register/Register.vue":12,"../sign-in/SignIn.vue":13,"vue":3,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+},{"../claims/GuestClaim.vue":8,"../register/Register.vue":13,"../sign-in/SignIn.vue":14,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],8:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n\n")
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _StateInput = require("../inputs/StateInput.vue");
+
+var _StateInput2 = _interopRequireDefault(_StateInput);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         endpoint: {
@@ -6599,31 +6620,235 @@ exports.default = {
         return {
             firstName: null,
             lastName: null,
-            email: null
+            email: null,
+            company: null,
+            street1: null,
+            street2: null,
+            city: null,
+            state: null,
+            zip: null,
+            phone: null,
+            claimSuccess: false,
+            stateOptions: [{
+                "name": "Alabama",
+                "abbreviation": "AL"
+            }, {
+                "name": "Alaska",
+                "abbreviation": "AK"
+            }, {
+                "name": "American Samoa",
+                "abbreviation": "AS"
+            }, {
+                "name": "Arizona",
+                "abbreviation": "AZ"
+            }, {
+                "name": "Arkansas",
+                "abbreviation": "AR"
+            }, {
+                "name": "California",
+                "abbreviation": "CA"
+            }, {
+                "name": "Colorado",
+                "abbreviation": "CO"
+            }, {
+                "name": "Connecticut",
+                "abbreviation": "CT"
+            }, {
+                "name": "Delaware",
+                "abbreviation": "DE"
+            }, {
+                "name": "District Of Columbia",
+                "abbreviation": "DC"
+            }, {
+                "name": "Federated States Of Micronesia",
+                "abbreviation": "FM"
+            }, {
+                "name": "Florida",
+                "abbreviation": "FL"
+            }, {
+                "name": "Georgia",
+                "abbreviation": "GA"
+            }, {
+                "name": "Guam",
+                "abbreviation": "GU"
+            }, {
+                "name": "Hawaii",
+                "abbreviation": "HI"
+            }, {
+                "name": "Idaho",
+                "abbreviation": "ID"
+            }, {
+                "name": "Illinois",
+                "abbreviation": "IL"
+            }, {
+                "name": "Indiana",
+                "abbreviation": "IN"
+            }, {
+                "name": "Iowa",
+                "abbreviation": "IA"
+            }, {
+                "name": "Kansas",
+                "abbreviation": "KS"
+            }, {
+                "name": "Kentucky",
+                "abbreviation": "KY"
+            }, {
+                "name": "Louisiana",
+                "abbreviation": "LA"
+            }, {
+                "name": "Maine",
+                "abbreviation": "ME"
+            }, {
+                "name": "Marshall Islands",
+                "abbreviation": "MH"
+            }, {
+                "name": "Maryland",
+                "abbreviation": "MD"
+            }, {
+                "name": "Massachusetts",
+                "abbreviation": "MA"
+            }, {
+                "name": "Michigan",
+                "abbreviation": "MI"
+            }, {
+                "name": "Minnesota",
+                "abbreviation": "MN"
+            }, {
+                "name": "Mississippi",
+                "abbreviation": "MS"
+            }, {
+                "name": "Missouri",
+                "abbreviation": "MO"
+            }, {
+                "name": "Montana",
+                "abbreviation": "MT"
+            }, {
+                "name": "Nebraska",
+                "abbreviation": "NE"
+            }, {
+                "name": "Nevada",
+                "abbreviation": "NV"
+            }, {
+                "name": "New Hampshire",
+                "abbreviation": "NH"
+            }, {
+                "name": "New Jersey",
+                "abbreviation": "NJ"
+            }, {
+                "name": "New Mexico",
+                "abbreviation": "NM"
+            }, {
+                "name": "New York",
+                "abbreviation": "NY"
+            }, {
+                "name": "North Carolina",
+                "abbreviation": "NC"
+            }, {
+                "name": "North Dakota",
+                "abbreviation": "ND"
+            }, {
+                "name": "Northern Mariana Islands",
+                "abbreviation": "MP"
+            }, {
+                "name": "Ohio",
+                "abbreviation": "OH"
+            }, {
+                "name": "Oklahoma",
+                "abbreviation": "OK"
+            }, {
+                "name": "Oregon",
+                "abbreviation": "OR"
+            }, {
+                "name": "Palau",
+                "abbreviation": "PW"
+            }, {
+                "name": "Pennsylvania",
+                "abbreviation": "PA"
+            }, {
+                "name": "Puerto Rico",
+                "abbreviation": "PR"
+            }, {
+                "name": "Rhode Island",
+                "abbreviation": "RI"
+            }, {
+                "name": "South Carolina",
+                "abbreviation": "SC"
+            }, {
+                "name": "South Dakota",
+                "abbreviation": "SD"
+            }, {
+                "name": "Tennessee",
+                "abbreviation": "TN"
+            }, {
+                "name": "Texas",
+                "abbreviation": "TX"
+            }, {
+                "name": "Utah",
+                "abbreviation": "UT"
+            }, {
+                "name": "Vermont",
+                "abbreviation": "VT"
+            }, {
+                "name": "Virgin Islands",
+                "abbreviation": "VI"
+            }, {
+                "name": "Virginia",
+                "abbreviation": "VA"
+            }, {
+                "name": "Washington",
+                "abbreviation": "WA"
+            }, {
+                "name": "West Virginia",
+                "abbreviation": "WV"
+            }, {
+                "name": "Wisconsin",
+                "abbreviation": "WI"
+            }, {
+                "name": "Wyoming",
+                "abbreviation": "WY"
+            }]
         };
     },
 
+    components: {
+        'state-input': _StateInput2.default
+    },
     computed: {
         guestClaimData: function guestClaimData() {
             return {
                 'first_name': this.firstName,
                 'last_name': this.lastName,
-                'email': this.email
+                'email': this.email,
+                'company': this.company,
+                'street1': this.street1,
+                'street2': this.street2,
+                'city': this.city,
+                'state': this.state,
+                'zip': this.zip,
+                'phone': this.phone
             };
         }
     },
     methods: {
         claim: function claim() {
             this.$http.post(this.endpoint, this.guestClaimData).then(function (response) {
-                console.log(response);
+                this.claimSuccess = true;
+                this.$emit('success');
+                notify({
+                    'text': 'Verify this claim from the email we just sent you!',
+                    'type': 'success'
+                });
             }, function (response) {
-                console.log(response);
+                notify({
+                    'text': 'There was a problem with the information you provided. Please try again!',
+                    'type': 'error'
+                });
             });
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"md-form-group\">\n        <input v-model=\"firstName\" type=\"text\" name=\"first_name\" class=\"md-input\">\n        <label>First Name</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"lastName\" type=\"text\" name=\"last_name\" class=\"md-input\">\n        <label>Last Name</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"email\" type=\"text\" name=\"email\" class=\"md-input\">\n        <label>Email Address</label>\n    </div>\n\n    <p class=\"\">By clicking on \"Claim\" below, you are agreeing to the <a href=\"\" class=\"text-info\">Terms of Service</a> and the <a href=\"\" class=\"text-info\">Privacy Policy</a>.</p>\n\n    <button @click=\"claim\" type=\"submit\" class=\"btn primary btn-block p-x-md\">Claim</button>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"claimSuccess\">\n        <span class=\"text-center text-muted\">\n            Boo Yah!!\n        </span>\n    </div>\n    <div v-else=\"\">\n        <div class=\"row\">\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"firstName\" type=\"text\" name=\"first_name\" class=\"md-input\">\n                    <label>First Name</label>\n                </div>\n            </div>\n\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"lastName\" type=\"text\" name=\"last_name\" class=\"md-input\">\n                    <label>Last Name</label>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"md-form-group\">\n            <input v-model=\"email\" type=\"text\" name=\"email\" class=\"md-input\">\n            <label>Email Address</label>\n        </div>\n\n        <div class=\"md-form-group\">\n            <input v-model=\"company\" type=\"text\" name=\"company\" class=\"md-input\">\n            <label>Company Name <small>(Optional)</small></label>\n        </div>\n\n        <div class=\"md-form-group\">\n            <input v-model=\"street1\" type=\"text\" name=\"street1\" class=\"md-input\">\n            <label>Street 1</label>\n        </div>\n\n        <div class=\"md-form-group\">\n            <input v-model=\"street2\" type=\"text\" name=\"street2\" class=\"md-input\">\n            <label>Street 2 <small>(Optional)</small></label>\n        </div>\n\n        <div class=\"row\">\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"city\" type=\"text\" name=\"city\" class=\"md-input\">\n                    <label>City</label>\n                </div>\n            </div>\n\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <select v-model=\"state\" type=\"text\" name=\"state\" class=\"md-input\">\n                        <option v-for=\"option in stateOptions\" :value=\"option.abbreviation\">\n                            {{ option.name }}\n                        </option>\n                    </select>\n                    <label>State</label>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row\">\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"zip\" type=\"text\" name=\"zip\" class=\"md-input\">\n                    <label>Zip</label>\n                </div>\n            </div>\n\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"phone\" type=\"text\" name=\"phone\" class=\"md-input\">\n                    <label>Phone <small>(Optional)</small></label>\n                </div>\n            </div>\n        </div>\n\n        <p class=\"\">By clicking on \"Claim\" below, you are agreeing to the <a href=\"\" class=\"text-info\">Terms of Service</a> and the <a href=\"\" class=\"text-info\">Privacy Policy</a>.</p>\n\n        <button @click=\"claim\" type=\"submit\" class=\"btn primary btn-block p-x-md\">Claim</button>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6638,7 +6863,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-58e0d6ba", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],9:[function(require,module,exports){
+},{"../inputs/StateInput.vue":11,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6931,6 +7156,213 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2}],11:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: ['classes'],
+    data: function data() {
+        return {
+            stateOptions: [{
+                "name": "Alabama",
+                "abbreviation": "AL"
+            }, {
+                "name": "Alaska",
+                "abbreviation": "AK"
+            }, {
+                "name": "American Samoa",
+                "abbreviation": "AS"
+            }, {
+                "name": "Arizona",
+                "abbreviation": "AZ"
+            }, {
+                "name": "Arkansas",
+                "abbreviation": "AR"
+            }, {
+                "name": "California",
+                "abbreviation": "CA"
+            }, {
+                "name": "Colorado",
+                "abbreviation": "CO"
+            }, {
+                "name": "Connecticut",
+                "abbreviation": "CT"
+            }, {
+                "name": "Delaware",
+                "abbreviation": "DE"
+            }, {
+                "name": "District Of Columbia",
+                "abbreviation": "DC"
+            }, {
+                "name": "Federated States Of Micronesia",
+                "abbreviation": "FM"
+            }, {
+                "name": "Florida",
+                "abbreviation": "FL"
+            }, {
+                "name": "Georgia",
+                "abbreviation": "GA"
+            }, {
+                "name": "Guam",
+                "abbreviation": "GU"
+            }, {
+                "name": "Hawaii",
+                "abbreviation": "HI"
+            }, {
+                "name": "Idaho",
+                "abbreviation": "ID"
+            }, {
+                "name": "Illinois",
+                "abbreviation": "IL"
+            }, {
+                "name": "Indiana",
+                "abbreviation": "IN"
+            }, {
+                "name": "Iowa",
+                "abbreviation": "IA"
+            }, {
+                "name": "Kansas",
+                "abbreviation": "KS"
+            }, {
+                "name": "Kentucky",
+                "abbreviation": "KY"
+            }, {
+                "name": "Louisiana",
+                "abbreviation": "LA"
+            }, {
+                "name": "Maine",
+                "abbreviation": "ME"
+            }, {
+                "name": "Marshall Islands",
+                "abbreviation": "MH"
+            }, {
+                "name": "Maryland",
+                "abbreviation": "MD"
+            }, {
+                "name": "Massachusetts",
+                "abbreviation": "MA"
+            }, {
+                "name": "Michigan",
+                "abbreviation": "MI"
+            }, {
+                "name": "Minnesota",
+                "abbreviation": "MN"
+            }, {
+                "name": "Mississippi",
+                "abbreviation": "MS"
+            }, {
+                "name": "Missouri",
+                "abbreviation": "MO"
+            }, {
+                "name": "Montana",
+                "abbreviation": "MT"
+            }, {
+                "name": "Nebraska",
+                "abbreviation": "NE"
+            }, {
+                "name": "Nevada",
+                "abbreviation": "NV"
+            }, {
+                "name": "New Hampshire",
+                "abbreviation": "NH"
+            }, {
+                "name": "New Jersey",
+                "abbreviation": "NJ"
+            }, {
+                "name": "New Mexico",
+                "abbreviation": "NM"
+            }, {
+                "name": "New York",
+                "abbreviation": "NY"
+            }, {
+                "name": "North Carolina",
+                "abbreviation": "NC"
+            }, {
+                "name": "North Dakota",
+                "abbreviation": "ND"
+            }, {
+                "name": "Northern Mariana Islands",
+                "abbreviation": "MP"
+            }, {
+                "name": "Ohio",
+                "abbreviation": "OH"
+            }, {
+                "name": "Oklahoma",
+                "abbreviation": "OK"
+            }, {
+                "name": "Oregon",
+                "abbreviation": "OR"
+            }, {
+                "name": "Palau",
+                "abbreviation": "PW"
+            }, {
+                "name": "Pennsylvania",
+                "abbreviation": "PA"
+            }, {
+                "name": "Puerto Rico",
+                "abbreviation": "PR"
+            }, {
+                "name": "Rhode Island",
+                "abbreviation": "RI"
+            }, {
+                "name": "South Carolina",
+                "abbreviation": "SC"
+            }, {
+                "name": "South Dakota",
+                "abbreviation": "SD"
+            }, {
+                "name": "Tennessee",
+                "abbreviation": "TN"
+            }, {
+                "name": "Texas",
+                "abbreviation": "TX"
+            }, {
+                "name": "Utah",
+                "abbreviation": "UT"
+            }, {
+                "name": "Vermont",
+                "abbreviation": "VT"
+            }, {
+                "name": "Virgin Islands",
+                "abbreviation": "VI"
+            }, {
+                "name": "Virginia",
+                "abbreviation": "VA"
+            }, {
+                "name": "Washington",
+                "abbreviation": "WA"
+            }, {
+                "name": "West Virginia",
+                "abbreviation": "WV"
+            }, {
+                "name": "Wisconsin",
+                "abbreviation": "WI"
+            }, {
+                "name": "Wyoming",
+                "abbreviation": "WY"
+            }]
+        };
+    },
+
+    computed: {
+        states: function states() {}
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<select type=\"text\" name=\"state\" :class=\"classes\">\n    <option v-for=\"option in options\" :value=\"option.abbreviation\">\n        {{ option.name }}\n    </option>\n</select>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-a76aebb4", module.exports)
+  } else {
+    hotAPI.update("_v-a76aebb4", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":3,"vue-hot-reload-api":2}],12:[function(require,module,exports){
 'use strict';
 
 var _CheckIn = require('../check-in/CheckIn.vue');
@@ -6962,7 +7394,7 @@ new Vue({
     }
 });
 
-},{"../Spinner.vue":5,"../check-in/CheckIn.vue":7,"../comments/Commentable.vue":9,"../follow/Followable.vue":10}],12:[function(require,module,exports){
+},{"../Spinner.vue":5,"../check-in/CheckIn.vue":7,"../comments/Commentable.vue":9,"../follow/Followable.vue":10}],13:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
@@ -7007,7 +7439,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<form :action=\"route\" method=\"POST\">\n    <input type=\"hidden\" name=\"_token\" :value=\"csrf\">\n    <input type=\"hidden\" name=\"_redirect\" :value=\"redirect\">\n    <div class=\"md-form-group\">\n        <input v-model=\"firstName\" type=\"text\" name=\"first_name\" class=\"md-input\">\n        <label>First Name</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"lastName\" type=\"text\" name=\"last_name\" class=\"md-input\">\n        <label>Last Name</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"username\" type=\"text\" name=\"username\" class=\"md-input\">\n        <label>Username</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"email\" type=\"text\" name=\"email\" class=\"md-input\">\n        <label>Email Address</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"password\" type=\"password\" name=\"password\" class=\"md-input\">\n        <label>Password</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"referredBy\" type=\"text\" name=\"referred_by\" class=\"md-input\">\n        <label>Referred By User <small class=\"\">(username or email)</small></label>\n    </div>\n\n    <p class=\"\">By clicking on \"Create Account\" below, you are agreeing to the <a href=\"\" class=\"text-info\">Terms of Service</a> and the <a href=\"\" class=\"text-info\">Privacy Policy</a>.</p>\n\n    <button type=\"submit\" class=\"btn primary btn-block p-x-md\">Create Account</button>\n</form>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<form :action=\"route\" method=\"POST\">\n    <input type=\"hidden\" name=\"_token\" :value=\"csrf\">\n    <input type=\"hidden\" name=\"_redirect\" :value=\"redirect\">\n    <div class=\"row\">\n        <div class=\"col-xs-6\">\n            <div class=\"md-form-group\">\n                <input v-model=\"firstName\" type=\"text\" name=\"first_name\" class=\"md-input\">\n                <label>First Name</label>\n            </div>\n        </div>\n\n        <div class=\"col-xs-6\">\n            <div class=\"md-form-group\">\n                <input v-model=\"lastName\" type=\"text\" name=\"last_name\" class=\"md-input\">\n                <label>Last Name</label>\n            </div>\n        </div>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"username\" type=\"text\" name=\"username\" class=\"md-input\">\n        <label>Username</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"email\" type=\"text\" name=\"email\" class=\"md-input\">\n        <label>Email Address</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"password\" type=\"password\" name=\"password\" class=\"md-input\">\n        <label>Password</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"referredBy\" type=\"text\" name=\"referred_by\" class=\"md-input\">\n        <label>Referred By User <small class=\"\">(username or email)</small></label>\n    </div>\n\n    <p class=\"\">By clicking on \"Create Account\" below, you are agreeing to the <a href=\"\" class=\"text-info\">Terms of Service</a> and the <a href=\"\" class=\"text-info\">Privacy Policy</a>.</p>\n\n    <button type=\"submit\" class=\"btn primary btn-block p-x-md\">Create Account</button>\n</form>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -7022,7 +7454,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-20c85916", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],13:[function(require,module,exports){
+},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],14:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
@@ -7078,6 +7510,6 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-84b634b6", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[11]);
+},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[12]);
 
 //# sourceMappingURL=listing-items-page.js.map

@@ -2,14 +2,20 @@
     <form :action="route" method="POST">
         <input type="hidden" name="_token" :value="csrf">
         <input type="hidden" name="_redirect" :value="redirect">
-        <div class="md-form-group">
-            <input v-model="firstName" type="text" name="first_name" class="md-input">
-            <label>First Name</label>
-        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="md-form-group">
+                    <input v-model="firstName" type="text" name="first_name" class="md-input">
+                    <label>First Name</label>
+                </div>
+            </div>
 
-        <div class="md-form-group">
-            <input v-model="lastName" type="text" name="last_name" class="md-input">
-            <label>Last Name</label>
+            <div class="col-xs-6">
+                <div class="md-form-group">
+                    <input v-model="lastName" type="text" name="last_name" class="md-input">
+                    <label>Last Name</label>
+                </div>
+            </div>
         </div>
 
         <div class="md-form-group">

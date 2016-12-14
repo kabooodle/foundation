@@ -1,114 +1,15 @@
 <template>
-    <div>
-        <div v-if="claimSuccess">
-            <span class="text-center text-muted">
-                Boo Yah!!
-            </span>
-        </div>
-        <div v-else>
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="md-form-group">
-                        <input v-model="firstName" type="text" name="first_name" class="md-input">
-                        <label>First Name</label>
-                    </div>
-                </div>
-
-                <div class="col-xs-6">
-                    <div class="md-form-group">
-                        <input v-model="lastName" type="text" name="last_name" class="md-input">
-                        <label>Last Name</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="md-form-group">
-                <input v-model="email" type="text" name="email" class="md-input">
-                <label>Email Address</label>
-            </div>
-
-            <div class="md-form-group">
-                <input v-model="company" type="text" name="company" class="md-input">
-                <label>Company Name <small>(Optional)</small></label>
-            </div>
-
-            <div class="md-form-group">
-                <input v-model="street1" type="text" name="street1" class="md-input">
-                <label>Street 1</label>
-            </div>
-
-            <div class="md-form-group">
-                <input v-model="street2" type="text" name="street2" class="md-input">
-                <label>Street 2 <small>(Optional)</small></label>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="md-form-group">
-                        <input v-model="city" type="text" name="city" class="md-input">
-                        <label>City</label>
-                    </div>
-                </div>
-
-                <div class="col-xs-6">
-                    <div class="md-form-group">
-                        <select v-model="state" type="text" name="state" class="md-input">
-                            <option v-for="option in stateOptions" :value="option.abbreviation">
-                                {{ option.name }}
-                            </option>
-                        </select>
-                        <label>State</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="md-form-group">
-                        <input v-model="zip" type="text" name="zip" class="md-input">
-                        <label>Zip</label>
-                    </div>
-                </div>
-
-                <div class="col-xs-6">
-                    <div class="md-form-group">
-                        <input v-model="phone" type="text" name="phone" class="md-input">
-                        <label>Phone <small>(Optional)</small></label>
-                    </div>
-                </div>
-            </div>
-
-            <p class="">By clicking on "Claim" below, you are agreeing to the <a href="" class="text-info">Terms of Service</a> and the <a href="" class="text-info">Privacy Policy</a>.</p>
-
-            <button @click="claim" type="submit" class="btn primary btn-block p-x-md">Claim</button>
-        </div>
-    </div>
+    <select type="text" name="state" :class="classes">
+        <option v-for="option in options" :value="option.abbreviation">
+            {{ option.name }}
+        </option>
+    </select>
 </template>
-<style>
-
-</style>
 <script>
-    import StateInput from '../inputs/StateInput.vue';
     export default {
-        props: {
-            endpoint: {
-                type: String,
-                required: true
-            },
-        },
+        props: ['classes'],
         data(){
-            return {
-                firstName: null,
-                lastName: null,
-                email: null,
-                company: null,
-                street1: null,
-                street2: null,
-                city: null,
-                state: null,
-                zip: null,
-                phone: null,
-                claimSuccess: false,
+            return{
                 stateOptions: [
                     {
                         "name": "Alabama",
@@ -349,44 +250,10 @@
                 ],
             }
         },
-        components: {
-            'state-input': StateInput,
-        },
         computed: {
-            guestClaimData: function () {
-                return {
-                    'first_name': this.firstName,
-                    'last_name': this.lastName,
-                    'email': this.email,
-                    'company': this.company,
-                     'street1': this.street1,
-                     'street2': this.street2,
-                     'city': this.city,
-                     'state': this.state,
-                     'zip': this.zip,
-                     'phone': this.phone,
-                }
-            }
+            states: function () {
+
+            },
         },
-        methods: {
-            claim: function () {
-                this.$http.post(
-                    this.endpoint,
-                    this.guestClaimData
-                ).then(function (response) {
-                    this.claimSuccess = true;
-                    this.$emit('success');
-                    notify({
-                        'text': 'Verify this claim from the email we just sent you!',
-                        'type': 'success'
-                    });
-                }, function (response) {
-                    notify({
-                        'text': 'There was a problem with the information you provided. Please try again!',
-                        'type': 'error'
-                    });
-                });
-            }
-        }
     }
 </script>

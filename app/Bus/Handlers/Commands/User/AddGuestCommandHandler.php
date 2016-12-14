@@ -6,10 +6,11 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\User;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Commands\User\AddGuestCommand;
+use Kabooodle\Models\Address;
 use Kabooodle\Models\Email;
 use Kabooodle\Models\User;
+use DB;
 
 /**
  * Class AddUserCommandHandler
@@ -21,11 +22,13 @@ class AddGuestCommandHandler
      * AddGuestCommandHandler constructor.
      * @param User $user
      * @param Email $email
+     * @param Address $address
      */
-    public function __construct(User $user, Email $email)
+    public function __construct(User $user, Email $email, Address $address)
     {
         $this->user = $user;
         $this->email = $email;
+        $this->address = $address;
     }
 
     /**
@@ -35,22 +38,38 @@ class AddGuestCommandHandler
      */
     public function handle(AddGuestCommand $command)
     {
-        $user = $this->user;
-        $guest = $user::factory([
-            'first_name' => $command->getFirstName(),
-            'last_name' => $command->getLastName(),
-            'email' => $command->getEmail(),
-            'guest' => true,
-        ]);
+        return DB::transaction(function () use ($command) {
+            $user = $this->user;
+            $guest = $user::factory([
+                'first_name' => $command->getFirstName(),
+                'last_name' => $command->getLastName(),
+                'email' => $command->getEmail(),
+                'guest' => true,
+            ]);
 
-        $email = $this->email;
-        $email::factory([
-            'user_id' => $guest->id,
-            'address' => $command->getEmail(),
-            'primary' => true,
-            'verified' => false,
-        ]);
+            $email = $this->email;
+            $email::factory([
+                'user_id' => $guest->id,
+                'address' => $command->getEmail(),
+                'primary' => true,
+                'verified' => false,
+            ]);
 
-        return $guest;
+            $address = $this->address;
+            $address::factory([
+                'user_id' => $guest->id,
+                'type' => Address::TYPE_TO,
+                'primary' => 1,
+                'company' => $command->getCompany(),
+                'street1' => $command->getStreet1(),
+                'street2' => $command->getStreet2(),
+                'city' => $command->getCity(),
+                'state' => $command->getState(),
+                'zip' => $command->getZip(),
+                'phone' => $command->getPhone(),
+            ]);
+
+            return $guest;
+        });
     }
 }

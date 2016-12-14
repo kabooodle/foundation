@@ -178,6 +178,14 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
+     * @return bool
+     */
+    public function isRejected()
+    {
+        return (bool) $this->rejected_on;
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function shoppable()

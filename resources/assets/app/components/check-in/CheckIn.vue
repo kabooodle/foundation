@@ -1,48 +1,70 @@
 <template>
     <div>
-        <div>
-            <p class="text-center">
-                <a @click="checkInType = 'user'">Sign In</a>
-            </p>
-            <div v-show="checkInType === 'user'">
-                <sign-in
-                        :sign-in-route="signInRoute"
-                        :password-reset-route="passwordResetRoute"
-                        :csrf="csrf"
-                        :redirect="redirect"
-                    >
-                </sign-in>
-                <a @click="checkInType = null">Go Back</a>
+        <div v-if="guestSuccess">
+            <div class="text-center text-muted">
+                Fantastic! This item is on hold for you for 5 minutes in order to allow you time to verify the claim through the email we just sent you.
             </div>
         </div>
-        <div>
-            <p class="text-center">
-                <a @click="checkInType = 'register'">Register</a>
-            </p>
-            <div v-show="checkInType === 'register'">
-                <register
-                        :route="registerRoute"
-                        :csrf="csrf"
-                        :redirect="redirect"
+        <div v-else>
+            <div v-show="checkInType === null || checkInType === 'user'">
+                <p class="text-center">
+                    <a @click="checkInType = 'user'" class="text-primary">Sign In</a>
+                    <span v-show="checkInType === 'user'">
+                        or
+                        <a @click="checkInType = null" class=text-muted>Go Back</a>
+                    </span>
+                </p>
+                <div v-show="checkInType === 'user'">
+                    <sign-in
+                            :sign-in-route="signInRoute"
+                            :password-reset-route="passwordResetRoute"
+                            :csrf="csrf"
+                            :redirect="redirect"
+                            v-on:success="performUserSuccess"
                     >
-                </register>
-                <a @click="checkInType = null">Go Back</a>
+                    </sign-in>
+                </div>
             </div>
-        </div>
-        <div>
-            <p class="text-center">
-                <a @click="checkInType = 'guest'">Continue as a Guest</a>
-            </p>
-            <div v-show="checkInType === 'guest'">
-                <guest-claim
-                        :endpoint="guestClaimEndpoint"
+            <div v-show="checkInType === null || checkInType === 'register'">
+                <p class="text-center">
+                    <a @click="checkInType = 'register'" class="text-primary">Register</a>
+                    <span v-show="checkInType === 'register'">
+                        or
+                        <a @click="checkInType = null" class=text-muted>Go Back</a>
+                    </span>
+                </p>
+                <div v-show="checkInType === 'register'">
+                    <register
+                            :route="registerRoute"
+                            :csrf="csrf"
+                            :redirect="redirect"
+                            v-on:success="performUserSuccess"
                     >
-                </guest-claim>
-                <a @click="checkInType = null">Go Back</a>
+                    </register>
+                </div>
+            </div>
+            <div v-show="checkInType === null || checkInType === 'guest'">
+                <p class="text-center">
+                    <a @click="checkInType = 'guest'" class="text-primary selected">Continue as a Guest</a>
+                    <span v-show="checkInType === 'guest'">
+                        or
+                        <a @click="checkInType = null" class=text-muted>Go Back</a>
+                    </span>
+                </p>
+                <div v-show="checkInType === 'guest'">
+                    <guest-claim
+                            :endpoint="guestClaimEndpoint"
+                            v-on:success="performGuestSuccess"
+                    >
+                    </guest-claim>
+                </div>
             </div>
         </div>
     </div>
 </template>
+<style>
+
+</style>
 <script>
     import SignIn from '../sign-in/SignIn.vue';
     import Register from '../register/Register.vue';
@@ -74,15 +96,25 @@
                 required: true
             },
         },
-        data (){
+        data () {
             return {
                 checkInType: null,
+                success: false,
+                guestSuccess: false,
             }
         },
-        components:{
+        components: {
             'sign-in': SignIn,
             'register': Register,
             'guest-claim': GuestClaim,
+        },
+        methods: {
+            performUserSuccess: function () {
+
+            },
+            performGuestSuccess: function () {
+                this.guestSuccess = true;
+            },
         },
     }
 </script>

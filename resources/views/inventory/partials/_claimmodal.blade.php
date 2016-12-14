@@ -6,6 +6,7 @@
                     @if(user())
                         {{ Form::open(['id' => 'form-save']) }}
                         <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                             <h5 class="modal-title">Claim item</h5>
                         </div>
                         <div class="modal-body">
@@ -23,7 +24,8 @@
                         {{ Form::close() }}
                     @else
                         <div class="modal-header">
-                            <h5 class="modal-title">We need to know who's making the claim</h5>
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h5 class="modal-title text-center">Please tell us who's making the claim</h5>
                         </div>
                         <div class="modal-body">
                             <check-in
@@ -36,11 +38,11 @@
                                 redirect="{{ $redirect }}"
                             ></check-in>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn white" id="btn_confirmed_claim_cancel"
-                                    data-dismiss="modal">Cancel
-                            </button>
-                        </div>
+                        {{--<div class="modal-footer">--}}
+                            {{--<button type="button" class="btn white" id="btn_confirmed_claim_cancel"--}}
+                                    {{--data-dismiss="modal">Cancel--}}
+                            {{--</button>--}}
+                        {{--</div>--}}
                     @endif
                 </div>
             </div>

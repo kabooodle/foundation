@@ -7,6 +7,8 @@
 namespace Kabooodle\Http\Controllers\Web\Auth;
 
 use Auth;
+use Kabooodle\Bus\Commands\User\ConvertGuestToUserCommand;
+use Kabooodle\Models\Email;
 use Messages;
 use Validator;
 use Kabooodle\Models\User;
@@ -83,16 +85,33 @@ class AuthController extends Controller
     public function postRegister(Request $request)
     {
         try {
-            $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
+            $email = Email::whereAddress(trim($request->get('email')))->first();
 
-            $user = $this->dispatch(new AddUserCommand(
-                $request->get('first_name'),
-                $request->get('last_name'),
-                $request->get('username'),
-                $request->get('email'),
-                $request->get('password'),
-                $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
-            ));
+            if ($email && $email->user->isGuest()) {
+                $guest = $email->user;
+                $this->validate($request, User::getConvertGuestRules($guest));
+
+                $user = $this->dispatch(new ConvertGuestToUserCommand(
+                    $guest,
+                    $email,
+                    $request->get('first_name'),
+                    $request->get('last_name'),
+                    $request->get('username'),
+                    $request->get('password'),
+                    $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
+                ));
+            } else {
+                $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
+
+                $user = $this->dispatch(new AddUserCommand(
+                    $request->get('first_name'),
+                    $request->get('last_name'),
+                    $request->get('username'),
+                    $request->get('email'),
+                    $request->get('password'),
+                    $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
+                ));
+            }
 
             Auth::attempt([
                 'username' => $user->username,

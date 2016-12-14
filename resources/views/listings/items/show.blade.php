@@ -11,7 +11,13 @@
         <div class="btn-toolbar pull-right">
             @if(! $listingItem->inventoryItem->canSatisfyRequestedQuantityOf(1))
                 <div class="inline" data-toggle="tooltip" data-placement="bottom" title="Watch the item to be notified of availability">
-                    <a class="btn btn-sm claim  _800 disabled" disabled href="#">Out of stock!</a>
+                    <a class="btn btn-sm claim  _800 disabled" disabled href="#">
+                        @if($listingItem->inventoryItem->getOnHoldQuantity())
+                            On hold!
+                        @else
+                            Out of stock!
+                        @endif
+                    </a>
                 </div>
             @else
                 <a data-toggle="modal" data-target="#modal_claim_wrapper" data-backdrop="static" data-keyboard="false" href="" class="btn btn-sm claim  _800 ">Claim Item</a>

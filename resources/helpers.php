@@ -1485,3 +1485,13 @@ if (! function_exists('user')) {
         return Auth::user();
     }
 }
+
+if (! function_exists('onHoldInterval')) {
+    /**
+     * @return string
+     */
+    function onHoldInterval()
+    {
+        return new DateInterval('PT5M');
+    }
+}

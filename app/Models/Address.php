@@ -29,6 +29,24 @@ class Address extends BaseEloquentModel implements Revisionable
     /**
      * @var array
      */
+    protected $fillable = [
+        'user_id',
+        'type',
+        'company',
+        'street1',
+        'street2',
+        'city',
+        'state',
+        'zip',
+        'country',
+        'phone',
+        'is_residential',
+        'metadata',
+    ];
+
+    /**
+     * @var array
+     */
     protected $attributes = [
         'user_id' => 0,
         'type' => self::TYPE_FROM,
@@ -60,6 +78,16 @@ class Address extends BaseEloquentModel implements Revisionable
             'to.state' => 'required_with:to.street1,to.city',
             'to.zip' => 'required_with:to.street1,to.city,to.state',
         ];
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return static
+     */
+    public static function factory(array $attributes)
+    {
+        return self::create($attributes);
     }
 
     /**

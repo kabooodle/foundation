@@ -381,7 +381,15 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function getAvailableQuantity()
     {
-        return $this->initial_qty;
+        return $this->initial_qty - $this->getOnHoldQuantity();
+    }
+
+    /**
+     * @return int
+     */
+    public function getOnHoldQuantity()
+    {
+        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
     }
 
     /**
