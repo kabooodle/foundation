@@ -7,6 +7,7 @@
 namespace Kabooodle\Models;
 
 use DB;
+use Carbon\Carbon;
 
 /**
  * Class AbstractListingModel
