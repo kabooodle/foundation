@@ -92,8 +92,6 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
         // Shuffle all the listing items, similar to above, to keep everything as random as possible.
         $shuffledListingItems = $listingItems->shuffle();
 
-        $this->updateListingItemsStatus($shuffledListingItems->pluck('id')->toArray(), $this->timestamp, ListingItems::STATUS_QUEUED_LIST);
-
         // Iterate over the listing items and push them to the queue.
         foreach($shuffledListingItems as $shuffledListingItem) {
 
@@ -107,6 +105,8 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
 
             unset($job);
         }
+
+        $this->updateListingItemsStatus($shuffledListingItems->pluck('id')->toArray(), $this->timestamp, ListingItems::STATUS_QUEUED_LIST);
 
         $this->job->delete();
 

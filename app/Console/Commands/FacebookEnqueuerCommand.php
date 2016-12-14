@@ -48,11 +48,6 @@ class FacebookEnqueuerCommand extends Command
 
         if ($listings && $listings->count() > 0) {
 
-            $listingsIds = $listings->pluck('id')->toArray();
-
-            // Update the Queues status to processing.
-            $this->updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
-
             // Build our job
             $job = $this->buildJob($listings);
 
@@ -60,6 +55,11 @@ class FacebookEnqueuerCommand extends Command
             $this->dispatch($job);
 
             event(new ListingsWereQueued($job));
+
+            $listingsIds = $listings->pluck('id')->toArray();
+
+            // Update the Queues status to processing.
+            $this->updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
         }
 
         $this->output->writeln('Completed');
