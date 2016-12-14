@@ -10,7 +10,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Models\ListingItems;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Facebook\Exceptions\FacebookAuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
@@ -34,16 +33,14 @@ class ListingItemsClaimsController extends AbstractApiController
     {
         try {
             $listingItem = $this->getListingItem($listingId, $listingItemsId);
-            if (! $listingItem) {
+            if (!$listingItem) {
                 throw new ModelNotFoundException;
             }
 
-            $this->dispatchNow(new ClaimInventoryItemCommand($this->getUser(), $listingItem, $listingItem->inventoryItem));
+            $this->dispatchNow(new ClaimInventoryItemCommand($this->getUser(), $listingItem,
+                $listingItem->inventoryItem));
 
             return $this->respond();
-        } catch (FacebookAuthenticationException $e) {
-            $msg = 'Your facebook credentials are invalid. Please re-authorize '.env('APP_NAME').' for your facebook account, via our settings page.';
-            return $this->setData(['msg' => $msg])->$this->setStatusCode(500)->respond();
         } catch (RequestedQuantityCannotBeSatisfiedException $e) {
             return $this->setData(['msg' => $e->getMessage()])->$this->setStatusCode(500)->respond();
         } catch (Exception $e) {
