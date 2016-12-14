@@ -18,7 +18,7 @@
     <td>{{ $watch->watchable->created_at->format('F jS Y g:i A') }}</td>
     <td>
         {{ Form::open(array('route' => array('watching.items.destroy', user()->username, $watch->id), 'method' => 'delete')) }}
-        <button type="submit" class="btn btn-danger btn-mini">Delete</button>
+        <button type="submit" class="btn white btn-xs btn-action">Delete</button>
         {{ Form::close() }}
     </td>
 </tr>
