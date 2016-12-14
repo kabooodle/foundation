@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Console\Commands;
 
+use Bugsnag;
 use Carbon\Carbon;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
@@ -51,18 +52,29 @@ class FacebookEnqueuerCommand extends Command
 
         if ($listings && $listings->count() > 0) {
 
+            Bugsnag::notifyError('enqueuer', 'we have listings', null, 'info');
+            Bugsnag::leaveBreadcrumb('listings', \Bugsnag\Breadcrumbs\Breadcrumb::LOG_TYPE, $listings);
+
             // Build our job
             $job = $this->buildJob($listings);
+
+            Bugsnag::notifyError('enqueuer', 'job was built', null, 'info');
+            Bugsnag::leaveBreadcrumb('job built', \Bugsnag\Breadcrumbs\Breadcrumb::LOG_TYPE, $job);
 
             // Dispatch the listings queue handler for the listings.
             $this->dispatch($job);
 
-            event(new ListingsWereQueued($job));
+            Bugsnag::notifyError('enqueuer', 'job was dispatched', null, 'info');
+
+//            event(new ListingsWereQueued($job));
 
             $listingsIds = $listings->pluck('id')->toArray();
 
             // Update the Queues status to processing.
             $this->updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
+
+            Bugsnag::notifyError('enqueuer', 'status was updated', null, 'info');
+            Bugsnag::leaveBreadcrumb('listings', \Bugsnag\Breadcrumbs\Breadcrumb::LOG_TYPE, $listingsIds);
         }
 
         $this->output->writeln('Completed');
