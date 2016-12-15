@@ -30,7 +30,7 @@ class CreateEmailsTable extends Migration
                 ->onUpdate('cascade');
         });
 
-        DB::statement('INSERT INTO `emails` (`user_id`, `address`, `primary`) SELECT `users`.`id`, `users`.`email`, 1 FROM `users`');
+        DB::statement('INSERT INTO `emails` (`user_id`, `address`, `primary`, `created_at`, `updated_at`) SELECT `users`.`id`, `users`.`email`, 1, NOW(), NOW() FROM `users`');
 
         Schema::table('users', function(Blueprint $table){
             $table->dropUnique('users_email_unique');

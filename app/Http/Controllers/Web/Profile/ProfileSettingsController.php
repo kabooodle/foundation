@@ -179,7 +179,10 @@ class ProfileSettingsController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\View\View
+     * @param Request $request
+     * @param         $token
+     *
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function verifyEmail(Request $request, $token)
     {
@@ -189,6 +192,8 @@ class ProfileSettingsController extends Controller
     }
 
     /**
+     * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\View
      */
     public function verifiedEmail(Request $request)

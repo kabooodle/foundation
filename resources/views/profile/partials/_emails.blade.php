@@ -1,6 +1,8 @@
 <div id="emails">
+
+
     <emails
-        :emails="{{ json_encode($_emails) }}"
+        :emails="{{ $_emails->toJson()  }}"
         new-email-endpoint="{{ apiRoute('user.emails.store', user()->id) }}"
     ></emails>
     {{--@foreach($_emails as $_email)--}}

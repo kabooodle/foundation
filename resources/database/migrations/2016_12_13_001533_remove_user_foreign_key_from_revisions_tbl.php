@@ -12,9 +12,13 @@ class RemoveUserForeignKeyFromRevisionsTbl extends Migration
      */
     public function up()
     {
-        Schema::table('revisions', function (Blueprint $table) {
-            $table->dropForeign('revisions_user_foreign');
-        });
+        $keyExists = DB::select( DB::raw( 'SHOW KEYS FROM revisions WHERE Key_name="revisions_user_foreign"'));
+
+        if ($keyExists) {
+            Schema::table('revisions', function (Blueprint $table) {
+                $table->dropForeign('revisions_user_foreign');
+            });
+        }
     }
 
     /**
