@@ -127,9 +127,11 @@ if (!function_exists('staticAsset')) {
     {
         $url = env('AWS_CLOUDFRONT_DISTRIBUTION', false);
 
+        $useCloundfront = $url && env('AWS_USE_CLOUDFRONT', false);
+
         $postPart = ltrim($path, '/') . ($cacheBust ? '?v='.getAppVersion() : null);
 
-        return  ($url && env('AWS_USE_CLOUDFRONT', false)) ? '//' . $url . '/' . $postPart : '/' . $postPart;
+        return  $useCloundfront ? '//' . $url . '/' . $postPart : '/' . $postPart;
     }
 }
 

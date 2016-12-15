@@ -15,6 +15,10 @@
     <script type="text/javascript">
         const KABOOODLE_APP = window.KABOOODLE_APP || {};
         KABOOODLE_APP.currentUser = {!! $_current_user !!};
+        KABOOODLE_APP.makeStaticAsset = function(url){
+            let staticAsset = '{{ staticAsset('[URL]') }}';
+            return staticAsset.replace('[URL]', url);
+        };
     </script>
 
     @push('header-scripts')

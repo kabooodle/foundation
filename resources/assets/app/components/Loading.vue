@@ -2,7 +2,7 @@
     <div v-if="kb_overlay_show === true">
         <div class="kb_overlay">
             <div class="kb_overlay__inner">
-                <img src="/assets/images/icons/ring-alt.gif">
+                <img :src="img_url">
             </div>
         </div>
     </div>
@@ -37,6 +37,11 @@
             return {
                 kb_overlay_show : false,
             }
+        },
+        computed : {
+            img_url(){
+              return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+            },
         },
         created : function() {
             const scope = this;

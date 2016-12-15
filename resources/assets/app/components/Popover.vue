@@ -2,7 +2,7 @@
     <div>
         <div class="pop-out-overlay inventory-overlay" style="display: none;">
             <a href="javascript:;" class="close-overlay" v-on:click="closeOverlay" aria-label="close">
-                <img src="/assets/images/icons/over-close-white.png" alt="Icon shot x light">
+                <img :src="img_url" alt="Icon shot x light">
             </a>
             <div class="overlay-content group">
             </div>
@@ -16,8 +16,13 @@
                 promptOnClose : true,
                 defaultContent: '<div class="text-center center-block" ' +
                 'style="position: absolute; top: 50%; margin-top: -20px; margin-left: -20px; left: 50%; ">' +
-                '<img src="/assets/images/icons/ring-alt.gif"></div>'
+                '<img src="'+KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif")+'"></div>'
             }
+        },
+        computed : {
+            img_url(){
+                return KABOOODLE_APP.makeStaticAsset("assets/images/icons/over-close-white.png");
+            },
         },
         mounted: function() {
             this.resetOverlay();
