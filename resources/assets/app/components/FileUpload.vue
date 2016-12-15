@@ -175,7 +175,6 @@
                     el.s3uploader({
                         save_file_model: false,
                         multiple: that.has_multiple,
-                        s3_bucket: 'kabooodle-storage',
                         s3_key_url: that.s3_key_url,
                         s3_key_payload: {
                             user: that.user_hash

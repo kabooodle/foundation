@@ -40,7 +40,7 @@ return [
     'facebook' => [
         'client_id' => '',
         'client_secret' => '',
-        'redirect' => 'http://kabooodle.dev/callback',
+        'redirect' => env('APP_URL').'/callback',
     ],
 
 ];

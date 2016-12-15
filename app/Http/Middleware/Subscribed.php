@@ -23,12 +23,30 @@ class Subscribed
      */
     public function handle($request, Closure $next, $subscription)
     {
-        if ($request->user() && ! $request->user()->subscribed($subscription)) {
+        $subscription = explode('|', $subscription);
+        if ($request->user() && ! $this->hasSubscriptionAccess($request->user(), $subscription)) {
             Messages::error('Subscription required.');
 
             return redirect()->route('profile.subscription.index');
         }
 
         return $next($request);
+    }
+
+    /**
+     * @param       $user
+     * @param array $subscriptions
+     *
+     * @return bool
+     */
+    public function hasSubscriptionAccess($user, array $subscriptions)
+    {
+        foreach ($subscriptions as $subscription) {
+            if($user->hasSubscriptionAccess($subscription)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

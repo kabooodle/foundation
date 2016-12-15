@@ -90,6 +90,7 @@
                     <th scope="col">Watchers</th>
                     <th scope="col">Gross</th>
                     <th scope="col">Status</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -102,7 +103,7 @@
                                     <img src="{{ $item->inventoryItem->firstImage()->location }}">
                                 @endif
                             </div>
-                            <span><a class="text-primary" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">{{ $item->inventoryItem->name_with_variant }}</a></span>
+                            <span>{{ $item->inventoryItem->name_with_variant }}</span>
                         </div></td>
                     <td>{{ $item->sales->count() }}</td>
                     <td>{{ $item->pendingSales->count() }}</td>
@@ -110,6 +111,7 @@
                     <td>{{ $item->watchers->count() }}</td>
                     <td>${{ $item->sales->sum('price') }}</td>
                     <td>{!! $item->present()->getStatus()  !!}</td>
+                    <td><a class="btn btn-xs white" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">View</td>
                 </tr>
                 @endforeach
                 </tbody>

@@ -4,7 +4,7 @@
 
     <div class="text-center center-block">
         <a href="/" class="">
-            <span class="inline"><img src="/assets/images/logo/logo-prpl-md.png"></span>
+            <span class="inline"><img src="{{staticAsset('/assets/images/logo/logo-prpl-md.png')}}"></span>
         </a>
     </div>
 

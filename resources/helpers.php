@@ -42,6 +42,10 @@ if (! function_exists('listingStatusHtml')) {
     function listingStatusHtml($status)
     {
         switch ($status) {
+            case 'processing':
+                $class = 'deep-orange-400';
+                $text = 'Uploading';
+                break;
             case 'queued':
                 $class = 'blue-500';
                 $text = 'Queued';
@@ -87,7 +91,7 @@ if (! function_exists('spinnyAppendedToEl')) {
     function spinnyAppendedToEl($size = 25)
     {
         return ' <img 
-        src="/assets/images/icons/ring-alt.gif" 
+        src="'.staticAsset("/assets/images/icons/ring-alt.gif").'" 
         height="'.$size.'" 
         style="position:absolute; margin-top:-'.($size/2+5).'px; right:-'.$size.'px; top: 50%;" 
         class="spinny">';
@@ -122,9 +126,10 @@ if (!function_exists('staticAsset')) {
     function staticAsset($path, $cacheBust = true)
     {
         $url = env('AWS_CLOUDFRONT_DISTRIBUTION', false);
+
         $postPart = ltrim($path, '/') . ($cacheBust ? '?v='.getAppVersion() : null);
 
-        return  $url ? '//' . $url . '/' . $postPart : '/' . $postPart;
+        return  ($url && env('AWS_USE_CLOUDFRONT', false)) ? '//' . $url . '/' . $postPart : '/' . $postPart;
     }
 }
 
@@ -1141,6 +1146,19 @@ if (!function_exists('getMimeContentType')) {
 }
 
 
+if (! function_exists('hmacsha256')) {
+    /**
+     * @param $key
+     * @param $data
+     *
+     * @return string
+     */
+    function hmacsha256($key, $data)
+    {
+        return hash_hmac('sha256', $data, $key);
+    }
+}
+
 if (! function_exists('hmacsha1')) {
     /**
      * @param $key
@@ -1375,7 +1393,12 @@ if (! function_exists('apiRoute')) {
      */
     function apiRoute($routeName, $routeParams = [], $version = 'v1', $absoluteUrl = true)
     {
-        return app('Dingo\Api\Routing\UrlGenerator')->version($version)->route($routeName, $routeParams, $absoluteUrl);
+        $url = app(Dingo\Api\Routing\UrlGenerator::class);
+        if (app()->environment() == 'production') {
+            $url->forceSchema('https');
+        }
+
+        return $url->version($version)->route($routeName, $routeParams, $absoluteUrl);
     }
 }
 
@@ -1413,7 +1436,7 @@ if (! function_exists('getEnvDomain')) {
         // Although confusing at first, its essentially required because of how L5 handles
         // environments (stupidly). So either close your eyes and jump ahead 4 lines or
         // behold: the sexy hack.
-        if ($httpHost == 'app.kabooodle.ngrok.io') {
+        if (in_array($httpHost, ['app.kabooodle.ngrok.io', 'api.kabooodle.ngrok.io'])) {
             return 'kabooodle.ngrok.io';
         }
 

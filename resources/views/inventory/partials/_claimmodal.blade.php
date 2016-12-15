@@ -83,7 +83,7 @@
                     that.replaceWith(claimCloneEl);
                 });
         });
-    })
+    });
 </script>
 
 @endpush

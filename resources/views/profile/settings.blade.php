@@ -7,7 +7,7 @@
                 <div class="col-md-6 col-md-offset-3">
                     <div class="list-body clearfix">
                         <div class="pull-left m-r-1">
-                            <img src="/assets/images/icons/FB-f-Logo__blue_50.png">
+                            <img src="{{ staticAsset('/assets/images/icons/FB-f-Logo__blue_50.png') }}">
                         </div>
                         <div class="pull-left">
                             <span class="h6 _500">Facebook Connect</span><br>

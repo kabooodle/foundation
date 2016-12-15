@@ -10,7 +10,7 @@
 
         <ul class="nav navbar-nav pull-right nav-active-border">
             @if(user())
-                @if(user()->subscribed('main') || (user()->getAvailableBalance() > 0))
+                @if(user()->haAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
                 <li class="nav-item ">
                     <a class="nav-link text-sm" href="{{ route('profile.credits.index') }}">${{ user()->getAvailableBalance() }} Credits</a>
                 </li>
@@ -58,7 +58,7 @@
                         {{--</div>--}}
                     {{--</div>--}}
                 {{--</li>--}}
-                <li class="nav-item dropdown dropdown-onhover">
+                <li class="nav-item dropdown ">
                     <a class="nav-link dropdown-toggle clear" data-toggle=
                     "dropdown" href=""><span class="avatar_container _32 inline avatar-thumbnail"><img alt="..."
                                                                       src="{{ user()->avatar }}"> <i class=
@@ -83,8 +83,8 @@
 
         <div class="collapse navbar-toggleable-sm" data-pjax="" id="navbar-4">
             <ul class="nav navbar-nav pull-left nav-active-border b-warning">
-                @if(user() && user()->subscribed('main'))
-                    <li class="nav-item dropdown dropdown-onhover">
+                @if(user() && user()->haAtLeastMerchantSubscription())
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle "
                            href="#" data-toggle="dropdown"><span
                                     class="nav-text">Merchant Services</span></a>
@@ -103,16 +103,18 @@
                             <div class="divider"></div>
                             <a href="{{ route('listings.index') }}" class="dropdown-item {{ Request::is('listings') ? 'active' : null }}"><span>Listings</span></a>
 
+                            @if(user()->isSubscribedToMerchantPlus())
                             <div class="divider"></div>
                             <a href="{{  route('shipping.create') }}"
                                class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
                             <a href="{{  route('shipping.index') }}"
                                class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
+                            @endif
                         </div>
                     </li>
                 @endif
                     <li class="nav-item">
-                        <a href="#"
+                        <a href="{{ route('profile.purchases.index') }}"
                            class="nav-link {{ Request::is('purchases*') ? 'active' : null }}"><span
                                     class="nav-text">Claims</span></a>
                     </li>

@@ -1327,66 +1327,6 @@
         ]
     },
     {
-        "name": "jeremeamia/SuperClosure",
-        "version": "2.2.0",
-        "version_normalized": "2.2.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/jeremeamia/super_closure.git",
-            "reference": "29a88be2a4846d27c1613aed0c9071dfad7b5938"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/29a88be2a4846d27c1613aed0c9071dfad7b5938",
-            "reference": "29a88be2a4846d27c1613aed0c9071dfad7b5938",
-            "shasum": ""
-        },
-        "require": {
-            "nikic/php-parser": "^1.2|^2.0",
-            "php": ">=5.4",
-            "symfony/polyfill-php56": "^1.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "^4.0|^5.0"
-        },
-        "time": "2015-12-05 17:17:57",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.2-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "SuperClosure\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Jeremy Lindblom",
-                "email": "jeremeamia@gmail.com",
-                "homepage": "https://github.com/jeremeamia",
-                "role": "Developer"
-            }
-        ],
-        "description": "Serialize Closure objects, including their context and binding",
-        "homepage": "https://github.com/jeremeamia/super_closure",
-        "keywords": [
-            "closure",
-            "function",
-            "lambda",
-            "parser",
-            "serializable",
-            "serialize",
-            "tokenizer"
-        ]
-    },
-    {
         "name": "doctrine/inflector",
         "version": "v1.1.0",
         "version_normalized": "1.1.0.0",
@@ -1646,59 +1586,6 @@
             "laravel",
             "manager"
         ]
-    },
-    {
-        "name": "algolia/algoliasearch-client-php",
-        "version": "1.11.0",
-        "version_normalized": "1.11.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/algolia/algoliasearch-client-php.git",
-            "reference": "d4f29a1fe82f3d6361a516276849bd98dd014cc0"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/d4f29a1fe82f3d6361a516276849bd98dd014cc0",
-            "reference": "d4f29a1fe82f3d6361a516276849bd98dd014cc0",
-            "shasum": ""
-        },
-        "require": {
-            "ext-mbstring": "*",
-            "php": ">=5.3"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "^4.8 || ^5.0",
-            "satooshi/php-coveralls": "0.6.*"
-        },
-        "time": "2016-10-20 11:25:18",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "AlgoliaSearch": "src/",
-                "AlgoliaSearch\\Tests": "tests/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Algolia Team",
-                "email": "contact@algolia.com"
-            },
-            {
-                "name": "Ryan T. Catlin",
-                "email": "ryan.catlin@gmail.com"
-            },
-            {
-                "name": "Jonathan H. Wage",
-                "email": "jonwage@gmail.com"
-            }
-        ],
-        "description": "Algolia Search API Client for PHP",
-        "homepage": "https://github.com/algolia/algoliasearch-client-php"
     },
     {
         "name": "vinkla/algolia",
@@ -3776,71 +3663,6 @@
         ]
     },
     {
-        "name": "namshi/jose",
-        "version": "7.2.2",
-        "version_normalized": "7.2.2.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/namshi/jose.git",
-            "reference": "c38b5e46a9e3816a4415268ede5ed08ece558ab6"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/namshi/jose/zipball/c38b5e46a9e3816a4415268ede5ed08ece558ab6",
-            "reference": "c38b5e46a9e3816a4415268ede5ed08ece558ab6",
-            "shasum": ""
-        },
-        "require": {
-            "ext-date": "*",
-            "ext-hash": "*",
-            "ext-json": "*",
-            "ext-pcre": "*",
-            "ext-spl": "*",
-            "php": ">=5.5",
-            "symfony/polyfill-php56": "^1.0"
-        },
-        "require-dev": {
-            "phpseclib/phpseclib": "^2.0",
-            "phpunit/phpunit": "^4.5|^5.0",
-            "satooshi/php-coveralls": "^1.0"
-        },
-        "suggest": {
-            "ext-openssl": "Allows to use OpenSSL as crypto engine.",
-            "phpseclib/phpseclib": "Allows to use Phpseclib as crypto engine, use version ^2.0."
-        },
-        "time": "2016-10-05 13:30:27",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Namshi\\JOSE\\": "src/Namshi/JOSE/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Alessandro Nadalin",
-                "email": "alessandro.nadalin@gmail.com"
-            },
-            {
-                "name": "Alessandro Cinelli (cirpo)",
-                "email": "alessandro.cinelli@gmail.com"
-            }
-        ],
-        "description": "JSON Object Signing and Encryption library for PHP.",
-        "keywords": [
-            "JSON Web Signature",
-            "JSON Web Token",
-            "JWS",
-            "json",
-            "jwt",
-            "token"
-        ]
-    },
-    {
         "name": "tymon/jwt-auth",
         "version": "dev-develop",
         "version_normalized": "dev-develop",
@@ -4096,71 +3918,6 @@
             "laravel",
             "testbench-core",
             "testing"
-        ]
-    },
-    {
-        "name": "alt-three/testbench",
-        "version": "v1.10.0",
-        "version_normalized": "1.10.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/AltThree/TestBench.git",
-            "reference": "90e8d749a11aa6c92731e0081979de8961d47397"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/AltThree/TestBench/zipball/90e8d749a11aa6c92731e0081979de8961d47397",
-            "reference": "90e8d749a11aa6c92731e0081979de8961d47397",
-            "shasum": ""
-        },
-        "require": {
-            "graham-campbell/testbench-core": "^1.1",
-            "php": ">=5.5.9"
-        },
-        "require-dev": {
-            "nikic/php-parser": "^2.0",
-            "phpunit/phpunit": "^4.8|^5.0"
-        },
-        "suggest": {
-            "laravel/framework": "Enables the use of every trait.",
-            "nikic/php-parser": "Enables the use of the static analyzer."
-        },
-        "time": "2016-11-09 15:31:34",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.9-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "AltThree\\TestBench\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "James Brooks",
-                "email": "james@alt-three.com"
-            },
-            {
-                "name": "Graham Campbell",
-                "email": "graham@alt-three.com"
-            },
-            {
-                "name": "Joseph Cohen",
-                "email": "joe@alt-three.com"
-            }
-        ],
-        "description": "Provides Some Testing Traits For Apps",
-        "keywords": [
-            "Alt Three",
-            "TestBench",
-            "app"
         ]
     },
     {
@@ -5255,247 +5012,6 @@
         "homepage": "https://symfony.com"
     },
     {
-        "name": "phpoffice/phpexcel",
-        "version": "1.8.1",
-        "version_normalized": "1.8.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/PHPOffice/PHPExcel.git",
-            "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
-            "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
-            "shasum": ""
-        },
-        "require": {
-            "ext-xml": "*",
-            "ext-xmlwriter": "*",
-            "php": ">=5.2.0"
-        },
-        "time": "2015-05-01 07:00:55",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "PHPExcel": "Classes/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL"
-        ],
-        "authors": [
-            {
-                "name": "Maarten Balliauw",
-                "homepage": "http://blog.maartenballiauw.be"
-            },
-            {
-                "name": "Mark Baker"
-            },
-            {
-                "name": "Franck Lefevre",
-                "homepage": "http://blog.rootslabs.net"
-            },
-            {
-                "name": "Erik Tilt"
-            }
-        ],
-        "description": "PHPExcel - OpenXML - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
-        "homepage": "http://phpexcel.codeplex.com",
-        "keywords": [
-            "OpenXML",
-            "excel",
-            "php",
-            "spreadsheet",
-            "xls",
-            "xlsx"
-        ]
-    },
-    {
-        "name": "tijsverkoyen/css-to-inline-styles",
-        "version": "2.2.0",
-        "version_normalized": "2.2.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/tijsverkoyen/CssToInlineStyles.git",
-            "reference": "ab03919dfd85a74ae0372f8baf9f3c7d5c03b04b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/ab03919dfd85a74ae0372f8baf9f3c7d5c03b04b",
-            "reference": "ab03919dfd85a74ae0372f8baf9f3c7d5c03b04b",
-            "shasum": ""
-        },
-        "require": {
-            "php": "^5.5 || ^7",
-            "symfony/css-selector": "^2.7|~3.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~4.8|5.1.*"
-        },
-        "time": "2016-09-20 12:50:39",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "TijsVerkoyen\\CssToInlineStyles\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Tijs Verkoyen",
-                "email": "css_to_inline_styles@verkoyen.eu",
-                "role": "Developer"
-            }
-        ],
-        "description": "CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline styles. This is very useful when you're sending emails.",
-        "homepage": "https://github.com/tijsverkoyen/CssToInlineStyles"
-    },
-    {
-        "name": "maatwebsite/excel",
-        "version": "2.1.7",
-        "version_normalized": "2.1.7.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-            "reference": "55d18b6a99b30b9003c2f174cc3ecd9ca79f1bf5"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/55d18b6a99b30b9003c2f174cc3ecd9ca79f1bf5",
-            "reference": "55d18b6a99b30b9003c2f174cc3ecd9ca79f1bf5",
-            "shasum": ""
-        },
-        "require": {
-            "illuminate/cache": "5.0.*|5.1.*|5.2.*|5.3.*",
-            "illuminate/config": "5.0.*|5.1.*|5.2.*|5.3.*",
-            "illuminate/filesystem": "5.0.*|5.1.*|5.2.*|5.3.*",
-            "illuminate/support": "5.0.*|5.1.*|5.2.*|5.3.*",
-            "nesbot/carbon": "~1.0",
-            "php": ">=5.5",
-            "phpoffice/phpexcel": "1.8.*",
-            "tijsverkoyen/css-to-inline-styles": "~2.0"
-        },
-        "require-dev": {
-            "mockery/mockery": "~0.9",
-            "orchestra/testbench": "3.1.*",
-            "phpseclib/phpseclib": "~1.0",
-            "phpunit/phpunit": "~4.0"
-        },
-        "suggest": {
-            "illuminate/http": "5.0.*|5.1.*|5.2.*|5.3.*",
-            "illuminate/queue": "5.0.*|5.1.*|5.2.*|5.3.*",
-            "illuminate/routing": "5.0.*|5.1.*|5.2.*|5.3.*",
-            "illuminate/view": "5.0.*|5.1.*|5.2.*|5.3.*"
-        },
-        "time": "2016-10-18 16:43:26",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/Maatwebsite/Excel"
-            ],
-            "psr-0": {
-                "Maatwebsite\\Excel\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL"
-        ],
-        "authors": [
-            {
-                "name": "Maatwebsite.nl",
-                "email": "patrick@maatwebsite.nl"
-            }
-        ],
-        "description": "An eloquent way of importing and exporting Excel and CSV in Laravel 4 with the power of PHPExcel",
-        "keywords": [
-            "PHPExcel",
-            "batch",
-            "csv",
-            "excel",
-            "export",
-            "import",
-            "laravel"
-        ]
-    },
-    {
-        "name": "yajra/laravel-datatables-oracle",
-        "version": "v6.18.1",
-        "version_normalized": "6.18.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/kabooodle/laravel-datatables.git",
-            "reference": "0b6b129fde401e15988aa82b13c0d9513faf4026"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/kabooodle/laravel-datatables/zipball/0b6b129fde401e15988aa82b13c0d9513faf4026",
-            "reference": "0b6b129fde401e15988aa82b13c0d9513faf4026",
-            "shasum": ""
-        },
-        "require": {
-            "dompdf/dompdf": "^0.6.1",
-            "illuminate/database": "~5.0",
-            "illuminate/filesystem": "~5.0",
-            "illuminate/http": "~5.0",
-            "illuminate/support": "~5.0",
-            "illuminate/view": "~5.0",
-            "laravelcollective/html": "~5.0",
-            "league/fractal": "~0.12",
-            "maatwebsite/excel": "^2.0",
-            "php": ">=5.5.9"
-        },
-        "require-dev": {
-            "mockery/mockery": "~0.9",
-            "phpunit/phpunit": "~4.0"
-        },
-        "suggest": {
-            "barryvdh/laravel-snappy": "Allows exporting of dataTable to PDF using the print view."
-        },
-        "time": "2016-09-05 01:15:20",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Yajra\\Datatables\\": "src/"
-            }
-        },
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Arjay Angeles",
-                "email": "aqangeles@gmail.com"
-            }
-        ],
-        "description": "jQuery DataTables API for Laravel 4|5",
-        "keywords": [
-            "datatable",
-            "datatables",
-            "datatables jquery plugin",
-            "laravel",
-            "laravel4",
-            "laravel5"
-        ],
-        "support": {
-            "source": "https://github.com/kabooodle/laravel-datatables/tree/v6.18.1"
-        }
-    },
-    {
         "name": "mockery/mockery",
         "version": "0.9.6",
         "version_normalized": "0.9.6.0",
@@ -6064,66 +5580,6 @@
         ]
     },
     {
-        "name": "composer/ca-bundle",
-        "version": "1.0.6",
-        "version_normalized": "1.0.6.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/composer/ca-bundle.git",
-            "reference": "a795611394b3c05164fd0eb291b492b39339cba4"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/composer/ca-bundle/zipball/a795611394b3c05164fd0eb291b492b39339cba4",
-            "reference": "a795611394b3c05164fd0eb291b492b39339cba4",
-            "shasum": ""
-        },
-        "require": {
-            "ext-openssl": "*",
-            "ext-pcre": "*",
-            "php": "^5.3.2 || ^7.0"
-        },
-        "require-dev": {
-            "psr/log": "^1.0",
-            "symfony/process": "^2.5 || ^3.0"
-        },
-        "suggest": {
-            "symfony/process": "This is necessary to reliably check whether openssl_x509_parse is vulnerable on older php versions, but can be ignored on PHP 5.5.6+"
-        },
-        "time": "2016-11-02 18:11:27",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Composer\\CaBundle\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Jordi Boggiano",
-                "email": "j.boggiano@seld.be",
-                "homepage": "http://seld.be"
-            }
-        ],
-        "description": "Lets you find a path to the system CA bundle, and includes a fallback to the Mozilla CA bundle.",
-        "keywords": [
-            "cabundle",
-            "cacert",
-            "certificate",
-            "ssl",
-            "tls"
-        ]
-    },
-    {
         "name": "bugsnag/bugsnag",
         "version": "v3.4.0",
         "version_normalized": "3.4.0.0",
@@ -6502,67 +5958,6 @@
         ]
     },
     {
-        "name": "sammyk/laravel-facebook-sdk",
-        "version": "3.4.0",
-        "version_normalized": "3.4.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/SammyK/LaravelFacebookSdk.git",
-            "reference": "8bd9d66ef57fb182f77ab41dee89b2a81ee59677"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/SammyK/LaravelFacebookSdk/zipball/8bd9d66ef57fb182f77ab41dee89b2a81ee59677",
-            "reference": "8bd9d66ef57fb182f77ab41dee89b2a81ee59677",
-            "shasum": ""
-        },
-        "require": {
-            "facebook/graph-sdk": "^5.0",
-            "illuminate/auth": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/config": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/database": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/routing": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/session": "~5.0|~5.1|~5.2|~5.3",
-            "illuminate/support": "~5.0|~5.1|~5.2|~5.3",
-            "php": ">=5.5.0"
-        },
-        "require-dev": {
-            "mockery/mockery": "~0.9",
-            "phpunit/phpunit": "~4.0",
-            "squizlabs/php_codesniffer": "~2.0"
-        },
-        "time": "2016-08-25 14:54:47",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "SammyK\\LaravelFacebookSdk\\": "src/LaravelFacebookSdk"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Sammy Kaye Powers",
-                "email": "me@sammyk.me",
-                "homepage": "http://sammyk.me",
-                "role": "Developer"
-            }
-        ],
-        "description": "Fully unit tested Facebook SDK v5 integration for Laravel & Lumen 5.x",
-        "homepage": "https://github.com/SammyK/LaravelFacebookSdk",
-        "keywords": [
-            "facebook",
-            "facebook sdk v4",
-            "facebook sdk v5",
-            "laravel",
-            "lumen",
-            "sdk"
-        ]
-    },
-    {
         "name": "mtdowling/jmespath.php",
         "version": "2.4.0",
         "version_normalized": "2.4.0.0",
@@ -6617,88 +6012,6 @@
         "keywords": [
             "json",
             "jsonpath"
-        ]
-    },
-    {
-        "name": "aws/aws-sdk-php",
-        "version": "3.20.1",
-        "version_normalized": "3.20.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/aws/aws-sdk-php.git",
-            "reference": "c83afe188b2f462840a5ab12d43f2e83f356f3f0"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c83afe188b2f462840a5ab12d43f2e83f356f3f0",
-            "reference": "c83afe188b2f462840a5ab12d43f2e83f356f3f0",
-            "shasum": ""
-        },
-        "require": {
-            "guzzlehttp/guzzle": "^5.3.1|^6.2.1",
-            "guzzlehttp/promises": "~1.0",
-            "guzzlehttp/psr7": "~1.3.1",
-            "mtdowling/jmespath.php": "~2.2",
-            "php": ">=5.5"
-        },
-        "require-dev": {
-            "andrewsville/php-token-reflection": "^1.4",
-            "aws/aws-php-sns-message-validator": "~1.0",
-            "behat/behat": "~3.0",
-            "doctrine/cache": "~1.4",
-            "ext-dom": "*",
-            "ext-json": "*",
-            "ext-openssl": "*",
-            "ext-pcre": "*",
-            "ext-simplexml": "*",
-            "ext-spl": "*",
-            "nette/neon": "^2.3",
-            "phpunit/phpunit": "~4.0|~5.0",
-            "psr/cache": "^1.0"
-        },
-        "suggest": {
-            "aws/aws-php-sns-message-validator": "To validate incoming SNS notifications",
-            "doctrine/cache": "To use the DoctrineCacheAdapter",
-            "ext-curl": "To send requests using cURL",
-            "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
-        },
-        "time": "2016-12-01 19:25:12",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "3.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Aws\\": "src/"
-            },
-            "files": [
-                "src/functions.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Amazon Web Services",
-                "homepage": "http://aws.amazon.com"
-            }
-        ],
-        "description": "AWS SDK for PHP - Use Amazon Web Services in your PHP project",
-        "homepage": "http://aws.amazon.com/sdkforphp",
-        "keywords": [
-            "amazon",
-            "aws",
-            "cloud",
-            "dynamodb",
-            "ec2",
-            "glacier",
-            "s3",
-            "sdk"
         ]
     },
     {
@@ -6958,5 +6271,843 @@
                 "email": "me@mikevanriel.com"
             }
         ]
+    },
+    {
+        "name": "sammyk/laravel-facebook-sdk",
+        "version": "3.4.1",
+        "version_normalized": "3.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/SammyK/LaravelFacebookSdk.git",
+            "reference": "8cef4beb5e2c6c928e390458264f7a7e44eff2d1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/SammyK/LaravelFacebookSdk/zipball/8cef4beb5e2c6c928e390458264f7a7e44eff2d1",
+            "reference": "8cef4beb5e2c6c928e390458264f7a7e44eff2d1",
+            "shasum": ""
+        },
+        "require": {
+            "facebook/graph-sdk": "^5.0",
+            "illuminate/auth": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/config": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/database": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/routing": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/session": "~5.0|~5.1|~5.2|~5.3",
+            "illuminate/support": "~5.0|~5.1|~5.2|~5.3",
+            "php": ">=5.5.0"
+        },
+        "require-dev": {
+            "mockery/mockery": "~0.9",
+            "phpunit/phpunit": "~4.0",
+            "squizlabs/php_codesniffer": "~2.0"
+        },
+        "time": "2016-10-12 19:16:35",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "SammyK\\LaravelFacebookSdk\\": "src/LaravelFacebookSdk"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Sammy Kaye Powers",
+                "email": "me@sammyk.me",
+                "homepage": "http://sammyk.me",
+                "role": "Developer"
+            }
+        ],
+        "description": "Fully unit tested Facebook SDK v5 integration for Laravel & Lumen 5.x",
+        "homepage": "https://github.com/SammyK/LaravelFacebookSdk",
+        "keywords": [
+            "facebook",
+            "facebook sdk v4",
+            "facebook sdk v5",
+            "laravel",
+            "lumen",
+            "sdk"
+        ]
+    },
+    {
+        "name": "fideloper/proxy",
+        "version": "3.1.0",
+        "version_normalized": "3.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/fideloper/TrustedProxy.git",
+            "reference": "ec4dd30141e2515e307aea3539ff242e85c3f120"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/fideloper/TrustedProxy/zipball/ec4dd30141e2515e307aea3539ff242e85c3f120",
+            "reference": "ec4dd30141e2515e307aea3539ff242e85c3f120",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/contracts": "~5.0",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "illuminate/http": "~5.0",
+            "mockery/mockery": "~0.9.3"
+        },
+        "time": "2015-12-24 15:02:55",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.1-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Fideloper\\Proxy\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Chris Fidao",
+                "email": "fideloper@gmail.com"
+            }
+        ],
+        "description": "Set trusted proxies for Laravel",
+        "keywords": [
+            "load balancing",
+            "proxy",
+            "trusted proxy"
+        ]
+    },
+    {
+        "name": "namshi/jose",
+        "version": "7.2.3",
+        "version_normalized": "7.2.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/namshi/jose.git",
+            "reference": "89a24d7eb3040e285dd5925fcad992378b82bcff"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/namshi/jose/zipball/89a24d7eb3040e285dd5925fcad992378b82bcff",
+            "reference": "89a24d7eb3040e285dd5925fcad992378b82bcff",
+            "shasum": ""
+        },
+        "require": {
+            "ext-date": "*",
+            "ext-hash": "*",
+            "ext-json": "*",
+            "ext-pcre": "*",
+            "ext-spl": "*",
+            "php": ">=5.5",
+            "symfony/polyfill-php56": "^1.0"
+        },
+        "require-dev": {
+            "phpseclib/phpseclib": "^2.0",
+            "phpunit/phpunit": "^4.5|^5.0",
+            "satooshi/php-coveralls": "^1.0"
+        },
+        "suggest": {
+            "ext-openssl": "Allows to use OpenSSL as crypto engine.",
+            "phpseclib/phpseclib": "Allows to use Phpseclib as crypto engine, use version ^2.0."
+        },
+        "time": "2016-12-05 07:27:31",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Namshi\\JOSE\\": "src/Namshi/JOSE/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Alessandro Nadalin",
+                "email": "alessandro.nadalin@gmail.com"
+            },
+            {
+                "name": "Alessandro Cinelli (cirpo)",
+                "email": "alessandro.cinelli@gmail.com"
+            }
+        ],
+        "description": "JSON Object Signing and Encryption library for PHP.",
+        "keywords": [
+            "JSON Web Signature",
+            "JSON Web Token",
+            "JWS",
+            "json",
+            "jwt",
+            "token"
+        ]
+    },
+    {
+        "name": "iron-io/iron_core",
+        "version": "1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/iron-io/iron_core_php.git",
+            "reference": "07f400f36eb4a29e8759abe1c81922a019f801dc"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/iron-io/iron_core_php/zipball/07f400f36eb4a29e8759abe1c81922a019f801dc",
+            "reference": "07f400f36eb4a29e8759abe1c81922a019f801dc",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.0"
+        },
+        "time": "2016-02-02 11:49:32",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "IronCore\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Alexander S",
+                "email": "alexander@iron.io",
+                "homepage": "http://iron.io",
+                "role": "Developer"
+            },
+            {
+                "name": "Iron.io",
+                "email": "support@iron.io",
+                "homepage": "http://iron.io",
+                "role": "Developer"
+            },
+            {
+                "name": "Tino Ehrich",
+                "email": "tino@bigpun.me"
+            }
+        ],
+        "description": "Collection of common functions for all iron.io client libraries",
+        "homepage": "http://github.com/iron-io/iron_core_php",
+        "keywords": [
+            "iron",
+            "iron_core"
+        ]
+    },
+    {
+        "name": "iron-io/iron_mq",
+        "version": "4.0.1",
+        "version_normalized": "4.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/iron-io/iron_mq_php.git",
+            "reference": "3302ad9be1a532ed2e413a082e251ed128816f37"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/iron-io/iron_mq_php/zipball/3302ad9be1a532ed2e413a082e251ed128816f37",
+            "reference": "3302ad9be1a532ed2e413a082e251ed128816f37",
+            "shasum": ""
+        },
+        "require": {
+            "iron-io/iron_core": "1.*",
+            "php": ">=5.2.0"
+        },
+        "require-dev": {
+            "mikey179/vfsstream": "~1.5",
+            "phpmd/phpmd": "~2.2",
+            "phpunit/phpunit": "4.6.*",
+            "squizlabs/php_codesniffer": "~2.3"
+        },
+        "time": "2015-07-23 21:55:36",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "IronMQ\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Alexander S",
+                "email": "alexander@iron.io",
+                "homepage": "http://iron.io",
+                "role": "Developer"
+            }
+        ],
+        "description": "Client binding for IronMQ (hosted message queue)",
+        "homepage": "http://github.com/iron-io/iron_mq_php",
+        "keywords": [
+            "MQ",
+            "iron",
+            "iron_mq"
+        ]
+    },
+    {
+        "name": "jeremeamia/SuperClosure",
+        "version": "2.3.0",
+        "version_normalized": "2.3.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/jeremeamia/super_closure.git",
+            "reference": "443c3df3207f176a1b41576ee2a66968a507b3db"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/443c3df3207f176a1b41576ee2a66968a507b3db",
+            "reference": "443c3df3207f176a1b41576ee2a66968a507b3db",
+            "shasum": ""
+        },
+        "require": {
+            "nikic/php-parser": "^1.2|^2.0|^3.0",
+            "php": ">=5.4",
+            "symfony/polyfill-php56": "^1.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.0|^5.0"
+        },
+        "time": "2016-12-07 09:37:55",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.3-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "SuperClosure\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jeremy Lindblom",
+                "email": "jeremeamia@gmail.com",
+                "homepage": "https://github.com/jeremeamia",
+                "role": "Developer"
+            }
+        ],
+        "description": "Serialize Closure objects, including their context and binding",
+        "homepage": "https://github.com/jeremeamia/super_closure",
+        "keywords": [
+            "closure",
+            "function",
+            "lambda",
+            "parser",
+            "serializable",
+            "serialize",
+            "tokenizer"
+        ]
+    },
+    {
+        "name": "alt-three/testbench",
+        "version": "v1.11.1",
+        "version_normalized": "1.11.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/AltThree/TestBench.git",
+            "reference": "bc1ece1aab1589c8b832e6d112f32b757739dd46"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/AltThree/TestBench/zipball/bc1ece1aab1589c8b832e6d112f32b757739dd46",
+            "reference": "bc1ece1aab1589c8b832e6d112f32b757739dd46",
+            "shasum": ""
+        },
+        "require": {
+            "graham-campbell/testbench-core": "^1.1",
+            "php": ">=5.5.9"
+        },
+        "require-dev": {
+            "nikic/php-parser": "^2.0|^3.0",
+            "phpunit/phpunit": "^4.8|^5.0"
+        },
+        "suggest": {
+            "laravel/framework": "Enables the use of every trait.",
+            "nikic/php-parser": "Enables the use of the static analyzer."
+        },
+        "time": "2016-12-07 22:41:29",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.11-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "AltThree\\TestBench\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "James Brooks",
+                "email": "james@alt-three.com"
+            },
+            {
+                "name": "Graham Campbell",
+                "email": "graham@alt-three.com"
+            },
+            {
+                "name": "Joseph Cohen",
+                "email": "joe@alt-three.com"
+            }
+        ],
+        "description": "Provides Some Testing Traits For Apps",
+        "keywords": [
+            "Alt Three",
+            "TestBench",
+            "app"
+        ]
+    },
+    {
+        "name": "algolia/algoliasearch-client-php",
+        "version": "1.12.1",
+        "version_normalized": "1.12.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/algolia/algoliasearch-client-php.git",
+            "reference": "01dd56a09db7fe6a5609fadbd7ad69d41c131375"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/01dd56a09db7fe6a5609fadbd7ad69d41c131375",
+            "reference": "01dd56a09db7fe6a5609fadbd7ad69d41c131375",
+            "shasum": ""
+        },
+        "require": {
+            "ext-mbstring": "*",
+            "php": ">=5.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.8 || ^5.0",
+            "satooshi/php-coveralls": "0.6.*"
+        },
+        "time": "2016-12-09 13:30:25",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "AlgoliaSearch": "src/",
+                "AlgoliaSearch\\Tests": "tests/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Algolia Team",
+                "email": "contact@algolia.com"
+            },
+            {
+                "name": "Ryan T. Catlin",
+                "email": "ryan.catlin@gmail.com"
+            },
+            {
+                "name": "Jonathan H. Wage",
+                "email": "jonwage@gmail.com"
+            }
+        ],
+        "description": "Algolia Search API Client for PHP",
+        "homepage": "https://github.com/algolia/algoliasearch-client-php"
+    },
+    {
+        "name": "tijsverkoyen/css-to-inline-styles",
+        "version": "2.2.0",
+        "version_normalized": "2.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/tijsverkoyen/CssToInlineStyles.git",
+            "reference": "ab03919dfd85a74ae0372f8baf9f3c7d5c03b04b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/ab03919dfd85a74ae0372f8baf9f3c7d5c03b04b",
+            "reference": "ab03919dfd85a74ae0372f8baf9f3c7d5c03b04b",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^5.5 || ^7",
+            "symfony/css-selector": "^2.7|~3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.8|5.1.*"
+        },
+        "time": "2016-09-20 12:50:39",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "TijsVerkoyen\\CssToInlineStyles\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Tijs Verkoyen",
+                "email": "css_to_inline_styles@verkoyen.eu",
+                "role": "Developer"
+            }
+        ],
+        "description": "CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline styles. This is very useful when you're sending emails.",
+        "homepage": "https://github.com/tijsverkoyen/CssToInlineStyles"
+    },
+    {
+        "name": "phpoffice/phpexcel",
+        "version": "1.8.1",
+        "version_normalized": "1.8.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/PHPOffice/PHPExcel.git",
+            "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
+            "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
+            "shasum": ""
+        },
+        "require": {
+            "ext-xml": "*",
+            "ext-xmlwriter": "*",
+            "php": ">=5.2.0"
+        },
+        "time": "2015-05-01 07:00:55",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "PHPExcel": "Classes/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL"
+        ],
+        "authors": [
+            {
+                "name": "Maarten Balliauw",
+                "homepage": "http://blog.maartenballiauw.be"
+            },
+            {
+                "name": "Mark Baker"
+            },
+            {
+                "name": "Franck Lefevre",
+                "homepage": "http://blog.rootslabs.net"
+            },
+            {
+                "name": "Erik Tilt"
+            }
+        ],
+        "description": "PHPExcel - OpenXML - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
+        "homepage": "http://phpexcel.codeplex.com",
+        "keywords": [
+            "OpenXML",
+            "excel",
+            "php",
+            "spreadsheet",
+            "xls",
+            "xlsx"
+        ]
+    },
+    {
+        "name": "maatwebsite/excel",
+        "version": "2.1.8",
+        "version_normalized": "2.1.8.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
+            "reference": "d9c398f7eba0ac9caf9c104dd0d55bd6a5ff231e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/d9c398f7eba0ac9caf9c104dd0d55bd6a5ff231e",
+            "reference": "d9c398f7eba0ac9caf9c104dd0d55bd6a5ff231e",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/cache": "5.0.*|5.1.*|5.2.*|5.3.*",
+            "illuminate/config": "5.0.*|5.1.*|5.2.*|5.3.*",
+            "illuminate/filesystem": "5.0.*|5.1.*|5.2.*|5.3.*",
+            "illuminate/support": "5.0.*|5.1.*|5.2.*|5.3.*",
+            "nesbot/carbon": "~1.0",
+            "php": ">=5.5",
+            "phpoffice/phpexcel": "1.8.*",
+            "tijsverkoyen/css-to-inline-styles": "~2.0"
+        },
+        "require-dev": {
+            "mockery/mockery": "~0.9",
+            "orchestra/testbench": "3.1.*",
+            "phpseclib/phpseclib": "~1.0",
+            "phpunit/phpunit": "~4.0"
+        },
+        "suggest": {
+            "illuminate/http": "5.0.*|5.1.*|5.2.*|5.3.*",
+            "illuminate/queue": "5.0.*|5.1.*|5.2.*|5.3.*",
+            "illuminate/routing": "5.0.*|5.1.*|5.2.*|5.3.*",
+            "illuminate/view": "5.0.*|5.1.*|5.2.*|5.3.*"
+        },
+        "time": "2016-12-09 19:11:09",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/Maatwebsite/Excel"
+            ],
+            "psr-0": {
+                "Maatwebsite\\Excel\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL"
+        ],
+        "authors": [
+            {
+                "name": "Maatwebsite.nl",
+                "email": "patrick@maatwebsite.nl"
+            }
+        ],
+        "description": "An eloquent way of importing and exporting Excel and CSV in Laravel 4 with the power of PHPExcel",
+        "keywords": [
+            "PHPExcel",
+            "batch",
+            "csv",
+            "excel",
+            "export",
+            "import",
+            "laravel"
+        ]
+    },
+    {
+        "name": "composer/ca-bundle",
+        "version": "1.0.6",
+        "version_normalized": "1.0.6.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/composer/ca-bundle.git",
+            "reference": "a795611394b3c05164fd0eb291b492b39339cba4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/composer/ca-bundle/zipball/a795611394b3c05164fd0eb291b492b39339cba4",
+            "reference": "a795611394b3c05164fd0eb291b492b39339cba4",
+            "shasum": ""
+        },
+        "require": {
+            "ext-openssl": "*",
+            "ext-pcre": "*",
+            "php": "^5.3.2 || ^7.0"
+        },
+        "require-dev": {
+            "psr/log": "^1.0",
+            "symfony/process": "^2.5 || ^3.0"
+        },
+        "suggest": {
+            "symfony/process": "This is necessary to reliably check whether openssl_x509_parse is vulnerable on older php versions, but can be ignored on PHP 5.5.6+"
+        },
+        "time": "2016-11-02 18:11:27",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Composer\\CaBundle\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jordi Boggiano",
+                "email": "j.boggiano@seld.be",
+                "homepage": "http://seld.be"
+            }
+        ],
+        "description": "Lets you find a path to the system CA bundle, and includes a fallback to the Mozilla CA bundle.",
+        "keywords": [
+            "cabundle",
+            "cacert",
+            "certificate",
+            "ssl",
+            "tls"
+        ]
+    },
+    {
+        "name": "aws/aws-sdk-php",
+        "version": "3.20.5",
+        "version_normalized": "3.20.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/aws/aws-sdk-php.git",
+            "reference": "5a05ae6851405587f0bdeedb67abfe997a079ac0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5a05ae6851405587f0bdeedb67abfe997a079ac0",
+            "reference": "5a05ae6851405587f0bdeedb67abfe997a079ac0",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "^5.3.1|^6.2.1",
+            "guzzlehttp/promises": "~1.0",
+            "guzzlehttp/psr7": "~1.3.1",
+            "mtdowling/jmespath.php": "~2.2",
+            "php": ">=5.5"
+        },
+        "require-dev": {
+            "andrewsville/php-token-reflection": "^1.4",
+            "aws/aws-php-sns-message-validator": "~1.0",
+            "behat/behat": "~3.0",
+            "doctrine/cache": "~1.4",
+            "ext-dom": "*",
+            "ext-json": "*",
+            "ext-openssl": "*",
+            "ext-pcre": "*",
+            "ext-simplexml": "*",
+            "ext-spl": "*",
+            "nette/neon": "^2.3",
+            "phpunit/phpunit": "~4.0|~5.0",
+            "psr/cache": "^1.0"
+        },
+        "suggest": {
+            "aws/aws-php-sns-message-validator": "To validate incoming SNS notifications",
+            "doctrine/cache": "To use the DoctrineCacheAdapter",
+            "ext-curl": "To send requests using cURL",
+            "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
+        },
+        "time": "2016-12-12 23:02:57",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Aws\\": "src/"
+            },
+            "files": [
+                "src/functions.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Amazon Web Services",
+                "homepage": "http://aws.amazon.com"
+            }
+        ],
+        "description": "AWS SDK for PHP - Use Amazon Web Services in your PHP project",
+        "homepage": "http://aws.amazon.com/sdkforphp",
+        "keywords": [
+            "amazon",
+            "aws",
+            "cloud",
+            "dynamodb",
+            "ec2",
+            "glacier",
+            "s3",
+            "sdk"
+        ]
+    },
+    {
+        "name": "laravelcollective/iron-queue",
+        "version": "v5.2.6",
+        "version_normalized": "5.2.6.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/kabooodle/iron-queue.git",
+            "reference": "0ec42a225d35a2a83f3377af44b8d7e213e3cc35"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/kabooodle/iron-queue/zipball/0ec42a225d35a2a83f3377af44b8d7e213e3cc35",
+            "reference": "0ec42a225d35a2a83f3377af44b8d7e213e3cc35",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/container": "5.2.*",
+            "illuminate/contracts": "5.2.*",
+            "illuminate/encryption": "5.2.*",
+            "illuminate/http": "5.2.*",
+            "illuminate/queue": "5.2.*",
+            "illuminate/support": "5.2.*",
+            "iron-io/iron_mq": "~4.0",
+            "jeremeamia/superclosure": "~2.0",
+            "php": ">=5.5.9"
+        },
+        "require-dev": {
+            "mockery/mockery": "~0.9",
+            "phpunit/phpunit": "~4.0"
+        },
+        "time": "2016-12-12 23:33:54",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Collective\\IronQueue\\": "src/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Taylor Otwell",
+                "email": "taylorotwell@gmail.com"
+            }
+        ],
+        "description": "IronMQ support for the Laravel queue.",
+        "homepage": "http://laravelcollective.com",
+        "support": {
+            "issues": "https://github.com/laravelcollective/iron-queue/issues",
+            "source": "https://github.com/laravelcollective/iron-queue"
+        }
     }
 ]

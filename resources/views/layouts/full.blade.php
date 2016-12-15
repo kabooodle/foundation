@@ -1,7 +1,7 @@
 <!DOCTYPE html>
     <html lang="en">
     @include('layouts.header._htmlheader')
-    <body class=" @yield('body-class', null)">
+    <body class=" @yield('body-class', null)  {{ user() && user()->onGenericTrial() ? ' on-trial ' : null }} ">
     <div id="fb-root"></div>
     <script>(function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
@@ -24,6 +24,12 @@
         <div class="app" id="{{ $contentId or 'kabooodle_app' }}">
             <div id="content" class="app-content box-shadow-z0" role="main">
                 @include('layouts.header._header')
+
+                @if(user() && user()->onGenericTrial())
+                    <div class="notificationbar b-b">
+                        <p><span class="label">Notice</span> Trial ends {{ user()->genericTrialEndsInDays() }}. <a href="{{ route('profile.subscription.index') }}">Subscribe now. <i class="fa fa-angle-right" aria-hidden="true"></i></a></p>
+                    </div>
+                @endif
 
                 @hasSection('body-menu')
                 @include('layouts.partials._bodymenu')

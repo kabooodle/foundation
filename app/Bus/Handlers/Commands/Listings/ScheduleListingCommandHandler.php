@@ -8,10 +8,12 @@ namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use DB;
 use Carbon\Carbon;
-use Kabooodle\Bus\Events\Listings\ListingScheduledEvent;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
+use Facebook\Exceptions\FacebookAuthenticationException;
+use Kabooodle\Bus\Events\Listings\ListingScheduledEvent;
+use Kabooodle\Services\Social\Facebook\FacebookSdkService;
 use Kabooodle\Bus\Commands\Listings\ScheduleListingCommand;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 
@@ -41,8 +43,8 @@ class ScheduleListingCommandHandler
 
     /**
      * @param ScheduleListingCommand $command
-     *
-     * @return Listings
+     * @throws FacebookAuthenticationException
+     * @return mixed
      */
     public function handle(ScheduleListingCommand $command)
     {
@@ -56,6 +58,8 @@ class ScheduleListingCommandHandler
         $scheduledFor = $this->normalizeScheduledDateTime($command->getScheduledFor());
 
         if ($command->getFacebookGroupId()) {
+            $this->assertFacebookCredentialsAreValid();
+
             $this->isFacebookListing = true;
         }
 
@@ -67,7 +71,6 @@ class ScheduleListingCommandHandler
 
             // We have some special logic for facebook listings
             if ($this->isFacebookListing) {
-
                 // Build an array of InventoryItems containing facebook listings associated
                 // to the parent listing just created.
                 $facebookInventoryItems = $this->buildFacebookListingItems($listing, $command);
@@ -106,6 +109,11 @@ class ScheduleListingCommandHandler
         $listing->owner_id = $command->getActor()->id;
         $listing->scheduled_for = $scheduledFor;
         $listing->include_link_in_descr = $command->includeDescrText();
+
+        if ($command->includeDescrText() && $command->getAvailableAt()) {
+            $listing->claimable_at = Carbon::createFromTimestamp(strtotime($command->getAvailableAt()));
+        }
+
         $listing->status = Listings::STATUS_SCHEDULED;
         $listing->status_updated_at = $this->now;
 
@@ -317,6 +325,20 @@ class ScheduleListingCommandHandler
 
         if ($hourlyQuoteExceeded) {
             throw new ListingConflictsWithExistingListingException;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     * @throws FacebookAuthenticationException
+     */
+    public function assertFacebookCredentialsAreValid()
+    {
+        $fb = app(FacebookSdkService::class);
+        if (! $fb->testAccessToken()){
+            throw new FacebookAuthenticationException;
         }
 
         return true;

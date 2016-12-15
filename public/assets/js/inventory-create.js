@@ -6534,7 +6534,6 @@ exports.default = {
                 el.s3uploader({
                     save_file_model: false,
                     multiple: that.has_multiple,
-                    s3_bucket: 'kabooodle-storage',
                     s3_key_url: that.s3_key_url,
                     s3_key_payload: {
                         user: that.user_hash
@@ -6899,7 +6898,7 @@ if (module.hot) {(function () {  module.hot.accept()
         initFileUpload: function initFileUpload() {
             var that = this;
             var fileUpload = {
-                url: "https://" + that.options.s3_bucket + ".s3.amazonaws.com",
+                url: "",
                 dataType: "xml",
                 type: "POST",
                 dropZone: that.options.drop_zone,
@@ -6923,6 +6922,8 @@ if (module.hot) {(function () {  module.hot.accept()
                         success: function success(response) {
                             $(document).trigger('s3uploader.s3_key_retrieved', response);
                             that.log('api.files.s3key: done', response);
+                            console.log(response);
+                            data.url = response.data.url;
                             data.formData = {
                                 AWSAccessKeyId: response.data.AWSAccessKeyId,
                                 acl: response.data.acl,

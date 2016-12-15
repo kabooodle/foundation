@@ -30,6 +30,11 @@ final class ScheduleListingCommand
     public $scheduledFor;
 
     /**
+     * @var null
+     */
+    public $availableAt;
+
+    /**
      * @var int
      */
     public $flashSaleId;
@@ -53,6 +58,7 @@ final class ScheduleListingCommand
      * @param User     $actor
      * @param bool     $includeDescrText
      * @param null     $scheduledFor
+     * @param null     $availableAt
      * @param int|null $flashSaleId
      * @param array    $facebookAlbums
      * @param int|null $facebookGroupId
@@ -62,6 +68,7 @@ final class ScheduleListingCommand
         User $actor,
         $includeDescrText = true,
         $scheduledFor = null,
+        $availableAt = null,
         int $flashSaleId = null,
         array $facebookAlbums = [],
         int $facebookGroupId = null,
@@ -71,6 +78,7 @@ final class ScheduleListingCommand
         $this->actor = $actor;
         $this->includeDescrText = $includeDescrText;
         $this->scheduledFor = $scheduledFor;
+        $this->availableAt = $availableAt;
         $this->flashSaleId = $flashSaleId;
         $this->facebookAlbums = $facebookAlbums;
         $this->facebookGroupId = $facebookGroupId;
@@ -107,6 +115,14 @@ final class ScheduleListingCommand
     public function getScheduledFor()
     {
         return $this->scheduledFor;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAvailableAt()
+    {
+        return $this->availableAt;
     }
 
     /**

@@ -109,7 +109,14 @@
             <div class="navbar-side-inner p-a" data-scrollable="scrollable">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a data-toggle="tab" class="nav-link active" href="#post_flashsales">
+                        <a data-toggle="tab" class="nav-link active" href="#post_facebook">Facebook
+                            {{--<small class="block text-sm text-center text-muted">--}}
+                            {{--(@{{ get_selected_facebook_sales.length }} items assigned)--}}
+                            {{--</small>--}}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-toggle="tab" class="nav-link" href="#post_flashsales">
                             Flash Sales
                             {{--<small class="block text-sm text-center text-muted">--}}
                             {{--(@{{ get_selected_flashsales_sales.length }} selected)--}}
@@ -117,17 +124,11 @@
                             {{--</small>--}}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a data-toggle="tab" class="nav-link" href="#post_facebook">Facebook
-                            {{--<small class="block text-sm text-center text-muted">--}}
-                            {{--(@{{ get_selected_facebook_sales.length }} items assigned)--}}
-                            {{--</small>--}}
-                        </a>
-                    </li>
+
                 </ul>
                 <div class="box">
                     <div class="tab-content p-a">
-                        <div class="tab-pane active" id="post_flashsales">
+                        <div class="tab-pane" id="post_flashsales">
                             <div v-if="postables.flashsales && postables.flashsales.length > 0"
                                  v-for="flashsale in postables.flashsales">
                                 <div class="radio">
@@ -142,7 +143,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane" id="post_facebook">
+                        <div class="tab-pane active" id="post_facebook">
                             <div class="form-group">
                                 <label>Select Group</label>
                                 <select
@@ -160,17 +161,16 @@
                                 </select>
                             </div>
                             <template v-if="selected.fb_group">
-                                <template v-if="postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums.length > 0">
+                                <div v-if="postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums.length > 0">
                                     {{--<template v-if="actions.fb_advanced_menu">--}}
-                                    <template>
-                                        <hr>
+                                    <div class="p-a-md dker box m-t-0">
                                         <div class="form-group">
-                                            <label>List on a specific date and time</label>
+                                            <label>Date items are to be listed</label>
                                             <div class="input-group">
-                                                {{ Form::text('options[ends_at]', null, ['class' => 'form-control', 'id' => 'datetimepicker2']) }}
+                                                {{ Form::text('options[ends_at]', null, ['class' => 'form-control needs-datetimepicker', 'id' => 'options_ends_at']) }}
                                                 <span class="input-group-btn">
                                                 <button
-                                                    @click="clearDateTimeInput"
+                                                    @click="clearDateTimeInput('options_ends_at')"
                                                     class="btn white"
                                                     type="button"
                                                     style="padding-bottom: .3rem
@@ -178,17 +178,35 @@
                                             </span>
                                             </div>
                                         </div>
+                                        <hr>
                                         <div class="checkbox">
                                             <label>
                                                 <input
+                                                        @change="toggleIncludeLinkOption"
+                                                        id="options_include_text"
                                                         checked
                                                         name="options[include_text]"
                                                         value="1"
                                                         type="checkbox"> Include Link in description
                                             </label>
                                         </div>
-                                        <hr>
-                                    </template>
+
+                                        <div class="form-group m-b-0" id="wrapper-if-include-link">
+                                            <hr>
+                                            <label>Earliest date items can be claimed</label>
+                                            <div class="input-group">
+                                                {{ Form::text('options[available_at]', null, ['class' => 'form-control needs-datetimepicker', 'id' => 'options_available_at']) }}
+                                                <span class="input-group-btn">
+                                                <button
+                                                    @click="clearDateTimeInput('options_available_at')"
+                                                    class="btn white"
+                                                    type="button"
+                                                    style="padding-bottom: .3rem
+                                                    ;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                                            </span>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <label>Select Album</label>
                                     <div class="radio"
@@ -262,7 +280,7 @@
     $(function () {
         function registerDateTimepicker()
         {
-            $('#datetimepicker2').datetimepicker({
+            $('input.needs-datetimepicker').datetimepicker({
                 format: "MM/DD/YYYY hh:mmA",
                 minDate: moment().add('1', 'hour'),
                 icons: {

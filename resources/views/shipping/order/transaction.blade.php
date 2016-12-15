@@ -23,13 +23,13 @@
                     @include('shipping.order.partials._shipping_status_item', [
                         '_itemStatus' => $transaction->isLabelPrinted() ? 'created' : null,
                         '_itemTimestamp' => $transaction->isLabelPrinted() ? $transaction->getShippingStatusHuman() : 'Pending',
-                        '_itemName'=>'Label Printed'
+                        '_itemName'=>'Label Created'
                     ])
 
                     @include('shipping.order.partials._shipping_status_item', [
                         '_itemStatus' => null,
                         '_itemTimestamp' => null,
-                        '_itemName'=>'Received'
+                        '_itemName'=>'With Carrier'
                     ])
 
                     @include('shipping.order.partials._shipping_status_item', [

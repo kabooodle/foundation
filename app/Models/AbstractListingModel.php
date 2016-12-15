@@ -7,6 +7,7 @@
 namespace Kabooodle\Models;
 
 use DB;
+use Carbon\Carbon;
 
 /**
  * Class AbstractListingModel
@@ -18,12 +19,15 @@ abstract class AbstractListingModel extends BaseEloquentModel
 
     const STATUS_SCHEDULED = 'scheduled';
     const STATUS_QUEUED_LIST = 'queued';
+    const STATUS_PROCESSING = 'processing';
     const STATUS_PARTIAL = 'partial';
     const STATUS_SUCCESS = 'success';
     const STATUS_COMPLETED = 'completed';
     const STATUS_DELETED = 'deleted';
     const STATUS_QUEUED_DELETE = 'queued_delete';
     const STATUS_IGNORED_DUPLICATE = 'ignored_duplicate';
+    const STATUS_FAILED = 'failed';
+    const STATUS_THROTTLED = 'throttled';
 
     /**
      * @param $scope
@@ -119,6 +123,8 @@ abstract class AbstractListingModel extends BaseEloquentModel
     {
         return ! in_array($status, [
             static::STATUS_QUEUED_LIST,
+            static::STATUS_COMPLETED,
+            static::STATUS_SUCCESS,
             static::STATUS_QUEUED_DELETE,
             static::STATUS_DELETED
         ]);
@@ -155,5 +161,55 @@ abstract class AbstractListingModel extends BaseEloquentModel
         $countResults = count($results);
 
         return ($countResults + $incomingItemsCount) > 600;
+    }
+
+
+    /**
+     * @param Carbon $startTime
+     * @param Carbon $endTime
+     *
+     * @return mixed
+     */
+    public static function getScheduledListings(Carbon $startTime, Carbon $endTime)
+    {
+        return Listings::noEagerLoads()
+            ->facebook()
+            ->scheduledFor('>=', $startTime->format('Y-m-d H:i:s'))
+            ->scheduledFor('<=', $endTime->format('Y-m-d H:i:s'))
+            ->statusScheduled()
+            ->randomize()
+            ->get();
+    }
+
+    /**
+     * @param array $listingIds
+     * @param Carbon $timestamp
+     * @param string $status
+     * @return bool|int
+     */
+    public static function updateListingsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
+    {
+        return Listings::whereIn('id', $listingIds)
+            ->noEagerLoads()
+            ->update([
+                'status' => $status,
+                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
+            ]);
+    }
+
+    /**
+     * @param array $listingIds
+     * @param Carbon $timestamp
+     * @param string $status
+     * @return bool|int
+     */
+    public static function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
+    {
+        return ListingItems::whereIn('id', $listingIds)
+            ->noEagerLoads()
+            ->update([
+                'status' => $status,
+                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
+            ]);
     }
 }

@@ -66,5 +66,5 @@
 </div>
 
 @push('footer-scripts')
-<script src="/assets/js/settings.js"></script>
+<script src="{{ staticAsset('/assets/js/settings.js') }}"></script>
 @endpush

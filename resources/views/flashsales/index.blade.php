@@ -62,7 +62,7 @@
                     <div class="white box padding">
                         <div class="row">
                             <div class="col-md-7">
-                                <img src="/assets/images/online-shop.jpg" class="" width="500">
+                                <img src="{{ staticAsset('/assets/images/online-shop.jpg') }}" class="" width="500">
                             </div>
                             <div class="col-md-5">
                                 <div class="center-block text-center">

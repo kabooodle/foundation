@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Foundation\Providers;
 
+use URL;
 use AltThree\Bus\Dispatcher;
 use Illuminate\Pagination\Paginator;
 use Kabooodle\Services\EventDispatcher;
@@ -25,6 +26,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Dispatcher $dispatcher)
     {
+        if ($this->app->environment() == 'production') {
+            URL::forceSchema('https');
+
+            // Added this because named routes, specifically API named routes, don't generate secure
+            // routes for some reason.
+            // TODO: Fix this.
+//            $this->app['request']->server->set('HTTPS', true);
+        }
+
         $dispatcher->mapUsing(function ($command) {
             return Dispatcher::simpleMapping($command, 'Kabooodle\Bus', 'Kabooodle\Bus\Handlers');
         });
@@ -50,7 +60,6 @@ class AppServiceProvider extends ServiceProvider
             return $this->app['messages'];
         });
     }
-
 
     public function registerPaginationPresenter()
     {

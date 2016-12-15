@@ -52,5 +52,5 @@
 
 
 @push('footer-scripts')
-<script src="/assets/js/claims-index.js"></script>
+<script src="{{  staticAsset("/assets/js/claims-index.js") }}"></script>
 @endpush

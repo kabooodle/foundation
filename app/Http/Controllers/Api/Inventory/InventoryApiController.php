@@ -6,18 +6,20 @@
 
 namespace Kabooodle\Http\Controllers\Api\Inventory;
 
+
 use Binput;
 use Exception;
 use Illuminate\Http\Request;
-use Kabooodle\Models\Listings;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
+use Facebook\Exceptions\FacebookAuthenticationException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Listings\ScheduleListingCommand;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
+use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
 
 /**
  * Class InventoryApiController
@@ -91,11 +93,11 @@ class InventoryApiController extends AbstractApiController
             $this->dispatchNow(new UpdateInventoryItemCommand(
                 user(),
                 $item,
-                Binput::get('style_id'),
-                Binput::get('size_id'),
-                Binput::get('price_usd'),
-                Binput::get('wholesale_price_usd', 0),
-                Binput::get('initial_qty'),
+                (int) Binput::get('style_id'),
+                (int) Binput::get('size_id'),
+                (float) Binput::get('price_usd'),
+                (float) Binput::get('wholesale_price_usd', 0),
+                (int) Binput::get('initial_qty'),
                 Binput::get('images'),
                 Binput::get('description'),
                 Binput::get('categories'),
@@ -133,10 +135,11 @@ class InventoryApiController extends AbstractApiController
         $options = (array) Binput::get('options', []);
         $endsAt = array_get($options, 'ends_at', null);
         $includeText = (bool) array_get($options, 'include_text', false);
+        $claimableAt = array_get($options, 'available_at', null);
 
         try {
             // You must have either a flashsaleid or facebookalbum
-            if (! $flashsaleId && count($facebookAlbums)== 0) {
+            if (! $flashsaleId && count($facebookAlbums) == 0) {
                 throw new MissingMandatoryParametersException;
             }
 
@@ -144,10 +147,15 @@ class InventoryApiController extends AbstractApiController
                 throw new MissingMandatoryParametersException;
             }
 
+            if ($claimableAt && $includeText && (strtotime($claimableAt) < strtotime($endsAt))) {
+                throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
+            }
+
             $command = new ScheduleListingCommand(
                 $this->getUser(),
                 $includeText,
                 $endsAt,
+                $claimableAt,
                 $flashsaleId,
                 $facebookAlbums,
                 $facebookGroupId,
@@ -157,6 +165,9 @@ class InventoryApiController extends AbstractApiController
             $this->dispatchNow($command);
 
             return $this->setData(['msg' =>'Items scheduled successfully for queuing.'])->respond();
+        } catch (FacebookAuthenticationException $e) {
+            $msg = 'Your facebook credentials are invalid. Please re-authorize '.env('APP_NAME').' for your facebook account, via our settings page.';
+            return $this->setData(['msg' => $msg])->$this->setStatusCode(500)->respond();
         }catch (MissingMandatoryParametersException $e) {
             return $this->setStatusCode(500)->setData(['msg' => 'You must select as least 1 item for listing.'])->respond();
         } catch (ListingConflictsWithExistingListingException $e) {

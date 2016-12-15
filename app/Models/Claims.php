@@ -7,6 +7,7 @@
 namespace Kabooodle\Models;
 
 use Ramsey\Uuid\Uuid;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
@@ -23,6 +24,14 @@ use Kabooodle\Models\Contracts\NotificationableInterface;
 class Claims extends BaseEloquentModel implements NotificationableInterface, Revisionable
 {
     use ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
+
+    /**
+     * @var array
+     */
+    protected $appends = [
+        'claim_status',
+        'status'
+    ];
 
     /**
      * @var array
@@ -182,7 +191,31 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     public function isRejected()
     {
-        return (bool) $this->rejected_on;
+        return (bool)$this->rejected_on;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClaimStatusAttribute()
+    {
+        if($this->wasAccepted()) {
+            return 'Accepted';
+        }
+
+        if ($this->wasRejected()) {
+            return 'Rejected';
+        }
+
+        return 'Pending';
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusAttribute()
+    {
+        return $this->claim_status;
     }
 
     /**

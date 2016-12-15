@@ -177,6 +177,7 @@ new Vue({
             selectedPostables.fb_group = this.selected.fb_group;
             selectedPostables.options = {};
             selectedPostables.options.ends_at = form.find('[name="options[ends_at]"]').val();
+            selectedPostables.options.available_at = form.find('[name="options[available_at]"]').val();
             selectedPostables.options.include_text = form.find('[name="options[include_text]"]').is(':checked') ? 1 : 0;
             selectedPostables.items = this.selected.items;
 
@@ -229,15 +230,24 @@ new Vue({
             });
         },
         getPostables(){
-            this.$http.get('http://'+window.location.hostname+'/inventory/postables').then((response)=>{
+            this.$http.get(window.location.protocol+'//'+window.location.hostname+'/inventory/postables').then((response)=>{
                 // Called using computed property;
                 this.postables = response.body.data;
             }, (response)=>{
                 console.log('Error in retrieving postables');
             });
         },
-        clearDateTimeInput(){
-            $('#datetimepicker2').val('');
+        toggleIncludeLinkOption() {
+            let wrapper = $('#wrapper-if-include-link');
+            if(wrapper.is(':visible')) {
+                wrapper.hide();
+                wrapper.find('input').val('');
+            } else {
+                wrapper.show();
+            }
+        },
+        clearDateTimeInput(elname){
+            $('#'+elname).val('');
         }
     },
     components: {

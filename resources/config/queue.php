@@ -2,7 +2,7 @@
 
 return [
 
-    'max_retries' => (int) 3,
+    'max_retries' => 3,
 
     /*
     |--------------------------------------------------------------------------
@@ -66,6 +66,44 @@ return [
             'expire' => 60,
         ],
 
+
+        'iron' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'email-queue',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-emails' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'email-queue',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-scheduler' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-scheduler-queue',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+
+        'iron-facebook-lister' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-lister-queue',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
     ],
 
     /*

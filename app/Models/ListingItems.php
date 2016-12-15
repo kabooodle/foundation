@@ -29,7 +29,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     protected $appends = [
         'name',
-        'is_watched'
+        'is_watched',
+        'sale_name'
     ];
 
     /**
@@ -208,5 +209,21 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         }
 
         return 'Flashsale';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSaleNameAttribute()
+    {
+        return $this->listing->sale_name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function includeLinkInDescr()
+    {
+        return $this->listing->includeLinkInDescr();
     }
 }

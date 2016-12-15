@@ -20,7 +20,9 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \Kabooodle\Http\Middleware\IfTurbolinksMiddleware::class,
+        \Fideloper\Proxy\TrustProxies::class,
+        \Kabooodle\Http\Middleware\HTTPSMiddleware::class,
+//        \Kabooodle\Http\Middleware\IfTurbolinksMiddleware::class,
         \Barryvdh\Cors\HandleCors::class
     ];
 

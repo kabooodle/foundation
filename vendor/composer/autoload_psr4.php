@@ -7,7 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
-    'Yajra\\Datatables\\' => array($vendorDir . '/yajra/laravel-datatables-oracle/src'),
     'XdgBaseDir\\' => array($vendorDir . '/dnoegel/php-xdg-base-dir/src'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'Vinkla\\Algolia\\' => array($vendorDir . '/vinkla/algolia/src'),
@@ -51,6 +50,8 @@ return array(
     'Kabooodle\\Tests\\' => array($baseDir . '/tests'),
     'Kabooodle\\' => array($baseDir . '/app'),
     'JmesPath\\' => array($vendorDir . '/mtdowling/jmespath.php/src'),
+    'IronMQ\\' => array($vendorDir . '/iron-io/iron_mq/src'),
+    'IronCore\\' => array($vendorDir . '/iron-io/iron_core/src'),
     'Illuminate\\' => array($vendorDir . '/laravel/framework/src/Illuminate'),
     'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
     'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
@@ -60,6 +61,7 @@ return array(
     'GrahamCampbell\\Manager\\' => array($vendorDir . '/graham-campbell/manager/src'),
     'GrahamCampbell\\HTMLMin\\' => array($vendorDir . '/graham-campbell/htmlmin/src'),
     'GrahamCampbell\\Binput\\' => array($vendorDir . '/graham-campbell/binput/src'),
+    'Fideloper\\Proxy\\' => array($vendorDir . '/fideloper/proxy/src'),
     'Faker\\' => array($vendorDir . '/fzaninotto/faker/src/Faker'),
     'Facebook\\' => array($vendorDir . '/facebook/graph-sdk/src/Facebook'),
     'Emojione\\' => array($vendorDir . '/emojione/emojione/lib/php/src'),
@@ -71,6 +73,7 @@ return array(
     'DebugBar\\' => array($vendorDir . '/maximebf/debugbar/src/DebugBar'),
     'Conner\\Tagging\\' => array($vendorDir . '/rtconner/laravel-tagging/src'),
     'Composer\\CaBundle\\' => array($vendorDir . '/composer/ca-bundle/src'),
+    'Collective\\IronQueue\\' => array($vendorDir . '/laravelcollective/iron-queue/src'),
     'Collective\\Html\\' => array($vendorDir . '/laravelcollective/html/src'),
     'ClassPreloader\\' => array($vendorDir . '/classpreloader/classpreloader/src'),
     'Carbon\\' => array($vendorDir . '/nesbot/carbon/src/Carbon'),

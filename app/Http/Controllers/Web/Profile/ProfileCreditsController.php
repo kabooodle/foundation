@@ -45,9 +45,9 @@ class ProfileCreditsController extends Controller
             $user = user();
 
             if (! $user->hasCardOnFile()) {
-                Messages::error('No credit card on file.');
+                Messages::error('In order to purchase credits, you must have a credit card on file.');
 
-                return $this->view('profile.creditcard.index');
+                return $this->view('profile.creditcard.index')->with('card', null);
             }
 
             $this->dispatchNow(new PurchaseCreditsForUserCommand($user, $creditTypeId));

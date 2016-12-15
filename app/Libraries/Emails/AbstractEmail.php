@@ -42,6 +42,11 @@ abstract class AbstractEmail
     protected $parameters = null;
 
     /**
+     * @var string
+     */
+    protected $queueConnection = 'iron';
+
+    /**
      * AbstractEmail constructor.
      *
      * @param string  $resourceView
@@ -58,6 +63,18 @@ abstract class AbstractEmail
     }
 
     abstract public function getEmailTemplate();
+
+    /**
+     * @param $name
+     *
+     * @return $this
+     */
+    public function setQueueConnection($name)
+    {
+        $this->queueConnection = $name;
+
+        return $this;
+    }
 
     /**
      * @param $resourceView
@@ -120,6 +137,14 @@ abstract class AbstractEmail
     }
 
     /**
+     * @return string|null
+     */
+    public function getQueueConnectionName()
+    {
+        return $this->queueConnection;
+    }
+
+    /**
      * TODO: Consider passing queue parameter such that queuing can be made optional.
      *
      * @return mixed
@@ -140,7 +165,12 @@ abstract class AbstractEmail
         $content = $this->getView()->make($this->getResourceView(), $this->getParameters())->render();
 
         // For now, we're implicitly queueing all emails.
-        return $this->getMailer()->queue($template, ['emailContent' => $content] + $this->getParameters(), $this->getCallable());
+        return $this->getMailer()->queue(
+            $template,
+            ['emailContent' => $content] + $this->getParameters(),
+            $this->getCallable(),
+            $this->getQueueConnectionName()
+        );
     }
 
     /**

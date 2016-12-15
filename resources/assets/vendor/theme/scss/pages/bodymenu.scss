@@ -1,0 +1,57 @@
+@import '../variables.md.scss';
+@import '../variables.scss';
+
+$notification-box-size : 24px;
+
+body.on-trial {
+
+  #kabooodle_app,
+  .app,
+  #kabooodle_app.app {
+    margin-top: $notification-box-size;
+  }
+  .app-header {
+    top: $notification-box-size;
+  }
+
+  .notificationbar {
+    background-color: $warning;
+    position: fixed;
+    //top: 64px;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1019;
+    height: $notification-box-size;
+    padding: 4px 0;
+    p {
+      .label {
+        font-size: .78rem;
+        background-color: #d94f71;
+        margin-right: 2px;
+      }
+      margin: -1px 0 0 0;
+      text-align: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: .78rem;
+    }
+  }
+  #view{
+    padding-top: 4rem;
+  }
+  .app-header.navbar-md~.bodymenu~.app-body {
+    padding-top: 7rem !important;
+  }
+  .bodymenu {
+    top: ($notification-box-size + 64px);
+  }
+}
+
+.bodymenu {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  z-index: 1019;
+}

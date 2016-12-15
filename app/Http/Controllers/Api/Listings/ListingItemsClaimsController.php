@@ -36,11 +36,12 @@ class ListingItemsClaimsController extends AbstractApiController
     {
         try {
             $listingItem = $this->getListingItem($listingId, $listingItemsId);
-            if (! $listingItem) {
+            if (!$listingItem) {
                 throw new ModelNotFoundException;
             }
 
-            $this->dispatchNow(new ClaimInventoryItemCommand($this->getUser(), $listingItem, $listingItem->inventoryItem));
+            $this->dispatchNow(new ClaimInventoryItemCommand($this->getUser(), $listingItem,
+                $listingItem->inventoryItem));
 
             return $this->respond();
         } catch (RequestedQuantityCannotBeSatisfiedException $e) {

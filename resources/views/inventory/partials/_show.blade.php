@@ -41,7 +41,7 @@
             <div class="box-header no-shadow">
                 <h2><span class="_800">{!! $item->name !!}</span></h2>
                 <p class="block m-t-0"><span class="text-muted">Size:</span> {!! $item->styleSize->name !!}</p>
-                <p class="m-b-0 m-t-1 h4 text-warning _500">${{ $item->getPrice() }}</p>
+                <p class="m-b-0 m-t-1 h4 text-warning _500">${{ isset($_price) ? $_price : $item->getPrice() }}</p>
                 <div class="list-item m-t-2 m-b-0 box">
                     <a href="{{ route('shop.show', [$item->user->username]) }}" class="list-left">
                         <span class="w-40 avatar"><img
@@ -74,10 +74,6 @@
                     <small class="text-muted text-sm"><em>None</em></small>
                 @endif
             </div>
-
-            {{--<div class="text-center">--}}
-                {{--<small class="text-muted"><i class="fa fa-flag" aria-hidden="true"></i> Flag</small>--}}
-            {{--</div>--}}
         </div>
     </div>
 </div>

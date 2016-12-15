@@ -7,6 +7,7 @@
 namespace Kabooodle\Foundation\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Kabooodle\Bus\Handlers\Events\User\AddNewUserToAllNotificationTypes;
 
 /**
  * Class EventServiceProvider
@@ -74,7 +75,9 @@ class EventServiceProvider extends ServiceProvider
 
         // USER EVENTS
         \Kabooodle\Bus\Events\User\UserWasCreatedEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\User\UserWasCreatedListener::class,
+            \Kabooodle\Bus\Handlers\Events\User\AddNewUserToGenericTrial::class,
+            \Kabooodle\Bus\Handlers\Events\User\AddNewUserToAllNotificationTypes::class,
+            \Kabooodle\Bus\Handlers\Events\User\SendNewUserWelcomeNotifications::class,
         ],
         \Kabooodle\Bus\Events\User\UserLoggedInEvent::class => [
             \Kabooodle\Bus\Handlers\Events\User\UserLoggedInListener::class

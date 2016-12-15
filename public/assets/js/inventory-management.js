@@ -7199,6 +7199,7 @@ new Vue({
             selectedPostables.fb_group = this.selected.fb_group;
             selectedPostables.options = {};
             selectedPostables.options.ends_at = form.find('[name="options[ends_at]"]').val();
+            selectedPostables.options.available_at = form.find('[name="options[available_at]"]').val();
             selectedPostables.options.include_text = form.find('[name="options[include_text]"]').is(':checked') ? 1 : 0;
             selectedPostables.items = this.selected.items;
 
@@ -7255,15 +7256,24 @@ new Vue({
         getPostables: function getPostables() {
             var _this4 = this;
 
-            this.$http.get('http://' + window.location.hostname + '/inventory/postables').then(function (response) {
+            this.$http.get(window.location.protocol + '//' + window.location.hostname + '/inventory/postables').then(function (response) {
                 // Called using computed property;
                 _this4.postables = response.body.data;
             }, function (response) {
                 console.log('Error in retrieving postables');
             });
         },
-        clearDateTimeInput: function clearDateTimeInput() {
-            $('#datetimepicker2').val('');
+        toggleIncludeLinkOption: function toggleIncludeLinkOption() {
+            var wrapper = $('#wrapper-if-include-link');
+            if (wrapper.is(':visible')) {
+                wrapper.hide();
+                wrapper.find('input').val('');
+            } else {
+                wrapper.show();
+            }
+        },
+        clearDateTimeInput: function clearDateTimeInput(elname) {
+            $('#' + elname).val('');
         }
     },
     components: {

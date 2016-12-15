@@ -14,4 +14,9 @@ use Kabooodle\Presenters\PresenterAbstract;
 class ListingsModelPresenter extends PresenterAbstract
 {
     use ListingsPresenterTrait;
+
+    public function listingParentName()
+    {
+        return $this->entity->sale_name;
+    }
 }
