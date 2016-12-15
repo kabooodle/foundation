@@ -144,6 +144,7 @@
                             </div>
                         </div>
                         <div class="tab-pane active" id="post_facebook">
+                            <facebook-login></facebook-login>
                             <div class="form-group">
                                 <label>Select Group</label>
                                 <select

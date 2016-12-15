@@ -1,6 +1,7 @@
 import store from './manage/store';
 import computed from './manage/computed';
 import StyleTemplate from './style_template.vue';
+import FacebookLogin from '../facebook/FacebookLogin.vue';
 
 new Vue({
     el: '#manage_inventory',
@@ -251,6 +252,7 @@ new Vue({
         }
     },
     components: {
-        'style-template' : StyleTemplate
+        'style-template' : StyleTemplate,
+        'facebook-login' : FacebookLogin
     }
 });
