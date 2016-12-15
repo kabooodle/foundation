@@ -23,7 +23,7 @@ class AbstractFacebookSdkService extends LaravelFacebookSdk
     public function testAccessToken($accessToken = null)
     {
         try {
-            $request = $this->get('/me', $accessToken ?: user()->getFacebookUserId());
+            $request = $this->get('/me', $accessToken ?: user()->getFacebookUserToken());
 
             return $request->getGraphNode();
         } catch (FacebookSDKException $e) {

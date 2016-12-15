@@ -6,9 +6,9 @@
 
 namespace Kabooodle\Http\Controllers\Api\Inventory;
 
-
 use Binput;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
@@ -151,6 +151,14 @@ class InventoryApiController extends AbstractApiController
                 throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
             }
 
+            if ($endsAt) {
+                $endsAt = Carbon::createFromTimestamp(strtotime($endsAt));
+            }
+
+            if ($claimableAt) {
+                $claimableAt = Carbon::createFromTimestamp(strtotime($claimableAt));
+            }
+
             $command = new ScheduleListingCommand(
                 $this->getUser(),
                 $includeText,
@@ -167,7 +175,7 @@ class InventoryApiController extends AbstractApiController
             return $this->setData(['msg' =>'Items scheduled successfully for queuing.'])->respond();
         } catch (FacebookAuthenticationException $e) {
             $msg = 'Your facebook credentials are invalid. Please re-authorize '.env('APP_NAME').' for your facebook account, via our settings page.';
-            return $this->setData(['msg' => $msg])->$this->setStatusCode(500)->respond();
+            return $this->setData(['msg' => $msg])->setStatusCode(500)->respond();
         }catch (MissingMandatoryParametersException $e) {
             return $this->setStatusCode(500)->setData(['msg' => 'You must select as least 1 item for listing.'])->respond();
         } catch (ListingConflictsWithExistingListingException $e) {

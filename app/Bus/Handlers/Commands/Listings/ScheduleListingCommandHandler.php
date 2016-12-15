@@ -111,7 +111,7 @@ class ScheduleListingCommandHandler
         $listing->include_link_in_descr = $command->includeDescrText();
 
         if ($command->includeDescrText() && $command->getAvailableAt()) {
-            $listing->claimable_at = Carbon::createFromTimestamp(strtotime($command->getAvailableAt()));
+            $listing->claimable_at = $command->getAvailableAt();
         }
 
         $listing->status = Listings::STATUS_SCHEDULED;
@@ -168,7 +168,7 @@ class ScheduleListingCommandHandler
      *
      * @return Carbon
      */
-    public function normalizeScheduledDateTime(string $dateTime = null)
+    public function normalizeScheduledDateTime($dateTime = null)
     {
         // If the dateTime is null, then we will schedule this posting for
         // 5 minutes from now.
@@ -178,7 +178,7 @@ class ScheduleListingCommandHandler
             return Carbon::now()->addMinutes(self::EMPTY_DATE_LOOKAHEAD_MINUTES);
         }
 
-        return Carbon::createFromTimestamp(strtotime($dateTime));
+        return $dateTime;
     }
 
     /**
