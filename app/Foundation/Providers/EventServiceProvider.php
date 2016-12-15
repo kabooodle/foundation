@@ -30,6 +30,9 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Claim\ClaimWasAcceptedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Claim\MoveClaimToShippingEventHandler::class
         ],
+        \Kabooodle\Bus\Events\Claim\NewGuestClaimEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Claim\GuestClaimedEventHandler::class
+        ],
 
         // GROUP EVENTS
         \Kabooodle\Bus\Events\Group\GroupWasCreatedEvent::class => [
@@ -78,6 +81,11 @@ class EventServiceProvider extends ServiceProvider
         ],
         \Kabooodle\Bus\Events\User\UserLoggedInEvent::class => [
             \Kabooodle\Bus\Handlers\Events\User\UserLoggedInListener::class
+        ],
+
+        // EMAIL EVENTS
+        \Kabooodle\Bus\Events\Email\EmailWasCreatedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Email\EmailWasCreatedListener::class,
         ],
     ];
     /**

@@ -113,10 +113,10 @@
                     <div class="form-group row {{ $errors->has('from.name') ? 'has-danger' : null }}">
                         <label class="form-control-label col-sm-3">Sender Name</label>
                         <div class="col-sm-4">
-                            {{ Form::text('from[name]', user()->name, ['class' => 'form-control']) }}
+                            {{ Form::text('from[name]', user()->first_name, ['class' => 'form-control']) }}
                         </div>
                     </div>
-                    @include('profile.partials._addressform', ['_key' => 'from','_from' => user()->shipFromAddress])
+                    @include('profile.partials._addressform', ['_key' => 'from','_from' => user()->primaryShipFromAddress])
                     <div class="form-group row {{ $errors->has('from.email') ? 'has-danger' : null }}">
                         <label class="form-control-label col-sm-3">Email</label>
                         <div class="col-sm-4">

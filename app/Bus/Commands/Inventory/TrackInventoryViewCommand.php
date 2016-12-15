@@ -33,11 +33,12 @@ final class TrackInventoryViewCommand
     public $ipAddress;
 
     /**
-     * @param User               $actor
+     * TrackInventoryViewCommand constructor.
+     * @param User|null $actor
      * @param ShoppableInterface $resource
-     * @param string             $ipAddress
+     * @param string $ipAddress
      */
-    public function __construct(User $actor, ShoppableInterface $resource, string $ipAddress)
+    public function __construct(User $actor = null, ShoppableInterface $resource, string $ipAddress)
     {
         $this->actor = $actor;
         $this->resource = $resource;
@@ -45,9 +46,9 @@ final class TrackInventoryViewCommand
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getActor(): User
+    public function getActor()
     {
         return $this->actor;
     }

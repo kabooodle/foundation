@@ -30,12 +30,14 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
         $rejectedBy = $event->getActor();
         $claimedBy = $claim->claimedBy;
 
-        $mail = new PiperEmail;
-        $mail->setView('inventory.claims.emails.rejected_toclaimer')
-            ->setParameters(['item' => $claim->inventoryItem, 'claim' => $claim])
-            ->setCallable(function ($mail) use ($claimedBy) {
-                $mail->to($claimedBy->email)->subject('Item claim rejected.');
-            })
-            ->send();
+        if ($claimedBy->primaryEmail->isVerified()) {
+            $mail = new PiperEmail;
+            $mail->setView('inventory.claims.emails.rejected_toclaimer')
+                ->setParameters(['item' => $claim->inventoryItem, 'claim' => $claim])
+                ->setCallable(function ($mail) use ($claimedBy) {
+                    $mail->to($claimedBy->email)->subject('Item claim rejected.');
+                })
+                ->send();
+        }
     }
 }

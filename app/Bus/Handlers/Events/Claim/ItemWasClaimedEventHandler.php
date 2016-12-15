@@ -83,14 +83,18 @@ class ItemWasClaimedEventHandler
         $sellerEmail = $seller->email;
         $claimerEmail = $claimedBy->email;
 
-        with(new KitEmail('inventory.claims.emails.claimed_toclaimer', ['item' => $event->getclaim()->inventoryItem], function ($mailer) use ($claimerEmail) {
-            $mailer->to($claimerEmail)->subject('Item claimed.');
-        }))->send();
+        if ($claimedBy->primaryEmail && ($claimedBy->primaryEmail->isVerified() || $claimedBy->isGuest())) {
+            with(new KitEmail('inventory.claims.emails.claimed_toclaimer', ['item' => $event->getclaim()->inventoryItem], function ($mailer) use ($claimerEmail) {
+                $mailer->to($claimerEmail)->subject('Item claimed.');
+            }))->send();
+        }
 
         if ($seller->checkIsNotifyable('inventory_claimed', 'web')) {
-            with(new KitEmail('inventory.claims.emails.claimed_toseller', ['item' => $event->getclaim()->inventoryItem], function ($mailer) use ($sellerEmail) {
-                $mailer->to($sellerEmail)->subject('Item claimed.');
-            }))->send();
+            if ($seller->primaryEmail && $seller->primaryEmail->isVerified()) {
+                with(new KitEmail('inventory.claims.emails.claimed_toseller', ['item' => $event->getclaim()->inventoryItem], function ($mailer) use ($sellerEmail) {
+                    $mailer->to($sellerEmail)->subject('Item claimed.');
+                }))->send();
+            }
         }
     }
 

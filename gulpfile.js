@@ -18,6 +18,7 @@ elixir(function (mix) {
     mix.browserify('app/components/inventory/inventory-edit.js');
 
     mix.browserify('app/components/profile/settings.js');
+    mix.browserify('app/components/profile/emails.js');
     mix.browserify('app/components/profile/profile-notifications.js');
 
     mix.browserify('app/components/shipping/shipping-create.js');
@@ -28,6 +29,10 @@ elixir(function (mix) {
     mix.browserify('app/components/claims/claims-index.js');
 
     mix.browserify('app/components/listings/listing-items-page.js');
+
+    mix.browserify('app/components/register/register.js');
+
+    mix.browserify('app/components/sign-in/sign-in.js');
 
 
 

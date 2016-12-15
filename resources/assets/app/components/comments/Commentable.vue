@@ -94,23 +94,31 @@
                 });
             },
             userCanDelete : function(comment){
-                return comment.author.id === this.modelobject.user.id || KABOOODLE_APP.currentUser.id === this.modelobject.user.id || comment.author.id === KABOOODLE_APP.currentUser.id
+                return KABOOODLE_APP.currentUser && (KABOOODLE_APP.currentUser.id === this.modelobject.user.id || comment.author.id === KABOOODLE_APP.currentUser.id)
             },
             addNewComment : function(e){
                 e.preventDefault();
-                this.newcomment = null;
-                const $scope = this;
 
-                this.posting = true;
-                this.$http.post(this.post_route, {text_raw : $('#comment_new_text').val()}).then(function (response) {
-                    $scope.comments.push($.parseJSON(response.body.data.json));
-                    $scope.resetCommentForm();
-                }, function(){
-                    notify({'text' : 'An error occurred, please try again.'});
-                    $scope.resetCommentForm();
-                }).then(function(){
-                    $scope.posting = false;
-                });
+                if (KABOOODLE_APP.currentUser) {
+                    this.newcomment = null;
+                    const $scope = this;
+
+                    this.posting = true;
+                    this.$http.post(this.post_route, {text_raw : $('#comment_new_text').val()}).then(function (response) {
+                        $scope.comments.push($.parseJSON(response.body.data.json));
+                        $scope.resetCommentForm();
+                    }, function(){
+                        notify({'text' : 'An error occurred, please try again.'});
+                        $scope.resetCommentForm();
+                    }).then(function(){
+                        $scope.posting = false;
+                    });
+                } else {
+                    notify({
+                        'text': 'You must be signed in to comment',
+                        'type': 'information'
+                    });
+                }
             },
             deleteComment: function(comment, e){
                 e.preventDefault();

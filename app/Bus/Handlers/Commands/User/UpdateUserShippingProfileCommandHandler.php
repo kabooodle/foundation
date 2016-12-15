@@ -7,7 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\User;
 
 use DB;
-use Kabooodle\Models\ShippingAddress;
+use Kabooodle\Models\Address;
 use Kabooodle\Bus\Commands\User\UpdateUserShippingProfileCommand;
 
 /**
@@ -24,28 +24,30 @@ class UpdateUserShippingProfileCommandHandler
     {
         $actor = $command->getActor();
         $formShipFrom = $command->getFromAddress();
-        $formToFrom = $command->getToAddress();
+        $formShipTo = $command->getToAddress();
 
-        return DB::transaction(function () use ($command, $actor, $formShipFrom, $formToFrom) {
-            $shipFromAddress = $actor->shipFromAddress ? : new ShippingAddress;
-            $shipFromAddress->user_id = $actor->id;
-            $shipFromAddress->type = ShippingAddress::TYPE_FROM;
-            $shipFromAddress->street1 = $formShipFrom->getStreet1();
-            $shipFromAddress->street2 = $formShipFrom->getStreet2();
-            $shipFromAddress->city = $formShipFrom->getCity();
-            $shipFromAddress->state = $formShipFrom->getState();
-            $shipFromAddress->zip = $formShipFrom->getZip();
-            $shipFromAddress->save();
+        return DB::transaction(function () use ($command, $actor, $formShipFrom, $formShipTo) {
+            $primaryShipFromAddress = $actor->primaryShipFromAddress ? : new Address;
+            $primaryShipFromAddress->user_id = $actor->id;
+            $primaryShipFromAddress->type = Address::TYPE_FROM;
+            $primaryShipFromAddress->primary = 1;
+            $primaryShipFromAddress->street1 = $formShipFrom->getStreet1();
+            $primaryShipFromAddress->street2 = $formShipFrom->getStreet2();
+            $primaryShipFromAddress->city = $formShipFrom->getCity();
+            $primaryShipFromAddress->state = $formShipFrom->getState();
+            $primaryShipFromAddress->zip = $formShipFrom->getZip();
+            $primaryShipFromAddress->save();
 
-            $shipToAddress = $actor->shipToAddress ? : new ShippingAddress;
-            $shipToAddress->user_id = $actor->id;
-            $shipToAddress->type = ShippingAddress::TYPE_TO;
-            $shipToAddress->street1 = $formToFrom->getStreet1();
-            $shipToAddress->street2 = $formToFrom->getStreet2();
-            $shipToAddress->city = $formToFrom->getCity();
-            $shipToAddress->state = $formToFrom->getState();
-            $shipToAddress->zip = $formToFrom->getZip();
-            $shipToAddress->save();
+            $primaryShipToAddress = $actor->primaryShipToAddress ? : new Address;
+            $primaryShipToAddress->user_id = $actor->id;
+            $primaryShipToAddress->type = Address::TYPE_TO;
+            $primaryShipToAddress->primary = 1;
+            $primaryShipToAddress->street1 = $formShipTo->getStreet1();
+            $primaryShipToAddress->street2 = $formShipTo->getStreet2();
+            $primaryShipToAddress->city = $formShipTo->getCity();
+            $primaryShipToAddress->state = $formShipTo->getState();
+            $primaryShipToAddress->zip = $formShipTo->getZip();
+            $primaryShipToAddress->save();
 
             $actor->kabooodle_as_shipping = $command->isKabooodleDefaultShippingProvider();
             $actor->save();

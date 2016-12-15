@@ -4,10 +4,22 @@
 $factory->define(Kabooodle\Models\User::class, function (Faker\Generator $faker) {
     return [
         'id' => $faker->randomNumber(),
-        'name' => $faker->name,
-        'email' => $faker->safeEmail,
+        'first_name' => $faker->firstName,
+        'last_name' => $faker->lastName,
         'password' => bcrypt(str_random(10)),
         'remember_token' => str_random(10),
+    ];
+});
+
+$factory->define(Kabooodle\Models\Email::class, function (Faker\Generator $faker) {
+    return [
+        'id' => $faker->randomNumber(),
+        'user_id' => function () {
+            return factory(\Kabooodle\Models\User::class)->create()->id;
+        },
+        'address' => $faker->safeEmail,
+        'verified' => 0,
+        'token' => str_random(10),
     ];
 });
 

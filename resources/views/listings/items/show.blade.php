@@ -1,10 +1,9 @@
 @extends('layouts.full', ['contentId' => 'listing-item-page'])
 
-
 @section('body-menu')
     <div class="clearfix">
         <div class="pull-left">
-            @if($listingItem->owner->id == user()->id)
+            @if(user() && $listingItem->owner->id == user()->id)
             <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ $listingItem->sales->count() }} <span class="text-muted">Sales</span></span>
             @endif
             <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ $listingItem->pageViews->count() }} <span class="text-muted">Views</span></span>
@@ -12,7 +11,13 @@
         <div class="btn-toolbar pull-right">
             @if(! $listingItem->inventoryItem->canSatisfyRequestedQuantityOf(1))
                 <div class="inline" data-toggle="tooltip" data-placement="bottom" title="Watch the item to be notified of availability">
-                    <a class="btn btn-sm claim  _800 disabled" disabled href="#">Out of stock!</a>
+                    <a class="btn btn-sm claim  _800 disabled" disabled href="#">
+                        @if($listingItem->inventoryItem->getOnHoldQuantity())
+                            On hold!
+                        @else
+                            Out of stock!
+                        @endif
+                    </a>
                 </div>
             @else
                 <a data-toggle="modal" data-target="#modal_claim_wrapper" data-backdrop="static" data-keyboard="false" href="" class="btn btn-sm claim  _800 ">Claim Item</a>
@@ -35,11 +40,13 @@
 
 @section('body-content')
 
-    <div class="box white">
-        <div class="box-body">
-            {{ $listingItem->type }}
+    @if(user() && $listingItem->owner->id == user()->id)
+        <div class="box white">
+            <div class="box-body">
+                {{ $listingItem->type }}
+            </div>
         </div>
-    </div>
+    @endif
 
     @include('inventory.partials._show', [
         'item' => $listingItem->inventoryItem
@@ -47,7 +54,8 @@
 
     @include('inventory.partials._claimmodal', [
         'post' => apiRoute('listings.listingitems.claims.store', [$listingItem->listing_id, $listingItem->id]),
-        'redirect' => ('')
+        'guestClaimEndpoint' => apiRoute('listings.listingitems.claims.guest-store', [$listingItem->listing_id, $listingItem->id]),
+        'redirect' => Request::url()
     ])
 
     @include('comments.container', [

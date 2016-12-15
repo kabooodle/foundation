@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Ramsey\Uuid\Uuid;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Presenters\PresentableTrait;
@@ -90,6 +91,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     protected $casts = [
         'inventory_id' => 'int',
         'claimed_by' => 'int',
+        'verified' => 'bool',
         'claim_accepted' => 'bool',
         'price' => 'float',
         'inventory_item_object_data' => 'object',
@@ -110,9 +112,10 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'inventory_id',
         'claimed_by',
         'inventory_id',
-        'claimed_by',
         'inventory_item_object_data',
         'price',
+        'verified',
+        'token',
         'accepted_price',
         'shoppable_id',
         'shoppable_type',
@@ -126,6 +129,17 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     protected $hidden =[
         'shoppable_type'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($claim) {
+            if (!$claim->verified) {
+                $claim->token = Uuid::uuid4();
+            }
+        });
+    }
 
     public function setInventoryItemObjectDataAttribute($value)
     {
@@ -150,6 +164,34 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function getPriceAttribute($value)
     {
         return ! is_null($this->accepted_price) ? $this->accepted_price : $value;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVerified()
+    {
+        return (bool) $this->verified;
+    }
+
+    /**
+     * Verify the claim.
+     *
+     * @return bool
+     */
+    public function verify()
+    {
+        $this->verified = true;
+        $this->token = null;
+        return $this->save();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRejected()
+    {
+        return (bool)$this->rejected_on;
     }
 
     /**
@@ -197,7 +239,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     public function claimer()
     {
-        return $this->belongsTo(User::class, 'claimed_by')->with('shipToAddress');
+        return $this->belongsTo(User::class, 'claimed_by')->with('primaryShipToAddress');
     }
 
     /**

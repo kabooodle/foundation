@@ -24,12 +24,14 @@ class UserWasSubscribedToPlanEventHandler
         $subscription = $event->getSubscription();
         $plan = $event->getPlan();
 
-        $mail = new PiperEmail;
-        $mail->setView('profile.subscription.emails.subscribed')
-            ->setParameters(['user' => $actor, 'subscription' => $subscription, 'plan' => $plan])
-            ->setCallable(function ($m) use ($actor) {
-                $m->to($actor->email)->subject('Subscription activated on '.env('APP_NAME'));
-            })
-            ->send();
+        if ($actor->primaryEmail->isVerified()) {
+            $mail = new PiperEmail;
+            $mail->setView('profile.subscription.emails.subscribed')
+                ->setParameters(['user' => $actor, 'subscription' => $subscription, 'plan' => $plan])
+                ->setCallable(function ($m) use ($actor) {
+                    $m->to($actor->email)->subject('Subscription activated on '.env('APP_NAME'));
+                })
+                ->send();
+        }
     }
 }

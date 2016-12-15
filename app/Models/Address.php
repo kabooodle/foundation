@@ -10,20 +10,39 @@ use Sofa\Revisionable\Revisionable;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 
 /**
- * Class ShippingAddress
+ * Class Address
  * @package Kabooodle\Models
  */
-class ShippingAddress extends BaseEloquentModel implements Revisionable
+class Address extends BaseEloquentModel implements Revisionable
 {
     use RevisionableTrait;
 
+    const TYPE_BILLING = 'billing';
     const TYPE_FROM = 'ship_from';
     const TYPE_TO = 'ship_to';
 
     /**
      * @var string
      */
-    protected $table = 'shipping_addresses';
+    protected $table = 'addresses';
+
+    /**
+     * @var array
+     */
+    protected $fillable = [
+        'user_id',
+        'type',
+        'company',
+        'street1',
+        'street2',
+        'city',
+        'state',
+        'zip',
+        'country',
+        'phone',
+        'is_residential',
+        'metadata',
+    ];
 
     /**
      * @var array
@@ -59,6 +78,16 @@ class ShippingAddress extends BaseEloquentModel implements Revisionable
             'to.state' => 'required_with:to.street1,to.city',
             'to.zip' => 'required_with:to.street1,to.city,to.state',
         ];
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return static
+     */
+    public static function factory(array $attributes)
+    {
+        return self::create($attributes);
     }
 
     /**

@@ -7,6 +7,8 @@
 namespace Kabooodle\Http\Controllers\Web\Auth;
 
 use Auth;
+use Kabooodle\Bus\Commands\User\ConvertGuestToUserCommand;
+use Kabooodle\Models\Email;
 use Messages;
 use Validator;
 use Kabooodle\Models\User;
@@ -33,6 +35,11 @@ class AuthController extends Controller
      * @var string
      */
     protected $loginView = 'auth.login';
+
+    /**
+     * @var string
+     */
+    protected $username = 'username';
 
     /**
      * @var string
@@ -78,23 +85,42 @@ class AuthController extends Controller
     public function postRegister(Request $request)
     {
         try {
-            $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
+            $email = Email::whereAddress(trim($request->get('email')))->first();
 
-            $user = $this->dispatch(new AddUserCommand(
-                $request->get('name'),
-                $request->get('email'),
-                $request->get('password'),
-                $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
-            ));
+            if ($email && $email->user->isGuest()) {
+                $guest = $email->user;
+                $this->validate($request, User::getConvertGuestRules($guest));
+
+                $user = $this->dispatch(new ConvertGuestToUserCommand(
+                    $guest,
+                    $email,
+                    $request->get('first_name'),
+                    $request->get('last_name'),
+                    $request->get('username'),
+                    $request->get('password'),
+                    $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
+                ));
+            } else {
+                $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
+
+                $user = $this->dispatch(new AddUserCommand(
+                    $request->get('first_name'),
+                    $request->get('last_name'),
+                    $request->get('username'),
+                    $request->get('email'),
+                    $request->get('password'),
+                    $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
+                ));
+            }
 
             Auth::attempt([
-                'email' => $user->email,
+                'username' => $user->username,
                 'password' => $request->get('password')
             ]);
 
-            Messages::success("Welcome to ".env('APP_NAME').", {$user->name} !");
+            Messages::success("Welcome to ".env('APP_NAME').", {$user->first_name}!");
 
-            return $this->redirect('/');
+            return $this->redirect($request->get('_redirect', '/'));
         } catch (\Illuminate\Validation\ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());
 
@@ -115,7 +141,8 @@ class AuthController extends Controller
         try {
             $this->validateLogin($request);
 
-            return $this->parentLogin($request);
+            $this->parentLogin($request);
+            return redirect()->intended($request->get('_redirect', $this->redirectTo));
         } catch (\Illuminate\Validation\ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());
 

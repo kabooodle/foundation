@@ -27,10 +27,13 @@ trait WatchableTrait
      */
     public function getIsWatchedAttribute()
     {
-        $follow = $this->watchers->filter(function ($follow) {
-            return $follow->user_id = user()->id;
-        })->first();
+        if (user()) {
+            $follow = $this->watchers->filter(function ($follow) {
+                return $follow->user_id = user()->id;
+            })->first();
 
-        return $follow ? true : false;
+            return $follow ? true : false;
+        }
+        return false;
     }
 }

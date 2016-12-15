@@ -22,12 +22,14 @@ class GroupWasCreatedEventHandler
     {
         $group = $event->getGroup();
 
-        $mail = new KitEmail;
-        $mail->setView('groups.emails.created')
-            ->setParameters(['group' => $group])
-            ->setCallable(function ($m) use ($group) {
-                $m->to(user()->email)->subject('Group created on '.env('APP_NAME'));
-            })
-            ->send();
+        if (user()->primaryEmail->isVerified()) {
+            $mail = new KitEmail;
+            $mail->setView('groups.emails.created')
+                ->setParameters(['group' => $group])
+                ->setCallable(function ($m) use ($group) {
+                    $m->to(user()->email)->subject('Group created on '.env('APP_NAME'));
+                })
+                ->send();
+        }
     }
 }

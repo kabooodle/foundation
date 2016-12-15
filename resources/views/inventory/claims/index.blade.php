@@ -34,6 +34,7 @@
                         <th class="text-muted p-l-0 m-l-0">Claim Price</th>
                         <th class="text-muted p-l-0 m-l-0">Claimer</th>
                         <th class="text-muted p-l-0 m-l-0">Claimed On</th>
+                        <th class="text-muted p-l-0 m-l-0">Verified</th>
                         <th></th>
                     </tr>
                     </thead>

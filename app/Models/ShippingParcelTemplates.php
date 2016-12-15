@@ -9,7 +9,7 @@ namespace Kabooodle\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class ShippingAddress
+ * Class ShippingParcelTemplates
  * @package Kabooodle\Models
  */
 class ShippingParcelTemplates extends BaseEloquentModel

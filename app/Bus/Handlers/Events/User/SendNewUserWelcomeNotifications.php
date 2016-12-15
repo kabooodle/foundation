@@ -27,11 +27,13 @@ class SendNewUserWelcomeNotifications
         $this->sendWelcomeEmail($user);
 
         // Check if user was referred by someone
-        // and send an email to the referee notifying them.
-        /** @var User $referee */
-        if ($referee = $this->checkIfUserWasReferred($user)) {
-            if ($referee->checkIsNotifyable('referral_joined', 'web')) {
-                $this->notifyReferee($user, $referee);
+        // and send an email to the referer notifying them.
+        /** @var User $referer */
+        if ($referer = $this->checkIfUserWasReferred($user)) {
+            if ($referer->checkIsNotifyable('referral_joined', 'web')) {
+                if ($referer->primaryEmail->isVerified()) {
+                    $this->notifyReferer($user, $referer);
+                }
             }
         }
     }
@@ -53,15 +55,15 @@ class SendNewUserWelcomeNotifications
 
     /**
      * @param $user
-     * @param $referee
+     * @param $referer
      */
-    public function notifyReferee($user, $referee)
+    public function notifyReferer($user, $referer)
     {
         $mail = new PiperEmail;
         $mail->setView('auth.emails.referraljoined')
-            ->setParameters(['user' => $user, 'referee' => $referee])
-            ->setCallable(function ($m) use ($user, $referee) {
-                $m->to($referee->email)
+            ->setParameters(['user' => $user, 'referee' => $referer])
+            ->setCallable(function ($m) use ($user, $referer) {
+                $m->to($referer->email)
                     ->subject(env('APP_NAME').' referral joined!');
             })
             ->send();

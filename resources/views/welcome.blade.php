@@ -159,7 +159,7 @@
                     </div>
                     <div class="p-a-md text-center">
                         <p><img src="https://unsplash.it/90/90/?random" class="img-circle w-xs"></p>
-                        <a href class="text-md block">{{ auth()->user()->name }}</a>
+                        <a href class="text-md block">{{ auth()->user()->full_name }}</a>
                         <p><small>{{ auth()->user()->email }}</small></p>
                         <div>
                             <a href="" class="btn btn-icon btn-social rounded white btn-sm">
