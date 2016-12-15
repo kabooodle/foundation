@@ -122,7 +122,7 @@ return [
     |
     */
 
-    'debug' => (env('APP_ENV') == 'production' ? env('API_DEBUG', true) : false),
+    'debug' => (env('APP_ENV') == 'production' ? false : env('API_DEBUG', true)),
 
     /*
     |--------------------------------------------------------------------------
