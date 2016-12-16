@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\User;
 
+use DB;
 use Kabooodle\Models\Email;
 use Kabooodle\Models\User;
 use Illuminate\Foundation\Bus\DispatchesJobs;

@@ -145,8 +145,18 @@
                         </div>
                         <div class="tab-pane active" id="post_facebook">
                             <div class="form-group">
-                                <label>Select Group</label>
+                                <div class="clearfix">
+                                    <label>Select Group</label>
+                                    <span class="pull-right">
+                                        <facebook-login
+                                                refresh_endpoint="{{ apiRoute('social.refresh') }}"
+                                        ></facebook-login>
+                                    </span>
+                                </div>
                                 <select
+                                        :disabled="actions.getting_postables === true"
+                                    :class="actions.getting_postables ? 'disabled' : null"
+                                    id="post_facebook_group_el"
                                 @change="changeFacebookGroup"
                                 name="facebook_group"
                                 placeholder="Select a group"
@@ -234,7 +244,7 @@
                                     </div>
                                 </template>
                                 <template v-else>
-                                    <small class="text-muted">Selected group has no albums, or, you are not permitted to post to them.</small>
+                                    <small class="text-muted">Selected group has no albums, or, you are not permitted to post to them. Login to Facebook or refresh your Facebook groups, above.</small>
                                 </template>
                             </template>
                         </div>

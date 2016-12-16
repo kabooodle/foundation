@@ -54,7 +54,7 @@ class AbstractFacebookSdkService extends LaravelFacebookSdk
     {
         $userId = $userId ?: user()->getFacebookUserId();
         $user = $user ?: user();
-        $request = $this->get("/{$userId}/groups?fields=administrator,albums{id,can_upload,name},id,name", $user->getFacebookUserToken());
+        $request = $this->get("/{$userId}/groups?fields=administrator,albums.limit(100000){id,can_upload,name},id,name,limit=100000", $user->getFacebookUserToken());
 
         return $request->getGraphEdge();
     }
@@ -67,7 +67,7 @@ class AbstractFacebookSdkService extends LaravelFacebookSdk
     public function getGroupAlbums($groupId, User $user = null)
     {
         $user =  $user ?: user();
-        $request = $this->get("/{$groupId}/albums?fields=id,name,updated_time,type,photo_count", $user->getFacebookUserToken());
+        $request = $this->get("/{$groupId}/albums?fields=id,name,updated_time,type,photo_count,limit=100000", $user->getFacebookUserToken());
 
         return $request->getGraphEdge();
     }

@@ -33,6 +33,7 @@ export default {
     actions: {
         refreshing_data: false,
         posting_to_sales: false,
+        getting_postables: false,
         fb_advanced_menu: false
     },
 

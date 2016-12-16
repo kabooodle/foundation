@@ -3,11 +3,22 @@
     @include('layouts.header._htmlheader')
     <body class=" @yield('body-class', null)  {{ user() && user()->onGenericTrial() ? ' on-trial ' : null }} ">
     <div id="fb-root"></div>
-    <script>(function(d, s, id) {
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '513860408823933',
+                cookie: true,
+                xfbml: true,
+                version: 'v2.7',
+                scope: 'email,user_managed_groups,publish_actions,publish_pages'
+            });
+            $(document).trigger('fbload');
+        };
+        (function(d, s, id){
             var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
+            if (d.getElementById(id)) {return;}
             js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.7&appId=680971485365927";
+            js.src = "//connect.facebook.net/en_US/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));</script>
 
