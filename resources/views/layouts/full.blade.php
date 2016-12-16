@@ -9,8 +9,10 @@
                 appId: '513860408823933',
                 cookie: true,
                 xfbml: true,
-                version: 'v2.7'
+                version: 'v2.7',
+                scope: 'email,user_managed_groups,publish_actions,publish_pages'
             });
+            $(document).trigger('fbload');
         };
         (function(d, s, id){
             var js, fjs = d.getElementsByTagName(s)[0];

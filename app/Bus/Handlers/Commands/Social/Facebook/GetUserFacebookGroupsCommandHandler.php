@@ -63,6 +63,11 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
             $nodeIds = [];
 
             if ($groups) {
+                $groups = $groups->asArray();
+                usort($groups, function($a, $b){
+                    return strcasecmp($a['name'], $b['name']);
+                });
+
                 foreach ($groups as $key => $group) {
 
                     // If the user cannot administrate, delete the group.
@@ -81,6 +86,11 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
                             }
                             $nodeIds[] = $album['id'];
                         }
+
+                        usort($group['albums'], function($a, $b){
+                            return strcasecmp($a['name'], $b['name']);
+                        });
+
                     } else {
                         // Create an empty albums key with an empty array.
                         $group['albums'] = [];
@@ -118,24 +128,45 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
         $storedNodes = [];
         foreach($fbGroups as $group) {
             $storedGroup = $this->storeFbNode($group['id'], $group['name']);
-            $storedGroup->users()->attach($userId, [
-                'facebook_node_id' => $storedGroup->facebook_node_id,
-                'node_type' => $storedGroup->facebook_node_type
-            ]);
+
+            $this->checkAndAttachUserToNode($storedGroup, $userId, $storedGroup->facebook_node_type);
+
             $storedNodes[] = $storedGroup;
             if(count($group['albums'])) {
                 foreach($group['albums'] as $album) {
                     $storedAlbum = $this->storeFbNode($album['id'], $album['name'], FacebookNodes::NODE_ALBUM, $storedGroup->id);
-                    $storedAlbum->users()->attach($userId, [
-                        'facebook_node_id' => $storedAlbum->facebook_node_id,
-                        'node_type' => FacebookNodes::NODE_ALBUM
-                    ]);
+
+                    $this->checkAndAttachUserToNode($storedAlbum, $userId, FacebookNodes::NODE_ALBUM);
+
                     $storedNodes[] = $storedAlbum;
                 }
             }
         }
 
         return $storedNodes;
+    }
+
+    /**
+     * Check if the stored node ^ exists in the already existing nodes.
+     * If it doesn't, then we know we need to attach the user to it.
+     * It it does, see if its already attached to the user.
+     *
+     * @param $node
+     * @param $userId
+     * @param $nodeType
+     * @return node
+     */
+    public function checkAndAttachUserToNode($node, $userId, $nodeType)
+    {
+        $exists = $this->existingNodesFromDB->find($node->id);
+        if (! $exists || ! $exists->users->contains($userId)) {
+            $node->users()->attach($userId, [
+                'facebook_node_id' => $node->facebook_node_id,
+                'node_type' => $nodeType
+            ]);
+        }
+
+        return $node;
     }
 
     /**
@@ -165,7 +196,7 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
      */
     public function setAllExistingNodesFromDB(array $nodeIds)
     {
-        $nodes = FacebookNodes::whereIn('facebook_node_id', $nodeIds)->get();
+        $nodes = FacebookNodes::whereIn('facebook_node_id', $nodeIds)->with('users')->get();
 
         $this->existingNodesFromDB = $nodes;
     }
@@ -176,6 +207,6 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
      */
     public function doesFbNodeExistInDB($nodeId)
     {
-        return $this->existingNodesFromDB->where('facebook_node_id', $nodeId)->first();
+        return $this->existingNodesFromDB->where('facebook_node_id', (int) $nodeId)->first();
     }
 }

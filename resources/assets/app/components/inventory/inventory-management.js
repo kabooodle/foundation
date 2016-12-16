@@ -13,6 +13,19 @@ new Vue({
         this.getInventory();
         this.getPostables();
 
+        $Bus.$on('facebook:refreshing', (status)=>{
+            $('#post_facebook_group_el option').prop("selected", false);
+            $('#post_facebook_group_el').val([]).trigger('change');
+            this.resetSelectedFBAlbum();
+            this.resetSelectedFBGroup();
+            this.actions.getting_postables = true;
+        });
+
+        $Bus.$on('facebook:refreshed', (fbAuth, postables)=>{
+            this.postables = postables;
+            this.actions.getting_postables = false;
+        });
+
         $Bus.$on('post-menu:closed', ()=>{
             // this.facebook_album_selected = false;
             // $('[name=facebookalbums]:checked').prop('checked', false);
@@ -231,11 +244,14 @@ new Vue({
             });
         },
         getPostables(){
+            const that = this;
+            this.actions.getting_postables = true;
             this.$http.get(window.location.protocol+'//'+window.location.hostname+'/inventory/postables').then((response)=>{
                 // Called using computed property;
-                this.postables = response.body.data;
+                that.postables = response.body.data;
+                that.actions.getting_postables = false;
             }, (response)=>{
-                console.log('Error in retrieving postables');
+                that.actions.getting_postables = false;
             });
         },
         toggleIncludeLinkOption() {

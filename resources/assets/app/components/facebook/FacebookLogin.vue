@@ -1,27 +1,80 @@
 <template>
     <span class="fb-img-wrapper">
         <template v-if="authorizedAndLoggedIn">
-                <img src="/assets/images/icons/FB-login-xs.png">
-                <img src="/assets/images/icons/FB-logout-xs.png">
+                <spinny v-if="refreshing"></spinny>
+                <a
+                        :class="refreshing ? 'disabled' : null"
+                        href="javascript:;"
+                        @click="FBRefresh"
+                        type="button">
+                    <img :src="refresh_icon">
+                </a>
         </template>
         <template v-if="!authorizedAndLoggedIn">
-                <img src="/assets/images/icons/FB-login-xs.png">
-                <img src="/assets/images/icons/FB-logout-xs.png">
+                <a
+                        :class="refreshing ? 'disabled' : null"
+                        href="javascript:;"
+                        @click="FBLogin"
+                        type="button">
+                    <img :src="login_icon">
+                </a>
         </template>
     </span>
 </template>
 <script>
+    import Spinny from '../Spinner.vue';
     export default{
+        props: {
+            refresh_endpoint : {
+                required: true,
+                type: String
+            },
+            login_icon : {
+                type: String,
+                default: '/assets/images/icons/FB-login-xs.png'
+            },
+            refresh_icon_disabled : {
+                type: String,
+                default: '/assets/images/icons/FB-refresh-disabled-xs.png'
+            },
+            refresh_icon_original : {
+                type: String,
+                default: '/assets/images/icons/FB-refresh-xs.png',
+            }
+        },
         data(){
             return {
+                refresh_icon: this.refresh_icon_original,
+                refreshing: false,
                 authorized: false,
-                logged_in: false,
-                attempts: 0
+                connected: false,
+                attempts: 0,
+                fbAuth: {
+                    token : null,
+                    userId: null,
+                    expiresIn: null, // days
+                    signedRequest: null
+                }
             }
+        },
+        watch : {
+            'refreshing' :function(){
+                if (this.refreshing == true) {
+                    this.refresh_icon = this.refresh_icon_disabled;
+                    $Bus.$emit('facebook:refreshing', this.refreshing);
+                } else {
+                    this.refresh_icon = this.refresh_icon_original;
+                }
+            },
+        },
+        mounted(){
+            $(document).on('fbload', ()=>{
+                this.checkLoginState();
+            });
         },
         computed : {
             authorizedAndLoggedIn(){
-                return this.logged_in && this.authorized;
+                return this.connected && this.authorized;
             },
         },
         methods : {
@@ -32,35 +85,76 @@
             },
             statusChangeCallback(response){
                 if (response.status === 'connected') {
-                    // Logged into your app and Facebook.
-                    this.storeUserStatus(response);
-                } else if (response.status === 'not_authorized') {
-                    // logged in but not authorized
-                } else {
-                    // not logged in
+                    this.handleSuccessfulConnection(response);
+
+                    return response;
                 }
-            },
-            FBLogin(){
-                FB.login((response)=>{
-                    if (response.authResponse) {
-                        // Logged in
-                        this.storeUserStatus(response);
-                    } else {
-                        // cancelled or error
-                        // No we invalidate the user's shtuff?
-                    }
-                });
+                this.handleUnsuccessfulConnection(response);
+
                 return false;
             },
-            storeUserStatus(response){
-                this.$http.post().then((response)=>{
+            handleSuccessfulConnection(response){
+                this.fbAuth = response.authResponse;
+                this.authorized = true;
+                this.connected = true;
+            },
+            handleUnsuccessfulConnection(){
+                this.fbAuth = {},
+                        this.authorized = false;
+                this.connected = false;
+            },
+            storeUserStatus(callback){
+                return this.$http.post(this.refresh_endpoint, this.fbAuth).then((response)=>{
                     this.authorized = true;
-                    this.logged_in = true;
+                    this.connected = true;
+
+                    $Bus.$emit('facebook:refreshed', this.fbAuth, response.body.data);
+
+                    return callback();
                 }, (response)=>{
                     this.authorized = false;
-                    this.logged_in = false;
+                    this.connected = false;
+                    return false;
                 });
-            }
+            },
+            FBRefresh(){
+                this.attempts++;
+                this.refreshing = true;
+                this.checkLoginState();
+                if (this.authorizedAndLoggedIn) {
+                    return this.storeUserStatus(()=>{
+                        this.refreshing = false;
+                        return true;
+                    });
+                }
+
+                if (this.attempts <= 4) {
+                    return this.FBLogin();
+                } else {
+                    notify({
+                        text: 'An error occurred. Please refresh the page and try again.'
+                    });
+                    this.refreshing = false;
+                    this.attempts = 0;
+                    this.handleUnsuccessfulConnection();
+
+                    return false;
+                }
+            },
+            FBLogout(){
+                FB.logout((response)=>{
+                    this.handleUnsuccessfulConnection();
+                });
+            },
+            FBLogin(){
+                return FB.login((response)=>{
+                    this.statusChangeCallback(response);
+                    this.FBRefresh();
+                }, {scope: 'email,user_managed_groups,publish_actions,publish_pages'});
+            },
+        },
+        components: {
+            'spinny' : Spinny
         }
     }
 </script>
