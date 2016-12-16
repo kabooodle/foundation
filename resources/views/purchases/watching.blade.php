@@ -17,6 +17,8 @@
                         <th class="text-muted p-l-0 m-l-0">Price</th>
                         <th class="text-muted p-l-0 m-l-0">Seller</th>
                         <th class="text-muted p-l-0 m-l-0">Posted On</th>
+                        <th class="text-muted p-l-0 m-l-0">Last Update</th>
+                        <th></th>
                         <th></th>
                     </tr>
                     </thead>
