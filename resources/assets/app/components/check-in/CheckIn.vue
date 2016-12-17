@@ -5,7 +5,7 @@
                 Fantastic! This item is on hold for you for 5 minutes in order to allow you time to verify the claim through the email we just sent you.
             </div>
         </div>
-        <div v-else>
+        <div v-show="!guestSuccess">
             <div v-show="checkInType === null || checkInType === 'user'">
                 <p class="text-center">
                     <a @click="checkInType = 'user'" class="text-primary">Sign In</a>
@@ -99,7 +99,7 @@
         data () {
             return {
                 checkInType: null,
-                success: false,
+                userSuccess: false,
                 guestSuccess: false,
             }
         },
