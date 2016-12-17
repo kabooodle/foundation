@@ -8,7 +8,7 @@ Route::get('privacy', function(){
 });
 
 // routes registered to (any).domain.tld
-Route::group(['middleware' => ['web'], 'domain' => getEnvDomain(true)], function(){
+Route::group(['middleware' => ['web']], function(){
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'routes.php';
 });
 

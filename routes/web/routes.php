@@ -7,9 +7,9 @@
 //    dd($r, $x->getConnectionError());
 //});
 
-Route::get('/', function(){
-    return redirect('http://www.kabooodle.com');
-});
+//Route::get('/', function(){
+//    return redirect('http://www.kabooodle.com');
+//});
 
 Route::get('privacy', function(){
    return view('content.privacy');
@@ -25,7 +25,7 @@ Route::post(
 );
 Route::get('c/{hash}', \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show');
 
-Route::group(['domain' => 'app.'.getEnvDomain(true)], function(){
+//Route::group(['domain' => getEnvDomain(true)], function(){
 
     Route::group(['middleware' => 'auth'], function () {
         Route::get('/', function () {
@@ -53,4 +53,4 @@ Route::group(['domain' => 'app.'.getEnvDomain(true)], function(){
         'as' => 'invite.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@invite'
     ]);
-});
+//});

@@ -52,7 +52,6 @@ class AuthController extends Controller
     protected $redirectAfterLogout = '/';
 
     /**
-     * @return void
      */
     public function __construct()
     {
@@ -148,6 +147,8 @@ class AuthController extends Controller
 
             return $this->redirect(route('auth.login'))
                 ->withErrors($e->validator->getMessageBag());
+        } catch (Exception $e) {
+            return $this->redirect(route('auth.login'));
         }
     }
 
