@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://app.kabooodle.com'),
+    'url' => env('APP_URL', 'https://kabooodle.com'),
 
     /*
     |--------------------------------------------------------------------------
