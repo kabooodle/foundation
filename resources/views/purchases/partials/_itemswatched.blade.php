@@ -16,6 +16,13 @@
     <td>{{ $watch->watchable->created_at->format('F jS Y g:i A') }}</td>
     <td>{{ $watch->watchable->updated_at->format('F jS Y g:i A') }}</td>
     <td>
+        @if($watch->watchable->inventoryItem->canSatisfyRequestedQuantityOf(1))
+            In stock
+        @else
+            Out of stock
+        @endif
+    </td>
+    <td>
         <a class="btn white btn-xs btn-action" href="{{ route('listingitems.show', [$watch->watchable->obfuscateIdToString()]) }}">View</a>
     </td>
     <td>
