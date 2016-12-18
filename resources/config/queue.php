@@ -67,7 +67,7 @@ return [
         ],
 
 
-        'iron' => [
+        'email-queue' => [
             'driver'  => 'iron',
             'host'    => 'mq-aws-us-east-1-2.iron.io',
             'token'   => env('IRON_QUEUE_TOKEN'),
