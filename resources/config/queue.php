@@ -66,8 +66,20 @@ return [
             'expire' => 60,
         ],
 
-
+        // Laravel is fucking weird about queues.
+        // Default driver is "iron" but apparently this isn't looking for
+        // the true "driver" but instead, the connection in this file named "iron".
+        // For now, just in case, we will keep this one here.
         'iron' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'iron',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'email-queue' => [
             'driver'  => 'iron',
             'host'    => 'mq-aws-us-east-1-2.iron.io',
             'token'   => env('IRON_QUEUE_TOKEN'),
