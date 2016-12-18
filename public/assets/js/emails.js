@@ -6445,7 +6445,7 @@ exports.insert = function (css) {
 },{}],5:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n\n")
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -6461,28 +6461,89 @@ exports.default = {
             required: false
         },
         id: {
-            type: String,
-            required: false
+            type: Number,
+            required: true
         },
         address: {
             type: String,
             required: false
         },
-        isPrimary: {
-            type: Boolean,
-            default: false
+        primaryId: {
+            type: Number,
+            required: true
         },
         isVerified: {
             type: Boolean,
             default: false
+        },
+        updatePrimaryEndpoint: {
+            type: String,
+            required: true
+        },
+        resendVerificationEndpoint: {
+            type: String,
+            required: true
         }
     },
     data: function data() {
-        return {};
+        return {
+            isPrimary: this.initialPrimary
+        };
+    },
+
+    computed: {
+        isPrimary: function isPrimary() {
+            return this.primaryId == this.id;
+        },
+        updatePrimaryData: function updatePrimaryData() {
+            return {
+                'email_id': this.id
+            };
+        },
+        resendVerificationData: function resendVerificationData() {
+            return {
+                'email_id': this.id
+            };
+        }
+    },
+    methods: {
+        notifyNeedsToVerify: function notifyNeedsToVerify() {
+            notify({
+                'text': 'Your must verify your email address before you can make it your primary email!',
+                'type': 'information'
+            });
+        },
+        makePrimary: function makePrimary() {
+            this.$http.put(this.updatePrimaryEndpoint, this.updatePrimaryData).then(function (response) {
+                this.$emit('new-primary', this.id);
+                notify({
+                    'text': 'Your primary email address has been updated!',
+                    'type': 'success'
+                });
+            }, function (response) {
+                notify({
+                    'text': 'We\'re sorry. Something went wrong. Please try again.',
+                    'type': 'error'
+                });
+            });
+        },
+        resendVerification: function resendVerification() {
+            this.$http.put(this.resendVerificationEndpoint, this.resendVerificationData).then(function (response) {
+                notify({
+                    'text': 'A new email verification has been sent to this address!',
+                    'type': 'success'
+                });
+            }, function (response) {
+                notify({
+                    'text': 'We\'re sorry. Something went wrong. Please try again.',
+                    'type': 'error'
+                });
+            });
+        }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row\">\n    <div class=\"col-sm-6\">\n        <input v-if=\"isInput\" type=\"text\" :name=\"name\" :value=\"address\" class=\"form-control\">\n        <p v-else=\"\">{{ address }}</p>\n    </div>\n    <div class=\"col-sm-3\">\n        <div v-if=\"isPrimary\">\n            Primary\n        </div>\n        <div v-else=\"\">\n            Make Primary\n        </div>\n    </div>\n    <div class=\"col-sm-3\">\n        <div v-if=\"isVerified\">\n            Verified\n        </div>\n        <div v-else=\"\">\n            Send Verification Email\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row\">\n    <div class=\"col-sm-9\">\n        <span>{{ address }}</span>\n        <span v-show=\"isVerified\">\n            <i class=\"fa fa-check-circle text-success\" aria-hidden=\"true\"></i>\n        </span>\n        <span v-show=\"!isVerified\">\n            <div class=\"pull-right\">\n                <button @click=\"resendVerification\" class=\"btn primary btn-block p-x-md\">Resend Verification</button>\n            </div>\n        </span>\n    </div>\n    <div class=\"col-sm-3\">\n        <div v-show=\"isPrimary\">\n            <div class=\"text-primary text-center\">Primary</div>\n        </div>\n        <div v-show=\"!isPrimary\">\n            <button v-if=\"isVerified\" @click=\"makePrimary\" class=\"btn white btn-block p-x-md\">Make Primary</button>\n            <button v-else=\"\" @click=\"notifyNeedsToVerify\" class=\"btn disabled white btn-block p-x-md\">Make Primary</button>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6514,27 +6575,70 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = {
     props: {
-        emails: Array,
+        initialEmails: Array,
+        initialPrimaryId: {
+            type: Number,
+            required: true
+        },
         newEmailEndpoint: {
+            type: String,
+            required: true
+        },
+        updatePrimaryEndpoint: {
+            type: String,
+            required: true
+        },
+        resendVerificationEndpoint: {
             type: String,
             required: true
         }
     },
     data: function data() {
         return {
-            msg: 'hello vue'
+            emails: this.initialEmails,
+            primaryId: this.initialPrimaryId,
+            addingEmail: false,
+            newAddress: null
         };
     },
 
     components: {
         'email': _Email2.default
     },
-    created: function created() {
-        console.log(this.emails);
+    computed: {
+        newEmailData: function newEmailData() {
+            return {
+                'address': this.newAddress
+            };
+        }
+    },
+    methods: {
+        setNewPrimary: function setNewPrimary(id) {
+            this.primaryId = id;
+        },
+        resendVerification: function resendVerification(id) {
+            console.log(id);
+        },
+        saveEmail: function saveEmail() {
+            this.$http.post(this.newEmailEndpoint, this.newEmailData).then(function (response) {
+                this.emails.push(response.data.data.email);
+                this.addingEmail = false;
+                notify({
+                    'text': 'Your new address has been saved. Please verify the address in the email we just sent you!',
+                    'type': 'success'
+                });
+            }, function (response) {
+                console.log(response);
+                notify({
+                    'text': 'We\'re sorry. Something went wrong. Please try again.',
+                    'type': 'error'
+                });
+            });
+        }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <email v-for=\"email in emails\" :is-input=\"false\" :address=\"email.address\" :is-primary=\"email.primary\" :is-verified=\"email.verified\"></email>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\n<div>\n    <email v-for=\"email in emails\" :address=\"email.address\" :id=\"email.id\" :primary-id=\"primaryId\" :is-verified=\"email.verified\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :resend-verification-endpoint=\"resendVerificationEndpoint\" v-on:new-primary=\"setNewPrimary\" v-on:resend-verification=\"resendVerification\"></email>\n    <div class=\"row\">\n        <div class=\"col-sm-12\">\n            <div v-show=\"addingEmail\">\n                <div class=\"form-group\">\n                    <input type=\"text\" v-model=\"newAddress\" class=\"form-control\">\n                </div>\n                <div class=\"pull-left\">\n                    <button @click=\"addingEmail = !addingEmail\" class=\"btn white btn-block p-x-md\">Cancel</button>\n                </div>\n                <div class=\"pull-right\">\n                    <button @click=\"saveEmail\" class=\"btn primary btn-block p-x-md\">Save</button>\n                </div>\n            </div>\n            <div v-show=\"!addingEmail\">\n                <div class=\"pull-left\">\n                    <button @click=\"addingEmail = !addingEmail\" class=\"btn white btn-block p-x-md\">Add Email</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
