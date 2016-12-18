@@ -26,6 +26,22 @@ class EmailController extends AbstractApiController
      *
      * @return \Dingo\Api\Http\Response
      */
+    public function index(Request $request)
+    {
+        try {
+            $emails = Email::whereUserId($this->getUser()->id)->get();
+
+            return $this->setData(['emails' => $emails])->respond();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->respond($e);
+        }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Dingo\Api\Http\Response
+     */
     public function store(Request $request)
     {
         try {
@@ -47,7 +63,7 @@ class EmailController extends AbstractApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function update(Request $request, $emailId)
+    public function update(Request $request, $userId, $emailId)
     {
         try {
             $email = Email::whereId($emailId)->whereUserId($this->getUser()->id)->whereVerified(1)->firstOrFail();
@@ -102,7 +118,7 @@ class EmailController extends AbstractApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function destroy(Request $request, $emailId)
+    public function destroy(Request $request, $userId, $emailId)
     {
         try {
             $email = Email::whereId($emailId)->whereUserId($this->getUser()->id)->wherePrimary(false)->firstOrFail();

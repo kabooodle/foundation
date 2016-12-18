@@ -1,15 +1,17 @@
 <template>
 
     <div>
-        <email v-for="email in emails"
+        <email v-for="(email, index) in emails" :key="email.id"
             :address=email.address
             :id=email.id
             :primary-id=primaryId
             :is-verified=email.verified
             :update-primary-endpoint=updatePrimaryEndpoint
             :resend-verification-endpoint=resendVerificationEndpoint
+            :emails-endpoint=emailsEndpoint
             v-on:new-primary=setNewPrimary
             v-on:resend-verification=resendVerification
+            v-on:remove-email="emails.splice(index, 1)"
         ></email>
         <div class="row">
             <div class="col-sm-12">
@@ -43,6 +45,10 @@
             initialEmails: Array,
             initialPrimaryId: {
                 type: Number,
+                required: true,
+            },
+            emailsEndpoint: {
+                type: String,
                 required: true,
             },
             newEmailEndpoint: {
@@ -93,7 +99,6 @@
                             'type': 'success'
                         });
                     }, function (response) {
-                        console.log(response);
                         notify({
                             'text': 'We\'re sorry. Something went wrong. Please try again.',
                             'type': 'error'

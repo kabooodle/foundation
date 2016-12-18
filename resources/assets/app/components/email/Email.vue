@@ -1,6 +1,6 @@
 <template>
     <div class="form-group row">
-        <div class="col-sm-9">
+        <div class="col-sm-8">
             <span>{{ address }}</span>
             <span v-show="isVerified">
                 <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
@@ -19,6 +19,11 @@
                 <button v-if="isVerified" @click="makePrimary" class="btn white btn-block p-x-md">Make Primary</button>
                 <button v-else @click="notifyNeedsToVerify" class="btn disabled white btn-block p-x-md">Make Primary</button>
             </div>
+        </div>
+        <div class="col-sm-1">
+            <span v-show="!isPrimary" @click="destroy">
+                <i class="fa fa-times text-danger" aria-hidden="true"></i>
+            </span>
         </div>
     </div>
 </template>
@@ -51,6 +56,10 @@
             isVerified: {
                 type: Boolean,
                 default: false,
+            },
+            emailsEndpoint: {
+                type: String,
+                required: true,
             },
             updatePrimaryEndpoint: {
                 type: String,
@@ -116,6 +125,28 @@
                             'type': 'error'
                         });
                     });
+            },
+            destroy: function () {
+                var self = this;
+                confirmModal(function () {
+                    self.$http.delete(self.emailsEndpoint+'/'+self.id)
+                    .then(function (response) {
+                        $.noty.closeAll();
+                        self.$emit('remove-email');
+                        notify({
+                            'text': 'That email address has been deleted.',
+                            'type': 'success'
+                        });
+                    }, function (response) {
+                        $.noty.closeAll();
+                        notify({
+                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'type': 'error'
+                        });
+                    });
+                }, function () {
+                    $.noty.close();
+                }, {text: 'Are you sure you want to delete this email address?'});
             }
         },
     }

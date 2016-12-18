@@ -1,5 +1,10 @@
 <?php
 
+$api->get('user/{id}/emails', [
+    'as' => 'user.emails.index',
+    'uses' => \Kabooodle\Http\Controllers\Api\User\EmailController::class.'@index'
+]);
+
 $api->post('user/{id}/emails', [
     'as' => 'user.emails.store',
     'uses' => \Kabooodle\Http\Controllers\Api\User\EmailController::class.'@store'

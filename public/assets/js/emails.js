@@ -6476,6 +6476,10 @@ exports.default = {
             type: Boolean,
             default: false
         },
+        emailsEndpoint: {
+            type: String,
+            required: true
+        },
         updatePrimaryEndpoint: {
             type: String,
             required: true
@@ -6539,11 +6543,32 @@ exports.default = {
                     'type': 'error'
                 });
             });
+        },
+        destroy: function destroy() {
+            var self = this;
+            confirmModal(function () {
+                self.$http.delete(self.emailsEndpoint + '/' + self.id).then(function (response) {
+                    $.noty.closeAll();
+                    self.$emit('remove-email');
+                    notify({
+                        'text': 'That email address has been deleted.',
+                        'type': 'success'
+                    });
+                }, function (response) {
+                    $.noty.closeAll();
+                    notify({
+                        'text': 'We\'re sorry. Something went wrong. Please try again.',
+                        'type': 'error'
+                    });
+                });
+            }, function () {
+                $.noty.close();
+            }, { text: 'Are you sure you want to delete this email address?' });
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row\">\n    <div class=\"col-sm-9\">\n        <span>{{ address }}</span>\n        <span v-show=\"isVerified\">\n            <i class=\"fa fa-check-circle text-success\" aria-hidden=\"true\"></i>\n        </span>\n        <span v-show=\"!isVerified\">\n            <div class=\"pull-right\">\n                <button @click=\"resendVerification\" class=\"btn primary btn-block p-x-md\">Resend Verification</button>\n            </div>\n        </span>\n    </div>\n    <div class=\"col-sm-3\">\n        <div v-show=\"isPrimary\">\n            <div class=\"text-primary text-center\">Primary</div>\n        </div>\n        <div v-show=\"!isPrimary\">\n            <button v-if=\"isVerified\" @click=\"makePrimary\" class=\"btn white btn-block p-x-md\">Make Primary</button>\n            <button v-else=\"\" @click=\"notifyNeedsToVerify\" class=\"btn disabled white btn-block p-x-md\">Make Primary</button>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row\">\n    <div class=\"col-sm-8\">\n        <span>{{ address }}</span>\n        <span v-show=\"isVerified\">\n            <i class=\"fa fa-check-circle text-success\" aria-hidden=\"true\"></i>\n        </span>\n        <span v-show=\"!isVerified\">\n            <div class=\"pull-right\">\n                <button @click=\"resendVerification\" class=\"btn primary btn-block p-x-md\">Resend Verification</button>\n            </div>\n        </span>\n    </div>\n    <div class=\"col-sm-3\">\n        <div v-show=\"isPrimary\">\n            <div class=\"text-primary text-center\">Primary</div>\n        </div>\n        <div v-show=\"!isPrimary\">\n            <button v-if=\"isVerified\" @click=\"makePrimary\" class=\"btn white btn-block p-x-md\">Make Primary</button>\n            <button v-else=\"\" @click=\"notifyNeedsToVerify\" class=\"btn disabled white btn-block p-x-md\">Make Primary</button>\n        </div>\n    </div>\n    <div class=\"col-sm-1\">\n        <span v-show=\"!isPrimary\" @click=\"destroy\">\n            <i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i>\n        </span>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6578,6 +6603,10 @@ exports.default = {
         initialEmails: Array,
         initialPrimaryId: {
             type: Number,
+            required: true
+        },
+        emailsEndpoint: {
+            type: String,
             required: true
         },
         newEmailEndpoint: {
@@ -6628,7 +6657,6 @@ exports.default = {
                     'type': 'success'
                 });
             }, function (response) {
-                console.log(response);
                 notify({
                     'text': 'We\'re sorry. Something went wrong. Please try again.',
                     'type': 'error'
@@ -6638,7 +6666,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\n<div>\n    <email v-for=\"email in emails\" :address=\"email.address\" :id=\"email.id\" :primary-id=\"primaryId\" :is-verified=\"email.verified\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :resend-verification-endpoint=\"resendVerificationEndpoint\" v-on:new-primary=\"setNewPrimary\" v-on:resend-verification=\"resendVerification\"></email>\n    <div class=\"row\">\n        <div class=\"col-sm-12\">\n            <div v-show=\"addingEmail\">\n                <div class=\"form-group\">\n                    <input type=\"text\" v-model=\"newAddress\" class=\"form-control\">\n                </div>\n                <div class=\"pull-left\">\n                    <button @click=\"addingEmail = !addingEmail\" class=\"btn white btn-block p-x-md\">Cancel</button>\n                </div>\n                <div class=\"pull-right\">\n                    <button @click=\"saveEmail\" class=\"btn primary btn-block p-x-md\">Save</button>\n                </div>\n            </div>\n            <div v-show=\"!addingEmail\">\n                <div class=\"pull-left\">\n                    <button @click=\"addingEmail = !addingEmail\" class=\"btn white btn-block p-x-md\">Add Email</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\n<div>\n    <email v-for=\"(email, index) in emails\" :key=\"email.id\" :address=\"email.address\" :id=\"email.id\" :primary-id=\"primaryId\" :is-verified=\"email.verified\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :resend-verification-endpoint=\"resendVerificationEndpoint\" :emails-endpoint=\"emailsEndpoint\" v-on:new-primary=\"setNewPrimary\" v-on:resend-verification=\"resendVerification\" v-on:remove-email=\"emails.splice(index, 1)\"></email>\n    <div class=\"row\">\n        <div class=\"col-sm-12\">\n            <div v-show=\"addingEmail\">\n                <div class=\"form-group\">\n                    <input type=\"text\" v-model=\"newAddress\" class=\"form-control\">\n                </div>\n                <div class=\"pull-left\">\n                    <button @click=\"addingEmail = !addingEmail\" class=\"btn white btn-block p-x-md\">Cancel</button>\n                </div>\n                <div class=\"pull-right\">\n                    <button @click=\"saveEmail\" class=\"btn primary btn-block p-x-md\">Save</button>\n                </div>\n            </div>\n            <div v-show=\"!addingEmail\">\n                <div class=\"pull-left\">\n                    <button @click=\"addingEmail = !addingEmail\" class=\"btn white btn-block p-x-md\">Add Email</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
