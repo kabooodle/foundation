@@ -48,8 +48,9 @@ class ProfileSettingsController extends Controller
     public function postProfile(Request $request)
     {
         $input = [
-            'name' => Binput::get('name'),
-            'email' => Binput::get('email'),
+            'first_name' => Binput::get('first_name'),
+            'last_name' => Binput::get('last_name'),
+            'username' => Binput::get('username'),
             'password' => Binput::get('password'),
             'newPassword' => Binput::get('newPassword'),
             'newPassword_confirmation' => Binput::get('newPassword_confirmation'),
@@ -58,8 +59,9 @@ class ProfileSettingsController extends Controller
 
         // Set Validation Rules
         $rules = [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . user()->id,
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'username' => 'required|alpha_dash|unique:users,username,' . user()->id,
             'password' => 'required_with:newPassword,newPassword_confirmation',
             'newPassword' => 'required_with:newPassword_confirmation,password|min:6|confirmed',
             'newPassword_confirmation' => 'required_with:newPassword',
@@ -71,8 +73,9 @@ class ProfileSettingsController extends Controller
 
             user()->first_name = $input['first_name'];
             user()->last_name = $input['last_name'];
+            user()->username = $input['username'];
             // TODO: profile updates email
-            user()->email = $input['email'];
+//            user()->email = $input['email'];
             user()->timezone = $input['timezone'];
             user()->avatar = $request->has('avatar') ? $request->get('avatar') : null;
 
