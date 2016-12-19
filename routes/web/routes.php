@@ -11,6 +11,10 @@
 //    return redirect('http://www.kabooodle.com');
 //});
 
+Route::get('/home', function(){
+   return view('home.index');
+});
+
 Route::get('privacy', function(){
    return view('content.privacy');
 });
