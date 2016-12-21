@@ -8,6 +8,7 @@ namespace Kabooodle\Bus\Handlers\Events\User;
 
 use Carbon\Carbon;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
+use Kabooodle\Bus\Events\User\UserUpgradedToGenericTrial;
 
 /**
  * Class AddNewUserToGenericTrial
@@ -23,6 +24,8 @@ class AddNewUserToGenericTrial
         if ($event->getAccountType() == 'merchant') {
             $user->trial_ends_at = Carbon::now()->addDays(30);
             $user->save();
+
+            event(new UserUpgradedToGenericTrial($user));
         }
     }
 }
