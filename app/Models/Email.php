@@ -26,7 +26,7 @@ class Email extends BaseEloquentModel
         'user_id' => 0,
         'address' => '',
         'primary' => 0,
-        'verified' => null,
+        'verified' => 0,
         'token' => null,
     ];
 
@@ -109,15 +109,15 @@ class Email extends BaseEloquentModel
     }
 
     /**
-     * Verify the email.
-     *
-     * @return bool
+     * @return $this
      */
     public function verify()
     {
         $this->verified = true;
         $this->token = null;
-        return $this->save();
+        $this->save();
+
+        return $this;
     }
 
     /**

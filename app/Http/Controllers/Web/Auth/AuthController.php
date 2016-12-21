@@ -7,11 +7,12 @@
 namespace Kabooodle\Http\Controllers\Web\Auth;
 
 use Auth;
-use Kabooodle\Bus\Commands\User\ConvertGuestToUserCommand;
-use Kabooodle\Models\Email;
+use Binput;
 use Messages;
 use Validator;
+use Exception;
 use Kabooodle\Models\User;
+use Kabooodle\Models\Email;
 use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\User\AddUserCommand;
@@ -19,6 +20,7 @@ use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Kabooodle\Bus\Events\User\UserLoggedInEvent;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Kabooodle\Http\Middleware\ReferralProgramMiddleware;
+use Kabooodle\Bus\Commands\User\ConvertGuestToUserCommand;
 
 /**
  * Class AuthController
@@ -29,7 +31,7 @@ class AuthController extends Controller
     use AuthenticatesUsers {
         login as parentLogin;
     }
-    use ThrottlesLogins;
+//    use ThrottlesLogins;
 
     /**
      * @var string
@@ -84,13 +86,17 @@ class AuthController extends Controller
     public function postRegister(Request $request)
     {
         try {
-            $email = Email::whereAddress(trim($request->get('email')))->first();
+            $email = Email::whereAddress(Binput::clean($request->get('email')))->first();
+            $redirect = Binput::get('_redirect', false);
+            if (! $redirect || $redirect == '') {
+                $redirect = route('auth.login');
+            }
 
             if ($email && $email->user->isGuest()) {
                 $guest = $email->user;
                 $this->validate($request, User::getConvertGuestRules($guest));
 
-                $user = $this->dispatch(new ConvertGuestToUserCommand(
+                $this->dispatch(new ConvertGuestToUserCommand(
                     $guest,
                     $email,
                     $request->get('first_name'),
@@ -102,30 +108,28 @@ class AuthController extends Controller
             } else {
                 $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
 
-                $user = $this->dispatch(new AddUserCommand(
+                $this->dispatch(new AddUserCommand(
                     $request->get('first_name'),
                     $request->get('last_name'),
                     $request->get('username'),
                     $request->get('email'),
                     $request->get('password'),
+                    $request->get('account_type'),
                     $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
                 ));
+
+                Messages::success("Please check your email to verify and confirm your account.");
             }
 
-            Auth::attempt([
-                'username' => $user->username,
-                'password' => $request->get('password')
-            ]);
-
-            Messages::success("Welcome to ".env('APP_NAME').", {$user->first_name}!");
-
-            return $this->redirect($request->get('_redirect', '/'));
+            return $this->redirect($redirect);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());
 
             return $this->redirect(route('auth.register'))
                 ->withInput($request->all())
                 ->withErrors($e->validator->getMessageBag());
+        } catch (Exception $e) {
+            dd($e);
         }
     }
 
@@ -138,9 +142,8 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
-            $this->validateLogin($request);
-
             $this->parentLogin($request);
+
             return redirect()->intended($request->get('_redirect', $this->redirectTo));
         } catch (\Illuminate\Validation\ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());
@@ -157,28 +160,30 @@ class AuthController extends Controller
      * @param User    $user
      *
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
-    protected function authenticated(Request $request, User $user)
+    public function authenticated(Request $request, User $user)
     {
-        event(new UserLoggedInEvent($user));
+        if (! $user->accountActivated()) {
+            Auth::guard($this->getGuard())->logout();
 
-        return redirect()->intended($this->redirectPath());
+            Messages::error('Your primary email address has not yet been verified. Please check your email.');
+
+            throw new Exception;
+        }
+
+        event(new UserLoggedInEvent($user));
     }
 
     /**
-     * Get the failed login response instance.
+     * @param Request $request
      *
-     * @param \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @throws Exception
      */
     protected function sendFailedLoginResponse(Request $request)
     {
         Messages::error($this->getFailedLoginMessage());
 
-        return redirect()->back()
-            ->withInput($request->only($this->loginUsername(), 'remember'))
-            ->withErrors([
-                $this->loginUsername() => $this->getFailedLoginMessage(),
-            ]);
+        throw new Exception;
     }
 }

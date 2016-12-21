@@ -20,7 +20,9 @@ class AddNewUserToGenericTrial
     public function handle(UserWasCreatedEvent $event)
     {
         $user = $event->getUser();
-        $user->trial_ends_at = Carbon::now()->addDays(30);
-        $user->save();
+        if ($event->getAccountType() == 'merchant') {
+            $user->trial_ends_at = Carbon::now()->addDays(30);
+            $user->save();
+        }
     }
 }

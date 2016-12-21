@@ -61,6 +61,7 @@ elixir(function (mix) {
             'vendor/emojionearea/emojionearea.css',
             'vendor/bootstrap-slider/bootstrap-slider.css',
             'vendor/tablesaw/tablesaw.css',
+            'vendor/theme/bootstrap-select/bootstrap-select.css',
             'vendor/perfectscroll/perfect-scrollbar.css'
         ], elixir.config.publicPath + 'css/merchant.css')
 

@@ -21,6 +21,7 @@ require('bootstrap-touchspin');
 global.datetimepicker = require('eonasdan-bootstrap-datetimepicker');
 require('../vendor/tablesaw/tablesaw');
 require('perfect-scrollbar/jquery')($);
+require('bootstrap-select');
 //
 // // Use the localized version because the NPM version is being fuckity.
 global.multiselect = require('../vendor/bootstrap-multiselect/dist/js/bootstrap-multiselect');

@@ -172,6 +172,7 @@ class User extends BaseEloquentModel implements
     public static function getRules()
     {
         return [
+            'account_type' => 'required|in:basic,merchant,merchant_plus',
             'first_name' => 'required',
             'last_name' => 'required',
             'username' => 'required|unique:users',
@@ -181,11 +182,14 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @param User $guest
+     *
      * @return array
      */
     public static function getConvertGuestRules(User $guest)
     {
         return [
+            'account_type' => 'required|in:basic,merchant,merchant_plus',
             'first_name' => 'required',
             'last_name' => 'required',
             'username' => 'required|unique:users,username,'.$guest->id,
@@ -320,7 +324,7 @@ class User extends BaseEloquentModel implements
      */
     public function accountActivated()
     {
-        return (bool) $this->activated;
+        return $this->activated;
     }
 
     /**

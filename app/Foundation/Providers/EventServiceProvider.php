@@ -87,6 +87,9 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Email\EmailWasCreatedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Email\EmailWasCreatedListener::class,
         ],
+        \Kabooodle\Bus\Events\Email\EmailWasVerifiedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\User\CheckAndActivateUserAccount::class
+        ],
     ];
     /**
      * @var array

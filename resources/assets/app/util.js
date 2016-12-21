@@ -408,9 +408,11 @@ $(function () {
         disableIfEmpty: true,
         numberDisplayed: 1
     });
+
     $('[data-ride="carousel"]').carousel({
         interval : false
     });
+
     $('[data-toggle="tooltip"]').tooltip();
 
     $('[data-scrollable="scrollable-y"]').perfectScrollbar({
@@ -423,7 +425,9 @@ $(function () {
 
     $('[data-scrollable="scrollable"]').perfectScrollbar();
 
-
+    $('[data-toggle="selectpicker"]').selectpicker({
+        style: 'btn-default'
+    });
 
     $('.dropdown.dropdown-onhover').hover(function () {
         $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();

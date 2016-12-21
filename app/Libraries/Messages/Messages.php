@@ -17,25 +17,29 @@ use Illuminate\Support\MessageBag as M;
 class Messages extends M implements MessagesInterface
 {
     /**
-     * @var SessionStore $session
+     * The session store instance.
+     *
+     * @var \Illuminate\Session\Store
      */
     protected $session;
 
     /**
      * Cached messages to be extends to current request.
      *
-     * @var self
+     * @var static
      */
-    protected $instance = null;
+    protected $instance;
 
     /**
-     * @param SessionStore $session
+     * Set the session store.
+     *
+     * @param  \Illuminate\Session\Store   $session
      *
      * @return $this
      */
     public function setSessionStore(SessionStore $session)
     {
-        $this->session = $session;
+        $this->session  = $session;
         $this->instance = null;
 
         return $this;
@@ -52,38 +56,37 @@ class Messages extends M implements MessagesInterface
     }
 
     /**
-     * Add a message to the bag.
+     * Extend Messages instance from session.
      *
-     * @param  string $key
-     * @param  string $message
+     * @param  \Closure $callback
      *
-     * @return \Illuminate\Support\MessageBag
+     * @return static
      */
-    public function add($key, $message)
+    public function extend(Closure $callback)
     {
-        $key = trim(strtolower($key));
-        $message = addslashes($message);
-        parent::add($key, $message);
-        $this->save();
+        $instance = $this->retrieve();
+
+        $callback($instance);
+
+        return $instance;
     }
 
     /**
      * Retrieve Message instance from Session, the data should be in
      * serialize, so we need to unserialize it first.
      *
-     * @return self
+     * @return static
      */
     public function retrieve()
     {
         $messages = null;
 
-        if (!isset($this->instance)) {
+        if (is_null($this->instance)) {
             $this->instance = new static();
             $this->instance->setSessionStore($this->session);
 
             if ($this->session->has('message')) {
-                $messages = @unserialize($this->session->get('message', ''));
-                $this->session->forget('message');
+                $messages = unserialize($this->session->pull('message'));
             }
 
             if (is_array($messages)) {
@@ -92,19 +95,6 @@ class Messages extends M implements MessagesInterface
         }
 
         return $this->instance;
-    }
-
-    /**
-     * @param Closure $callback
-     *
-     * @return Messages
-     */
-    public function extend(Closure $callback)
-    {
-        $instance = $this->retrieve();
-        call_user_func($callback, $instance);
-
-        return $instance;
     }
 
     /**
@@ -119,7 +109,7 @@ class Messages extends M implements MessagesInterface
     }
 
     /**
-     * Compile the instance into serialize
+     * Compile the instance into serialize.
      *
      * @return string   serialize of this instance
      */
