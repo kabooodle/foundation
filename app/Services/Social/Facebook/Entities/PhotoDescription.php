@@ -37,7 +37,7 @@ class PhotoDescription
     {
         $id = $this->obfuscateIdToString($this->listingItem->id);
 
-        return str_replace(['https://', 'http://'], '', str_replace(['api', 'app'], '', route('externalclaim.show', [$id])));
+        return str_replace(['https://', 'http://'], '', str_replace(['api.', 'app.', 'api', 'app'], '', route('externalclaim.show', [$id])));
     }
 
     /**
