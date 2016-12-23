@@ -19,14 +19,14 @@
 
 @section('body-content')
 
-    <div class="box-white">
+    <div class="box white">
         <div class="box-header">
             <h4>Pending claims on your inventory</h4>
         </div>
         <div class="box-divider"></div>
         <div class="box-body">
             <div id="claims__wrapper">
-                <table class="table table-condensed table-as-list white">
+                <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
                     <thead>
                     <tr class="  ">
                         <th><input type="checkbox" id="checkAll" @click="toggleChecks"></th>

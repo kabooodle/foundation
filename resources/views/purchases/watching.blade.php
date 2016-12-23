@@ -9,7 +9,7 @@
         <div class="box-divider"></div>
         <div class="box-body">
             <div id="claims__wrapper">
-                <table class="table table-condensed table-as-list white">
+                <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
                     <thead>
                     <tr class="  ">
                         <th class="text-muted">Item</th>

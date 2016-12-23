@@ -18,6 +18,11 @@
 @endsection
 
 @section('body-content')
+    <style>
+        tr.claim-rejected {
+            text-decoration: line-through;
+        }
+    </style>
     <div class="box">
         <div class="box-header">
             <h4>Pending claims and purchases</h4>
@@ -40,7 +45,7 @@
                     </thead>
             <tbody>
             @foreach($claims as $claim)
-                <tr>
+                <tr class="{{ $claim->wasRejected() ? ' claim-rejected ' : null }}">
                     <td>
                         <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
@@ -51,7 +56,7 @@
                             <span>{{ $claim->inventoryItem->name_with_variant }}</span>
                         </div>
                     </td>
-                    <td>{{ $claim->claim_status }}</td>
+                    <td>{!! $claim->present()->getClaimStatus()  !!}</td>
                     <td>${{ $claim->price }}</td>
                     <td>{{ $claim->inventoryItem->owner->name }}</td>
                     <td>{{ $claim->createdAtHumanNoTime() }} <i data-placement="top" class="fa fa-clock-o" data-toggle="tooltip" title="{{ $claim->created_at->format('g:i A') }}"></i></td>

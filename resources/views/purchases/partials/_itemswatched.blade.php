@@ -24,7 +24,11 @@
     </td>
     <td>
         <a class="btn white btn-xs btn-action" href="{{ route('listingitems.show', [$watch->watchable->obfuscateIdToString()]) }}">View</a>
-        <form action="{{ apiRoute('listings.listingitems.watchers.destroy', [$watch->watchable->listing_id, $watch->watchable->id]) }}" method="post" class="inline inline-form"  @submit="deleteWatching">
+        <form
+                action="{{ apiRoute('listings.listingitems.watchers.destroy', [$watch->watchable->listing_id, $watch->watchable->id]) }}"
+                method="post"
+                class="inline inline-form"
+                @submit="deleteWatching">
         {{ csrf_field() }}
         {{ method_field('delete') }}
         <button type="submit" class="btn white btn-xs btn-action btn-action-del">Remove</button>

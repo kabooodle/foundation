@@ -15,6 +15,23 @@ use Kabooodle\Presenters\PresenterAbstract;
  */
 class ClaimsPresenter extends PresenterAbstract
 {
+
+    public function getClaimStatus()
+    {
+        /** @var Claims $claim */
+        $claim = $this->entity;
+
+        if ($claim->wasRejected()) {
+            return '<span class="text-pink-500">'.$claim->claim_status.'</span>';
+        }
+
+        if ($claim->wasAccepted()) {
+            return '<span class="">'.$claim->claim_status.'</span>';
+        }
+
+        return '<span class="text-warn">'.$claim->claim_status.'</span>';
+    }
+
     /**
      * @param bool $statusAsBuyerPov
      * @return string
@@ -23,6 +40,11 @@ class ClaimsPresenter extends PresenterAbstract
     {
         /** @var Claims $claim */
         $claim = $this->entity;
+
+        // Rejected and Buyer POV?
+        if ($statusAsBuyerPov && $claim->wasRejected()) {
+            return '<span class=""></span>';
+        }
 
         // If we already have a shipping transaction, return the status.
         if ($claim->shipmentTransaction()) {
