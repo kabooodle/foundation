@@ -1481,6 +1481,16 @@ if (! function_exists('getProtocol')) {
     }
 }
 
+if (! function_exists('getReleaseVersion')) {
+    /**
+     * @return string
+     */
+    function getReleaseVersion()
+    {
+        return Kabooodle\Foundation\Application\KabooodleApplication::RELEASE_VERSION;
+    }
+}
+
 if (! function_exists('getAppVersion')) {
     /**
      * @return string

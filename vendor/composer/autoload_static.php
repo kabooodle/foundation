@@ -646,6 +646,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'CreateFlashsalesPivotAdminsTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_27_002932_create_flashsales_pivot_admins_tbl.php',
         'CreateFlashsalesPivotSellersTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_27_003144_create_flashsales_pivot_sellers_tbl.php',
         'CreateFollowableTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_22_064902_create_followable_tbl.php',
+        'CreateGenericTrialHistory' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_22_223858_create_generic_trial_history.php',
         'CreateGroupsAdminsTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_13_063654_create_groups_admins_tbl.php',
         'CreateGroupsMembersTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_13_063704_create_groups_members_tbl.php',
         'CreateGroupsTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_13_063058_create_groups_tbl.php',

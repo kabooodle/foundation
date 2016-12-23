@@ -13,25 +13,48 @@
         </div>
     </div>
 
+    @if(user()->onGenericTrial())
+        <div class="box warning">
+            <div class="box-body">
+                <div class="text-center center-block">
+                    <p class="m-b-0">You are currently on a 30 day trial. Your trial ends on <strong>{{ $user->trial_ends_at->format('l, F jS \a\t h:ia') }}</strong></p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if($subscription && $subscription->cancelled())
         <div class="box info">
             <div class="box-body clearfix">
-                <p class="m-b-0">You cancelled your subscription on <strong>{{ $subscription->updated_at->format('l, F jS \a\t h:ia') }}.</strong></p>
+                <p class="m-b-0">You cancelled your subscription on <strong>{{ $subscription->updated_at->format('l, F jS \a\t h:ia') }}</strong></p>
                 @if($subscription->onGracePeriod())
-                    <p class="m-b-0">You'll still be able to access your account until <strong>{{ $subscription->ends_at->format('l, F jS \a\t h:ia') }}</strong>.</p>
+                    <p class="m-b-0">You'll still be able to access your account until <strong>{{ $subscription->ends_at->format('l, F jS \a\t h:ia') }}</strong></p>
                 @endif
             </div>
         </div>
     @endif
 
     @if(user()->isEarlyAdapter())
-
         @include('profile.subscription.partials._earlyadapter', [
         '_plan' => \Kabooodle\Models\Plans::getEarlyAdapterPlan(),
         '_disable' => false
         ])
-
     @else
+        @if(! user()->hasUserAlreadyHadGenericTrial())
+        <div class="box warning">
+            <div class="box-body">
+                <div class="text-center center-block">
+                    <h5><strong>Try the MERCHANT PLUS PLAN free for 30 days! </strong> </h5>
+                    <button
+                            type="button"
+                            @click="subscribeToTrial"
+                            class="btn white text-black-dk">
+                    Start Your Trial Now!
+                    </button>
+                </div>
+            </div>
+        </div>
+        @endif
 
     <div class="row">
         <div class="col-lg-12">
@@ -51,7 +74,14 @@
             </div>
         </div>
     </div>
-
     @endif
 
 @endsection
+
+
+@push('footer-scripts')
+<script>
+    const sub_endpoint = "{{ apiRoute('subscription.trial.store') }}";
+</script>
+<script src="{{ staticAsset('/assets/js/profile-subscription.js') }}"></script>
+@endpush

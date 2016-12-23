@@ -1,5 +1,10 @@
 <?php
 
+$api->post('subscription/trial', [
+    'as' => 'subscription.trial.store',
+    'uses' => \Kabooodle\Http\Controllers\Api\Profile\ProfileApiController::class.'@subscribeToTrial'
+]);
+
 $api->post('user/{id}/emails', [
     'as' => 'user.emails.store',
     'uses' => \Kabooodle\Http\Controllers\Api\User\EmailController::class.'@store'

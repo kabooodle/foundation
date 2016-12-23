@@ -45,6 +45,7 @@ return array(
     'CreateFlashsalesPivotAdminsTbl' => $baseDir . '/resources/database/migrations/2016_08_27_002932_create_flashsales_pivot_admins_tbl.php',
     'CreateFlashsalesPivotSellersTbl' => $baseDir . '/resources/database/migrations/2016_08_27_003144_create_flashsales_pivot_sellers_tbl.php',
     'CreateFollowableTbl' => $baseDir . '/resources/database/migrations/2016_08_22_064902_create_followable_tbl.php',
+    'CreateGenericTrialHistory' => $baseDir . '/resources/database/migrations/2016_12_22_223858_create_generic_trial_history.php',
     'CreateGroupsAdminsTbl' => $baseDir . '/resources/database/migrations/2016_08_13_063654_create_groups_admins_tbl.php',
     'CreateGroupsMembersTbl' => $baseDir . '/resources/database/migrations/2016_08_13_063704_create_groups_members_tbl.php',
     'CreateGroupsTbl' => $baseDir . '/resources/database/migrations/2016_08_13_063058_create_groups_tbl.php',

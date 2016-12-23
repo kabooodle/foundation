@@ -20,6 +20,7 @@ elixir(function (mix) {
     mix.browserify('app/components/profile/settings.js');
     mix.browserify('app/components/profile/emails.js');
     mix.browserify('app/components/profile/profile-notifications.js');
+    mix.browserify('app/components/profile/profile-subscription.js');
 
     mix.browserify('app/components/shipping/shipping-create.js');
     mix.browserify('app/components/shipping/shipping-create.js');

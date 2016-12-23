@@ -944,4 +944,23 @@ class User extends BaseEloquentModel implements
             return $value->created_at->getTimestamp();
         })->first();
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function genericTrialHistory()
+    {
+        return $this->hasOne(GenericTrialHistory::class);
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function hasUserAlreadyHadGenericTrial()
+    {
+        $trial = $this->genericTrialHistory;
+        $subscriptions = $this->subscriptions;
+
+        return ($trial || $subscriptions->cout) ? true : false;
+    }
 }

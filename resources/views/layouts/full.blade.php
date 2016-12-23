@@ -38,7 +38,7 @@
 
                 @if(user() && user()->onGenericTrial())
                     <div class="notificationbar b-b">
-                        <p><span class="label">Notice</span> Trial ends {{ user()->genericTrialEndsInDays() }}. <a href="{{ route('profile.subscription.index') }}">Subscribe now. <i class="fa fa-angle-right" aria-hidden="true"></i></a></p>
+                        <p><span class="label">Notice</span> Trial ends {{ user()->genericTrialEndsInDays() }}. <a href="{{ route('profile.subscription.index') }}"> <strong>Subscribe now. <i class="fa fa-angle-right" aria-hidden="true"></i></strong></a></p>
                     </div>
                 @endif
 
