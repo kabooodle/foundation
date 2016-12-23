@@ -880,7 +880,7 @@ class User extends BaseEloquentModel implements
      */
     public function hasSubscriptionAccess(string $subscription = Plans::SUBSCRIPTION_MERCHANT)
     {
-        if ($this->haAtLeastMerchantSubscription()) {
+        if ($this->hasAtLeastMerchantSubscription()) {
             return true;
         }
 
@@ -894,7 +894,7 @@ class User extends BaseEloquentModel implements
     /**
      * @return bool
      */
-    public function haAtLeastMerchantSubscription()
+    public function hasAtLeastMerchantSubscription()
     {
         return ($this->onGenericTrial() || $this->isSubscribedToMerchant() || $this->isSubscribedToMerchantPlus());
     }
@@ -904,7 +904,7 @@ class User extends BaseEloquentModel implements
      */
     public function isSubscribedToMerchantPlus()
     {
-        return $this->subscribed(Plans::SUBSCRIPTION_MERCHANT_PLUS);
+        return ($this->onGenericTrial() || $this->subscribed(Plans::SUBSCRIPTION_MERCHANT_PLUS));
     }
 
     /**
