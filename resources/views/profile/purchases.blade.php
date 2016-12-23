@@ -18,11 +18,6 @@
 @endsection
 
 @section('body-content')
-    <style>
-        tr.claim-rejected {
-            text-decoration: line-through;
-        }
-    </style>
     <div class="box">
         <div class="box-header">
             <h4>Pending claims and purchases</h4>

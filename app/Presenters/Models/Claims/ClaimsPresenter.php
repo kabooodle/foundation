@@ -42,7 +42,7 @@ class ClaimsPresenter extends PresenterAbstract
         $claim = $this->entity;
 
         // Rejected and Buyer POV?
-        if ($statusAsBuyerPov && $claim->wasRejected()) {
+        if ($statusAsBuyerPov && ($claim->wasRejected() || $claim->isPending())) {
             return '<span class=""></span>';
         }
 
@@ -52,13 +52,14 @@ class ClaimsPresenter extends PresenterAbstract
         }
 
         // If this claim is queued to ship
-        if ($claim->queuedToShip()) {
-            if ($statusAsBuyerPov) {
-                return 'Pending Action';
-            }
+        if (!$statusAsBuyerPov && $claim->queuedToShip()) {
             return '<a class="btn white btn-xs" href="'.route('shipping.create').'?c='.$claim->id.'">Create Label</a>';
         }
 
-        return '<span class="">Externally Shipped</span>';
+        if ($claim->shippedManually()) {
+            return '<span class="">Externally Shipped</span>';
+        }
+
+        return '<span class="">Pending Seller Action</span>';
     }
 }

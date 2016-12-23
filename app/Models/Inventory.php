@@ -8,7 +8,6 @@ namespace Kabooodle\Models;
 
 use DB;
 use Carbon\Carbon;
-use Kabooodle\Models\Traits\UuidableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
