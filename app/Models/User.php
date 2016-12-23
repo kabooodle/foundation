@@ -963,4 +963,12 @@ class User extends BaseEloquentModel implements
 
         return ($trial || $subscriptions->count() > 0) ? true : false;
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function watching()
+    {
+        return $this->hasMany(Watches::class, 'user_id');
+    }
 }

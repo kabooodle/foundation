@@ -113,10 +113,14 @@
                         </div>
                     </li>
                 @endif
-                    <li class="nav-item">
-                        <a href="{{ route('profile.purchases.index') }}"
-                           class="nav-link {{ Request::is('purchases*') ? 'active' : null }}"><span
-                                    class="nav-text">Claims</span></a>
+                    <li class ="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> <span class="nav-text">Purchases</span></a>
+                        <div class="dropdown-menu">
+                            <a href="{{ route('profile.purchases.index') }}"
+                               class="dropdown-item {{ Request::is('purchases*') ? 'active' : null }}">Purchases &amp; Claims</a>
+                            <a href="{{ route('watching.items.index', [user()->username]) }}"
+                               class="dropdown-item {{ Request::is('watching*') ? 'active' : null }}">Watching</a>
+                        </div>
                     </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('groups*') ? 'active' : null }}"

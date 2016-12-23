@@ -19,7 +19,7 @@
 
 @section('body-content')
 
-    <div class="box">
+    <div class="box-white">
         <div class="box-header">
             <h4>Pending claims on your inventory</h4>
         </div>

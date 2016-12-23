@@ -31,6 +31,8 @@ elixir(function (mix) {
 
     mix.browserify('app/components/listings/listing-items-page.js');
 
+    mix.browserify('app/components/purchases/watching-items.js');
+
     mix.browserify('app/components/register/register.js');
 
     mix.browserify('app/components/sign-in/sign-in.js');

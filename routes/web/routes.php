@@ -46,6 +46,7 @@ Route::get('c/{hash}', [
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'sales' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'analytics' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'listings' . DIRECTORY_SEPARATOR . 'routes.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'watching' . DIRECTORY_SEPARATOR . 'routes.php';
 
     Route::get('/referrals', [
         'as' => 'referrals.index',
