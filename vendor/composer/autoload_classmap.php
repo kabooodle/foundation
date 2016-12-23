@@ -805,6 +805,7 @@ return array(
     'UpdateClaimsTblAddUuid' => $baseDir . '/resources/database/migrations/2016_09_04_072643_update_claims_tbl_add_uuid.php',
     'UpdateClaimsTblMakePriceNullable' => $baseDir . '/resources/database/migrations/2016_11_28_191411_update_claims_tbl_make_price_nullable.php',
     'UpdateColLongblob' => $baseDir . '/resources/database/migrations/2016_11_08_165133_update_col_longblob.php',
+    'UpdateCreditChargeTypesTbl' => $baseDir . '/resources/database/migrations/2016_12_23_070657_update_credit_charge_types_tbl.php',
     'UpdateFacebookNodesAddParentNode' => $baseDir . '/resources/database/migrations/2016_12_04_232446_update_facebook_nodes_add_parent_node.php',
     'UpdateFlashSalesAddGroup' => $baseDir . '/resources/database/migrations/2016_08_21_215811_update_flash_sales_add_group.php',
     'UpdateFlashsaleItemsRemoveNonsense' => $baseDir . '/resources/database/migrations/2016_08_31_060148_update_flashsale_items_remove_nonsense.php',
