@@ -961,6 +961,6 @@ class User extends BaseEloquentModel implements
         $trial = $this->genericTrialHistory;
         $subscriptions = $this->subscriptions;
 
-        return ($trial || $subscriptions->cout) ? true : false;
+        return ($trial || $subscriptions->count() > 0) ? true : false;
     }
 }

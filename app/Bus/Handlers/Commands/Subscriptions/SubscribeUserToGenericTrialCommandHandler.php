@@ -12,6 +12,7 @@ use Kabooodle\Models\User;
 use Kabooodle\Models\GenericTrialHistory;
 use Kabooodle\Bus\Events\User\UserUpgradedToGenericTrial;
 use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToGenericTrialCommand;
+use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadyHadFreeTrialException;
 
 /**
  * Class SubscribeUserToGenericTrial
@@ -24,30 +25,32 @@ class SubscribeUserToGenericTrialCommandHandler
     public function handle(SubscribeUserToGenericTrialCommand $command)
     {
         $user = $command->getUser();
-        if (! $this->hasUserAlreadyHadGenericTrial($user)) {
-            DB::transaction(function() use ($user, $command) {
-                $endsAt = Carbon::now()->addDays($command->getTrialDurationInDays());
+        $this->assertUserNotAlreadyHadGenericTrial($user);
 
-                $user->trial_ends_at = $endsAt;
-                $user->save();
+        DB::transaction(function() use ($user, $command) {
+            $endsAt = Carbon::now()->addDays($command->getTrialDurationInDays());
 
-                GenericTrialHistory::create([
-                    'user_id' => $user->id,
-                    'trial_ends_at' => $endsAt
-                ]);
+            $user->trial_ends_at = $endsAt;
+            $user->save();
 
-                event(new UserUpgradedToGenericTrial($user));
-            });
-        }
+            GenericTrialHistory::create([
+                'user_id' => $user->id,
+                'trial_ends_at' => $endsAt
+            ]);
+
+            event(new UserUpgradedToGenericTrial($user));
+        });
     }
 
     /**
      * @param User $user
      *
-     * @return bool
+     * @throws UserAlreadyHadFreeTrialException
      */
-    public function hasUserAlreadyHadGenericTrial(User $user) : bool
+    public function assertUserNotAlreadyHadGenericTrial(User $user)
     {
-        return $user->hasUserAlreadyHadGenericTrial();
+        if ($user->hasUserAlreadyHadGenericTrial()) {
+            throw new UserAlreadyHadFreeTrialException;
+        }
     }
 }
