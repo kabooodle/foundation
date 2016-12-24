@@ -7,7 +7,9 @@
             </span>
             <span v-show="!isVerified">
                 <div class="pull-right">
-                    <button @click="resendVerification" class="btn primary btn-block p-x-md">Resend Verification</button>
+                    <button @click="resendVerification" class="btn primary btn-sm">
+                        Resend Verification
+                    </button>
                 </div>
             </span>
         </div>
@@ -16,14 +18,14 @@
                 <div class="text-primary text-center">Primary</div>
             </div>
             <div v-show="!isPrimary">
-                <button v-if="isVerified" @click="makePrimary" class="btn white btn-block p-x-md">Make Primary</button>
-                <button v-else @click="notifyNeedsToVerify" class="btn disabled white btn-block p-x-md">Make Primary</button>
+                <button v-if="isVerified" @click="makePrimary" class="btn white btn-sm">Make Primary</button>
+                <button v-else @click="notifyNeedsToVerify" class="btn disabled white btn-sm">Make Primary</button>
             </div>
         </div>
         <div class="col-sm-1">
-            <span v-show="!isPrimary" @click="destroy">
+            <a href="javascript:;" v-show="!isPrimary" @click="destroy">
                 <i class="fa fa-times text-danger" aria-hidden="true"></i>
-            </span>
+            </a>
         </div>
     </div>
 </template>

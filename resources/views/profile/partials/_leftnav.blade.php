@@ -23,7 +23,7 @@
 </a>
 @if(user()->hasAtLeastMerchantSubscription())
 <a href="{{ route('profile.subscription.invoices.index') }}" class="nav-link {{ Request::is('profile/subscription/invoices') ? 'active' : null }}">
-    Purchases
+    Receipts
 </a>
 @endif
 <a href="{{ route('profile.creditcard.index') }}" class="nav-link {{ Request::is('profile/creditcard') ? 'active' : null }}">

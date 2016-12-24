@@ -89,14 +89,14 @@ class AuthController extends Controller
             $email = Email::whereAddress(Binput::clean($request->get('email')))->first();
             $redirect = Binput::get('_redirect', false);
             if (! $redirect || $redirect == '') {
-                $redirect = route('auth.login');
+                $redirect = '/';
             }
 
             if ($email && $email->user->isGuest()) {
                 $guest = $email->user;
                 $this->validate($request, User::getConvertGuestRules($guest));
 
-                $this->dispatch(new ConvertGuestToUserCommand(
+                $user = $this->dispatch(new ConvertGuestToUserCommand(
                     $guest,
                     $email,
                     $request->get('first_name'),
@@ -108,7 +108,7 @@ class AuthController extends Controller
             } else {
                 $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
 
-                $this->dispatch(new AddUserCommand(
+                $user = $this->dispatch(new AddUserCommand(
                     $request->get('first_name'),
                     $request->get('last_name'),
                     $request->get('username'),
@@ -117,9 +117,16 @@ class AuthController extends Controller
                     $request->get('account_type'),
                     $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
                 ));
-
-                Messages::success("Please check your email to verify and confirm your account.");
             }
+
+            Auth::attempt([
+                'username' => $user->username,
+                'password' => $request->get('password')
+            ]);
+
+            event(new UserLoggedInEvent($user));
+
+            Messages::success("Welcome to ".env('APP_NAME').", {$user->first_name}!");
 
             return $this->redirect($redirect);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -129,7 +136,10 @@ class AuthController extends Controller
                 ->withInput($request->all())
                 ->withErrors($e->validator->getMessageBag());
         } catch (Exception $e) {
-            dd($e);
+            Messages::error('An error occurred, please try again.');
+
+            return $this->redirect(route('auth.register'))
+                ->withInput($request->all());
         }
     }
 
@@ -162,18 +172,18 @@ class AuthController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception
      */
-    public function authenticated(Request $request, User $user)
-    {
-        if (! $user->accountActivated()) {
-            Auth::guard($this->getGuard())->logout();
-
-            Messages::error('Your primary email address has not yet been verified. Please check your email.');
-
-            throw new Exception;
-        }
-
-        event(new UserLoggedInEvent($user));
-    }
+//    public function authenticated(Request $request, User $user)
+//    {
+////        if (! $user->accountActivated()) {
+////            Auth::guard($this->getGuard())->logout();
+////
+////            Messages::error('Your primary email address has not yet been verified. Please check your email.');
+////
+////            throw new Exception;
+////        }
+//
+//
+//    }
 
     /**
      * @param Request $request
