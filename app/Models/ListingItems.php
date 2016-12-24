@@ -113,6 +113,14 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     }
 
     /**
+     * @return BelongsTo
+     */
+    public function facebookAlbum()
+    {
+        return $this->belongsTo(FacebookNodes::class, 'fb_album_node_id', 'facebook_node_id');
+    }
+
+    /**
      * @return mixed
      */
     public function claims()
@@ -205,11 +213,11 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     public function getNameOfResource(): string
     {
-        if($this->isFacebook()) {
-            return 'Facebook Album';
+        if ($this->isFacebook()) {
+            return $this->facebookAlbum->facebook_node_name;
         }
 
-        return 'Flashsale';
+        return $this->flashsale->name;
     }
 
     /**

@@ -46,16 +46,16 @@
 @section('body-content')
 
         <div class="box white">
-            <div class="box-header">
-                <h4>{{ $listingItem->sale_name }} @include('listings._listingtype', ['_type' => $listingItem->type])</h4>
+            <div class="box-header clearfix">
+                <h4 class="">
+                    <span class="pull-left">
+                        {{ $listingItem->sale_name }} @include('listings._listingtype', ['_type' => $listingItem->type]) - {{ $listingItem->getNameOfResource() }}
+                    </span>
+                    @if(! $listingItem->claimableBasedOnSchedule())
+                    <span class="pull-right m-b-0">Claimable after {{ $listingItem->listing->claimableAfter()->format('F jS, g:i A') }}</span>
+                    @endif
+                </h4>
             </div>
-            @if(! $listingItem->claimableBasedOnSchedule())
-            <div class="box-divider"></div>
-            <div class="box-body clearfix">
-                <p class="pull-left m-b-0">Scheduled to list on: {{ $listingItem->listing->scheduled_for }}</p>
-                <p class="pull-right m-b-0">Claimable after: {{ $listingItem->listing->claimableAfter()->format('j m-d') }}</p>
-            </div>
-            @endif
         </div>
 
     @include('inventory.partials._show', [
