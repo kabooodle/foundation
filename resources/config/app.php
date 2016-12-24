@@ -185,6 +185,7 @@ return [
         Spatie\Analytics\AnalyticsServiceProvider::class,
 //        Kabooodle\Foundation\Providers\IronQueueServiceProvider::class,
         Collective\IronQueue\IronQueueServiceProvider::class,
+        Nexmo\Laravel\NexmoServiceProvider::class,
     ],
 
     /*

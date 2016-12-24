@@ -119,9 +119,14 @@ class Blacklist
     {
         $val = $this->storage->get($this->getKey($payload));
 
-        // exit early if the token was blacklisted forever
+        // exit early if the token was blacklisted forever,
         if ($val === 'forever') {
             return true;
+        }
+
+        // exit with false if key isn't found
+        if ($val === null || empty($val)) {
+            return false;
         }
 
         // check whether the expiry + grace has past

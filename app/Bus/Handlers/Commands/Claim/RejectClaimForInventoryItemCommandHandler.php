@@ -33,7 +33,10 @@ class RejectClaimForInventoryItemCommandHandler
             $claim->accepted = false;
             $claim->save();
 
-            $claim->inventoryItem->increment('initial_qty');
+            // Increment doesn't trigger any eloquent events.
+            $currentQty = $claim->inventoryItem->initial_qty;
+            $claim->inventoryItem->initial_qty = $currentQty+1;
+            $claim->inventoryItem->save();
 
             event(new ClaimWasRejectedEvent($command->getUser(), $claim));
 

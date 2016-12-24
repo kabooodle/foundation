@@ -8,6 +8,7 @@ namespace Kabooodle\Models;
 
 use DB;
 use Carbon\Carbon;
+use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
@@ -82,7 +83,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'name' => '',
         'description' => '',
         'barcode' => null,
-        'initial_qty' => 0,
+        'initial_qty' => null,
         'date_received' => '',
         'price_usd' => 0.0,
         'wholesale_price_usd' => 0.0,
@@ -183,6 +184,11 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
             if(!$model->uuid) {
                 $model->uuid = str_random(16);
             }
+
+            if ($model->isDirty('initial_qty')) {
+                event(new InventoryQuantityUpdatedEvent($model));
+                return true;
+            }
         });
     }
 
@@ -265,7 +271,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function flashsales()
     {
-        return $this->hasMany(ListingItems::class, 'inventory_id')->where('type', Listings::TYPE_FLASHSALE);
+        return $this->listings()->where('type', Listings::TYPE_FLASHSALE);
     }
 
     /**
@@ -273,7 +279,15 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function facebooksales()
     {
-        return $this->hasMany(ListingItems::class, 'inventory_id')->where('type', Listings::TYPE_FACEBOOK);
+        return $this->listings()->where('type', Listings::TYPE_FACEBOOK);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function listings()
+    {
+        return $this->hasMany(ListingItems::class, 'inventory_id');
     }
 
     /**

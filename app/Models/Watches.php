@@ -56,4 +56,20 @@ class Watches extends BaseEloquentModel
     {
         return $this->morphTo('watchable');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function watcher()
+    {
+        return $this->user();
+    }
 }
