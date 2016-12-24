@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Carbon\Carbon;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Models\Traits\WatchableTrait;
@@ -30,7 +31,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     protected $appends = [
         'name',
         'is_watched',
-        'sale_name'
+        'sale_name',
     ];
 
     /**
@@ -225,5 +226,31 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     public function includeLinkInDescr()
     {
         return $this->listing->includeLinkInDescr();
+    }
+
+    /**
+     * @return bool
+     */
+    public function claimableBasedOnSchedule()
+    {
+        $now = Carbon::now();
+        $claimableAt = $this->listing->claimable_at;
+        $scheduledFor = $this->listing->scheduled_for;
+
+        if ($scheduledFor) {
+            if ($claimableAt) {
+                if ($now >= $claimableAt && $now >= $scheduledFor) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            if ($now >= $scheduledFor) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

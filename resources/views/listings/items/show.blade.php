@@ -9,6 +9,7 @@
             <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ $listingItem->pageViews->count() }} <span class="text-muted">Views</span></span>
         </div>
         <div class="btn-toolbar pull-right">
+
             @if(! $listingItem->inventoryItem->canSatisfyRequestedQuantityOf(1))
                 <div class="inline" data-toggle="tooltip" data-placement="bottom" title="Watch the item to be notified of availability">
                     <a class="btn btn-sm claim  _800 disabled" disabled href="#">
@@ -20,7 +21,11 @@
                     </a>
                 </div>
             @else
-                <a data-toggle="modal" data-target="#modal_claim_wrapper" data-backdrop="static" data-keyboard="false" href="" class="btn btn-sm claim  _800 ">Claim Item</a>
+                @if($listingItem->claimableBasedOnSchedule())
+                    <a data-toggle="modal" data-target="#modal_claim_wrapper" data-backdrop="static" data-keyboard="false" href="" class="btn btn-sm claim  _800 ">Claim Item</a>
+                @else
+                    <a class="btn btn-sm claim  _800 disabled" disabled href="#">Not Yet Claimable</a>
+                @endif
             @endif
             <followable
                     able_name="watchable"
@@ -40,13 +45,18 @@
 
 @section('body-content')
 
-    @if(user() && $listingItem->owner->id == user()->id)
         <div class="box white">
-            <div class="box-body">
-                {{ $listingItem->type }}
+            <div class="box-header">
+                <h4>{{ $listingItem->sale_name }} @include('listings._listingtype', ['_type' => $listingItem->type])</h4>
             </div>
+            @if(! $listingItem->claimableBasedOnSchedule())
+            <div class="box-divider"></div>
+            <div class="box-body clearfix">
+                <p class="pull-left m-b-0">Scheduled to list on: {{ $listingItem->listing->scheduled_for }}</p>
+                <p class="pull-right m-b-0">Claimable after: {{ $listingItem->listing->claimableAfter()->format('j m-d') }}</p>
+            </div>
+            @endif
         </div>
-    @endif
 
     @include('inventory.partials._show', [
         'item' => $listingItem->inventoryItem
