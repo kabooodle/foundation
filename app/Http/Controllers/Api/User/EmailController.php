@@ -26,19 +26,14 @@ class EmailController extends AbstractApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function store(Request $request)
+    public function index(Request $request)
     {
         try {
-            $this->validate($request, Email::getRules());
+            $emails = Email::whereUserId($this->getUser()->id)->get();
 
-            $this->dispatchNow(new AddEmailCommand(
-                $this->getUser(),
-                $request->get('address'),
-                $request->get('primary')));
-
-            return $this->respond();
+            return $this->setData(['emails' => $emails])->respond();
         } catch (Exception $e) {
-            return $this->setStatusCode(500)->respond();
+            return $this->setStatusCode(500)->respond($e);
         }
     }
 
@@ -47,10 +42,31 @@ class EmailController extends AbstractApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function update(Request $request, $emailId)
+    public function store(Request $request)
     {
         try {
-            $email = Email::whereId($emailId)->whereUserId($this->getUser()->id)->firstOrFail();
+            $this->validate($request, Email::getRules());
+
+            $email = $this->dispatchNow(new AddEmailCommand(
+                $this->getUser(),
+                $request->get('address'),
+                $request->get('primary', false)));
+
+            return $this->setData(['email' => $email])->respond();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->respond($e);
+        }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Dingo\Api\Http\Response
+     */
+    public function update(Request $request, $userId, $emailId)
+    {
+        try {
+            $email = Email::whereId($emailId)->whereUserId($this->getUser()->id)->whereVerified(1)->firstOrFail();
 
             $this->dispatchNow(new MakeEmailPrimaryCommand($email));
 
@@ -65,10 +81,28 @@ class EmailController extends AbstractApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function resendVerification(Request $request, $emailId)
+    public function updatePrimary(Request $request)
     {
         try {
-            $email = Email::whereId($emailId)->whereUserId($this->getUser()->id)->firstOrFail();
+            $email = Email::whereId($request->get('email_id'))->whereUserId($this->getUser()->id)->whereVerified(1)->firstOrFail();
+
+            $this->dispatchNow(new MakeEmailPrimaryCommand($email));
+
+            return $this->respond();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Dingo\Api\Http\Response
+     */
+    public function resendVerification(Request $request)
+    {
+        try {
+            $email = Email::whereId($request->get('email_id'))->whereUserId($this->getUser()->id)->firstOrFail();
 
             $this->dispatchNow(new ResendEmailVerificationCommand($email));
 
@@ -84,7 +118,7 @@ class EmailController extends AbstractApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function destroy(Request $request, $emailId)
+    public function destroy(Request $request, $userId, $emailId)
     {
         try {
             $email = Email::whereId($emailId)->whereUserId($this->getUser()->id)->wherePrimary(false)->firstOrFail();

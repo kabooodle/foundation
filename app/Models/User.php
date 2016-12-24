@@ -295,19 +295,21 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * @param Email $email
+     * @param Email $primaryEmail
      */
-    public function makeEmailOnlyPrimary(Email $email)
+    public function makeEmailOnlyPrimary(Email $primaryEmail)
     {
-        $previousEmails = $this->emails->where('id', '!=', $email->id);
-        foreach ($previousEmails as $previousEmail) {
-            $previousEmail->primary = false;
-            $previousEmail->save();
+        $otherEmails = $this->emails->filter(function ($email) use ($primaryEmail) {
+            return $email->id != $primaryEmail->id;
+        });
+        foreach ($otherEmails as $otherEmail) {
+            $otherEmail->primary = false;
+            $otherEmail->save();
         }
 
-        if (!$email->isPrimary()) {
-            $email->primary = true;
-            $email->save();
+        if (!$primaryEmail->isPrimary()) {
+            $primaryEmail->primary = true;
+            $primaryEmail->save();
         }
     }
 

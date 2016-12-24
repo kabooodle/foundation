@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -14,6 +15,8 @@ use Ramsey\Uuid\Uuid;
  */
 class Email extends BaseEloquentModel
 {
+    use SoftDeletes;
+
     /**
      * @var string
      */

@@ -176,9 +176,12 @@ class ProfileSettingsController extends Controller
      */
     public function getEmails()
     {
-        $emails = user()->emails;
+        $data = [
+            'primaryEmail' => user()->primaryEmail,
+            'emails' => user()->emails
+        ];
 
-        return $this->view('profile.emails')->with(compact('emails'));
+        return $this->view('profile.emails', $data);
     }
 
     /**
