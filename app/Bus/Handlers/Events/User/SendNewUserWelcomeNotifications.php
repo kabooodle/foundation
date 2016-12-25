@@ -30,7 +30,7 @@ class SendNewUserWelcomeNotifications
         // and send an email to the referer notifying them.
         /** @var User $referer */
         if ($referer = $this->checkIfUserWasReferred($user)) {
-            if ($referer->checkIsNotifyable('referral_joined', 'web')) {
+            if ($referer->checkIsNotifyable('referral_joined', 'email')) {
                 if ($referer->primaryEmail->isVerified()) {
                     $this->notifyReferer($user, $referer);
                 }

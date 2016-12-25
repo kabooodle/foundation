@@ -29,7 +29,9 @@ class NotifyWatcherInventoryQuantityUpdatedCommandHandler
         $watcher = $command->getWatcher();
         $listingItem = $command->getListingItem();
 
-        $this->toMail($watcher, $listingItem);
+        if ($watcher->checkIsNotifyable('inventory_updated', 'email')) {
+            $this->toMail($watcher, $listingItem);
+        }
 //        $this->toSMS($listingItem);
 
         return true;
