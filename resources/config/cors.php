@@ -6,14 +6,22 @@ return [
         'http://app.kabooodle.ngrok.io',
         'http://api.kabooodle.ngrok.io',
 
+        'http://kabooodle.dev',
+        'http://www.kabooodle.dev',
         'http://app.kabooodle.dev',
         'http://api.kabooodle.dev',
 
+        'http://kabooodle.net',
+        'http://www.kabooodle.net',
         'http://api.kabooodle.net',
         'http://app.kabooodle.net',
 
+        'http://www.kabooodle.com',
+        'http://kabooodle.com',
         'http://app.kabooodle.com',
         'http://api.kabooodle.com',
+        'https://www.kabooodle.com',
+        'https://kabooodle.com',
         'https://app.kabooodle.com',
         'https://api.kabooodle.com',
 

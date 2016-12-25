@@ -2,11 +2,11 @@
 
 @section('body-content')
 
-    @push('header-scripts')
-    <script>
-        Turbolinks.clearCache();
-    </script>
-    @endpush
+    {{--@push('header-scripts')--}}
+    {{--<script>--}}
+        {{--Turbolinks.clearCache();--}}
+    {{--</script>--}}
+    {{--@endpush--}}
 
 
         <div class="text-center center-block">
@@ -30,8 +30,6 @@
     <div class="p-v-lg text-center">
         <div>Don't have an account? <a href="{{ route('auth.register') }}" class="text-primary _500">Create one!</a></div>
     </div>
-
-
 
 @endsection
 

@@ -189,6 +189,9 @@
                     <div class="text-sm-right text-xs-left">
                         <small class="text-muted">&copy; 2016</small>
                         <small class="block text-xs text-muted">v.{{ getAppVersion() }}</small>
+                        @if(env('APP_ENV') <> 'production')
+                            <small class="block text-xs text-muted">release v.{{ getReleaseVersion() }}</small>
+                        @endif
                     </div>
                 </div>
             </div>

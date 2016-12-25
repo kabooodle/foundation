@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Email;
 
 use Kabooodle\Bus\Commands\Email\VerifyEmailCommand;
+use Kabooodle\Bus\Events\Email\EmailWasVerifiedEvent;
 use Kabooodle\Models\Email;
 
 /**
@@ -33,6 +34,10 @@ class VerifyEmailCommandHandler
      */
     public function handle(VerifyEmailCommand $command)
     {
-        return $this->email->whereToken($command->getToken())->firstOrFail()->verify();
+        $email = $this->email->whereToken($command->getToken())->firstOrFail()->verify();
+
+        if ($email) {
+            event(new EmailWasVerifiedEvent($email));
+        }
     }
 }

@@ -9,7 +9,6 @@
         </div>
         <div class="box-divider"></div>
         <div class="box-body">
-            <p>Buy credits in bulk for larger discounts:</p>
             <table class="table">
                 @foreach(creditTypes() as $type)
                     <tr>

@@ -172,6 +172,7 @@ class User extends BaseEloquentModel implements
     public static function getRules()
     {
         return [
+            'account_type' => 'required|in:basic,merchant,merchant_plus',
             'first_name' => 'required',
             'last_name' => 'required',
             'username' => 'required|unique:users',
@@ -181,11 +182,14 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @param User $guest
+     *
      * @return array
      */
     public static function getConvertGuestRules(User $guest)
     {
         return [
+            'account_type' => 'required|in:basic,merchant,merchant_plus',
             'first_name' => 'required',
             'last_name' => 'required',
             'username' => 'required|unique:users,username,'.$guest->id,
@@ -322,7 +326,7 @@ class User extends BaseEloquentModel implements
      */
     public function accountActivated()
     {
-        return (bool) $this->activated;
+        return $this->activated;
     }
 
     /**
@@ -878,7 +882,7 @@ class User extends BaseEloquentModel implements
      */
     public function hasSubscriptionAccess(string $subscription = Plans::SUBSCRIPTION_MERCHANT)
     {
-        if ($this->haAtLeastMerchantSubscription()) {
+        if ($this->hasAtLeastMerchantSubscription()) {
             return true;
         }
 
@@ -892,7 +896,7 @@ class User extends BaseEloquentModel implements
     /**
      * @return bool
      */
-    public function haAtLeastMerchantSubscription()
+    public function hasAtLeastMerchantSubscription()
     {
         return ($this->onGenericTrial() || $this->isSubscribedToMerchant() || $this->isSubscribedToMerchantPlus());
     }
@@ -902,7 +906,7 @@ class User extends BaseEloquentModel implements
      */
     public function isSubscribedToMerchantPlus()
     {
-        return $this->subscribed(Plans::SUBSCRIPTION_MERCHANT_PLUS);
+        return ($this->onGenericTrial() || $this->subscribed(Plans::SUBSCRIPTION_MERCHANT_PLUS));
     }
 
     /**
@@ -941,5 +945,32 @@ class User extends BaseEloquentModel implements
         return $this->subscriptions->sortByDesc(function ($value) {
             return $value->created_at->getTimestamp();
         })->first();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function genericTrialHistory()
+    {
+        return $this->hasOne(GenericTrialHistory::class);
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function hasUserAlreadyHadGenericTrial()
+    {
+        $trial = $this->genericTrialHistory;
+        $subscriptions = $this->subscriptions;
+
+        return ($trial || $subscriptions->count() > 0) ? true : false;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function watching()
+    {
+        return $this->hasMany(Watches::class, 'user_id');
     }
 }

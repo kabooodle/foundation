@@ -206,7 +206,11 @@ class ProfileSettingsController extends Controller
     {
         Messages::success("Email successfully verified!");
 
-        return $this->view('profile.email-verified');
+        if (user()) {
+            return $this->view('profile.email-verified');
+        }
+
+        return $this->redirect()->route('auth.login');
     }
 
     /**

@@ -350,4 +350,16 @@ class Listings extends AbstractListingModel
 
         return $this->flashSale->name;
     }
+
+    /**
+     * @return mixed
+     */
+    public function claimableAfter()
+    {
+        if ($this->claimable_at) {
+            return $this->claimable_at;
+        }
+
+        return $this->scheduled_for;
+    }
 }

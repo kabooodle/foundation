@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Carbon\Carbon;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Models\Traits\WatchableTrait;
@@ -30,7 +31,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     protected $appends = [
         'name',
         'is_watched',
-        'sale_name'
+        'sale_name',
     ];
 
     /**
@@ -109,6 +110,14 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     public function getNameAttribute()
     {
         return $this->inventoryItem->name;
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function facebookAlbum()
+    {
+        return $this->belongsTo(FacebookNodes::class, 'fb_album_node_id', 'facebook_node_id');
     }
 
     /**
@@ -204,11 +213,11 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     public function getNameOfResource(): string
     {
-        if($this->isFacebook()) {
-            return 'Facebook Album';
+        if ($this->isFacebook()) {
+            return $this->facebookAlbum->facebook_node_name;
         }
 
-        return 'Flashsale';
+        return $this->flashsale->name;
     }
 
     /**
@@ -225,5 +234,31 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     public function includeLinkInDescr()
     {
         return $this->listing->includeLinkInDescr();
+    }
+
+    /**
+     * @return bool
+     */
+    public function claimableBasedOnSchedule()
+    {
+        $now = Carbon::now();
+        $claimableAt = $this->listing->claimable_at;
+        $scheduledFor = $this->listing->scheduled_for;
+
+        if ($scheduledFor) {
+            if ($claimableAt) {
+                if ($now >= $claimableAt && $now >= $scheduledFor) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            if ($now >= $scheduledFor) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -1,5 +1,4 @@
 <template>
-
     <div>
         <email v-for="(email, index) in emails" :key="email.id"
             :address=email.address
@@ -20,15 +19,15 @@
                         <input type="text" v-model="newAddress" class="form-control">
                     </div>
                     <div class="pull-left">
-                        <button @click="addingEmail = !addingEmail" class="btn white btn-block p-x-md">Cancel</button>
+                        <button @click="addingEmail = !addingEmail" class="btn btn-sm white">Cancel</button>
                     </div>
                     <div class="pull-right">
-                        <button @click="saveEmail" class="btn primary btn-block p-x-md">Save</button>
+                        <button @click="saveEmail" class="btn primary  btn-sm ">Save</button>
                     </div>
                 </div>
                 <div v-show="!addingEmail">
                     <div class="pull-left">
-                        <button @click="addingEmail = !addingEmail" class="btn white btn-block p-x-md">Add Email</button>
+                        <button @click="addingEmail = !addingEmail" class="btn btn-sm white ">Add Email</button>
                     </div>
                 </div>
             </div>
@@ -40,6 +39,8 @@
 </style>
 <script>
     import Email from './Email.vue'
+    import Spinny from '../Spinner.vue';
+
     export default {
         props: {
             initialEmails: Array,
@@ -72,9 +73,6 @@
                 newAddress: null,
             }
         },
-        components:{
-            'email': Email,
-        },
         computed: {
             newEmailData: function () {
                 return {
@@ -91,7 +89,7 @@
             },
             saveEmail: function () {
                 this.$http.post(this.newEmailEndpoint, this.newEmailData)
-                    .then(function (response) {
+                    .then((response)=>{
                         this.emails.push(response.data.data.email);
                         this.addingEmail = false;
                         notify({
@@ -106,5 +104,9 @@
                     });
             },
         },
+        components:{
+            'email': Email,
+            'spinny' : Spinny
+        }
     }
 </script>

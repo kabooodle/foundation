@@ -44,7 +44,7 @@ abstract class AbstractEmail
     /**
      * @var string
      */
-    protected $queueConnection = 'email-queue';
+    protected $queueConnection;
 
     /**
      * AbstractEmail constructor.
@@ -141,7 +141,7 @@ abstract class AbstractEmail
      */
     public function getQueueConnectionName()
     {
-        return $this->queueConnection;
+        return $this->queueConnection ? : env('QUEUE_DRIVER');
     }
 
     /**

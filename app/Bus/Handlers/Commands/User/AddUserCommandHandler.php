@@ -7,8 +7,8 @@
 namespace Kabooodle\Bus\Handlers\Commands\User;
 
 use DB;
-use Kabooodle\Models\Email;
 use Kabooodle\Models\User;
+use Kabooodle\Models\Email;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Commands\User\AddUserCommand;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
@@ -45,7 +45,7 @@ class AddUserCommandHandler
                 'verified' => false,
             ]);
 
-            event(new UserWasCreatedEvent($user));
+            event(new UserWasCreatedEvent($user, $command->getAccountType()));
             event(new EmailWasCreatedEvent($email));
 
             return $user;

@@ -23,7 +23,7 @@ return [
     |
     */
 
-    //'api_key' => 'API_KEY',
-    //'signature_secret' => 'SECRET'
+//    'api_key' => 'API_KEY',
+//    'signature_secret' => 'SECRET'
 
 ];
