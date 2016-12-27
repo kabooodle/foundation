@@ -43,6 +43,8 @@ class ConvertGuestToUserCommandHandler
     public function handle(ConvertGuestToUserCommand $command)
     {
         return DB::transaction(function () use ($command) {
+            $email = $command->getEmail();
+
             $user = $command->getGuest();
             $user->first_name = $command->getFirstName();
             $user->last_name = $command->getLastName();
@@ -50,9 +52,9 @@ class ConvertGuestToUserCommandHandler
             $user->password = bcrypt($command->getPassword());
             $user->referred_by_user_id = $command->getReferralId();
             $user->guest = false;
+            $user->activated = $email->isVerified();
             $user->save();
 
-            $email = $command->getEmail();
             $email->primary = true;
             $email->verified = false;
             $email->save();

@@ -40,24 +40,30 @@ final class AddUserCommand
     /**
      * @var string
      */
+    public $accountType;
+
+    /**
+     * @var string
+     */
     public $referralId;
 
     /**
-     * AddUserCommand constructor.
-     * @param $firstName
-     * @param $lastName
-     * @param $username
-     * @param $email
-     * @param $password
-     * @param null $referralId
+     * @param        $firstName
+     * @param        $lastName
+     * @param        $username
+     * @param        $email
+     * @param        $password
+     * @param string $accountType
+     * @param null   $referralId
      */
-    public function __construct($firstName, $lastName, $username, $email, $password, $referralId = null)
+    public function __construct($firstName, $lastName, $username, $email, $password, string $accountType, $referralId = null)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->username = $username;
         $this->email = $email;
         $this->password = $password;
+        $this->accountType = $accountType;
         $this->referralId = $referralId;
     }
 
@@ -99,6 +105,14 @@ final class AddUserCommand
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccountType(): string
+    {
+        return $this->accountType;
     }
 
     /**

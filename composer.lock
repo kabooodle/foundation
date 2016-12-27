@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
-            "version": "1.12.1",
+            "version": "1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/algoliasearch-client-php.git",
-                "reference": "01dd56a09db7fe6a5609fadbd7ad69d41c131375"
+                "reference": "dd0f04de8e33b091f546fd02e0d54311473c1e1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/01dd56a09db7fe6a5609fadbd7ad69d41c131375",
-                "reference": "01dd56a09db7fe6a5609fadbd7ad69d41c131375",
+                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/dd0f04de8e33b091f546fd02e0d54311473c1e1f",
+                "reference": "dd0f04de8e33b091f546fd02e0d54311473c1e1f",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
             ],
             "description": "Algolia Search API Client for PHP",
             "homepage": "https://github.com/algolia/algoliasearch-client-php",
-            "time": "2016-12-09 13:30:25"
+            "time": "2016-12-21 14:12:19"
         },
         {
             "name": "algolia/algoliasearch-laravel",
@@ -176,16 +176,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.20.5",
+            "version": "3.20.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5a05ae6851405587f0bdeedb67abfe997a079ac0"
+                "reference": "39d122b903813da2f53312fd3146acaa83a6d9f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5a05ae6851405587f0bdeedb67abfe997a079ac0",
-                "reference": "5a05ae6851405587f0bdeedb67abfe997a079ac0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/39d122b903813da2f53312fd3146acaa83a6d9f6",
+                "reference": "39d122b903813da2f53312fd3146acaa83a6d9f6",
                 "shasum": ""
             },
             "require": {
@@ -252,7 +252,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-12-12 23:02:57"
+            "time": "2016-12-22 20:47:16"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
@@ -1262,16 +1262,16 @@
         },
         {
             "name": "fideloper/proxy",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fideloper/TrustedProxy.git",
-                "reference": "ec4dd30141e2515e307aea3539ff242e85c3f120"
+                "reference": "b270bfa52915e55cfb67faa0f16863a479c36121"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fideloper/TrustedProxy/zipball/ec4dd30141e2515e307aea3539ff242e85c3f120",
-                "reference": "ec4dd30141e2515e307aea3539ff242e85c3f120",
+                "url": "https://api.github.com/repos/fideloper/TrustedProxy/zipball/b270bfa52915e55cfb67faa0f16863a479c36121",
+                "reference": "b270bfa52915e55cfb67faa0f16863a479c36121",
                 "shasum": ""
             },
             "require": {
@@ -1309,7 +1309,7 @@
                 "proxy",
                 "trusted proxy"
             ],
-            "time": "2015-12-24 15:02:55"
+            "time": "2016-12-20 14:23:22"
         },
         {
             "name": "google/apiclient",
@@ -1662,28 +1662,28 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "1.3.0",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "2693c101803ca78b27972d84081d027fca790a1e"
+                "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/2693c101803ca78b27972d84081d027fca790a1e",
-                "reference": "2693c101803ca78b27972d84081d027fca790a1e",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/a59da6cf61d80060647ff4d3eb2c03a2bc694646",
+                "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.5.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "^4.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "1.4-dev"
                 }
             },
             "autoload": {
@@ -1709,7 +1709,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-11-18 17:47:58"
+            "time": "2016-12-20 10:07:11"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -3867,16 +3867,16 @@
         },
         {
             "name": "spatie/laravel-analytics",
-            "version": "2.3.0",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-analytics.git",
-                "reference": "18e4132ec94e07288affe8cf46d79308d408e926"
+                "reference": "158da07a9e78fa3b850071f5757987ff2638e501"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-analytics/zipball/18e4132ec94e07288affe8cf46d79308d408e926",
-                "reference": "18e4132ec94e07288affe8cf46d79308d408e926",
+                "url": "https://api.github.com/repos/spatie/laravel-analytics/zipball/158da07a9e78fa3b850071f5757987ff2638e501",
+                "reference": "158da07a9e78fa3b850071f5757987ff2638e501",
                 "shasum": ""
             },
             "require": {
@@ -3920,7 +3920,7 @@
                 "retrieve",
                 "spatie"
             ],
-            "time": "2016-10-20 09:38:38"
+            "time": "2016-12-14 09:46:26"
         },
         {
             "name": "spatie/laravel-fractal",
@@ -4088,7 +4088,7 @@
         },
         {
             "name": "symfony/class-loader",
-            "version": "v3.2.0",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/class-loader.git",
@@ -4314,7 +4314,7 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v3.2.0",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
@@ -5027,12 +5027,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tymondesigns/jwt-auth.git",
-                "reference": "d4c2822b2eafafb6512e4ca0798a79ecbd8a2c4f"
+                "reference": "6ac8699818affe333ad46e3380b183029fe5c91b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tymondesigns/jwt-auth/zipball/d4c2822b2eafafb6512e4ca0798a79ecbd8a2c4f",
-                "reference": "d4c2822b2eafafb6512e4ca0798a79ecbd8a2c4f",
+                "url": "https://api.github.com/repos/tymondesigns/jwt-auth/zipball/6ac8699818affe333ad46e3380b183029fe5c91b",
+                "reference": "6ac8699818affe333ad46e3380b183029fe5c91b",
                 "shasum": ""
             },
             "require": {
@@ -5085,7 +5085,7 @@
                 "jwt",
                 "laravel"
             ],
-            "time": "2016-11-21 19:55:09"
+            "time": "2016-12-23 23:08:37"
         },
         {
             "name": "vinkla/algolia",
@@ -5369,16 +5369,16 @@
     "packages-dev": [
         {
             "name": "alt-three/testbench",
-            "version": "v1.11.1",
+            "version": "v1.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AltThree/TestBench.git",
-                "reference": "bc1ece1aab1589c8b832e6d112f32b757739dd46"
+                "reference": "c67aac05c817777e6b42cc161c381bf27bb66266"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AltThree/TestBench/zipball/bc1ece1aab1589c8b832e6d112f32b757739dd46",
-                "reference": "bc1ece1aab1589c8b832e6d112f32b757739dd46",
+                "url": "https://api.github.com/repos/AltThree/TestBench/zipball/c67aac05c817777e6b42cc161c381bf27bb66266",
+                "reference": "c67aac05c817777e6b42cc161c381bf27bb66266",
                 "shasum": ""
             },
             "require": {
@@ -5428,7 +5428,7 @@
                 "TestBench",
                 "app"
             ],
-            "time": "2016-12-07 22:41:29"
+            "time": "2016-12-13 20:30:09"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -5754,16 +5754,16 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "0.9.6",
+            "version": "0.9.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/padraic/mockery.git",
-                "reference": "65d4ca18e15cb02eeb1e5336f884e46b9b905be0"
+                "reference": "4de7969f4664da3cef1ccd83866c9f59378c3371"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/65d4ca18e15cb02eeb1e5336f884e46b9b905be0",
-                "reference": "65d4ca18e15cb02eeb1e5336f884e46b9b905be0",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/4de7969f4664da3cef1ccd83866c9f59378c3371",
+                "reference": "4de7969f4664da3cef1ccd83866c9f59378c3371",
                 "shasum": ""
             },
             "require": {
@@ -5815,7 +5815,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2016-09-30 12:09:40"
+            "time": "2016-12-19 14:50:55"
         },
         {
             "name": "myclabs/deep-copy",
@@ -6821,16 +6821,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.2.0",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "f2300ba8fbb002c028710b92e1906e7457410693"
+                "reference": "a7095af4b97a0955f85c8989106c249fa649011f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/f2300ba8fbb002c028710b92e1906e7457410693",
-                "reference": "f2300ba8fbb002c028710b92e1906e7457410693",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/a7095af4b97a0955f85c8989106c249fa649011f",
+                "reference": "a7095af4b97a0955f85c8989106c249fa649011f",
                 "shasum": ""
             },
             "require": {
@@ -6872,7 +6872,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-18 21:17:59"
+            "time": "2016-12-10 10:07:06"
         }
     ],
     "aliases": [],

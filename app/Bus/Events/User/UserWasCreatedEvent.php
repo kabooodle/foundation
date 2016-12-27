@@ -13,28 +13,41 @@ use Kabooodle\Bus\Events\Event;
  * Class UserWasCreatedEvent
  * @package Kabooodle\Bus\Events\User
  */
-class UserWasCreatedEvent extends Event
+final class UserWasCreatedEvent extends Event
 {
     /**
      * @var User
      */
-    private $user;
+    public $user;
 
     /**
-     * UserWasCreatedEvent constructor.
-     *
-     * @param User $user
+     * @var string
      */
-    public function __construct(User $user)
+    public $accountType;
+
+    /**
+     * @param User   $user
+     * @param string $accountType
+     */
+    public function __construct(User $user, string $accountType)
     {
         $this->user = $user;
+        $this->accountType = $accountType;
     }
 
     /**
      * @return User
      */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccountType(): string
+    {
+        return $this->accountType;
     }
 }

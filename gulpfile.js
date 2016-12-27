@@ -20,6 +20,7 @@ elixir(function (mix) {
     mix.browserify('app/components/profile/settings.js');
     mix.browserify('app/components/profile/emails.js');
     mix.browserify('app/components/profile/profile-notifications.js');
+    mix.browserify('app/components/profile/profile-subscription.js');
 
     mix.browserify('app/components/shipping/shipping-create.js');
     mix.browserify('app/components/shipping/shipping-create.js');
@@ -29,6 +30,8 @@ elixir(function (mix) {
     mix.browserify('app/components/claims/claims-index.js');
 
     mix.browserify('app/components/listings/listing-items-page.js');
+
+    mix.browserify('app/components/purchases/watching-items.js');
 
     mix.browserify('app/components/register/register.js');
 
@@ -61,6 +64,7 @@ elixir(function (mix) {
             'vendor/emojionearea/emojionearea.css',
             'vendor/bootstrap-slider/bootstrap-slider.css',
             'vendor/tablesaw/tablesaw.css',
+            'vendor/theme/bootstrap-select/bootstrap-select.css',
             'vendor/perfectscroll/perfect-scrollbar.css'
         ], elixir.config.publicPath + 'css/merchant.css')
 

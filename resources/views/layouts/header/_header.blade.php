@@ -10,7 +10,7 @@
 
         <ul class="nav navbar-nav pull-right nav-active-border">
             @if(user())
-                @if(user()->haAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
+                @if(user()->hasAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
                 <li class="nav-item ">
                     <a class="nav-link text-sm" href="{{ route('profile.credits.index') }}">${{ user()->getAvailableBalance() }} Credits</a>
                 </li>
@@ -83,7 +83,7 @@
 
         <div class="collapse navbar-toggleable-sm" data-pjax="" id="navbar-4">
             <ul class="nav navbar-nav pull-left nav-active-border b-warning">
-                @if(user() && user()->haAtLeastMerchantSubscription())
+                @if(user() && user()->hasAtLeastMerchantSubscription())
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle "
                            href="#" data-toggle="dropdown"><span
@@ -113,10 +113,14 @@
                         </div>
                     </li>
                 @endif
-                    <li class="nav-item">
-                        <a href="{{ route('profile.purchases.index') }}"
-                           class="nav-link {{ Request::is('purchases*') ? 'active' : null }}"><span
-                                    class="nav-text">Claims</span></a>
+                    <li class ="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> <span class="nav-text">Purchases</span></a>
+                        <div class="dropdown-menu">
+                            <a href="{{ route('profile.purchases.index') }}"
+                               class="dropdown-item {{ Request::is('purchases*') ? 'active' : null }}">Purchases &amp; Claims</a>
+                            <a href="{{ route('watching.items.index', [user()->username]) }}"
+                               class="dropdown-item {{ Request::is('watching*') ? 'active' : null }}">Watching</a>
+                        </div>
                     </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('groups*') ? 'active' : null }}"

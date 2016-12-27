@@ -46,6 +46,9 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Inventory\InventoryItemWasRemovedFromSaleEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Inventory\InventoryItemWasRemovedFromSaleEventHandler::class
         ],
+        \Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Inventory\InventoryQuantityUpdatedHandler::class
+        ],
         \Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Comments\CommentWasCreatedEventHandler::class
         ],
@@ -79,6 +82,9 @@ class EventServiceProvider extends ServiceProvider
             \Kabooodle\Bus\Handlers\Events\User\AddNewUserToAllNotificationTypes::class,
             \Kabooodle\Bus\Handlers\Events\User\SendNewUserWelcomeNotifications::class,
         ],
+        \Kabooodle\Bus\Events\User\UserUpgradedToGenericTrial::class => [
+            \Kabooodle\Bus\Handlers\Events\User\SendUserOnNewGenericTrialNotifications::class
+        ],
         \Kabooodle\Bus\Events\User\UserLoggedInEvent::class => [
             \Kabooodle\Bus\Handlers\Events\User\UserLoggedInListener::class
         ],
@@ -86,6 +92,9 @@ class EventServiceProvider extends ServiceProvider
         // EMAIL EVENTS
         \Kabooodle\Bus\Events\Email\EmailWasCreatedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Email\EmailWasCreatedListener::class,
+        ],
+        \Kabooodle\Bus\Events\Email\EmailWasVerifiedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\User\CheckAndActivateUserAccount::class
         ],
     ];
     /**

@@ -15,21 +15,10 @@ use Kabooodle\Models\Email;
  */
 class DestroyEmailCommandHandler
 {
-    protected $email;
-
-    /**
-     * DestroyEmailCommandHandler constructor.
-     * @param Email $email
-     */
-    public function __construct(Email $email)
-    {
-        $this->email = $email;
-    }
-
     /**
      * @param DestroyEmailCommand $command
      *
-     * @return Email
+     * @return boolean
      */
     public function handle(DestroyEmailCommand $command)
     {

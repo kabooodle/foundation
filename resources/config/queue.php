@@ -75,7 +75,7 @@ return [
             'host'    => 'mq-aws-us-east-1-2.iron.io',
             'token'   => env('IRON_QUEUE_TOKEN'),
             'project' => env('IRON_QUEUE_ID'),
-            'queue'   => 'iron',
+            'queue'   => 'email-queue',
             'encrypt' => true,
             'timeout' => 60
         ],

@@ -29,7 +29,7 @@ class MakeEmailPrimaryCommandHandler
     /**
      * @param MakeEmailPrimaryCommand $command
      *
-     * @return Email
+     * @return boolean
      */
     public function handle(MakeEmailPrimaryCommand $command)
     {
@@ -38,6 +38,6 @@ class MakeEmailPrimaryCommandHandler
         $email->save();
 
         $email->user->makeEmailOnlyPrimary($email);
-        return $email;
+        return $email->isPrimary();
     }
 }

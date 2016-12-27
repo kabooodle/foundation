@@ -11,10 +11,6 @@
 //    return redirect('http://www.kabooodle.com');
 //});
 
-Route::get('/home', function(){
-   return view('home.index');
-});
-
 Route::get('privacy', function(){
    return view('content.privacy');
 });
@@ -27,7 +23,10 @@ Route::post(
     '__captainHook/sheepoo',
     \Kabooodle\Http\Controllers\Web\Webhooks\ShippoWebhooksController::class . '@handleWebhook'
 );
-Route::get('c/{hash}', \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show');
+Route::get('c/{hash}', [
+    'as' => 'externalclaim.show',
+    'uses' => \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show'
+]);
 
 //Route::group(['domain' => getEnvDomain(true)], function(){
 
@@ -47,6 +46,8 @@ Route::get('c/{hash}', \Kabooodle\Http\Controllers\Web\Claims\ClaimingController
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'sales' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'analytics' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'listings' . DIRECTORY_SEPARATOR . 'routes.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'watching' . DIRECTORY_SEPARATOR . 'routes.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'home' . DIRECTORY_SEPARATOR . 'routes.php';
 
     Route::get('/referrals', [
         'as' => 'referrals.index',

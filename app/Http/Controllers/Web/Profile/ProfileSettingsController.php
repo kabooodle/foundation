@@ -176,9 +176,12 @@ class ProfileSettingsController extends Controller
      */
     public function getEmails()
     {
-        $emails = user()->emails;
+        $data = [
+            'primaryEmail' => user()->primaryEmail,
+            'emails' => user()->emails
+        ];
 
-        return $this->view('profile.emails')->with(compact('emails'));
+        return $this->view('profile.emails', $data);
     }
 
     /**
@@ -203,7 +206,11 @@ class ProfileSettingsController extends Controller
     {
         Messages::success("Email successfully verified!");
 
-        return $this->view('profile.email-verified');
+        if (user()) {
+            return $this->view('profile.email-verified');
+        }
+
+        return $this->redirect()->route('auth.login');
     }
 
     /**

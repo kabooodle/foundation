@@ -20,11 +20,8 @@ trait NotificationableTrait
      */
     public function checkIsNotifyable(string $name, string $type)
     {
-        $setting = $this->notificationsettings->where('name', $name)->first();
-        if ($setting) {
-            return $setting->{$type} == true;
-        }
-
-        return false;
+        return $this->notificationsettings->filter(function($setting) use ($name, $type) {
+            return $setting->name == $name && $setting->pivot->{$type} == true;
+        })->first();
     }
 }

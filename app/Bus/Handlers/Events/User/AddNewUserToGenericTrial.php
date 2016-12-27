@@ -6,21 +6,25 @@
 
 namespace Kabooodle\Bus\Handlers\Events\User;
 
-use Carbon\Carbon;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
+use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToPlanCommand;
 
 /**
  * Class AddNewUserToGenericTrial
  */
 class AddNewUserToGenericTrial
 {
+    use DispatchesJobs;
+
     /**
      * @param UserWasCreatedEvent $event
      */
     public function handle(UserWasCreatedEvent $event)
     {
         $user = $event->getUser();
-        $user->trial_ends_at = Carbon::now()->addDays(30);
-        $user->save();
+        if ($event->getAccountType() == 'merchant') {
+            $this->dispatchNow(new SubscribeUserToPlanCommand($user));
+        }
     }
 }

@@ -130,7 +130,7 @@
             {{--<div class="box-body">--}}
             <div class="form-group row m-b-0">
                 <div class="col-sm-9 col-sm-offset-3">
-                    <button class="btn primary">Contine to pricing</button>
+                    <button class="btn primary">Continue to pricing</button>
                 </div>
             </div>
             {{--</div>--}}

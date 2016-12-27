@@ -2,6 +2,19 @@
     <form :action="route" method="POST">
         <input type="hidden" name="_token" :value="csrf">
         <input type="hidden" name="_redirect" :value="redirect">
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="md-form-group">
+                    <select class="md-input" name="account_type" data-toggle="selectpicker" data-style="btn white" data-width="100%">
+                        <option data-subtext="Always free" value="basic" selected="selected">Basic</option>
+                        <option data-subtext="30 day free trial" value="merchant">Merchant</option>
+                    </select>
+                    <label>Account Type:</label>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-xs-6">
                 <div class="md-form-group">
@@ -61,6 +74,7 @@
         },
         data() {
             return {
+                accountType: 'basic',
                 firstName: null,
                 lastName: null,
                 username: null,
@@ -72,6 +86,7 @@
         computed: {
             registerData: function () {
                 return {
+                    'account_type' : this.accountType,
                     'first_name': this.firstName,
                     'last_name': this.lastName,
                     'username': this.username,

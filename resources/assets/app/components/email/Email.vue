@@ -1,24 +1,31 @@
 <template>
     <div class="form-group row">
-        <div class="col-sm-6">
-            <input v-if="isInput" type="text" :name="name" :value="address" class="form-control">
-            <p v-else>{{ address }}</p>
+        <div class="col-sm-8">
+            <span>{{ address }}</span>
+            <span v-show="isVerified">
+                <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
+            </span>
+            <span v-show="!isVerified">
+                <div class="pull-right">
+                    <button @click="resendVerification" class="btn primary btn-sm">
+                        Resend Verification
+                    </button>
+                </div>
+            </span>
         </div>
         <div class="col-sm-3">
-            <div v-if="isPrimary">
-                Primary
+            <div v-show="isPrimary">
+                <div class="text-primary text-center">Primary</div>
             </div>
-            <div v-else>
-                Make Primary
+            <div v-show="!isPrimary">
+                <button v-if="isVerified" @click="makePrimary" class="btn white btn-sm">Make Primary</button>
+                <button v-else @click="notifyNeedsToVerify" class="btn disabled white btn-sm">Make Primary</button>
             </div>
         </div>
-        <div class="col-sm-3">
-            <div v-if="isVerified">
-                Verified
-            </div>
-            <div v-else>
-                Send Verification Email
-            </div>
+        <div class="col-sm-1">
+            <a href="javascript:;" v-show="!isPrimary" @click="destroy">
+                <i class="fa fa-times text-danger" aria-hidden="true"></i>
+            </a>
         </div>
     </div>
 </template>
@@ -37,25 +44,111 @@
                 required: false,
             },
             id: {
-                type: String,
-                required: false,
+                type: Number,
+                required: true,
             },
             address: {
                 type: String,
                 required: false,
             },
-            isPrimary: {
-                type: Boolean,
-                default: false,
+            primaryId: {
+                type: Number,
+                required: true,
             },
             isVerified: {
                 type: Boolean,
                 default: false,
             },
+            emailsEndpoint: {
+                type: String,
+                required: true,
+            },
+            updatePrimaryEndpoint: {
+                type: String,
+                required: true,
+            },
+            resendVerificationEndpoint: {
+                type: String,
+                required: true,
+            }
         },
         data() {
             return {
-
+                isPrimary: this.initialPrimary,
+            }
+        },
+        computed: {
+            isPrimary: function () {
+                return this.primaryId == this.id
+            },
+            updatePrimaryData: function () {
+                return {
+                    'email_id': this.id,
+                }
+            },
+            resendVerificationData: function () {
+                return {
+                    'email_id': this.id,
+                }
+            },
+        },
+        methods: {
+            notifyNeedsToVerify: function () {
+                notify({
+                    'text': 'Your must verify your email address before you can make it your primary email!',
+                    'type': 'information'
+                });
+            },
+            makePrimary: function () {
+                this.$http.put(this.updatePrimaryEndpoint, this.updatePrimaryData)
+                    .then(function (response) {
+                        this.$emit('new-primary', this.id);
+                        notify({
+                            'text': 'Your primary email address has been updated!',
+                            'type': 'success'
+                        });
+                    }, function (response) {
+                        notify({
+                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'type': 'error'
+                        });
+                    });
+            },
+            resendVerification: function () {
+                this.$http.put(this.resendVerificationEndpoint, this.resendVerificationData)
+                    .then(function (response) {
+                        notify({
+                            'text': 'A new email verification has been sent to this address!',
+                            'type': 'success'
+                        });
+                    }, function (response) {
+                        notify({
+                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'type': 'error'
+                        });
+                    });
+            },
+            destroy: function () {
+                var self = this;
+                confirmModal(function () {
+                    self.$http.delete(self.emailsEndpoint+'/'+self.id)
+                    .then(function (response) {
+                        $.noty.closeAll();
+                        self.$emit('remove-email');
+                        notify({
+                            'text': 'That email address has been deleted.',
+                            'type': 'success'
+                        });
+                    }, function (response) {
+                        $.noty.closeAll();
+                        notify({
+                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'type': 'error'
+                        });
+                    });
+                }, function () {
+                    $.noty.close();
+                }, {text: 'Are you sure you want to delete this email address?'});
             }
         },
     }
