@@ -7,7 +7,6 @@
 namespace Kabooodle\Bus\Commands\User;
 
 use Kabooodle\Models\User;
-use Kabooodle\Models\MailingAddress;
 
 /**
  * Class UpdateUserShippingProfileCommand
@@ -17,59 +16,30 @@ final class UpdateUserShippingProfileCommand
     /**
      * @var User
      */
-    public $actor;
-
-    /**
-     * @var MailingAddress
-     */
-    public $fromAddress;
-
-    /**
-     * @var MailingAddress
-     */
-    public $toAddress;
+    public $user;
 
     /**
      * @var bool;
      */
-    public $kabooodleAsDefaultshippingProvider;
+    public $kabooodleAsDefaultShippingProvider;
 
     /**
-     * @param User           $actor
-     * @param MailingAddress $fromAddress
-     * @param MailingAddress $toAddress
-     * @param bool           $kabooodleAsDefaultshippingProvider
+     * UpdateUserShippingProfileCommand constructor.
+     * @param User $user
+     * @param bool $kabooodleAsDefaultShippingProvider
      */
-    public function __construct(User $actor, MailingAddress $fromAddress, MailingAddress $toAddress, bool $kabooodleAsDefaultshippingProvider = true)
+    public function __construct(User $user, bool $kabooodleAsDefaultShippingProvider = true)
     {
-        $this->actor = $actor;
-        $this->fromAddress = $fromAddress;
-        $this->toAddress = $toAddress;
-        $this->kabooodleAsDefaultshippingProvider = $kabooodleAsDefaultshippingProvider;
+        $this->user = $user;
+        $this->kabooodleAsDefaultShippingProvider = $kabooodleAsDefaultShippingProvider;
     }
 
     /**
      * @return User
      */
-    public function getActor()
+    public function getUser()
     {
-        return $this->actor;
-    }
-
-    /**
-     * @return MailingAddress
-     */
-    public function getFromAddress()
-    {
-        return $this->fromAddress;
-    }
-
-    /**
-     * @return MailingAddress
-     */
-    public function getToAddress()
-    {
-        return $this->toAddress;
+        return $this->user;
     }
 
     /**
@@ -77,6 +47,6 @@ final class UpdateUserShippingProfileCommand
      */
     public function isKabooodleDefaultShippingProvider(): bool
     {
-        return $this->kabooodleAsDefaultshippingProvider;
+        return (bool) $this->kabooodleAsDefaultShippingProvider;
     }
 }

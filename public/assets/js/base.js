@@ -1,1 +1,630 @@
-function moneyfy(e){return e=parseFloat(e),e.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g,"$1,"),isNaN(e)?0:e}function getAllUrlParams(e){var t=e?e.split("?")[1]:window.location.search.slice(1),n={};if(t){t=t.split("#")[0];for(var r=t.split("&"),i=0;i<r.length;i++){var o=r[i].split("="),a=void 0,s=o[0].replace(/\[\d*\]/,function(e){return a=e.slice(1,-1),""}),l="undefined"==typeof o[1]||o[1];s=s.toLowerCase(),l=l.toLowerCase(),n[s]?("string"==typeof n[s]&&(n[s]=[n[s]]),"undefined"==typeof a?n[s].push(l):n[s][a]=l):n[s]=l}}return n}function randomAlphaStr(e){for(var e=e||9,t="",n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",r=0;r<e;r++)t+=n.charAt(Math.floor(Math.random()*n.length));return t}function isNumber(e){return!isNaN(parseFloat(e))&&isFinite(e)}function arrayUnique(e){for(var t=e.concat(),n=0;n<t.length;++n)for(var r=n+1;r<t.length;++r)t[n]===t[r]&&t.splice(r--,1);return t}function confirmModal(e,t,n){var r={text:"<h6>Are you sure you want to continue?</h6>",layout:"center",theme:"relax",type:"alert",modal:!0,animation:{open:{height:"toggle"},close:{height:"toggle"},easing:"linear",speed:1},timeout:4e3,buttons:[{addClass:"btn btn-sm primary noty-btn-primary noty-btn",text:"Continue",onClick:function(t){"function"==typeof e&&e(t)}},{addClass:"btn white btn-sm noty-btn-cancel noty-btn",addId:"noty_cancel",text:"Cancel",onClick:function(e){e.close(),"function"==typeof t&&t(e)}}]};n=$.extend({},r,n),noty(n)}function notify(e){var t={text:"",layout:"top",theme:"relax",type:"error",animation:{open:"animated bounceInDown",close:"animated bounceOutUp"},timeout:4e3,closeWith:["button","click"]};e=$.extend({},t,e),noty(e)}function spinny(e){return"undefined"==typeof e&&(e=14),' <img style="margin:-2px 0 0 0; padding:0;" height="'+e+'" width="'+e+'" src="'+KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif")+'">'}function snakeToCamel(e){return e.replace(/(\-\w)/g,function(e){return e[1].toUpperCase()})}!function(e){"use strict";(navigator.userAgent.match(/MSIE/i)||navigator.userAgent.match(/Trident.*rv:11\./))&&e("body").addClass("ie");var t=window.navigator.userAgent||window.navigator.vendor||window.opera;/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/.test(t)&&e("body").addClass("smart")}(jQuery),function(e){"use strict";e("input, textarea").each(function(){e(this).val()?e(this).addClass("has-value"):e(this).removeClass("has-value")}),e(document).on("blur","input, textarea",function(t){e(this).val()?e(this).addClass("has-value"):e(this).removeClass("has-value")})}(jQuery),function(e){"use strict";e(document).on("click","[ui-nav] a",function(t){var n,r,i=e(t.target);i.is("a")||(i=i.closest("a")),r=i.parent(),n=r.siblings(".active"),r.toggleClass("active"),n.removeClass("active")})}(jQuery);var uiLoad=uiLoad||{};!function(e,t,n){"use strict";var r=[],i=!1,o=e.Deferred();n.load=function(t){return t=e.isArray(t)?t:t.split(/\s+/),i||(i=o.promise()),e.each(t,function(e,t){i=i.then(function(){return t.indexOf(".css")>=0?s(t):a(t)})}),o.resolve(),i};var a=function(n){if(r[n])return r[n].promise();var i=e.Deferred(),o=t.createElement("script");return o.src=n,o.onload=function(e){i.resolve(e)},o.onerror=function(e){i.reject(e)},t.body.appendChild(o),r[n]=i,i.promise()},s=function(n){if(r[n])return r[n].promise();var i=e.Deferred(),o=t.createElement("link");return o.rel="stylesheet",o.type="text/css",o.href=n,o.onload=function(e){i.resolve(e)},o.onerror=function(e){i.reject(e)},t.head.appendChild(o),r[n]=i,i.promise()}}(jQuery,document,uiLoad),function(e){"use strict";e(document).on("click","[ui-fullscreen]",function(e){e.preventDefault(),screenfull.enabled&&screenfull.toggle()})}(jQuery),function(e){"use strict";e.extend(jQuery.easing,{def:"easeOutQuad",easeInOutExpo:function(e,t,n,r,i){return 0==t?n:t==i?n+r:(t/=i/2)<1?r/2*Math.pow(2,10*(t-1))+n:r/2*(-Math.pow(2,-10*--t)+2)+n}}),e(document).on("click","[ui-scroll-to]",function(t){t.preventDefault();var n=e("#"+e(this).attr("ui-scroll-to"));e("html,body").animate({scrollTop:n.offset().top},600,"easeInOutExpo")})}(jQuery),function($){"use strict";$.fn.uiJp=function(){var lists=this;return lists.each(function(){var self=$(this),options=eval("["+self.attr("ui-options")+"]");$.isPlainObject(options[0])&&(options[0]=$.extend({},options[0])),self[self.attr("ui-jp")].apply(self,options)}),lists}}(jQuery),String.prototype.regexIndexOf=function(e,t){var n=this.substring(t||0).search(e);return n>=0?n+(t||0):n},String.prototype.regexLastIndexOf=function(e,t){e=e.global?e:new RegExp(e.source,"g"+(e.ignoreCase?"i":"")+(e.multiLine?"m":"")),"undefined"==typeof t?t=this.length:t<0&&(t=0);for(var n=this.substring(0,t+1),r=-1,i=0;null!=(result=e.exec(n));)r=result.index,e.lastIndex=++i;return r},Array.prototype.includes||(Array.prototype.includes=function(e){"use strict";if(null==this)throw new TypeError("Array.prototype.includes called on null or undefined");var t=Object(this),n=parseInt(t.length,10)||0;if(0===n)return!1;var r,i=parseInt(arguments[1],10)||0;i>=0?r=i:(r=n+i,r<0&&(r=0));for(var o;r<n;){if(o=t[r],e===o||e!==e&&o!==o)return!0;r++}return!1}),Array.prototype.indexOf||(Array.prototype.indexOf=function(e,t){for(t=t||0;t<this.length;t++)if(this[t]===e)return t;return-1}),Array.prototype.filter||(Array.prototype.filter=function(e,t){var n,r=[];for(n=0;n<this.length;n+=1)e.call(t,this[n])&&r.push(this[n]);return r}),Array.prototype.reject||(Array.prototype.reject=function(e,t){return this.filter(function(n){return!e.call(t,n)})}),function(e,t){if("function"==typeof define&&define.amd)define(["exports","jquery"],function(e,n){return t(e,n)});else if("undefined"!=typeof exports){var n=require("jquery");t(exports,n)}else t(e,e.jQuery||e.Zepto||e.ender||e.$)}(this,function(e,t){function n(e,n){function i(e,t,n){return"undefined"==typeof n||null===n?e:(e[t]=n,e)}function o(e,t){for(var n,o=e.match(r.key);void 0!==(n=o.pop());)if(r.push.test(n)){var s=a(e.replace(/\[\]$/,""));t=i([],s,t)}else r.fixed.test(n)?t=i([],n,t):r.named.test(n)&&(t=i({},n,t));return t}function a(e){return void 0===p[e]&&(p[e]=0),p[e]++}function s(e){switch(t('[name="'+e.name+'"]',n).attr("type")){case"checkbox":return"on"===e.value||e.value;default:return e.value}}function l(t){if(!r.validate.test(t.name))return this;var n=o(t.name,s(t));return d=e.extend(!0,d,n),this}function u(t){if(!e.isArray(t))throw new Error("formSerializer.addPairs expects an Array");for(var n=0,r=t.length;n<r;n++)this.addPair(t[n]);return this}function c(){return d}function f(){return JSON.stringify(c())}var d={},p={};this.addPair=l,this.addPairs=u,this.serialize=c,this.serializeJSON=f}var r={validate:/^[a-z_][a-z0-9_]*(?:\[(?:\d*|[a-z0-9_]+)\])*$/i,key:/[a-z0-9_]+|(?=\[\])/gi,push:/^$/,fixed:/^\d+$/,named:/^[a-z0-9_]+$/i};return n.patterns=r,n.serializeObject=function(){return new n(t,this).addPairs(this.serializeArray()).serialize()},n.serializeJSON=function(){return new n(t,this).addPairs(this.serializeArray()).serializeJSON()},"undefined"!=typeof t.fn&&(t.fn.serializeObject=n.serializeObject,t.fn.serializeJSON=n.serializeJSON),e.FormSerializer=n,n}),$(function(){$(document).trigger("enhance.tablesaw"),$.extend({findFirst:function(e,t){var n;for(n=0;n<e.length;++n)if(t(e[n],n))return e[n]}}),$(document).on("click",'[data-toggle="lightbox"]',function(e){e.preventDefault(),$(this).ekkoLightbox()}),$("form").submit(function(e){var t=$(this),n=t.find(":submit"),r=n.html();setTimeout(function(){e.isDefaultPrevented()||n.prop("disabled",!0).html(r+' <i class="fa fa-spin fa-spinner"></i>')},0)}),$('[data-toggle="multiselect"]').multiselect({buttonClass:"btn white btn-sm",maxHeight:300,buttonWidth:"100%",enableFiltering:!1,disableIfEmpty:!0,numberDisplayed:1}),$('[data-ride="carousel"]').carousel({interval:!1}),$('[data-toggle="tooltip"]').tooltip(),$('[data-scrollable="scrollable-y"]').perfectScrollbar({suppressScrollX:!0}),$('[data-scrollable="scrollable-x"]').perfectScrollbar({suppressScrollY:!0}),$('[data-scrollable="scrollable"]').perfectScrollbar(),$('[data-toggle="selectpicker"]').selectpicker({style:"btn-default"}),$(".dropdown.dropdown-onhover").hover(function(){$(this).addClass("open active").find(".dropdown-menu").stop(!0,!0).show()},function(){$(this).removeClass("open active").find(".dropdown-menu").stop(!0,!0).hide()}),$(".float").keypress(function(e){46==e.which&&$(this).val().indexOf(".")==-1||!(e.which<48||e.which>57)||e.preventDefault()})});
+(function ($) {
+	"use strict";
+
+    // Checks for ie
+    if ( !!navigator.userAgent.match(/MSIE/i) || !!navigator.userAgent.match(/Trident.*rv:11\./) ){
+    	$('body').addClass('ie');
+    }
+
+    // Checks for iOs, Android, Blackberry, Opera Mini, and Windows mobile devices
+    var ua = window['navigator']['userAgent'] || window['navigator']['vendor'] || window['opera'];
+    if( (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua) ){
+    	$('body').addClass('smart');
+	} 
+
+})(jQuery);
+
+(function ($) {
+	"use strict";
+
+	$('input, textarea').each(function(){
+		$(this).val() ? $(this).addClass('has-value') : $(this).removeClass('has-value');
+	});
+	$(document).on('blur', 'input, textarea', function(e){
+		$(this).val() ? $(this).addClass('has-value') : $(this).removeClass('has-value');
+	});
+
+})(jQuery);
+
+(function ($) {
+  "use strict";
+  
+  $(document).on('click', '[ui-nav] a', function (e) {
+    var $this = $(e.target), $active, $li;
+    $this.is('a') || ($this = $this.closest('a'));
+    
+    $li = $this.parent();
+    $active = $li.siblings( ".active" );
+    $li.toggleClass('active');
+    $active.removeClass('active');
+  });
+})(jQuery);
+
+
+/**
+ * 0.1.0
+ * Deferred load js/css file, used for ui-jq.js and Lazy Loading.
+ * 
+ * @ flatfull.com All Rights Reserved.
+ * Author url: http://themeforest.net/user/flatfull
+ */
+var uiLoad = uiLoad || {};
+
+(function($, $document, uiLoad) {
+	"use strict";
+
+	var loaded = [],
+	promise = false,
+	deferred = $.Deferred();
+
+	/**
+	 * Chain loads the given sources
+	 * @param srcs array, script or css
+	 * @returns {*} Promise that will be resolved once the sources has been loaded.
+	 */
+	uiLoad.load = function (srcs) {
+		srcs = $.isArray(srcs) ? srcs : srcs.split(/\s+/);
+		if(!promise){
+			promise = deferred.promise();
+		}
+
+		$.each(srcs, function(index, src) {
+			promise = promise.then( function(){
+				return src.indexOf('.css') >=0 ? loadCSS(src) : loadScript(src);
+			} );
+		});
+		deferred.resolve();
+		return promise;
+	};
+
+	/**
+	 * Dynamically loads the given script
+	 * @param src The url of the script to load dynamically
+	 * @returns {*} Promise that will be resolved once the script has been loaded.
+	 */
+	var loadScript = function (src) {
+		if(loaded[src]) return loaded[src].promise();
+
+		var deferred = $.Deferred();
+		var script = $document.createElement('script');
+		script.src = src;
+		script.onload = function (e) {
+			deferred.resolve(e);
+		};
+		script.onerror = function (e) {
+			deferred.reject(e);
+		};
+		$document.body.appendChild(script);
+		loaded[src] = deferred;
+
+		return deferred.promise();
+	};
+
+	/**
+	 * Dynamically loads the given CSS file
+	 * @param href The url of the CSS to load dynamically
+	 * @returns {*} Promise that will be resolved once the CSS file has been loaded.
+	 */
+	var loadCSS = function (href) {
+		if(loaded[href]) return loaded[href].promise();
+
+		var deferred = $.Deferred();
+		var style = $document.createElement('link');
+		style.rel = 'stylesheet';
+		style.type = 'text/css';
+		style.href = href;
+		style.onload = function (e) {
+			deferred.resolve(e);
+		};
+		style.onerror = function (e) {
+			deferred.reject(e);
+		};
+		$document.head.appendChild(style);
+		loaded[href] = deferred;
+
+		return deferred.promise();
+	}
+
+})(jQuery, document, uiLoad);
+
+(function ($) {
+	"use strict";
+
+	$(document).on('click', '[ui-fullscreen]', function (e) {
+		e.preventDefault();
+		if (screenfull.enabled) {
+		  screenfull.toggle();
+		}
+	});
+})(jQuery);
+
+(function ($) {
+	"use strict";
+  	$.extend( jQuery.easing,{
+	    def: 'easeOutQuad',
+	    easeInOutExpo: function (x, t, b, c, d) {
+	        if (t==0) return b;
+	        if (t==d) return b+c;
+	        if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
+	        return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
+	    }
+	});
+
+	$(document).on('click', '[ui-scroll-to]', function (e) {
+		e.preventDefault();
+		var target = $('#'+$(this).attr('ui-scroll-to'));
+		$('html,body').animate({
+          scrollTop: target.offset().top
+        }, 600, 'easeInOutExpo');
+	});
+})(jQuery);
+
+(function ($) {
+  	"use strict";
+  
+	$.fn.uiJp = function(){
+
+		var lists  = this;
+
+        lists.each(function()
+        {
+        	var self = $(this);
+			var options = eval('[' + self.attr('ui-options') + ']');
+			if ($.isPlainObject(options[0])) {
+				options[0] = $.extend({}, options[0]);
+			}
+
+			// uiLoad.load(MODULE_CONFIG[self.attr('ui-jp')]).then( function(){
+				self[self.attr('ui-jp')].apply(self, options);
+			// });
+        });
+
+        return lists;
+	}
+
+})(jQuery);
+
+;
+function moneyfy(n) {
+    n = parseFloat(n);
+    n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+    if(isNaN(n)){
+        return 0;
+    }
+    return n;
+};
+
+function getAllUrlParams(url) {
+
+    var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+
+    var obj = {};
+
+    if (queryString) {
+
+        queryString = queryString.split('#')[0];
+
+        var arr = queryString.split('&');
+
+        for (var i=0; i<arr.length; i++) {
+            var a = arr[i].split('=');
+            var paramNum = undefined;
+            var paramName = a[0].replace(/\[\d*\]/, function(v) {
+                paramNum = v.slice(1,-1);
+                return '';
+            });
+
+            var paramValue = typeof(a[1])==='undefined' ? true : a[1];
+
+            paramName = paramName.toLowerCase();
+            paramValue = paramValue.toLowerCase();
+
+            if (obj[paramName]) {
+                if (typeof obj[paramName] === 'string') {
+                    obj[paramName] = [obj[paramName]];
+                }
+                if (typeof paramNum === 'undefined') {
+                    obj[paramName].push(paramValue);
+                }
+                else {
+                    obj[paramName][paramNum] = paramValue;
+                }
+            }
+            else {
+                obj[paramName] = paramValue;
+            }
+        }
+    }
+
+    return obj;
+};
+
+function randomAlphaStr(m) {
+    var m = m || 9;
+   var s = '',
+        r = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    for (var i = 0; i < m; i++) {
+        s += r.charAt(Math.floor(Math.random() * r.length));
+    }
+    return s;
+};
+
+function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+};
+
+function arrayUnique(array) {
+    var a = array.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
+String.prototype.regexIndexOf = function(regex, startpos) {
+    var indexOf = this.substring(startpos || 0).search(regex);
+    return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
+};
+
+String.prototype.regexLastIndexOf = function(regex, startpos) {
+    regex = (regex.global) ? regex : new RegExp(regex.source, "g" + (regex.ignoreCase ? "i" : "") + (regex.multiLine ? "m" : ""));
+    if(typeof (startpos) == "undefined") {
+        startpos = this.length;
+    } else if(startpos < 0) {
+        startpos = 0;
+    }
+    var stringToWorkWith = this.substring(0, startpos + 1);
+    var lastIndexOf = -1;
+    var nextStop = 0;
+    while((result = regex.exec(stringToWorkWith)) != null) {
+        lastIndexOf = result.index;
+        regex.lastIndex = ++nextStop;
+    }
+    return lastIndexOf;
+};
+
+if (!Array.prototype.includes) {
+    Array.prototype.includes = function(searchElement) {
+        'use strict';
+        if (this == null) {
+            throw new TypeError('Array.prototype.includes called on null or undefined');
+        }
+
+        var O = Object(this);
+        var len = parseInt(O.length, 10) || 0;
+        if (len === 0) {
+            return false;
+        }
+        var n = parseInt(arguments[1], 10) || 0;
+        var k;
+        if (n >= 0) {
+            k = n;
+        } else {
+            k = len + n;
+            if (k < 0) {k = 0;}
+        }
+        var currentElement;
+        while (k < len) {
+            currentElement = O[k];
+            if (searchElement === currentElement ||
+                (searchElement !== searchElement && currentElement !== currentElement)) {
+                return true;
+            }
+            k++;
+        }
+        return false;
+    };
+}
+
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function (item, start) {
+        start = start || 0;
+        for( ; start < this.length; start++) {
+            if (this[start] === item) {
+                return start;
+            }
+        }
+        return -1;
+    };
+}
+
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function (iterator, context) {
+        var arr = [];
+        var i;
+        for (i = 0; i < this.length; i += 1) {
+            if (iterator.call(context, this[i])) {
+                arr.push(this[i]);
+            }
+        }
+        return arr;
+    };
+}
+if (!Array.prototype.reject) {
+    Array.prototype.reject = function (iterator, context) {
+        return this.filter(function (item) {
+            return !iterator.call(context, item);
+        });
+    };
+}
+
+function confirmModal(confirmCB, closeCB, options) {
+    var defaults = {
+        text: '<h6>Are you sure you want to continue?</h6>',
+        layout: 'center',
+        theme: 'relax',
+        type: 'alert',
+        modal: true,
+        animation: {
+            open: {height: 'toggle'},
+            close: {height: 'toggle'},
+            easing: 'linear',
+            speed: 1
+        },
+        timeout: 4000,
+        buttons: [
+            {
+                addClass: 'btn btn-sm primary noty-btn-primary noty-btn', text: 'Continue', onClick: function ($noty) {
+                if (typeof confirmCB === 'function') {
+                    confirmCB($noty);
+                }
+            }
+            },
+            {
+                addClass: 'btn white btn-sm noty-btn-cancel noty-btn', addId: 'noty_cancel', text: 'Cancel', onClick: function ($noty) {
+                $noty.close();
+                if (typeof closeCB === 'function') {
+                    closeCB($noty);
+                }
+            }
+            }
+        ]
+    };
+
+    options = $.extend({}, defaults, options);
+
+    noty(options);
+};
+
+(function(root, factory) {
+
+    // AMD
+    if (typeof define === "function" && define.amd) {
+        define(["exports", "jquery"], function(exports, $) {
+            return factory(exports, $);
+        });
+    }
+
+    else if (typeof exports !== "undefined") {
+        var $ = require("jquery");
+        factory(exports, $);
+    }
+
+    else {
+        factory(root, (root.jQuery || root.Zepto || root.ender || root.$));
+    }
+
+}(this, function(exports, $) {
+
+    var patterns = {
+        validate: /^[a-z_][a-z0-9_]*(?:\[(?:\d*|[a-z0-9_]+)\])*$/i,
+        key:      /[a-z0-9_]+|(?=\[\])/gi,
+        push:     /^$/,
+        fixed:    /^\d+$/,
+        named:    /^[a-z0-9_]+$/i
+    };
+
+    function FormSerializer(helper, $form) {
+
+        var data     = {},
+            pushes   = {};
+
+        function build(base, key, value) {
+            if (typeof value === 'undefined' || value === null) {
+                return base;
+            }
+            base[key] = value;
+            return base;
+        }
+
+        function makeObject(root, value) {
+
+            var keys = root.match(patterns.key), k;
+
+            while ((k = keys.pop()) !== undefined) {
+                if (patterns.push.test(k)) {
+                    var idx = incrementPush(root.replace(/\[\]$/, ''));
+                    value = build([], idx, value);
+                }
+
+                else if (patterns.fixed.test(k)) {
+                    value = build([], k, value);
+                }
+
+                else if (patterns.named.test(k)) {
+                    value = build({}, k, value);
+                }
+            }
+
+            return value;
+        }
+
+        function incrementPush(key) {
+            if (pushes[key] === undefined) {
+                pushes[key] = 0;
+            }
+            return pushes[key]++;
+        }
+
+        function encode(pair) {
+            switch ($('[name="' + pair.name + '"]', $form).attr("type")) {
+                case "checkbox":
+                    return pair.value === "on" ? true : pair.value;
+                default:
+                    return pair.value;
+            }
+        }
+
+        function addPair(pair) {
+            if (!patterns.validate.test(pair.name)) return this;
+            var obj = makeObject(pair.name, encode(pair));
+            data = helper.extend(true, data, obj);
+            return this;
+        }
+
+        function addPairs(pairs) {
+            if (!helper.isArray(pairs)) {
+                throw new Error("formSerializer.addPairs expects an Array");
+            }
+            for (var i=0, len=pairs.length; i<len; i++) {
+                this.addPair(pairs[i]);
+            }
+            return this;
+        }
+
+        function serialize() {
+            return data;
+        }
+
+        function serializeJSON() {
+            return JSON.stringify(serialize());
+        }
+
+        this.addPair = addPair;
+        this.addPairs = addPairs;
+        this.serialize = serialize;
+        this.serializeJSON = serializeJSON;
+    }
+
+    FormSerializer.patterns = patterns;
+
+    FormSerializer.serializeObject = function serializeObject() {
+        return new FormSerializer($, this).
+        addPairs(this.serializeArray()).
+        serialize();
+    };
+
+    FormSerializer.serializeJSON = function serializeJSON() {
+        return new FormSerializer($, this).
+        addPairs(this.serializeArray()).
+        serializeJSON();
+    };
+
+    if (typeof $.fn !== "undefined") {
+        $.fn.serializeObject = FormSerializer.serializeObject;
+        $.fn.serializeJSON   = FormSerializer.serializeJSON;
+    }
+
+    exports.FormSerializer = FormSerializer;
+
+    return FormSerializer;
+}));
+
+function notify(options){
+    var defaults = {
+        text: '',
+        layout: 'top',
+        theme: 'relax',
+        type: 'error',
+        animation: {
+            open: 'animated bounceInDown',
+            close: 'animated bounceOutUp'
+        },
+        timeout: 4000,
+        closeWith: ['button','click']
+    };
+
+    options = $.extend({}, defaults, options);
+
+    noty(options);
+};
+
+function spinny(size){
+    if(typeof size === 'undefined') {
+        size = 14;
+    }
+    return ' <img style="margin:-2px 0 0 0; padding:0;" height="'+size+'" width="'+size+'" src="'+KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif")+'">';
+};
+
+function snakeToCamel(s){
+    return s.replace(/(\-\w)/g, function(m){return m[1].toUpperCase();});
+};
+
+
+$(function () {
+
+    $(document).trigger("enhance.tablesaw");
+
+    $.extend( {
+        findFirst: function( elems, validateCb ){
+            var i;
+            for( i=0 ; i < elems.length ; ++i ) {
+                if( validateCb( elems[i], i ) )
+                    return elems[i];
+            }
+            return undefined;
+        }
+    } );
+
+    $(document).on('click', '[data-toggle="lightbox"]', function (e) {
+        e.preventDefault();
+        $(this).ekkoLightbox();
+    });
+
+    $('form').submit(function (e) {
+        var $form = $(this),
+            btn = $form.find(':submit'),
+            btnHtml = btn.html();
+
+        setTimeout(function(){
+            if(! e.isDefaultPrevented()) {
+                btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
+            }
+        },0);
+    });
+
+    $('[data-toggle="multiselect"]').multiselect({
+        buttonClass: 'btn white btn-sm',
+        maxHeight: 300,
+        buttonWidth: '100%',
+        enableFiltering: false,
+        disableIfEmpty: true,
+        numberDisplayed: 1
+    });
+
+    $('[data-ride="carousel"]').carousel({
+        interval : false
+    });
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $('[data-scrollable="scrollable-y"]').perfectScrollbar({
+        suppressScrollX: true
+    });
+
+    $('[data-scrollable="scrollable-x"]').perfectScrollbar({
+        suppressScrollY: true
+    });
+
+    $('[data-scrollable="scrollable"]').perfectScrollbar();
+
+    $('[data-toggle="selectpicker"]').selectpicker({
+        style: 'btn-default'
+    });
+
+    $('.dropdown.dropdown-onhover').hover(function () {
+        $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();
+    }, function () {
+        $(this).removeClass('open active').find('.dropdown-menu').stop(true, true).hide();
+    });
+
+    $('.float').keypress(function (e) {
+        if ((e.which != 46 || $(this).val().indexOf('.') != -1) && (e.which < 48 || e.which > 57)) {
+            e.preventDefault();
+        }
+    });
+});
+//# sourceMappingURL=base.js.map

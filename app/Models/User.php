@@ -531,7 +531,7 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     * @return\Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function primaryBillingAddress()
     {
@@ -547,7 +547,7 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     * @return\Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function primaryShipFromAddress()
     {
@@ -556,6 +556,14 @@ class User extends BaseEloquentModel implements
 
     /**
      * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function shipFromAddresses()
+    {
+        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_FROM);
+    }
+
+    /**
+     * @return\Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function primaryShipToAddress()
     {
