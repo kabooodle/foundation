@@ -6524,8 +6524,25 @@ exports.default = {
             primaryFromId: this.initialPrimaryFromId,
             toAddresses: this.initialToAddresses,
             primaryToId: this.initialPrimaryToId,
-            addingAddress: false,
-            newAddress: null
+            addingFromAddress: false,
+            addingToAddress: false,
+            newAddressData: null,
+            shipFromType: 'ship_from',
+            newFromCompany: null,
+            newFromStreet1: null,
+            newFromStreet2: null,
+            newFromCity: null,
+            newFromState: null,
+            newFromZip: null,
+            newFromPhone: null,
+            shipToType: 'ship_to',
+            newToCompany: null,
+            newToStreet1: null,
+            newToStreet2: null,
+            newToCity: null,
+            newToState: null,
+            newToZip: null,
+            newToPhone: null
         };
     },
 
@@ -6538,15 +6555,28 @@ exports.default = {
                 'use_kabooodle_as_shipper': this.usesKabooodleAsShipper ? 1 : 0
             };
         },
-        newAddressData: function newAddressData() {
+        newFromAddressData: function newFromAddressData() {
             return {
-                'company': this.company,
-                'street1': this.street1,
-                'street2': this.street2,
-                'city': this.city,
-                'state': this.state,
-                'zip': this.zip,
-                'phone': this.phone
+                'type': this.shipFromType,
+                'company': this.newFromCompany,
+                'street1': this.newFromStreet1,
+                'street2': this.newFromStreet2,
+                'city': this.newFromCity,
+                'state': this.newFromState,
+                'zip': this.newFromZip,
+                'phone': this.newFromPhone
+            };
+        },
+        newToAddressData: function newToAddressData() {
+            return {
+                'type': this.shipToType,
+                'company': this.newToCompany,
+                'street1': this.newToStreet1,
+                'street2': this.newToStreet2,
+                'city': this.newToCity,
+                'state': this.newToState,
+                'zip': this.newToZip,
+                'phone': this.newToPhone
             };
         }
     },
@@ -6568,17 +6598,28 @@ exports.default = {
         setNewPrimary: function setNewPrimary(id) {
             this.primaryId = id;
         },
+        saveFromAddress: function saveFromAddress() {
+            this.newAddressData = this.newFromAddressData;
+            this.saveAddress();
+        },
+        saveToAddress: function saveToAddress() {
+            this.newAddressData = this.newToAddressData;
+            this.saveAddress();
+        },
         saveAddress: function saveAddress() {
-            this.$http.post(this.newAddressEndpoint, this.newAddressData).then(function (response) {
-                switch (response.data.data.type) {
-                    case 'ship_from':
+            this.$http.post(this.addressesEndpoint, this.newAddressData).then(function (response) {
+                switch (this.newAddressData.type) {
+                    case this.shipFromType:
                         this.fromAddresses.push(response.data.data.address);
+                        this.addingFromAddress = false;
+                        this.clearNewAddressData(this.shipFromType);
                         break;
-                    case 'ship_to':
+                    case this.shipToType:
                         this.toAddresses.push(response.data.data.address);
+                        this.addingToAddress = false;
+                        this.clearNewAddressData(this.shipToType);
                         break;
                 }
-                this.addingAddress = false;
                 notify({
                     'text': 'Your new address has been saved!',
                     'type': 'success'
@@ -6589,11 +6630,31 @@ exports.default = {
                     'type': 'error'
                 });
             });
+        },
+        clearNewAddressData: function clearNewAddressData(type) {
+            if (type == this.shipFromType) {
+                this.newFromCompany = null;
+                this.newFromStreet1 = null;
+                this.newFromStreet2 = null;
+                this.newFromCity = null;
+                this.newFromState = null;
+                this.newFromZip = null;
+                this.newFromPhone = null;
+            } else if (type == this.shipToType) {
+                this.newToCompany = null;
+                this.newToStreet1 = null;
+                this.newToStreet2 = null;
+                this.newToCity = null;
+                this.newToState = null;
+                this.newToZip = null;
+                this.newToPhone = null;
+            }
         }
-    }
+    },
+    created: function created() {}
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"isMerchantPlus\">\n        <div class=\"box\">\n            <div class=\"box-header\">\n                <h2>Shipping Profile Settings</h2>\n            </div>\n            <div class=\"box-divider m-a-0\"></div>\n            <div class=\"box-body\">\n                <div class=\"row\">\n                    <div class=\"col-sm-9\">\n                        <p>Set Kabooodle as default shipping provider.</p>\n                        <small class=\"text-muted\">When a claim is accepted, the claim is automatically added to Kabooodle's shipping queue for you.</small>\n                    </div>\n                    <div class=\"col-sm-3\">\n                        <div class=\"checkbox  pull-right checkbox-slider--b-flat\">\n                            <label>\n                                <input type=\"checkbox\" v-model=\"usesKabooodleAsShipper\" v-on:change=\"updateShippingProfile\"><span></span>\n                            </label>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div v-else=\"\">\n        <p>You gotta get on the merchant plus shit!</p>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"isMerchantPlus\">\n        <div class=\"box\">\n            <div class=\"box-header\">\n                <h2>Shipping Profile Settings</h2>\n            </div>\n            <div class=\"box-divider m-a-0\"></div>\n            <div class=\"box-body\">\n                <div class=\"row\">\n                    <div class=\"col-sm-9\">\n                        <p>Set Kabooodle as default shipping provider.</p>\n                        <small class=\"text-muted\">When a claim is accepted, the claim is automatically added to Kabooodle's shipping queue for you.</small>\n                    </div>\n                    <div class=\"col-sm-3\">\n                        <div class=\"checkbox  pull-right checkbox-slider--b-flat\">\n                            <label>\n                                <input type=\"checkbox\" v-model=\"usesKabooodleAsShipper\" v-on:change=\"updateShippingProfile\"><span></span>\n                            </label>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"box\">\n            <div class=\"box-header\">\n                <h2>Ship From Addresses</h2>\n                <small>These are the addresses used as the \"From\" address when using shipping labels and processing shipments as a seller.</small>\n            </div>\n            <div class=\"box-divider m-a-0\"></div>\n            <div class=\"box-body\">\n                <user-address v-for=\"(address, index) in fromAddresses\" :key=\"address.id\" :address=\"address\" :id=\"address.id\" :primary-id=\"primaryFromId\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :addresses-endpoint=\"addressesEndpoint\" v-on:new-primary=\"setNewPrimary\" v-on:remove-address=\"fromAddresses.splice(index, 1)\"></user-address>\n                <div class=\"row\">\n                    <div class=\"col-sm-12\">\n                        <div v-show=\"addingFromAddress\">\n                            <div class=\"form-group\">\n\n                            </div>\n                            <div class=\"pull-left\">\n                                <button @click=\"addingFromAddress = !addingFromAddress\" class=\"btn white btn-block p-x-md\">Cancel</button>\n                            </div>\n                            <div class=\"pull-right\">\n                                <button @click=\"saveFromAddress\" class=\"btn primary btn-block p-x-md\">Save</button>\n                            </div>\n                        </div>\n                        <div v-show=\"!addingFromAddress\">\n                            <div class=\"pull-left\">\n                                <button @click=\"addingFromAddress = !addingFromAddress\" class=\"btn white btn-block p-x-md\">Add Address</button>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"box\">\n        <div class=\"box-header\">\n            <h2>Ship To Addresses</h2>\n            <small>As a buyer, these are the shipping addresses used for the items you purchase.</small>\n        </div>\n        <div class=\"box-divider m-a-0\"></div>\n        <div class=\"box-body\">\n            <user-address v-for=\"(address, index) in toAddresses\" :key=\"address.id\" :address=\"address\" :id=\"address.id\" :primary-id=\"primaryToId\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :addresses-endpoint=\"addressesEndpoint\" v-on:new-primary=\"setNewPrimary\" v-on:remove-address=\"toAddresses.splice(index, 1)\"></user-address>\n            <div class=\"row\">\n                <div class=\"col-sm-12\">\n                    <div v-show=\"addingToAddress\">\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Company Name<small class=\"block text-muted\">(Optional)</small></label>\n                            <div class=\"col-sm-6\">\n                                <input type=\"text\" v-model=\"newToCompany\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Street 1</label>\n                            <div class=\"col-sm-6\">\n                                <input type=\"text\" v-model=\"newToStreet1\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Street 2<small class=\"block text-muted\">(Optional)</small></label>\n                            <div class=\"col-sm-6\">\n                                <input type=\"text\" v-model=\"newToStreet2\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">City</label>\n                            <div class=\"col-sm-6\">\n                                <input type=\"text\" v-model=\"newToCity\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">State</label>\n                            <div class=\"col-sm-3\">\n                                <input type=\"text\" v-model=\"newToState\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Zip</label>\n                            <div class=\"col-sm-3\">\n                                <input type=\"text\" v-model=\"newToZip\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Phone <small class=\"block text-muted\">(Optional)</small></label>\n                            <div class=\"col-md-4\">\n                                <input type=\"text\" v-model=\"newToPhone\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"pull-left\">\n                            <button @click=\"addingToAddress = !addingToAddress\" class=\"btn white btn-block p-x-md\">Cancel</button>\n                        </div>\n                        <div class=\"pull-right\">\n                            <button @click=\"saveToAddress\" class=\"btn primary btn-block p-x-md\">Save</button>\n                        </div>\n                    </div>\n                    <div v-show=\"!addingToAddress\">\n                        <div class=\"pull-left\">\n                            <button @click=\"addingToAddress = !addingToAddress\" class=\"btn white btn-block p-x-md\">Add Address</button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6611,7 +6672,7 @@ if (module.hot) {(function () {  module.hot.accept()
 },{"../address/Address.vue":5,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],7:[function(require,module,exports){
 'use strict';
 
-var _ShippingProfile = require('../shipping/ShippingProfile.vue');
+var _ShippingProfile = require('./ShippingProfile.vue');
 
 var _ShippingProfile2 = _interopRequireDefault(_ShippingProfile);
 
@@ -6624,6 +6685,6 @@ new Vue({
     }
 });
 
-},{"../shipping/ShippingProfile.vue":6}]},{},[7]);
+},{"./ShippingProfile.vue":6}]},{},[7]);
 
 //# sourceMappingURL=shipping-profile.js.map

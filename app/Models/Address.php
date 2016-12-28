@@ -68,15 +68,10 @@ class Address extends BaseEloquentModel implements Revisionable
     public static function getRules()
     {
         return [
-            'from.street1' => 'required',
-            'from.city' => 'required',
-            'from.state' => 'required',
-            'from.zip' => 'required',
-
-            'to.street1' => '',
-            'to.city' => 'required_with:street1',
-            'to.state' => 'required_with:to.street1,to.city',
-            'to.zip' => 'required_with:to.street1,to.city,to.state',
+            'street1' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required',
         ];
     }
 
@@ -88,6 +83,14 @@ class Address extends BaseEloquentModel implements Revisionable
     public static function factory(array $attributes)
     {
         return self::create($attributes);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrimary()
+    {
+        return (bool) $this->primary;
     }
 
     /**

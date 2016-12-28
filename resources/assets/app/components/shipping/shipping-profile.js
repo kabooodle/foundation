@@ -1,4 +1,4 @@
-import ShippingProfile from '../shipping/ShippingProfile.vue';
+import ShippingProfile from './ShippingProfile.vue';
 
 new Vue({
     el: '#shipping-profile-div',

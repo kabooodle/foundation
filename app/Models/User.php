@@ -579,6 +579,25 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @param Address $primaryAddress
+     */
+    public function makeAddressOnlyPrimary(Address $primaryAddress)
+    {
+        $otherAddresses = $this->addresses->filter(function ($address) use ($primaryAddress) {
+            return $address->type == $primaryAddress->type && $address->id != $primaryAddress->id;
+        });
+        foreach ($otherAddresses as $otherAddress) {
+            $otherAddress->primary = false;
+            $otherAddress->save();
+        }
+
+        if (!$primaryAddress->isPrimary()) {
+            $primaryAddress->primary = true;
+            $primaryAddress->save();
+        }
+    }
+
+    /**
      * @param $name
      *
      * @return string

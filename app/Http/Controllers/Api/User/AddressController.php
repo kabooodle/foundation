@@ -23,8 +23,7 @@ class AddressController extends AbstractApiController
 {
     /**
      * @param Request $request
-     *
-     * @return \Dingo\Api\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
@@ -39,22 +38,30 @@ class AddressController extends AbstractApiController
 
     /**
      * @param Request $request
+     * @param $userId
      *
-     * @return \Dingo\Api\Http\Response
+     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $userId)
     {
         try {
             $this->validate($request, Address::getRules());
 
             $address = $this->dispatchNow(new AddAddressCommand(
                 $this->getUser(),
-                $request->get('address'),
-                $request->get('primary', false)));
+                $request->get('type'),
+                $request->get('primary', false),
+                $request->get('company'),
+                $request->get('street1'),
+                $request->get('street2'),
+                $request->get('city'),
+                $request->get('state'),
+                $request->get('zip'),
+                $request->get('phone')));
 
             return $this->setData(['address' => $address])->respond();
         } catch (Exception $e) {
-            return $this->setStatusCode(500)->respond($e);
+            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond($e);
         }
     }
 
@@ -96,32 +103,15 @@ class AddressController extends AbstractApiController
 
     /**
      * @param Request $request
+     * @param $userId
+     * @param $addressId
      *
-     * @return \Dingo\Api\Http\Response
-     */
-    public function resendVerification(Request $request)
-    {
-        try {
-            $address = Address::whereId($request->get('address_id'))->whereUserId($this->getUser()->id)->firstOrFail();
-
-            $this->dispatchNow(new ResendAddressVerificationCommand($address));
-
-            return $this->respond();
-        } catch (Exception $e) {
-            return $this->setStatusCode(500)->respond();
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @param         $addressId
-     *
-     * @return \Dingo\Api\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $userId, $addressId)
     {
         try {
-            $address = Address::whereId($addressId)->whereUserId($this->getUser()->id)->wherePrimary(false)->firstOrFail();
+            $address = Address::whereId($addressId)->whereUserId($userId)->wherePrimary(false)->firstOrFail();
 
             $this->dispatchNow(new DestroyAddressCommand($address));
 
