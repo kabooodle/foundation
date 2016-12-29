@@ -6449,16 +6449,85 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
+    props: {
+        address: {
+            type: Object,
+            required: true
+        },
+        showType: {
+            type: Boolean,
+            default: true
+        },
+        primaryId: {
+            type: Number,
+            required: true
+        },
+        addressesEndpoint: {
+            type: String,
+            required: true
+        },
+        updatePrimaryEndpoint: {
+            type: String,
+            required: true
+        }
+    },
     data: function data() {
         return {
             msg: 'hello vue'
         };
     },
 
-    components: {}
+    computed: {
+        isPrimary: function isPrimary() {
+            return this.primaryId == this.address.id;
+        },
+        updatePrimaryData: function updatePrimaryData() {
+            return {
+                'type': this.address.type,
+                'address_id': this.address.id
+            };
+        }
+    },
+    methods: {
+        makePrimary: function makePrimary() {
+            this.$http.put(this.updatePrimaryEndpoint, this.updatePrimaryData).then(function (response) {
+                this.$emit('new-primary', this.address.id);
+                notify({
+                    'text': 'Your primary address has been updated!',
+                    'type': 'success'
+                });
+            }, function (response) {
+                notify({
+                    'text': 'We\'re sorry. Something went wrong. Please try again.',
+                    'type': 'error'
+                });
+            });
+        },
+        destroy: function destroy() {
+            var self = this;
+            confirmModal(function () {
+                self.$http.delete(self.addressesEndpoint + '/' + self.address.id).then(function (response) {
+                    $.noty.closeAll();
+                    self.$emit('remove-address');
+                    notify({
+                        'text': 'That address has been deleted.',
+                        'type': 'success'
+                    });
+                }, function (response) {
+                    $.noty.closeAll();
+                    notify({
+                        'text': 'We\'re sorry. Something went wrong. Please try again.',
+                        'type': 'error'
+                    });
+                });
+            }, function () {
+                $.noty.close();
+            }, { text: 'Are you sure you want to delete this address?' });
+        }
+    }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row\">\n    <div class=\"col-sm-8\">\n        <span><strong>{{ address.full_name }}</strong> {{ address.street1 }}</span>\n    </div>\n    <div class=\"col-sm-3\">\n        <div v-show=\"isPrimary\">\n            <div class=\"text-primary text-center\">Primary</div>\n        </div>\n        <div v-show=\"!isPrimary\">\n            <button @click=\"makePrimary\" class=\"btn white btn-block p-x-md\">Make Primary</button>\n        </div>\n    </div>\n    <div class=\"col-sm-1\">\n        <span v-show=\"!isPrimary\" @click=\"destroy\">\n            <i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i>\n        </span>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6470,6 +6539,298 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Address = require("../address/Address.vue");
+
+var _Address2 = _interopRequireDefault(_Address);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: {
+        type: {
+            type: String,
+            required: true
+        },
+        addressesEndpoint: {
+            type: String,
+            required: true
+        },
+        updatePrimaryEndpoint: {
+            type: String,
+            required: true
+        },
+        initialAddresses: Array,
+        initialPrimaryId: {
+            type: Number,
+            required: true
+        }
+    },
+    data: function data() {
+        return {
+            addresses: this.initialAddresses,
+            primaryId: this.initialPrimaryId,
+            addingAddress: false,
+            fullName: null,
+            company: null,
+            street1: null,
+            street2: null,
+            city: null,
+            state: null,
+            zip: null,
+            phone: null,
+            stateOptions: [{
+                "name": "Alabama",
+                "abbreviation": "AL"
+            }, {
+                "name": "Alaska",
+                "abbreviation": "AK"
+            }, {
+                "name": "American Samoa",
+                "abbreviation": "AS"
+            }, {
+                "name": "Arizona",
+                "abbreviation": "AZ"
+            }, {
+                "name": "Arkansas",
+                "abbreviation": "AR"
+            }, {
+                "name": "California",
+                "abbreviation": "CA"
+            }, {
+                "name": "Colorado",
+                "abbreviation": "CO"
+            }, {
+                "name": "Connecticut",
+                "abbreviation": "CT"
+            }, {
+                "name": "Delaware",
+                "abbreviation": "DE"
+            }, {
+                "name": "District Of Columbia",
+                "abbreviation": "DC"
+            }, {
+                "name": "Federated States Of Micronesia",
+                "abbreviation": "FM"
+            }, {
+                "name": "Florida",
+                "abbreviation": "FL"
+            }, {
+                "name": "Georgia",
+                "abbreviation": "GA"
+            }, {
+                "name": "Guam",
+                "abbreviation": "GU"
+            }, {
+                "name": "Hawaii",
+                "abbreviation": "HI"
+            }, {
+                "name": "Idaho",
+                "abbreviation": "ID"
+            }, {
+                "name": "Illinois",
+                "abbreviation": "IL"
+            }, {
+                "name": "Indiana",
+                "abbreviation": "IN"
+            }, {
+                "name": "Iowa",
+                "abbreviation": "IA"
+            }, {
+                "name": "Kansas",
+                "abbreviation": "KS"
+            }, {
+                "name": "Kentucky",
+                "abbreviation": "KY"
+            }, {
+                "name": "Louisiana",
+                "abbreviation": "LA"
+            }, {
+                "name": "Maine",
+                "abbreviation": "ME"
+            }, {
+                "name": "Marshall Islands",
+                "abbreviation": "MH"
+            }, {
+                "name": "Maryland",
+                "abbreviation": "MD"
+            }, {
+                "name": "Massachusetts",
+                "abbreviation": "MA"
+            }, {
+                "name": "Michigan",
+                "abbreviation": "MI"
+            }, {
+                "name": "Minnesota",
+                "abbreviation": "MN"
+            }, {
+                "name": "Mississippi",
+                "abbreviation": "MS"
+            }, {
+                "name": "Missouri",
+                "abbreviation": "MO"
+            }, {
+                "name": "Montana",
+                "abbreviation": "MT"
+            }, {
+                "name": "Nebraska",
+                "abbreviation": "NE"
+            }, {
+                "name": "Nevada",
+                "abbreviation": "NV"
+            }, {
+                "name": "New Hampshire",
+                "abbreviation": "NH"
+            }, {
+                "name": "New Jersey",
+                "abbreviation": "NJ"
+            }, {
+                "name": "New Mexico",
+                "abbreviation": "NM"
+            }, {
+                "name": "New York",
+                "abbreviation": "NY"
+            }, {
+                "name": "North Carolina",
+                "abbreviation": "NC"
+            }, {
+                "name": "North Dakota",
+                "abbreviation": "ND"
+            }, {
+                "name": "Northern Mariana Islands",
+                "abbreviation": "MP"
+            }, {
+                "name": "Ohio",
+                "abbreviation": "OH"
+            }, {
+                "name": "Oklahoma",
+                "abbreviation": "OK"
+            }, {
+                "name": "Oregon",
+                "abbreviation": "OR"
+            }, {
+                "name": "Palau",
+                "abbreviation": "PW"
+            }, {
+                "name": "Pennsylvania",
+                "abbreviation": "PA"
+            }, {
+                "name": "Puerto Rico",
+                "abbreviation": "PR"
+            }, {
+                "name": "Rhode Island",
+                "abbreviation": "RI"
+            }, {
+                "name": "South Carolina",
+                "abbreviation": "SC"
+            }, {
+                "name": "South Dakota",
+                "abbreviation": "SD"
+            }, {
+                "name": "Tennessee",
+                "abbreviation": "TN"
+            }, {
+                "name": "Texas",
+                "abbreviation": "TX"
+            }, {
+                "name": "Utah",
+                "abbreviation": "UT"
+            }, {
+                "name": "Vermont",
+                "abbreviation": "VT"
+            }, {
+                "name": "Virgin Islands",
+                "abbreviation": "VI"
+            }, {
+                "name": "Virginia",
+                "abbreviation": "VA"
+            }, {
+                "name": "Washington",
+                "abbreviation": "WA"
+            }, {
+                "name": "West Virginia",
+                "abbreviation": "WV"
+            }, {
+                "name": "Wisconsin",
+                "abbreviation": "WI"
+            }, {
+                "name": "Wyoming",
+                "abbreviation": "WY"
+            }]
+        };
+    },
+
+    components: {
+        'user-address': _Address2.default
+    },
+    computed: {
+        primary: function primary() {
+            return this.primaryId == 0 ? 1 : 0;
+        },
+        addressData: function addressData() {
+            return {
+                'type': this.type,
+                'primary': this.primary,
+                'full_name': this.fullName,
+                'company': this.company,
+                'street1': this.street1,
+                'street2': this.street2,
+                'city': this.city,
+                'state': this.state,
+                'zip': this.zip,
+                'phone': this.phone
+            };
+        }
+    },
+    methods: {
+        setNewPrimary: function setNewPrimary(id) {
+            this.primaryId = id;
+        },
+        saveAddress: function saveAddress() {
+            this.$http.post(this.addressesEndpoint, this.addressData).then(function (response) {
+                this.addresses.push(response.data.data.address);
+                this.addingAddress = false;
+                this.clearAddressData();
+                notify({
+                    'text': 'Your new address has been saved!',
+                    'type': 'success'
+                });
+            }, function (response) {
+                notify({
+                    'text': 'We\'re sorry. Something went wrong. Please try again.',
+                    'type': 'error'
+                });
+            });
+        },
+        clearAddressData: function clearAddressData() {
+            this.company = null;
+            this.street1 = null;
+            this.street2 = null;
+            this.city = null;
+            this.state = null;
+            this.zip = null;
+            this.phone = null;
+        }
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <user-address v-for=\"(address, index) in addresses\" :key=\"address.id\" :address=\"address\" :primary-id=\"primaryId\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :addresses-endpoint=\"addressesEndpoint\" v-on:new-primary=\"setNewPrimary\" v-on:remove-address=\"addresses.splice(index, 1)\"></user-address>\n    <div class=\"row\">\n        <div class=\"col-sm-12\">\n            <div v-show=\"addingAddress\">\n                <div class=\"form-group row\">\n                    <label class=\"form-control-label col-sm-3\">Full Name</label>\n                    <div class=\"col-sm-6\">\n                        <input type=\"text\" v-model=\"fullName\" class=\"form-control\">\n                    </div>\n                </div>\n                <div class=\"form-group row\">\n                    <label class=\"form-control-label col-sm-3\">Company Name<small class=\"block text-muted\">(Optional)</small></label>\n                    <div class=\"col-sm-6\">\n                        <input type=\"text\" v-model=\"company\" class=\"form-control\">\n                    </div>\n                </div>\n                <div class=\"form-group row\">\n                    <label class=\"form-control-label col-sm-3\">Street 1</label>\n                    <div class=\"col-sm-6\">\n                        <input type=\"text\" v-model=\"street1\" class=\"form-control\">\n                    </div>\n                </div>\n                <div class=\"form-group row\">\n                    <label class=\"form-control-label col-sm-3\">Street 2<small class=\"block text-muted\">(Optional)</small></label>\n                    <div class=\"col-sm-6\">\n                        <input type=\"text\" v-model=\"street2\" class=\"form-control\">\n                    </div>\n                </div>\n                <div class=\"form-group row\">\n                    <label class=\"form-control-label col-sm-3\">City</label>\n                    <div class=\"col-sm-6\">\n                        <input type=\"text\" v-model=\"city\" class=\"form-control\">\n                    </div>\n                </div>\n                <div class=\"form-group row\">\n                    <label class=\"form-control-label col-sm-3\">State</label>\n                    <div class=\"col-sm-3\">\n                        <select v-model=\"state\" type=\"text\" name=\"state\" class=\"form-control\">\n                            <option v-for=\"option in stateOptions\" :value=\"option.abbreviation\">\n                                {{ option.name }}\n                            </option>\n                        </select>\n                    </div>\n                </div>\n                <div class=\"form-group row\">\n                    <label class=\"form-control-label col-sm-3\">Zip</label>\n                    <div class=\"col-sm-3\">\n                        <input type=\"text\" v-model=\"zip\" class=\"form-control\">\n                    </div>\n                </div>\n                <div class=\"form-group row\">\n                    <label class=\"form-control-label col-sm-3\">Phone <small class=\"block text-muted\">(Optional)</small></label>\n                    <div class=\"col-md-4\">\n                        <input type=\"text\" v-model=\"phone\" class=\"form-control\">\n                    </div>\n                </div>\n                <div class=\"pull-left\">\n                    <button @click=\"addingAddress = !addingAddress\" class=\"btn white btn-block p-x-md\">Cancel</button>\n                </div>\n                <div class=\"pull-right\">\n                    <button @click=\"saveAddress\" class=\"btn primary btn-block p-x-md\">Save</button>\n                </div>\n            </div>\n            <div v-show=\"!addingAddress\">\n                <div class=\"pull-left\">\n                    <button @click=\"addingAddress = !addingAddress\" class=\"btn white btn-block p-x-md\">Add Address</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-19456b8e", module.exports)
+  } else {
+    hotAPI.update("_v-19456b8e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"../address/Address.vue":5,"vue":3,"vue-hot-reload-api":2}],7:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
@@ -6478,9 +6839,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _Address = require('../address/Address.vue');
+var _Addresses = require('../address/Addresses.vue');
 
-var _Address2 = _interopRequireDefault(_Address);
+var _Addresses2 = _interopRequireDefault(_Addresses);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6506,9 +6867,17 @@ exports.default = {
             type: String,
             required: true
         },
+        shipFromType: {
+            type: String,
+            required: true
+        },
         initialFromAddresses: Array,
         initialPrimaryFromId: {
             type: Number,
+            required: true
+        },
+        shipToType: {
+            type: String,
             required: true
         },
         initialToAddresses: Array,
@@ -6523,60 +6892,17 @@ exports.default = {
             fromAddresses: this.initialFromAddresses,
             primaryFromId: this.initialPrimaryFromId,
             toAddresses: this.initialToAddresses,
-            primaryToId: this.initialPrimaryToId,
-            addingFromAddress: false,
-            addingToAddress: false,
-            newAddressData: null,
-            shipFromType: 'ship_from',
-            newFromCompany: null,
-            newFromStreet1: null,
-            newFromStreet2: null,
-            newFromCity: null,
-            newFromState: null,
-            newFromZip: null,
-            newFromPhone: null,
-            shipToType: 'ship_to',
-            newToCompany: null,
-            newToStreet1: null,
-            newToStreet2: null,
-            newToCity: null,
-            newToState: null,
-            newToZip: null,
-            newToPhone: null
+            primaryToId: this.initialPrimaryToId
         };
     },
 
     components: {
-        'user-address': _Address2.default
+        'addresses': _Addresses2.default
     },
     computed: {
         updateShippingProfileData: function updateShippingProfileData() {
             return {
                 'use_kabooodle_as_shipper': this.usesKabooodleAsShipper ? 1 : 0
-            };
-        },
-        newFromAddressData: function newFromAddressData() {
-            return {
-                'type': this.shipFromType,
-                'company': this.newFromCompany,
-                'street1': this.newFromStreet1,
-                'street2': this.newFromStreet2,
-                'city': this.newFromCity,
-                'state': this.newFromState,
-                'zip': this.newFromZip,
-                'phone': this.newFromPhone
-            };
-        },
-        newToAddressData: function newToAddressData() {
-            return {
-                'type': this.shipToType,
-                'company': this.newToCompany,
-                'street1': this.newToStreet1,
-                'street2': this.newToStreet2,
-                'city': this.newToCity,
-                'state': this.newToState,
-                'zip': this.newToZip,
-                'phone': this.newToPhone
             };
         }
     },
@@ -6594,67 +6920,12 @@ exports.default = {
                     'type': 'error'
                 });
             });
-        },
-        setNewPrimary: function setNewPrimary(id) {
-            this.primaryId = id;
-        },
-        saveFromAddress: function saveFromAddress() {
-            this.newAddressData = this.newFromAddressData;
-            this.saveAddress();
-        },
-        saveToAddress: function saveToAddress() {
-            this.newAddressData = this.newToAddressData;
-            this.saveAddress();
-        },
-        saveAddress: function saveAddress() {
-            this.$http.post(this.addressesEndpoint, this.newAddressData).then(function (response) {
-                switch (this.newAddressData.type) {
-                    case this.shipFromType:
-                        this.fromAddresses.push(response.data.data.address);
-                        this.addingFromAddress = false;
-                        this.clearNewAddressData(this.shipFromType);
-                        break;
-                    case this.shipToType:
-                        this.toAddresses.push(response.data.data.address);
-                        this.addingToAddress = false;
-                        this.clearNewAddressData(this.shipToType);
-                        break;
-                }
-                notify({
-                    'text': 'Your new address has been saved!',
-                    'type': 'success'
-                });
-            }, function (response) {
-                notify({
-                    'text': 'We\'re sorry. Something went wrong. Please try again.',
-                    'type': 'error'
-                });
-            });
-        },
-        clearNewAddressData: function clearNewAddressData(type) {
-            if (type == this.shipFromType) {
-                this.newFromCompany = null;
-                this.newFromStreet1 = null;
-                this.newFromStreet2 = null;
-                this.newFromCity = null;
-                this.newFromState = null;
-                this.newFromZip = null;
-                this.newFromPhone = null;
-            } else if (type == this.shipToType) {
-                this.newToCompany = null;
-                this.newToStreet1 = null;
-                this.newToStreet2 = null;
-                this.newToCity = null;
-                this.newToState = null;
-                this.newToZip = null;
-                this.newToPhone = null;
-            }
         }
     },
     created: function created() {}
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"isMerchantPlus\">\n        <div class=\"box\">\n            <div class=\"box-header\">\n                <h2>Shipping Profile Settings</h2>\n            </div>\n            <div class=\"box-divider m-a-0\"></div>\n            <div class=\"box-body\">\n                <div class=\"row\">\n                    <div class=\"col-sm-9\">\n                        <p>Set Kabooodle as default shipping provider.</p>\n                        <small class=\"text-muted\">When a claim is accepted, the claim is automatically added to Kabooodle's shipping queue for you.</small>\n                    </div>\n                    <div class=\"col-sm-3\">\n                        <div class=\"checkbox  pull-right checkbox-slider--b-flat\">\n                            <label>\n                                <input type=\"checkbox\" v-model=\"usesKabooodleAsShipper\" v-on:change=\"updateShippingProfile\"><span></span>\n                            </label>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"box\">\n            <div class=\"box-header\">\n                <h2>Ship From Addresses</h2>\n                <small>These are the addresses used as the \"From\" address when using shipping labels and processing shipments as a seller.</small>\n            </div>\n            <div class=\"box-divider m-a-0\"></div>\n            <div class=\"box-body\">\n                <user-address v-for=\"(address, index) in fromAddresses\" :key=\"address.id\" :address=\"address\" :id=\"address.id\" :primary-id=\"primaryFromId\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :addresses-endpoint=\"addressesEndpoint\" v-on:new-primary=\"setNewPrimary\" v-on:remove-address=\"fromAddresses.splice(index, 1)\"></user-address>\n                <div class=\"row\">\n                    <div class=\"col-sm-12\">\n                        <div v-show=\"addingFromAddress\">\n                            <div class=\"form-group\">\n\n                            </div>\n                            <div class=\"pull-left\">\n                                <button @click=\"addingFromAddress = !addingFromAddress\" class=\"btn white btn-block p-x-md\">Cancel</button>\n                            </div>\n                            <div class=\"pull-right\">\n                                <button @click=\"saveFromAddress\" class=\"btn primary btn-block p-x-md\">Save</button>\n                            </div>\n                        </div>\n                        <div v-show=\"!addingFromAddress\">\n                            <div class=\"pull-left\">\n                                <button @click=\"addingFromAddress = !addingFromAddress\" class=\"btn white btn-block p-x-md\">Add Address</button>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"box\">\n        <div class=\"box-header\">\n            <h2>Ship To Addresses</h2>\n            <small>As a buyer, these are the shipping addresses used for the items you purchase.</small>\n        </div>\n        <div class=\"box-divider m-a-0\"></div>\n        <div class=\"box-body\">\n            <user-address v-for=\"(address, index) in toAddresses\" :key=\"address.id\" :address=\"address\" :id=\"address.id\" :primary-id=\"primaryToId\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :addresses-endpoint=\"addressesEndpoint\" v-on:new-primary=\"setNewPrimary\" v-on:remove-address=\"toAddresses.splice(index, 1)\"></user-address>\n            <div class=\"row\">\n                <div class=\"col-sm-12\">\n                    <div v-show=\"addingToAddress\">\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Company Name<small class=\"block text-muted\">(Optional)</small></label>\n                            <div class=\"col-sm-6\">\n                                <input type=\"text\" v-model=\"newToCompany\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Street 1</label>\n                            <div class=\"col-sm-6\">\n                                <input type=\"text\" v-model=\"newToStreet1\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Street 2<small class=\"block text-muted\">(Optional)</small></label>\n                            <div class=\"col-sm-6\">\n                                <input type=\"text\" v-model=\"newToStreet2\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">City</label>\n                            <div class=\"col-sm-6\">\n                                <input type=\"text\" v-model=\"newToCity\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">State</label>\n                            <div class=\"col-sm-3\">\n                                <input type=\"text\" v-model=\"newToState\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Zip</label>\n                            <div class=\"col-sm-3\">\n                                <input type=\"text\" v-model=\"newToZip\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"form-control-label col-sm-3\">Phone <small class=\"block text-muted\">(Optional)</small></label>\n                            <div class=\"col-md-4\">\n                                <input type=\"text\" v-model=\"newToPhone\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"pull-left\">\n                            <button @click=\"addingToAddress = !addingToAddress\" class=\"btn white btn-block p-x-md\">Cancel</button>\n                        </div>\n                        <div class=\"pull-right\">\n                            <button @click=\"saveToAddress\" class=\"btn primary btn-block p-x-md\">Save</button>\n                        </div>\n                    </div>\n                    <div v-show=\"!addingToAddress\">\n                        <div class=\"pull-left\">\n                            <button @click=\"addingToAddress = !addingToAddress\" class=\"btn white btn-block p-x-md\">Add Address</button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"isMerchantPlus\">\n        <div class=\"box\">\n            <div class=\"box-header\">\n                <h2>Shipping Profile Settings</h2>\n            </div>\n            <div class=\"box-divider m-a-0\"></div>\n            <div class=\"box-body\">\n                <div class=\"row\">\n                    <div class=\"col-sm-9\">\n                        <p>Set Kabooodle as default shipping provider.</p>\n                        <small class=\"text-muted\">When a claim is accepted, the claim is automatically added to Kabooodle's shipping queue for you.</small>\n                    </div>\n                    <div class=\"col-sm-3\">\n                        <div class=\"checkbox  pull-right checkbox-slider--b-flat\">\n                            <label>\n                                <input type=\"checkbox\" v-model=\"usesKabooodleAsShipper\" v-on:change=\"updateShippingProfile\"><span></span>\n                            </label>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"box\">\n            <div class=\"box-header\">\n                <h2>Ship From Addresses</h2>\n                <small>These are the addresses used as the \"From\" address when using shipping labels and processing shipments as a seller.</small>\n            </div>\n            <div class=\"box-divider m-a-0\"></div>\n            <div class=\"box-body\">\n                <addresses :type=\"shipFromType\" :addresses-endpoint=\"addressesEndpoint\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :initial-addresses=\"initialFromAddresses\" :initial-primary-id=\"initialPrimaryFromId\"></addresses>\n            </div>\n        </div>\n    </div>\n    <div class=\"box\">\n        <div class=\"box-header\">\n            <h2>Ship To Addresses</h2>\n            <small>As a buyer, these are the shipping addresses used for the items you purchase.</small>\n        </div>\n        <div class=\"box-divider m-a-0\"></div>\n        <div class=\"box-body\">\n            <addresses :type=\"shipToType\" :addresses-endpoint=\"addressesEndpoint\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :initial-addresses=\"initialToAddresses\" :initial-primary-id=\"initialPrimaryToId\"></addresses>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6669,7 +6940,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-154141fa", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../address/Address.vue":5,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],7:[function(require,module,exports){
+},{"../address/Addresses.vue":6,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],8:[function(require,module,exports){
 'use strict';
 
 var _ShippingProfile = require('./ShippingProfile.vue');
@@ -6685,6 +6956,6 @@ new Vue({
     }
 });
 
-},{"./ShippingProfile.vue":6}]},{},[7]);
+},{"./ShippingProfile.vue":7}]},{},[8]);
 
 //# sourceMappingURL=shipping-profile.js.map

@@ -32,6 +32,11 @@ final class AddAddressCommand
     /**
      * @var string
      */
+    protected $fullName;
+
+    /**
+     * @var string
+     */
     protected $company;
 
     /**
@@ -69,6 +74,7 @@ final class AddAddressCommand
      * @param User $user
      * @param $type
      * @param $primary
+     * @param $fullName
      * @param $company
      * @param $street1
      * @param $street2
@@ -81,6 +87,7 @@ final class AddAddressCommand
         User $user,
         $type,
         $primary,
+        $fullName,
         $company,
         $street1,
         $street2,
@@ -123,6 +130,14 @@ final class AddAddressCommand
     public function isPrimary()
     {
         return (bool) $this->primary;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        return $this->fullName;
     }
 
     /**

@@ -13,6 +13,7 @@ return array(
     'AddFacebookColumnsToUsersTable' => $baseDir . '/resources/database/migrations/2016_09_06_194340_add_facebook_columns_to_users_table.php',
     'AddFacebookNodesUsersTbl' => $baseDir . '/resources/database/migrations/2016_12_04_212554_add_facebook_nodes_users_tbl.php',
     'AddFirstLastNameToUsersTbl' => $baseDir . '/resources/database/migrations/2016_12_12_020304_add_first_last_name_to_users_tbl.php',
+    'AddFullNameToAddressesTable' => $baseDir . '/resources/database/migrations/2016_12_29_072632_add_full_name_to_addresses_table.php',
     'AddGuestToUsersTbl' => $baseDir . '/resources/database/migrations/2016_12_11_213948_add_guest_to_users_tbl.php',
     'AddVerifiedToClaimsTbl' => $baseDir . '/resources/database/migrations/2016_12_12_213316_add_verified_to_claims_tbl.php',
     'Adobe_Font_Metrics' => $vendorDir . '/phenx/php-font-lib/classes/Adobe_Font_Metrics.php',

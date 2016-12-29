@@ -28,6 +28,7 @@ class AddAddressCommandHandler
                 'user_id' => $command->getUser()->id,
                 'type' => $command->getType(),
                 'primary' => $command->isPrimary(),
+                'full_name' => $command->getFullName(),
                 'company' => $command->getCompany(),
                 'street1' => $command->getStreet1(),
                 'street2' => $command->getStreet2(),

@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Sofa\Revisionable\Revisionable;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 
@@ -15,6 +16,7 @@ use Sofa\Revisionable\Laravel\RevisionableTrait;
  */
 class Address extends BaseEloquentModel implements Revisionable
 {
+    use SoftDeletes;
     use RevisionableTrait;
 
     const TYPE_BILLING = 'billing';
@@ -32,6 +34,8 @@ class Address extends BaseEloquentModel implements Revisionable
     protected $fillable = [
         'user_id',
         'type',
+        'primary',
+        'full_name',
         'company',
         'street1',
         'street2',

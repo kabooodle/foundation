@@ -3,7 +3,7 @@
         <div class="col-sm-8">
             <span>{{ address }}</span>
             <span v-show="isVerified">
-                <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
+                <i class="fa fa-check-circle text-primary" aria-hidden="true"></i>
             </span>
             <span v-show="!isVerified">
                 <div class="pull-right">

@@ -51,6 +51,7 @@ class AddressController extends AbstractApiController
                 $this->getUser(),
                 $request->get('type'),
                 $request->get('primary', false),
+                $request->get('full_name'),
                 $request->get('company'),
                 $request->get('street1'),
                 $request->get('street2'),
@@ -85,19 +86,20 @@ class AddressController extends AbstractApiController
 
     /**
      * @param Request $request
+     * @param $userId
      *
-     * @return \Dingo\Api\Http\Response
+     * @return \Illuminate\Http\Response
      */
-    public function updatePrimary(Request $request)
+    public function updatePrimary(Request $request, $userId)
     {
         try {
-            $address = Address::whereId($request->get('address_id'))->whereUserId($this->getUser()->id)->whereVerified(1)->firstOrFail();
+            $address = Address::whereId($request->get('address_id'))->whereUserId($userId)->whereType($request->get('type'))->firstOrFail();
 
             $this->dispatchNow(new MakeAddressPrimaryCommand($address));
 
             return $this->respond();
         } catch (Exception $e) {
-            return $this->setStatusCode(500)->respond();
+            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond($e);
         }
     }
 
@@ -117,7 +119,7 @@ class AddressController extends AbstractApiController
 
             return $this->respond();
         } catch (Exception $e) {
-            return $this->setStatusCode(500)->respond();
+            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond($e);
         }
     }
 }

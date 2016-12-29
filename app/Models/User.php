@@ -527,7 +527,7 @@ class User extends BaseEloquentModel implements
      */
     public function addresses()
     {
-        return $this->hasMany(Address::class, 'user_id');
+        return $this->hasMany(Address::class, 'user_id')->orderBy('primary', 'desc');
     }
 
     /**
@@ -543,7 +543,7 @@ class User extends BaseEloquentModel implements
      */
     public function billingAddresses()
     {
-        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_BILLING);
+        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_BILLING)->orderBy('primary', 'desc');
     }
 
     /**
@@ -559,7 +559,7 @@ class User extends BaseEloquentModel implements
      */
     public function shipFromAddresses()
     {
-        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_FROM);
+        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_FROM)->orderBy('primary', 'desc');
     }
 
     /**
@@ -575,7 +575,7 @@ class User extends BaseEloquentModel implements
      */
     public function shipToAddresses()
     {
-        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_TO);
+        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_TO)->orderBy('primary', 'desc');
     }
 
     /**

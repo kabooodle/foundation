@@ -9,8 +9,10 @@
                 shipping-profile-update-endpoint="{{ apiRoute('user.shipping-profile.update', user()->id) }}"
                 addresses-endpoint="{{ apiRoute('user.addresses.index', user()->id) }}"
                 update-primary-endpoint="{{ apiRoute('user.addresses.update-primary', user()->id) }}"
+                ship-from-type="{{ \Kabooodle\Models\Address::TYPE_FROM }}"
                 :initial-from-addresses="{{ $fromAddresses->toJson() }}"
                 :initial-primary-from-id="{{ $primaryFrom->id or 0 }}"
+                ship-to-type="{{ \Kabooodle\Models\Address::TYPE_TO }}"
                 :initial-to-addresses="{{ $toAddresses->toJson() }}"
                 :initial-primary-to-id="{{ $primaryTo->id or 0 }}"
         ></shipping-profile>
