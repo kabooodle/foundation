@@ -219,6 +219,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
+     * @return string
+     */
+    public function getNameAndSize(): string
+    {
+        return $this->getName(). ' '.$this->styleSize->name;
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function owner()

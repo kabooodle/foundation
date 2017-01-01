@@ -45,6 +45,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         ),
         'V' => 
         array (
+            'Vinkla\\Pusher\\' => 14,
             'Vinkla\\Algolia\\' => 15,
         ),
         'T' => 
@@ -192,6 +193,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'Vinkla\\Pusher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/vinkla/pusher/src',
         ),
         'Vinkla\\Algolia\\' => 
         array (
@@ -584,6 +589,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
             'Cron' => 
             array (
                 0 => __DIR__ . '/..' . '/mtdowling/cron-expression/src',
+            ),
+            'Cmgmyr\\Messenger\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/cmgmyr/messenger/src',
             ),
         ),
         'B' => 
@@ -1102,6 +1111,12 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'ClassPreloader\\Parser\\FileVisitor' => __DIR__ . '/..' . '/classpreloader/classpreloader/src/Parser/FileVisitor.php',
         'ClassPreloader\\Parser\\NodeTraverser' => __DIR__ . '/..' . '/classpreloader/classpreloader/src/Parser/NodeTraverser.php',
         'ClassPreloader\\Parser\\StrictTypesVisitor' => __DIR__ . '/..' . '/classpreloader/classpreloader/src/Parser/StrictTypesVisitor.php',
+        'Cmgmyr\\Messenger\\MessengerServiceProvider' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/MessengerServiceProvider.php',
+        'Cmgmyr\\Messenger\\Models\\Message' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Models/Message.php',
+        'Cmgmyr\\Messenger\\Models\\Models' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Models/Models.php',
+        'Cmgmyr\\Messenger\\Models\\Participant' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Models/Participant.php',
+        'Cmgmyr\\Messenger\\Models\\Thread' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Models/Thread.php',
+        'Cmgmyr\\Messenger\\Traits\\Messagable' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Traits/Messagable.php',
         'Collective\\Html\\Componentable' => __DIR__ . '/..' . '/laravelcollective/html/src/Componentable.php',
         'Collective\\Html\\Eloquent\\FormAccessible' => __DIR__ . '/..' . '/laravelcollective/html/src/Eloquent/FormAccessible.php',
         'Collective\\Html\\FormBuilder' => __DIR__ . '/..' . '/laravelcollective/html/src/FormBuilder.php',
@@ -1156,6 +1171,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'CreateLikeablesTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_21_220846_create_likeables_table.php',
         'CreateListingsAndMetaTbls' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_26_185939_create_listings_and_meta_tbls.php',
         'CreateNotificationablesTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_01_223435_create_notificationables_table.php',
+        'CreateNotificationeventTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_26_035308_create_notificationevent_tbl.php',
         'CreatePageviews' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_18_231944_create_pageviews.php',
         'CreatePasswordResetsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2014_10_12_100000_create_password_resets_table.php',
         'CreateQueuesTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_07_085215_create_queues_table.php',
@@ -2765,7 +2781,6 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Bus\\Events\\Listings\\ListingItemWasQueued' => __DIR__ . '/../..' . '/app/Bus/Events/Listings/ListingItemWasQueued.php',
         'Kabooodle\\Bus\\Events\\Listings\\ListingScheduledEvent' => __DIR__ . '/../..' . '/app/Bus/Events/Listings/ListingScheduledEvent.php',
         'Kabooodle\\Bus\\Events\\Listings\\ListingsWereQueued' => __DIR__ . '/../..' . '/app/Bus/Events/Listings/ListingsWereQueued.php',
-        'Kabooodle\\Bus\\Events\\NotificationableEvent' => __DIR__ . '/../..' . '/app/Bus/Events/NotificationableEvent.php',
         'Kabooodle\\Bus\\Events\\Profile\\CreditsWerePurchasedForUserEvent' => __DIR__ . '/../..' . '/app/Bus/Events/Profile/CreditsWerePurchasedForUserEvent.php',
         'Kabooodle\\Bus\\Events\\Profile\\UserCancelledSubscriptionEvent' => __DIR__ . '/../..' . '/app/Bus/Events/Profile/UserCancelledSubscriptionEvent.php',
         'Kabooodle\\Bus\\Events\\Profile\\UserWasSubscribedToPlanEvent' => __DIR__ . '/../..' . '/app/Bus/Events/Profile/UserWasSubscribedToPlanEvent.php',
@@ -2842,12 +2857,16 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Bus\\Handlers\\Events\\Claim\\GuestClaimedEventHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Claim/GuestClaimedEventHandler.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Claim\\ItemWasClaimedEventHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Claim/ItemWasClaimedEventHandler.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Claim\\MoveClaimToShippingEventHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Claim/MoveClaimToShippingEventHandler.php',
+        'Kabooodle\\Bus\\Handlers\\Events\\Claim\\NotifyClaimWasAccepted' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Claim/NotifyClaimWasAccepted.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Comments\\CommentWasCreatedEventHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Comments/CommentWasCreatedEventHandler.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Email\\EmailWasCreatedListener' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Email/EmailWasCreatedListener.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Group\\GroupWasCreatedEventHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Group/GroupWasCreatedEventHandler.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Inventory\\InventoryItemWasAddedEventHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Inventory/InventoryItemWasAddedEventHandler.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Inventory\\InventoryItemWasRemovedFromSaleEventHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Inventory/InventoryItemWasRemovedFromSaleEventHandler.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Inventory\\InventoryQuantityUpdatedHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Inventory/InventoryQuantityUpdatedHandler.php',
+        'Kabooodle\\Bus\\Handlers\\Events\\Listings\\NotifyListingItemWasListed' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Listings/NotifyListingItemWasListed.php',
+        'Kabooodle\\Bus\\Handlers\\Events\\Listings\\NotifyListingItemWasQueued' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Listings/NotifyListingItemWasQueued.php',
+        'Kabooodle\\Bus\\Handlers\\Events\\Listings\\NotifyListingsWereQueued' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Listings/NotifyListingsWereQueued.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Profile\\UserWasSubscribedToPlanEventHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Profile/UserWasSubscribedToPlanEventHandler.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Shipping\\DispatchShippingWebhookHandler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Shipping/DispatchShippingWebhookHandler.php',
         'Kabooodle\\Bus\\Handlers\\Events\\Shipping\\MoveLabelToS3Handler' => __DIR__ . '/../..' . '/app/Bus/Handlers/Events/Shipping/MoveLabelToS3Handler.php',
@@ -2915,6 +2934,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Http\\Controllers\\Api\\Listings\\ListingItemsClaimsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Listings/ListingItemsClaimsController.php',
         'Kabooodle\\Http\\Controllers\\Api\\Listings\\ListingsApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Listings/ListingsApiController.php',
         'Kabooodle\\Http\\Controllers\\Api\\Listings\\WatchesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Listings/WatchesController.php',
+        'Kabooodle\\Http\\Controllers\\Api\\Notices\\NoticesApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Notices/NoticesApiController.php',
         'Kabooodle\\Http\\Controllers\\Api\\Profile\\ProfileApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Profile/ProfileApiController.php',
         'Kabooodle\\Http\\Controllers\\Api\\Queues\\PushQueueController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Queues/PushQueueController.php',
         'Kabooodle\\Http\\Controllers\\Api\\Sales\\SalesFilterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Sales/SalesFilterController.php',
@@ -2939,6 +2959,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Http\\Controllers\\Web\\Groups\\GroupsMembersController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Groups/GroupsMembersController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Listings\\ListingItemsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Listings/ListingItemsController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Listings\\ListingsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Listings/ListingsController.php',
+        'Kabooodle\\Http\\Controllers\\Web\\Notices\\NoticesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Notices/NoticesController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Profile\\ProfileCreditCardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Profile/ProfileCreditCardController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Profile\\ProfileCreditsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Profile/ProfileCreditsController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Profile\\ProfilePurchasesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Profile/ProfilePurchasesController.php',
@@ -2956,6 +2977,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Http\\Controllers\\Web\\Shop\\Inventory\\InventoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Shop/Inventory/InventoryController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Shop\\UserShopController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Shop/UserShopController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Social\\Facebook\\FacebookController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Social/Facebook/FacebookController.php',
+        'Kabooodle\\Http\\Controllers\\Web\\Webhooks\\PusherWebhookController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Webhooks/PusherWebhookController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Webhooks\\ShippoWebhooksController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Webhooks/ShippoWebhooksController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Webhooks\\StripeWebhooksController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Webhooks/StripeWebhooksController.php',
         'Kabooodle\\Http\\Controllers\\Web\\Workers\\WorkersController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/Workers/WorkersController.php',
@@ -2990,6 +3012,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Libraries\\Messages\\MessagesFacade' => __DIR__ . '/../..' . '/app/Libraries/Messages/MessagesFacade.php',
         'Kabooodle\\Libraries\\Messages\\MessagesInterface' => __DIR__ . '/../..' . '/app/Libraries/Messages/MessagesInterface.php',
         'Kabooodle\\Libraries\\Timezone' => __DIR__ . '/../..' . '/app/Libraries/Timezone.php',
+        'Kabooodle\\Libraries\\WebSockets\\WebSocket' => __DIR__ . '/../..' . '/app/Libraries/WebSockets/WebSocket.php',
         'Kabooodle\\Models\\AbstractListingModel' => __DIR__ . '/../..' . '/app/Models/AbstractListingModel.php',
         'Kabooodle\\Models\\Address' => __DIR__ . '/../..' . '/app/Models/Address.php',
         'Kabooodle\\Models\\BaseEloquentModel' => __DIR__ . '/../..' . '/app/Models/BaseEloquentModel.php',
@@ -3029,6 +3052,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Models\\ListingItems' => __DIR__ . '/../..' . '/app/Models/ListingItems.php',
         'Kabooodle\\Models\\Listings' => __DIR__ . '/../..' . '/app/Models/Listings.php',
         'Kabooodle\\Models\\MailingAddress' => __DIR__ . '/../..' . '/app/Models/MailingAddress.php',
+        'Kabooodle\\Models\\NotificationNotices' => __DIR__ . '/../..' . '/app/Models/NotificationNotices.php',
         'Kabooodle\\Models\\Notifications' => __DIR__ . '/../..' . '/app/Models/Notifications.php',
         'Kabooodle\\Models\\PageViews' => __DIR__ . '/../..' . '/app/Models/PageViews.php',
         'Kabooodle\\Models\\Permissions' => __DIR__ . '/../..' . '/app/Models/Permissions.php',
@@ -3046,6 +3070,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Models\\ShippingWebhooks' => __DIR__ . '/../..' . '/app/Models/ShippingWebhooks.php',
         'Kabooodle\\Models\\SocialAccount' => __DIR__ . '/../..' . '/app/Models/SocialAccount.php',
         'Kabooodle\\Models\\Traits\\AuthorableTrait' => __DIR__ . '/../..' . '/app/Models/Traits/AuthorableTrait.php',
+        'Kabooodle\\Models\\Traits\\BroadcastableTrait' => __DIR__ . '/../..' . '/app/Models/Traits/BroadcastableTrait.php',
         'Kabooodle\\Models\\Traits\\ClaimableTrait' => __DIR__ . '/../..' . '/app/Models/Traits/ClaimableTrait.php',
         'Kabooodle\\Models\\Traits\\CommentableTrait' => __DIR__ . '/../..' . '/app/Models/Traits/CommentableTrait.php',
         'Kabooodle\\Models\\Traits\\CreditCardTrait' => __DIR__ . '/../..' . '/app/Models/Traits/CreditCardTrait.php',
@@ -5574,6 +5599,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateListingsStatus' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_07_181657_update_listings_status.php',
         'UpdateListingsTblAddClaimableDateCol' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_13_034716_update_listings_tbl_add_claimable_date_col.php',
         'UpdateListingsTblAddQueue' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_14_202419_update_listings_tbl_add_queue.php',
+        'UpdateNotificationsAddListingProcessingRow' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_26_040240_update_notifications_add_listing_processing_row.php',
         'UpdateQueuesTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_14_202217_update_queues_tbl.php',
         'UpdateRevisionsTblAddFk' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_26_065602_update_revisions_tbl_add_fk.php',
         'UpdateShipmentsRemoveClaimAddShipmentClaims' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_04_223232_update_shipments_remove_claim_add_shipment_claims.php',
@@ -5593,6 +5619,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Vinkla\\Algolia\\AlgoliaManager' => __DIR__ . '/..' . '/vinkla/algolia/src/AlgoliaManager.php',
         'Vinkla\\Algolia\\AlgoliaServiceProvider' => __DIR__ . '/..' . '/vinkla/algolia/src/AlgoliaServiceProvider.php',
         'Vinkla\\Algolia\\Facades\\Algolia' => __DIR__ . '/..' . '/vinkla/algolia/src/Facades/Algolia.php',
+        'Vinkla\\Pusher\\Facades\\Pusher' => __DIR__ . '/..' . '/vinkla/pusher/src/Facades/Pusher.php',
+        'Vinkla\\Pusher\\PusherFactory' => __DIR__ . '/..' . '/vinkla/pusher/src/PusherFactory.php',
+        'Vinkla\\Pusher\\PusherManager' => __DIR__ . '/..' . '/vinkla/pusher/src/PusherManager.php',
+        'Vinkla\\Pusher\\PusherServiceProvider' => __DIR__ . '/..' . '/vinkla/pusher/src/PusherServiceProvider.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
         'XdgBaseDir\\Xdg' => __DIR__ . '/..' . '/dnoegel/php-xdg-base-dir/src/Xdg.php',
         'ZackKitzmiller\\Facades\\Tiny' => __DIR__ . '/..' . '/zackkitzmiller/tiny/src/ZackKitzmiller/Facades/Tiny.php',

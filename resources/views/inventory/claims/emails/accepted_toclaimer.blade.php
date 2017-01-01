@@ -1,0 +1,1 @@
+Your claimed item, {!! $item->name !!}, was accepted by the seller:<br>

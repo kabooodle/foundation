@@ -5,6 +5,7 @@
         </div>
     </div>
     <div v-else>
+            <popout-overlay></popout-overlay>
             <div class="box style-container" v-for="style in inventory_items">
                 <div class="box-header clearfix">
                     <div class="row">
@@ -103,6 +104,7 @@
     }
 </style>
 <script>
+    import PopoutOverlay from '../Popover.vue';
     import computed from './manage/computed';
     import Spinny from '../Spinner.vue';
 
@@ -305,7 +307,8 @@
             }
         },
         components: {
-            'spinny' : Spinny
+            'spinny' : Spinny,
+            'popout-overlay' : PopoutOverlay
         }
     }
 </script>

@@ -17,14 +17,15 @@ trait PaginatesTrait
 {
     /**
      * @param Request $request
-     * @param         $data
+     * @param $data
+     * @param null $perPage
      *
      * @return LengthAwarePaginator
      */
-    public function paginateData(Request $request, $data)
+    public function paginateData(Request $request, $data, $perPage = null)
     {
         $page = $request->get('page', 1);
-        $perPage = $request->get('per_page', config('pagination.per-page'));
+        $perPage = $perPage ? : $request->get('per_page', config('pagination.per-page'));
 
         return new LengthAwarePaginator(
             $data->forPage($page, $perPage),

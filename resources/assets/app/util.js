@@ -395,7 +395,7 @@ $(function () {
 
         setTimeout(function(){
             if(! e.isDefaultPrevented()) {
-                btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
+                btn.prop('disabled', true).html(btnHtml + (spinny()));
             }
         },0);
     });

@@ -31,11 +31,15 @@ elixir(function (mix) {
 
     mix.browserify('app/components/listings/listing-items-page.js');
 
+    mix.browserify('app/components/notices/notice-handler.js');
+
     mix.browserify('app/components/purchases/watching-items.js');
 
     mix.browserify('app/components/register/register.js');
 
     mix.browserify('app/components/sign-in/sign-in.js');
+    mix.browserify('app/components/messenger/messenger-index.js');
+    mix.browserify('app/components/messenger/messenger-thread-index.js');
 
 
 
@@ -46,6 +50,11 @@ elixir(function (mix) {
         .sass([
             'vendor/theme/scss/app.scss'
         ], elixir.config.publicPath + 'css/app.css')
+
+        .sass([
+            'vendor/theme/scss/pages/home.scss'
+        ], elixir.config.publicPath + 'css/home.css')
+
 
         .sass([
             'vendor/theme/bootstrap/scss/bootstrap.scss',

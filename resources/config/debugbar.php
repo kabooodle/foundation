@@ -126,13 +126,13 @@ return array(
                 'enabled' => false,
                 'types' => array('SELECT'), // array('SELECT', 'INSERT', 'UPDATE', 'DELETE'); for MySQL 5.6.3+
             ),
-            'hints'             => false,    // Show hints for common mistakes
+            'hints'             => true,    // Show hints for common mistakes
         ),
         'mail' => array(
             'full_log' => false
         ),
         'views' => array(
-            'data' => false,    //Note: Can slow down the application, because the data can be quite large..
+            'data' => true,    //Note: Can slow down the application, because the data can be quite large..
         ),
         'route' => array(
             'label' => true  // show complete route on bar

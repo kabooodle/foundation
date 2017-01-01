@@ -1,4 +1,4 @@
-<tr>
+<tr data-id="{{ $listing->id }}">
     @unless(isset($_excludeActionCol))
     <td><input type="checkbox"></td>
     @endunless
@@ -23,7 +23,7 @@
                     @if(Kabooodle\Models\Listings::isStillEditable($listing->status))
                         <a href="{{ route('listings.edit', [$listing->uuid]) }}" class="dropdown-item">Edit</a>
                     @endif
-                    <a href="{{ route('listings.show', [$listing->uuid]) }}" class="dropdown-item">View</a>
+                    <a href="{{ route('listings.show', [$listing->uuid]) }}" class="dropdown-item">Details</a>
                     <a href="{{ route('listings.show', [$listing->uuid]) }}" class="text-warning dropdown-item">Delete</a>
                 </div>
             </div>

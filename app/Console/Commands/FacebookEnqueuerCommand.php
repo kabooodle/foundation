@@ -59,12 +59,12 @@ class FacebookEnqueuerCommand extends Command
 
             $this->dispatch($job);
 
-            event(new ListingsWereQueued($job));
-
             $listingsIds = $listings->pluck('id')->toArray();
 
             // Update the Queues status to processing.
             Listings::updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
+
+            event(new ListingsWereQueued($listings, $job));
         }
 
         $this->output->writeln('Completed');

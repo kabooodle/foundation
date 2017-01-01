@@ -91,12 +91,10 @@
                 createFilter: function(input) {
                     var match, regex;
 
-                    // email@address.com
                     regex = new RegExp('^' + REGEX_EMAIL + '$', 'i');
                     match = input.match(regex);
                     if (match) return !this.options.hasOwnProperty(match[0]);
 
-                    // name <email@address.com>
                     regex = new RegExp('^([^<]*)\<' + REGEX_EMAIL + '\>$', 'i');
                     match = input.match(regex);
                     if (match) return !this.options.hasOwnProperty(match[2]);

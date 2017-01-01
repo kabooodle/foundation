@@ -15,5 +15,6 @@ class NotifyUsersShippingStatusUpdatedHandler
 {
     public function handle(ShippingTransactionStatusUpdatedEvent $event)
     {
+
     }
 }

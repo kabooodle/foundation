@@ -215,6 +215,7 @@ class Listings extends AbstractListingModel
         //                IFNULL(COUNT(DISTINCT(p.id)), 0) AS pageviews_count,
         //                LEFT JOIN pageviews AS p ON p.shoppable_id = li.id AND p.inventory_id = li.inventory_id
         $sql = "SELECT
+                l.id as id,
                 l.scheduled_for AS scheduled_for,
                 l.include_link_in_descr as use_link,
                 l.status AS status,
@@ -265,6 +266,7 @@ class Listings extends AbstractListingModel
     {
         $sql = "
                 SELECT
+                l.id as id,
                 fs.name AS flashsale_name,
                 fb.facebook_node_name AS fb_name,
                 li.fb_album_node_id as fb_album_id,

@@ -19,6 +19,7 @@ return array(
     'Doctrine\\Common\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib'),
     'Doctrine\\Common\\Annotations\\' => array($vendorDir . '/doctrine/annotations/lib'),
     'Cron' => array($vendorDir . '/mtdowling/cron-expression/src'),
+    'Cmgmyr\\Messenger\\' => array($vendorDir . '/cmgmyr/messenger/src'),
     'Barryvdh' => array($vendorDir . '/barryvdh/reflection-docblock/src'),
     'AlgoliaSearch\\Tests' => array($vendorDir . '/algolia/algoliasearch-client-php/tests'),
     'AlgoliaSearch' => array($vendorDir . '/algolia/algoliasearch-client-php/src'),

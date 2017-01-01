@@ -1,0 +1,40 @@
+<?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
+
+namespace Kabooodle\Http\Controllers\Api\User;
+
+use Binput;
+use Exception;
+use Kabooodle\Models\User;
+use Illuminate\Http\Request;
+use Kabooodle\Http\Controllers\Api\AbstractApiController;
+
+/**
+ * Class QueryUser
+ */
+class QueryUser extends AbstractApiController
+{
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function query(Request $request)
+    {
+        $search = Binput::get('q');
+        try {
+            $users = User::where('username', 'like', '%'.$search.'%')
+                ->orWhere('first_name', 'like', '%'.$search.'%')
+                ->orWhere('last_name', 'like', '%'.$search.'%')
+                ->limit(10)
+                ->get();
+
+            return $users;
+        } catch (Exception $e) {
+
+        }
+    }
+}

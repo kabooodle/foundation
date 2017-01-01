@@ -3,10 +3,11 @@
    View Flash Sales
 </a>
 
-
+@if (user()->hasAtLeastMerchantSubscription())
 <a href="{{ route('flashsales.create') }}" class="nav-link {{ Request::is('flashsales/create') ? 'active' : null }}">
     Create Flash Sale
 </a>
+@endif
 @if(user())
 <a href="#" class="nav-link {{ Request::is('flashsales/favorite') ? 'active' : null }}">
     Favorited
