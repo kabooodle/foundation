@@ -1,7 +1,7 @@
 <template>
     <div class="form-group row">
         <div class="col-sm-8">
-            <span><strong>{{ address.name }}</strong> {{ address.street1 }}</span>
+            <span><strong>{{ address.name }}</strong> {{ address.street1 }}, {{ address.city }}, {{ address.state }}, {{ address.zip }}</span>
         </div>
         <div class="col-sm-3">
             <div v-show="isPrimary">
