@@ -15,6 +15,7 @@ return array(
     'AddFirstLastNameToUsersTbl' => $baseDir . '/resources/database/migrations/2016_12_12_020304_add_first_last_name_to_users_tbl.php',
     'AddFullNameToAddressesTable' => $baseDir . '/resources/database/migrations/2016_12_29_072632_add_full_name_to_addresses_table.php',
     'AddGuestToUsersTbl' => $baseDir . '/resources/database/migrations/2016_12_11_213948_add_guest_to_users_tbl.php',
+    'AddObjectIdToAddressesTable' => $baseDir . '/resources/database/migrations/2017_01_01_013034_add_object_id_to_addresses_table.php',
     'AddVerifiedToClaimsTbl' => $baseDir . '/resources/database/migrations/2016_12_12_213316_add_verified_to_claims_tbl.php',
     'Adobe_Font_Metrics' => $vendorDir . '/phenx/php-font-lib/classes/Adobe_Font_Metrics.php',
     'AlterShippingAddressesTableToAddresses' => $baseDir . '/resources/database/migrations/2016_12_12_010835_alter_shipping_addresses_table_to_addresses.php',

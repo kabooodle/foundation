@@ -14,7 +14,7 @@
                     <div class="form-group row">
                         <label class="form-control-label col-sm-3">Full Name</label>
                         <div class="col-sm-6">
-                            <input type="text" v-model="fullName" class="form-control">
+                            <input type="text" v-model="name" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -106,7 +106,7 @@
                 addresses: this.initialAddresses,
                 primaryId: this.initialPrimaryId,
                 addingAddress: false,
-                fullName: null,
+                name: null,
                 company: null,
                 street1: null,
                 street2: null,
@@ -365,7 +365,7 @@
                 return {
                     'type': this.type,
                     'primary': this.primary,
-                    'full_name': this.fullName,
+                    'name': this.name,
                     'company': this.company,
                     'street1': this.street1,
                     'street2': this.street2,
@@ -398,6 +398,7 @@
                     });
             },
             clearAddressData: function () {
+                this.name = null;
                 this.company = null;
                 this.street1 = null;
                 this.street2 = null;

@@ -616,6 +616,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'AddFirstLastNameToUsersTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_12_020304_add_first_last_name_to_users_tbl.php',
         'AddFullNameToAddressesTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_29_072632_add_full_name_to_addresses_table.php',
         'AddGuestToUsersTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_11_213948_add_guest_to_users_tbl.php',
+        'AddObjectIdToAddressesTable' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_01_013034_add_object_id_to_addresses_table.php',
         'AddVerifiedToClaimsTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_12_213316_add_verified_to_claims_tbl.php',
         'Adobe_Font_Metrics' => __DIR__ . '/..' . '/phenx/php-font-lib/classes/Adobe_Font_Metrics.php',
         'AlterShippingAddressesTableToAddresses' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_12_010835_alter_shipping_addresses_table_to_addresses.php',

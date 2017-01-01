@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddFullNameToAddressesTable extends Migration
+class AddObjectIdToAddressesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class AddFullNameToAddressesTable extends Migration
     public function up()
     {
         Schema::table('addresses', function (Blueprint $table) {
-            $table->string('name')->nullable()->default(NULL)->after('primary');
+            $table->string('object_id')->after('user_id');
         });
     }
 
@@ -25,7 +25,7 @@ class AddFullNameToAddressesTable extends Migration
     public function down()
     {
         Schema::table('addresses', function (Blueprint $table) {
-            $table->removeColumn('name');
+            $table->dropColumn('object_id');
         });
     }
 }

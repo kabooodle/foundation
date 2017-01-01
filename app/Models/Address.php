@@ -33,9 +33,10 @@ class Address extends BaseEloquentModel implements Revisionable
      */
     protected $fillable = [
         'user_id',
+        'object_id',
         'type',
         'primary',
-        'full_name',
+        'name',
         'company',
         'street1',
         'street2',
@@ -54,6 +55,7 @@ class Address extends BaseEloquentModel implements Revisionable
     protected $attributes = [
         'user_id' => 0,
         'type' => self::TYPE_FROM,
+        'name' => '',
         'company' => null,
         'street1' => '',
         'street2' => null,

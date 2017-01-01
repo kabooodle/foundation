@@ -26,16 +26,18 @@ class AddAddressCommandHandler
         return DB::transaction(function() use ($command) {
             $address = Address::factory([
                 'user_id' => $command->getUser()->id,
+                'object_id' => $command->getObjectId(),
                 'type' => $command->getType(),
                 'primary' => $command->isPrimary(),
-                'full_name' => $command->getFullName(),
-                'company' => $command->getCompany(),
+                'name' => $command->getName(),
+                'company' => $command->getCompany() ?: null,
                 'street1' => $command->getStreet1(),
-                'street2' => $command->getStreet2(),
+                'street2' => $command->getStreet2() ?: null,
                 'city' => $command->getCity(),
                 'state' => $command->getState(),
                 'zip' => $command->getZip(),
-                'phone' => $command->getPhone(),
+                'phone' => $command->getPhone() ?: null,
+                'metadata' => $command->getMetadata(),
             ]);
 
             if ($address->isPrimary()) {

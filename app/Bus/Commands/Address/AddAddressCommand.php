@@ -22,6 +22,11 @@ final class AddAddressCommand
     /**
      * @var string
      */
+    protected $objectId;
+
+    /**
+     * @var string
+     */
     protected $type;
 
     /**
@@ -32,7 +37,7 @@ final class AddAddressCommand
     /**
      * @var string
      */
-    protected $fullName;
+    protected $name;
 
     /**
      * @var string
@@ -70,11 +75,17 @@ final class AddAddressCommand
     protected $phone;
 
     /**
+     * @var string
+     */
+    protected $metadata;
+
+    /**
      * AddAddressCommand constructor.
      * @param User $user
+     * @param $objectId
      * @param $type
      * @param $primary
-     * @param $fullName
+     * @param $name
      * @param $company
      * @param $street1
      * @param $street2
@@ -82,23 +93,28 @@ final class AddAddressCommand
      * @param $state
      * @param $zip
      * @param $phone
+     * @param $metadata
      */
     public function __construct(
         User $user,
+        $objectId,
         $type,
         $primary,
-        $fullName,
+        $name,
         $company,
         $street1,
         $street2,
         $city,
         $state,
         $zip,
-        $phone)
+        $phone,
+        $metadata)
     {
         $this->user = $user;
+        $this->objectId = $objectId;
         $this->type = $type;
         $this->primary = $primary;
+        $this->name = $name;
         $this->company = $company;
         $this->street1 = $street1;
         $this->street2 = $street2;
@@ -114,6 +130,14 @@ final class AddAddressCommand
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @return string
+     */
+    public function getObjectId()
+    {
+        return $this->objectId;
     }
 
     /**
@@ -135,9 +159,9 @@ final class AddAddressCommand
     /**
      * @return string
      */
-    public function getFullName()
+    public function getName()
     {
-        return $this->fullName;
+        return $this->name;
     }
 
     /**
@@ -194,5 +218,13 @@ final class AddAddressCommand
     public function getPhone()
     {
         return $this->phone;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
     }
 }

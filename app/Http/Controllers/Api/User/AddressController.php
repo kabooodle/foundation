@@ -11,9 +11,11 @@ use Illuminate\Http\Request;
 use Kabooodle\Bus\Commands\Address\AddAddressCommand;
 use Kabooodle\Bus\Commands\Address\DestroyAddressCommand;
 use Kabooodle\Bus\Commands\Address\MakeAddressPrimaryCommand;
-use Kabooodle\Bus\Commands\Address\ResendAddressVerificationCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Models\Address;
+use Kabooodle\Models\MailingAddress;
+use Kabooodle\Services\Shippr\Exceptions\InvalidAddressException;
+use Kabooodle\Services\Shippr\ShipprService;
 
 /**
  * Class AddressController
@@ -21,6 +23,20 @@ use Kabooodle\Models\Address;
  */
 class AddressController extends AbstractApiController
 {
+    /**
+     * @var ShipprService
+     */
+    protected $shippr;
+
+    /**
+     * AddressController constructor.
+     * @param ShipprService $shippr
+     */
+    public function __construct(ShipprService $shippr)
+    {
+        $this->shippr = $shippr;
+    }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\Response
@@ -45,22 +61,36 @@ class AddressController extends AbstractApiController
     public function store(Request $request, $userId)
     {
         try {
-            $this->validate($request, Address::getRules());
-
-            $address = $this->dispatchNow(new AddAddressCommand(
-                $this->getUser(),
-                $request->get('type'),
-                $request->get('primary', false),
-                $request->get('full_name'),
+            $validatedAddress = $this->shippr->createAndValidateAddress(new MailingAddress(
                 $request->get('company'),
                 $request->get('street1'),
                 $request->get('street2'),
                 $request->get('city'),
                 $request->get('state'),
                 $request->get('zip'),
-                $request->get('phone')));
+                $request->get('name'),
+                $this->getUser()->primaryEmail->address,
+                $request->get('phone')
+            ));
+
+            $address = $this->dispatchNow(new AddAddressCommand(
+                $this->getUser(),
+                $validatedAddress->object_id,
+                $request->get('type'),
+                $request->get('primary', false),
+                $validatedAddress->name,
+                $validatedAddress->company,
+                $validatedAddress->street1,
+                $validatedAddress->street2,
+                $validatedAddress->city,
+                $validatedAddress->state,
+                $validatedAddress->zip,
+                $validatedAddress->phone,
+                $validatedAddress->metadata));
 
             return $this->setData(['address' => $address])->respond();
+        } catch (InvalidAddressException $e) {
+            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond($e);
         } catch (Exception $e) {
             return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond($e);
         }
