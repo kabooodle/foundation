@@ -832,7 +832,7 @@ class User extends BaseEloquentModel implements
     public function notificationsettings()
     {
         return $this->belongsToMany(Notifications::class, 'users_notificationsettings', 'user_id', 'notification_id')
-            ->withPivot(['email', 'web']);
+            ->withPivot(['email', 'web', 'sms']);
     }
 
     /**
@@ -1010,5 +1010,13 @@ class User extends BaseEloquentModel implements
     public function watching()
     {
         return $this->hasMany(Watches::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function phoneNumber()
+    {
+        return $this->hasOne(PhoneNumber::class, 'user_id');
     }
 }

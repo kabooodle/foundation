@@ -11,8 +11,8 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         '1d1b89d124cc9cb8219922c9d5569199' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
-        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
         'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
@@ -34,6 +34,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'p' => 
         array (
             'phpDocumentor\\Reflection\\' => 25,
+        ),
+        'Z' => 
+        array (
+            'Zend\\Diactoros\\' => 15,
         ),
         'X' => 
         array (
@@ -93,6 +97,8 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         ),
         'N' => 
         array (
+            'Nexmo\\Laravel\\' => 14,
+            'Nexmo\\' => 6,
             'Namshi\\JOSE\\' => 12,
         ),
         'M' => 
@@ -104,6 +110,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
             'League\\Fractal\\' => 15,
             'League\\Flysystem\\AwsS3v3\\' => 25,
             'League\\Flysystem\\' => 17,
+            'Lcobucci\\JWT\\' => 13,
             'Laravel\\Cashier\\' => 16,
         ),
         'K' => 
@@ -120,6 +127,12 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
             'IronMQ\\' => 7,
             'IronCore\\' => 9,
             'Illuminate\\' => 11,
+        ),
+        'H' => 
+        array (
+            'Http\\Promise\\' => 13,
+            'Http\\Client\\' => 12,
+            'Http\\Adapter\\Guzzle6\\' => 21,
         ),
         'G' => 
         array (
@@ -146,6 +159,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         array (
             'Dotenv\\' => 7,
             'Doctrine\\Instantiator\\' => 22,
+            'Doctrine\\Common\\Annotations\\' => 28,
             'Dingo\\Blueprint\\' => 16,
             'Dingo\\Api\\' => 10,
             'DeepCopy\\' => 9,
@@ -185,6 +199,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+        ),
+        'Zend\\Diactoros\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-diactoros/src',
         ),
         'XdgBaseDir\\' => 
         array (
@@ -326,6 +344,14 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
+        'Nexmo\\Laravel\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nexmo/laravel/src',
+        ),
+        'Nexmo\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nexmo/client/src',
+        ),
         'Namshi\\JOSE\\' => 
         array (
             0 => __DIR__ . '/..' . '/namshi/jose/src/Namshi/JOSE',
@@ -345,6 +371,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'League\\Flysystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
+        ),
+        'Lcobucci\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
         'Laravel\\Cashier\\' => 
         array (
@@ -373,6 +403,18 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Illuminate\\' => 
         array (
             0 => __DIR__ . '/..' . '/laravel/framework/src/Illuminate',
+        ),
+        'Http\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-http/promise/src',
+        ),
+        'Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-http/httplug/src',
+        ),
+        'Http\\Adapter\\Guzzle6\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-http/guzzle6-adapter/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -429,6 +471,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Doctrine\\Instantiator\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
+        ),
+        'Doctrine\\Common\\Annotations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
         ),
         'Dingo\\Blueprint\\' => 
         array (
@@ -579,10 +625,6 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
             array (
                 0 => __DIR__ . '/..' . '/doctrine/inflector/lib',
             ),
-            'Doctrine\\Common\\Annotations\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/doctrine/annotations/lib',
-            ),
         ),
         'C' => 
         array (
@@ -678,6 +720,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'CreatePageviews' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_18_231944_create_pageviews.php',
         'CreateParticipantsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2014_10_28_180224_create_participants_table.php',
         'CreatePasswordResetsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2014_10_12_100000_create_password_resets_table.php',
+        'CreatePhoneNumbersTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_02_174733_create_phone_numbers_tbl.php',
         'CreateQueuesTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_07_085215_create_queues_table.php',
         'CreateSaleSellerItems' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_28_050551_create_sale_seller_items.php',
         'CreateShippingOrders' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_11_195334_create_shipping_orders.php',
@@ -1443,7 +1486,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateListingsStatus' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_07_181657_update_listings_status.php',
         'UpdateListingsTblAddClaimableDateCol' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_13_034716_update_listings_tbl_add_claimable_date_col.php',
         'UpdateListingsTblAddQueue' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_14_202419_update_listings_tbl_add_queue.php',
-        'UpdateNotificationsAddListingProcessingRow' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_26_040240_update_notifications_add_listing_processing_row.php',
+        'UpdateNotificationsPivot' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_02_103104_update_notifications_pivot.php',
         'UpdateNotificationsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_02_063042_update_notifications_table.php',
         'UpdateQueuesTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_14_202217_update_queues_tbl.php',
         'UpdateRevisionsTblAddFk' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_26_065602_update_revisions_tbl_add_fk.php',

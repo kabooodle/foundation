@@ -35,6 +35,8 @@
     "laravelcollective/iron-queue": "^5.2",
     "league/flysystem-aws-s3-v3": "1.0.13",
     "maatwebsite/excel": "~2.1.0",
+    "nexmo/client": "@beta",
+    "nexmo/laravel": "1.0.0-beta3",
     "predis/predis": "1.1.0",
     "ramsey/uuid": "3.5.0",
     "rtconner/laravel-tagging": "2.2.0",

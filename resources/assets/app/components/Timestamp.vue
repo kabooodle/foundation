@@ -1,10 +1,12 @@
 <template>
-    <div v-if="older_than_week">
-        {{ humanized }}
-    </div>
-    <div v-else>
-        <timeago :since="timestamp"></timeago>
-    </div>
+    <span>
+        <template v-if="older_than_week">
+            {{ humanized }}
+        </template>
+        <template v-else>
+            <timeago :since="timestamp"></timeago>
+        </template>
+    </span>
 </template>
 <script>
     export default{

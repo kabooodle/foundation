@@ -214,7 +214,7 @@ class ProfileSettingsController extends Controller
         return [
             'id' => 'required|in:'.implode(',', $notifications->pluck('id')->toArray()),
             'action' => 'required|in:subscribed,unsubscribed',
-            'type' => 'required|in:web,email'
+            'type' => 'required|in:web,email,sms'
         ];
     }
 }

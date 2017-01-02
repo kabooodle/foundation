@@ -54,6 +54,10 @@ class EventServiceProvider extends ServiceProvider
             \Kabooodle\Bus\Handlers\Events\Comments\CommentWasCreatedEventHandler::class
         ],
 
+        // PHONE NUMBERS
+        \Kabooodle\Bus\Events\PhoneNumbers\PhoneNumberWasVerifiedSuccessfullyEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\PhoneNumbers\NotifyNewPhoneNumberVerified::class
+        ],
 
         // MESSENGER
         \Kabooodle\Bus\Events\Messenger\MessageWasAddedToThreadEvent::class => [

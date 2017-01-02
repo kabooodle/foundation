@@ -1,3 +1,4 @@
+import PhoneNumber from '../phonenumber/PhoneNumber.vue';
 
 new Vue({
     el: '#profile_settings',
@@ -23,5 +24,8 @@ new Vue({
                 event.target.disabled=false;
             });
         }
+    },
+    components: {
+        'phone-number': PhoneNumber
     }
 });
