@@ -31,6 +31,8 @@ class CreateNewMessageForThreadCommandHandler
             $author = $command->getAuthor();
             $message = $command->getMessage();
 
+            $timestamp = Carbon::now();
+
             $message = ThreadMessages::create([
                 'thread_id' => $thread->id,
                 'user_id'   => $author->id,
@@ -43,7 +45,7 @@ class CreateNewMessageForThreadCommandHandler
                 'thread_id' => $thread->id,
                 'user_id'   => $author->id
             ]);
-            $participant->last_read = Carbon::now();
+            $participant->last_read = $timestamp;
             $participant->save();
 
             event(new MessageWasAddedToThreadEvent($thread, $message, $author));

@@ -8,9 +8,11 @@ namespace Kabooodle\Http\Controllers\Api\Messenger;
 
 use Binput;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Threads;
 use Kabooodle\Models\ThreadMessages;
+use Kabooodle\Models\ThreadParticipants;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -114,6 +116,32 @@ class MessengerApiController extends AbstractApiController
             }
 
             $this->dispatch(new CreateNewMessageForThreadCommand($thread, user(), Binput::get('msg')));
+
+            return $this->noContent();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param         $threadId
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     */
+    public function updateThreadMarkAsRead(Request $request, $threadId)
+    {
+        try {
+            $thread = ThreadParticipants::where('thread_id', $threadId)
+                ->where('user_id', $this->user()->id)
+                ->first();
+
+            if (! $thread) {
+                throw new ModelNotFoundException;
+            }
+
+            $thread->last_read = Carbon::now();
+            $thread->save();
 
             return $this->noContent();
         } catch (Exception $e) {

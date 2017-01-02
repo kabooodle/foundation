@@ -8,12 +8,13 @@ namespace Kabooodle\Bus\Handlers\Commands\Messenger;
 
 use DB;
 use Carbon\Carbon;
-use Cmgmyr\Messenger\Models\Thread;
-use Cmgmyr\Messenger\Models\Message;
-use Cmgmyr\Messenger\Models\Participant;
+use Kabooodle\Models\Threads;
+use Kabooodle\Models\ThreadMessages;
+use Kabooodle\Models\ThreadParticipants;
 use Kabooodle\Bus\Events\Messenger\ThreadWasCreatedEvent;
 use Kabooodle\Bus\Commands\Messenger\CreateNewThreadCommand;
 use Kabooodle\Foundation\Exceptions\Messenger\CannotMessageYourselfException;
+
 
 /**
  * Class CreateNewThreadCommandHandler
@@ -40,17 +41,17 @@ class CreateNewThreadCommandHandler
                 }
             }
 
-            $thread = Thread::create([
+            $thread = Threads::create([
                 'subject' => $subject
             ]);
 
-            Message::create([
+            $message = ThreadMessages::create([
                 'thread_id' => $thread->id,
                 'user_id' => $sender->id,
                 'body' => $message
             ]);
 
-            Participant::create([
+            ThreadParticipants::create([
                 'thread_id' => $thread->id,
                 'user_id' => $sender->id,
                 'last_read' => Carbon::now()
@@ -58,7 +59,7 @@ class CreateNewThreadCommandHandler
 
             $thread->addParticipant($recipients);
 
-            event(new ThreadWasCreatedEvent($thread, $sender));
+            event(new ThreadWasCreatedEvent($thread, $sender, $message));
 
             return $thread;
         });

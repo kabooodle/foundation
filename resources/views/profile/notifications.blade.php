@@ -14,14 +14,17 @@
                 <thead>
                     <tr>
                         <th>Event</th>
+                        <th>Group</th>
                         <th>Email</th>
                         {{--<th>Web</th>--}}
                     </tr>
                 </thead>
                 <tbody>
-                @foreach($notifications as $notification)
+                @foreach($notifications as $group => $notific)
+                    @foreach($notific as $notification)
                     <tr>
                         <td>{{ $notification->description }}</td>
+                        <td>{{ ucfirst($notification->group) }}</td>
                         <td>
                             <div class="checkbox checkbox-slider--b-flat">
                                 <label>
@@ -30,13 +33,14 @@
                                         data-id="{{ $notification->id }}"
                                     @change="changed"
                                     type="checkbox"
-                                    {{ user()->notificationsettings->find($notification->id)->pivot->email == true ? 'checked' : null  }}
+                                    {{ $userNotifications->first(function($v, $k) use ($notification) {  return $k->pivot->notification_id == $notification->id && $k->pivot->email == 1; }) ? ' checked' : null }}
                                     ><span></span>
                                 </label>
                             </div>
                         </td>
                     </tr>
                     @endforeach
+                @endforeach
                 </tbody>
             </table>
         </div>

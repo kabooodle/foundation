@@ -174,8 +174,11 @@ class ProfileSettingsController extends Controller
     public function getNotifications()
     {
         $notifications = $this->dispatchNow(new GetActiveNotifications);
+        $notifications = $notifications->groupBy('group');
 
-        return $this->view('profile.notifications')->with(compact('notifications'));
+        $userNotifications = user()->notificationsettings;
+
+        return $this->view('profile.notifications')->with(compact('notifications', 'userNotifications'));
     }
 
     /**

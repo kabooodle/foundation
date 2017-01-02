@@ -4,6 +4,7 @@
                 class="list-item b-l b-l-2x b-b"
                 :data-id="thread.id"
                 :data-href="endpoint"
+                :class="is_read ? null : ' b-l-primary list-item-unread '"
         >
                 <!--<div class="list-left">-->
                 <!--</div>-->
@@ -34,6 +35,16 @@
             }
         },
         computed:{
+            is_read(){
+                const thread_updated_at = this.thread.updated_at;
+                const myself = _.find(this.thread.participants, function(v){  return parseInt(v.user_id) == parseInt(KABOOODLE_APP.currentUser.id);  });
+
+                if (_.has(myself.last_read, 'date')) {
+                    return moment(myself.last_read.date).isAfter(thread_updated_at.date);
+                }
+
+                return false;
+            },
             most_recent_message(){
                 return _.last(this.thread.messages)
             },

@@ -18,6 +18,7 @@
             <messages
                     :thread="{{ $thread->toJson() }}"
                     endpoint="{{ apiRoute('messenger.show', [$thread->id]) }}"
+                    read_endpoint="{{ apiRoute('messenger.markasread', [$thread->id]) }}"
             ></messages>
         </div>
         <div class="box-footer b-t">

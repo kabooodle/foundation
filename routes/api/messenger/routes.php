@@ -19,4 +19,8 @@ $api->group(['middleware' => 'jwt.auth'], function ($api) {
         'as' => 'messenger.update',
         'uses' => \Kabooodle\Http\Controllers\Api\Messenger\MessengerApiController::class.'@update'
     ]);
+    $api->post('messenger/{thread}/markasread', [
+        'as' => 'messenger.markasread',
+        'uses' => \Kabooodle\Http\Controllers\Api\Messenger\MessengerApiController::class.'@updateThreadMarkAsRead'
+    ]);
 });

@@ -59,6 +59,9 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Messenger\MessageWasAddedToThreadEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Messenger\NotifyNewMessageForThreadCreated::class
         ],
+        \Kabooodle\Bus\Events\Messenger\ThreadWasCreatedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Messenger\NotifyNewThreadWasCreatedEvent::class
+        ],
 
         // LISTINGS
         \Kabooodle\Bus\Events\Listings\ListingsWereQueued::class => [

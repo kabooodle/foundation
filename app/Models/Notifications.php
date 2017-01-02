@@ -28,6 +28,8 @@ class Notifications extends BaseEloquentModel implements Revisionable
     protected $fillable = [
         'name',
         'description',
-        'active'
+        'active',
+        'group',
+        'required_subscription_type'
     ];
 }

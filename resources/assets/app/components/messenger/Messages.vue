@@ -13,6 +13,10 @@
     import Message from './Message.vue';
     export default{
         props: {
+            read_endpoint: {
+                required: true,
+                type: String
+            },
             endpoint: {
                 required: true,
                 type: String
@@ -37,6 +41,10 @@
                 this.messages.push(data.message);
                 $Bus.$emit('messages:fetched', this.thread, this.messages);
             });
+
+            $Bus.$on('messages:fetched', (thread, messages)=>{
+                this.flagAsRead(thread,messages);
+            });
         },
         methods: {
             fetchThread(){
@@ -45,7 +53,10 @@
                     this.messages = response.body.data;
                     this.fetching = false;
                     $Bus.$emit('messages:fetched', this.thread, this.messages);
-                });
+                }, (response)=>{});
+            },
+            flagAsRead(thread, messages){
+                this.$http.post(this.read_endpoint, {participant_id: KABOOODLE_APP.currentUser.id});
             },
         },
         components: {

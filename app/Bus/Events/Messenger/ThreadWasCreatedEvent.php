@@ -8,6 +8,8 @@ namespace Kabooodle\Bus\Events\Messenger;
 
 use Kabooodle\Models\User;
 use Cmgmyr\Messenger\Models\Thread;
+use Kabooodle\Models\ThreadMessages;
+use Cmgmyr\Messenger\Models\Message;
 
 /**
  * Class ThreadWasCreatedEvent
@@ -25,13 +27,20 @@ final class ThreadWasCreatedEvent
     public $sender;
 
     /**
-     * @param Thread $thread
-     * @param User   $sender
+     * @var ThreadMessages
      */
-    public function __construct(Thread $thread, User $sender)
+    public $message;
+
+    /**
+     * @param Thread         $thread
+     * @param User           $sender
+     * @param ThreadMessages $message
+     */
+    public function __construct(Thread $thread, User $sender, ThreadMessages $message)
     {
         $this->thread = $thread;
         $this->sender = $sender;
+        $this->message = $message;
     }
 
     /**
@@ -48,5 +57,13 @@ final class ThreadWasCreatedEvent
     public function getSender(): User
     {
         return $this->sender;
+    }
+
+    /**
+     * @return Message
+     */
+    public function getMessage(): Message
+    {
+        return $this->message;
     }
 }

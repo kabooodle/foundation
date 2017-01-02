@@ -43,7 +43,13 @@ class NotifyNewMessageForThreadCreated implements ShouldQueue
 
             /** @var ThreadParticipants $participant */
             foreach ($participants as $participant) {
-                if ($participant->primaryEmail && $participant->primaryEmail->isValid() && $participant->checkIsNotifyable('thread_message_added', 'email')) {
+
+                // Don't notify yourself silly pants.
+                if ($sender->id == $participant->user->id) {
+                    continue;
+                }
+
+                if ($participant->user->primaryEmail && $participant->user->primaryEmail->isVerified() && $participant->user->checkIsNotifyable('thread_message_added', 'email')) {
                     $this->toEmail($sender, $participant->user, $thread, $message);
                 }
             }
