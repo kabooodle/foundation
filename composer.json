@@ -22,6 +22,7 @@
     "barryvdh/laravel-cors": "0.8.1",
     "barryvdh/laravel-ide-helper": "2.2.1",
     "bugsnag/bugsnag-laravel": "2.4.0",
+    "cmgmyr/messenger": "~2.0",
     "dingo/api": "1.0.*@dev",
     "emojione/emojione": "2.2.6",
     "fideloper/proxy": "^3.1",
@@ -35,7 +36,6 @@
     "league/flysystem-aws-s3-v3": "1.0.13",
     "maatwebsite/excel": "~2.1.0",
     "predis/predis": "1.1.0",
-    "pusher/pusher-php-server": "2.2.1",
     "ramsey/uuid": "3.5.0",
     "rtconner/laravel-tagging": "2.2.0",
     "sammyk/laravel-facebook-sdk": "^3.4.0",
@@ -45,7 +45,8 @@
     "spatie/laravel-fractal": "1.9.1",
     "tymon/jwt-auth": "1.0.*@dev",
     "wildbit/laravel-postmark-provider": "3.0.0",
-    "zackkitzmiller/tiny": "1.2.2"
+    "zackkitzmiller/tiny": "1.2.2",
+    "vinkla/pusher": "^2.4"
   },
   "require-dev": {
     "alt-three/testbench": "^1.8",

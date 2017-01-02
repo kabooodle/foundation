@@ -15,13 +15,12 @@
         },
         data(){
             return {
-                now: new Date().getTime(),
                 format: 'MMM D \\at h:mma'
             }
         },
         computed : {
             older_than_week :function(){
-                return moment(this.timestamp).subtract(1, 'weeks').isBefore(moment(this.timestamp));
+                return moment(this.timestamp).isBefore(moment().subtract(1, 'weeks'));
             },
             humanized : function(){
                 return moment(this.timestamp).format(this.format);

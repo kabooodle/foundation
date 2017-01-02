@@ -55,6 +55,10 @@ class GroupsController extends Controller
      */
     public function create()
     {
+        if (! user()->hasAtLeastMerchantSubscription()) {
+            return redirect()->route('groups.index');
+        }
+
         return $this->view('groups.create');
     }
 
@@ -67,6 +71,10 @@ class GroupsController extends Controller
     public function store(Request $request)
     {
         try {
+            if (! user()->hasAtLeastMerchantSubscription()) {
+                return redirect()->route('groups.index');
+            }
+
             $this->validate($request, Groups::getRules());
 
             $group = $this->dispatch(new AddGroupCommand(Binput::get('name'), Binput::get('members'), Binput::get('privacy'), user()));
@@ -107,6 +115,9 @@ class GroupsController extends Controller
      */
     public function edit($idAndName)
     {
+        if (! user()->hasAtLeastMerchantSubscription()) {
+            return redirect()->route('groups.index');
+        }
         $decryptedId = $this->obfuscateFromURIString($idAndName);
         $item = user()->allMyGroups()->find($decryptedId);
 

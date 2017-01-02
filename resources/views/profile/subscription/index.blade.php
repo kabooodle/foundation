@@ -9,7 +9,10 @@
         </div>
         <div class="box-divider"></div>
         <div class="box-body clearfix">
-            <p class="m-b-0">Using {{ env('APP_NAME') }} to browse items and submit claims is free.  If you wish to have access to merchant inventory tools, including a b c, we offer various subscription plans.</p>
+            <p class="">Using {{ env('APP_NAME') }} to browse items and submit claims is free.  If you wish to have access to merchant inventory tools, including a b c, we offer various subscription plans.</p>
+            @if(user()->currentSubscription())
+                <p class="m-b-0">Your next scheduled billing date is: {{ user()->upcomingInvoice()->date()->format('F jS Y') }}, for {{ user()->upcomingInvoice()->total() }}.</p>
+            @endif
         </div>
     </div>
 

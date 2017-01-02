@@ -50,9 +50,6 @@
                     return ((KABOOODLE_APP && KABOOODLE_APP.currentUser) ? KABOOODLE_APP.currentUser : {})
                 }
             },
-            already_following: {
-                required: true
-            },
             unfollow_text: {
                 type: String,
                 default: 'Following'
@@ -64,6 +61,7 @@
         },
         data (){
             return {
+                already_following: false,
                 display: false,
                 following: false,
                 processing: false,

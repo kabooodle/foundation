@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d0eb625377ab87c03c7fdc48572614a6",
-    "content-hash": "6abf0c5defa9f1557b4e26cdbcda9499",
+    "hash": "6add069da69078519df1d950c70c3c66",
+    "content-hash": "756c563ba018bd0a2e9a57d65b4bf547",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -176,16 +176,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.20.11",
+            "version": "3.20.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "39d122b903813da2f53312fd3146acaa83a6d9f6"
+                "reference": "8725e67cb77b057b55596b4468ce9a1a95c5fe96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/39d122b903813da2f53312fd3146acaa83a6d9f6",
-                "reference": "39d122b903813da2f53312fd3146acaa83a6d9f6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8725e67cb77b057b55596b4468ce9a1a95c5fe96",
+                "reference": "8725e67cb77b057b55596b4468ce9a1a95c5fe96",
                 "shasum": ""
             },
             "require": {
@@ -252,7 +252,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-12-22 20:47:16"
+            "time": "2016-12-30 00:41:36"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
@@ -707,6 +707,61 @@
             "time": "2016-09-16 12:50:15"
         },
         {
+            "name": "cmgmyr/messenger",
+            "version": "2.13.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cmgmyr/laravel-messenger.git",
+                "reference": "ea45e22251ef2fb4400deeb9f5b1ba98f7340867"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cmgmyr/laravel-messenger/zipball/ea45e22251ef2fb4400deeb9f5b1ba98f7340867",
+                "reference": "ea45e22251ef2fb4400deeb9f5b1ba98f7340867",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/config": "~5.0",
+                "illuminate/database": "~5.0",
+                "illuminate/support": "~5.0",
+                "nesbot/carbon": "~1.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "adamwathan/faktory": "0.3.*",
+                "friendsofphp/php-cs-fixer": "^1.11",
+                "orchestra/testbench": "~3.0",
+                "phpunit/phpunit": "4.*",
+                "scrutinizer/ocular": "~1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Cmgmyr\\Messenger\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Gmyr",
+                    "email": "cmgmyr@gmail.com",
+                    "homepage": "https://github.com/cmgmyr",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Simple user messaging tool for Laravel",
+            "keywords": [
+                "Messenger",
+                "laravel",
+                "messaging",
+                "user messaging"
+            ],
+            "time": "2016-10-08 12:28:04"
+        },
+        {
             "name": "composer/ca-bundle",
             "version": "1.0.6",
             "source": {
@@ -770,17 +825,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dingo/api.git",
-                "reference": "dc312a566ff8fe16098f95360d3778789727f63f"
+                "reference": "81dbdbded14ec4b1529bb435ee0532540dbae24f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dingo/api/zipball/dc312a566ff8fe16098f95360d3778789727f63f",
-                "reference": "dc312a566ff8fe16098f95360d3778789727f63f",
+                "url": "https://api.github.com/repos/dingo/api/zipball/81dbdbded14ec4b1529bb435ee0532540dbae24f",
+                "reference": "81dbdbded14ec4b1529bb435ee0532540dbae24f",
                 "shasum": ""
             },
             "require": {
                 "dingo/blueprint": "0.2.*",
-                "doctrine/annotations": "1.2.*",
                 "illuminate/routing": "5.1.* || 5.2.* || 5.3.*",
                 "illuminate/support": "5.1.* || 5.2.* || 5.3.*",
                 "league/fractal": ">=0.12.0",
@@ -837,24 +891,24 @@
                 "laravel",
                 "restful"
             ],
-            "time": "2016-10-18 16:20:39"
+            "time": "2016-12-27 22:09:26"
         },
         {
             "name": "dingo/blueprint",
-            "version": "v0.2.0",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dingo/blueprint.git",
-                "reference": "d37fb7433aeadb3d40d5e790978c3c8d229d0e7d"
+                "reference": "53c2e553e2cb1284d5736f0bd264599ba89c376f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dingo/blueprint/zipball/d37fb7433aeadb3d40d5e790978c3c8d229d0e7d",
-                "reference": "d37fb7433aeadb3d40d5e790978c3c8d229d0e7d",
+                "url": "https://api.github.com/repos/dingo/blueprint/zipball/53c2e553e2cb1284d5736f0bd264599ba89c376f",
+                "reference": "53c2e553e2cb1284d5736f0bd264599ba89c376f",
                 "shasum": ""
             },
             "require": {
-                "doctrine/annotations": "1.2.*",
+                "doctrine/annotations": "~1.2",
                 "illuminate/filesystem": "5.1.* || 5.2.* || 5.3.*",
                 "illuminate/support": "5.1.* || 5.2.* || 5.3.*",
                 "php": ">=5.5.9",
@@ -893,7 +947,7 @@
                 "docs",
                 "laravel"
             ],
-            "time": "2016-08-30 03:27:49"
+            "time": "2016-12-27 21:55:37"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1204,16 +1258,16 @@
         },
         {
             "name": "facebook/graph-sdk",
-            "version": "5.4.2",
+            "version": "5.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/php-graph-sdk.git",
-                "reference": "2839246e971aef150650196acbb46d47e5207370"
+                "reference": "3e0f78787556375bb6ed52beaabfedbc16b5a4e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/php-graph-sdk/zipball/2839246e971aef150650196acbb46d47e5207370",
-                "reference": "2839246e971aef150650196acbb46d47e5207370",
+                "url": "https://api.github.com/repos/facebook/php-graph-sdk/zipball/3e0f78787556375bb6ed52beaabfedbc16b5a4e8",
+                "reference": "3e0f78787556375bb6ed52beaabfedbc16b5a4e8",
                 "shasum": ""
             },
             "require": {
@@ -1258,7 +1312,7 @@
                 "facebook",
                 "sdk"
             ],
-            "time": "2016-11-15 14:34:16"
+            "time": "2016-12-30 17:54:16"
         },
         {
             "name": "fideloper/proxy",
@@ -1484,21 +1538,21 @@
         },
         {
             "name": "graham-campbell/manager",
-            "version": "v2.4.0",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GrahamCampbell/Laravel-Manager.git",
-                "reference": "fd9052082e2c69c9a67d3e8d7dfa94cb33f8ab0b"
+                "reference": "e6ab47a8971da6fd18bc7ced546f0d24cb7ebe3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Manager/zipball/fd9052082e2c69c9a67d3e8d7dfa94cb33f8ab0b",
-                "reference": "fd9052082e2c69c9a67d3e8d7dfa94cb33f8ab0b",
+                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Manager/zipball/e6ab47a8971da6fd18bc7ced546f0d24cb7ebe3a",
+                "reference": "e6ab47a8971da6fd18bc7ced546f0d24cb7ebe3a",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "5.1.*|5.2.*|5.3.*",
-                "illuminate/support": "5.1.*|5.2.*|5.3.*",
+                "illuminate/contracts": "5.1.*|5.2.*|5.3.*|5.4.*",
+                "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*",
                 "php": ">=5.5.9"
             },
             "require-dev": {
@@ -1509,7 +1563,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -1539,25 +1593,25 @@
                 "laravel",
                 "manager"
             ],
-            "time": "2016-04-26 14:27:59"
+            "time": "2017-01-01 13:08:54"
         },
         {
             "name": "graham-campbell/security",
-            "version": "v3.6.0",
+            "version": "v3.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GrahamCampbell/Laravel-Security.git",
-                "reference": "07d4ec2658582032afe225928bde883474e2a543"
+                "reference": "48d92c56581142d776cf2c5a0185a4319c6eb063"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Security/zipball/07d4ec2658582032afe225928bde883474e2a543",
-                "reference": "07d4ec2658582032afe225928bde883474e2a543",
+                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Security/zipball/48d92c56581142d776cf2c5a0185a4319c6eb063",
+                "reference": "48d92c56581142d776cf2c5a0185a4319c6eb063",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "5.1.*|5.2.*|5.3.*",
-                "illuminate/support": "5.1.*|5.2.*|5.3.*",
+                "illuminate/contracts": "5.1.*|5.2.*|5.3.*|5.4.*",
+                "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*",
                 "php": ">=5.5.9"
             },
             "require-dev": {
@@ -1567,7 +1621,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.6-dev"
+                    "dev-master": "3.7-dev"
                 }
             },
             "autoload": {
@@ -1596,7 +1650,7 @@
                 "laravel",
                 "security"
             ],
-            "time": "2016-04-26 14:29:04"
+            "time": "2017-01-01 13:20:49"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -3517,16 +3571,16 @@
         },
         {
             "name": "pusher/pusher-php-server",
-            "version": "v2.2.1",
+            "version": "2.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pusher/pusher-http-php.git",
-                "reference": "79d755cc5d5b02b67779e2a40782fd6e3726657d"
+                "reference": "7101edc482d1b1de027abadd7a80a0d00222ef08"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/79d755cc5d5b02b67779e2a40782fd6e3726657d",
-                "reference": "79d755cc5d5b02b67779e2a40782fd6e3726657d",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/7101edc482d1b1de027abadd7a80a0d00222ef08",
+                "reference": "7101edc482d1b1de027abadd7a80a0d00222ef08",
                 "shasum": ""
             },
             "require": {
@@ -3557,7 +3611,7 @@
                 "rest",
                 "trigger"
             ],
-            "time": "2015-05-13 11:01:46"
+            "time": "2016-12-22 10:46:28"
         },
         {
             "name": "ramsey/uuid",
@@ -4035,23 +4089,24 @@
         },
         {
             "name": "swiftmailer/swiftmailer",
-            "version": "v5.4.4",
+            "version": "v5.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "545ce9136690cea74f98f86fbb9c92dd9ab1a756"
+                "reference": "cd142238a339459b10da3d8234220963f392540c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/545ce9136690cea74f98f86fbb9c92dd9ab1a756",
-                "reference": "545ce9136690cea74f98f86fbb9c92dd9ab1a756",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/cd142238a339459b10da3d8234220963f392540c",
+                "reference": "cd142238a339459b10da3d8234220963f392540c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "mockery/mockery": "~0.9.1"
+                "mockery/mockery": "~0.9.1",
+                "symfony/phpunit-bridge": "~3.2"
             },
             "type": "library",
             "extra": {
@@ -4084,7 +4139,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2016-11-24 01:01:23"
+            "time": "2016-12-29 10:02:40"
         },
         {
             "name": "symfony/class-loader",
@@ -5144,6 +5199,68 @@
             "time": "2016-07-11 19:12:28"
         },
         {
+            "name": "vinkla/pusher",
+            "version": "2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vinkla/laravel-pusher.git",
+                "reference": "5e7777095f9eac33bcc2a0abcafede37ea9232f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vinkla/laravel-pusher/zipball/5e7777095f9eac33bcc2a0abcafede37ea9232f5",
+                "reference": "5e7777095f9eac33bcc2a0abcafede37ea9232f5",
+                "shasum": ""
+            },
+            "require": {
+                "graham-campbell/manager": "^2.4",
+                "illuminate/contracts": "5.1.* || 5.2.* || 5.3.*",
+                "illuminate/support": "5.1.* || 5.2.* || 5.3.*",
+                "php": "^5.6.4 || ^7.0",
+                "pusher/pusher-php-server": "^2.2.1"
+            },
+            "require-dev": {
+                "graham-campbell/testbench": "^3.2",
+                "mockery/mockery": "^0.9.5",
+                "phpunit/phpunit": "^5.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Vinkla\\Pusher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vincent Klaiber",
+                    "email": "hello@vinkla.com"
+                }
+            ],
+            "description": "A Pusher bridge for Laravel",
+            "keywords": [
+                "api",
+                "events",
+                "http",
+                "laravel",
+                "php-pusher-server",
+                "publish",
+                "pusher",
+                "realtime",
+                "rest",
+                "trigger"
+            ],
+            "time": "2016-07-11 19:13:22"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v2.4.0",
             "source": {
@@ -5369,16 +5486,16 @@
     "packages-dev": [
         {
             "name": "alt-three/testbench",
-            "version": "v1.11.2",
+            "version": "v1.11.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AltThree/TestBench.git",
-                "reference": "c67aac05c817777e6b42cc161c381bf27bb66266"
+                "reference": "41921bae1a2228785fa54dc3b2fa206e484e5f79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AltThree/TestBench/zipball/c67aac05c817777e6b42cc161c381bf27bb66266",
-                "reference": "c67aac05c817777e6b42cc161c381bf27bb66266",
+                "url": "https://api.github.com/repos/AltThree/TestBench/zipball/41921bae1a2228785fa54dc3b2fa206e484e5f79",
+                "reference": "41921bae1a2228785fa54dc3b2fa206e484e5f79",
                 "shasum": ""
             },
             "require": {
@@ -5428,7 +5545,7 @@
                 "TestBench",
                 "app"
             ],
-            "time": "2016-12-13 20:30:09"
+            "time": "2017-01-01 12:36:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -5588,16 +5705,16 @@
         },
         {
             "name": "graham-campbell/testbench-core",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GrahamCampbell/Laravel-TestBench-Core.git",
-                "reference": "407e8cff5568ab95c4788ed5f7633e54be712de1"
+                "reference": "9dcc8fe7feb891e4c7ffb85d7bc316de9699cf41"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-TestBench-Core/zipball/407e8cff5568ab95c4788ed5f7633e54be712de1",
-                "reference": "407e8cff5568ab95c4788ed5f7633e54be712de1",
+                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-TestBench-Core/zipball/9dcc8fe7feb891e4c7ffb85d7bc316de9699cf41",
+                "reference": "9dcc8fe7feb891e4c7ffb85d7bc316de9699cf41",
                 "shasum": ""
             },
             "require": {
@@ -5644,7 +5761,7 @@
                 "testbench-core",
                 "testing"
             ],
-            "time": "2016-01-30 13:57:27"
+            "time": "2017-01-01 13:06:17"
         },
         {
             "name": "hamcrest/hamcrest-php",

@@ -13,63 +13,6 @@
 
 
 @section('body-content')
-    {{--<div class="row">--}}
-        {{--<div class="col-sm-6 col-md-4 col-lg-3">--}}
-            {{--<div class="box p-a">--}}
-                {{--<div class="pull-left m-r">--}}
-            {{--<span class="w-40 warn text-center rounded">--}}
-              {{--<i class="material-icons">shopping_basket</i>--}}
-            {{--</span>--}}
-                {{--</div>--}}
-                {{--<div class="clear">--}}
-                    {{--<h4 class="m-a-0 text-md"><a href="">75 <span class="text-sm">Sales</span></a></h4>--}}
-                    {{--<small class="text-muted">6 waiting payment.</small>--}}
-                {{--</div>--}}
-            {{--</div>--}}
-        {{--</div>--}}
-
-        {{--<div class="col-sm-6 col-md-4 col-lg-3">--}}
-            {{--<div class="box p-a">--}}
-                {{--<div class="pull-left m-r">--}}
-            {{--<span class="w-40 warn text-center rounded">--}}
-              {{--<i class="material-icons">shopping_basket</i>--}}
-            {{--</span>--}}
-                {{--</div>--}}
-                {{--<div class="clear">--}}
-                    {{--<h4 class="m-a-0 text-md"><a href="">75 <span class="text-sm">Sales</span></a></h4>--}}
-                    {{--<small class="text-muted">6 waiting payment.</small>--}}
-                {{--</div>--}}
-            {{--</div>--}}
-        {{--</div>--}}
-
-        {{--<div class="col-sm-6 col-md-4 col-lg-3">--}}
-            {{--<div class="box p-a">--}}
-                {{--<div class="pull-left m-r">--}}
-            {{--<span class="w-40 warn text-center rounded">--}}
-              {{--<i class="material-icons">shopping_basket</i>--}}
-            {{--</span>--}}
-                {{--</div>--}}
-                {{--<div class="clear">--}}
-                    {{--<h4 class="m-a-0 text-md"><a href="">75 <span class="text-sm">Sales</span></a></h4>--}}
-                    {{--<small class="text-muted">6 waiting payment.</small>--}}
-                {{--</div>--}}
-            {{--</div>--}}
-        {{--</div>--}}
-
-        {{--<div class="col-sm-6 col-md-4 col-lg-3">--}}
-            {{--<div class="box p-a">--}}
-                {{--<div class="pull-left m-r">--}}
-            {{--<span class="w-40 warn text-center rounded">--}}
-              {{--<i class="material-icons">shopping_basket</i>--}}
-            {{--</span>--}}
-                {{--</div>--}}
-                {{--<div class="clear">--}}
-                    {{--<h4 class="m-a-0 text-md"><a href="">75 <span class="text-sm">Sales</span></a></h4>--}}
-                    {{--<small class="text-muted">6 waiting payment.</small>--}}
-                {{--</div>--}}
-            {{--</div>--}}
-        {{--</div>--}}
-    {{--</div>--}}
 
     @include('listings.partials._listingbox', ['listing' => $listing])
 
@@ -111,7 +54,7 @@
                     <td>{{ $item->watchers->count() }}</td>
                     <td>${{ $item->sales->sum('price') }}</td>
                     <td>{!! $item->present()->getStatus()  !!}</td>
-                    <td><a class="btn btn-xs white" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">View</td>
+                    <td><a class="btn btn-xs white" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">View Item</td>
                 </tr>
                 @endforeach
                 </tbody>

@@ -18,7 +18,7 @@ class ComposerServiceProvider extends ServiceProvider
 {
     public function boot(Factory $factory)
     {
-        $factory->composer('*', CurrentUserComposer::class);
+        $factory->composer('layouts.header._htmlheader', CurrentUserComposer::class);
     }
 
     public function register()

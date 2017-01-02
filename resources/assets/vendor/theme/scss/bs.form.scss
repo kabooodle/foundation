@@ -108,3 +108,7 @@ option{
   border-color: $danger;
   border:1px solid $danger;
 }
+
+.multiselect__option--highlight {
+  background: $primary;
+}

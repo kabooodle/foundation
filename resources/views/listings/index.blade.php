@@ -1,18 +1,14 @@
 @extends('layouts.full')
 
 
-
 @section('body-menu')
     <div class="pull-left">
         <button class="btn btn-sm white">Filter Listings</button>
     </div>
-
 @endsection
 
 
 @section('body-content')
-
-
     <div class="box">
         <div class="box-header">
             <h4>Listings</h4>
@@ -44,5 +40,19 @@
         </div>
     </div>
 
-
 @endsection
+
+
+@push('footer-scripts')
+
+<script>
+    var channel = KABOOODLE_APP.pusher.subscribe('private.'+KABOOODLE_APP.env+'.listings.'+KABOOODLE_APP.currentUser.id);
+    channel.bind('listing:updated', function(data) {
+        let target_row = $('tr[data-id="'+data.id+'"]');
+        if (target_row.length) {
+            target_row.replaceWith(data.html);
+        }
+    });
+</script>
+
+@endpush

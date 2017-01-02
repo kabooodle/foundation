@@ -22,10 +22,8 @@
                         </td>
                         <td class="action-column" style="vertical-align: middle !important">
                             {{ Form::open() }}
-                            <label class="btn white pull-right m-a-0">
-                                <input type="radio" data-type="select" name="p" data-id="{{ $type->id }}" value="{{ $type->id }}"> Select
-                            </label>
-                            <button type="submit" data-type="buy" class="btn m-a-0 primary pull-right" data-id="{{ $type->id }}" style="display: none;">Purchase</button>
+                            <input type="hidden" name="p" data-id="{{ $type->id }}" value="{{ $type->id }}">
+                            <button type="submit" data-type="buy" class="btn white pull-right" data-id="{{ $type->id }}" >Purchase</button>
                             {{ Form::close() }}
                         </td>
                     </tr>
@@ -54,16 +52,6 @@
 @push('footer-scripts')
 <script>
     $(function(){
-        var selectBtnEl = $('[data-type="select"]');
-        selectBtnEl.on('click change', function(e){
-            var $that = $(this);
-            $that.parent().hide();
-            var purchaseBtn = $that.closest('.action-column').find('[data-type="buy"]');
-            purchaseBtn.show();
-            $(document).find('[data-type="buy"]').not(purchaseBtn).hide();
-            $(document).find('[data-type="select"]').not($that).prop('checked', false).parent().show();
-        });
-
         var buyBtnEl = $('[data-type="buy"]');
         buyBtnEl.click(function(e){
             e.preventDefault();
@@ -78,6 +66,7 @@
                 setTimeout(function(){
                     $that.closest('form').submit();
                 }, 100);
+            },function(){
             });
         });
     });

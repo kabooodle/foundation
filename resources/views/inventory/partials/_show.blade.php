@@ -55,6 +55,13 @@
                                 able_type="{{ get_class($item->user) }}"
                                 able_id="{{ $item->user->id }}">
                         </followable>
+                        @if(user()->id <> $item->user->id)
+                        <message-user
+                                recipient_id="{{ $item->user->id }}"
+                                recipient_name="{{ $item->user->full_name }} ({{ $item->user->username }})"
+                                endpoint="{{ apiRoute('messenger.store') }}"
+                        ></message-user>
+                        @endif
                     </div>
                 </div>
             </div>

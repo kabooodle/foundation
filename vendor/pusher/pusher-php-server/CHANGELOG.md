@@ -1,13 +1,54 @@
-# Changelog
+## 2.6.1 (2016-11-11)
+
+[FIXED] Check for correct status code when POSTing to native push notifications API.
+
+## 2.6.0 (2016-08-23)
+
+[ADDED] support for publishing push notifications on up to 10 interests.
+
+## 2.5.0 (2016-08-15)
+
+[REMOVED] Native push notifications payload validation in the client.
+
+## 2.5.0-rc2 (2016-07-19)
+
+[FIXED] DDN and Native Push endpoints were not assembled correctly.
+
+## 2.5.0-rc1 (2016-07-18)
+
+[NEW] Native push notifications
+
+## 2.4.2 (2016-07-04)
+
+[CHANGED] One curl instance per Pusher instance
+
+## 2.4.1 (2016-05-27)
+
+[FIXED] Presence data could not be submitted after the style changes
+
+## 2.4.0 (2016-05-25)
+
+[ADDED] Support for batch events
+[ADDED] Curl options
+[FIXED] Applied fixes from StyleCI
+
+## 2.3.0 (2015-02-16)
+
+[ADDED] A new `cluster` option for the Pusher constructor.
+
+## 2.2.2 (2015-05-15)
+
+[FIXED] Fixed a PHP 5.2 incompatibility caused by referencing a private method in array_walk.
 
 ## 2.2.1 (2015-05-13)
 
 [FIXED] Channel name and socket_id values are now validated.
+[BROKE] Inadvertently broke PHP 5.2 compatibility by referencing a private method in array_walk.
 
 ## 2.2.0 (2015-01-20)
 
 [CHANGED] `new Pusher($app_key, $app_secret, $app_id, $options)` - The `$options` parameter
-has been added as the forth parameter to the constructor and other additional 
+has been added as the forth parameter to the constructor and other additional
 parameters are now deprecated.
 
 ## 2.1.3 (2012-12-22)

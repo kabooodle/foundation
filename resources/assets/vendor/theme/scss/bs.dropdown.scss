@@ -38,6 +38,15 @@
   min-width: 120px !important;
 }
 
+.dropdown-menu.dropdown-menu-lg {
+  min-width: 300px !important;
+  .scrollable {
+    position: relative;
+    overflow: hidden;
+    max-height: 220px;
+  }
+}
+
 .app-header .dropdown-menu {
   font-size: .79rem;
   margin-top: 0;

@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Auth\Authenticatable;
+use Cmgmyr\Messenger\Traits\Messagable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Kabooodle\Bus\NotificationableTrait;
 use Kabooodle\Presenters\PresentableTrait;
@@ -52,6 +53,7 @@ class User extends BaseEloquentModel implements
         DispatchesJobs,
         FollowableTrait,
         LikeableTrait,
+        Messagable,
         NotificationableTrait,
         ObfuscatesIdTrait,
         PresentableTrait,
@@ -64,7 +66,9 @@ class User extends BaseEloquentModel implements
     protected $appends = [
         'is_following',
         'full_name',
-        'name'
+        'full_name_with_username',
+        'name',
+        'email'
     ];
 
     /**
@@ -175,7 +179,7 @@ class User extends BaseEloquentModel implements
             'account_type' => 'required|in:basic,merchant,merchant_plus',
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required|unique:users',
+            'username' => 'required|unique:users|min:5|max:30',
             'email' => 'required|email|max:255|unique:emails,address',
             'password' => 'required|min:6',
         ];
@@ -192,7 +196,7 @@ class User extends BaseEloquentModel implements
             'account_type' => 'required|in:basic,merchant,merchant_plus',
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required|unique:users,username,'.$guest->id,
+            'username' => 'required|min:5|max:30|unique:users,username,'.$guest->id,
             'email' => 'required|email|max:255',
             'password' => 'required|min:6',
         ];
@@ -247,6 +251,14 @@ class User extends BaseEloquentModel implements
     public function getFullNameAttribute()
     {
         return $this->first_name.' '.$this->last_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullNameWithUsernameAttribute()
+    {
+        return $this->first_name.' '.$this->last_name.' ('.$this->username.')';
     }
 
     /**
@@ -870,7 +882,7 @@ class User extends BaseEloquentModel implements
     {
         $balance = $this->creditBalance;
 
-        return (float) ($balance ? $balance->sum('balance') : 0.00);
+        return (float) ($balance ? $balance->balance : 0.00);
     }
 
     /**

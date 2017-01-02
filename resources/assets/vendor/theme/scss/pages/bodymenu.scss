@@ -55,3 +55,27 @@ body.on-trial {
   right: 0;
   z-index: 1019;
 }
+
+.no-body-menu {
+  .kabooodle_app_inner {
+    padding-top: 70px;
+  }
+}
+
+.with-body-menu {
+  .kabooodle_app_inner {
+    padding-top: 110px;
+  }
+}
+
+
+.header-condensed {
+  .bodymenu {
+    top: 48px;
+  }
+  &~.kabooodle_app_inner {
+    padding-top: 7rem !important;
+  }
+}
+
+

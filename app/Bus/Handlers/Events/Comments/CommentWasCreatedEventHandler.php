@@ -9,8 +9,9 @@ namespace Kabooodle\Bus\Handlers\Events\Comments;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Comments;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Kabooodle\Libraries\Emails\KitEmail;
+use Illuminate\Queue\InteractsWithQueue;
+use Kabooodle\Models\NotificationNotices;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Kabooodle\Models\Contracts\CommentableInterface;
 use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
@@ -21,7 +22,7 @@ use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
  */
 class CommentWasCreatedEventHandler implements ShouldQueue
 {
-    use InteractsWithQueue;
+    use InteractsWithQueue, SerializesModels;
 
     /**
      * @param CommentWasCreatedEvent $event
@@ -39,9 +40,11 @@ class CommentWasCreatedEventHandler implements ShouldQueue
 
         if ($commentableOwner->checkIsNotifyable('inventory_commented', 'email')) {
             if ($commentableOwner->primaryEmail->isVerified()) {
-                $mailOwner = $this->notifyOwner($commentableOwner, $comment, $commentable);
+                $this->notifyOwner($commentableOwner, $comment, $commentable);
             }
         }
+
+        $this->toDatabase($commentableOwner, $comment, $commentable);
     }
 
     /**
@@ -62,5 +65,25 @@ class CommentWasCreatedEventHandler implements ShouldQueue
                     ->subject('New comment');
             })
             ->send();
+    }
+
+    /**
+     * @param $commentableOwner
+     * @param Comments $comment
+     * @param CommentableInterface $commentable
+     */
+    public function toDatabase($commentableOwner, Comments $comment, CommentableInterface $commentable)
+    {
+        $title = $comment->author->full_name.' commented on '.$commentable->getName();
+
+        $notification = new NotificationNotices;
+        $notification->user_id = $commentableOwner->id;
+        $notification->notification_id = null;
+        $notification->reference_id = $commentable->id;
+        $notification->reference_type = get_class($commentable);
+        $notification->payload = '';
+        $notification->title = $title;
+        $notification->description = '';
+        $notification->save();
     }
 }
