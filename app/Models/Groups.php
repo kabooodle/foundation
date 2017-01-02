@@ -20,7 +20,7 @@ use Sofa\Revisionable\Laravel\RevisionableTrait;
  */
 class Groups extends BaseEloquentModel implements Revisionable
 {
-    use AlgoliaEloquentTrait, LikeableTrait, FollowableTrait, ObfuscatesIdTrait, SoftDeletes, RevisionableTrait;
+    use LikeableTrait, FollowableTrait, ObfuscatesIdTrait, SoftDeletes, RevisionableTrait;
 
     const PRIVACY_PUBLIC = 'public';
     const PRIVACY_SECRET = 'secret';

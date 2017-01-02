@@ -28,8 +28,7 @@ use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
  */
 class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisionable
 {
-    use AlgoliaEloquentTrait,
-        AuthorableTrait,
+    use AuthorableTrait,
         ClaimableTrait,
         FollowableTrait,
         LikeableTrait,

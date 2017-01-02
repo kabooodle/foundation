@@ -45,8 +45,7 @@ class User extends BaseEloquentModel implements
     LikeableInterface,
     Revisionable
 {
-    use AlgoliaEloquentTrait,
-        Authenticatable,
+    use Authenticatable,
         Authorizable,
         Billable,
         CanResetPassword,

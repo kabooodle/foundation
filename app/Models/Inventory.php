@@ -28,8 +28,7 @@ use Kabooodle\Models\Contracts\CommentableInterface;
  */
 class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable
 {
-    use AlgoliaEloquentTrait,
-        ClaimableTrait,
+    use ClaimableTrait,
         CommentableTrait,
         FollowableTrait,
         LikeableTrait,
