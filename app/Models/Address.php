@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Sofa\Revisionable\Revisionable;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 
@@ -15,6 +16,7 @@ use Sofa\Revisionable\Laravel\RevisionableTrait;
  */
 class Address extends BaseEloquentModel implements Revisionable
 {
+    use SoftDeletes;
     use RevisionableTrait;
 
     const TYPE_BILLING = 'billing';
@@ -31,7 +33,10 @@ class Address extends BaseEloquentModel implements Revisionable
      */
     protected $fillable = [
         'user_id',
+        'object_id',
         'type',
+        'primary',
+        'name',
         'company',
         'street1',
         'street2',
@@ -50,6 +55,7 @@ class Address extends BaseEloquentModel implements Revisionable
     protected $attributes = [
         'user_id' => 0,
         'type' => self::TYPE_FROM,
+        'name' => '',
         'company' => null,
         'street1' => '',
         'street2' => null,
@@ -68,15 +74,10 @@ class Address extends BaseEloquentModel implements Revisionable
     public static function getRules()
     {
         return [
-            'from.street1' => 'required',
-            'from.city' => 'required',
-            'from.state' => 'required',
-            'from.zip' => 'required',
-
-            'to.street1' => '',
-            'to.city' => 'required_with:street1',
-            'to.state' => 'required_with:to.street1,to.city',
-            'to.zip' => 'required_with:to.street1,to.city,to.state',
+            'street1' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required',
         ];
     }
 
@@ -88,6 +89,14 @@ class Address extends BaseEloquentModel implements Revisionable
     public static function factory(array $attributes)
     {
         return self::create($attributes);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrimary()
+    {
+        return (bool) $this->primary;
     }
 
     /**
