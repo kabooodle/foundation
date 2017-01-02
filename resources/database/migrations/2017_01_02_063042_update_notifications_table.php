@@ -18,7 +18,7 @@ class UpdateNotificationsTable extends Migration
             $table->string('required_subscription_type')->after('active')->nullable();
         });
 
-        $r = Notifications::where('name', 'referral_joined')->find();
+        $r = Notifications::where('name', 'referral_joined')->first();
         $r->description = 'When someone you refer joins';
         $r->save();
 
