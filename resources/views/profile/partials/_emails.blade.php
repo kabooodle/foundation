@@ -12,5 +12,5 @@
 </div>
 
 @push('footer-scripts')
-<script src="/assets/js/emails.js"></script>
+<script src="{{ staticAsset('/assets/js/emails.js') }}"></script>
 @endpush

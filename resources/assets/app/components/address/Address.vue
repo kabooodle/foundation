@@ -1,0 +1,101 @@
+<template>
+    <div class="form-group row">
+        <div class="col-sm-8">
+            <span><strong>{{ address.name }}</strong> {{ address.street1 }}, {{ address.city }}, {{ address.state }}, {{ address.zip }}</span>
+        </div>
+        <div class="col-sm-3">
+            <div v-show="isPrimary">
+                <div class="text-primary text-center">Primary</div>
+            </div>
+            <div v-show="!isPrimary">
+                <button @click="makePrimary" class="btn white btn-block p-x-md">Make Primary</button>
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <span v-show="!isPrimary" @click="destroy">
+                <i class="fa fa-times text-danger" aria-hidden="true"></i>
+            </span>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        props: {
+            address: {
+                type: Object,
+                required: true,
+            },
+            showType: {
+                type: Boolean,
+                default: true,
+            },
+            primaryId: {
+                type: Number,
+                required: true,
+            },
+            addressesEndpoint: {
+                type: String,
+                required: true,
+            },
+            updatePrimaryEndpoint: {
+                type: String,
+                required: true,
+            },
+        },
+        data() {
+            return {
+                msg:'hello vue'
+            }
+        },
+        computed: {
+            isPrimary: function () {
+                return this.primaryId == this.address.id
+            },
+            updatePrimaryData: function () {
+                return {
+                    'type': this.address.type,
+                    'address_id': this.address.id,
+                }
+            },
+        },
+        methods: {
+            makePrimary: function () {
+                this.$http.put(this.updatePrimaryEndpoint, this.updatePrimaryData)
+                    .then(function (response) {
+                        this.$emit('new-primary', this.address.id);
+                        notify({
+                            'text': 'Your primary address has been updated!',
+                            'type': 'success'
+                        });
+                    }, function (response) {
+                        notify({
+                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'type': 'error'
+                        });
+                    });
+            },
+            destroy: function () {
+                var self = this;
+                confirmModal(function () {
+                    self.$http.delete(self.addressesEndpoint+'/'+self.address.id)
+                    .then(function (response) {
+                        $.noty.closeAll();
+                        self.$emit('remove-address');
+                        notify({
+                            'text': 'That address has been deleted.',
+                            'type': 'success'
+                        });
+                    }, function (response) {
+                        $.noty.closeAll();
+                        notify({
+                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'type': 'error'
+                        });
+                    });
+                }, function () {
+                    $.noty.close();
+                }, {text: 'Are you sure you want to delete this address?'});
+            }
+        },
+    }
+</script>

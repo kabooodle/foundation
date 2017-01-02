@@ -21,7 +21,6 @@ use Kabooodle\Models\MailingAddress;
 use Kabooodle\Models\Address;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Commands\User\UpdateUserShippingProfileCommand;
 use PragmaRX\Support\DateTime;
 
 /**
@@ -109,58 +108,14 @@ class ProfileSettingsController extends Controller
      */
     public function getShippingProfile()
     {
-        $from = user()->primaryShipFromAddress;
-        $to = user()->primaryShipToAddress;
+        $data = [
+            'fromAddresses' => user()->shipFromAddresses,
+            'primaryFrom' => user()->primaryShipFromAddress,
+            'toAddresses' => user()->shipToAddresses,
+            'primaryTo' => user()->primaryShipToAddress,
+        ];
 
-        return $this->view('profile.shippingprofile')->with(compact('from', 'to'));
-    }
-
-    /**
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function postShippingProfile(Request $request)
-    {
-        try {
-            $this->validate($request, Address::getRules());
-
-            $kabooodleAsDefaultShippingProvider = $request->has('kabooodle_as_shipping') ? true : false;
-
-            $fromAddressArray = Binput::get('from');
-            $toAddressArray = Binput::get('to');
-
-            $from = new MailingAddress(
-                $fromAddressArray['company'],
-                $fromAddressArray['street1'],
-                array_get($fromAddressArray, 'street2'),
-                $fromAddressArray['city'],
-                $fromAddressArray['state'],
-                $fromAddressArray['zip'],
-                array_get($fromAddressArray, 'email'),
-                array_get($fromAddressArray, 'phone')
-            );
-
-            $to = new MailingAddress(
-                array_get($toAddressArray, 'company'),
-                array_get($toAddressArray, 'street1'),
-                array_get($toAddressArray, 'street2'),
-                array_get($toAddressArray, 'city'),
-                array_get($toAddressArray, 'state'),
-                array_get($toAddressArray, 'zip'),
-                array_get($toAddressArray, 'email'),
-                array_get($toAddressArray, 'phone')
-            );
-
-            $this->dispatchNow(new UpdateUserShippingProfileCommand(user(), $from, $to, $kabooodleAsDefaultShippingProvider));
-
-            Messages::success("Shipping profile was successfully updated!");
-
-            return $this->redirect()->route('profile.shippingprofile.edit');
-        } catch (ValidationException $e) {
-            Messages::error('Some fields require input!');
-
-            return $this->redirect(route('profile.shippingprofile.edit'))
-                ->withErrors($e->validator->getMessageBag());
-        }
+        return $this->view('profile.shippingprofile', $data);
     }
 
     /**

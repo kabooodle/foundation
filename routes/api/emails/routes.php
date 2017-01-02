@@ -1,4 +1,5 @@
 <?php
+
 $api->get('user/{id}/emails', [
     'as' => 'user.emails.index',
     'uses' => \Kabooodle\Http\Controllers\Api\User\EmailController::class.'@index'
@@ -27,9 +28,4 @@ $api->put('user/{id}/emails/{email}', [
 $api->delete('user/{id}/emails/{email}', [
     'as' => 'user.emails.destroy',
     'uses' => \Kabooodle\Http\Controllers\Api\User\EmailController::class.'@destroy'
-]);
-
-$api->put('user/{id}/shipping-profile', [
-    'as' => 'user.shipping-profile.update',
-    'uses' => \Kabooodle\Http\Controllers\Api\Profile\ProfileApiController::class.'@updateShippingProfile'
 ]);
