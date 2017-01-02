@@ -49,7 +49,7 @@ class Thread extends Eloquent
      */
     public function messages()
     {
-        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id');
+        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->orderBy('created_at');
     }
 
     /**
