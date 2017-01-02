@@ -93,6 +93,7 @@ class MessengerApiController extends AbstractApiController
             'participants' => function($query){
                 $query->whereIn('user_id', [user()->id]);
             }])
+            ->orderBy('created_at', 'asc')
             ->get();
 
         return $this->setData($messages)->respond();
