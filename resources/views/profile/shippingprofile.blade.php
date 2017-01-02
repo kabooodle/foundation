@@ -21,5 +21,5 @@
 @endsection
 
 @push('footer-scripts')
-<script src="{{ staticAsset('/assets/js/shipping-profile.js') }}436543tyrfiuygjhg7i89"></script>
+    <script src="{{ staticAsset('/assets/js/shipping-profile.js') }}"></script>
 @endpush
