@@ -32,7 +32,7 @@ new Vue({
                 return false;
             }
             const ids = _.pluck(this.unread, 'id');
-            this.$http.post(endpoint, {ids,
+            this.$http.post(endpoint, {ids}, {
                 before(request) {
                     if (this.previousRequest) {
                         this.previousRequest.abort();

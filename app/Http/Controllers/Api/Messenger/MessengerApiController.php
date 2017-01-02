@@ -48,12 +48,12 @@ class MessengerApiController extends AbstractApiController
     {
         try {
             $this->validate($request, [
-                'recipients' => 'required',
+                'recipient' => 'required',
                 'subject' => 'required|filled',
                 'message' => 'required|filled'
             ]);
 
-            $recipients = explode(',', Binput::get('recipients'));
+            $recipients = explode(',', Binput::get('recipient'));
 
             $this->dispatch(new CreateNewThreadCommand($this->getUser(), $recipients, Binput::get('subject'), Binput::get('message')));
 

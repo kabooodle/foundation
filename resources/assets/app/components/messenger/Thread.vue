@@ -5,19 +5,16 @@
                 :data-id="thread.id"
                 :data-href="endpoint"
         >
-                <div class="list-left">
-                    <span class="w-40 avatar">
-                        <img src="../assets/images/a0.jpg">
-                    </span>
-                </div>
+                <!--<div class="list-left">-->
+                <!--</div>-->
                 <div class="list-body">
-                    <div class="pull-right text-muted text-xs">
-                        <span class="text-muted text-sm">{{ thread.participants_names_excluding_creator}}</span>
-                        <timestamp :timestamp="thread.created_at.date"></timestamp>
+                    <div class="pull-right text-muted">
+                        <div class="text-sm text-right">{{ thread.participants_names_excluding_creator}}</div>
+                        <div class="text-right text-muted text-sm"><timestamp :timestamp="most_recent_message.created_at.date"></timestamp></div>
                     </div>
                     <a :href="endpoint" class="_500 block">{{ thread.subject }}</a>
                     <div class="text-ellipsis text-muted text-sm p-r-3">
-                        <span>{{ _.last(thread.messages).body }}</span>
+                        <span>{{ most_recent_message.body }}</span>
                     </div>
                 </div>
         </div>
@@ -35,6 +32,11 @@
                 required: true,
                 type: String
             }
+        },
+        computed:{
+            most_recent_message(){
+                return _.last(this.thread.messages)
+            },
         },
         components: {
             'timestamp' : Timestamp

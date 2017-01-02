@@ -66,6 +66,7 @@ class User extends BaseEloquentModel implements
     protected $appends = [
         'is_following',
         'full_name',
+        'full_name_with_username',
         'name',
         'email'
     ];
@@ -250,6 +251,14 @@ class User extends BaseEloquentModel implements
     public function getFullNameAttribute()
     {
         return $this->first_name.' '.$this->last_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullNameWithUsernameAttribute()
+    {
+        return $this->first_name.' '.$this->last_name.' ('.$this->username.')';
     }
 
     /**

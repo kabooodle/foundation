@@ -25,11 +25,14 @@ class QueryUser extends AbstractApiController
      */
     public function query(Request $request)
     {
-        $search = Binput::get('q');
         try {
-            $users = User::where('username', 'like', '%'.$search.'%')
-                ->orWhere('first_name', 'like', '%'.$search.'%')
-                ->orWhere('last_name', 'like', '%'.$search.'%')
+            $search = Binput::get('q');
+            $users = User::where('id', '<>', $this->user()->id)
+                ->where(function($query) use ($search) {
+                    $query->where('username', 'like', '%'.$search.'%');
+                    $query->orWhere('first_name', 'like', '%'.$search.'%');
+                    $query->orWhere('last_name', 'like', '%'.$search.'%');
+                })
                 ->limit(10)
                 ->get();
 
@@ -41,7 +44,7 @@ class QueryUser extends AbstractApiController
 
             return $this->setData($data)->respond();
         } catch (Exception $e) {
-
+            return $this->setData(['data' => []])->respond();
         }
     }
 }

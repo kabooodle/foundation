@@ -16,8 +16,18 @@ class Threads extends Thread
 {
     use EloquentDatesTrait;
 
+    /**
+     * @var array
+     */
     protected $appends = [
         'participants_names_excluding_creator'
+    ];
+
+    /**
+     * @var array
+     */
+    protected $with = [
+        'participantsExcludingCreator.user',
     ];
 
     /**
@@ -27,7 +37,7 @@ class Threads extends Thread
     {
         $participants = $this->participantsExcludingCreator;
 
-        return implode(',', $participants->pluck('user.full_name')->toArray());
+        return implode(',', $participants->pluck('user.full_name_with_username')->toArray());
     }
 
     /**

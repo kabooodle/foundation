@@ -29,18 +29,17 @@
                                             :searchable="true"
                                             :loading="isLoading"
                                             :internal-search="false"
-                                            :clear-on-select="false"
-                                            :close-on-select="false"
+                                            :clear-on-select="true"
+                                            :close-on-select="true"
                                             :options-limit="10"
-                                            :limit="3"
+                                            :limit="10"
                                             @search-change="searchIt">
                                         <template slot="option" scope="props">
                                             <div class="option__desc">
                                                 <span class="option__title">{{ props.option.full_name }}</span>
-                                                <span class="option__small">({{ props.option.username }})</span>
+                                                <small class="option__small text-muted text-small">({{ props.option.username }})</small>
                                             </div>
                                         </template>
-                                        <span slot="noResult">Oops! No elements found. Consider changing the search query.</span>
                                     </multiselect>
                                 </div>
                             </div>
@@ -91,6 +90,7 @@
         },
         data(){
             return{
+                previousRequest:null,
                 isLoading: false,
                 recipient: null,
                 display_success: false,
@@ -116,11 +116,21 @@
         },
         methods: {
             nameWithUsername ({ full_name, username }) {
-                return `${full_name} — [${username}]`
+                return `${full_name} (${username})`;
             },
             searchIt(query){
-                this.isLoading = true
-                this.$http.post(this.search_endpoint, query).then((response) => {
+                if (query.trim() == '') {
+                    return;
+                }
+                this.isLoading = true;
+                this.$http.post(this.search_endpoint, {q: query},  {
+                    before(request) {
+                        if (this.previousRequest) {
+                            this.previousRequest.abort();
+                        }
+                        this.previousRequest = request;
+                    }
+                }).then((response) => {
                     this.recipients = response.body.data.data;
                     this.isLoading = false;
                 });
@@ -129,10 +139,10 @@
                 this.message = null;
                 this.subject = null;
                 this.sending = false;
-                this.display_success = false;
             },
             resetModal(){
                 this.resetState();
+                this.display_success = false;
             },
             closeModal(event){
                 $('#'+this.modal_el_id).modal('hide');
@@ -143,10 +153,11 @@
                 this.$http.post(this.endpoint, {
                     message: this.message,
                     subject: this.subject,
-                    recipient: this.recipient
+                    recipient: (this.recipient === Object(this.recipient) ? this.recipient.id : this.recipient )
                 }).then((response)=>{
                     this.display_success = true;
                 }, (response)=>{
+                    console.log(response);
                     if (response.body.data.msg) {
                         notify({
                             text: response.body.data.msg

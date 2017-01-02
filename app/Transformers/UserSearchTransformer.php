@@ -22,9 +22,13 @@ class UserSearchTransformer extends TransformerAbstract
     public function transform(User $user)
     {
         return [
+            'id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
             'full_name' => $user->full_name,
+            'hash' => $user->public_hash,
+            'avatar' => $user->avatar,
             'username' => $user->username,
-            'id' => $user->id
         ];
     }
 }

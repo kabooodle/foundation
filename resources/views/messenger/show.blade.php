@@ -2,7 +2,7 @@
 
 @section('body-menu')
 
-    <a class="btn white btn-sm" href="{{ route('messenger.index') }}">Messages</a>
+    <a class="btn white btn-sm pull-right" href="{{ route('messenger.index') }}">All Messages</a>
 
 @endsection
 
@@ -11,6 +11,7 @@
     <div class="box white" >
         <div class="box-header">
             <h4>{{ $thread->subject }}</h4>
+            <small class="text-muted m-b-0">{{ $thread->participants_names_excluding_creator }}</small>
         </div>
         <div class="box-divider"></div>
         <div class="box-body" id="messages-body" style="max-height:450px; position: relative;" data-scrollable="scrollable">
