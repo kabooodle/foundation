@@ -12,7 +12,7 @@ namespace Kabooodle\Libraries\Linkify;
  */
 class Linkify implements LinkifyInterface
 {
-    const HREF_CLASSES = ' text-primary _600 ';
+    const HREF_CLASSES = ' text-u-l _600 ';
 
     /**
      * Default options.

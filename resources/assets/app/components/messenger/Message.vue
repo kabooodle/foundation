@@ -12,7 +12,7 @@
                     <div
                             :class="author_is_self ? 'primary' : 'grey-200 b-a'"
                             class="p-a p-y-sm inline  r"
-                    >{{ message.body }}</div>
+                    ><span v-html="message.body"></span></div>
                 </div>
                 <timestamp :timestamp="message.created_at.date" class="text-muted text-xs m-t-xs"></timestamp>
             </div>

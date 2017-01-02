@@ -15,7 +15,7 @@
                     </div>
                     <a :href="endpoint" class="_500 block">{{ thread.subject }}</a>
                     <div class="text-ellipsis text-muted text-sm p-r-3">
-                        <span>{{ most_recent_message.body }}</span>
+                        <span v-html="most_recent_message.body"></span>
                     </div>
                 </div>
         </div>
