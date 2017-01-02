@@ -14,7 +14,7 @@ class UpdateNotificationsTable extends Migration
     public function up()
     {
         Schema::table('notifications', function (Blueprint $table) {
-            $table->enum('group', ['general', 'inventory', 'messenger', 'listings'])->after('active')->default('general');
+            $table->enum('group', ['general', 'inventory', 'messenger', 'listings', 'claims'])->after('active')->default('general');
             $table->string('required_subscription_type')->after('active')->nullable();
         });
 

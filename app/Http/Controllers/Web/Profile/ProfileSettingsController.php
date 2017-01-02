@@ -174,7 +174,12 @@ class ProfileSettingsController extends Controller
     public function getNotifications()
     {
         $notifications = $this->dispatchNow(new GetActiveNotifications);
-        $notifications = $notifications->groupBy('group');
+        $notifications = $notifications->filter(function($notification){
+            if ($notification->required_subscription_type == 'merchant' && ! user()->hasAtLeastMerchantSubscription()) {
+                return false;
+            }
+            return $notification;
+        })->groupBy('group');
 
         $userNotifications = user()->notificationsettings;
 
