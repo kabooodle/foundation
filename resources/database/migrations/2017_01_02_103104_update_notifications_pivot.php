@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Kabooodle\Models\Notifications;
 
 class UpdateNotificationsPivot extends Migration
 {
