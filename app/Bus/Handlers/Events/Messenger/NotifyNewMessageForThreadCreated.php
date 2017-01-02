@@ -10,24 +10,18 @@ use Bugsnag;
 use Exception;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Threads;
-use Illuminate\Bus\Queueable;
 use Cmgmyr\Messenger\Models\Thread;
 use Kabooodle\Models\ThreadMessages;
-use Illuminate\Queue\SerializesModels;
 use Kabooodle\Models\ThreadParticipants;
-use Illuminate\Queue\InteractsWithQueue;
 use Kabooodle\Libraries\Emails\PiperEmail;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Kabooodle\Libraries\WebSockets\WebSocket;
 use Kabooodle\Bus\Events\Messenger\MessageWasAddedToThreadEvent;
 
 /**
  * Class NotifyNewMessageForThreadCreated
  */
-class NotifyNewMessageForThreadCreated implements ShouldQueue
+class NotifyNewMessageForThreadCreated
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
-
     /**
      * @param MessageWasAddedToThreadEvent $event
      */
