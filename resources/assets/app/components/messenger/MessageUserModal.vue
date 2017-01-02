@@ -4,7 +4,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h6 class="modal-title">{{ title ? : 'Send message' }}</h6>
+                        <h6 class="modal-title">{{ title }}</h6>
                     </div>
                     <div class="modal-body">
                         <div v-if="! display_success">
@@ -15,13 +15,37 @@
                                 </div>
                             </div>
                             <div class="form-group row" v-if="! is_direct_to_user">
-                                <label class="control-label col-sm-3">Recipient(s)</label>
+                                <label class="control-label col-sm-3">Recipient</label>
                                 <div class="col-sm-9">
-                                    <input type="text" name="recipients[]"  v-model.trim="recipients" class="form-control">
+                                    <multiselect
+                                            v-model="recipient"
+                                            id="ajax"
+                                            label="full_name"
+                                            track-by="id"
+                                            placeholder="Type to search for a recipient"
+                                            :custom-label="nameWithUsername"
+                                            :options="recipients"
+                                            :multiple="false"
+                                            :searchable="true"
+                                            :loading="isLoading"
+                                            :internal-search="false"
+                                            :clear-on-select="false"
+                                            :close-on-select="false"
+                                            :options-limit="10"
+                                            :limit="3"
+                                            @search-change="searchIt">
+                                        <template slot="option" scope="props">
+                                            <div class="option__desc">
+                                                <span class="option__title">{{ props.option.full_name }}</span>
+                                                <span class="option__small">({{ props.option.username }})</span>
+                                            </div>
+                                        </template>
+                                        <span slot="noResult">Oops! No elements found. Consider changing the search query.</span>
+                                    </multiselect>
                                 </div>
                             </div>
                             <div v-else>
-                                <input type="hidden" name="recipients[]" v-model.trim="recipients" :value="recipient_id">
+                                <input type="hidden" name="recipient" v-model.trim="recipient" :value="recipient_id">
                             </div>
                             <div class="form-group row">
                                 <label class="control-label col-sm-3">Message</label>
@@ -42,7 +66,7 @@
     </div>
 </template>
 <script>
-
+    import Multiselect from 'vue-multiselect';
     import Spinny from '../Spinner.vue';
     export default{
         props : {
@@ -50,6 +74,9 @@
                 type: String
             },
             recipient_id: {},
+            search_endpoint: {
+              type: String
+            },
             endpoint : {
                 required: true,
                 type: String
@@ -64,29 +91,40 @@
         },
         data(){
             return{
-                recipients: null,
+                isLoading: false,
+                recipient: null,
                 display_success: false,
                 sending: false,
                 subject: null,
                 message: null,
-                _title: 'Send message'
+                recipients:[],
+                _defaultTitle: 'Send message'
             }
         },
         computed:{
             title(){
-                return this.is_direct_to_user ? 'Send a message to '+this.recipient_name : this._title;
+                return this.is_direct_to_user ? 'Send a message to '+this.recipient_name : this._defaultTitle;
             },
             is_direct_to_user(){
                 return (this.direct_to_user === 'true' || this.direct_to_user === true);
             }
         },
         created() {
-            console.log(this._title);
             if (this.is_direct_to_user) {
-                this.recipients = this.recipient_id;
+                this.recipient = this.recipient_id;
             }
         },
         methods: {
+            nameWithUsername ({ full_name, username }) {
+                return `${full_name} — [${username}]`
+            },
+            searchIt(query){
+                this.isLoading = true
+                this.$http.post(this.search_endpoint, query).then((response) => {
+                    this.recipients = response.body.data.data;
+                    this.isLoading = false;
+                });
+            },
             resetState(){
                 this.message = null;
                 this.subject = null;
@@ -105,7 +143,7 @@
                 this.$http.post(this.endpoint, {
                     message: this.message,
                     subject: this.subject,
-                    recipients: this.recipients
+                    recipient: this.recipient
                 }).then((response)=>{
                     this.display_success = true;
                 }, (response)=>{
@@ -120,7 +158,8 @@
             }
         },
         components: {
-            'spinny' : Spinny
+            'spinny' : Spinny,
+            'multiselect' : Multiselect
         }
     }
 </script>

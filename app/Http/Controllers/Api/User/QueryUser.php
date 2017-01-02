@@ -11,6 +11,7 @@ use Exception;
 use Kabooodle\Models\User;
 use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Transformers\UserSearchTransformer;
 
 /**
  * Class QueryUser
@@ -32,7 +33,13 @@ class QueryUser extends AbstractApiController
                 ->limit(10)
                 ->get();
 
-            return $users;
+            $data = fractal()
+                ->collection($users)
+                ->transformWith(new UserSearchTransformer)
+                ->includeCharacters()
+                ->toArray();
+
+            return $this->setData($data)->respond();
         } catch (Exception $e) {
 
         }
