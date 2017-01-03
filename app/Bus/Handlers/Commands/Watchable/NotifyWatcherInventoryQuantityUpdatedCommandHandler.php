@@ -103,8 +103,6 @@ class NotifyWatcherInventoryQuantityUpdatedCommandHandler
      */
     public function getListingRoute(ListingItems $listingItem)
     {
-        $route = route('externalclaim.show', [$listingItem->obfuscateIdToString()]);
-
-        return str_replace(['api.', 'app.'], '', $route);
+        return route('externalclaim.show', [$listingItem->obfuscateIdToString()]);
     }
 }

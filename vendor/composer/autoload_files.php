@@ -25,6 +25,4 @@ return array(
     'f4e9c7747917193061b46ee142399603' => $vendorDir . '/dingo/api/src/helpers.php',
     'f18cc91337d49233e5754e93f3ed9ec3' => $vendorDir . '/laravelcollective/html/src/helpers.php',
     '4a1f389d6ce373bda9e57857d3b61c84' => $vendorDir . '/barryvdh/laravel-debugbar/src/helpers.php',
-    '7f870f73a2be4db057a527ecee0f9b01' => $baseDir . '/resources/helpers.php',
-    'c5001896a887f9807394ad1b0c25d564' => $baseDir . '/resources/model-helpers.php',
 );

@@ -66,13 +66,6 @@
         },
         mounted(){
             this.registerDateTimePicker();
-
-            // hack for clearing the inputs, except, checkbox.
-            setTimeout(function(){
-                this.clearOption('ends_at', 'options_ends_at');
-                this.clearOption('available_at', 'options_available_at');
-                this.clearOption('available_until', 'options_available_until');
-            }, 1000);
         },
         created(){
             $Bus.$on('listing.options:get', ()=>{
@@ -128,6 +121,13 @@
                     $("#options_available_until").on("dp.change", function (e) {
                         $('#options_available_at').data("DateTimePicker").maxDate(e.date);
                     });
+
+                    // hack for clearing the inputs, except, checkbox.
+                    setTimeout(()=>{
+                        this.clearOption('ends_at', 'options_ends_at');
+                        this.clearOption('available_at', 'options_available_at');
+                        this.clearOption('available_until', 'options_available_until');
+                    }, 0);
                 });
             },
             updateDateTimeEl(option, event){

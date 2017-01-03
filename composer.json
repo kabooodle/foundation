@@ -63,10 +63,6 @@
     "classmap": [
       "resources/database"
     ],
-    "files" : [
-      "resources/helpers.php",
-      "resources/model-helpers.php"
-    ],
     "psr-4": {
       "Kabooodle\\": "app/"
     }

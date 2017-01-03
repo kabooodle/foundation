@@ -1,6 +1,24 @@
 <?php
 use Carbon\Carbon;
 
+if (! function_exists('route')) {
+    /**
+     * Generate a URL to a named route.
+     *
+     * @param  string $name
+     * @param  array  $parameters
+     * @param  bool   $absolute
+     *
+     * @return string
+     */
+    function route($name, $parameters = [], $absolute = true)
+    {
+        $route = app('url')->route($name, $parameters, $absolute);
+
+        return str_replace(['api.', 'app.'], '', $route);
+    }
+}
+
 if (! function_exists('humanizeDateTime')) {
     /**
      * @param $value

@@ -6,6 +6,8 @@
 
 define('KABOOODLE_START', microtime(true));
 
+require __DIR__.'/../resources/helpers.php';
+require __DIR__.'/../resources/model-helpers.php';
 require __DIR__.'/../vendor/autoload.php';
 
 
