@@ -30,15 +30,15 @@
             <div id="content" class="app-content box-shadow-z0" role="main">
                 @include('layouts.header._header')
 
-                @hasSection('body-menu')
-                    @include('layouts.partials._bodymenu')
-                @endif
-
                 <div id="{{ $contentId or 'kabooodle_app_inner' }}" class="kabooodle_app_inner">
                     @if(user() && user()->onGenericTrial())
                         <div class="notificationbar b-b">
                             <p><span class="label">Notice</span> Trial ends {{ user()->genericTrialEndsInDays() }}. <a href="{{ route('profile.subscription.index') }}"> <strong>Subscribe now. <i class="fa fa-angle-right" aria-hidden="true"></i></strong></a></p>
                         </div>
+                    @endif
+
+                    @hasSection('body-menu')
+                        @include('layouts.partials._bodymenu')
                     @endif
 
                     <div ui-view class="app-body" id="view">
