@@ -2,6 +2,8 @@ import store from './manage/store';
 import computed from './manage/computed';
 import StyleTemplate from './style_template.vue';
 import FacebookLogin from '../facebook/FacebookLogin.vue';
+import ListingSettings from './Listing-Settings.vue';
+import Spinner from '../Spinner.vue';
 
 new Vue({
     el: '#manage_inventory',
@@ -269,6 +271,8 @@ new Vue({
     },
     components: {
         'style-template' : StyleTemplate,
-        'facebook-login' : FacebookLogin
+        'facebook-login' : FacebookLogin,
+        'listing-settings' : ListingSettings,
+        'spinner': Spinner
     }
 });

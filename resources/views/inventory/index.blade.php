@@ -146,8 +146,11 @@
                         <div class="tab-pane active" id="post_facebook">
                             <div class="form-group">
                                 <div class="clearfix">
-                                    <label>Select Group</label>
+                                    <label class="control-label">Select Group</label>
                                     <span class="pull-right">
+                                     <button type="button" class="btn white btn-xs" data-toggle="modal" data-target="#kbdl-mdl-listings">
+                                        Settings
+                                    </button>
                                         <facebook-login
                                                 refresh_endpoint="{{ apiRoute('social.refresh') }}"
                                         ></facebook-login>
@@ -173,52 +176,52 @@
                             <template v-if="selected.fb_group">
                                 <div v-if="postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums.length > 0">
                                     {{--<template v-if="actions.fb_advanced_menu">--}}
-                                    <div class="p-a-md dker box m-t-0">
-                                        <div class="form-group">
-                                            <label>Date items are to be listed</label>
-                                            <div class="input-group">
-                                                {{ Form::text('options[ends_at]', null, ['class' => 'form-control needs-datetimepicker', 'id' => 'options_ends_at']) }}
-                                                <span class="input-group-btn">
-                                                <button
-                                                    @click="clearDateTimeInput('options_ends_at')"
-                                                    class="btn white"
-                                                    type="button"
-                                                    style="padding-bottom: .3rem
-                                                    ;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
-                                            </span>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input
-                                                        @change="toggleIncludeLinkOption"
-                                                        id="options_include_text"
-                                                        checked
-                                                        name="options[include_text]"
-                                                        value="1"
-                                                        type="checkbox"> Include Link in description
-                                            </label>
-                                        </div>
+                                    {{--<div class="p-a-md dker box m-t-0">--}}
+                                        {{--<div class="form-group">--}}
+                                            {{--<label>Date items are to be listed</label>--}}
+                                            {{--<div class="input-group">--}}
+                                                {{--{{ Form::text('options[ends_at]', null, ['class' => 'form-control needs-datetimepicker', 'id' => 'options_ends_at']) }}--}}
+                                                {{--<span class="input-group-btn">--}}
+                                                {{--<button--}}
+                                                    {{--@click="clearDateTimeInput('options_ends_at')"--}}
+                                                    {{--class="btn white"--}}
+                                                    {{--type="button"--}}
+                                                    {{--style="padding-bottom: .3rem--}}
+                                                    {{--;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>--}}
+                                            {{--</span>--}}
+                                            {{--</div>--}}
+                                        {{--</div>--}}
+                                        {{--<hr>--}}
+                                        {{--<div class="checkbox">--}}
+                                            {{--<label>--}}
+                                                {{--<input--}}
+                                                        {{--@change="toggleIncludeLinkOption"--}}
+                                                        {{--id="options_include_text"--}}
+                                                        {{--checked--}}
+                                                        {{--name="options[include_text]"--}}
+                                                        {{--value="1"--}}
+                                                        {{--type="checkbox"> Include Link in description--}}
+                                            {{--</label>--}}
+                                        {{--</div>--}}
 
-                                        <div class="form-group m-b-0" id="wrapper-if-include-link">
-                                            <hr>
-                                            <label>Earliest date items can be claimed</label>
-                                            <div class="input-group">
-                                                {{ Form::text('options[available_at]', null, ['class' => 'form-control needs-datetimepicker', 'id' => 'options_available_at']) }}
-                                                <span class="input-group-btn">
-                                                <button
-                                                    @click="clearDateTimeInput('options_available_at')"
-                                                    class="btn white"
-                                                    type="button"
-                                                    style="padding-bottom: .3rem
-                                                    ;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
-                                            </span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        {{--<div class="form-group m-b-0" id="wrapper-if-include-link">--}}
+                                            {{--<hr>--}}
+                                            {{--<label>Earliest date items can be claimed</label>--}}
+                                            {{--<div class="input-group">--}}
+                                                {{--{{ Form::text('options[available_at]', null, ['class' => 'form-control needs-datetimepicker', 'id' => 'options_available_at']) }}--}}
+                                                {{--<span class="input-group-btn">--}}
+                                                {{--<button--}}
+                                                    {{--@click="clearDateTimeInput('options_available_at')"--}}
+                                                    {{--class="btn white"--}}
+                                                    {{--type="button"--}}
+                                                    {{--style="padding-bottom: .3rem--}}
+                                                    {{--;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>--}}
+                                            {{--</span>--}}
+                                            {{--</div>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
 
-                                    <label>Select Album</label>
+                                    <label class="control-label">Select Album</label>
                                     <div class="radio"
                                          v-for="facebook_album in postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums">
                                         <label >
@@ -261,7 +264,7 @@
                     type="button"
                     class="btn btn-lg primary"
                     >
-                    Post Items <i class="fa fa-spin fa-spinner" v-show="actions.posting_to_sales"></i>
+                    Post Items <spinner v-show="actions.posting_to_sales" size="24"></spinner>
                     </button>
                     <button
                             :disabled="( actions.posting_to_sales )"
@@ -278,6 +281,7 @@
     </form>
 
     <style-template></style-template>
+    <listing-settings></listing-settings>
 
 @endsection
 
@@ -286,28 +290,4 @@
     const inventory_route = '{{ apiRoute('inventory.index', [user()->username]) }}';
 </script>
 <script src="{{ staticAsset("/assets/js/inventory-management.js") }}"></script>
-<script>
-    $(function () {
-        function registerDateTimepicker()
-        {
-            $('input.needs-datetimepicker').datetimepicker({
-                format: "MM/DD/YYYY hh:mmA",
-                minDate: moment().add('1', 'hour'),
-                icons: {
-                    time: 'fa fa-clock-o fa-lg',
-                    clear: 'fa fa-times-circle-o',
-                    date: 'fa fa-lg fa-calendar',
-                    up: 'fa fa-chevron-up',
-                    down: 'fa fa-chevron-down',
-                    previous: 'fa fa-chevron-left',
-                    next: 'fa fa-chevron-right'
-                }
-            });
-        };
-
-        $('[name="facebook_group"]').change(function(){
-            registerDateTimepicker();
-        });
-    })
-</script>
 @endpush

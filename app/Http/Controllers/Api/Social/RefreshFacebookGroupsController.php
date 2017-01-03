@@ -39,7 +39,8 @@ class RefreshFacebookGroupsController extends AbstractApiController
 
             $this->dispatchNow(new RefreshUserFacebookGroupsCommand($user));
 
-            $l = \Request::create(route('inventory.postables'));
+            $route = str_replace(['api.'], '', route('inventory.postables'));
+            $l = \Request::create($route);
 
             return \Route::dispatch($l);
         } catch (Exception $e) {

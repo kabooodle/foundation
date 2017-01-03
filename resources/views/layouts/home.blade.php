@@ -9,11 +9,12 @@
     @include('layouts.header._htmlheader')
 
     <body class=" @yield('body-class', null) home-content ">
+        <div class="app">
+            @yield('content')
 
-        @yield('content')
+            @include('layouts.footer._htmlfooter')
 
-        @include('layouts.footer._htmlfooter')
-
-        @include('widgets.messages')
+            @include('widgets.messages')
+        </div>
     </body>
 </html>

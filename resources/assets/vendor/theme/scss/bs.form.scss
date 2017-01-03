@@ -94,10 +94,17 @@ option{
 }
 
 
+.form-control-label,
+.control-label {
+  color: #817e99;
+  font-size: .9rem;
+}
+
 .form-group.row {
   .form-control-label,
   label.col-sm-3.control-label{
     text-align: right;
+    line-height: 2.4rem;
   }
 }
 

@@ -1,4 +1,4 @@
-<div class="prpl-800 dk pos-rlt">
+<div class="prpl-800 dk pos-rlt app-footer" >
     <div class="p-md">
         <div class="p-a">
             <div class="row">

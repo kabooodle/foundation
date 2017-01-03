@@ -50,9 +50,9 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        @include('layouts.footer._footer')
+            @include('layouts.footer._footer')
+        </div>
 
         @include('layouts.footer._htmlfooter')
 
