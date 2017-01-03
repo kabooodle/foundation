@@ -23,6 +23,10 @@ new Vue({
             this.actions.getting_postables = true;
         });
 
+        $Bus.$on('listing.options:saved', (options)=>{
+            this.options = options;
+        });
+
         $Bus.$on('facebook:refreshed', (fbAuth, postables)=>{
             this.postables = postables;
             this.actions.getting_postables = false;
@@ -187,14 +191,19 @@ new Vue({
         // of the selected flash sales, facebook album items
         postSelectedItemsToSales(event){
             event.preventDefault();
+
+            $Bus.$emit('listing.options:get');
+
             let $el = $(event.target);
             let form = $el.closest('form');
             const selectedPostables = this.selected.postables;
             selectedPostables.fb_group = this.selected.fb_group;
             selectedPostables.options = {};
-            selectedPostables.options.ends_at = form.find('[name="options[ends_at]"]').val();
-            selectedPostables.options.available_at = form.find('[name="options[available_at]"]').val();
-            selectedPostables.options.include_text = form.find('[name="options[include_text]"]').is(':checked') ? 1 : 0;
+
+            selectedPostables.options.ends_at = this.options.ends_at;
+            selectedPostables.options.available_at = this.options.available_at;
+            selectedPostables.options.include_text = this.options.include_link;
+
             selectedPostables.items = this.selected.items;
 
             // Perhaps fire event instead of calling method directly.
@@ -256,18 +265,6 @@ new Vue({
                 that.actions.getting_postables = false;
             });
         },
-        toggleIncludeLinkOption() {
-            let wrapper = $('#wrapper-if-include-link');
-            if(wrapper.is(':visible')) {
-                wrapper.hide();
-                wrapper.find('input').val('');
-            } else {
-                wrapper.show();
-            }
-        },
-        clearDateTimeInput(elname){
-            $('#'+elname).val('');
-        }
     },
     components: {
         'style-template' : StyleTemplate,

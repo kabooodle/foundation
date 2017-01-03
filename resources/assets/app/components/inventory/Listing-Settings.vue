@@ -62,7 +62,7 @@
         },
         created(){
             $Bus.$on('listing.options:get', ()=>{
-                return this.options;
+                $Bus.$emit('listing.options:saved', this.options);
             });
         },
         methods: {
