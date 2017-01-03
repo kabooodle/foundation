@@ -106,7 +106,7 @@
 
         $('#datetimepicker1').datetimepicker({
             format: "MM/DD/YYYY hh:mmA",
-            minDate: new Date(), // Don't allow dates before today.
+            minDate: new Date(),
             sideBySide: true,
             icons: {
                 up: 'fa fa-chevron-up',
@@ -117,7 +117,7 @@
         });
         $('#datetimepicker2').datetimepicker({
             format: "MM/DD/YYYY hh:mmA",
-            minDate: new Date(), // Don't allow dates before today.
+            minDate: new Date(),
             sideBySide: true,
             icons: {
                 up: 'fa fa-chevron-up',
@@ -125,7 +125,7 @@
                 previous: 'fa fa-chevron-left',
                 next: 'fa fa-chevron-right'
             },
-            useCurrent: false //Important! See issue #1075
+            useCurrent: false
         });
         $("#datetimepicker1").on("dp.change", function (e) {
             $('#datetimepicker2').data("DateTimePicker").minDate(e.date);

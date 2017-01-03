@@ -202,6 +202,7 @@ new Vue({
 
             selectedPostables.options.ends_at = this.options.ends_at;
             selectedPostables.options.available_at = this.options.available_at;
+            selectedPostables.options.available_until = this.options.available_until;
             selectedPostables.options.include_text = this.options.include_link;
 
             selectedPostables.items = this.selected.items;

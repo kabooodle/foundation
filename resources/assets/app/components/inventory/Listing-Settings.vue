@@ -14,9 +14,15 @@
                         <input @blur="updateDateTimeEl('ends_at', $event)" class="form-control needs-datetimepicker" id="options_ends_at"  name="options[ends_at]" type="text">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label">Date-range items can be claimed </label><button type="button" @click="clearOption('available_at', 'options_available_at', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
-                    <input @blur="updateDateTimeEl('available_at', $event)" class="form-control needs-datetimepicker" id="options_available_at" name="options[available_at]" type="text">
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label class="control-label">Start date for claiming</label><button type="button" @click="clearOption('available_at', 'options_available_at', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
+                        <input @blur="updateDateTimeEl('available_at', $event)" class="form-control needs-datetimepicker" value="" id="options_available_at" name="options[available_at]" type="text">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label">Last date for claiming</label><button type="button" @click="clearOption('available_until', 'options_available_until', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
+                        <input @blur="updateDateTimeEl('available_until', $event)" class="form-control needs-datetimepicker" value="" id="options_available_until" name="options[available_until]" type="text">
+                    </div>
                 </div>
                 <div class="form-group">
                     <div class="checkbox">
@@ -53,12 +59,20 @@
                 options : {
                     ends_at: null,
                     available_at: null,
+                    available_until: null,
                     include_link: true,
                 }
             }
         },
         mounted(){
             this.registerDateTimePicker();
+
+            // hack for clearing the inputs, except, checkbox.
+            setTimeout(function(){
+                this.clearOption('ends_at', 'options_ends_at');
+                this.clearOption('available_at', 'options_available_at');
+                this.clearOption('available_until', 'options_available_until');
+            }, 1000);
         },
         created(){
             $Bus.$on('listing.options:get', ()=>{
@@ -80,15 +94,21 @@
                 this.options = {
                     ends_at: null,
                     available_at: null,
+                    available_until: null,
                     include_link: false,
                 }
                 $('.needs-datetimepicker').val('').trigger('change');
             },
             registerDateTimePicker(){
                 this.$nextTick(function(){
-                    $('input.needs-datetimepicker').datetimepicker({
-                        format: "MM/DD/YYYY hh:mmA",
-                        minDate: moment().add('1', 'hour'),
+
+                    const minDate = moment().add('1', 'hour');
+                    const options = {
+                        format: "MM/DD/YYYY hh:mma",
+                        allowInputToggle: true,
+                        useCurrent: false,
+                        defaultDate: minDate,
+                        minDate: minDate,
                         icons: {
                             time: 'fa fa-clock-o fa-lg',
                             clear: 'fa fa-times-circle-o',
@@ -98,6 +118,15 @@
                             previous: 'fa fa-chevron-left',
                             next: 'fa fa-chevron-right'
                         }
+                    };
+
+                    $('input.needs-datetimepicker').datetimepicker(options);
+
+                    $("#options_available_at").on("dp.change", function (e) {
+                        $('#options_available_until').data("DateTimePicker").minDate(e.date);
+                    });
+                    $("#options_available_until").on("dp.change", function (e) {
+                        $('#options_available_at').data("DateTimePicker").maxDate(e.date);
                     });
                 });
             },
