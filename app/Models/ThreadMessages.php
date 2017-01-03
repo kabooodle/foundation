@@ -25,10 +25,20 @@ class ThreadMessages extends Message
     public function setBodyAttribute($value)
     {
         $text = $this->linkify($value);
+        $this->attributes['body'] = $text;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    public function getBodyAttribute($value)
+    {
         if (self::CONVERT_EMOJI) {
-            $text = $this->emojify($text);
+            $value = $this->emojify($value);
         }
 
-        $this->attributes['body'] = $text;
+        return $value;
     }
 }

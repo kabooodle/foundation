@@ -26,11 +26,12 @@ class Emojify
     public static function getInstance()
     {
         if (!self::$client) {
-            self::$client = new Client(new Ruleset());
+            self::$client = new EmojifyClient(new Ruleset());
         }
 
+        self::$client->htmlClasses = ' emojione-ascii emojione-no-sprites ';
         self::$client->ascii = true;
-        self::$client->sprites = true;
+        self::$client->sprites = false;
         return self::$client;
     }
 }

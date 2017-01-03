@@ -83,6 +83,7 @@
                     $('[data-toggle="emojione"]').emojioneArea({
                         pickerPosition: "bottom",
                         filtersPosition: "bottom",
+                        useSprite: false,
                         autocomplete : true,
                         saveEmojisAs: "shortname",
                         events: {
