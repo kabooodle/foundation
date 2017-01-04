@@ -200,7 +200,8 @@ new Vue({
             selectedPostables.fb_group = this.selected.fb_group;
             selectedPostables.options = {};
 
-            selectedPostables.options.ends_at = this.options.ends_at;
+            selectedPostables.options.list_at = this.options.list_at;
+            selectedPostables.options.remove_at = this.options.remove_at;
             selectedPostables.options.available_at = this.options.available_at;
             selectedPostables.options.available_until = this.options.available_until;
             selectedPostables.options.include_text = this.options.include_link;

@@ -8,20 +8,34 @@
                 <h6 class="m-b-0">Optional settings for listing to facebook</h6>
             </template>
             <template slot="modal_body">
-                <div class="form-group row">
-                    <div class="col-md-6">
-                        <label class="control-label">Date to list the items</label><button type="button" @click="clearOption('ends_at', 'options_ends_at', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
-                        <input @blur="updateDateTimeEl('ends_at', $event)" class="form-control needs-datetimepicker" id="options_ends_at"  name="options[ends_at]" type="text">
+                <div class="form-group m-b-1">
+                    <div class="card b p-a dker">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Date to list the items</label><button type="button" @click="clearOption('list_at', 'options_list_at', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
+                                <input @blur="updateDateTimeEl('list_at', $event)" placeholder="optional" class="form-control needs-datetimepicker" id="options_list_at"  name="options[list_at]" type="text">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Date to remove the listing</label><button type="button" @click="clearOption('remove_at', 'options_remove_at', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
+                                <input @blur="updateDateTimeEl('remove_at', $event)" placeholder="optional" class="form-control needs-datetimepicker" id="options_remove_at"  name="options[remove_at]" type="text">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <div class="col-md-6">
-                        <label class="control-label">Start date for claiming</label><button type="button" @click="clearOption('available_at', 'options_available_at', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
-                        <input @blur="updateDateTimeEl('available_at', $event)" class="form-control needs-datetimepicker" value="" id="options_available_at" name="options[available_at]" type="text">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="control-label">Last date for claiming</label><button type="button" @click="clearOption('available_until', 'options_available_until', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
-                        <input @blur="updateDateTimeEl('available_until', $event)" class="form-control needs-datetimepicker" value="" id="options_available_until" name="options[available_until]" type="text">
+                <div class="form-group m-b-1">
+                    <div class="card b p-a dker">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Start date for claiming</label><button type="button" @click="clearOption('available_at', 'options_available_at', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
+                                <input @blur="updateDateTimeEl('available_at', $event)" placeholder="optional" class="form-control needs-datetimepicker" id="options_available_at" name="options[available_at]" type="text">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Last date for claiming</label><button type="button" @click="clearOption('available_until', 'options_available_until', $event)" class="btn-link btn-text text-primary text-xs">Clear</button>
+                                <input @blur="updateDateTimeEl('available_until', $event)"
+                                       class="form-control needs-datetimepicker"
+                                       id="options_available_until" name="options[available_until]" placeholder="optional" type="text">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -33,7 +47,7 @@
                                     name="options[include_link]"
                                     type="checkbox"
                             >
-                            Include link in description
+                            Include link to Kabooodle claim page, in description
                         </label>
                     </div>
                 </div>
@@ -57,7 +71,8 @@
         data(){
             return {
                 options : {
-                    ends_at: null,
+                    list_at: null,
+                    remove_at:null,
                     available_at: null,
                     available_until: null,
                     include_link: true,
@@ -85,7 +100,8 @@
             },
             clearOptions(){
                 this.options = {
-                    ends_at: null,
+                    list_at: null,
+                    remove_at: null,
                     available_at: null,
                     available_until: null,
                     include_link: false,
@@ -94,9 +110,8 @@
             },
             registerDateTimePicker(){
                 this.$nextTick(function(){
-
-                    const minDate = moment().add('1', 'hour');
-                    const options = {
+                    let minDate = moment().add('1', 'hour');
+                    let options = {
                         format: "MM/DD/YYYY hh:mma",
                         allowInputToggle: true,
                         useCurrent: false,
@@ -115,19 +130,25 @@
 
                     $('input.needs-datetimepicker').datetimepicker(options);
 
+                    // hack for clearing the inputs, except, checkbox.
+                    this.clearOption('list_at', 'options_list_at');
+                    this.clearOption('remove_at', 'options_remove_at');
+                    this.clearOption('available_at', 'options_available_at');
+                    this.clearOption('available_until', 'options_available_until');
+
+
+                    $("#options_list_at").on("dp.change", function (e) {
+                        $('#options_remove_at').data("DateTimePicker").minDate(e.date);
+                    });
+                    $("#options_remove_at").on("dp.change", function (e) {
+                        $('#options_list_at').data("DateTimePicker").maxDate(e.date);
+                    });
                     $("#options_available_at").on("dp.change", function (e) {
                         $('#options_available_until').data("DateTimePicker").minDate(e.date);
                     });
                     $("#options_available_until").on("dp.change", function (e) {
                         $('#options_available_at').data("DateTimePicker").maxDate(e.date);
                     });
-
-                    // hack for clearing the inputs, except, checkbox.
-                    setTimeout(()=>{
-                        this.clearOption('ends_at', 'options_ends_at');
-                        this.clearOption('available_at', 'options_available_at');
-                        this.clearOption('available_until', 'options_available_until');
-                    }, 0);
                 });
             },
             updateDateTimeEl(option, event){

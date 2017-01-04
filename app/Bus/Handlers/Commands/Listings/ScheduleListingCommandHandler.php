@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
+use Kabooodle\Models\Listing\FacebookListingOptions;
 use Facebook\Exceptions\FacebookAuthenticationException;
 use Kabooodle\Bus\Events\Listings\ListingScheduledEvent;
 use Kabooodle\Services\Social\Facebook\FacebookSdkService;
@@ -55,7 +56,7 @@ class ScheduleListingCommandHandler
         $actor = $command->getActor();
 
         /** @var Carbon $scheduledFor */
-        $scheduledFor = $this->normalizeScheduledDateTime($command->getScheduledFor());
+        $scheduledFor = $this->normalizeScheduledDateTime($command->getFacebookListingOptions()->getStartsAt());
 
         if ($command->getFacebookGroupId()) {
             $this->assertFacebookCredentialsAreValid();
@@ -67,6 +68,7 @@ class ScheduleListingCommandHandler
         $totalSavedListings = [];
 
         return DB::transaction(function () use ($actor, $scheduledFor, $command, $totalSavedListings) {
+            /** @var Listings $listing */
             $listing = $this->buildListing($command, $scheduledFor);
 
             // We have some special logic for facebook listings
@@ -105,13 +107,24 @@ class ScheduleListingCommandHandler
      */
     public function buildListing(ScheduleListingCommand $command, Carbon $scheduledFor)
     {
+        /** @var FacebookListingOptions $options */
+        $options = $command->getFacebookListingOptions();
+
         $listing = new Listings;
         $listing->owner_id = $command->getActor()->id;
         $listing->scheduled_for = $scheduledFor;
-        $listing->include_link_in_descr = $command->includeDescrText();
+        $listing->include_link_in_descr = $options->getIncludeLink();
 
-        if ($command->includeDescrText() && $command->getAvailableAt()) {
-            $listing->claimable_at = $command->getAvailableAt();
+        if ($options->getEndsAt()) {
+            $listing->scheduled_until = $options->getEndsAt();
+        }
+
+        if ($options->getClaimingStartsAt()) {
+            $listing->claimable_at = $options->getClaimingStartsAt();
+        }
+
+        if ($options->getClaimingEndsAt()) {
+            $listing->claimable_until = $options->getClaimingEndsAt();
         }
 
         $listing->status = Listings::STATUS_SCHEDULED;

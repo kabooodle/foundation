@@ -10,6 +10,7 @@ use DB;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
 
 /**
@@ -17,7 +18,7 @@ use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
  */
 class Listings extends AbstractListingModel
 {
-    use PresentableTrait, SoftDeletes, UuidableTrait;
+    use EloquentDatesTrait,PresentableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array
@@ -49,8 +50,10 @@ class Listings extends AbstractListingModel
      */
     protected $dates = [
         'scheduled_for',
+        'scheduled_untl',
         'status_updated_at',
         'claimable_at',
+        'claimable_until',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -74,6 +77,8 @@ class Listings extends AbstractListingModel
     protected $attributes = [
         'include_link_in_descr' => true,
         'scheduled_for' => null,
+        'scheduled_until' => null,
+        'claimable_until' => null,
         'claimable_at' => null,
         'owner_id' => 0,
         'fb_group_node_id' => null,
@@ -91,7 +96,9 @@ class Listings extends AbstractListingModel
     protected $fillable = [
         'include_link_in_descr',
         'scheduled_for',
+        'scheduled_until',
         'claimable_at',
+        'claimable_until',
         'fb_group_node_id',
         'flashsale_id',
         'owner_id',

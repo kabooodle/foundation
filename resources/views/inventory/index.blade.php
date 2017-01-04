@@ -148,9 +148,6 @@
                                 <div class="clearfix">
                                     <label class="control-label">Select Group</label>
                                     <span class="pull-right">
-                                     <button type="button" class="btn white btn-xs" data-toggle="modal" data-target="#kbdl-mdl-listings">
-                                        Settings
-                                    </button>
                                         <facebook-login
                                                 refresh_endpoint="{{ apiRoute('social.refresh') }}"
                                         ></facebook-login>
@@ -175,6 +172,10 @@
                             </div>
                             <template v-if="selected.fb_group">
                                 <div v-if="postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums.length > 0">
+                                    <button type="button" class="btn white btn-block btn-sm m-b-1" data-toggle="modal" data-target="#kbdl-mdl-listings">
+                                        Facebook listing settings
+                                    </button>
+
                                     {{--<template v-if="actions.fb_advanced_menu">--}}
                                     {{--<div class="p-a-md dker box m-t-0">--}}
                                         {{--<div class="form-group">--}}
@@ -264,7 +265,7 @@
                     type="button"
                     class="btn btn-lg primary"
                     >
-                    Post Items <spinner v-show="actions.posting_to_sales" size="24"></spinner>
+                    List Items <spinner v-show="actions.posting_to_sales" size="24"></spinner>
                     </button>
                     <button
                             :disabled="( actions.posting_to_sales )"

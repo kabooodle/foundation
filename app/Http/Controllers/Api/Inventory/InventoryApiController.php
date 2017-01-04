@@ -17,6 +17,7 @@ use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Listings\ScheduleListingCommand;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
+use Kabooodle\Models\Listing\FacebookListingOptions;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
@@ -131,11 +132,16 @@ class InventoryApiController extends AbstractApiController
         $facebookGroup = Binput::get('fb_group', null);
         $facebookGroupId = $facebookGroup ? $facebookGroup['id'] : null;
 
-        // Facebook sales options
+        // Facebook sales options, are, optional :)
         $options = (array) Binput::get('options', []);
-        $endsAt = array_get($options, 'ends_at', null);
-        $includeText = (bool) array_get($options, 'include_text', false);
+
+        // Date to list it and remove it
+        $listAt = array_get($options, 'list_at', null);
+        $removeAt = array_get($options,'remove_at', null);
+        // Date range you can claim.
         $claimableAt = array_get($options, 'available_at', null);
+        $claimableUntil = array_get($options, 'available_until', null);
+        $includeText = (bool) array_get($options, 'include_text', false);
 
         try {
             // You must have either a flashsaleid or facebookalbum
@@ -147,27 +153,19 @@ class InventoryApiController extends AbstractApiController
                 throw new MissingMandatoryParametersException;
             }
 
-            if ($claimableAt && $includeText && (strtotime($claimableAt) < strtotime($endsAt))) {
+            if ($claimableAt && strtotime($claimableAt) < strtotime($listAt)) {
                 throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
             }
 
-            if ($endsAt) {
-                $endsAt = Carbon::createFromTimestamp(strtotime($endsAt));
-            }
-
-            if ($claimableAt) {
-                $claimableAt = Carbon::createFromTimestamp(strtotime($claimableAt));
-            }
+            $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $includeText === true);
 
             $command = new ScheduleListingCommand(
                 $this->getUser(),
-                $includeText,
-                $endsAt,
-                $claimableAt,
                 $flashsaleId,
                 $facebookAlbums,
                 $facebookGroupId,
-                $selectedItems
+                $selectedItems,
+                $listingOptions
             );
 
             $this->dispatchNow($command);
