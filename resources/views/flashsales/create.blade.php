@@ -17,13 +17,12 @@
         <div class="box-divider m-a-0"></div>
         <div class="box-body">
 
-
             <build-flashsale
                     user_hash="{{ user()->public_hash }}"
                     s3_key_url="{{ apiRoute('api.files.sign') }}"
+                    search_endpoint="{{ apiRoute('users.search') }}"
                     :form_errors="{{ $errors->toJson() }}"
             ></build-flashsale>
-
 
         </div>
     </div>
@@ -78,16 +77,6 @@
             maxItems: null,
             plugins: ['remove_button'],
             options: [ ]
-        });
-
-        $('#form-host-select').change(function(e){
-            var $that = $(this);
-            var $groupWrapper = $('#form-wrapper-group');
-            if ($that.find(':selected').val() == '{{ \Kabooodle\Models\FlashSales::TYPE_GROUP }}') {
-                $groupWrapper.removeClass('hide hidden').show();
-            } else {
-                $groupWrapper.addClass('hide hidden').hide();
-            }
         });
     })
 </script>

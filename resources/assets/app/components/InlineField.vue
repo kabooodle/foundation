@@ -5,6 +5,7 @@
         </label>
         <div class="col-sm-9 ">
             <slot name="input"></slot>
+            <slot name="text-help"></slot>
         </div>
     </div>
 </template>
