@@ -103,15 +103,15 @@ class BaseEloquentModel extends Eloquent
      */
     public function __call($method, $parameters)
     {
-        // Magic method for calling, what are already magic properties on the model, as a function
-        // For example, "username" property would be called : $model->username however we can now invoke
-        // this retrieval using a method call: $model->getUsername()
-        if (starts_with($method, 'get')) {
-            $methodAsParameter = snake_case(str_replace('get', '', $method));
-            if (parent::__get($methodAsParameter)) {
-                return parent::__get($methodAsParameter);
-            }
-        }
+//        // Magic method for calling, what are already magic properties on the model, as a function
+//        // For example, "username" property would be called : $model->username however we can now invoke
+//        // this retrieval using a method call: $model->getUsername()
+//        if (starts_with($method, 'get')) {
+//            $methodAsParameter = snake_case(str_replace('get', '', $method));
+//            if (parent::__get($methodAsParameter)) {
+//                return parent::__get($methodAsParameter);
+//            }
+//        }
 
         return parent::__call($method, $parameters);
     }

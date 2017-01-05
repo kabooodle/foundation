@@ -80,7 +80,7 @@
                         type="button"
                         :class="'btn white '+btnClassSize+' fileinput-button'" style="display: inline-block;">
                     {{ button_title }}
-                    <template v-if="has_multiple || multiple">
+                    <template v-if="has_multiple">
                     <input
                         type="file"
                         name="file"
@@ -133,7 +133,7 @@
                 default: ' btn-sm '
             },
             button_title: {
-                default: 'Add Images'
+                default: 'Add images'
             },
             acceptRegEx: {
                 default: 'image/*'
@@ -153,7 +153,7 @@
         },
         computed : {
             has_multiple: function() {
-                return this.multiple == true;
+                return (this.multiple === true || this.multiple === 'true');
             }
         },
         created : function() {

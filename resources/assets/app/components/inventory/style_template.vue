@@ -85,7 +85,7 @@
                                                         target="_blank"
                                                         v-bind:href="this.window.location.href+'/'+item.name_uuid"
                                                         class="btn btn-xs pull-right white"
-                                                >View</a>
+                                                >Claim</a>
                                                 </div>
                                             </div>
                                         </template>

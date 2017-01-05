@@ -43,6 +43,10 @@ elixir(function (mix) {
     mix.browserify('app/components/messenger/messenger-thread-index.js');
 
 
+    mix.browserify('app/components/users/user-listings-index.js');
+    mix.browserify('app/components/flashsales/flashsale-create.js');
+
+
 
     // Vendor File
     mix.browserify('app/vendor.js');

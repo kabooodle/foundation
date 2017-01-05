@@ -18,7 +18,7 @@ use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
  */
 class Listings extends AbstractListingModel
 {
-    use EloquentDatesTrait,PresentableTrait, SoftDeletes, UuidableTrait;
+    use EloquentDatesTrait, PresentableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array
@@ -30,7 +30,9 @@ class Listings extends AbstractListingModel
         'accepted_sales_count',
         'pending_sales_count',
         'gross',
-        'sale_name'
+        'sale_name',
+        'claimable_range',
+        'type_icon_src'
     ];
 
     /**
@@ -50,7 +52,7 @@ class Listings extends AbstractListingModel
      */
     protected $dates = [
         'scheduled_for',
-        'scheduled_untl',
+        'scheduled_until',
         'status_updated_at',
         'claimable_at',
         'claimable_until',
@@ -360,6 +362,27 @@ class Listings extends AbstractListingModel
         return $this->flashSale->name;
     }
 
+    /**
+     * @return string
+     */
+    public function getClaimableRangeAttribute()
+    {
+        $scheduledFor = $this->scheduled_for;
+        $scheduledUntil = $this->scheduled_until;
+
+        $claimableAt = $this->claimable_at ? : $scheduledFor;
+        $claimableUntil = $this->claimable_until ? : ($scheduledUntil ? : null);
+
+        return $claimableAt.' - '.$claimableUntil;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTypeIconSrcAttribute()
+    {
+        return $this->typeIs(self::TYPE_FACEBOOK) ? '/assets/images/icons/FB-f-Logo__blue_18.png' : '/assets/images/icons/kabooodle_logo_18.png';
+    }
     /**
      * @return mixed
      */

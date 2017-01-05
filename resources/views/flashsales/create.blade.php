@@ -1,4 +1,4 @@
-@extends('layouts.body_w_leftnav')
+@extends('layouts.body_w_leftnav', ['contentId' => 'create_flashsale'])
 
 
 
@@ -9,6 +9,7 @@
 @section('body-inner-content')
 
     {{ Form::open(['route' => 'flashsales.store']) }}
+
     <div class="box">
         <div class="box-header">
             <h2>Create a flash sale</h2>
@@ -16,76 +17,13 @@
         <div class="box-divider m-a-0"></div>
         <div class="box-body">
 
-            <div class="form-group row {{ $errors->has('name') ? 'has-danger' : null }}">
-                <label for="inputEmail3" class="col-sm-3 form-control-label">Name</label>
-                <div class="col-sm-9">
-                    {{ Form::text('name', null, ['class' => 'form-control']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('description') ? 'has-danger' : null }}">
-                <label for="inputPassword3" class="col-sm-3 form-control-label">Description</label>
-                <div class="col-sm-9">
-                    {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => 2]) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('starts_at') ? 'has-danger' : null }}">
-                <label for="inputEmail3" class="col-sm-3 form-control-label">Starting Date and Time</label>
-                <div class="col-sm-9">
-                    {{ Form::text('starts_at', null or 0, ['class' => 'form-control', 'id' => 'datetimepicker1']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('ends_at') ? 'has-danger' : null }}">
-                <label for="inputEmail3" class="col-sm-3 form-control-label">Ending Date and Time</label>
-                <div class="col-sm-9">
-                    {{ Form::text('ends_at', null or 0, ['class' => 'form-control', 'id' => 'datetimepicker2']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('type') ? 'has-danger' : null }}">
-                <label for="type" class="col-sm-3 form-control-label">Hosted by</label>
-                <div class="col-sm-9">
-                    {{ Form::select('type', array_flip(\Kabooodle\Models\FlashSales::getTypes()), null, ['class' => 'form-control', 'id' => 'form-host-select']) }}
-                </div>
-            </div>
-            <div id="form-wrapper-group" class="hide hidden">
-                <div class="form-group row {{ $errors->has('group_id') ? 'has-danger' : null }} ">
-                    <label for="inputEmail3" class="col-sm-3 form-control-label">Group</label>
-                    <div class="col-sm-9">
-                        {{ Form::select('host_id', user()->groupsAsAdmin->pluck('name', 'id')->toArray(), null, ['class' => 'form-control selectpicker']) }}
-                    </div>
-                </div>
-                <div class="form-group row {{ $errors->has('admins') ? 'has-danger' : null }}">
-                    <label for="inputEmail3" class="col-sm-3 form-control-label">Admins</label>
-                    <div class="col-sm-9">
-                        {{ Form::select('admins[]', [] + (user()->groupsAsAdmin->first() ? user()->groupsAsAdmin->first()->allMembers()->pluck('name', 'id')->toArray() : []), null, ['class' => 'form-control disabled', 'id' => 'admins', 'placeholder' => 'Select a group first', 'disabled']) }}
-                    </div>
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('admins') ? 'has-danger' : null }}">
-                <label for="inputEmail3" class="col-sm-3 form-control-label">Seller Rules</label>
-                <div class="col-sm-9">
-                    {{ Form::textarea('seller_rules', null, ['class'=> 'form-control']) }}
-                </div>
-            </div>
-            <div class="form-group row {{ $errors->has('privacy') ? 'has-danger' : null }}">
-                <label for="inputPassword3" class="col-sm-3 form-control-label">Privacy</label>
-                <div class="col-sm-9">
-                    <div class="radio">
-                        <label class="md-check">
-                            {{ Form::radio('privacy', 'private', null, ['class'=>'has-value']) }}<i class="green"></i> private
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label class="md-check">
-                            {{ Form::radio('privacy', 'public', null, ['class'=>'has-value']) }}<i class="green"></i> public
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label class="md-check">
-                            {{ Form::radio('privacy', 'secret', null, ['class'=>'has-value']) }}<i class="green"></i> secret
-                        </label>
-                    </div>
-                </div>
-            </div>
+
+            <build-flashsale
+                    user_hash="{{ user()->public_hash }}"
+                    s3_key_url="{{ apiRoute('api.files.sign') }}"
+                    :form_errors="{{ $errors->toJson() }}"
+            ></build-flashsale>
+
 
         </div>
     </div>
@@ -101,6 +39,7 @@
 @endsection
 
 @push('footer-scripts')
+<script src="/assets/js/flashsale-create.js"></script>
 <script>
     $(function(){
 

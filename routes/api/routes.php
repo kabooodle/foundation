@@ -5,11 +5,12 @@ $route->get('/', [
     'uses' => \Kabooodle\Http\Controllers\Api\GeneralController::class.'@ping'
 ]);
 
-$route->get('files', ['as' =>'api.files.sign', 'uses' => \Kabooodle\Http\Controllers\Api\Files\FilesApiController::class.'@createPresignedData']);
 
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
+
+    $api->get('files', ['as' =>'api.files.sign', 'uses' => \Kabooodle\Http\Controllers\Api\Files\FilesApiController::class.'@createPresignedData']);
 
     $api->post('/queues/errors', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@errorQueueHandler');
     $api->post('/queues/email', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailHandler');
@@ -37,8 +38,9 @@ $api->version('v1', function ($api) {
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'social' . DIRECTORY_SEPARATOR . 'routes.php';
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'notices' . DIRECTORY_SEPARATOR . 'routes.php';
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'messenger' . DIRECTORY_SEPARATOR . 'routes.php';
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'user' . DIRECTORY_SEPARATOR . 'routes.php';
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'phonenumbers' . DIRECTORY_SEPARATOR . 'routes.php';
     });
+
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'user' . DIRECTORY_SEPARATOR . 'routes.php';
 
 });

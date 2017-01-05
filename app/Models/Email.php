@@ -44,6 +44,15 @@ class Email extends BaseEloquentModel
         'token',
     ];
 
+    /**
+     * @var array
+     */
+    protected $hidden = [
+        'verified',
+        'token',
+        'primary'
+    ];
+
     public static function boot()
     {
         parent::boot();

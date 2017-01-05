@@ -103,8 +103,9 @@ option{
 .form-group.row {
   .form-control-label,
   label.col-sm-3.control-label{
+    padding: .15rem .75rem;
     text-align: right;
-    line-height: 2.4rem;
+    line-height: 2.3rem;
   }
 }
 
