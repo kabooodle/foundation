@@ -54,39 +54,55 @@
             </template>
         </inline-field>
 
-        <inline-field v-if="hosted_by_group">
-            <template slot="label">Admins</template>
+        <div v-if="hosted_by_group">
+            <inline-field >
+                <template slot="label">Admins</template>
+                <template slot="input">
+                    <multiselect
+                            id="admins_el"
+                            label="full_name"
+                            track-by="id"
+                            placeholder="Search by name or username"
+                            :custom-label="nameWithUsername"
+                            :options="admins_list"
+                            :multiple="true"
+                            :searchable="true"
+                            :loading="loading.admins"
+                            :internal-search="false"
+                            :clear-on-select="true"
+                            :close-on-select="true"
+                            :options-limit="10"
+                            :limit="10"
+                            v-model="admins"
+                            @search-change="searchAdmins">
+                        <template slot="option" scope="props">
+                            <div class="option__desc">
+                                <span class="option__title">{{ props.option.full_name }}</span>
+                                <small class="option__small text-muted text-small">({{ props.option.username }})</small>
+                            </div>
+                        </template>
+                    </multiselect>
+                </template>
+                <template slot="text-help">
+                    <small class="text-sm text-muted">In addition to the users from the selected group, you can grant others admin permissions.</small>
+                    <small class="text-sm text-muted">Admin permissions allow users to make changes to name/sellers/etc;</small>
+                </template>
+            </inline-field>
+        </div>
+
+        <inline-field :errors="form_errors.privacy">
+            <template slot="label">Privacy</template>
             <template slot="input">
-                <multiselect
-                        id="admins_el"
-                        label="full_name"
-                        track-by="id"
-                        placeholder="Search by name or username"
-                        :custom-label="nameWithUsername"
-                        :options="admins_list"
-                        :multiple="true"
-                        :searchable="true"
-                        :loading="loading.admins"
-                        :internal-search="false"
-                        :clear-on-select="true"
-                        :close-on-select="true"
-                        :options-limit="10"
-                        :limit="10"
-                        v-model="admins"
-                        @search-change="searchAdmins">
-                    <template slot="option" scope="props">
-                        <div class="option__desc">
-                            <span class="option__title">{{ props.option.full_name }}</span>
-                            <small class="option__small text-muted text-small">({{ props.option.username }})</small>
-                        </div>
-                    </template>
-                </multiselect>
-            </template>
-            <template slot="text-help">
-                <small class="text-sm text-muted">Users whom can manage the sales' settings</small>
+                <div class="radio" v-for="privacy_type in privacy_options">
+                    <label class="">
+                        <input class="has-value" name="privacy" v-model="privacy" type="radio" :value="privacy_type">
+                        {{ privacy_type }}
+                    </label>
+                </div>
             </template>
         </inline-field>
 
+        <hr>
 
         <inline-field>
             <template slot="label">Sellers</template>
@@ -115,18 +131,6 @@
                         </div>
                     </template>
                 </multiselect>
-            </template>
-        </inline-field>
-
-        <inline-field :errors="form_errors.privacy">
-            <template slot="label">Privacy</template>
-            <template slot="input">
-                <div class="radio" v-for="privacy_type in privacy_options">
-                    <label class="">
-                        <input class="has-value" name="privacy" v-model="privacy" type="radio" :value="privacy_type">
-                        {{ privacy_type }}
-                    </label>
-                </div>
             </template>
         </inline-field>
 
