@@ -21,10 +21,10 @@
                 </a>
                 <div class="dropdown-menu dropdown-over dropdown-menu-sm pull-xs-none dropdown-menu-right">
                     @if(Kabooodle\Models\Listings::isStillEditable($listing->status))
-                        <a href="{{ route('listings.edit', [$listing->uuid]) }}" class="dropdown-item">Edit</a>
+                        <a href="{{ route('merchant.listings.edit', [$listing->uuid]) }}" class="dropdown-item">Edit</a>
                     @endif
-                    <a href="{{ route('listings.show', [$listing->uuid]) }}" class="dropdown-item">Details</a>
-                    <a href="{{ route('listings.show', [$listing->uuid]) }}" class="text-warning dropdown-item">Delete</a>
+                    <a href="{{ route('merchant.listings.show', [$listing->uuid]) }}" class="dropdown-item">Details</a>
+                    <a href="{{ route('merchant.listings.show', [$listing->uuid]) }}" class="text-warning dropdown-item">Delete</a>
                 </div>
             </div>
         </div>

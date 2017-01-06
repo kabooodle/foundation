@@ -24,7 +24,7 @@ class UpdateNotificationsPivot extends Migration
         });
 
         $r = Notifications::where('name', 'inventory_updated')->first();
-        $r->to_sms = true;
+        $r->type_sms = true;
         $r->save();
     }
 

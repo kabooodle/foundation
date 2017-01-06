@@ -13,7 +13,7 @@
                     :button_title="avatar ? 'Replace profile image' : 'Add profile image'"
                     multiple="false"
                     user_hash="{{ $_user->public_hash }}"
-                    s3_key_url="{{ route('api.files.sign') }}"
+                    s3_key_url="{{ apiRoute('api.files.sign') }}"
             ></file-upload>
             <button
                     @click="removeAvatar"

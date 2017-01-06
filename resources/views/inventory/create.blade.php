@@ -64,7 +64,7 @@
 
         <inventory-sizing
                 user_hash="{{ user()->public_hash }}"
-                s3_key_url="{{ route('api.files.sign') }}"
+                s3_key_url="{{ apiRoute('api.files.sign') }}"
                 :size_containers.sync="size_containers"></inventory-sizing>
 
         <div class="form-group row m-t-md">

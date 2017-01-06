@@ -22,7 +22,7 @@
                                             id="ajax"
                                             label="full_name"
                                             track-by="id"
-                                            placeholder="Type to search for a recipient"
+                                            placeholder=""
                                             :custom-label="nameWithUsername"
                                             :options="recipients"
                                             :multiple="false"

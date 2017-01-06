@@ -74,7 +74,7 @@
                         <td><a class="text-primary" href="{{ $transaction->tracking_url_provider }}" target="_blank" >{{ $transaction->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>
                         <td>
                             <div class="pull-right">
-                                <a target="_blank" href="{{ route('shipping.transactions.label.show', [$transaction->shipping_shipments_uuid, $transaction->uuid]) }}" class="btn btn-xs white">Shipping Label</a>
+                                <a target="_blank" href="{{ route('merchant.shipping.transactions.label.show', [$transaction->shipping_shipments_uuid, $transaction->uuid]) }}" class="btn btn-xs white">Shipping Label</a>
                             </div>
                         </td>
                     </tr>

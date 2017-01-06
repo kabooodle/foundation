@@ -11,5 +11,5 @@
 {{--</div>--}}
 
 <div class="pull-right">
-    <a href="{{ route('shipping.create') }}" class="btn btn-sm white">Create new shipment</a>
+    <a href="{{ route('merchant.shipping.create') }}" class="btn btn-sm white">Create new shipment</a>
 </div>

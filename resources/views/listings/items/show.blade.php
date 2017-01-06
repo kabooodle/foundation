@@ -34,7 +34,7 @@
                     unfollow_text="Watching"
                     follow_text="Watch"
                     btn_size_class="btn-sm"
-                    already_following="{{ $listingItem->is_watched ? 1 : 0 }}"
+                    already_following="{{ $listingItem->is_watched ? 'true' : 'false' }}"
                     endpoint="{{ apiRoute('listings.listingitems.watchers.store', [$listingItem->listing_id, $listingItem->id]) }}"
             >
             </followable>
@@ -49,7 +49,8 @@
             <div class="box-header clearfix">
                 <h4 class="">
                     <span class="pull-left">
-                        {{ $listingItem->sale_name }} @include('listings._listingtype', ['_type' => $listingItem->type]) - {{ $listingItem->getNameOfResource() }}
+                        @include('listings._listingtype', ['_type' => $listingItem->type]) {{ $listingItem->sale_name }} - {{ $listingItem->getNameOfResource() }}
+                        <a href="{{ route('listings.show', [$listingItem->listing->uuid] ) }}"class="m-t-xs block link btn-link text-primary">More items from {{ $listingItem->owner->full_name }}</a>
                     </span>
                     @if(! $listingItem->claimableBasedOnSchedule())
                     <span class="pull-right m-b-0">Claimable after {{ $listingItem->listing->claimableAfter()->format('F jS, g:i A') }}</span>

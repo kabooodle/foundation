@@ -80,18 +80,18 @@
                                 <span class="">({{ user()->pendingClaimsOnMyInventory()->count() }})</span>
                             </a>
 
-                            <a  href="{{  route('sales.index') }}"
-                                class="dropdown-item {{ Request::is('sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
+                            <a  href="{{  route('merchant.sales.index') }}"
+                                class="dropdown-item {{ Request::is('merchant/sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
 
                             <div class="divider"></div>
-                            <a href="{{ route('listings.index') }}" class="dropdown-item {{ Request::is('listings') ? 'active' : null }}"><span>Listings</span></a>
+                            <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Listings</span></a>
 
                             @if(user()->isSubscribedToMerchantPlus())
                                 <div class="divider"></div>
-                                <a href="{{  route('shipping.create') }}"
-                                   class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
-                                <a href="{{  route('shipping.index') }}"
-                                   class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
+                                <a href="{{  route('merchant.shipping.create') }}"
+                                   class="dropdown-item {{ Request::is('merchant.shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
+                                <a href="{{  route('merchant.shipping.index') }}"
+                                   class="dropdown-item {{ Request::is('merchant/shipping') ? 'active' : null }}"><span>Shipments</span></a>
                             @endif
                         </div>
                     </li>

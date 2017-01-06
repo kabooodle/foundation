@@ -9,7 +9,7 @@
 @section('body-content')
     <div class="row">
         <div class="col-md-12">
-            {{ Form::open(['route' => ['shipping.store', user()->username]]) }}
+            {{ Form::open(['route' => ['merchant.shipping.store', user()->username]]) }}
             <div class="box white">
                 <div class="box-header">
                     <h4>Claimed Item Information</h4>

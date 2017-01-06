@@ -7,7 +7,7 @@
     </div>
 
     <div class="pull-right">
-        <a href="{{ route('shipping.create') }}" class="btn btn-sm white">Create new shipment</a>
+        <a href="{{ route('merchant.shipping.create') }}" class="btn btn-sm white">Create new shipment</a>
     </div>
 @endsection
 
@@ -17,7 +17,7 @@
     <div class="navbar-side p-a " id="navbarSide">
         <div class="box ">
             <div class="box-body clearfix">
-                <form method="GET" action="{{ route('shipping.index') }}">
+                <form method="GET" action="{{ route('merchant.shipping.index') }}">
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Status</label>
                         <div class="col-sm-9">
@@ -84,8 +84,8 @@
                             <td>{!! $shipment->present()->getStatus()  !!}</td>
                             <td>
                                 <div class="pull-right">
-                                    <a href="{{ route('shipping.transactions.show', [$shipment->shipping_shipments_uuid, $shipment->uuid]) }}"  class="btn btn-xs white">View</a>
-                                    <a target="_blank" href="{{ route('shipping.transactions.label.show', [$shipment->shipping_shipments_uuid, $shipment->uuid])}}" class="btn btn-xs white">Shipping Label</a>
+                                    <a href="{{ route('merchant.shipping.transactions.show', [$shipment->shipping_shipments_uuid, $shipment->uuid]) }}"  class="btn btn-xs white">View</a>
+                                    <a target="_blank" href="{{ route('merchant.shipping.transactions.label.show', [$shipment->shipping_shipments_uuid, $shipment->uuid])}}" class="btn btn-xs white">Shipping Label</a>
                                 </div>
                             </td>
                         </tr>

@@ -101,7 +101,7 @@ class ShippingOrderController extends Controller
             );
             $response = $this->dispatchNow($command);
 
-            return redirect()->route('shipping.show', [$response->uuid]);
+            return redirect()->route('merchant.shipping.show', [$response->uuid]);
         } catch (ValidationException $e) {
             Messages::error('Some fields require input!');
 

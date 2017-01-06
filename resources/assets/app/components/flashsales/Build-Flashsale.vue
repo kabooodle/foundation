@@ -62,7 +62,7 @@
                             id="admins_el"
                             label="full_name"
                             track-by="id"
-                            placeholder="Search by name or username"
+                            placeholder=""
                             :custom-label="nameWithUsername"
                             :options="admins_list"
                             :multiple="true"
@@ -101,9 +101,7 @@
                 </div>
             </template>
         </inline-field>
-
         <hr>
-
         <inline-field>
             <template slot="label">Sellers</template>
             <template slot="input">
@@ -111,7 +109,7 @@
                         id="sellers_el"
                         label="full_name"
                         track-by="id"
-                        placeholder="Search by name or username"
+                        placeholder=""
                         :custom-label="nameWithUsername"
                         :options="sellers_list"
                         :multiple="true"

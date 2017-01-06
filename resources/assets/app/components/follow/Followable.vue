@@ -3,11 +3,11 @@
         <button
                 :disabled="processing"
                 type="button"
-                @click="following ? unfollowMe($event) : followMe($event)"
+                @click="is_following ? unfollowMe($event) : followMe($event)"
                 class="btn-follow btn "
                 :class="btnclass"
         >
-            {{ following ? unfollow_text : follow_text }} <spinny v-if="processing"></spinny>
+            {{ is_following ? unfollow_text : follow_text }} <spinny v-if="processing"></spinny>
         </button>
     </span>
 </template>
@@ -26,6 +26,9 @@
             },
             able_type: {
                 required: true,
+                type: String
+            },
+            already_following: {
                 type: String
             },
             btn_active_class : {
@@ -61,7 +64,6 @@
         },
         data (){
             return {
-                already_following: false,
                 display: false,
                 following: false,
                 processing: false,
@@ -90,40 +92,31 @@
                 }
 
                 return theClass;
-            }
+            },
+            is_following(){
+                if (this.doWeHaveCurrentUser()) {
+                    return (this.already_following === true || this.already_following === 'true' || this.following === 'true' || this.following === true);
+                }
+            },
         },
         methods: {
             entityIsMe: function(){
                 if(this.doWeHaveCurrentUser()) {
                     return parseInt(this.current_user.id) == parseInt(this.able_id);
                 }
-
                 return false;
             },
             doWeHaveCurrentUser: function () {
                 return this.current_user;
             },
             isUserFollowingEntity: function () {
-                if (this.doWeHaveCurrentUser()) {
-//                    const typeName = this.able_name+'_type';
-//                    const typeId = this.able_name+'_id';
-//                    let attrs = {
-//                        user_id: parseInt(this.current_user.id)
-//                    };
-//                    attrs[typeName] =  this.able_type;
-//                    attrs[typeId] = parseInt(this.able_id);
-
-                    return (this.already_following == '1');
-                }
-
-                return false;
+                return this.is_following;
             },
             followMe: function (e) {
                 if (KABOOODLE_APP.currentUser) {
                     this.processing = true;
                     this.$http.post(this.endpoint).then(()=>{
                         this.following = true;
-                        this.already_following = true;
                     }, function(response){
                         throw new Error(response);
                     }).catch(function() {}).finally(()=>{
@@ -140,7 +133,6 @@
                 this.processing = true;
                 this.$http.delete(this.endpoint).then(()=>{
                     this.following = false;
-                    this.already_following = false;
                 }, function(response){
                     throw new Error(response);
                 }).catch(function() {}).finally(()=>{

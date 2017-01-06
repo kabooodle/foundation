@@ -4,7 +4,7 @@
 
 @section('body-menu')
     <div class="pull-left">
-        <a class="btn btn-sm white" href="{{ route('listings.index') }}">
+        <a class="btn btn-sm white" href="{{ route('merchant.listings.index') }}">
             Filter Listings
         </a>
     </div>
