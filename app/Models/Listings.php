@@ -44,7 +44,7 @@ class Listings extends AbstractListingModel
      * @var array
      */
     protected $with = [
-        'items'
+//        'items'
     ];
 
     /**

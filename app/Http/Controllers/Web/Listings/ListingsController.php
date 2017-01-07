@@ -9,12 +9,15 @@ namespace Kabooodle\Http\Controllers\Web\Listings;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Listings;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 
 /**
  * Class ListingItemsController
  */
 class ListingsController extends Controller
 {
+    use PaginatesTrait;
+
     /**
      * @param Request $request
      * @param         $listingUuid
@@ -23,13 +26,22 @@ class ListingsController extends Controller
      */
     public function show(Request $request, $listingUuid)
     {
-        $listing = Listings::where('uuid', $listingUuid)
+        $listing = Listings::with(['items', 'items.inventoryItem'])
+            ->where('uuid', $listingUuid)
             ->first();
 
         if (! $listing) {
             return $this->redirect()->to('/');
         }
 
-        return $this->view('listings.show')->with(compact('listing'));
+        $items = $listing->items->sortBy(function($item){
+            return $item->inventoryItem->style->name;
+        });
+
+        $items = $this->paginateData($request, $items);
+
+        $categories = Listings::getStyleGroupings($listingUuid);
+
+        return $this->view('listings.show')->with(compact('categories', 'items', 'listing'));
     }
 }

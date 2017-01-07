@@ -1,11 +1,12 @@
 <template>
-    <span v-if="display" >
+    <span>
         <button
-                :disabled="processing"
+                :disabled="processing || disable"
                 type="button"
                 class="btn-message btn white btn-xs "
+                :class="processing || disable ? 'disabled' : null"
                 @click="openModal"
-        ><i class="fa fa-comments" aria-hidden="true"></i> Message
+        >Message
             <spinny v-if="processing"></spinny>
         </button>
         <message-modal
@@ -37,7 +38,15 @@
         data(){
             return{
                 display: true,
+                disable: true,
                 processing: false,
+            }
+        },
+        created(){
+            if (this.recipient_id == KABOOODLE_APP.currentUser.id) {
+                this.disable = true;
+            } else {
+                this.disable = false;
             }
         },
         computed: {

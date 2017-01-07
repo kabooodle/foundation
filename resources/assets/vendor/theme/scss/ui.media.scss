@@ -32,6 +32,24 @@
   height: 200px;
   overflow: hidden;
   display: inline-block;
+  margin: 0 auto;
+  text-align: center;
+  &.center {
+    text-align: center;
+    margin: 0 auto;
+    width: 100% !important;
+  }
+  &._152 {
+    width: 152px !important;
+    height: 152px !important;
+  }
+  &._256 {
+    width: 256px !important;
+    height: 256px !important;
+  }
+  &._128h {
+    height: 128px !important;
+  }
   &._128 {
     width: 128px !important;
     height: 128px !important;

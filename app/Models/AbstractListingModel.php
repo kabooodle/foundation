@@ -163,7 +163,6 @@ abstract class AbstractListingModel extends BaseEloquentModel
         return ($countResults + $incomingItemsCount) > 600;
     }
 
-
     /**
      * @param Carbon $startTime
      * @param Carbon $endTime
@@ -211,5 +210,26 @@ abstract class AbstractListingModel extends BaseEloquentModel
                 'status' => $status,
                 'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
             ]);
+    }
+
+    /**
+     * @param string $listingUuid
+     *
+     * @return mixed
+     */
+    public static function getStyleGroupings(string $listingUuid)
+    {
+        return InventoryTypeStyles::with('sizes')
+            ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
+            ->join('listing_items', 'listing_items.inventory_id', '=', 'inventory.id')
+            ->join('listings','listings.id', '=', 'listing_items.listing_id')
+            ->where('listings.uuid', $listingUuid)
+            ->groupBy('inventory_type_styles.id')
+            ->select([
+                'inventory_type_styles.id',
+                'inventory_type_styles.name',
+                DB::raw('count(inventory_type_styles.id) as count_per_style')
+            ])
+            ->get();
     }
 }

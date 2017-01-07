@@ -1,17 +1,19 @@
 <template>
-    <span v-if="display">
+    <span>
         <button
-                :disabled="processing"
+                :disabled="processing || disable"
                 type="button"
                 @click="is_following ? unfollowMe($event) : followMe($event)"
                 class="btn-follow btn "
                 :class="btnclass"
         >
-            {{ is_following ? unfollow_text : follow_text }} <spinny v-if="processing"></spinny>
+            <span v-html="is_following ? unfollow_text : follow_text"></span>
+            <spinner v-if="processing" :size="'' + 10"></spinner>
         </button>
     </span>
 </template>
 <script>
+    import Spinny from '../Spinner.vue';
     export default{
         props: {
             able_name : {
@@ -64,7 +66,8 @@
         },
         data (){
             return {
-                display: false,
+                disable: true,
+                display: true,
                 following: false,
                 processing: false,
             }
@@ -77,9 +80,10 @@
             }
         },
         mounted (){
-            if (! this.entityIsMe()) {
-                this.display = true;
-            }
+            this.disable = false;
+//            if (! this.entityIsMe()) {
+//                this.disable = false;
+//            }
         },
         computed: {
             btnclass : function(){
@@ -87,7 +91,7 @@
                 if (this.following) {
                     theClass = this.btn_active_class + ' ' + this.btn_size_class;
                 }
-                if (this.processing) {
+                if (this.processing || this.disable) {
                     theClass = theClass + ' disabled ';
                 }
 
@@ -140,5 +144,8 @@
                 });
             }
         },
+        components: {
+            'spinner' : Spinny
+        }
     }
 </script>
