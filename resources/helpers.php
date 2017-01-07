@@ -1,6 +1,21 @@
 <?php
 use Carbon\Carbon;
 
+if (!function_exists('current_timezone')) {
+
+    /**
+     * @return string
+     */
+    function current_timezone()
+    {
+        if (user()) {
+            return user()->timezone;
+        }
+
+        return 'UTC';
+    }
+}
+
 if (! function_exists('route')) {
     /**
      * Generate a URL to a named route.
@@ -31,7 +46,7 @@ if (! function_exists('humanizeDateTime')) {
             $value = Carbon::createFromTimestamp(strtotime($value));
         }
 
-        return $value->format('m-d-Y h:ia');
+        return $value->format('M j, Y h:ia');
     }
 }
 
@@ -47,7 +62,7 @@ if (! function_exists('humanizeDate')) {
             $value = Carbon::createFromTimestamp(strtotime($value));
         }
 
-        return $value->format('m-d-Y');
+        return $value->format('M j, Y');
     }
 }
 

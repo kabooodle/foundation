@@ -68,6 +68,9 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         // LISTINGS
+        \Kabooodle\Bus\Events\Listings\ListingScheduledEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Listings\NotifyListingWasScheduled::class,
+        ],
         \Kabooodle\Bus\Events\Listings\ListingsWereQueued::class => [
             \Kabooodle\Bus\Handlers\Events\Listings\NotifyListingsWereQueued::class,
         ],

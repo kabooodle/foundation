@@ -22,6 +22,17 @@ class ListingsController extends Controller
      * @param Request $request
      * @param         $listingUuid
      *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function shorthand(Request $request, $listingUuid)
+    {
+        return redirect()->route('listings.show', [$listingUuid]);
+    }
+
+    /**
+     * @param Request $request
+     * @param         $listingUuid
+     *
      * @return $this|\Illuminate\Http\RedirectResponse
      */
     public function show(Request $request, $listingUuid)

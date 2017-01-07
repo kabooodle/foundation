@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9b88f7103aa92234364f2fc783818c74",
-    "content-hash": "a1df8223adeb67558818b8df8c356f95",
+    "hash": "835dc83d971f83d10fbe8be7f466b636",
+    "content-hash": "746400c93c56849ed09e83db1c86b8c6",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -1473,25 +1473,25 @@
         },
         {
             "name": "graham-campbell/htmlmin",
-            "version": "v4.4.0",
+            "version": "v4.5.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/GrahamCampbell/Laravel-HTMLMin.git",
-                "reference": "31a3101a7ff58a62250d77d61cd2516e55683b24"
+                "url": "https://github.com/kabooodle/Laravel-HTMLMin.git",
+                "reference": "b9f8bcb51ba28327667c7bded21e217ceeda12b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-HTMLMin/zipball/31a3101a7ff58a62250d77d61cd2516e55683b24",
-                "reference": "31a3101a7ff58a62250d77d61cd2516e55683b24",
+                "url": "https://api.github.com/repos/kabooodle/Laravel-HTMLMin/zipball/b9f8bcb51ba28327667c7bded21e217ceeda12b6",
+                "reference": "b9f8bcb51ba28327667c7bded21e217ceeda12b6",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "5.1.*|5.2.*|5.3.*",
-                "illuminate/filesystem": "5.1.*|5.2.*|5.3.*",
-                "illuminate/http": "5.1.*|5.2.*|5.3.*",
-                "illuminate/routing": "5.1.*|5.2.*|5.3.*",
-                "illuminate/support": "5.1.*|5.2.*|5.3.*",
-                "illuminate/view": "5.1.*|5.2.*|5.3.*",
+                "illuminate/contracts": "5.1.*|5.2.*|5.3.*|5.4.*",
+                "illuminate/filesystem": "5.1.*|5.2.*|5.3.*|5.4.*",
+                "illuminate/http": "5.1.*|5.2.*|5.3.*|5.4.*",
+                "illuminate/routing": "5.1.*|5.2.*|5.3.*|5.4.*",
+                "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*",
+                "illuminate/view": "5.1.*|5.2.*|5.3.*|5.4.*",
                 "mrclay/minify": "^2.2",
                 "php": ">=5.5.9"
             },
@@ -1503,7 +1503,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.4-dev"
+                    "dev-master": "4.5-dev"
                 }
             },
             "autoload": {
@@ -1511,7 +1511,11 @@
                     "GrahamCampbell\\HTMLMin\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "GrahamCampbell\\Tests\\HTMLMin\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -1525,16 +1529,19 @@
             "keywords": [
                 "Graham Campbell",
                 "GrahamCampbell",
+                "HTMLMin",
                 "Laravel HTMLMin",
                 "Laravel-HTMLMin",
                 "framework",
                 "html",
                 "html minifier",
-                "htmlmin",
                 "laravel",
                 "minifier"
             ],
-            "time": "2016-08-28 09:57:28"
+            "support": {
+                "source": "https://github.com/kabooodle/Laravel-HTMLMin/tree/v4.5.1"
+            },
+            "time": "2017-01-07 21:30:57"
         },
         {
             "name": "graham-campbell/manager",

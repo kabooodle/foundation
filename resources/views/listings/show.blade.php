@@ -10,7 +10,7 @@
         <div class="box-header clearfix">
             <h4 class="pull-left"> @include('listings._listingtype', ['_type' => $listing->type]) {{ $listing->sale_name }}</h4>
             <div class="pull-right text-muted text-sm">
-                <p class="m-0 m-b-0 p-o ">Items can be claimed Jan 1 through Jan 8</p>
+                <p class="m-0 m-b-0 p-o ">Items can be claimed {{ $listing->claimable_range }}</p>
             </div>
         </div>
     </div>

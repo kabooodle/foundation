@@ -9,29 +9,83 @@ use Carbon\Carbon;
  */
 trait EloquentDatesTrait
 {
+    /**************************************************************************/
+    /*************** USED TO CONVERT TIMEZONES TO USER TIMEZONES **************/
+    /**************************************************************************/
     /**
-     * @param $v
-     *
-     * @return string
+     * @param $value
+     * @return bool|null|string
      */
-    public function getCreatedAtAttribute($v)
+    public static function formatDateAttribute($value)
     {
-        $time = Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
+        if (! $value or is_null($value)) {
+            return null;
+        }
 
-        return user() ? $time->tz(user()->timezone) : $time;
+        return Carbon::createFromFormat('Y-m-d H:i:s', $value)->setTimezone(current_timezone());
     }
 
     /**
-     * @param $v
+     * @param $value
      *
-     * @return string
+     * @return Carbon
      */
-    public function getUpdatedAtAttribute($v)
+    public static function convertToUTC($value)
     {
-        $time = Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
-
-        return user() ? $time->tz(user()->timezone) : $time;
+        return Carbon::createFromFormat('Y-m-d H:i:s', $value, current_timezone())->setTimezone('UTC');
     }
+
+    /**
+     * Overload Laravel setAttribute to convert dates to UTC.
+     *
+     * {@inheritdoc}
+     */
+    public function setAttribute($key, $value)
+    {
+        if ($value && (in_array($key, $this->getDates()) || $this->isDateCastable($key))) {
+            if (!isset($value->tzName) || $value->tzName <> 'UTC') {
+                $value = static::convertToUTC($this->fromDateTime__set($value));
+            }
+
+            $this->attributes[$key] = $value;
+            return $this;
+        }
+
+        return parent::setAttribute($key, $value);
+    }
+
+    /**
+     * @param $key
+     *
+     * @return bool|null|string
+     */
+    public function getAttributeValue($key)
+    {
+        $value = $this->getAttributeFromArray($key);
+
+        if (in_array($key, $this->getDates()) && ! is_null($value) && (!isset($value->tzName) || $value->tzName <> 'UTC')) {
+            return static::formatDateAttribute(parent::asDateTime($value));
+        }
+
+        return parent::getAttributeValue($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fromDateTime__set($value)
+    {
+        $format = $this->getDateFormat();
+
+        // Call parent method because local method converts to user TZ
+        $value = parent::asDateTime($value);
+
+        return $value->format($format);
+    }
+    /**************************************************************************/
+    /**************************** END TIMEZONE CODE ***************************/
+    /**************************************************************************/
+
 
     /**
      * @param $date

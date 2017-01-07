@@ -53,7 +53,7 @@
                         <a href="{{ route('listings.show', [$listingItem->listing->uuid] ) }}"class="m-t-xs block link btn-link text-primary">More items from {{ $listingItem->owner->full_name }}</a>
                     </span>
                     @if(! $listingItem->claimableBasedOnSchedule())
-                    <span class="pull-right m-b-0">Claimable after {{ $listingItem->listing->claimableAfter()->format('F jS, g:i A') }}</span>
+                    <span class="pull-right m-b-0 text-muted text-sm">Items can be claimed {{ $listingItem->listing->claimable_range }}</span>
                     @endif
                 </h4>
             </div>

@@ -70,7 +70,7 @@ class Listings extends AbstractListingModel
      * @var array
      */
     protected $casts = [
-        'include_link_in_descr' => 'bool'
+        'include_link_in_descr' => 'bool',
     ];
 
     /**
@@ -373,7 +373,7 @@ class Listings extends AbstractListingModel
         $claimableAt = $this->claimable_at ? : $scheduledFor;
         $claimableUntil = $this->claimable_until ? : ($scheduledUntil ? : null);
 
-        return $claimableAt.' - '.$claimableUntil;
+        return $claimableUntil ? $this->humanize($claimableAt).' - '.$this->humanize($claimableUntil) : $this->humanize($claimableAt);
     }
 
     /**
