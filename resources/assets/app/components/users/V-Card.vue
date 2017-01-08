@@ -77,7 +77,7 @@
         },
         data(){
             return{
-                current_user: KABOOODLE_APP.currentUser
+                current_user: (KABOOODLE_APP && KABOOODLE_APP.currentUser) ? KABOOODLE_APP.currentUser : {}
             }
         },
         computed: {

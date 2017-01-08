@@ -96,7 +96,7 @@
                         </div>
                     </li>
                 @endif
-                @if(user()->claimsAsBuyer->count() > 0)
+                @if(user() && user()->claimsAsBuyer->count() > 0)
                     <li class ="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> <span class="nav-text">Purchases</span></a>
                         <div class="dropdown-menu">

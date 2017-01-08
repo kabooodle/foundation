@@ -43,11 +43,15 @@
             }
         },
         created(){
-            if (this.recipient_id == KABOOODLE_APP.currentUser.id) {
-                this.disable = true;
-            } else {
-                this.disable = false;
+            if (KABOOODLE_APP && KABOOODLE_APP.currentUser) {
+                if (this.recipient_id == KABOOODLE_APP.currentUser.id) {
+                    this.disable = true;
+                    return;
+                }
             }
+
+            this.disable = false;
+            return;
         },
         computed: {
           modal_id(){
