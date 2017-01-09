@@ -6,8 +6,6 @@
 
 namespace Kabooodle\Models\Traits;
 
-use Vinkla\Pusher\PusherManager;
-
 /**
  * Class BroadcastableTrait
  */
@@ -24,7 +22,7 @@ trait BroadcastableTrait
     public function getPusher()
     {
         if (! self::$_pusherManager) {
-            self::$_pusherManager = app(PusherManager::class);
+            self::$_pusherManager = app('pusher');
         }
 
         return self::$_pusherManager;

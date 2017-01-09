@@ -92,11 +92,11 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
                 $listingItem->owner->getFacebookUserToken()
             );
 
-            event(new ListingItemWasListed);
-
-            $this->job->delete();
+//            event(new ListingItemWasListed);
 
             $this->successfulJobHandler($listingItem);
+
+            $this->job->delete();
 
         } catch (Exception $e) {
             $this->failedJobHandler($listingItem);
