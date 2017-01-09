@@ -75,6 +75,15 @@ return [
             'host'    => 'mq-aws-us-east-1-2.iron.io',
             'token'   => env('IRON_QUEUE_TOKEN'),
             'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'email-queue',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-general' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'general-queue',
             'encrypt' => true,
             'timeout' => 60
@@ -106,7 +115,6 @@ return [
             'encrypt' => true,
             'timeout' => 60
         ],
-
         'iron-facebook-lister' => [
             'driver'  => 'iron',
             'host'    => 'mq-aws-us-east-1-2.iron.io',
