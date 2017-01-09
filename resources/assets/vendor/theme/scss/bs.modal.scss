@@ -104,3 +104,10 @@
 .noty_buttons {
   border-top: none !important;
 }
+
+.modal-backdrop {
+  &.show {
+    opacity: .5;
+  }
+  background-color: #6f31b7;
+}
