@@ -45,14 +45,8 @@ class ListingsController extends Controller
             return $this->redirect()->to('/');
         }
 
-        $items = $listing->items->sortBy(function($item){
-            return $item->inventoryItem->style->name;
-        });
-
-        $items = $this->paginateData($request, $items);
-
         $categories = Listings::getStyleGroupings($listingUuid);
 
-        return $this->view('listings.show')->with(compact('categories', 'items', 'listing'));
+        return $this->view('listings.show')->with(compact('categories', 'listing'));
     }
 }

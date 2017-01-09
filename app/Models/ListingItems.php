@@ -30,8 +30,9 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     protected $appends = [
         'name',
+        'id_to_string',
         'is_watched',
-        'sale_name',
+//        'sale_name',
     ];
 
     /**
@@ -43,8 +44,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      * @var array
      */
     protected $with = [
-        'sales',
-        'watchers'
+//        'sales',
+//        'watchers'
     ];
 
     /**
@@ -226,6 +227,14 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     public function getSaleNameAttribute()
     {
         return $this->listing->sale_name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdToStringAttribute()
+    {
+        return $this->obfuscateIdToString();
     }
 
     /**

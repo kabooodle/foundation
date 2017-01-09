@@ -1550,7 +1550,17 @@ if (! function_exists('user')) {
      */
     function user()
     {
-        return Auth::user();
+        static $apiAuth;
+
+        if ($auth = Auth::user()) {
+            return $auth;
+        }
+
+        if ($apiAuth = app('Dingo\Api\Auth\Auth')->user()) {
+            return $apiAuth;
+        }
+
+        return $auth;
     }
 }
 

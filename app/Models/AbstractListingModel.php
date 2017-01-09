@@ -219,16 +219,20 @@ abstract class AbstractListingModel extends BaseEloquentModel
      */
     public static function getStyleGroupings(string $listingUuid)
     {
-        return InventoryTypeStyles::with('sizes')
+        return DB::table('inventory_type_styles')
             ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
+            ->join('inventory_sizes', 'inventory_sizes.id', '=', 'inventory.inventory_sizes_id')
             ->join('listing_items', 'listing_items.inventory_id', '=', 'inventory.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listings.uuid', $listingUuid)
-            ->groupBy('inventory_type_styles.id')
+            ->groupBy('inventory_type_styles_id')
+//            ->groupBy('inventory_sizes_id')
             ->select([
-                'inventory_type_styles.id',
-                'inventory_type_styles.name',
-                DB::raw('count(inventory_type_styles.id) as count_per_style')
+                'inventory_type_styles.id as style_id',
+                'inventory_type_styles.name as style_name',
+                'inventory_sizes.name as size_name',
+                DB::raw('count(inventory_type_styles_id) as count_per_style'),
+                DB::raw('count(inventory_sizes_id) as count_per_size')
             ])
             ->get();
     }
