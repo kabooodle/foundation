@@ -102,7 +102,7 @@ class Files extends BaseEloquentModel
     public function getLocationAttribute($value)
     {
         if (useCDN()) {
-            return  env('AWS_CLOUDFRONT_DISTRIBUTION').'/'.$this->key;
+            return  staticAsset($this->key, false);
         }
 
         return $value;
