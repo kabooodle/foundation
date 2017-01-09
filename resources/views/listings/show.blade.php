@@ -17,25 +17,23 @@
 
     <div class="row">
         <div class="col-md-3">
-            <div class="navside white r box-shadow-z0 m-b">
-                <div>
-                    <div class="p-a-sm r">
-                        <v-card
-                                avatar_size="32"
-                                extra_class="no-border b-0 b-b-0"
-                                already_following="{{ $listing->owner->is_following ? 'true' : 'false'}}"
-                                follow_endpoint="{{ apiRoute('user.followers.store', [$listing->owner->id]) }}"
-                                able_type="{{ get_class($listing->owner) }}"
-                                able_id="{{ $listing->owner->id }}"
-                                :user="{{ $listing->owner }}"
-                                message_endpoint="{{ apiRoute('messenger.store') }}"
-                        ></v-card>
-                    </div>
-                </div>
+            <div class="box white m-b-2">
+                <v-card
+                        avatar_size="32"
+                        extra_class="no-border b-0 b-b-0"
+                        already_following="{{ $listing->owner->is_following ? 'true' : 'false'}}"
+                        follow_endpoint="{{ apiRoute('user.followers.store', [$listing->owner->id]) }}"
+                        able_type="{{ get_class($listing->owner) }}"
+                        able_id="{{ $listing->owner->id }}"
+                        :user="{{ $listing->owner }}"
+                        message_endpoint="{{ apiRoute('messenger.store') }}"
+                ></v-card>
+            </div>
 
+            <div class="navside white r box-shadow-z0 m-b">
                 <div class="nav-border b-primary p-b-sm">
                     <ul class="nav">
-                        <li class="nav-header hidden-folded"><span class="text-xs text-muted">Filters</span></li>
+                        <li class="nav-header hidden-folded"><span class="text-xs text-muted">Search Filters</span></li>
                         @foreach($categories as $categoryName => $sizes)
                         <li
                                 data-style-id="{{ $styleId = $sizes->first()->first()->style_id }}"
