@@ -12,13 +12,6 @@ $api->version('v1', function ($api) {
 
     $api->get('files', ['as' =>'api.files.sign', 'uses' => \Kabooodle\Http\Controllers\Api\Files\FilesApiController::class.'@createPresignedData']);
 
-    $api->post('/queues/errors', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@errorQueueHandler');
-    $api->post('/queues/general', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueGeneralHandler');
-    $api->post('/queues/viewtracker', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueViewTrackerHandler');
-    $api->post('/queues/email', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailHandler');
-    $api->post('/queues/fb-scheduler', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueFacebookScheduleHandler');
-    $api->post('/queues/fb-lister', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueFacebookListingHandler');
-
     $api->get('/ping', \Kabooodle\Http\Controllers\Api\GeneralController::class.'@ping');
     $api->get('/version', \Kabooodle\Http\Controllers\Api\GeneralController::class.'@version');
     $api->post('/auth/login', [
@@ -30,6 +23,7 @@ $api->version('v1', function ($api) {
         'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryViewsController::class.'@store'
     ]);
 
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'queues' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'inventory' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'groups' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'listings' . DIRECTORY_SEPARATOR . 'routes.php';

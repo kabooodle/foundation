@@ -40,25 +40,29 @@ class PushQueueController extends AbstractApiController
         return $this->handler($request, 'iron');
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+    public function queueEmailHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-emails');
+    }
+
+
+
+
     public function queueViewTrackerHandler(Request $request)
     {
         return $this->handler($request, 'iron-viewtracker');
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function queueEmailHandler(Request $request)
+    public function queueViewTrackerBHandler(Request $request)
     {
-        return $this->handler($request, 'iron-emails');
+        return $this->handler($request, 'iron-viewtracker-b');
     }
+
+
+
+
+    
 
     /**
      * @param Request $request
@@ -69,6 +73,22 @@ class PushQueueController extends AbstractApiController
     {
         return $this->handler($request, 'iron-facebook-scheduler');
     }
+    public function queueFacebookScheduleBHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-scheduler-b');
+    }
+    public function queueFacebookScheduleCHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-scheduler-c');
+    }
+    public function queueFacebookScheduleDHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-scheduler-d');
+    }
+    public function queueFacebookScheduleEHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-scheduler-e');
+    }
 
     /**
      * @param Request $request
@@ -78,6 +98,42 @@ class PushQueueController extends AbstractApiController
     public function queueFacebookListingHandler(Request $request)
     {
       return $this->handler($request, 'iron-facebook-lister');
+    }
+    public function queueFacebookListingBHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-lister-b');
+    }
+    public function queueFacebookListingCHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-lister-c');
+    }
+    public function queueFacebookListingDHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-lister-d');
+    }
+    public function queueFacebookListingEHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-lister-e');
+    }
+    public function queueFacebookListingFHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-lister-f');
+    }
+    public function queueFacebookListingGHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-lister-g');
+    }
+    public function queueFacebookListingHHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-lister-h');
+    }
+    public function queueFacebookListingIHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-lister-i');
+    }
+    public function queueFacebookListingJHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-lister-j');
     }
 
     /**

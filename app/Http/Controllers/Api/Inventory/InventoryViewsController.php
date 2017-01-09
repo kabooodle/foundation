@@ -9,6 +9,7 @@ namespace Kabooodle\Http\Controllers\Api\Inventory;
 use Binput;
 use Exception;
 use Illuminate\Http\Request;
+use Kabooodle\Libraries\QueueHelper;
 use Kabooodle\Models\Traits\ShoppableTrait;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Inventory\TrackInventoryViewCommand;
@@ -36,7 +37,7 @@ class InventoryViewsController extends AbstractApiController
             $user = $this->getUser();
 
             $job = new TrackInventoryViewCommand($user, $resource, $ip);
-            $job->onConnection('iron-viewtracker')
+            $job->onConnection(QueueHelper::pickViewTracker())
                 ->delay(60);
 
             $this->dispatch($job);
