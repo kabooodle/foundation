@@ -19,6 +19,11 @@
   }
 }
 
+.open >.dropdown-menu,
+.show >.dropdown-menu{
+  display: block !important;
+}
+
 .dropdown-toggle.no-caret::after {
   display: none;
   width: 0;
