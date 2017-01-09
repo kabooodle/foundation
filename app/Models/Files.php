@@ -93,4 +93,18 @@ class Files extends BaseEloquentModel
     {
         return $this->location;
     }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    public function getLocationAttribute($value)
+    {
+        if (useCDN()) {
+            return  env('AWS_CLOUDFRONT_DISTRIBUTION').'/'.$this->key;
+        }
+
+        return $value;
+    }
 }

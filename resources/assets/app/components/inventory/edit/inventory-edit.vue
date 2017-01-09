@@ -105,7 +105,7 @@
                             btn-class-size=""
                             :user_hash="item.user.public_hash"
                             :s3_key_url="api_route"
-                            multiple="false"></image-attach>
+                            multiple="true"></image-attach>
                 </span>
                 <button type="submit" class="btn primary"     @click="validateForm(item, $event)">Save</button>
             </div>

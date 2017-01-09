@@ -149,6 +149,18 @@ if (! function_exists('dispatchNow')) {
     }
 }
 
+if (!function_exists('useCDN')) {
+    /**
+     * @return bool
+     */
+    function useCDN()
+    {
+        $url = env('AWS_CLOUDFRONT_DISTRIBUTION', false);
+
+        return $url && env('AWS_USE_CLOUDFRONT', false);
+    }
+}
+
 if (!function_exists('staticAsset')) {
     /**
      * @param      $path
