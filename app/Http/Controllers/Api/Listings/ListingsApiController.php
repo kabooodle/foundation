@@ -59,6 +59,12 @@ class ListingsApiController extends AbstractApiController
                 });
             }
 
+            if ($size_query ) {
+                $items = $items->filter(function($item) use ($size_query){
+                    return in_array($item->inventoryItem->inventory_sizes_id, $size_query);
+                });
+            }
+
             $items = $items->sortBy(function($item){
                 return $item->inventoryItem->style->name;
             })->values();

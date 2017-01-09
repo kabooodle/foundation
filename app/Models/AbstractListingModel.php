@@ -225,14 +225,14 @@ abstract class AbstractListingModel extends BaseEloquentModel
             ->join('listing_items', 'listing_items.inventory_id', '=', 'inventory.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listings.uuid', $listingUuid)
+            ->groupBy('inventory.id')
             ->groupBy('inventory_type_styles_id')
-//            ->groupBy('inventory_sizes_id')
+            ->groupBy('inventory_sizes_id')
             ->select([
+                'inventory_sizes.id as size_id',
                 'inventory_type_styles.id as style_id',
                 'inventory_type_styles.name as style_name',
-                'inventory_sizes.name as size_name',
-                DB::raw('count(inventory_type_styles_id) as count_per_style'),
-                DB::raw('count(inventory_sizes_id) as count_per_size')
+                'inventory_sizes.name as size_name'
             ])
             ->get();
     }

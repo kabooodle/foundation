@@ -43,12 +43,14 @@ new Vue({
 
             if ($el.hasClass('active')) {
                 $el.removeClass('active');
+                $el.find('.nav-text').find('i.selected-icon').remove();
                 let index = this.sizes.indexOf(sizeId);
                 if (index >= 0) {
                     this.sizes.splice(index, 1);
                 }
             } else {
                 $el.addClass('active');
+                $el.find('.nav-text').html($el.find('.nav-text').html()+' <i class="fa selected-icon fa-check-circle" aria-hidden="true"></i>');
                 this.sizes.push(sizeId);
             }
         },

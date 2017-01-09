@@ -42,7 +42,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     protected $appends = [
         'name_with_variant',
-        'name_uuid'
+        'name_uuid',
+        'available_quantity'
     ];
 
     /**
@@ -402,6 +403,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getAvailableQuantity()
     {
         return $this->initial_qty - $this->getOnHoldQuantity();
+    }
+
+    /**
+     * @return int
+     */
+    public function getAvailableQuantityAttribute()
+    {
+        return $this->getAvailableQuantity();
     }
 
     /**

@@ -37,7 +37,7 @@
                             </div>
                         </div>
                         <div class="pull-right" style="text-align: right">
-                            <span class="text-muted ">Qty:</span> <span class="">{{ inventory_item.getAvailableQuantity }}</span>
+                            <span class="text-muted ">Qty:</span> <span class="">{{ inventory_item.available_quantity }}</span>
                         </div>
                     </div>
                 </div>

@@ -45,7 +45,11 @@ class ListingsController extends Controller
             return $this->redirect()->to('/');
         }
 
-        $categories = Listings::getStyleGroupings($listingUuid);
+        $rawCategories = collect(Listings::getStyleGroupings($listingUuid));
+
+        $categories = $rawCategories->groupBy('style_name')->transform(function($item, $k){
+            return $item->groupBy('size_name');
+        });
 
         return $this->view('listings.show')->with(compact('categories', 'listing'));
     }

@@ -33,22 +33,28 @@
                     </div>
                 </div>
 
-                <div class="nav-stacked p-b-sm">
+                <div class="nav-border b-primary p-b-sm">
                     <ul class="nav">
                         <li class="nav-header hidden-folded"><span class="text-xs text-muted">Filters</span></li>
-                        @foreach($categories as $category)
+                        @foreach($categories as $categoryName => $sizes)
                         <li
-                                class="b-b style-list-item" data-size-id="{{ $category->style_id }}">
-                            <a  @click="toggleStyleListItem({{ $category->style_id }}, $event)">
+                                data-style-id="{{ $styleId = $sizes->first()->first()->style_id }}"
+                                class="b-b style-list-item">
+                            <a  @click="toggleStyleListItem({{ $styleId }}, $event)">
                                 <span class="nav-caret text-muted text-xs"><i class="fa fa-caret-down"></i></span>
-                                <i class="nav-label"><b class="label label-sm no-bg ">{{ $category->count_per_style }}</b></i>
-                                <span class="nav-text">{{ $category->style_name }}</span>
+                                <i class="nav-label"><b class="label b label-sm no-bg text-muted ">{{ $sizes->flatten()->count() }}</b></i>
+                                <span class="nav-text">{{ $categoryName }}</span>
                             </a>
                             <ul class="nav-sub">
-                                <li class="size-list-item">
-                                    <i class="nav-label"><b class="label label-sm no-bg ">{{ $category->count_per_style }}</b></i>
-                                    <a @click="toggleSizeListItem(1, {{ $category->style_id }}, $event)" ><span class="nav-text">Size</span></a>
+                                @foreach($sizes as $sizeName => $size)
+                                <li class="size-list-item"
+                                    data-style-id="{{ $styleId }}"
+                                    data-size-id="{{ $size->first()->size_id }}"
+                                >
+                                    <i class="nav-label m-r-1 m-l-0 "><b class="label label-sm no-bg text-muted ">{{ $size->flatten()->count() }}</b></i>
+                                    <a @click="toggleSizeListItem({{ $size->first()->size_id }}, {{ $styleId }}, $event)" ><span class="nav-text">{{ $sizeName }}</span></a>
                                 </li>
+                                @endforeach
                             </ul>
                         </li>
                         @endforeach
