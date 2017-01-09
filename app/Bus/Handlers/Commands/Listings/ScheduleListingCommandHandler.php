@@ -93,7 +93,7 @@ class ScheduleListingCommandHandler
                 $totalSavedListings[] = $flashsaleInventoryItems;
             }
 
-            event(new ListingScheduledEvent($actor, $listing));
+            event(new ListingScheduledEvent($actor->id, $listing->id));
 
             return $listing;
         });

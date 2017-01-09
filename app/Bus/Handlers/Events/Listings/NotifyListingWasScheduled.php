@@ -28,8 +28,11 @@ final class NotifyListingWasScheduled implements ShouldQueue
      */
     public function handle(ListingScheduledEvent $event)
     {
-        $recipient = $event->getActor();
-        $listing = $event->getListing();
+        $recipientId = $event->getActorId();
+        $listingId = $event->getListingId();
+
+        $listing = Listings::noEagerLoads()->findOrFail($listingId);
+        $recipient = User::noEagerLoads()->findOrFail($recipientId);
 
         try {
             if ($recipient->primaryEmail && $recipient->primaryEmail->isVerified()) {
@@ -46,15 +49,16 @@ final class NotifyListingWasScheduled implements ShouldQueue
      */
     public function toEmail(User $actor, Listings $listing)
     {
+        $emailAddress = $actor->primaryEmail->address;
         $email = new KitEmail;
         $email->setView('listings.emails.newlisting')
-            ->setCallable(function($m) use ($actor, $listing) {
-                $m->to($actor->primaryEmail->address)
-                    ->subject('You scheduled a new listing');
+            ->setCallable(function($m) use ($emailAddress, $listing) {
+                $m->to($emailAddress)
+                    ->subject('You scheduled a new listing with '.$listing->items->count().' items');
             })
             ->setParameters([
                 'listing' => $listing,
-                'actor' => $actor
+                'timezone' => $actor->timezone
             ])
             ->send();
     }
