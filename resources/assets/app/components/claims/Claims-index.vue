@@ -25,7 +25,7 @@
                 <small v-if="claim.claimer.guest" class="text-muted">Guest</small>
             </td>
             <td >
-                <timeago :timestamp="claim.created_at.date"></timeago>
+                <timeago :timestamp="claim.created_at"></timeago>
             </td>
             <td>
                 <span v-if="claim.verified">

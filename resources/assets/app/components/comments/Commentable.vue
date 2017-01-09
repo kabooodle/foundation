@@ -25,7 +25,7 @@
                                     <div v-html="comment.text"></div>
                                     <div class="sl-footer sl-date clearfix">
                                         <ul class="text-muted list-inline pull-left">
-                                            <li class="list-inline-item"><timestamp :timestamp="comment.created_at.date">{{ comment.created_at.date }}</timeago></li>
+                                            <li class="list-inline-item"><timestamp :timestamp="comment.created_at">{{ comment.created_at }}</timeago></li>
                                             <li class="list-inline-item" v-if="userCanDelete(comment)"><button type="button" class="white btn btn-text btn-xs" @click="deleteComment(comment, $event)">Delete</button></li>
                                         </ul>
                                     </div>

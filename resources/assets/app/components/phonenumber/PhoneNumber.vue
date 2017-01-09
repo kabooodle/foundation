@@ -45,7 +45,6 @@
 </template>
 <script>
     import Spinny from '../Spinner.vue';
-    import Timestamp from '../Timestamp.vue';
     export default{
         props: {
             fetch_endpoint: {
@@ -123,8 +122,7 @@
             },
         },
         components:{
-            'spinny' : Spinny,
-            'timestamp' : Timestamp
+            'spinny' : Spinny
         }
     }
 </script>

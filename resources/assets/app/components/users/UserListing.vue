@@ -22,7 +22,6 @@
     </div>
 </template>
 <script>
-    import Timestamp from '../Timestamp.vue';
     export default{
         props: {
             listing: {
@@ -53,8 +52,5 @@
                 return scheduled_end ? moment(scheduled).format(this.date_format)+' - '+moment(scheduled_end).format(this.date_format) : moment(scheduled).format(this.date_format);
             }
         },
-        components: {
-            'timestamp' : Timestamp
-        }
     }
 </script>

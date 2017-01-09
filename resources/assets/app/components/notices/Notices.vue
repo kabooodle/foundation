@@ -11,7 +11,7 @@
                         :is_read="notice.is_read"
                         :priority="notice.priority"
                         :title="notice.title"
-                        :created_at="notice.created_at.date"
+                        :created_at="notice.created_at"
                         :model="notice"
                         :ref_url="notice.reference_url"
                 ></notice>

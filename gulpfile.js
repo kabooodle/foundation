@@ -35,6 +35,7 @@ elixir(function (mix) {
 
     mix.browserify('app/components/notices/notice-handler.js');
 
+    mix.browserify('app/components/purchases/purchases-index.js');
     mix.browserify('app/components/purchases/watching-items.js');
 
     mix.browserify('app/components/register/register.js');

@@ -1,4 +1,4 @@
-@extends('layouts.full')
+@extends('layouts.full', ['contentId' => 'purchases_page'])
 
 @section('body-content')
 
@@ -119,3 +119,8 @@
     ])
 
 @endsection
+
+
+@push('footer-scripts')
+<script src="{{ staticAsset('/assets/js/purchases-index.js') }}"></script>
+@endpush

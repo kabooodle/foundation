@@ -11,7 +11,7 @@
                 <div class="list-body">
                     <div class="pull-right text-muted">
                         <div class="text-sm text-right">{{ thread.participants_names_excluding_creator}}</div>
-                        <div class="text-right text-muted text-sm"><timestamp :timestamp="most_recent_message.created_at.date"></timestamp></div>
+                        <div class="text-right text-muted text-sm"><timestamp :timestamp="most_recent_message.created_at"></timestamp></div>
                     </div>
                     <a :href="endpoint" class="_500 block">{{ thread.subject }}</a>
                     <div class="text-ellipsis text-muted text-sm p-r-3">

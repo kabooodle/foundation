@@ -4,7 +4,7 @@
             <label class="col-sm-3 form-control-label">Added</label>
             <div class="col-sm-6">
                 <p style="margin-top: 6px;" class="m-b-0">
-                    <timestamp :timestamp="item.created_at.date"></timestamp>
+                    <timestamp :timestamp="item.created_at"></timestamp>
                 </p>
             </div>
         </div>
