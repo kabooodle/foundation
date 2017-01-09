@@ -79,6 +79,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'fb_group_node_id' => null,
         'flashsale_id' => null,
         'fb_album_node_id' => null,
+        'fb_response_object_id' => null,
+        'fb_response' => '',
         'owner_id' => 0,
         'inventory_id' => 0,
         'type' => self::TYPE_FACEBOOK,
@@ -95,7 +97,9 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'listing_id',
         'fb_group_node_id',
         'flashsale_id',
+        'fb_response_object_id',
         'fb_album_node_id',
+        'fb_response',
         'owner_id',
         'inventory_id',
         'type',
@@ -104,6 +108,24 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status_history',
         'ignore'
     ];
+
+    /**
+     * @param $value
+     *
+     * @return array
+     */
+    public function getFbResponseAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    /**
+     * @param $value
+     */
+    public function setFResponseAttribute($value)
+    {
+        $this->attributes['fb_response'] = json_encode($value);
+    }
 
     /**
      * @return mixed

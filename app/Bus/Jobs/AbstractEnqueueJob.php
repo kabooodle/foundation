@@ -34,14 +34,16 @@ abstract class AbstractEnqueueJob extends Job
     }
 
     /**
-     * @param array $listingIds
+     * @param array  $listingIds
      * @param Carbon $timestamp
      * @param string $status
+     * @param array  $attributes
+     *
      * @return bool|int
      */
-    public function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
+    public function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST, array $attributes = [])
     {
-        return ListingItems::updateListingItemsStatus($listingIds, $timestamp, $status);
+        return ListingItems::updateListingItemsStatus($listingIds, $timestamp, $status, $attributes);
     }
 
     /**

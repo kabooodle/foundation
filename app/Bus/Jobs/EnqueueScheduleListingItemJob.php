@@ -86,7 +86,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
 
             $facebookParams = $this->buildFacebookAlbumParams($listingItem);
 
-            $facebook->postPhotoToGroupAlbum(
+            $response = $facebook->postPhotoToGroupAlbum(
                 $listingItem->fb_album_node_id,
                 $facebookParams,
                 $listingItem->owner->getFacebookUserToken()
@@ -94,7 +94,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
 
 //            event(new ListingItemWasListed);
 
-            $this->successfulJobHandler($listingItem);
+            $this->successfulJobHandler($listingItem, ['fb_response' => $response->asArray()]);
 
             $this->job->delete();
 
@@ -127,12 +127,13 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     }
 
     /**
-     * @param $listingItem
+     * @param       $listingItem
+     * @param array $attributes
      */
-    public function successfulJobHandler($listingItem)
+    public function successfulJobHandler($listingItem, array $attributes = [])
     {
         // Update the status to the appropriate status based on the result.
-        $this->updateListingItemsStatus([$listingItem->id], $this->timestamp, ListingItems::STATUS_SUCCESS);
+        $this->updateListingItemsStatus([$listingItem->id], $this->timestamp, ListingItems::STATUS_SUCCESS, $attributes);
 
         // Update the associated queue in the DB
         $this->updateQueueStatus($this->queuesId, $this->timestamp, Queues::STATUS_SUCCESS, $this->job->attempts());
