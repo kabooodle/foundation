@@ -50,7 +50,7 @@ final class NotifyListingWasScheduled implements ShouldQueue
         $email->setView('listings.emails.newlisting')
             ->setCallable(function($m) use ($actor, $listing) {
                 $m->to($actor->primaryEmail->address)
-                    ->subject('You scheduled a new listing with '.$listing->items->count().' items');
+                    ->subject('You scheduled a new listing');
             })
             ->setParameters([
                 'listing' => $listing,
