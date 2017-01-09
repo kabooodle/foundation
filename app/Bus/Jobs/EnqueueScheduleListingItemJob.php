@@ -158,7 +158,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
         }
 
         return [
-            'url' => $image->getURL(),
+            'url' => $image->getOriginal('location'),
             'message' => $photoMessage
         ];
     }
@@ -186,7 +186,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
      */
     public function getListingImage(ListingItems $listingItem)
     {
-        return $listingItem->inventoryItem->firstImage()->getOriginal('location');
+        return $listingItem->inventoryItem->firstImage();
     }
 
     /**
