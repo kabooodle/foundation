@@ -35,7 +35,8 @@ class InventoryViewsController extends AbstractApiController
             $ip = $request->getClientIp();
             $user = $this->getUser();
 
-            $job = with(new TrackInventoryViewCommand($user, $resource, $ip))
+            $job = new TrackInventoryViewCommand($user, $resource, $ip);
+            $job->onConnection('iron-viewtracker')
                 ->delay(60);
 
             $this->dispatch($job);

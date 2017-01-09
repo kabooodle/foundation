@@ -133,7 +133,7 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
     {
         // Create our job class.
         $job = new EnqueueScheduleListingItemJob($item);
-        $job->onConnection($this->queueConnectionGroupName);
+        $job->onConnection('iron-facebook-lister');
 
         // Store details about the job in the DB for our own personal records.
         $localQueueDb = $this->createQueueStatus($this->queueConnectionGroupName, $this->queueConnectionGroupName, Queues::STATUS_QUEUED, serialize($job));

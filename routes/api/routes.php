@@ -13,6 +13,8 @@ $api->version('v1', function ($api) {
     $api->get('files', ['as' =>'api.files.sign', 'uses' => \Kabooodle\Http\Controllers\Api\Files\FilesApiController::class.'@createPresignedData']);
 
     $api->post('/queues/errors', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@errorQueueHandler');
+    $api->post('/queues/general', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueGeneralHandler');
+    $api->post('/queues/viewtracker', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueViewTrackerHandler');
     $api->post('/queues/email', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailHandler');
     $api->post('/queues/fb-scheduler', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueFacebookScheduleHandler');
     $api->post('/queues/fb-lister', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueFacebookListingHandler');

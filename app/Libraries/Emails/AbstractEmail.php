@@ -44,7 +44,7 @@ abstract class AbstractEmail
     /**
      * @var string
      */
-    protected $queueConnection;
+    protected $queueConnection = 'iron-emails';
 
     /**
      * AbstractEmail constructor.

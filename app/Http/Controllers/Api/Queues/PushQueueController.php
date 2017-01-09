@@ -35,9 +35,29 @@ class PushQueueController extends AbstractApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function queueEmailHandler(Request $request)
+    public function queueGeneralHandler(Request $request)
     {
         return $this->handler($request, 'iron');
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function queueViewTrackerHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-viewtracker');
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function queueEmailHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-emails');
     }
 
     /**
