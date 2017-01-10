@@ -43,5 +43,5 @@
 
 @push('footer-scripts')
 
-<script src="/assets/js/watching-items.js"></script>
+<script src="{{ staticAsset('/assets/js/watching-items.js') }}"></script>
 @endpush

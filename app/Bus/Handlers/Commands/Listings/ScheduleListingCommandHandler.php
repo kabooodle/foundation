@@ -237,12 +237,14 @@ class ScheduleListingCommandHandler
                     $listingItem->status = $listing->status;
                     $listingItem->status_updated_at = $this->now;
 
+                    // Disabled for now -- JT January 9, 2017
+                    // There really is no way to know if its a duplicate at this time.
                     // Flag duplicates as ignored listings.
                     // We do not actually "skip" them because we want to provide full transparency to the user.
-                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $inventoryItem['id'])) {
-                        $listingItem->ignore = true;
-                        $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
-                    }
+//                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $inventoryItem['id'])) {
+//                        $listingItem->ignore = true;
+//                        $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
+//                    }
 
                     $listedItems[] = $listingItem;
                 }

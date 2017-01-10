@@ -38,7 +38,7 @@
 @endsection
 
 @push('footer-scripts')
-<script src="/assets/js/flashsale-create.js"></script>
+<script src="{{ staticAsset('/assets/js/flashsale-create.js') }}"></script>
 <script>
     $(function(){
 

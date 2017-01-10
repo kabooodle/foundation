@@ -215,3 +215,11 @@
 .dropdown.open.prpl-hover .dropdown-menu {
 
 }
+
+.bg-danger-hover:hover {
+  background: $danger;
+}
+
+.text-white-hover:hover {
+  color: #fff !important;
+}

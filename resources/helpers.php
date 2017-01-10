@@ -44,6 +44,10 @@ if (! function_exists('humanizeDateTime')) {
     {
         if (! $value instanceof Carbon) {
             $value = Carbon::createFromTimestamp(strtotime($value));
+
+            if (user()){
+                $value = $value->setTimezone(user()->timezone);
+            }
         }
 
         return $value->format('M j, Y h:ia');
@@ -60,6 +64,10 @@ if (! function_exists('humanizeDate')) {
     {
         if (! $value instanceof Carbon) {
             $value = Carbon::createFromTimestamp(strtotime($value));
+
+            if (user()){
+                $value = $value->setTimezone(user()->timezone);
+            }
         }
 
         return $value->format('M j, Y');
