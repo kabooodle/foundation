@@ -200,18 +200,24 @@ abstract class AbstractListingModel extends BaseEloquentModel
      * @param array  $listingIds
      * @param Carbon $timestamp
      * @param string $status
-     * @param array  $attributes
+     * @param array  $additionalAttributes
      *
      * @return mixed
      */
-    public static function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST, array $attributes = [])
+    public static function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST, array $additionalAttributes = [])
     {
+        $attributes = [
+            'status' => $status,
+            'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
+        ];
+
+        if ($additionalAttributes && count($additionalAttributes) > 0) {
+            $attributes = array_merge($attributes, $additionalAttributes);
+        }
+
         return ListingItems::whereIn('id', $listingIds)
             ->noEagerLoads()
-            ->update([
-                'status' => $status,
-                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
-            ] + $attributes);
+            ->update($attributes);
     }
 
     /**
