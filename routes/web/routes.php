@@ -47,6 +47,7 @@ Route::get('c/{hash}', [
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'analytics' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'listings' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'watching' . DIRECTORY_SEPARATOR . 'routes.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'follow' . DIRECTORY_SEPARATOR . 'routes.php';
 
     Route::get('/referrals', [
         'as' => 'referrals.index',
@@ -56,5 +57,10 @@ Route::get('c/{hash}', [
     Route::get('/invite/{userName}', [
         'as' => 'invite.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@invite'
+    ]);
+
+    Route::get('/users/{userName}', [
+        'as' => 'profile.home',
+        'uses' => \Kabooodle\Http\Controllers\Web\Users\UsersController::class.'@userProfile'
     ]);
 //});

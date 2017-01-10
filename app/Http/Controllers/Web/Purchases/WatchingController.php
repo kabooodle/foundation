@@ -11,8 +11,8 @@ use Kabooodle\Models\Watches;
 use Kabooodle\Http\Controllers\Web\Controller;
 
 /**
- * Class ReferralsController
- * @package Kabooodle\Http\Controllers\Web\Referrals
+ * Class WatchingController
+ * @package Kabooodle\Http\Controllers\Web\Follow
  */
 class WatchingController extends Controller
 {

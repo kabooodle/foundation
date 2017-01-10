@@ -159,8 +159,8 @@
                     </div>
                     <div class="p-a-md text-center">
                         <p><img src="https://unsplash.it/90/90/?random" class="img-circle w-xs"></p>
-                        <a href class="text-md block">{{ auth()->user()->full_name }}</a>
-                        <p><small>{{ auth()->user()->email }}</small></p>
+                        <a href class="text-md block">{{ $user->full_name }}</a>
+                        <p><small>{{ $user->email }}</small></p>
                         <div>
                             <a href="" class="btn btn-icon btn-social rounded white btn-sm">
                                 <i class="fa fa-facebook"></i>
@@ -176,24 +176,26 @@
                             </a>
                         </div>
                         <div class="text-center m-t">
+                            <div id="profilePage">
                             <followable
-                                    endpoint="{{ apiRoute('user.followers.store', [user()->id]) }}"
+                                    endpoint="{{ apiRoute('user.followers.store', [$user->id]) }}"
                                     followable_entity_name="user"
                                     followable_type="user"
-                                    followable_id="{{ user()->id}}">
+                                    followable_id="{{ $user->id }}">
                             </followable>
+                            </div>
                         </div>
                     </div>
                     <div class="row no-gutter b-t b-b">
                         <div class="col-xs-6 b-r">
-                            <a class="p-a block text-center">
-                                <span class="block _600">{{ user()->followers->count() }}</span>
+                            <a href="{{ route('follow.followers', [$user->username]) }}" class="p-a block text-center">
+                                <span class="block _600">{{ $user->followers->count() }}</span>
                                 <span>Followers</span>
                             </a>
                         </div>
                         <div class="col-xs-6">
-                            <a class="p-a block text-center">
-                                <span class="block _600">{{ user()->following->count() }}</span>
+                            <a href="{{ route('follow.following', [$user->username]) }}" class="p-a block text-center">
+                                <span class="block _600">{{ $user->followers->count() }}</span>
                                 <span>Following</span>
                             </a>
                         </div>
@@ -280,3 +282,7 @@
     </div>
 
 @endsection
+
+@push('footer-scripts')
+<script src="/assets/js/profile.js"></script>
+@endpush

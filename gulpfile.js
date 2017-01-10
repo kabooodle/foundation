@@ -37,6 +37,8 @@ elixir(function (mix) {
 
     mix.browserify('app/components/sign-in/sign-in.js');
 
+    mix.browserify('app/components/profile/profile.js');
+
 
 
     // Vendor File
