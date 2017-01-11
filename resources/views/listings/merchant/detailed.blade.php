@@ -54,7 +54,7 @@
                     <td>{{ $item->watchers->count() }}</td>
                     <td>${{ $item->sales->sum('price') }}</td>
                     <td>{!! $item->present()->getStatus()  !!}</td>
-                    <td><a class="btn btn-xs white" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">View Item Listing</td>
+                    <td><a class="btn btn-xs white" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">View item listing</td>
                 </tr>
                 @endforeach
                 </tbody>

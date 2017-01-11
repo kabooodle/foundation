@@ -53,7 +53,7 @@ class NotifyClaimWasAccepted implements ShouldQueue
      */
     public function toDatabase(Claims $claim, User $claimedBy)
     {
-        $title = 'Your claim on '.$claim->inventoryItem->getNameAndSize().' - $'.$claim->price.', was accepted by '. $claim->inventoryItem->owner->full_name;
+        $title = 'Your claim on '.$claim->inventoryItem->getNameAndSize().' - $'.$claim->price.', was accepted by '. $claim->inventoryItem->owner->username;
 
         $notification = new NotificationNotices;
         $notification->user_id = $claimedBy->id;

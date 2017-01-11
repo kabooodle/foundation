@@ -111,3 +111,11 @@
   }
   background-color: #501f88;
 }
+
+.modal.ekko-lightbox {
+  padding: 5px !important;
+  .modal-dialog {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

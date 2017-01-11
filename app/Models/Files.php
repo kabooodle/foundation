@@ -101,10 +101,6 @@ class Files extends BaseEloquentModel
      */
     public function getLocationAttribute($value)
     {
-        if (useCDN()) {
-            return  staticAsset($this->key, false);
-        }
-
-        return $value;
+        return useCDN() ? staticAsset($this->key, false) : $value;
     }
 }

@@ -59,7 +59,7 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
      */
     public function toDatabase(Claims $claim, User $claimedBy)
     {
-        $title = 'Your claim on '.$claim->inventoryItem->getNameAndSize().' was rejected by '. $claim->rejector->full_name;
+        $title = 'Your claim on '.$claim->inventoryItem->getNameAndSize().' was rejected by '. $claim->rejector->username;
 
         $notification = new NotificationNotices;
         $notification->user_id = $claimedBy->id;

@@ -21,7 +21,7 @@
             </td>
             <td >${{ claim.price }}</td>
             <td >
-                {{ claim.claimer.full_name }}
+                {{ claim.claimer.username }}
                 <small v-if="claim.claimer.guest" class="text-muted">Guest</small>
             </td>
             <td >

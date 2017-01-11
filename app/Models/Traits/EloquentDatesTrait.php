@@ -61,13 +61,27 @@ trait EloquentDatesTrait
      */
     public function getAttributeValue($key)
     {
-        $value = $this->getAttributeFromArray($key);
-
-        if (in_array($key, $this->getDates()) && ! is_null($value) && (!isset($value->tzName) || $value->tzName <> 'UTC')) {
-            return static::formatDateAttribute(parent::asDateTime($value));
-        }
+//        Disabled by JT Jan 10, 2017, dont think we need this now.
+//        $value = $this->getAttributeFromArray($key);
+//
+//        if (in_array($key, $this->getDates()) && ! is_null($value)) {
+//            return static::formatDateAttribute(parent::asDateTime($value));
+//        }
 
         return parent::getAttributeValue($key);
+    }
+
+    /**
+     * Return a timestamp as DateTime object.
+     *
+     * @param  mixed  $value
+     * @return \Carbon\Carbon
+     */
+    protected function asDateTime($value)
+    {
+        $value = parent::asDateTime($value);
+
+        return $value->setTimezone(current_timezone());
     }
 
     /**

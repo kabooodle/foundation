@@ -286,7 +286,7 @@ class User extends BaseEloquentModel implements
             $value = '/assets/images/logo/roboto-avatar.png';
         }
 
-        return $value;
+        return useCDN() ? staticAsset($value) : $value;
     }
 
     /**

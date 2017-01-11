@@ -16,16 +16,18 @@
                                  :data-author-id="comment.author.public_hash"
                                  :data-author="comment.author.name">
                                 <div class="sl-left">
-                                    <img src="https://unsplash.it/32/32/?random" class="img-circle">
+                                    <span class="avatar_container _32 inline avatar-thumbnail">
+                                        <img :src="comment.author.avatar ? comment.author.avatar : '/assets/images/logo/roboto-avatar.png'">
+                                    </span>
                                 </div>
                                 <div class="sl-content">
                                     <div class="sl-author">
-                                        <a href="#" class="_600">{{ comment.author.name }}</a>
+                                        <a href="#" class="_600">{{ comment.author.username }} <span v-if="modelobject.owner.id == comment.author.id" style="font-weight: normal;" class="text-xs text-muted">(owner)</span></a>
                                     </div>
                                     <div v-html="comment.text"></div>
                                     <div class="sl-footer sl-date clearfix">
                                         <ul class="text-muted list-inline pull-left">
-                                            <li class="list-inline-item"><timestamp :timestamp="comment.created_at">{{ comment.created_at }}</timeago></li>
+                                            <li class="list-inline-item"><timestamp :timestamp="comment.created_at">{{ comment.created_at }}</timestamp></li>
                                             <li class="list-inline-item" v-if="userCanDelete(comment)"><button type="button" class="white btn btn-text btn-xs" @click="deleteComment(comment, $event)">Delete</button></li>
                                         </ul>
                                     </div>

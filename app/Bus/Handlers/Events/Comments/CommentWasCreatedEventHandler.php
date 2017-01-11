@@ -74,7 +74,7 @@ class CommentWasCreatedEventHandler implements ShouldQueue
      */
     public function toDatabase($commentableOwner, Comments $comment, CommentableInterface $commentable)
     {
-        $title = $comment->author->full_name.' commented on '.$commentable->getName();
+        $title = $comment->author->username.' commented on '.$commentable->getName();
 
         $notification = new NotificationNotices;
         $notification->user_id = $commentableOwner->id;

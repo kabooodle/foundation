@@ -156,7 +156,7 @@ class ItemWasClaimedEventHandler
      */
     public function toDatabase(User $user, Claims $claim, Inventory $inventoryItem)
     {
-        $title = $inventoryItem->getNameAndSize().' was claimed by '. $claim->claimedBy->full_name;
+        $title = $inventoryItem->getNameAndSize().' was claimed by '. $claim->claimedBy->username;
 
         $notification = new NotificationNotices;
         $notification->user_id = $user->id;
