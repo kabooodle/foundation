@@ -13,7 +13,7 @@ require('../../../resources/assets/vendor/jquery/noty/packaged/jquery.noty.packa
 global.Clipboard = require('clipboard');
 require('ekko-lightbox');
 // require('selectize'); // Removed
-// require('select2'); // Removed
+require('select2');
 require('emojione');
 require('emojionearea');
 require('bootstrap-touchspin');

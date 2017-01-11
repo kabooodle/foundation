@@ -17,22 +17,22 @@ final class FacebookListingOptions
     public $endsAt;
     public $claimingStartsAt;
     public $claimingEndsAt;
-    public $includeLink;
+    public $itemMessage;
 
     /**
      * @param string|null $startsAt
      * @param string|null $endsAt
      * @param string|null $claimingStartsAt
      * @param string|null $claimingEndsAt
-     * @param bool        $includeLink
+     * @param string|null $itemMessage
      */
-    public function __construct(string $startsAt = null, string $endsAt = null, string $claimingStartsAt = null, string $claimingEndsAt = null, bool $includeLink = true)
+    public function __construct(string $startsAt = null, string $endsAt = null, string $claimingStartsAt = null, string $claimingEndsAt = null, string $itemMessage = null)
     {
         $this->setStartsAt($startsAt);
         $this->setEndsAt($endsAt);
         $this->setClaimingStartsAt($claimingStartsAt);
         $this->setClaimingEndsAt($claimingEndsAt);
-        $this->setIncludeLink($includeLink);
+        $this->setItemMessage($itemMessage);
     }
 
     /**
@@ -76,11 +76,11 @@ final class FacebookListingOptions
     }
 
     /**
-     * @param boolean $includeLink
+     * @param string|null $itemMessage
      */
-    public function setIncludeLink(bool $includeLink)
+    public function setItemMessage(string $itemMessage = null)
     {
-        $this->includeLink = $includeLink;
+        $this->itemMessage = $itemMessage;
     }
 
     /**
@@ -116,10 +116,10 @@ final class FacebookListingOptions
     }
 
     /**
-     * @return boolean
+     * @return string|null
      */
-    public function getIncludeLink(): bool
+    public function getItemMessage()
     {
-        return $this->includeLink;
+        return $this->itemMessage;
     }
 }

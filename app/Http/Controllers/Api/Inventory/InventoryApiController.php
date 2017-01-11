@@ -141,7 +141,7 @@ class InventoryApiController extends AbstractApiController
         // Date range you can claim.
         $claimableAt = array_get($options, 'available_at', null);
         $claimableUntil = array_get($options, 'available_until', null);
-        $includeText = (bool) array_get($options, 'include_text', false);
+        $itemMessage = array_get($options, 'item_message', false);
 
         try {
             // You must have either a flashsaleid or facebookalbum
@@ -157,7 +157,7 @@ class InventoryApiController extends AbstractApiController
                 throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
             }
 
-            $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $includeText === true);
+            $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $itemMessage);
 
             $command = new ScheduleListingCommand(
                 $this->getUser(),

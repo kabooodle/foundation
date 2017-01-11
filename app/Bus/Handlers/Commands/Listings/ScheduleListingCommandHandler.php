@@ -113,7 +113,6 @@ class ScheduleListingCommandHandler
         $listing = new Listings;
         $listing->owner_id = $command->getActor()->id;
         $listing->scheduled_for = $scheduledFor;
-        $listing->include_link_in_descr = $options->getIncludeLink();
 
         if ($options->getEndsAt()) {
             $listing->scheduled_until = $options->getEndsAt();
@@ -230,6 +229,7 @@ class ScheduleListingCommandHandler
                     $listingItem->fb_group_node_id = $command->getFacebookGroupId();
                     $listingItem->fb_album_node_id = $facebookAlbum['id'];
                     $listingItem->inventory_id = $inventoryItem['id'];
+                    $listingItem->item_message = $command->getFacebookListingOptions()->getItemMessage();
 
                     // Copy the type and status from the parent listing.
                     // Status may actually change and be different, below otherwise they start the same.
@@ -280,6 +280,7 @@ class ScheduleListingCommandHandler
                 $listingItem->owner_id = $actor->id;
                 $listingItem->inventory_id = $selectedItem['id'];
                 $listingItem->flashsale_id = $command->getFlashSaleId();
+                $listingItem->item_message = $command->getFacebookListingOptions()->getItemMessage();
 
                 // Copy the type and status from the parent listing.
                 // Status may actually change and be different, below otherwise they start the same.

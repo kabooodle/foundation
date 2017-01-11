@@ -147,9 +147,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
      */
     public function buildFacebookAlbumParams(ListingItems $listingItem)
     {
-        $photoDescr = new PhotoDescription($listingItem);
-
-        $photoMessage = $listingItem->includeLinkInDescr() ? $photoDescr->getComment() : null;
+        $photoMessage = $listingItem->parseItemMessage();
 
         $image = $this->getListingImage($listingItem);
 
@@ -159,7 +157,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
 
         return [
             'url' => $image->getOriginal('location'),
-            'message' => $photoMessage
+            'message' => $photoMessage ? : null
         ];
     }
 

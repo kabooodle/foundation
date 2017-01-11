@@ -829,6 +829,7 @@ return array(
     'UpdateInventoryUnfuckQtyCols' => $baseDir . '/resources/database/migrations/2016_09_03_053022_update_inventory_unfuck_qty_cols.php',
     'UpdateInvnetoryAddUuid' => $baseDir . '/resources/database/migrations/2016_11_01_041205_update_invnetory_add_uuid.php',
     'UpdateListingAndListingItemsTblEnum' => $baseDir . '/resources/database/migrations/2016_12_13_204936_update_listing_and_listing_items_tbl_enum.php',
+    'UpdateListingItemsAddListingMessage' => $baseDir . '/resources/database/migrations/2017_01_11_022416_update_listing_items_add_listing_message.php',
     'UpdateListingTableAddDisableText' => $baseDir . '/resources/database/migrations/2016_12_02_233734_update_listing_table_add_disable_text.php',
     'UpdateListingTblAddDateCols' => $baseDir . '/resources/database/migrations/2017_01_04_035822_update_listing_tbl_add_date_cols.php',
     'UpdateListingsDropNameCol' => $baseDir . '/resources/database/migrations/2016_11_27_215750_update_listings_drop_name_col.php',

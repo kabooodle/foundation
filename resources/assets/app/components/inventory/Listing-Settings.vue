@@ -39,28 +39,35 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input
-                                    id="options_include_text"
-                                    v-model="$data.options.include_link"
-                                    name="options[include_link]"
-                                    type="checkbox"
-                            >
-                            Include link to Kabooodle claim page, in description
-                        </label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="control-label">Photo message</label>
+                            <textarea class="form-control" id="options_item_message" rows="5" v-model="$data.options.item_message" placeholder="An example: Claim here {url}"></textarea>
+                            <button class="btn white btn-xs" @click="addVariableToMessage('{price}', $event)" data-text="{price}">Price</button>
+                            <button class="btn white btn-xs" @click="addVariableToMessage('{url}', $event)" data-text="{url}">URL</button>
+                            <button class="btn white btn-xs"  @click="addVariableToMessage('{style}', $event)"data-text="{style}">Style</button>
+                            <button class="btn white btn-xs" @click="addVariableToMessage('{size}', $event)" data-text="{size}">Size</button>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Preview</label>
+                            <pre style="background: white; white-space: pre-wrap; word-wrap: break-word; font-family: inherit;" class="bg-white text-sm text-muted m-t-sm">{{ options.item_message }}</pre>
+                        </div>
                     </div>
                 </div>
             </template>
             <template slot="modal_footer">
-                <button class="btn primary btn-sm" @click="saveOptions" type="button">Save</button>
-                <button class="btn white btn-sm" @click="clearOptions" type="button">Clear</button>
+                <button class="btn primary btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="saveOptions" type="button">List Items
+                <spinny v-if="processing_listing"></spinny>
+                </button>
+                <button class="btn white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="clearOptions" type="button">Clear settings</button>
+                <button class="btn-link white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="closeModal" type="button">Close</button>
             </template>
         </modal>
     </span>
 </template>
 <script>
     import Modal from '../Modal.vue';
+    import Spinny from '../Spinner.vue';
     export default{
         props: {
             modal_id: {
@@ -70,12 +77,14 @@
         },
         data(){
             return {
+                processing_listing: false,
                 options : {
                     list_at: null,
                     remove_at:null,
                     available_at: null,
                     available_until: null,
                     include_link: true,
+                    item_message: null
                 }
             }
         },
@@ -83,15 +92,22 @@
             this.registerDateTimePicker();
         },
         created(){
-            $Bus.$on('listing.options:get', ()=>{
-                $Bus.$emit('listing.options:saved', this.options);
+            $Bus.$on('inventory:posting_listing', (status)=>{
+                if (status === true) {
+                    this.processing_listing = true;
+                } else {
+                    this.processing_listing = false;
+                }
             });
         },
         methods: {
+            closeModal(){
+                $('#'+this.modal_id).modal('hide');
+            },
             saveOptions(event){
                 event.preventDefault();
-                $('#'+this.modal_id).modal('hide');
                 $Bus.$emit('listing.options:saved', this.options);
+                this.processing_listing = true;
             },
             clearOption(option, optionElId, event){
                 const $el = $('#'+optionElId);
@@ -104,7 +120,8 @@
                     remove_at: null,
                     available_at: null,
                     available_until: null,
-                    include_link: false,
+                    item_message: null,
+                    include_link: false
                 }
                 $('.needs-datetimepicker').val('').trigger('change');
             },
@@ -154,10 +171,39 @@
             updateDateTimeEl(option, event){
                 const $el = $(event.target);
                 this.options[option] = $el.val();
+            },
+            addVariableToMessage(text, event){
+                event.preventDefault();
+                console.log(text);
+                let $textareaEl = $('#options_item_message');
+
+                // in the event user has selected/highlighted text for replacement
+                // get the start and end of cursor selection.
+                let cursorPosStart = $textareaEl.prop('selectionStart');
+                let cursorPosEnd = $textareaEl.prop('selectionEnd');
+
+                // current value
+                let v = $textareaEl.val();
+
+                // Get the value of the selected text
+                let textBefore = v.substring(0,  cursorPosStart );
+                let textAfter  = v.substring( cursorPosEnd, v.length );
+
+                // Create our new string with the newly added text
+                let newText = textBefore+ text +textAfter;
+
+                // Textarea is a v-model so set the data and it will update
+                // automatically.
+                this.options.item_message = newText;
+
+                // place the cursor back in the text area.
+                $textareaEl.focus();
+//                $textareaEl.val( textBefore+ text +textAfter );
             }
         },
         components: {
-            'modal': Modal
+            'modal': Modal,
+            'spinny' : Spinny
         }
     }
 </script>

@@ -46,7 +46,7 @@
                     <td>${{ $item->gross }}</td>
                     <td>
                         <div class="pull-md-right">
-                            <a href="{{ route('merchant.listings.group.show', [ $item->uuid, $item->type, ($item->type == 'facebook' ? $item->fb_album_id : $item->flashsale_id) ]) }}" class="btn btn-xs white">View Items</a>
+                            <a href="{{ route('merchant.listings.group.show', [ $item->uuid, $item->type, ($item->type == 'facebook' ? $item->fb_album_id : $item->flashsale_id) ]) }}" class="btn btn-xs white">Manage Items</a>
                         </div>
                     </td>
                 </tr>

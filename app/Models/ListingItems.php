@@ -88,6 +88,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status_updated_at' => '',
         'status_history' => '',
         'ignore' => false,
+        'item_message' => null,
     ];
 
     /**
@@ -106,7 +107,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status',
         'status_updated_at',
         'status_history',
-        'ignore'
+        'ignore',
+        'item_message'
     ];
 
     /**
@@ -262,14 +264,6 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     /**
      * @return bool
      */
-    public function includeLinkInDescr()
-    {
-        return $this->listing->includeLinkInDescr();
-    }
-
-    /**
-     * @return bool
-     */
     public function claimableBasedOnSchedule()
     {
         $now = Carbon::now();
@@ -291,5 +285,35 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         }
 
         return false;
+    }
+
+    /**
+     * @return mixed|null|string
+     */
+    public function parseItemMessage()
+    {
+        $itemMessage = trim($this->item_message);
+        if ($itemMessage) {
+            $placeholders = [
+                'url' => '{url}',
+                'price' => '{price}',
+                'style' => '{style}',
+                'size' => '{size}'
+            ];
+
+            $id = $this->obfuscateIdToString($this->id);
+            $route = str_replace(['https://', 'http://'], '', str_replace(['api.', 'app.', 'api', 'app'], '', route('externalclaim.show', [$id])));
+            $itemMessage = str_ireplace($placeholders['url'], $route, $itemMessage);
+
+            $itemMessage = str_ireplace($placeholders['price'], $this->inventoryItem->getPrice(), $itemMessage);
+
+            $itemMessage = str_ireplace($placeholders['style'], $this->inventoryItem->style->name, $itemMessage);
+
+            $itemMessage = str_ireplace($placeholders['size'], $this->inventoryItem->size->name, $itemMessage);
+
+            return $itemMessage;
+        }
+
+        return null;
     }
 }

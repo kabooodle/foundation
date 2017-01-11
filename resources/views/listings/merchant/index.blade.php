@@ -21,7 +21,6 @@
                         <th scope="col"><input type="checkbox"></th>
                         <th scope="col">Name</th>
                         <th scope="col">Scheduled For</th>
-                        <th scope="col">Display Link</th>
                         <th scope="col">Albums</th>
                         <th scope="col">Items</th>
                         <th scope="col">Sales</th>

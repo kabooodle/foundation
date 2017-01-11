@@ -1479,6 +1479,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateInventoryUnfuckQtyCols' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_03_053022_update_inventory_unfuck_qty_cols.php',
         'UpdateInvnetoryAddUuid' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_01_041205_update_invnetory_add_uuid.php',
         'UpdateListingAndListingItemsTblEnum' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_13_204936_update_listing_and_listing_items_tbl_enum.php',
+        'UpdateListingItemsAddListingMessage' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_11_022416_update_listing_items_add_listing_message.php',
         'UpdateListingTableAddDisableText' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_02_233734_update_listing_table_add_disable_text.php',
         'UpdateListingTblAddDateCols' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_04_035822_update_listing_tbl_add_date_cols.php',
         'UpdateListingsDropNameCol' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_27_215750_update_listings_drop_name_col.php',
