@@ -6,10 +6,10 @@
     <script>
         window.fbAsyncInit = function() {
             FB.init({
-                appId: '513860408823933',
+                appId: '1716604341984103',
                 cookie: true,
                 xfbml: true,
-                version: 'v2.7',
+                version: 'v2.8',
                 scope: 'email,user_managed_groups,publish_actions,publish_pages'
             });
             $(document).trigger('fbload');
