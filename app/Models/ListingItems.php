@@ -303,7 +303,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
 
             $id = $this->obfuscateIdToString($this->id);
             $route = str_replace(['https://', 'http://'], '', str_replace(['api.', 'app.', 'api', 'app'], '', route('externalclaim.show', [$id])));
-            $itemMessage = str_ireplace($placeholders['url'], $route, $itemMessage);
+            $itemMessage = str_ireplace($placeholders['url'], ' '.$route.' ', $itemMessage);
 
             $itemMessage = str_ireplace($placeholders['price'], $this->inventoryItem->getPrice(), $itemMessage);
 

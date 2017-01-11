@@ -51,3 +51,10 @@ a.close-overlay {
     border-radius: 0;
   }
 }
+
+#kbdl-mdl-listings {
+  .bootstrap-datetimepicker-widget.dropdown-menu {
+    top: auto !important;
+    bottom: 0 !important;
+  }
+}

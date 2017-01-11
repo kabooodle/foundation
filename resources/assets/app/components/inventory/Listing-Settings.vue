@@ -49,8 +49,8 @@
                             <button class="btn white btn-xs" @click="addVariableToMessage('{size}', $event)" data-text="{size}">Size</button>
                         </div>
                         <div class="col-md-6">
-                            <label class="control-label">Preview</label>
-                            <pre style="background: white; white-space: pre-wrap; word-wrap: break-word; font-family: inherit;" class="bg-white text-sm text-muted m-t-sm">{{ options.item_message }}</pre>
+                            <label class="control-label">Example message (with fake data)</label>
+                            <pre style="background: white; white-space: pre-wrap; word-wrap: break-word; font-family: inherit;" class="bg-white text-sm text-muted m-t-sm">{{ message_preview }}</pre>
                         </div>
                     </div>
                 </div>
@@ -99,6 +99,26 @@
                     this.processing_listing = false;
                 }
             });
+        },
+        computed: {
+            message_preview(){
+                if (this.options.item_message) {
+                    const price = Math.floor(Math.random() * 20);
+                    const url = 'kabooodle.com/i/'+randomAlphaStr(3)+' ';
+                    let style = 'Amelia';
+                    let size = ['XS', 'S', 'M'];
+                    let text = this.options.item_message;
+
+                    text = text.replace(/{price}/g, '$'+price);
+                    text = text.replace(/{size}/g, size[Math.floor(Math.random() * size.length)]);
+                    text = text.replace(/{style}/g, style);
+                    text = text.replace(/{url}/g, url);
+
+                    return text;
+                }
+
+                return this.options.item_message;
+            },
         },
         methods: {
             closeModal(){
