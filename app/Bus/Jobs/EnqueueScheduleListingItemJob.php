@@ -15,9 +15,7 @@ use Kabooodle\Models\Queues;
 use Kabooodle\Models\ListingItems;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Facebook\Exceptions\FacebookThrottleException;
-use Kabooodle\Bus\Events\Listings\ListingItemWasListed;
 use Kabooodle\Services\Social\Facebook\FacebookSdkService;
-use Kabooodle\Services\Social\Facebook\Entities\PhotoDescription;
 use Kabooodle\Foundation\Exceptions\Listings\ListingPhotoMissingException;
 
 /**
@@ -92,12 +90,13 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
                 $listingItem->owner->getFacebookUserToken()
             );
 
+            $response = $response->asArray();
+
 //            event(new ListingItemWasListed);
 
-            $this->successfulJobHandler($listingItem, ['fb_response' => $response->asArray()]);
+            $this->successfulJobHandler($listingItem, ['fb_response_object_id' => $response['id']]);
 
             $this->job->delete();
-
         } catch (Exception $e) {
             $this->failedJobHandler($listingItem);
 

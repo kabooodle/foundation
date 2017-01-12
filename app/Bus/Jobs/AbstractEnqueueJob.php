@@ -28,7 +28,7 @@ abstract class AbstractEnqueueJob extends Job
      * @param string $status
      * @return bool|int
      */
-    public function updateListingsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
+    public function updateListingsStatus(array $listingIds, Carbon $timestamp, string $status)
     {
         return Listings::updateListingsStatus($listingIds, $timestamp, $status);
     }
@@ -41,7 +41,7 @@ abstract class AbstractEnqueueJob extends Job
      *
      * @return bool|int
      */
-    public function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST, array $attributes = [])
+    public function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status, array $attributes = [])
     {
         return ListingItems::updateListingItemsStatus($listingIds, $timestamp, $status, $attributes);
     }

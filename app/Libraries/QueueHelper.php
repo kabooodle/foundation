@@ -53,6 +53,10 @@ class QueueHelper
      */
     private static function makeRandomSelection(array $array)
     {
+        if (in_array(app()->environment(), ['dev','local'])) {
+            return 'sync';
+        }
+
         return $array[mt_rand(0, count($array) - 1)];
     }
 
