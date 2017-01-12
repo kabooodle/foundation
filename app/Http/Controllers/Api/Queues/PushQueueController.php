@@ -136,6 +136,35 @@ class PushQueueController extends AbstractApiController
         return $this->handler($request, 'iron-facebook-lister-j');
     }
 
+
+
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function queueFacebookDeleterHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-deleter');
+    }
+    public function queueFacebookDeleterBHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-deleter-b');
+    }
+    public function queueFacebookDeleterCHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-deleter-c');
+    }
+    public function queueFacebookDeleterDHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-deleter-d');
+    }
+    public function queueFacebookDeleterEHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-facebook-deleter-e');
+    }
+
     /**
      * @param Request $request
      *

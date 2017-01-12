@@ -277,6 +277,56 @@ return [
             'encrypt' => true,
             'timeout' => 60
         ],
+
+
+        ////////////////////---------
+        // FACEBOOK SCHEDULER QUEUES
+        ////////////////////---------
+        'iron-facebook-deleter' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-deleter-queue',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-deleter-b' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-deleter-queue-b',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-deleter-c' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-deleter-queue-c',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-deleter-d' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-deleter-queue-d',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-facebook-deleter-e' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'fb-deleter-queue-e',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
     ],
 
     /*

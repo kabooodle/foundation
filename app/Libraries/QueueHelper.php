@@ -47,6 +47,17 @@ class QueueHelper
     ];
 
     /**
+     * @var array
+     */
+    public static $Q_FBDELETER = [
+        'iron-facebook-deleter',
+        'iron-facebook-deleter-b',
+        'iron-facebook-deleter-c',
+        'iron-facebook-deleter-d',
+        'iron-facebook-deleter-e',
+    ];
+
+    /**
      * @param array $array
      *
      * @return string
@@ -82,5 +93,13 @@ class QueueHelper
     public static function pickFacebookLister()
     {
         return self::makeRandomSelection(self::$Q_FBLISTER);
+    }
+
+    /**
+     * @return string
+     */
+    public static function pickFacebookDeleter()
+    {
+        return self::makeRandomSelection(self::$Q_FBDELETER);
     }
 }
