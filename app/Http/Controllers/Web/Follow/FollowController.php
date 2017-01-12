@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Follow;
 
 use Illuminate\Http\Request;
+use Kabooodle\Models\User;
 use Kabooodle\Models\Watches;
 use Kabooodle\Http\Controllers\Web\Controller;
 
@@ -19,9 +20,10 @@ class FollowController extends Controller
     /**
      * @return \Illuminate\Contracts\View\View
      */
-    public function followers()
+    public function followers(Request $request)
     {
-        $followers = user()->followers;
+        $user = User::where('username', $request->username)->first();
+        $followers = $user->followers;
 
         return view('follow.followers')->with(compact('followers'));
     }

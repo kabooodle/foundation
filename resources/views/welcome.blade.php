@@ -178,6 +178,9 @@
                         <div class="text-center m-t">
                             <div id="profilePage">
                             <followable
+                                    able_type="{{ get_class($user) }}"
+                                    able_id="{{ $user->id }}"
+                                    already_following="{{ auth()->user()->is_following ? 1 : 0 }}"
                                     endpoint="{{ apiRoute('user.followers.store', [$user->id]) }}"
                                     followable_entity_name="user"
                                     followable_type="user"
@@ -195,7 +198,7 @@
                         </div>
                         <div class="col-xs-6">
                             <a href="{{ route('follow.following', [$user->username]) }}" class="p-a block text-center">
-                                <span class="block _600">{{ $user->followers->count() }}</span>
+                                <span class="block _600">{{ $user->following->count() }}</span>
                                 <span>Following</span>
                             </a>
                         </div>

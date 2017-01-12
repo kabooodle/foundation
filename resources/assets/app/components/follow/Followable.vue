@@ -1,17 +1,19 @@
 <template>
-    <span v-if="display">
+    <span>
         <button
-                :disabled="processing"
+                :disabled="processing || disable"
                 type="button"
-                @click="following ? unfollowMe($event) : followMe($event)"
+                @click="is_following ? unfollowMe($event) : followMe($event)"
                 class="btn-follow btn "
                 :class="btnclass"
         >
-            {{ following ? unfollow_text : follow_text }} <spinny v-if="processing"></spinny>
+            <span v-html="is_following ? unfollow_text : follow_text"></span>
+            <spinner v-if="processing" :size="'' + 10"></spinner>
         </button>
     </span>
 </template>
 <script>
+    import Spinny from '../Spinner.vue';
     export default{
         props: {
             able_name : {
@@ -26,6 +28,9 @@
             },
             able_type: {
                 required: true,
+                type: String
+            },
+            already_following: {
                 type: String
             },
             btn_active_class : {
@@ -50,9 +55,6 @@
                     return ((KABOOODLE_APP && KABOOODLE_APP.currentUser) ? KABOOODLE_APP.currentUser : {})
                 }
             },
-            already_following: {
-                required: true
-            },
             unfollow_text: {
                 type: String,
                 default: 'Following'
@@ -64,7 +66,8 @@
         },
         data (){
             return {
-                display: false,
+                disable: true,
+                display: true,
                 following: false,
                 processing: false,
             }
@@ -77,9 +80,10 @@
             }
         },
         mounted (){
-            if (! this.entityIsMe()) {
-                this.display = true;
-            }
+            this.disable = false;
+//            if (! this.entityIsMe()) {
+//                this.disable = false;
+//            }
         },
         computed: {
             btnclass : function(){
@@ -87,45 +91,36 @@
                 if (this.following) {
                     theClass = this.btn_active_class + ' ' + this.btn_size_class;
                 }
-                if (this.processing) {
+                if (this.processing || this.disable) {
                     theClass = theClass + ' disabled ';
                 }
 
                 return theClass;
-            }
+            },
+            is_following(){
+                if (this.doWeHaveCurrentUser()) {
+                    return (this.already_following === true || this.already_following === 'true' || this.following === 'true' || this.following === true);
+                }
+            },
         },
         methods: {
             entityIsMe: function(){
                 if(this.doWeHaveCurrentUser()) {
                     return parseInt(this.current_user.id) == parseInt(this.able_id);
                 }
-
                 return false;
             },
             doWeHaveCurrentUser: function () {
                 return this.current_user;
             },
             isUserFollowingEntity: function () {
-                if (this.doWeHaveCurrentUser()) {
-//                    const typeName = this.able_name+'_type';
-//                    const typeId = this.able_name+'_id';
-//                    let attrs = {
-//                        user_id: parseInt(this.current_user.id)
-//                    };
-//                    attrs[typeName] =  this.able_type;
-//                    attrs[typeId] = parseInt(this.able_id);
-
-                    return (this.already_following == '1');
-                }
-
-                return false;
+                return this.is_following;
             },
             followMe: function (e) {
                 if (KABOOODLE_APP.currentUser) {
                     this.processing = true;
                     this.$http.post(this.endpoint).then(()=>{
                         this.following = true;
-                        this.already_following = true;
                     }, function(response){
                         throw new Error(response);
                     }).catch(function() {}).finally(()=>{
@@ -142,7 +137,6 @@
                 this.processing = true;
                 this.$http.delete(this.endpoint).then(()=>{
                     this.following = false;
-                    this.already_following = false;
                 }, function(response){
                     throw new Error(response);
                 }).catch(function() {}).finally(()=>{
@@ -150,5 +144,8 @@
                 });
             }
         },
+        components: {
+            'spinner' : Spinny
+        }
     }
 </script>
