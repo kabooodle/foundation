@@ -43,10 +43,11 @@
                         <div class="col-md-6">
                             <label class="control-label">Photo message</label>
                             <textarea class="form-control" id="options_item_message" rows="5" v-model="$data.options.item_message" placeholder="An example: Claim here {url}"></textarea>
-                            <button class="btn white btn-xs" @click="addVariableToMessage('{price}', $event)" data-text="{price}">Price</button>
-                            <button class="btn white btn-xs" @click="addVariableToMessage('{url}', $event)" data-text="{url}">URL</button>
-                            <button class="btn white btn-xs"  @click="addVariableToMessage('{style}', $event)"data-text="{style}">Style</button>
-                            <button class="btn white btn-xs" @click="addVariableToMessage('{size}', $event)" data-text="{size}">Size</button>
+                            <small class="text-xs block text-muted">Pre-defined tags you can optionally use</small>
+                            <button class="btn btn-clipboard white btn-xs" data-clipboard-action="copy" data-clipboard-text="{price}">{price}</button>
+                            <button class="btn btn-clipboard white btn-xs"  data-clipboard-action="copy" data-clipboard-text="{url}">{url}</button>
+                            <button class="btn btn-clipboard white btn-xs"  data-clipboard-action="copy" data-clipboard-text="{style}">{style}</button>
+                            <button class="btn btn-clipboard white btn-xs"  data-clipboard-action="copy" data-clipboard-text="{size}">{size}</button>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Example message (with fake data)</label>
@@ -56,7 +57,7 @@
                 </div>
             </template>
             <template slot="modal_footer">
-                <button class="btn primary btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="saveOptions" type="button">List Items
+                <button class="btn primary btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="saveOptions" type="button">List items to Facebook
                 <spinny v-if="processing_listing"></spinny>
                 </button>
                 <button class="btn white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="clearOptions" type="button">Clear settings</button>
@@ -89,6 +90,7 @@
             }
         },
         mounted(){
+            $.fn.modal.Constructor.prototype._enforceFocus = function() {};
             this.registerDateTimePicker();
         },
         created(){
@@ -146,7 +148,33 @@
                 $('.needs-datetimepicker').val('').trigger('change');
             },
             registerDateTimePicker(){
+
+                $('.btn-clipboard').tooltip({
+                    container: 'body',
+                    trigger: 'click',
+                    placement: 'bottom'
+                });
+
+                var clipboard = new Clipboard('.btn-clipboard');
+
+                clipboard.on('success', function(e) {
+                    try {
+                        $(e.trigger)
+                                .attr('title', 'Copied!')
+                                .attr('data-original-title', 'Copied!')
+                                .tooltip('show');
+
+                        setTimeout(function(){
+                            $(e.trigger).tooltip('hide');
+                        }, 500);
+                    } catch (err) {
+                        $(e.trigger).tooltip('dispose');
+                    }
+                    e.clearSelection();
+                });
+
                 this.$nextTick(function(){
+
                     let minDate = moment().add('1', 'hour');
                     let options = {
                         format: "MM/DD/YYYY hh:mma",
