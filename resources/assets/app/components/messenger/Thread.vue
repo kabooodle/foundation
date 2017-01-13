@@ -20,6 +20,7 @@
     </div>
 </template>
 <script>
+    import currentUser from '../current-user';
     import Timestamp from '../Timestamp.vue';
     export default{
         props: {
@@ -35,7 +36,7 @@
         computed:{
             is_read(){
                 const thread_updated_at = this.thread.updated_at;
-                const myself = _.find(this.thread.participants, function(v){  return parseInt(v.user_id) == parseInt(KABOOODLE_APP.currentUser.id);  });
+                const myself = _.find(this.thread.participants, function(v){  return parseInt(v.user_id) == parseInt(currentUser().id);  });
 
                 if (myself.last_read) {
                     return moment(myself.last_read).isAfter(thread_updated_at);

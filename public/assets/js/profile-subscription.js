@@ -1,1 +1,36 @@
-!function e(n,t,r){function i(s,a){if(!t[s]){if(!n[s]){var u="function"==typeof require&&require;if(!a&&u)return u(s,!0);if(o)return o(s,!0);var d=new Error("Cannot find module '"+s+"'");throw d.code="MODULE_NOT_FOUND",d}var c=t[s]={exports:{}};n[s][0].call(c.exports,function(e){var t=n[s][1][e];return i(t?t:e)},c,c.exports,e,n,t,r)}return t[s].exports}for(var o="function"==typeof require&&require,s=0;s<r.length;s++)i(r[s]);return i}({1:[function(e,n,t){"use strict";new Vue({el:"#profile_settings",methods:{subscribeToTrial:function(e){var n=e.target,t=n.innerHTML;n.classList.add("disabled"),n.disabled=!0,n.innerHTML=n.innerHTML+spinny(),this.$http.post(sub_endpoint).then(function(e){n.innerHTML="Success! One moment... "+spinny(),notify({text:e.body.data.msg,type:"success"}),setTimeout(function(){window.location.href=e.body.data.redirect},2500)},function(e){var r="An error occurred. Please try again.";e.body.data.msg&&(r=e.body.data.msg),notify({text:r}),n.classList.remove("disabled"),n.disabled=!1,n.innerHTML=t})}}})},{}]},{},[1]);
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+new Vue({
+    el: '#profile_settings',
+    methods: {
+        subscribeToTrial: function subscribeToTrial(event) {
+            var target = event.target;
+            var innerHtml = target.innerHTML;
+            target.classList.add('disabled');
+            target.disabled = true;
+            target.innerHTML = target.innerHTML + spinny();
+
+            this.$http.post(sub_endpoint).then(function (response) {
+                target.innerHTML = 'Success! One moment... ' + spinny();
+                notify({ text: response.body.data.msg, type: 'success' });
+                setTimeout(function () {
+                    window.location.href = response.body.data.redirect;
+                }, 2500);
+            }, function (response) {
+                var msg = 'An error occurred. Please try again.';
+                if (response.body.data.msg) {
+                    msg = response.body.data.msg;
+                }
+                notify({ text: msg });
+                target.classList.remove('disabled');
+                target.disabled = false;
+                target.innerHTML = innerHtml;
+            });
+        }
+    }
+});
+
+},{}]},{},[1]);
+
+//# sourceMappingURL=profile-subscription.js.map

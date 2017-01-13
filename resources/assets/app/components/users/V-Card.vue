@@ -40,6 +40,7 @@
     </div>
 </template>
 <script>
+    import currentUser from '../current-user';
     import MessageUser from '../messenger/MessageUser.vue';
     import Followable from '../follow/Followable.vue';
     export default{
@@ -77,7 +78,7 @@
         },
         data(){
             return{
-                current_user: (KABOOODLE_APP && KABOOODLE_APP.currentUser) ? KABOOODLE_APP.currentUser : {}
+                current_user: currentUser() ? currentUser() : {}
             }
         },
         computed: {

@@ -12,6 +12,7 @@
     </span>
 </template>
 <script>
+    import currentUser from '../current-user';
     export default{
         props: {
             btn_active_class : {
@@ -33,13 +34,13 @@
             current_user: {
                 type: Object,
                 default: function () {
-                    return (KABOOODLE_APP ? KABOOODLE_APP.currentUser : {})
+                    return (currentUser() ? currentUser() : {})
                 }
             },
             current_user_following: {
                 type: Array,
                 default: function () {
-                    return (KABOOODLE_APP ? KABOOODLE_APP.currentUser.following : {})
+                    return (currentUser() ? currentUser().following : {})
                 }
             },
             followable_id: {

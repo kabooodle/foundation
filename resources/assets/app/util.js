@@ -338,7 +338,12 @@ function confirmModal(confirmCB, closeCB, options) {
 }));
 
 function notify(options){
+
+    $.noty.clearQueue();
+
     var defaults = {
+        dismissQueue: false,
+        killer: true,
         text: '',
         layout: 'top',
         theme: 'relax',

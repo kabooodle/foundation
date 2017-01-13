@@ -56,7 +56,7 @@
 </template>
 <script>
     import Timestamp from '../Timestamp.vue';
-
+    import currentUser from '../current-user';
     export default{
         props:  ["post_route", "modelobject", "comments_url"],
         data: function () {
@@ -97,12 +97,15 @@
                 });
             },
             userCanDelete : function(comment){
-                return KABOOODLE_APP.currentUser && (KABOOODLE_APP.currentUser.id === this.modelobject.user.id || comment.author.id === KABOOODLE_APP.currentUser.id)
+                if (! currentUser()) {
+                    return false;
+                }
+                return currentUser() && (currentUser().id === this.modelobject.user.id || comment.author.id === currentUser().id)
             },
             addNewComment : function(e){
                 e.preventDefault();
 
-                if (KABOOODLE_APP.currentUser) {
+                if (currentUser()) {
                     this.newcomment = null;
                     const $scope = this;
 

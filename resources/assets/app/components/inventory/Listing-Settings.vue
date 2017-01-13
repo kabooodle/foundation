@@ -57,7 +57,7 @@
                 </div>
             </template>
             <template slot="modal_footer">
-                <button class="btn primary btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="saveOptions" type="button">List items to Facebook
+                <button class="btn primary btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="saveOptions" type="button">Save &amp; list items to Facebook
                 <spinny v-if="processing_listing"></spinny>
                 </button>
                 <button class="btn white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="clearOptions" type="button">Clear settings</button>
@@ -167,8 +167,10 @@
                         setTimeout(function(){
                             $(e.trigger).tooltip('hide');
                         }, 500);
-                    } catch (err) {
-                        $(e.trigger).tooltip('dispose');
+                    } catch (e) {
+                        try {
+                            $(e.trigger).tooltip('dispose');
+                        } catch (e) {}
                     }
                     e.clearSelection();
                 });

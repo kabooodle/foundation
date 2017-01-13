@@ -67,7 +67,19 @@
                 <small class="block text-muted text-sm">(Optional)</small>
             </label>
             <div class="col-sm-7">
-                <input type="text" name="categories" class="selectized" id="tags" placeholder="Type categories" :value="tags">
+                <multiselect
+                        v-model="category_value"
+                        tag-placeholder="Add this as a new category"
+                        placeholder="Add categories"
+                        label="name"
+                        track-by="name"
+                        :options="categories"
+                        :multiple="true"
+                        :taggable="true"
+                        @remove="removeTag"
+                        @tag="addTag">
+                </multiselect>
+                <template v-for="category in categories"><input type="hidden" name="categories[]" :value="category.name"></template>
             </div>
         </div>
 
@@ -113,6 +125,7 @@
     </div>
 </template>
 <script>
+    import Multiselect from 'vue-multiselect';
     import FileUpload from '../../FileUpload.vue';
     import Timestamp from '../../Timestamp.vue';
 
@@ -120,10 +133,11 @@
         props: ["styles", "existingimages", "item", "tags", "api_route"],
         data : function() {
             return {
+                categories: [],
+                category_value: [],
                 images : [],
                 sizes : [],
                 selected_style : '',
-                categories : '',
                 wholesale_price_usd : null,
                 price_usd : null
             }
@@ -134,6 +148,14 @@
             }
         },
         created(){
+
+            if(this.tags && this.tags != '') {
+                _.each(this.tags.split(','), (tag)=>{
+                    this.addTag(tag);
+                });
+            }
+
+
             const scope = this;
             this.wholesale_price_usd = this.item.wholesale_price_usd_less_5_percent;
             this.price_usd = this.item.price_usd;
@@ -154,24 +176,18 @@
 
             // set the selected style' sizes
             this.setSizes(this.item.style.sizes);
-
-            this.$nextTick(function(){
-                $('.selectized').selectize({
-                    delimiter: ',',
-                    persist: false,
-                    valueField: 'tag',
-                    labelField: 'tag',
-                    searchField: 'tag',
-                    plugins: ['remove_button'],
-                    create: function (input) {
-                        return {
-                            tag: input
-                        }
-                    }
-                });
-            });
         },
         methods : {
+            removeTag(option) {
+                this.categories.splice(this.categories.indexOf(option));
+            },
+            addTag (newTag) {
+                const tag = {
+                    name: newTag,
+                }
+                this.categories.push(tag)
+                this.category_value.push(tag)
+            },
             setSizes : function(sizes){
                 this.sizes = sizes;
             },
@@ -261,7 +277,8 @@
         },
         components: {
             'image-attach' : FileUpload,
-            'timestamp' : Timestamp
+            'timestamp' : Timestamp,
+            'multiselect' : Multiselect
         }
     }
 </script>

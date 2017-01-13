@@ -91,6 +91,8 @@ class InventoryApiController extends AbstractApiController
             $item = $this->getUser()->inventory()->findOrFail($id);
             $this->validate($request, Inventory::getUpdateRules(), ['uuid.required' => 'The Unique ID field is required.', 'images.required' =>'You must add at least 1 image.']);
 
+            $categories = implode(',',Binput::get('categories', []));
+
             $this->dispatchNow(new UpdateInventoryItemCommand(
                 $this->getUser(),
                 $item,
@@ -101,7 +103,7 @@ class InventoryApiController extends AbstractApiController
                 (int) Binput::get('initial_qty'),
                 Binput::get('images'),
                 Binput::get('description'),
-                Binput::get('categories'),
+                $categories,
                 Binput::get('uuid')
             ));
 
