@@ -119,7 +119,13 @@
                             :s3_key_url="api_route"
                             multiple="true"></image-attach>
                 </span>
-                <button type="submit" class="btn primary"     @click="validateForm(item, $event)">Save</button>
+                <button
+                        type="submit"
+                        class="btn primary"
+                        :disabled="processing"
+                        :class="processing ? 'disabled' : null"
+                        @click="validateForm(item, $event)"> Save <spinny v-if="processing"></spinny>
+                </button>
             </div>
         </div>
     </div>
@@ -128,11 +134,13 @@
     import Multiselect from 'vue-multiselect';
     import FileUpload from '../../FileUpload.vue';
     import Timestamp from '../../Timestamp.vue';
+    import Spinny from  '../../Spinner.vue';
 
     export default{
         props: ["styles", "existingimages", "item", "tags", "api_route"],
         data : function() {
             return {
+                processing: false,
                 categories: [],
                 category_value: [],
                 images : [],
@@ -240,6 +248,7 @@
             },
             validateForm: function (item, event) {
                 event.preventDefault();
+                this.processing = true;
                 const scope = this;
                 let $form = $(event.target).closest('form');
                 let btn = $(event.target);
@@ -248,9 +257,8 @@
                 if (this.images.length == 0) {
                     notify({text:  'Must have at least 1 image'});
                     return false;
+                    this.processing = false;
                 }
-
-                btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
 
                 this.$http.put($form.prop('action'), $form.serializeObject()).then(function(response){
                     notify({text:  response.body.data.msg, type: 'success'});
@@ -260,25 +268,15 @@
                     notify({text:  response.body.data.msg});
                     return false;
                 }).finally(function(){
-                    btn.prop('disabled', false).html(btnHtml);
+                    this.processing = false;
                 });
-
-
-//                this.$validate(true, function () {
-//                    if (scope.$inventory_validation.invalid || scope.images.length == 0) {
-//                        e.preventDefault();
-//                        if (scope.images.length == 0) {
-//                            alert('Must have at least 1 image');
-//                        }
-//                        return false;
-//                    }
-//                });
             },
         },
         components: {
             'image-attach' : FileUpload,
             'timestamp' : Timestamp,
-            'multiselect' : Multiselect
+            'multiselect' : Multiselect,
+            'spinny' : Spinny
         }
     }
 </script>

@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="pop-out-overlay inventory-overlay" style="display: none;">
+        <div class="inventory-overlay" style="display: none;"></div>
+        <div class="pop-out-overlay" style="display: none;">
             <a href="javascript:;" class="close-overlay" v-on:click="closeOverlay" aria-label="close">
                 <img :src="img_url" alt="Icon shot x light">
             </a>
@@ -50,6 +51,7 @@
             openOverlay : function(content){
                 $('body').addClass('noscroll');
                 $('.inventory-overlay').show();
+                $('.pop-out-overlay').show();
                 if(content) {
                     this.changeOverlayContent(content);
                 }
@@ -58,6 +60,7 @@
             resetOverlay : function() {
                 $('body').removeClass('noscroll');
                 $('.inventory-overlay').hide(200);
+                $('.pop-out-overlay').hide(200);
                 this.changeOverlayContent(this.defaultContent, true);
                 $Bus.$emit('popout-overlay:closed');
             },
@@ -81,7 +84,7 @@
                 if (typeof promptOnClose !== 'undefined') {
                     this.setPromptOnClose(promptOnClose);
                 }
-                $('.inventory-overlay').find('.overlay-content').html(content);
+                $('.pop-out-overlay').find('.overlay-content').html(content);
             }
         }
     }
