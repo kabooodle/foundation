@@ -71,13 +71,6 @@
         $("#datetimepicker2").on("dp.change", function (e) {
             $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
         });
-
-        $('select#admins').selectize({
-            persist: false,
-            maxItems: null,
-            plugins: ['remove_button'],
-            options: [ ]
-        });
     })
 </script>
 @endpush

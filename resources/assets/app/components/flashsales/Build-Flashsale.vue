@@ -11,7 +11,6 @@
                 <image-attach
                         :s3_key_url="s3_key_url"
                         multiple="false"
-                        :user_hash="user_hash"
                         :button_title="cover_photo ? 'Replace cover photo' : 'Add cover photo'"
                 ></image-attach>
             </template>
@@ -29,6 +28,9 @@
             <template slot="input">
                 <textarea class="form-control"  name="description"></textarea>
             </template>
+            <template slot="text-help">
+                <small class="text-sm text-muted">(optional)</small>
+            </template>
         </inline-field>
 
         <inline-field :errors="form_errors.starts_at">
@@ -45,50 +47,38 @@
             </template>
         </inline-field>
 
-        <inline-field :errors="form_errors.hosted_by">
-            <template slot="label">Hosted by</template>
+        <inline-field >
+            <template slot="label">Admins</template>
             <template slot="input">
-                <select name="host" v-model="hosted_by" class="form-control">
-                    <option v-for="host_option in host_options" :value="host_option">{{ host_option }}</option>
-                </select>
+                <multiselect
+                        id="admins_el"
+                        label="full_name"
+                        track-by="id"
+                        placeholder=""
+                        :custom-label="nameWithUsername"
+                        :options="admins_list"
+                        :multiple="true"
+                        :searchable="true"
+                        :loading="loading.admins"
+                        :internal-search="false"
+                        :clear-on-select="true"
+                        :close-on-select="true"
+                        :options-limit="10"
+                        :limit="10"
+                        v-model="admins"
+                        @search-change="searchAdmins">
+                    <template slot="option" scope="props">
+                        <div class="option__desc">
+                            <span class="option__title">{{ props.option.full_name }}</span>
+                            <small class="option__small text-muted text-small">({{ props.option.username }})</small>
+                        </div>
+                    </template>
+                </multiselect>
+            </template>
+            <template slot="text-help">
+                <small class="text-sm text-muted">Admins are allowed to make changes to this flash sales' settings.</small>
             </template>
         </inline-field>
-
-        <div v-if="hosted_by_group">
-            <inline-field >
-                <template slot="label">Admins</template>
-                <template slot="input">
-                    <multiselect
-                            id="admins_el"
-                            label="full_name"
-                            track-by="id"
-                            placeholder=""
-                            :custom-label="nameWithUsername"
-                            :options="admins_list"
-                            :multiple="true"
-                            :searchable="true"
-                            :loading="loading.admins"
-                            :internal-search="false"
-                            :clear-on-select="true"
-                            :close-on-select="true"
-                            :options-limit="10"
-                            :limit="10"
-                            v-model="admins"
-                            @search-change="searchAdmins">
-                        <template slot="option" scope="props">
-                            <div class="option__desc">
-                                <span class="option__title">{{ props.option.full_name }}</span>
-                                <small class="option__small text-muted text-small">({{ props.option.username }})</small>
-                            </div>
-                        </template>
-                    </multiselect>
-                </template>
-                <template slot="text-help">
-                    <small class="text-sm text-muted">In addition to the users from the selected group, you can grant others admin permissions.</small>
-                    <small class="text-sm text-muted">Admin permissions allow users to make changes to name/sellers/etc;</small>
-                </template>
-            </inline-field>
-        </div>
 
         <inline-field :errors="form_errors.privacy">
             <template slot="label">Privacy</template>
@@ -130,6 +120,9 @@
                     </template>
                 </multiselect>
             </template>
+            <template slot="text-help">
+                <small class="text-sm text-muted">Include groups, whether new or existing.</small>
+            </template>
         </inline-field>
 
         <modal modal_id="flashsale_modal">
@@ -152,8 +145,6 @@
     import Multiselect from 'vue-multiselect';
     import Spinny from  '../Spinner.vue';
 
-    const HOST_GROUP = 'group';
-    const HOST_SELF = 'self';
     const PRIVACY_PRIVATE= 'private';
     const PRIVACY_PUBLIC = 'public';
 
@@ -175,9 +166,6 @@
                 required: true,
                 type: String
             },
-            user_hash: {
-                required: true
-            },
         },
         data(){
             return{
@@ -190,11 +178,6 @@
                 },
                 description: null,
                 group: {},
-                hosted_by: null,
-                host_options: [
-                        HOST_SELF,
-                        HOST_GROUP,
-                ],
                 loading: {
                     admins: false,
                     sellers: false,
@@ -211,9 +194,6 @@
             }
         },
         computed: {
-            hosted_by_group(){
-                return this.hosted_by === HOST_GROUP;
-            }
         },
         created(){
             $Bus.$on('image:uploaded', (el, data)=>{
