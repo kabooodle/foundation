@@ -167,6 +167,9 @@
         watch : {
             images: function(){
                 $Bus.$emit('images:changed', this.images);
+                if (this.images.length == 1) {
+                    this.cover_photo = this.images[0].location;
+                }
             }
         },
         created(){
@@ -178,7 +181,6 @@
                     this.addTag(tag);
                 });
             }
-
 
             const scope = this;
             this.wholesale_price_usd = this.item.wholesale_price_usd_less_5_percent;
