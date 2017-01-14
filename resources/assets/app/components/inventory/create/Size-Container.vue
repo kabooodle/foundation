@@ -21,7 +21,7 @@
 
             <div class="row row-horizon clearfix" >
                 <div class="col-sm-4 thumbnail-container"  v-for="(image, $index) in images">
-                    <div class="box m-b-0">
+                    <div class="box no-shadow m-b-0 p-t-1 p-b-1 r b-1 b b-a" :class="cover_photo == image.key ? '  b-primary ' : null" >
                         <div class="item" >
                             <div class="item-overlay active p-l p-r " style="z-index: 999;">
                                 <a type="button" style=""
@@ -39,7 +39,7 @@
                         </div>
                         <input type="hidden"
                                :name="'sizings['+id +'][images]['+image.key+'][data]'" :value="image.json" />
-                        <div class="box-body m-t-0 p-t-0">
+                        <div class="box-body m-t-0 p-b-0 p-t-0">
                             <div class="image_item_component">
                                 <label class="text-muted text-sm m-b-0 p-b-0">Quantity:</label>
                                 <input type="text"
@@ -47,10 +47,24 @@
                                        :name="'sizings['+id+'][images]['+image.key+'][qty]'"
                                        class="text-center image_qty_btn"  />
                             </div>
+                            <div class="clearfix">
+
+                                <button
+                                        type="button"
+                                        :disabled="cover_photo == image.key ? true : false"
+                                        @click="setCoverPhoto(image.key, $event)"
+                                        class="m-t-1 btn btn-block pull-right white"
+                                >
+                                    <span v-if="cover_photo != image.key">Set as cover photo</span>
+                                    <span v-else>Cover photo</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+
+                <input type="hidden" v-model="cover_photo" :value="cover_photo">
             </div>
 
         </div>
@@ -121,17 +135,32 @@
                 },
                 categories: [],
                 category: [],
+                cover_photo: this.images.length > 0 ? this.images[0].key : null
             }
         },
-        created(){
-
+        watch: {
+            images(){
+                if (this.images.length >= 1) {
+                    this.cover_photo = this.images[0].key;
+                }
+            },
         },
         methods:{
+            moveCoverPhoto(){
+
+            },
+            setCoverPhoto(imageKey, event){
+                event.preventDefault();
+                this.cover_photo = imageKey;
+            },
             toggleCategory(){
                 this.display.categories == true ? this.display.categories = false : this.display.categories = true;
             },
             removeTag(option) {
-                this.categories.splice(this.categories.indexOf(option));
+                let index = this.categories.indexOf(option);
+                if (index > -1) {
+                    this.categories.splice(index, 1);
+                }
             },
             addTag(newTag){
                 const tag = {
@@ -142,7 +171,13 @@
                 this.category.push(tag)
             },
             deleteImage(image, event){
-                this.images.splice(this.images.indexOf(image, 1));
+                let index = this.images.indexOf(image);
+                if (index > -1) {
+                    this.images.splice(index, 1);
+                    if (this.cover_photo == image.key && this.images.length > 1) {
+                        this.cover_photo = this.images[0].key;
+                    }
+                }
             }
         },
         components:{

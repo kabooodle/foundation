@@ -6,8 +6,8 @@
 
 namespace Kabooodle\Bus\Commands\Inventory;
 
-use Kabooodle\Models\User;
 use Kabooodle\Models\Inventory;
+use Kabooodle\Models\User;
 
 /**
  * Class UpdateInventoryItemCommand
@@ -56,6 +56,11 @@ final class UpdateInventoryItemCommand
     public $images;
 
     /**
+     * @var string
+     */
+    public $coverPhotoKey;
+
+    /**
      * @var null|string
      */
     public $description;
@@ -79,12 +84,25 @@ final class UpdateInventoryItemCommand
      * @param float       $wholesalePrice
      * @param int         $qty
      * @param array       $images
+     * @param string      $coverPhotoKey
      * @param string|null $description
      * @param string|null $categories
      * @param string      $uuid
      */
-    public function __construct(User $actor, Inventory $item, int $styleId, int $sizeId, float $price, float $wholesalePrice, int $qty, array $images, string $description = null, string $categories = null, string $uuid)
-    {
+    public function __construct(
+        User $actor,
+        Inventory $item,
+        int $styleId,
+        int $sizeId,
+        float $price,
+        float $wholesalePrice,
+        int $qty,
+        array $images,
+        string $coverPhotoKey,
+        string $description = null,
+        string $categories = null,
+        string $uuid
+    ) {
         $this->actor = $actor;
         $this->item = $item;
         $this->styleId = $styleId;
@@ -93,6 +111,7 @@ final class UpdateInventoryItemCommand
         $this->wholesalePrice = $wholesalePrice;
         $this->qty = $qty;
         $this->images = $images;
+        $this->coverPhotoKey = $coverPhotoKey;
         $this->description = $description;
         $this->categories = $categories;
         $this->uuid = $uuid;
@@ -152,6 +171,14 @@ final class UpdateInventoryItemCommand
     public function getImages(): array
     {
         return $this->images;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoverPhotoKey(): string
+    {
+        return $this->coverPhotoKey;
     }
 
     /**

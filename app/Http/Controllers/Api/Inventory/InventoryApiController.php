@@ -63,7 +63,8 @@ class InventoryApiController extends AbstractApiController
                         'images' => $item->files->toArray(),
                         'initial_qty' => $item->initial_qty,
                         'price_usd' => $item->price_usd,
-                        'files' => $item->files
+                        'files' => $item->files,
+                        'cover_photo' => $item->cover_photo
                     ];
                 }
 
@@ -102,6 +103,7 @@ class InventoryApiController extends AbstractApiController
                 (float) Binput::get('wholesale_price_usd', 0),
                 (int) Binput::get('initial_qty'),
                 Binput::get('images'),
+                Binput::get('cover_photo'),
                 Binput::get('description'),
                 $categories,
                 Binput::get('uuid')
@@ -114,7 +116,7 @@ class InventoryApiController extends AbstractApiController
                 ->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)
-                ->setData(['msg' => 'An unknown error occurred, please try again.'])
+                ->setData(['msg' => $e])
                 ->respond();
         }
     }

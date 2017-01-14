@@ -86,7 +86,9 @@
         <hr>
         <div class="form-group row m-t-md">
             <div class="col-sm-12">
-                    <div class="box inline p-a-sm" v-for="image in images" style="margin-right:.78rem; margin-bottom:.78rem;">
+                    <div class="box inline p-a-sm b b-a no-shadow r"
+                         :class="cover_photo == image.location ? 'b-primary' : null "
+                         v-for="image in images" style="margin-right:.78rem; margin-bottom:.78rem;">
                          <div style="z-index: 999;" class="item-overlay active p-r-sm">
                                 <a
                                         @click="deleteImage(image, $event)"
@@ -106,9 +108,20 @@
                                     :name="'images[]'"
                                     :value="image.json">
                         </span>
+                        <button
+                                @click="setCoverPhoto(image.location, $event)"
+                                :disabled="cover_photo == image.location"
+                                :class="this.cover_photo == image.location ? true: false"
+                                class="btn white btn-xs block text-center center-block"
+                        >
+                            <span v-if="cover_photo == image.location">Cover photo</span>
+                            <span v-else>Make cover</span>
+                        </button>
                     </div>
             </div>
         </div>
+
+        <input type="hidden" v-model="cover_photo" name="cover_photo" :value="cover_photo">
 
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-7">
@@ -147,7 +160,8 @@
                 sizes : [],
                 selected_style : '',
                 wholesale_price_usd : null,
-                price_usd : null
+                price_usd : null,
+                cover_photo: null,
             }
         },
         watch : {
@@ -156,6 +170,8 @@
             }
         },
         created(){
+
+            this.cover_photo = this.item.cover_photo_file_location;
 
             if(this.tags && this.tags != '') {
                 _.each(this.tags.split(','), (tag)=>{
@@ -186,6 +202,10 @@
             this.setSizes(this.item.style.sizes);
         },
         methods : {
+            setCoverPhoto(imageKey, event){
+                event.preventDefault();
+                this.cover_photo = imageKey;
+            },
             removeTag(option) {
                 this.categories.splice(this.categories.indexOf(option));
             },

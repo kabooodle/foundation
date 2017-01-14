@@ -43,7 +43,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     protected $appends = [
         'name_with_variant',
         'name_uuid',
-        'available_quantity'
+        'available_quantity',
+        'cover_photo'
     ];
 
     /**
@@ -82,6 +83,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_sizes_id' => 0,
         'name' => '',
         'description' => '',
+        'cover_photo_file_location' => null,
+        'cover_photo_file_id' => null,
         'barcode' => null,
         'initial_qty' => null,
         'date_received' => '',
@@ -117,6 +120,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_sizes_id',
         'price_usd',
         'wholesale_price_usd',
+        'cover_photo_file_location',
+        'cover_photo_file_id',
         'name',
         'description',
         'barcode',
@@ -336,6 +341,22 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function images()
     {
         return $this->files();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCoverPhotoAttribute()
+    {
+        return $this->cover_photo_file_location;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function coverPhoto()
+    {
+        return $this->belongsTo(Files::class, 'cover_photo_file_id', 'id');
     }
 
     /**
