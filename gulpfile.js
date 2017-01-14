@@ -39,6 +39,8 @@ elixir(function (mix) {
 
     mix.browserify('app/components/profile/profile.js');
 
+    mix.browserify('app/components/follow/follow.js');
+
 
 
     // Vendor File

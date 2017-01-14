@@ -7022,6 +7022,13 @@ if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-h
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _Spinner = require('../Spinner.vue');
+
+var _Spinner2 = _interopRequireDefault(_Spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         able_name: {
@@ -7036,6 +7043,9 @@ exports.default = {
         },
         able_type: {
             required: true,
+            type: String
+        },
+        already_following: {
             type: String
         },
         btn_active_class: {
@@ -7060,9 +7070,6 @@ exports.default = {
                 return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : {};
             }
         },
-        already_following: {
-            required: true
-        },
         unfollow_text: {
             type: String,
             default: 'Following'
@@ -7074,7 +7081,8 @@ exports.default = {
     },
     data: function data() {
         return {
-            display: false,
+            disable: true,
+            display: true,
             following: false,
             processing: false
         };
@@ -7087,9 +7095,7 @@ exports.default = {
         }
     },
     mounted: function mounted() {
-        if (!this.entityIsMe()) {
-            this.display = true;
-        }
+        this.disable = false;
     },
 
     computed: {
@@ -7098,11 +7104,16 @@ exports.default = {
             if (this.following) {
                 theClass = this.btn_active_class + ' ' + this.btn_size_class;
             }
-            if (this.processing) {
+            if (this.processing || this.disable) {
                 theClass = theClass + ' disabled ';
             }
 
             return theClass;
+        },
+        is_following: function is_following() {
+            if (this.doWeHaveCurrentUser()) {
+                return this.already_following === true || this.already_following === 'true' || this.following === 'true' || this.following === true;
+            }
         }
     },
     methods: {
@@ -7110,19 +7121,13 @@ exports.default = {
             if (this.doWeHaveCurrentUser()) {
                 return parseInt(this.current_user.id) == parseInt(this.able_id);
             }
-
             return false;
         },
         doWeHaveCurrentUser: function doWeHaveCurrentUser() {
             return this.current_user;
         },
         isUserFollowingEntity: function isUserFollowingEntity() {
-            if (this.doWeHaveCurrentUser()) {
-
-                return this.already_following == '1';
-            }
-
-            return false;
+            return this.is_following;
         },
         followMe: function followMe(e) {
             var _this = this;
@@ -7131,7 +7136,6 @@ exports.default = {
                 this.processing = true;
                 this.$http.post(this.endpoint).then(function () {
                     _this.following = true;
-                    _this.already_following = true;
                 }, function (response) {
                     throw new Error(response);
                 }).catch(function () {}).finally(function () {
@@ -7150,20 +7154,22 @@ exports.default = {
             this.processing = true;
             this.$http.delete(this.endpoint).then(function () {
                 _this2.following = false;
-                _this2.already_following = false;
             }, function (response) {
                 throw new Error(response);
             }).catch(function () {}).finally(function () {
                 _this2.processing = false;
             });
         }
+    },
+    components: {
+        'spinner': _Spinner2.default
     }
 };
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.display)?_c('span',[_c('button',{staticClass:"btn-follow btn ",class:_vm.btnclass,attrs:{"disabled":_vm.processing,"type":"button"},on:{"click":function($event){_vm.following ? _vm.unfollowMe($event) : _vm.followMe($event)}}},[_vm._v("\n        "+_vm._s(_vm.following ? _vm.unfollow_text : _vm.follow_text)+" "),(_vm.processing)?_c('spinny'):_vm._e()],1)]):_vm._e()}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('button',{staticClass:"btn-follow btn ",class:_vm.btnclass,attrs:{"disabled":_vm.processing || _vm.disable,"type":"button"},on:{"click":function($event){_vm.is_following ? _vm.unfollowMe($event) : _vm.followMe($event)}}},[_c('span',{domProps:{"innerHTML":_vm._s(_vm.is_following ? _vm.unfollow_text : _vm.follow_text)}}),_vm._v(" "),(_vm.processing)?_c('spinner',{attrs:{"size":'' + 10}}):_vm._e()],1)])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -7175,7 +7181,7 @@ if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-h
     hotAPI.reload("data-v-6800c6a6", __vue__options__)
   }
 })()}
-},{"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],10:[function(require,module,exports){
+},{"../Spinner.vue":4,"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],10:[function(require,module,exports){
 ;(function(){
 "use strict";
 

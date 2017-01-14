@@ -29,8 +29,8 @@ class UnfollowEntityCommandHandler
 
         return DB::transaction(function() use ($actor, $followable) {
             $follow = Follows::where('user_id', $actor->id)
-                ->where('watchable_id', $followable->id)
-                ->where('watchable_type', get_class($followable))
+                ->where('followable_id', $followable->id)
+                ->where('followable_type', get_class($followable))
                 ->first();
 
             return $follow ? $follow->delete() : false;

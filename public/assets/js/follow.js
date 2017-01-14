@@ -6651,19 +6651,19 @@ if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-h
 },{"../Spinner.vue":4,"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],6:[function(require,module,exports){
 'use strict';
 
-var _Followable = require('../follow/Followable.vue');
+var _Followable = require('./Followable.vue');
 
 var _Followable2 = _interopRequireDefault(_Followable);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 new Vue({
-    el: '#profilePage',
+    el: '#follow',
     components: {
         'followable': _Followable2.default
     }
 });
 
-},{"../follow/Followable.vue":5}]},{},[6]);
+},{"./Followable.vue":5}]},{},[6]);
 
-//# sourceMappingURL=profile.js.map
+//# sourceMappingURL=follow.js.map

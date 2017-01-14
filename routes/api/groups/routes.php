@@ -12,7 +12,7 @@ $api->group(['middleware' => 'jwt.auth'], function ($api) {
     ]);
     $api->delete('user/{id}/followers', [
         'as' => 'user.followers.destroy',
-        'uses' => \Kabooodle\Http\Controllers\Api\User\FollowsController::class.'@store'
+        'uses' => \Kabooodle\Http\Controllers\Api\User\FollowsController::class.'@destroy'
     ]);
     $api->post('sales/filter', [
         'as' => 'sales.filter',

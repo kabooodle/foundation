@@ -63115,11 +63115,54 @@ exports.reload = tryWrap(function (id, options) {
 
 },{}],59:[function(require,module,exports){
 ;(function(){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: {
+        size: {
+            type: String,
+            default: '12'
+        }
+    },
+    computed: {
+        img_url: function img_url() {
+            return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        }
+    }
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('img',{staticStyle:{"margin":"-2px 2px 0 0","padding":"0"},attrs:{"src":_vm.img_url,"height":_vm.size,"width":_vm.size}})])}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3c8f0230", __vue__options__)
+  } else {
+    hotAPI.rerender("data-v-3c8f0230", __vue__options__)
+  }
+})()}
+},{"vue":57,"vueify/node_modules/vue-hot-reload-api":58}],60:[function(require,module,exports){
+;(function(){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _Spinner = require('../Spinner.vue');
+
+var _Spinner2 = _interopRequireDefault(_Spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         able_name: {
@@ -63134,6 +63177,9 @@ exports.default = {
         },
         able_type: {
             required: true,
+            type: String
+        },
+        already_following: {
             type: String
         },
         btn_active_class: {
@@ -63158,9 +63204,6 @@ exports.default = {
                 return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : {};
             }
         },
-        already_following: {
-            required: true
-        },
         unfollow_text: {
             type: String,
             default: 'Following'
@@ -63172,7 +63215,8 @@ exports.default = {
     },
     data: function data() {
         return {
-            display: false,
+            disable: true,
+            display: true,
             following: false,
             processing: false
         };
@@ -63185,9 +63229,7 @@ exports.default = {
         }
     },
     mounted: function mounted() {
-        if (!this.entityIsMe()) {
-            this.display = true;
-        }
+        this.disable = false;
     },
 
     computed: {
@@ -63196,11 +63238,16 @@ exports.default = {
             if (this.following) {
                 theClass = this.btn_active_class + ' ' + this.btn_size_class;
             }
-            if (this.processing) {
+            if (this.processing || this.disable) {
                 theClass = theClass + ' disabled ';
             }
 
             return theClass;
+        },
+        is_following: function is_following() {
+            if (this.doWeHaveCurrentUser()) {
+                return this.already_following === true || this.already_following === 'true' || this.following === 'true' || this.following === true;
+            }
         }
     },
     methods: {
@@ -63208,19 +63255,13 @@ exports.default = {
             if (this.doWeHaveCurrentUser()) {
                 return parseInt(this.current_user.id) == parseInt(this.able_id);
             }
-
             return false;
         },
         doWeHaveCurrentUser: function doWeHaveCurrentUser() {
             return this.current_user;
         },
         isUserFollowingEntity: function isUserFollowingEntity() {
-            if (this.doWeHaveCurrentUser()) {
-
-                return this.already_following == '1';
-            }
-
-            return false;
+            return this.is_following;
         },
         followMe: function followMe(e) {
             var _this = this;
@@ -63229,7 +63270,6 @@ exports.default = {
                 this.processing = true;
                 this.$http.post(this.endpoint).then(function () {
                     _this.following = true;
-                    _this.already_following = true;
                 }, function (response) {
                     throw new Error(response);
                 }).catch(function () {}).finally(function () {
@@ -63248,20 +63288,22 @@ exports.default = {
             this.processing = true;
             this.$http.delete(this.endpoint).then(function () {
                 _this2.following = false;
-                _this2.already_following = false;
             }, function (response) {
                 throw new Error(response);
             }).catch(function () {}).finally(function () {
                 _this2.processing = false;
             });
         }
+    },
+    components: {
+        'spinner': _Spinner2.default
     }
 };
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.display)?_c('span',[_c('button',{staticClass:"btn-follow btn ",class:_vm.btnclass,attrs:{"disabled":_vm.processing,"type":"button"},on:{"click":function($event){_vm.following ? _vm.unfollowMe($event) : _vm.followMe($event)}}},[_vm._v("\n        "+_vm._s(_vm.following ? _vm.unfollow_text : _vm.follow_text)+" "),(_vm.processing)?_c('spinny'):_vm._e()],1)]):_vm._e()}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('button',{staticClass:"btn-follow btn ",class:_vm.btnclass,attrs:{"disabled":_vm.processing || _vm.disable,"type":"button"},on:{"click":function($event){_vm.is_following ? _vm.unfollowMe($event) : _vm.followMe($event)}}},[_c('span',{domProps:{"innerHTML":_vm._s(_vm.is_following ? _vm.unfollow_text : _vm.follow_text)}}),_vm._v(" "),(_vm.processing)?_c('spinner',{attrs:{"size":'' + 10}}):_vm._e()],1)])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -63273,7 +63315,7 @@ if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-h
     hotAPI.rerender("data-v-6800c6a6", __vue__options__)
   }
 })()}
-},{"vue":57,"vueify/node_modules/vue-hot-reload-api":58}],60:[function(require,module,exports){
+},{"../Spinner.vue":59,"vue":57,"vueify/node_modules/vue-hot-reload-api":58}],61:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -63331,7 +63373,7 @@ Vue.component('followable', _Followable2.default);
 global.$Bus = new Vue();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../../resources/assets/vendor/jquery/noty/packaged/jquery.noty.packaged.js":62,"../vendor/bootstrap-multiselect/dist/js/bootstrap-multiselect":61,"../vendor/tablesaw/tablesaw":63,"./components/follow/Followable.vue":59,"bootstrap":4,"bootstrap-select":1,"bootstrap-slider":2,"bootstrap-touchspin":3,"clipboard":6,"ekko-lightbox":9,"emojione":10,"emojionearea":11,"eonasdan-bootstrap-datetimepicker":12,"jquery":15,"moment":22,"moment-timezone-tsc":17,"perfect-scrollbar/jquery":23,"select2":46,"selectize":48,"tether":50,"underscore":52,"vue-resource":53,"vue-timeago":54,"vue-timeago/locales/en-US.json":55,"vue/dist/vue.js":56}],61:[function(require,module,exports){
+},{"../../../resources/assets/vendor/jquery/noty/packaged/jquery.noty.packaged.js":63,"../vendor/bootstrap-multiselect/dist/js/bootstrap-multiselect":62,"../vendor/tablesaw/tablesaw":64,"./components/follow/Followable.vue":60,"bootstrap":4,"bootstrap-select":1,"bootstrap-slider":2,"bootstrap-touchspin":3,"clipboard":6,"ekko-lightbox":9,"emojione":10,"emojionearea":11,"eonasdan-bootstrap-datetimepicker":12,"jquery":15,"moment":22,"moment-timezone-tsc":17,"perfect-scrollbar/jquery":23,"select2":46,"selectize":48,"tether":50,"underscore":52,"vue-resource":53,"vue-timeago":54,"vue-timeago/locales/en-US.json":55,"vue/dist/vue.js":56}],62:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -64955,7 +64997,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     });
 }(window.jQuery);
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -66350,7 +66392,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     return window.noty;
 });
 
-},{"jquery":15}],63:[function(require,module,exports){
+},{"jquery":15}],64:[function(require,module,exports){
 "use strict";
 
 (function ($) {
@@ -66624,6 +66666,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     })();
 })(jQuery);
 
-},{}]},{},[60]);
+},{}]},{},[61]);
 
 //# sourceMappingURL=vendor.js.map
