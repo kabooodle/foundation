@@ -15,9 +15,7 @@ use Kabooodle\Models\Queues;
 use Kabooodle\Models\ListingItems;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Facebook\Exceptions\FacebookThrottleException;
-use Kabooodle\Bus\Events\Listings\ListingItemWasListed;
 use Kabooodle\Services\Social\Facebook\FacebookSdkService;
-use Kabooodle\Services\Social\Facebook\Entities\PhotoDescription;
 use Kabooodle\Foundation\Exceptions\Listings\ListingPhotoMissingException;
 
 /**
@@ -86,18 +84,19 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
 
             $facebookParams = $this->buildFacebookAlbumParams($listingItem);
 
-            $facebook->postPhotoToGroupAlbum(
+            $response = $facebook->postPhotoToGroupAlbum(
                 $listingItem->fb_album_node_id,
                 $facebookParams,
                 $listingItem->owner->getFacebookUserToken()
             );
 
-            event(new ListingItemWasListed);
+            $response = $response->asArray();
+
+//            event(new ListingItemWasListed);
+
+            $this->successfulJobHandler($listingItem, ['fb_response_object_id' => $response['id']]);
 
             $this->job->delete();
-
-            $this->successfulJobHandler($listingItem);
-
         } catch (Exception $e) {
             $this->failedJobHandler($listingItem);
 
@@ -127,12 +126,13 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     }
 
     /**
-     * @param $listingItem
+     * @param       $listingItem
+     * @param array $attributes
      */
-    public function successfulJobHandler($listingItem)
+    public function successfulJobHandler($listingItem, array $attributes = [])
     {
         // Update the status to the appropriate status based on the result.
-        $this->updateListingItemsStatus([$listingItem->id], $this->timestamp, ListingItems::STATUS_SUCCESS);
+        $this->updateListingItemsStatus([$listingItem->id], $this->timestamp, ListingItems::STATUS_SUCCESS, $attributes);
 
         // Update the associated queue in the DB
         $this->updateQueueStatus($this->queuesId, $this->timestamp, Queues::STATUS_SUCCESS, $this->job->attempts());
@@ -146,9 +146,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
      */
     public function buildFacebookAlbumParams(ListingItems $listingItem)
     {
-        $photoDescr = new PhotoDescription($listingItem);
-
-        $photoMessage = $listingItem->includeLinkInDescr() ? $photoDescr->getComment() : null;
+        $photoMessage = $listingItem->parseItemMessage();
 
         $image = $this->getListingImage($listingItem);
 
@@ -157,8 +155,8 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
         }
 
         return [
-            'url' => $image->getURL(),
-            'message' => $photoMessage
+            'url' => $image->getOriginal('location'),
+            'message' => $photoMessage ? : null
         ];
     }
 
@@ -185,7 +183,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
      */
     public function getListingImage(ListingItems $listingItem)
     {
-        return $listingItem->inventoryItem->firstImage();
+        return $listingItem->inventoryItem->cover_photo ? $listingItem->inventoryItem->cover_photo : $listingItem->inventoryItem->firstImage();
     }
 
     /**

@@ -30,8 +30,9 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     protected $appends = [
         'name',
+        'id_to_string',
         'is_watched',
-        'sale_name',
+//        'sale_name',
     ];
 
     /**
@@ -43,8 +44,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      * @var array
      */
     protected $with = [
-        'sales',
-        'watchers'
+//        'sales',
+//        'watchers'
     ];
 
     /**
@@ -78,6 +79,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'fb_group_node_id' => null,
         'flashsale_id' => null,
         'fb_album_node_id' => null,
+        'fb_response_object_id' => null,
+        'fb_response' => '',
         'owner_id' => 0,
         'inventory_id' => 0,
         'type' => self::TYPE_FACEBOOK,
@@ -85,6 +88,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status_updated_at' => '',
         'status_history' => '',
         'ignore' => false,
+        'item_message' => null,
     ];
 
     /**
@@ -94,15 +98,36 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'listing_id',
         'fb_group_node_id',
         'flashsale_id',
+        'fb_response_object_id',
         'fb_album_node_id',
+        'fb_response',
         'owner_id',
         'inventory_id',
         'type',
         'status',
         'status_updated_at',
         'status_history',
-        'ignore'
+        'ignore',
+        'item_message'
     ];
+
+    /**
+     * @param $value
+     *
+     * @return array
+     */
+    public function getFbResponseAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    /**
+     * @param $value
+     */
+    public function setFResponseAttribute($value)
+    {
+        $this->attributes['fb_response'] = json_encode($value);
+    }
 
     /**
      * @return mixed
@@ -229,11 +254,11 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     }
 
     /**
-     * @return bool
+     * @return mixed
      */
-    public function includeLinkInDescr()
+    public function getIdToStringAttribute()
     {
-        return $this->listing->includeLinkInDescr();
+        return $this->obfuscateIdToString();
     }
 
     /**
@@ -260,5 +285,35 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         }
 
         return false;
+    }
+
+    /**
+     * @return mixed|null|string
+     */
+    public function parseItemMessage()
+    {
+        $itemMessage = trim($this->item_message);
+        if ($itemMessage) {
+            $placeholders = [
+                'url' => '{url}',
+                'price' => '{price}',
+                'style' => '{style}',
+                'size' => '{size}'
+            ];
+
+            $id = $this->obfuscateIdToString($this->id);
+            $route = str_replace(['https://', 'http://'], '', str_replace(['api.', 'app.', 'api', 'app'], 'www.', route('externalclaim.show', [$id])));
+            $itemMessage = str_ireplace($placeholders['url'], ' '.$route.' ', $itemMessage);
+
+            $itemMessage = str_ireplace($placeholders['price'], $this->inventoryItem->getPrice(), $itemMessage);
+
+            $itemMessage = str_ireplace($placeholders['style'], $this->inventoryItem->style->name, $itemMessage);
+
+            $itemMessage = str_ireplace($placeholders['size'], $this->inventoryItem->size->name, $itemMessage);
+
+            return $itemMessage;
+        }
+
+        return null;
     }
 }

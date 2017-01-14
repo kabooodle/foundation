@@ -8,6 +8,7 @@ namespace Kabooodle\Http\Controllers\Api\Profile;
 
 use Exception;
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\User\UpdateUserShippingProfileCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToGenericTrialCommand;
 use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadyHadFreeTrialException;
@@ -40,6 +41,23 @@ class ProfileApiController extends AbstractApiController
             return $this->setStatusCode(500)->setData([
                 'msg' => 'An error occurred. Please try again.'
             ])->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     */
+    public function updateShippingProfile(Request $request)
+    {
+        try {
+            $user = $this->getUser();
+            $this->dispatchNow(new UpdateUserShippingProfileCommand($user, $request->get('use_kabooodle_as_shipper')));
+
+            return $this->respond();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->respond();
         }
     }
 }

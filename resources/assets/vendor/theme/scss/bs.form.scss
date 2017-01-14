@@ -94,10 +94,18 @@ option{
 }
 
 
+.form-control-label,
+.control-label {
+  color: #817e99;
+  font-size: .9rem;
+}
+
 .form-group.row {
   .form-control-label,
   label.col-sm-3.control-label{
+    padding: .15rem .75rem;
     text-align: right;
+    line-height: 2.3rem;
   }
 }
 
@@ -107,4 +115,8 @@ option{
 .has-danger .form-control {
   border-color: $danger;
   border:1px solid $danger;
+}
+
+.multiselect__option--highlight {
+  background: $primary;
 }

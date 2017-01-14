@@ -5,6 +5,7 @@
         </div>
     </div>
     <div v-else>
+            <popout-overlay></popout-overlay>
             <div class="box style-container" v-for="style in inventory_items">
                 <div class="box-header clearfix">
                     <div class="row">
@@ -67,7 +68,7 @@
                                                         type="button"
                                                         class="btn white btn-xs">
                                                             <span class="item block">
-                                                                <img v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 80px; height: 80px;">
+                                                                <img v-bind:src="item.cover_photo" class="img-responsive" style="width: 80px; height: 80px;">
                                                             </span>
                                                     <span class="p-a-o text-sm clearfix block">
                                                         <span class="pull-left">Qty: <span class="text-muted">{{ item.initial_qty }}</span></span>
@@ -84,7 +85,7 @@
                                                         target="_blank"
                                                         v-bind:href="this.window.location.href+'/'+item.name_uuid"
                                                         class="btn btn-xs pull-right white"
-                                                >View</a>
+                                                >Claim</a>
                                                 </div>
                                             </div>
                                         </template>
@@ -103,6 +104,7 @@
     }
 </style>
 <script>
+    import PopoutOverlay from '../Popover.vue';
     import computed from './manage/computed';
     import Spinny from '../Spinner.vue';
 
@@ -305,7 +307,8 @@
             }
         },
         components: {
-            'spinny' : Spinny
+            'spinny' : Spinny,
+            'popout-overlay' : PopoutOverlay
         }
     }
 </script>

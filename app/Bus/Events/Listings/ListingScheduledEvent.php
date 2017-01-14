@@ -18,38 +18,38 @@ final class ListingScheduledEvent
     use InteractsWithQueue;
 
     /**
-     * @var User
+     * @var
      */
-    public $actor;
+    public $actorId;
 
     /**
-     * @var Listings
+     * @var int
      */
-    public $listing;
+    public $listingId;
 
     /**
-     * @param User     $actor
-     * @param Listings $listing
+     * @param int $actorId
+     * @param int $listingId
      */
-    public function __construct(User $actor, Listings $listing)
+    public function __construct(int $actorId, int $listingId)
     {
-        $this->actor = $actor;
-        $this->listing = $listing;
+        $this->actorId = $actorId;
+        $this->listingId = $listingId;
     }
 
     /**
-     * @return User
+     * @return int
      */
-    public function getActor(): User
+    public function getActorId(): int
     {
-        return $this->actor;
+        return $this->actorId;
     }
 
     /**
-     * @return Listings
+     * @return int
      */
-    public function getListing(): Listings
+    public function getListingId(): int
     {
-        return $this->listing;
+        return $this->listingId;
     }
 }

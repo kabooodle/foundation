@@ -22,7 +22,7 @@ return [
     |
     */
 
-    'default' => 'main',
+    'default' => env('PUSHER_CONNECTION', 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -38,19 +38,22 @@ return [
     'connections' => [
 
         'main' => [
-            'key' => env('PUSHER_KEY'),
+            'auth_key' => env('PUSHER_KEY'),
             'secret' => env('PUSHER_SECRET'),
             'app_id' => env('PUSHER_ID'),
-            'options' => [],
+            'options' => [
+                'scheme' => 'https',
+                'encrypted' => true,
+            ],
             'host' => null,
             'port' => null,
             'timeout' => null,
         ],
 
-        'alternative' => [
-            'auth_key' => 'your-auth-key',
-            'secret' => 'your-secret',
-            'app_id' => 'your-app-id',
+        'local' => [
+            'auth_key' => env('PUSHER_KEY'),
+            'secret' => env('PUSHER_SECRET'),
+            'app_id' => env('PUSHER_ID'),
             'options' => [],
             'host' => null,
             'port' => null,

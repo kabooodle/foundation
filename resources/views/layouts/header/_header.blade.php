@@ -3,7 +3,7 @@
 
         <a class="navbar-item pull-right hidden-md-up m-a-0 m-l" data-target=
         "#navbar-4" data-toggle="collapse"><i class=
-                                              "material-icons"></i></a><a href="/"
+                                              "material-icons"></i></a><a href="/home"
                                                                            class="navbar-brand kabooodle-brand">
 <span class=
       "hidden-folded inline">{{ env('APP_NAME') }}</span></a>
@@ -11,61 +11,42 @@
         <ul class="nav navbar-nav pull-right nav-active-border">
             @if(user())
                 @if(user()->hasAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
-                <li class="nav-item ">
-                    <a class="nav-link text-sm" href="{{ route('profile.credits.index') }}">${{ user()->getAvailableBalance() }} Credits</a>
-                </li>
+                    <li class="nav-item ">
+                        <a class="nav-link text-sm hidden-md-down" href="{{ route('profile.credits.index') }}">${{ user()->getAvailableBalance() }} Credits</a>
+                    </li>
                 @endif
-                {{--<li class="nav-item dropdown">--}}
-                    {{--<a class="nav-link" data-toggle="dropdown" href=""><i class=--}}
-                                                                          {{--"material-icons"></i> <span class=--}}
-                                                                                                       {{--"label up warning hide"--}}
-                                                                                                       {{--id="notify_total"></span></a>--}}
-                    {{--<div class=--}}
-                         {{--"dropdown-menu pull-right w-xl no-bg no-border no-shadow">--}}
-                        {{--<div class="scrollable" style="max-height: 220px">--}}
-                            {{--<ul class="list-group m-a-0">--}}
-                                {{--<li class=--}}
-                                    {{--"list-group-item black lt box-shadow-z0 b">--}}
-                            {{--<span class="pull-left m-r"><img alt="..." class=--}}
-                                {{--"w-40 img-circle" src=--}}
-                                                             {{--"../assets/images/a0.jpg"></span> <span class=--}}
-                                                                                                     {{--"clear block">Use awesome <a--}}
-                                                {{--class="text-primary"--}}
-                                                {{--href="">animate.css</a><br>--}}
-                            {{--<small class="text-muted">10 minutes--}}
-                            {{--ago</small></span></li>--}}
-                                {{--<li class=--}}
-                                    {{--"list-group-item black lt box-shadow-z0 b">--}}
-                            {{--<span class="pull-left m-r"><img alt="..." class=--}}
-                                {{--"w-40 img-circle" src=--}}
-                                                             {{--"../assets/images/a1.jpg"></span> <span class=--}}
-                                                                                                     {{--"clear block"><a--}}
-                                                {{--class="text-primary" href=--}}
-                                        {{--"">Joe</a> Added you as friend<br>--}}
-                            {{--<small class="text-muted">2 hours--}}
-                            {{--ago</small></span></li>--}}
-                                {{--<li class=--}}
-                                    {{--"list-group-item dark-white text-color box-shadow-z0 b">--}}
-                            {{--<span class="pull-left m-r"><img alt="..." class=--}}
-                                {{--"w-40 img-circle" src=--}}
-                                                             {{--"https://placekitten.com/g/32/32"></span> <span class=--}}
-                                                                                                             {{--"clear block"><a--}}
-                                                {{--class="text-primary" href=--}}
-                                        {{--"">Danie</a> sent you a message<br>--}}
-                            {{--<small class="text-muted">1 day--}}
-                            {{--ago</small></span></li>--}}
-                            {{--</ul>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-                {{--</li>--}}
+                <li class="nav-item ">
+                    <a class="nav-link"  href="{{ route('messenger.index') }}">
+                        <i class="fa fa-comments" aria-hidden="true"></i><span class="label up indicator warning hide" ></span>
+                    </a>
+                </li>
+
+                <li id="notices_wrapper" class="nav-item dropdown" @click="markUnreadAsRead('{{ apiRoute('notices.all.mark_as_read') }}')">
+                <a class="nav-link" data-toggle="dropdown" href="">
+                    <i class="fa fa-bell-o " aria-hidden="true"></i><span class="label up indicator warning hide" id="notify_total"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg pull-right ">
+                    <div class="scrollable" data-scrollable="scrollable">
+                        <ul class="p-a-0 p-0 m-0 m-a-0">
+                            <notices
+                                    limit="10"
+                                    endpoint="{{ apiRoute('notices.index') }}"
+                            ></notices>
+                        </ul>
+                    </div>
+                    <a class="dropdown-item text-center" href="{{ route('notices.index') }}">View All Notices</a>
+                </div>
+                </li>
                 <li class="nav-item dropdown ">
                     <a class="nav-link dropdown-toggle clear" data-toggle=
                     "dropdown" href=""><span class="avatar_container _32 inline avatar-thumbnail"><img alt="..."
-                                                                      src="{{ user()->avatar }}"> <i class=
-                                                                                                                "busy b-white right"></i></span></a>
+                                                                                                       src="{{ user()->avatar }}"> <i class=
+                                                                                                                                      "busy b-white right"></i></span></a>
                     <div class="dropdown-menu pull-right">
                         <a class="dropdown-item" href="{{ route('profile.index') }}"><span>Account Settings</span></a>
-
+                        @if(user()->hasAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
+                            <a class="dropdown-item hidden-lg-up" href="{{ route('profile.credits.index') }}"><span>${{ user()->getAvailableBalance() }} Credits</span></a>
+                        @endif
                         <a class="dropdown-item" href="{{ route('referrals.index') }}"><span>Referrals</span></a>
                         <a class=
                            "dropdown-item" href="{{ route('auth.logout') }}">Sign out</a>
@@ -95,24 +76,27 @@
                                class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Inventory</a>
                             <div class="divider"></div>
                             <a href="{{ route('shop.claims.index', [user()->username]) }}"
-                               class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Pending Claims</a>
+                               class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Pending Claims
+                                <span class="">({{ user()->pendingClaimsOnMyInventory()->count() }})</span>
+                            </a>
 
-                            <a  href="{{  route('sales.index') }}"
-                                class="dropdown-item {{ Request::is('sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
+                            <a  href="{{  route('merchant.sales.index') }}"
+                                class="dropdown-item {{ Request::is('merchant/sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
 
                             <div class="divider"></div>
-                            <a href="{{ route('listings.index') }}" class="dropdown-item {{ Request::is('listings') ? 'active' : null }}"><span>Listings</span></a>
+                            <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Manage Listings</span></a>
 
                             @if(user()->isSubscribedToMerchantPlus())
-                            <div class="divider"></div>
-                            <a href="{{  route('shipping.create') }}"
-                               class="dropdown-item {{ Request::is('shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
-                            <a href="{{  route('shipping.index') }}"
-                               class="dropdown-item {{ Request::is('shipping') ? 'active' : null }}"><span>Shipments</span></a>
+                                <div class="divider"></div>
+                                <a href="{{  route('merchant.shipping.create') }}"
+                                   class="dropdown-item {{ Request::is('merchant.shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
+                                <a href="{{  route('merchant.shipping.index') }}"
+                                   class="dropdown-item {{ Request::is('merchant/shipping') ? 'active' : null }}"><span>Shipments</span></a>
                             @endif
                         </div>
                     </li>
                 @endif
+                @if(user() && user()->claimsAsBuyer->count() > 0)
                     <li class ="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> <span class="nav-text">Purchases</span></a>
                         <div class="dropdown-menu">
@@ -122,6 +106,7 @@
                                class="dropdown-item {{ Request::is('watching*') ? 'active' : null }}">Watching</a>
                         </div>
                     </li>
+                @endif
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('groups*') ? 'active' : null }}"
                        href="{{ route('groups.index') }}" ui-sref-active="active"><span class=
@@ -133,11 +118,27 @@
                 </li>
             </ul>
 
-            <div class="navbar-form form-inline pull-right pull-none-sm navbar-item v-m">
+            {{--<div class="navbar-form form-inline pull-right pull-none-sm navbar-item v-m">--}}
                 {{--<div class="form-group l-h m-a-0">--}}
-                    {{--<input type="text" id="app_search" class="nav-search-input half-rounded form-control b-a" placeholder="Search {{ appName() }}...">--}}
+                {{--<input type="text" id="app_search" class="nav-search-input half-rounded form-control b-a" placeholder="Search {{ appName() }}...">--}}
                 {{--</div>--}}
-            </div>
+            {{--</div>--}}
         </div>
     </div>
 </div>
+
+<script>
+    function init() {
+        window.addEventListener('scroll', function(e){
+            var distanceY = window.pageYOffset || document.documentElement.scrollTop,
+                    shrinkOn = 80,
+                    header = $(".app-header");
+            if (distanceY > shrinkOn) {
+                $('body').addClass('header-condensed');
+            } else {
+                $('body').removeClass('header-condensed');
+            }
+        });
+    }
+    window.onload = init();
+</script>

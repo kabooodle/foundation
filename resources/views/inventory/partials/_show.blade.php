@@ -42,20 +42,17 @@
                 <h2><span class="_800">{!! $item->name !!}</span></h2>
                 <p class="block m-t-0"><span class="text-muted">Size:</span> {!! $item->styleSize->name !!}</p>
                 <p class="m-b-0 m-t-1 h4 text-warning _500">${{ isset($_price) ? $_price : $item->getPrice() }}</p>
-                <div class="list-item m-t-2 m-b-0 box">
-                    <a href="{{ route('shop.show', [$item->user->username]) }}" class="list-left">
-                        <span class="w-40 avatar"><img
-                                    src="https://placekitten.com/g/32/32" alt="..."> <i
-                                    class="on b-white bottom"></i></span></a>
-                    <div class="list-body">
-                        <small class="_500 text-ellipsis">{{ $item->user->username }}</small>
-                        <followable
-                                already_following="{{ $item->user->is_following ? 1 : 0}}"
-                                endpoint="{{ apiRoute('user.followers.store', [$item->user->id]) }}"
-                                able_type="{{ get_class($item->user) }}"
-                                able_id="{{ $item->user->id }}">
-                        </followable>
-                    </div>
+
+                <div class="m-t-2 m-b-0">
+                    <v-card
+                            extra_class="list-group-item no-border b-a-0 "
+                            already_following="{{ $item->user->is_following  ? 'true' : 'false'}}"
+                            follow_endpoint="{{ apiRoute('user.followers.store', [$item->owner->id]) }}"
+                            able_type="{{ get_class($item->owner) }}"
+                            able_id="{{ $item->user->id }}"
+                            :user="{{ $item->user }}"
+                            message_endpoint="{{ apiRoute('messenger.store') }}"
+                    ></v-card>
                 </div>
             </div>
             <div class="box-body">

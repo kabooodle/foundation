@@ -28,8 +28,7 @@ use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
  */
 class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisionable
 {
-    use AlgoliaEloquentTrait,
-        AuthorableTrait,
+    use AuthorableTrait,
         ClaimableTrait,
         FollowableTrait,
         LikeableTrait,
@@ -39,8 +38,8 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
         SerializesModels,
         SoftDeletes;
 
-    const TYPE_SINGLE = 'single';
-    const TYPE_GROUP = 'group';
+    const HOST_SELF = 'self';
+    const HOST_GROUP = 'group';
 
     /**
      * @var array
@@ -172,11 +171,11 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
         return [
             'name' => 'required',
             'description' => 'required',
-            'type' => 'required|in:'.self::TYPE_GROUP.','.self::TYPE_SINGLE,
             'starts_at' => 'required|date',
             'ends_at' => 'required|date',
+            'hosted_by' => 'required|in:group,self',
 //            'host_id' => 'exists:groups,id',
-            'privacy' => 'required|in:private,public,secret'
+            'privacy' => 'required|in:private,public'
         ];
     }
 
@@ -186,8 +185,8 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public static function getTypes()
     {
         return [
-            'Myself' => self::TYPE_SINGLE,
-            'A Group' => self::TYPE_GROUP
+            'Myself' => self::HOST_SELF,
+            'A Group' => self::HOST_GROUP
         ];
     }
 
@@ -299,7 +298,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function hostIsGroup()
     {
-        return $this->type == self::TYPE_GROUP;
+        return $this->type == self::HOST_GROUP;
     }
 
     /**

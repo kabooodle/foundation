@@ -1,20 +1,21 @@
 <template>
     <span>
-        <img :src="img_url" style="margin:-2px 2px 0 0; padding:0;" :height="size" :width="size" >
+        <span v-html="img"></span>
     </span>
 </template>
 <script>
+    import spinner from './spinner';
     export default {
         props : {
-            size : {
+            size: {
                 type: String,
-                default : '12'
+                default: '12'
             }
         },
         computed : {
-            img_url(){
-                return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
-            },
+            img(){
+                return spinner(this.size);
+            }
         },
     }
 </script>

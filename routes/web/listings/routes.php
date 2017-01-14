@@ -1,29 +1,19 @@
 <?php
 
+
+Route::get('listing/{listing}', [
+    'as' =>'listings.show',
+    'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@show'
+]);
+// Shortened url, possible for sharing?
+Route::get('l/{listing}', [
+    'as' =>'listings.shorthand',
+    'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@shorthand'
+]);
+
 Route::get('listingitems/{listingItem}', [
     'as' => 'listingitems.show',
     'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingItemsController::class.'@show'
 ]);
 
-Route::group(['middleware' => ['auth', 'subscribed:merchant|merchant_plus']], function () {
-    Route::get('listings', [
-        'as' => 'listings.index',
-        'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@index'
-    ]);
-    Route::get('listings/{listing}/edit', [
-        'as' => 'listings.edit',
-        'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@edit'
-    ]);
-    Route::patch('listings/{listing}/edit', [
-        'as' => 'listings.update',
-        'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@update'
-    ]);
-    Route::get('listings/{listing}', [
-        'as' => 'listings.show',
-        'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@show'
-    ]);
-    Route::get('listings/{listing}/{group}/{groupid}', [
-        'as' => 'listings.group.show',
-        'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@detailed'
-    ]);
-});
+require_once('merchant_routes.php');

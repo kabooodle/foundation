@@ -10,6 +10,7 @@ use DB;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
 
 /**
@@ -17,7 +18,7 @@ use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
  */
 class Listings extends AbstractListingModel
 {
-    use PresentableTrait, SoftDeletes, UuidableTrait;
+    use EloquentDatesTrait, PresentableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array
@@ -25,11 +26,12 @@ class Listings extends AbstractListingModel
     protected $appends = [
         'albums_count',
         'items_count',
-        'use_link',
         'accepted_sales_count',
         'pending_sales_count',
         'gross',
-        'sale_name'
+        'sale_name',
+        'claimable_range',
+        'type_icon_src'
     ];
 
     /**
@@ -41,7 +43,7 @@ class Listings extends AbstractListingModel
      * @var array
      */
     protected $with = [
-        'items'
+//        'items'
     ];
 
     /**
@@ -49,8 +51,10 @@ class Listings extends AbstractListingModel
      */
     protected $dates = [
         'scheduled_for',
+        'scheduled_until',
         'status_updated_at',
         'claimable_at',
+        'claimable_until',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -64,16 +68,10 @@ class Listings extends AbstractListingModel
     /**
      * @var array
      */
-    protected $casts = [
-        'include_link_in_descr' => 'bool'
-    ];
-
-    /**
-     * @var array
-     */
     protected $attributes = [
-        'include_link_in_descr' => true,
         'scheduled_for' => null,
+        'scheduled_until' => null,
+        'claimable_until' => null,
         'claimable_at' => null,
         'owner_id' => 0,
         'fb_group_node_id' => null,
@@ -89,9 +87,10 @@ class Listings extends AbstractListingModel
      * @var array
      */
     protected $fillable = [
-        'include_link_in_descr',
         'scheduled_for',
+        'scheduled_until',
         'claimable_at',
+        'claimable_until',
         'fb_group_node_id',
         'flashsale_id',
         'owner_id',
@@ -119,14 +118,6 @@ class Listings extends AbstractListingModel
     public function getItemsCountAttribute()
     {
         return $this->listingItems->count();
-    }
-
-    /**
-     * @return bool
-     */
-    public function getUseLinkAttribute()
-    {
-        return $this->includeLinkInDescr();
     }
 
     public function getAcceptedSalesCountAttribute()
@@ -215,8 +206,8 @@ class Listings extends AbstractListingModel
         //                IFNULL(COUNT(DISTINCT(p.id)), 0) AS pageviews_count,
         //                LEFT JOIN pageviews AS p ON p.shoppable_id = li.id AND p.inventory_id = li.inventory_id
         $sql = "SELECT
+                l.id as id,
                 l.scheduled_for AS scheduled_for,
-                l.include_link_in_descr as use_link,
                 l.status AS status,
                 l.type as type,
                 l.uuid AS uuid,
@@ -265,6 +256,7 @@ class Listings extends AbstractListingModel
     {
         $sql = "
                 SELECT
+                l.id as id,
                 fs.name AS flashsale_name,
                 fb.facebook_node_name AS fb_name,
                 li.fb_album_node_id as fb_album_id,
@@ -300,14 +292,6 @@ class Listings extends AbstractListingModel
         }
 
         return DB::select($sql, [$this->uuid, $userId, $type]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function includeLinkInDescr()
-    {
-        return $this->include_link_in_descr;
     }
 
     /**
@@ -351,6 +335,27 @@ class Listings extends AbstractListingModel
         return $this->flashSale->name;
     }
 
+    /**
+     * @return string
+     */
+    public function getClaimableRangeAttribute()
+    {
+        $scheduledFor = $this->scheduled_for;
+        $scheduledUntil = $this->scheduled_until;
+
+        $claimableAt = $this->claimable_at ? : $scheduledFor;
+        $claimableUntil = $this->claimable_until ? : ($scheduledUntil ? : null);
+
+        return $claimableUntil ? $this->humanize($claimableAt).' - '.$this->humanize($claimableUntil) : $this->humanize($claimableAt);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTypeIconSrcAttribute()
+    {
+        return $this->typeIs(self::TYPE_FACEBOOK) ? '/assets/images/icons/FB-f-Logo__blue_18.png' : '/assets/images/icons/kabooodle_logo_18.png';
+    }
     /**
      * @return mixed
      */

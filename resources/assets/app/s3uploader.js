@@ -85,7 +85,6 @@
                         success: function (response) {
                             $(document).trigger('s3uploader.s3_key_retrieved', response);
                             that.log('api.files.s3key: done', response);
-                            console.log(response);
                             data.url = response.data.url;
                             data.formData = {
                                 AWSAccessKeyId:         response.data.AWSAccessKeyId,

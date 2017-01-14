@@ -9,7 +9,6 @@ namespace Kabooodle\Services;
 use Kabooodle\Bus\Events\NotificationableEvent;
 use Illuminate\Events\Dispatcher as BaseDispatcher;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Kabooodle\Models\Contracts\NotificationableInterface;
 
 /**
  * Class EventDispatcher
@@ -49,11 +48,6 @@ class EventDispatcher extends BaseDispatcher
             $this->broadcastEvent($payload[0]);
         }
 
-        // Custom NotificationableInterface
-        if (isset($payload[0]) && $payload[0] instanceof NotificationableInterface) {
-            $this->raiseNotificationEvent($event, $payload[0]);
-        }
-
         foreach ($this->getListeners($event) as $listener) {
             $response = call_user_func_array($listener, $payload);
 
@@ -79,14 +73,5 @@ class EventDispatcher extends BaseDispatcher
         array_pop($this->firing);
 
         return $halt ? null : $responses;
-    }
-
-    /**
-     * @param $event
-     * @param $payload
-     */
-    protected function raiseNotificationEvent($event, $payload)
-    {
-        $this->fire(new NotificationableEvent($event, $payload));
     }
 }

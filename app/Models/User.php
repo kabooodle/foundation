@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Auth\Authenticatable;
+use Cmgmyr\Messenger\Traits\Messagable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Kabooodle\Bus\NotificationableTrait;
 use Kabooodle\Presenters\PresentableTrait;
@@ -44,14 +45,14 @@ class User extends BaseEloquentModel implements
     LikeableInterface,
     Revisionable
 {
-    use AlgoliaEloquentTrait,
-        Authenticatable,
+    use Authenticatable,
         Authorizable,
         Billable,
         CanResetPassword,
         DispatchesJobs,
         FollowableTrait,
         LikeableTrait,
+        Messagable,
         NotificationableTrait,
         ObfuscatesIdTrait,
         PresentableTrait,
@@ -64,7 +65,9 @@ class User extends BaseEloquentModel implements
     protected $appends = [
         'is_following',
         'full_name',
-        'name'
+        'full_name_with_username',
+        'name',
+        'email'
     ];
 
     /**
@@ -175,7 +178,7 @@ class User extends BaseEloquentModel implements
             'account_type' => 'required|in:basic,merchant,merchant_plus',
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required|unique:users',
+            'username' => 'required|unique:users|min:5|max:30',
             'email' => 'required|email|max:255|unique:emails,address',
             'password' => 'required|min:6',
         ];
@@ -192,7 +195,7 @@ class User extends BaseEloquentModel implements
             'account_type' => 'required|in:basic,merchant,merchant_plus',
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required|unique:users,username,'.$guest->id,
+            'username' => 'required|min:5|max:30|unique:users,username,'.$guest->id,
             'email' => 'required|email|max:255',
             'password' => 'required|min:6',
         ];
@@ -250,6 +253,14 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return string
+     */
+    public function getFullNameWithUsernameAttribute()
+    {
+        return $this->first_name.' '.$this->last_name.' ('.$this->username.')';
+    }
+
+    /**
      * @return mixed
      */
     public function getNameAttribute()
@@ -275,7 +286,7 @@ class User extends BaseEloquentModel implements
             $value = '/assets/images/logo/roboto-avatar.png';
         }
 
-        return $value;
+        return useCDN() ? staticAsset($value) : $value;
     }
 
     /**
@@ -527,11 +538,11 @@ class User extends BaseEloquentModel implements
      */
     public function addresses()
     {
-        return $this->hasMany(Address::class, 'user_id');
+        return $this->hasMany(Address::class, 'user_id')->orderBy('primary', 'desc');
     }
 
     /**
-     * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     * @return\Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function primaryBillingAddress()
     {
@@ -543,11 +554,11 @@ class User extends BaseEloquentModel implements
      */
     public function billingAddresses()
     {
-        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_BILLING);
+        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_BILLING)->orderBy('primary', 'desc');
     }
 
     /**
-     * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     * @return\Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function primaryShipFromAddress()
     {
@@ -556,6 +567,14 @@ class User extends BaseEloquentModel implements
 
     /**
      * @return\Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function shipFromAddresses()
+    {
+        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_FROM)->orderBy('primary', 'desc');
+    }
+
+    /**
+     * @return\Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function primaryShipToAddress()
     {
@@ -567,7 +586,26 @@ class User extends BaseEloquentModel implements
      */
     public function shipToAddresses()
     {
-        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_TO);
+        return $this->hasMany(Address::class, 'user_id')->whereType(Address::TYPE_TO)->orderBy('primary', 'desc');
+    }
+
+    /**
+     * @param Address $primaryAddress
+     */
+    public function makeAddressOnlyPrimary(Address $primaryAddress)
+    {
+        $otherAddresses = $this->addresses->filter(function ($address) use ($primaryAddress) {
+            return $address->type == $primaryAddress->type && $address->id != $primaryAddress->id;
+        });
+        foreach ($otherAddresses as $otherAddress) {
+            $otherAddress->primary = false;
+            $otherAddress->save();
+        }
+
+        if (!$primaryAddress->isPrimary()) {
+            $primaryAddress->primary = true;
+            $primaryAddress->save();
+        }
     }
 
     /**
@@ -794,7 +832,7 @@ class User extends BaseEloquentModel implements
     public function notificationsettings()
     {
         return $this->belongsToMany(Notifications::class, 'users_notificationsettings', 'user_id', 'notification_id')
-            ->withPivot(['email', 'web']);
+            ->withPivot(['email', 'web', 'sms']);
     }
 
     /**
@@ -843,7 +881,7 @@ class User extends BaseEloquentModel implements
     {
         $balance = $this->creditBalance;
 
-        return (float) ($balance ? $balance->sum('balance') : 0.00);
+        return (float) ($balance ? $balance->balance : 0.00);
     }
 
     /**
@@ -972,5 +1010,13 @@ class User extends BaseEloquentModel implements
     public function watching()
     {
         return $this->hasMany(Watches::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function phoneNumber()
+    {
+        return $this->hasOne(PhoneNumber::class, 'user_id');
     }
 }

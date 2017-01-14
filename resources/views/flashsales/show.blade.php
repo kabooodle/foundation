@@ -44,7 +44,7 @@
                             <div class="box p-a-xs p-b-0">
                                 <div class="item">
                                     <a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}">
-                                        <img src="{{ $inventoryItem->firstImage() ? $inventoryItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
+                                        <img src="{{ $inventoryItem->cover_photo }}" class="img-responsive">
                                     </a>
                                 </div>
                                 <div class="p-a p-b-0">
@@ -59,9 +59,6 @@
                                             </div>
                                             <div class="pull-right" style="text-align: right">
                                                 <span class="text-muted ">Qty:</span> <span class="">{{ $inventoryItem->getAvailableQuantity() }}</span>
-                                                {{--<div>--}}
-                                                    {{--<span class="text-muted"><i class="fa fa-comment-o" aria-hidden="true"></i></span> <span class="">{{ $inventoryItem->comments->count() }}</span>--}}
-                                                {{--</div>--}}
                                             </div>
                                         </div>
                                     </div>

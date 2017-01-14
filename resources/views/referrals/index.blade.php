@@ -5,8 +5,9 @@
 
     <div class="text-center m-b-3 ">
         <img src="/assets/images/513550806.jpg" width="100%">
-        <h1 style="line-height: 50px" class="m-b-3 _300 m-t-2">Get your merchant account for free for a year when you invite your friends to {{ env('APP_NAME') }}!</h1>
-        <h5 class="_400 text-muted" style="line-height: 30px;">If you refer 10 friends, and they upgrade their accounts to basic, we'll give you the merchant account for free for a year! Also, we will credit each account $5.00! Need credits now? <a class="text-primary _600" href="{{ route('profile.credits.index') }}">Go here!</a></h5>
+        <h1 style="line-height: 50px" class="m-b-3 _300 m-t-2">Share {{ env('APP_NAME') }} and Earn!</h1>
+        <h5 class="_400 text-muted" style="line-height: 30px;">For every friend you refer whom joins {{ env('APP_NAME') }}, we'll credit your account a free month, up to 6 months.
+            For each additional referral, your name will be entered in our biannual drawing to win 4 tickets to Disneyland or a $500 gift card.</h5>
     </div>
 
     <div class="box padding">

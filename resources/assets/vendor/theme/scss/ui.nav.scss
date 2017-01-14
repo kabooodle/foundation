@@ -16,7 +16,10 @@
 			li {
 				a {
 					line-height: $aside-nav-sub-height;
-					padding-left: 3.5rem;
+					//padding-left: 3.5rem;
+					padding-left: 1rem;
+					padding-right: 1rem;
+					font-size: .9rem;
 					.nav-text{
 						padding: ($aside-nav-sub-height - 1.125)/2 0;
 					}

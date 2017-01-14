@@ -64,7 +64,7 @@ class AddInventoryCommandHandler
                 }
 
                 // Get the size categories.
-                $categories = isset($sizing['categories']) ? $sizing['categories'] : null;
+                $categories = isset($sizing['categories']) ? implode(',',$sizing['categories']) : null;
 
                 // Normalize the images array.
 
@@ -133,20 +133,27 @@ class AddInventoryCommandHandler
             'initial_qty' => $image['qty']
         ]);
 
-        // Associate files(images) to the item.
-        $item->files()->save(new Files([
+
+        $file = Files::create([
             'location' => $image['location'],
             'key' => $image['key'],
             'bucket_name' => $image['bucket'],
             'fileable_type' => get_class($item),
             'fileable_id' => $item->id
-        ]));
+        ]);
+        // Associate files(images) to the item.
+        $item->files()->save($file);
 
         // Associate categories to the item.
         // They are passed as a comma separated string.
         if ($categories) {
             $item->tag($categories);
         }
+
+        // When CREATING a new inventory item, we only allow 1 photo to be added.
+        // This means, each photo is also the cover photo.  :)
+        $item->cover_photo_file_location = $file->getOriginal('location');
+        $item->cover_photo_file_id = $file->id;
 
         $item->save();
 

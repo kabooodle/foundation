@@ -39,7 +39,6 @@ class GetActiveNotificationsHandler
             return $this->cache->get(self::TAG);
         }
 
-
         $notifications = Notifications::where('active', 1)->get();
         $this->cache->add(self::TAG, $notifications, 43800);
 

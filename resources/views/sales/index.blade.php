@@ -13,7 +13,7 @@
     <div class="navbar-side p-a " id="navbarSide">
         <div class="box ">
             <div class="box-body clearfix">
-                <form method="GET" action="{{ route('sales.index') }}">
+                <form method="GET" action="{{ route('merchant.sales.index') }}">
                     <div class="form-group row">
                         <label class=" form-control-label col-sm-3 text-sm">Style</label>
                         <div class="col-sm-9">

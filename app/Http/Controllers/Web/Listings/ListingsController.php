@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Http\Controllers\Web\Listings;
@@ -9,96 +9,48 @@ namespace Kabooodle\Http\Controllers\Web\Listings;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Listings;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 
 /**
- * Class ListingsController
+ * Class ListingItemsController
  */
 class ListingsController extends Controller
 {
+    use PaginatesTrait;
+
     /**
      * @param Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @param         $listingUuid
+     *
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function index(Request $request)
+    public function shorthand(Request $request, $listingUuid)
     {
-        $listings = Listings::getQueriedListings(user()->id);
-
-        return $this->view('listings.index')->with(compact('listings'));
+        return redirect()->route('listings.show', [$listingUuid]);
     }
 
     /**
      * @param Request $request
-     * @param         $uuid
+     * @param         $listingUuid
      *
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function edit(Request $request, $uuid)
+    public function show(Request $request, $listingUuid)
     {
-        $listing = user()->listings->where('uuid', $uuid)->first();
-        if (!$listing) {
-            return redirect()->to(route('listings.index'));
-        }
-
-        $listings = $listing->listingsGroupedByItemTypeGrouping(user()->id);
-
-        return $this->view('listings.edit')->with(compact('listing', 'listings'));
-    }
-
-    /**
-     * @param Request $request
-     * @param         $uuid
-     *
-     * @return $this|\Illuminate\Http\RedirectResponse
-     */
-    public function update(Request $request, $uuid)
-    {
-        $listing = user()->listings->where('uuid', $uuid)->first();
-        if (!$listing) {
-            return redirect()->to(route('listings.index'));
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @param $uuid
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function show(Request $request, $uuid)
-    {
-        $listing = user()->listings->where('uuid', $uuid)->first();
-        if (!$listing) {
-            return redirect()->to(route('listings.index'));
-        }
-        $listings = $listing->listingsGroupedByItemTypeGrouping(user()->id);
-
-        return $this->view('listings.show')->with(compact('listing', 'listings'));
-    }
-
-    /**
-     * @param Request $request
-     * @param         $uuid
-     * @param         $type
-     * @param         $id
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function detailed(Request $request, $uuid, $type, $id)
-    {
-        $listing = Listings::with(['listingItems' => function ($query) use ($type, $id) {
-            if ($type == Listings::TYPE_FACEBOOK) {
-                $query->where('fb_album_node_id', '=', $id);
-            } elseif ($type == Listings::TYPE_FLASHSALE) {
-                $query->where('flashsale_id', '=',  $id);
-            }
-        }])
-            ->where('uuid', $uuid)
-            ->where('owner_id', user()->id)
-            ->where('type', $type)
+        $listing = Listings::with(['items', 'items.inventoryItem'])
+            ->where('uuid', $listingUuid)
             ->first();
-        if (!$listing) {
-            return redirect()->to(route('listings.index'));
+
+        if (! $listing) {
+            return $this->redirect()->to('/');
         }
 
-        return $this->view('listings.detailed')->with(compact('listing'));
+        $rawCategories = collect(Listings::getStyleGroupings($listingUuid));
+
+        $categories = $rawCategories->groupBy('style_name')->transform(function($item, $k){
+            return $item->groupBy('size_name');
+        });
+
+        return $this->view('listings.show')->with(compact('categories', 'listing'));
     }
 }

@@ -18,6 +18,20 @@
 @import "pages/popout";
 @import "pages/inventory";
 @import "pages/bodymenu";
+@import "pages/spinner";
+
+.app {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.app-footer {
+  display: table-row;
+}
 
 .turbolinks-progress-bar {
   height: 2px;

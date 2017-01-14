@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
+use Kabooodle\Models\Listing\FacebookListingOptions;
 use Facebook\Exceptions\FacebookAuthenticationException;
 use Kabooodle\Bus\Events\Listings\ListingScheduledEvent;
 use Kabooodle\Services\Social\Facebook\FacebookSdkService;
@@ -55,7 +56,7 @@ class ScheduleListingCommandHandler
         $actor = $command->getActor();
 
         /** @var Carbon $scheduledFor */
-        $scheduledFor = $this->normalizeScheduledDateTime($command->getScheduledFor());
+        $scheduledFor = $this->normalizeScheduledDateTime($command->getFacebookListingOptions()->getStartsAt());
 
         if ($command->getFacebookGroupId()) {
             $this->assertFacebookCredentialsAreValid();
@@ -67,6 +68,7 @@ class ScheduleListingCommandHandler
         $totalSavedListings = [];
 
         return DB::transaction(function () use ($actor, $scheduledFor, $command, $totalSavedListings) {
+            /** @var Listings $listing */
             $listing = $this->buildListing($command, $scheduledFor);
 
             // We have some special logic for facebook listings
@@ -91,7 +93,7 @@ class ScheduleListingCommandHandler
                 $totalSavedListings[] = $flashsaleInventoryItems;
             }
 
-            event(new ListingScheduledEvent($actor, $listing));
+            event(new ListingScheduledEvent($actor->id, $listing->id));
 
             return $listing;
         });
@@ -105,13 +107,23 @@ class ScheduleListingCommandHandler
      */
     public function buildListing(ScheduleListingCommand $command, Carbon $scheduledFor)
     {
+        /** @var FacebookListingOptions $options */
+        $options = $command->getFacebookListingOptions();
+
         $listing = new Listings;
         $listing->owner_id = $command->getActor()->id;
         $listing->scheduled_for = $scheduledFor;
-        $listing->include_link_in_descr = $command->includeDescrText();
 
-        if ($command->includeDescrText() && $command->getAvailableAt()) {
-            $listing->claimable_at = $command->getAvailableAt();
+        if ($options->getEndsAt()) {
+            $listing->scheduled_until = $options->getEndsAt();
+        }
+
+        if ($options->getClaimingStartsAt()) {
+            $listing->claimable_at = $options->getClaimingStartsAt();
+        }
+
+        if ($options->getClaimingEndsAt()) {
+            $listing->claimable_until = $options->getClaimingEndsAt();
         }
 
         $listing->status = Listings::STATUS_SCHEDULED;
@@ -217,6 +229,7 @@ class ScheduleListingCommandHandler
                     $listingItem->fb_group_node_id = $command->getFacebookGroupId();
                     $listingItem->fb_album_node_id = $facebookAlbum['id'];
                     $listingItem->inventory_id = $inventoryItem['id'];
+                    $listingItem->item_message = $command->getFacebookListingOptions()->getItemMessage();
 
                     // Copy the type and status from the parent listing.
                     // Status may actually change and be different, below otherwise they start the same.
@@ -224,12 +237,14 @@ class ScheduleListingCommandHandler
                     $listingItem->status = $listing->status;
                     $listingItem->status_updated_at = $this->now;
 
+                    // Disabled for now -- JT January 9, 2017
+                    // There really is no way to know if its a duplicate at this time.
                     // Flag duplicates as ignored listings.
                     // We do not actually "skip" them because we want to provide full transparency to the user.
-                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $inventoryItem['id'])) {
-                        $listingItem->ignore = true;
-                        $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
-                    }
+//                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $inventoryItem['id'])) {
+//                        $listingItem->ignore = true;
+//                        $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
+//                    }
 
                     $listedItems[] = $listingItem;
                 }
@@ -265,6 +280,7 @@ class ScheduleListingCommandHandler
                 $listingItem->owner_id = $actor->id;
                 $listingItem->inventory_id = $selectedItem['id'];
                 $listingItem->flashsale_id = $command->getFlashSaleId();
+                $listingItem->item_message = $command->getFacebookListingOptions()->getItemMessage();
 
                 // Copy the type and status from the parent listing.
                 // Status may actually change and be different, below otherwise they start the same.

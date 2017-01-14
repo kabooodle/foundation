@@ -3,8 +3,21 @@
   overflow-y: hidden;
 }
 
+.pop-out-overlay {
+  top: 0;
+  left: 0;
+  z-index: 9998;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  overflow-y: auto;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
 .inventory-overlay {
-  background: rgba(30,30,30,0.9);
+  background-color: #501f88;
+  opacity: .5;
   top: 0;
   left: 0;
   z-index: 9997;
@@ -49,5 +62,12 @@ a.close-overlay {
     margin-left: 0;
     padding: 20px;
     border-radius: 0;
+  }
+}
+
+#kbdl-mdl-listings {
+  .bootstrap-datetimepicker-widget.dropdown-menu {
+    top: auto !important;
+    bottom: 0 !important;
   }
 }

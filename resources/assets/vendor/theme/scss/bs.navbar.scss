@@ -50,6 +50,8 @@
 	margin-top: 13px;
 }
 .app-header {
+	-webkit-transition: all 0.2s ease-in-out;
+	-moz-transition: all 0.2s ease-in-out;
 	.avatar_container {
 		top: 10px;
 	}
@@ -153,5 +155,50 @@
 .footer {
 	.footer-about {
 		max-width: 320px;
+	}
+}
+
+.header-condensed {
+	.app-header {
+		height: 48px;
+		min-height: 48px;
+		.navbar {
+			height: 48px;
+			min-height: 48px;
+			.nav-text {
+				font-size: .85rem;
+			}
+		}
+		.kabooodle-brand, .kabooodle-brand.navbar-brand {
+			background: url(/assets/images/logo/logo-white-sm.png) 50% no-repeat;
+			width: 107px;
+			height: 26px;
+			margin-top: 9px;
+		}
+		.avatar_container {
+			top: 6px;
+			&.avatar-thumbnail._32 {
+				width: 26px !important;
+				height: 26px !important;
+			}
+		}
+	}
+	.navbar-md .navbar-brand,
+	.navbar-md .navbar-item,
+	.navbar-md .navbar-nav>.nav-item>.nav-link,
+	.navbar-md .navbar-nav>.nav-link {
+		line-height: 3rem !important;
+	}
+
+}
+
+@media all and (max-width: 660px) {
+	.header-condensed {
+		.app-header {
+
+			.navbar {
+
+			}
+		}
 	}
 }

@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Illuminate\Console\Command;
+use Kabooodle\Libraries\QueueHelper;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Jobs\EnqueueScheduleListingsJob;
@@ -59,12 +60,12 @@ class FacebookEnqueuerCommand extends Command
 
             $this->dispatch($job);
 
-            event(new ListingsWereQueued($job));
-
             $listingsIds = $listings->pluck('id')->toArray();
 
             // Update the Queues status to processing.
             Listings::updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
+
+            event(new ListingsWereQueued($listings, $job));
         }
 
         $this->output->writeln('Completed');
@@ -79,13 +80,15 @@ class FacebookEnqueuerCommand extends Command
      */
     public function buildJob(Collection $listings)
     {
+        $queueConnectionName = QueueHelper::pickFacebookScheduler();
+
         $job = new EnqueueScheduleListingsJob($listings);
-        $job->onConnection('iron-facebook-scheduler');
+        $job->onConnection($queueConnectionName);
 
         // Store details about the job in the DB for our own personal records.
         $localQueueDb = Queues::create([
-            'queue' => $this->queueConnectionGroupName,
-            'queue_group' => $this->queueConnectionGroupName,
+            'queue' => $queueConnectionName,
+            'queue_group' => $queueConnectionName,
             'payload' => serialize($job),
             'status' => Queues::STATUS_QUEUED,
             'status_updated_at' => $this->timestamp,

@@ -8,6 +8,7 @@ namespace Kabooodle\Bus\Commands\Inventory;
 
 use Kabooodle\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
 use Kabooodle\Models\Contracts\ShoppableInterface;
 
 /**
@@ -15,7 +16,7 @@ use Kabooodle\Models\Contracts\ShoppableInterface;
  */
 final class TrackInventoryViewCommand
 {
-    use Queueable;
+    use InteractsWithQueue, Queueable;
 
     /**
      * @var User

@@ -80,7 +80,7 @@
                         type="button"
                         :class="'btn white '+btnClassSize+' fileinput-button'" style="display: inline-block;">
                     {{ button_title }}
-                    <template v-if="has_multiple || multiple">
+                    <template v-if="has_multiple">
                     <input
                         type="file"
                         name="file"
@@ -120,11 +120,12 @@
     require('../../vendor/fileupload/js/jquery.fileupload-image');
     require('../../vendor/fileupload/js/jquery.fileupload-ui');
     import s3uploader from '../../app/s3uploader';
-
+    import currentUser from './current-user';
     export default{
         props : {
             user_hash: {
-                required: true
+                type: String,
+                default: currentUser() ? currentUser().public_hash : false,
             },
             s3_key_url : {
                 required: true
@@ -133,7 +134,7 @@
                 default: ' btn-sm '
             },
             button_title: {
-                default: 'Add Images'
+                default: 'Add images'
             },
             acceptRegEx: {
                 default: 'image/*'
@@ -153,7 +154,7 @@
         },
         computed : {
             has_multiple: function() {
-                return this.multiple == true;
+                return (this.multiple === true || this.multiple === 'true');
             }
         },
         created : function() {

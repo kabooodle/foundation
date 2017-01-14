@@ -2,6 +2,7 @@ import CheckIn from '../check-in/CheckIn.vue';
 import Commentable from '../comments/Commentable.vue';
 import Followable from '../follow/Followable.vue';
 import Spinny from  '../Spinner.vue';
+import VCard from '../users/V-Card.vue';
 
 Vue.component('spinny', Spinny);
 
@@ -10,6 +11,7 @@ new Vue({
     components : {
         'check-in' : CheckIn,
         'comments-index' : Commentable,
-        'followable' : Followable
+        'followable' : Followable,
+        'v-card' : VCard
     },
 });

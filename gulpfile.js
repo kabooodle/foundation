@@ -22,6 +22,7 @@ elixir(function (mix) {
     mix.browserify('app/components/profile/profile-notifications.js');
     mix.browserify('app/components/profile/profile-subscription.js');
 
+    mix.browserify('app/components/shipping/shipping-profile.js');
     mix.browserify('app/components/shipping/shipping-create.js');
     mix.browserify('app/components/shipping/shipping-create.js');
 
@@ -30,12 +31,22 @@ elixir(function (mix) {
     mix.browserify('app/components/claims/claims-index.js');
 
     mix.browserify('app/components/listings/listing-items-page.js');
+    mix.browserify('app/components/listings/listing-index.js');
 
+    mix.browserify('app/components/notices/notice-handler.js');
+
+    mix.browserify('app/components/purchases/purchases-index.js');
     mix.browserify('app/components/purchases/watching-items.js');
 
     mix.browserify('app/components/register/register.js');
 
     mix.browserify('app/components/sign-in/sign-in.js');
+    mix.browserify('app/components/messenger/messenger-index.js');
+    mix.browserify('app/components/messenger/messenger-thread-index.js');
+
+
+    mix.browserify('app/components/users/user-listings-index.js');
+    mix.browserify('app/components/flashsales/flashsale-create.js');
 
     mix.browserify('app/components/profile/profile.js');
 
@@ -50,6 +61,11 @@ elixir(function (mix) {
         .sass([
             'vendor/theme/scss/app.scss'
         ], elixir.config.publicPath + 'css/app.css')
+
+        .sass([
+            'vendor/theme/scss/pages/home.scss'
+        ], elixir.config.publicPath + 'css/home.css')
+
 
         .sass([
             'vendor/theme/bootstrap/scss/bootstrap.scss',

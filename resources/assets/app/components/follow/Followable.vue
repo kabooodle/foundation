@@ -14,6 +14,7 @@
 </template>
 <script>
     import Spinny from '../Spinner.vue';
+    import currentUser from '../current-user';
     export default{
         props: {
             able_name : {
@@ -52,7 +53,7 @@
             current_user: {
                 type: Object,
                 default: function () {
-                    return ((KABOOODLE_APP && KABOOODLE_APP.currentUser) ? KABOOODLE_APP.currentUser : {})
+                    return (currentUser() ? currentUser() : {});
                 }
             },
             unfollow_text: {
@@ -117,7 +118,7 @@
                 return this.is_following;
             },
             followMe: function (e) {
-                if (KABOOODLE_APP.currentUser) {
+                if (currentUser()) {
                     this.processing = true;
                     this.$http.post(this.endpoint).then(()=>{
                         this.following = true;

@@ -32,7 +32,12 @@ class UpdateUserNotificationSettingCommandHandler
         $userNotificationSettings = $user->notificationsettings; // existing user notification settings
 
         $userNotificationSetting = $userNotificationSettings->find($notificationId);
-        $userNotificationSetting->pivot->{$type} = ($action == 'subscribed' ? 1 : ($action == 'unsubscribed' ? 0 : 1));
-        $userNotificationSetting->pivot->save();
+
+        if ($userNotificationSetting) {
+            $userNotificationSetting->pivot->{$type} = ($action == 'subscribed' ? 1 : ($action == 'unsubscribed' ? 0 : 1));
+            $userNotificationSetting->pivot->save();
+        } else {
+            $user->notificationsettings()->attach($notificationId);
+        }
     }
 }

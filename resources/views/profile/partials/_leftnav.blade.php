@@ -5,7 +5,7 @@
     Email Addresses
 </a>
 <a href="{{ route('profile.notifications.edit') }}" class="nav-link {{ Request::is('profile/notifications') ? 'active' : null }}">
-    Notifications
+    Notification Settings
 </a>
 <a href="{{ route('profile.social.edit') }}" class="nav-link {{ Request::is('profile/socialprofiles') ? 'active' : null }}">
     Social Profiles

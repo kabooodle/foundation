@@ -39,7 +39,7 @@ class ShippingTransactionController extends Controller
 
         try {
             $shippingTransaction = $this->dispatchNow(new CreateNewShippingTransactionCommand(user(), $rateUUID, $shipmentUUID));
-            $redirectRoute = route('shipping.transactions.show', [$shipmentUUID, $shippingTransaction->uuid]);
+            $redirectRoute = route('merchant.shipping.transactions.show', [$shipmentUUID, $shippingTransaction->uuid]);
 
             return Response::json(['txn_id' => $shippingTransaction->transaction_id, 'redirect' => $redirectRoute], 200);
         } catch (InsufficientBalanceException $e) {

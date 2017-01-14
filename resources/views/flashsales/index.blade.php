@@ -32,9 +32,6 @@
                         <div class="box p-a-xs">
                             <div class="item">
                                 <div class="item-overlay active p-a">
-                                    {{--<div class="pull-right">--}}
-                                        {{--<span class="label dark-white text-color"><i class="fa  @if($sale->hostIsGroup()) fa-users @else fa-user @endif" aria-hidden="true"></i></span>--}}
-                                    {{--</div>--}}
                                     <a href="{{ route('flashsales.show', [$sale->getUUID()]) }}" class="pull-left text-u-c label label-md">{{ $sale->active? 'Active' : 'Unpublished' }}</a>
                                 </div>
                                 <img src="https://placekitten.com/g/32/20" class="img-responsive">
@@ -44,7 +41,6 @@
                                     <span class="">{{ $sale->starts_at->diffForHumans() }}, {{ $sale->starts_at->format("M d \\@ h:ia") }}</span>
                                 </div>
                                 <div class="m-b-0 h-2x"><a href="{{ route('flashsales.show', [$sale->getUUID()]) }}" class="_800">{{ $sale->name }}</a></div>
-                                {{--{{ str_limit(nl2br($sale->description), 100) }}--}}
                                 <div class="text-xs pull-right">
                                 <a href="{{ route('flashsales.show', [$sale->getUUID()]) }}"><span class="_600">{{ $sale->likes->count() }}</span> <span class="text-muted">Followers</span></a>
                                     <a class="m-l-1" href="{{ route('flashsales.show', [$sale->getUUID()]) }}"><span class="_600">{{ $sale->adminsAndSellers()->count() }}</span>  <span class="text-muted">Sellers</span></a>

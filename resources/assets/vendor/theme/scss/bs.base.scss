@@ -1,7 +1,10 @@
 html {
-  background-color: $html-bg;
+  background-color: $body-bg;
+  height: 100%;
+
 }
 body {
+  height: 100%;
   color: $text-color;
   font-size: $font-size;
   background-color: $body-bg;

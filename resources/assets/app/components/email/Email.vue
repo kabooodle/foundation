@@ -2,28 +2,28 @@
     <div class="form-group row">
         <div class="col-sm-8">
             <span>{{ address }}</span>
-            <span v-show="isVerified">
+            <span v-show="isVerified" data-toggle="tooltip" title="Verified">
                 <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
             </span>
             <span v-show="!isVerified">
                 <div class="pull-right">
-                    <button @click="resendVerification" class="btn primary btn-sm">
+                    <button @click="resendVerification" class="btn white btn-sm">
                         Resend Verification
                     </button>
                 </div>
             </span>
         </div>
         <div class="col-sm-3">
-            <div v-show="isPrimary">
+            <div v-show="isPrimaryEmail">
                 <div class="text-primary text-center">Primary</div>
             </div>
-            <div v-show="!isPrimary">
+            <div v-show="!isPrimaryEmail">
                 <button v-if="isVerified" @click="makePrimary" class="btn white btn-sm">Make Primary</button>
-                <button v-else @click="notifyNeedsToVerify" class="btn disabled white btn-sm">Make Primary</button>
+                <button v-else @click="notifyNeedsToVerify" disabled class="btn disabled white btn-sm">Make Primary</button>
             </div>
         </div>
         <div class="col-sm-1">
-            <a href="javascript:;" v-show="!isPrimary" @click="destroy">
+            <a href="javascript:;" v-show="!isPrimaryEmail" @click="destroy">
                 <i class="fa fa-times text-danger" aria-hidden="true"></i>
             </a>
         </div>
@@ -78,7 +78,7 @@
             }
         },
         computed: {
-            isPrimary: function () {
+            isPrimaryEmail: function () {
                 return this.primaryId == this.id
             },
             updatePrimaryData: function () {
@@ -99,7 +99,13 @@
                     'type': 'information'
                 });
             },
-            makePrimary: function () {
+            makePrimary: function (event) {
+                event.preventDefault();
+                let el = event.target;
+                let innerHtml = el.innerHTML;
+                el.classList.add('disabled');
+                el.disabled = true;
+                el.innerHTML = innerHtml + (spinny());
                 this.$http.put(this.updatePrimaryEndpoint, this.updatePrimaryData)
                     .then(function (response) {
                         this.$emit('new-primary', this.id);
@@ -112,9 +118,19 @@
                             'text': 'We\'re sorry. Something went wrong. Please try again.',
                             'type': 'error'
                         });
-                    });
+                    }).finally(()=>{
+                    el.disabled = false;
+                    el.classList.remove('disabled');
+                    el.innerHTML = innerHtml
+                });
             },
-            resendVerification: function () {
+            resendVerification: function (event) {
+                event.preventDefault();
+                let el = event.target;
+                let innerHtml = el.innerHTML;
+                el.classList.add('disabled');
+                el.disabled = true;
+                el.innerHTML = innerHtml + (spinny());
                 this.$http.put(this.resendVerificationEndpoint, this.resendVerificationData)
                     .then(function (response) {
                         notify({
@@ -126,7 +142,11 @@
                             'text': 'We\'re sorry. Something went wrong. Please try again.',
                             'type': 'error'
                         });
-                    });
+                    }).finally(()=>{
+                    el.disabled = false;
+                    el.classList.remove('disabled');
+                    el.innerHTML = innerHtml
+                });
             },
             destroy: function () {
                 var self = this;

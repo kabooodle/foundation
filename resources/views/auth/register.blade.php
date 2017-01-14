@@ -20,5 +20,5 @@
 @endsection
 
 @push('footer-scripts')
-<script src="/assets/js/register.js"></script>
+<script src="{{ staticAsset('/assets/js/register.js') }}"></script>
 @endpush

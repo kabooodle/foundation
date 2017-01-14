@@ -21,11 +21,11 @@
             </td>
             <td >${{ claim.price }}</td>
             <td >
-                {{ claim.claimer.full_name }}
+                {{ claim.claimer.username }}
                 <small v-if="claim.claimer.guest" class="text-muted">Guest</small>
             </td>
             <td >
-                <timeago :timestamp="claim.created_at.date"></timeago>
+                <timeago :timestamp="claim.created_at"></timeago>
             </td>
             <td>
                 <span v-if="claim.verified">
@@ -116,7 +116,7 @@
                 return claim.inventory_item_object_data.files && claim.inventory_item_object_data.files.length;
             },
             getFile : function(claim) {
-                return this.hasFiles(claim) ? claim.inventory_item_object_data.files[0].location : null;
+                return claim.inventory_item_object_data.cover_photo ? claim.inventory_item_object_data.cover_photo : (this.hasFiles(claim) ? claim.inventory_item_object_data.files[0].location : null);
             },
             handleClaim : function(choice, claim, event){
                 event.preventDefault();

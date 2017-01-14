@@ -159,7 +159,7 @@ return [
         Barryvdh\Cors\ServiceProvider::class,
         Dingo\Api\Provider\LaravelServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
-//        Barryvdh\Debugbar\ServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
 
 
         Kabooodle\Foundation\Providers\AuthServiceProvider::class,
@@ -185,6 +185,9 @@ return [
         Spatie\Analytics\AnalyticsServiceProvider::class,
 //        Kabooodle\Foundation\Providers\IronQueueServiceProvider::class,
         Collective\IronQueue\IronQueueServiceProvider::class,
+        Kabooodle\Foundation\Providers\PusherServiceProvider::class,
+        Cmgmyr\Messenger\MessengerServiceProvider::class,
+        Nexmo\Laravel\NexmoServiceProvider::class
     ],
 
     /*
@@ -234,7 +237,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'AWS' => Aws\Laravel\AwsFacade::class,
-//        'Debugbar' => Barryvdh\Debugbar\Facade::class,
+        'Debugbar' => Barryvdh\Debugbar\Facade::class,
 
         'Messages' => Kabooodle\Libraries\Messages\MessagesFacade::class,
         'HTMLMin' => GrahamCampbell\HTMLMin\Facades\HTMLMin::class,

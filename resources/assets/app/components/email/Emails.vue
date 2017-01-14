@@ -18,11 +18,9 @@
                     <div class="form-group">
                         <input type="text" v-model="newAddress" class="form-control">
                     </div>
-                    <div class="pull-left">
-                        <button @click="addingEmail = !addingEmail" class="btn btn-sm white">Cancel</button>
-                    </div>
                     <div class="pull-right">
                         <button @click="saveEmail" class="btn primary  btn-sm ">Save</button>
+                        <button @click="addingEmail = !addingEmail" class="btn btn-sm white">Cancel</button>
                     </div>
                 </div>
                 <div v-show="!addingEmail">
@@ -88,6 +86,11 @@
                 console.log(id);
             },
             saveEmail: function () {
+                let el = event.target;
+                let innerHtml = el.innerHTML;
+                el.disabled = true;
+                el.classList.add('disabled');
+                el.innerHTML = el.innerHTML + (spinny());
                 this.$http.post(this.newEmailEndpoint, this.newEmailData)
                     .then((response)=>{
                         this.emails.push(response.data.data.email);
@@ -96,11 +99,16 @@
                             'text': 'Your new address has been saved. Please verify the address in the email we just sent you!',
                             'type': 'success'
                         });
-                    }, function (response) {
+                    }, (response)=>{
                         notify({
                             'text': 'We\'re sorry. Something went wrong. Please try again.',
                             'type': 'error'
                         });
+                    }).finally(()=>{
+                        this.newAddress = null;
+                        el.disabled = false;
+                        el.classList.remove('disabled');
+                        el.innerHTML = innerHtml
                     });
             },
         },

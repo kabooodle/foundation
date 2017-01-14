@@ -69,7 +69,7 @@ class FlashSalesController extends Controller
                 Binput::get('name'),
                 Binput::get('description'),
                 $startsEnds,
-                Binput::get('type', FlashSales::TYPE_SINGLE),
+                Binput::get('type', FlashSales::HOST_SELF),
                 Binput::get('group_id', null),
                 Binput::get('rules')
             ));

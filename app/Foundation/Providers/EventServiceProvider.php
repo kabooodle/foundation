@@ -28,7 +28,8 @@ class EventServiceProvider extends ServiceProvider
             \Kabooodle\Bus\Handlers\Events\Claim\ClaimWasRejectedEventHandler::class
         ],
         \Kabooodle\Bus\Events\Claim\ClaimWasAcceptedEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\Claim\MoveClaimToShippingEventHandler::class
+            \Kabooodle\Bus\Handlers\Events\Claim\MoveClaimToShippingEventHandler::class,
+            \Kabooodle\Bus\Handlers\Events\Claim\NotifyClaimWasAccepted::class,
         ],
         \Kabooodle\Bus\Events\Claim\NewGuestClaimEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Claim\GuestClaimedEventHandler::class
@@ -51,6 +52,30 @@ class EventServiceProvider extends ServiceProvider
         ],
         \Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Comments\CommentWasCreatedEventHandler::class
+        ],
+
+        // PHONE NUMBERS
+        \Kabooodle\Bus\Events\PhoneNumbers\PhoneNumberWasVerifiedSuccessfullyEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\PhoneNumbers\NotifyNewPhoneNumberVerified::class
+        ],
+
+        // MESSENGER
+        \Kabooodle\Bus\Events\Messenger\MessageWasAddedToThreadEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Messenger\NotifyNewMessageForThreadCreated::class
+        ],
+        \Kabooodle\Bus\Events\Messenger\ThreadWasCreatedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Messenger\NotifyNewThreadWasCreatedEvent::class
+        ],
+
+        // LISTINGS
+        \Kabooodle\Bus\Events\Listings\ListingScheduledEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Listings\NotifyListingWasScheduled::class,
+        ],
+        \Kabooodle\Bus\Events\Listings\ListingsWereQueued::class => [
+            \Kabooodle\Bus\Handlers\Events\Listings\NotifyListingsWereQueued::class,
+        ],
+        \Kabooodle\Bus\Events\Listings\ListingItemWasQueued::class => [
+            \Kabooodle\Bus\Handlers\Events\Listings\NotifyListingItemWasQueued::class,
         ],
 
         // PROFILE EVENTS

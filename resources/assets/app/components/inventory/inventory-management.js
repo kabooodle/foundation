@@ -2,6 +2,8 @@ import store from './manage/store';
 import computed from './manage/computed';
 import StyleTemplate from './style_template.vue';
 import FacebookLogin from '../facebook/FacebookLogin.vue';
+import ListingSettings from './Listing-Settings.vue';
+import Spinner from '../Spinner.vue';
 
 new Vue({
     el: '#manage_inventory',
@@ -19,6 +21,11 @@ new Vue({
             this.resetSelectedFBAlbum();
             this.resetSelectedFBGroup();
             this.actions.getting_postables = true;
+        });
+
+        $Bus.$on('listing.options:saved', (options)=>{
+            this.options = options;
+            this.postSelectedItemsToSales();
         });
 
         $Bus.$on('facebook:refreshed', (fbAuth, postables)=>{
@@ -184,15 +191,18 @@ new Vue({
         // Method for performing an AJAX post request
         // of the selected flash sales, facebook album items
         postSelectedItemsToSales(event){
-            event.preventDefault();
-            let $el = $(event.target);
-            let form = $el.closest('form');
+            $Bus.$emit('inventory:posting_listing', true);
+
+            let form = $('#post_sales_form');
             const selectedPostables = this.selected.postables;
             selectedPostables.fb_group = this.selected.fb_group;
             selectedPostables.options = {};
-            selectedPostables.options.ends_at = form.find('[name="options[ends_at]"]').val();
-            selectedPostables.options.available_at = form.find('[name="options[available_at]"]').val();
-            selectedPostables.options.include_text = form.find('[name="options[include_text]"]').is(':checked') ? 1 : 0;
+
+            selectedPostables.options.list_at = this.options.list_at;
+            selectedPostables.options.available_at = this.options.available_at;
+            selectedPostables.options.available_until = this.options.available_until;
+            selectedPostables.options.item_message = this.options.item_message;
+
             selectedPostables.items = this.selected.items;
 
             // Perhaps fire event instead of calling method directly.
@@ -209,6 +219,7 @@ new Vue({
                 notify({text: response.body.data.msg});
             }).finally(()=>{
                 this.setPostingToSales(false);
+                $Bus.$emit('inventory:posting_listing', false);
             });
         },
         toggleFlashSale(i, event){
@@ -254,21 +265,11 @@ new Vue({
                 that.actions.getting_postables = false;
             });
         },
-        toggleIncludeLinkOption() {
-            let wrapper = $('#wrapper-if-include-link');
-            if(wrapper.is(':visible')) {
-                wrapper.hide();
-                wrapper.find('input').val('');
-            } else {
-                wrapper.show();
-            }
-        },
-        clearDateTimeInput(elname){
-            $('#'+elname).val('');
-        }
     },
     components: {
         'style-template' : StyleTemplate,
-        'facebook-login' : FacebookLogin
+        'facebook-login' : FacebookLogin,
+        'listing-settings' : ListingSettings,
+        'spinner': Spinner
     }
 });

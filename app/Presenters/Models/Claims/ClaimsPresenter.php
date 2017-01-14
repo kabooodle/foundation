@@ -53,7 +53,7 @@ class ClaimsPresenter extends PresenterAbstract
 
         // If this claim is queued to ship
         if (!$statusAsBuyerPov && $claim->queuedToShip()) {
-            return '<a class="btn white btn-xs" href="'.route('shipping.create').'?c='.$claim->id.'">Create Label</a>';
+            return '<a class="btn white btn-xs" href="'.route('merchant.shipping.create').'?c='.$claim->id.'">Create Label</a>';
         }
 
         if ($claim->shippedManually()) {

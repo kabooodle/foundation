@@ -53,7 +53,7 @@
             <td>$@{{ rate.adjustedTotalAmount }}</td>
             <td class="pull-right">
                 <button type="button" v-on:click="purchaseLabel"
-                        data-route="{{ route('shipping.transactions.store', [$shipment->uuid]) }}"
+                        data-route="{{ route('merchant.shipping.transactions.store', [$shipment->uuid]) }}"
                         class="btn btn-xs white btn-purchase-label-el"
                         :data-uuid="rate.shippoRateObject.object_id">
                     Purchase Label

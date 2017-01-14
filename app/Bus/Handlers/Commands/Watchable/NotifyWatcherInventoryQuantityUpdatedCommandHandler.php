@@ -6,6 +6,8 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Watchable;
 
+use Kabooodle\Models\Inventory;
+use Kabooodle\Models\NotificationNotices;
 use Kabooodle\Models\User;
 use Kabooodle\Models\ListingItems;
 use Kabooodle\Libraries\Emails\PiperEmail;
@@ -34,6 +36,8 @@ class NotifyWatcherInventoryQuantityUpdatedCommandHandler
         }
 //        $this->toSMS($listingItem);
 
+        $this->toDatabase($watcher, $listingItem);
+
         return true;
     }
 
@@ -55,6 +59,26 @@ class NotifyWatcherInventoryQuantityUpdatedCommandHandler
                     ->subject('Listing quantity now available');
             })
             ->send();
+    }
+
+    /**
+     * @param User $user
+     * @param ListingItems $listingItem
+     */
+    public function toDatabase(User $user, ListingItems $listingItem)
+    {
+        $title = $listingItem->inventoryItem->getNameAndSize() .' - listing quantity now available';
+
+        $notification = new NotificationNotices;
+        $notification->reference_url = $this->getListingRoute($listingItem);
+        $notification->user_id = $user->id;
+        $notification->notification_id = null;
+        $notification->reference_id = $listingItem->id;
+        $notification->reference_type = get_class($listingItem);
+        $notification->payload = '';
+        $notification->title = $title;
+        $notification->description = '';
+        $notification->save();
     }
 
     public function toWeb()
@@ -79,8 +103,6 @@ class NotifyWatcherInventoryQuantityUpdatedCommandHandler
      */
     public function getListingRoute(ListingItems $listingItem)
     {
-        $route = route('externalclaim.show', [$listingItem->obfuscateIdToString()]);
-
-        return str_replace(['api.', 'app.'], '', $route);
+        return route('externalclaim.show', [$listingItem->obfuscateIdToString()]);
     }
 }

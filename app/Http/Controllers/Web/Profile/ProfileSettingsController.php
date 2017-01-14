@@ -21,7 +21,6 @@ use Kabooodle\Models\MailingAddress;
 use Kabooodle\Models\Address;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Commands\User\UpdateUserShippingProfileCommand;
 use PragmaRX\Support\DateTime;
 
 /**
@@ -61,7 +60,7 @@ class ProfileSettingsController extends Controller
         $rules = [
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required|alpha_dash|unique:users,username,' . user()->id,
+            'username' => 'required|alpha_dash|min:5|max:30|unique:users,username,' . user()->id,
             'password' => 'required_with:newPassword,newPassword_confirmation',
             'newPassword' => 'required_with:newPassword_confirmation,password|min:6|confirmed',
             'newPassword_confirmation' => 'required_with:newPassword',
@@ -109,58 +108,14 @@ class ProfileSettingsController extends Controller
      */
     public function getShippingProfile()
     {
-        $from = user()->primaryShipFromAddress;
-        $to = user()->primaryShipToAddress;
+        $data = [
+            'fromAddresses' => user()->shipFromAddresses,
+            'primaryFrom' => user()->primaryShipFromAddress,
+            'toAddresses' => user()->shipToAddresses,
+            'primaryTo' => user()->primaryShipToAddress,
+        ];
 
-        return $this->view('profile.shippingprofile')->with(compact('from', 'to'));
-    }
-
-    /**
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function postShippingProfile(Request $request)
-    {
-        try {
-            $this->validate($request, Address::getRules());
-
-            $kabooodleAsDefaultShippingProvider = $request->has('kabooodle_as_shipping') ? true : false;
-
-            $fromAddressArray = Binput::get('from');
-            $toAddressArray = Binput::get('to');
-
-            $from = new MailingAddress(
-                $fromAddressArray['company'],
-                $fromAddressArray['street1'],
-                array_get($fromAddressArray, 'street2'),
-                $fromAddressArray['city'],
-                $fromAddressArray['state'],
-                $fromAddressArray['zip'],
-                array_get($fromAddressArray, 'email'),
-                array_get($fromAddressArray, 'phone')
-            );
-
-            $to = new MailingAddress(
-                array_get($toAddressArray, 'company'),
-                array_get($toAddressArray, 'street1'),
-                array_get($toAddressArray, 'street2'),
-                array_get($toAddressArray, 'city'),
-                array_get($toAddressArray, 'state'),
-                array_get($toAddressArray, 'zip'),
-                array_get($toAddressArray, 'email'),
-                array_get($toAddressArray, 'phone')
-            );
-
-            $this->dispatchNow(new UpdateUserShippingProfileCommand(user(), $from, $to, $kabooodleAsDefaultShippingProvider));
-
-            Messages::success("Shipping profile was successfully updated!");
-
-            return $this->redirect()->route('profile.shippingprofile.edit');
-        } catch (ValidationException $e) {
-            Messages::error('Some fields require input!');
-
-            return $this->redirect(route('profile.shippingprofile.edit'))
-                ->withErrors($e->validator->getMessageBag());
-        }
+        return $this->view('profile.shippingprofile', $data);
     }
 
     /**
@@ -207,7 +162,7 @@ class ProfileSettingsController extends Controller
         Messages::success("Email successfully verified!");
 
         if (user()) {
-            return $this->view('profile.email-verified');
+            return $this->redirect()->route('profile.emails.index');
         }
 
         return $this->redirect()->route('auth.login');
@@ -219,8 +174,16 @@ class ProfileSettingsController extends Controller
     public function getNotifications()
     {
         $notifications = $this->dispatchNow(new GetActiveNotifications);
+        $notifications = $notifications->filter(function($notification){
+            if ($notification->required_subscription_type == 'merchant' && ! user()->hasAtLeastMerchantSubscription()) {
+                return false;
+            }
+            return $notification;
+        })->groupBy('group');
 
-        return $this->view('profile.notifications')->with(compact('notifications'));
+        $userNotifications = user()->notificationsettings;
+
+        return $this->view('profile.notifications')->with(compact('notifications', 'userNotifications'));
     }
 
     /**
@@ -256,7 +219,7 @@ class ProfileSettingsController extends Controller
         return [
             'id' => 'required|in:'.implode(',', $notifications->pluck('id')->toArray()),
             'action' => 'required|in:subscribed,unsubscribed',
-            'type' => 'required|in:web,email'
+            'type' => 'required|in:web,email,sms'
         ];
     }
 }
