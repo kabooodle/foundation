@@ -1,0 +1,97 @@
+<?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ */
+
+namespace Kabooodle\Models\Traits;
+use Kabooodle\Models\Listings;
+
+/**
+ * Class AuthorableTrait
+ * @package Kabooodle\Models\Traits
+ */
+trait ListableTrait
+{
+    /**
+     * @return string
+     */
+    public function getListingItemClass(): string
+    {
+        return $this->listingItemClass;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function listings()
+    {
+        return $this->hasMany($this->getListingItemClass(), 'listed_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function flashsales()
+    {
+        return $this->listings()->where('type', Listings::TYPE_FLASHSALE);
+    }
+
+    /**
+     * @return array|static[]
+     */
+    public function facebooksales()
+    {
+        return $this->listings()->where('type', Listings::TYPE_FACEBOOK);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrice()
+    {
+        return number_format($this->price_usd, 2);
+    }
+
+    /**
+     * @param int $qty
+     *
+     * @return bool
+     */
+    public function canSatisfyRequestedQuantityOf($qty = 1)
+    {
+        return $this->getAvailableQuantity() >= $qty;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAvailableQuantity()
+    {
+        return $this->initial_qty - $this->getOnHoldQuantity();
+    }
+
+    /**
+     * @return int
+     */
+    public function getOnHoldQuantity()
+    {
+        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameUuidAttribute() : string
+    {
+        return $this->getUUID();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCategoriesAttribute()
+    {
+        return $this->tags;
+    }
+}

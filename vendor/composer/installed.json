@@ -7603,5 +7603,61 @@
             }
         ],
         "description": "Laravel Package for Nexmo's PHP Client"
+    },
+    {
+        "name": "jonnypickett/eloquent-sti",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/jonnypickett/eloquent-sti.git",
+            "reference": "b2e0572b208c9e11413b6c716bce164c33fb7d7f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/jonnypickett/eloquent-sti/zipball/b2e0572b208c9e11413b6c716bce164c33fb7d7f",
+            "reference": "b2e0572b208c9e11413b6c716bce164c33fb7d7f",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/support": "~5.1",
+            "php": "~5.6|~7.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.0||~5.0",
+            "squizlabs/php_codesniffer": "^2.3"
+        },
+        "time": "2017-01-09 23:20:50",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "JonnyPickett\\EloquentSTI\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jonathan Pickett",
+                "email": "jonathanpickett@me.com"
+            }
+        ],
+        "description": "Single Table Inheritance for Eloquent ORM",
+        "homepage": "https://github.com/jonnypickett/eloquent-sti",
+        "keywords": [
+            "eloquent",
+            "eloquent-sti",
+            "laravel",
+            "single-table-inheritance",
+            "trait"
+        ]
     }
 ]

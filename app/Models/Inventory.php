@@ -9,6 +9,8 @@ namespace Kabooodle\Models;
 use DB;
 use Carbon\Carbon;
 use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
+use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Traits\ListableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
@@ -26,7 +28,7 @@ use Kabooodle\Models\Contracts\CommentableInterface;
  * Class Inventory
  * @package Kabooodle\Models
  */
-class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable
+class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable
 {
     use ClaimableTrait,
         CommentableTrait,
@@ -35,7 +37,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         ObfuscatesIdTrait,
         RevisionableTrait,
         SoftDeletes,
-        TaggableTrait;
+        TaggableTrait,
+        ListableTrait;
 
     /**
      * @var array
@@ -58,6 +61,11 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
 //        'comments',
 //        'sales'
     ];
+
+    /**
+     * @var string
+     */
+    protected $listingItemClass = ListingItemSingle::class;
 
     /**
      * @return array
@@ -274,30 +282,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @return mixed
-     */
-    public function flashsales()
-    {
-        return $this->listings()->where('type', Listings::TYPE_FLASHSALE);
-    }
-
-    /**
-     * @return array|static[]
-     */
-    public function facebooksales()
-    {
-        return $this->listings()->where('type', Listings::TYPE_FACEBOOK);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function listings()
-    {
-        return $this->hasMany(ListingItems::class, 'inventory_id');
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function claims()
@@ -381,40 +365,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @return string
      */
-    public function getPrice()
-    {
-        return number_format($this->price_usd, 2);
-    }
-
-    /**
-     * @param int $qty
-     *
-     * @return bool
-     */
-    public function canSatisfyRequestedQuantityOf($qty = 1)
-    {
-        return $this->getAvailableQuantity() >= $qty;
-    }
-
-    /**
-     * @return int
-     */
-    public function getAvailableQuantity()
-    {
-        return $this->initial_qty - $this->getOnHoldQuantity();
-    }
-
-    /**
-     * @return int
-     */
-    public function getOnHoldQuantity()
-    {
-        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
-    }
-
-    /**
-     * @return string
-     */
     public function getNameAttribute() : string
     {
         return $this->getName();
@@ -426,22 +376,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getNameWithVariantAttribute() : string
     {
         return $this->getName(). ' - '.$this->size->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNameUuidAttribute() : string
-    {
-        return $this->getUUID();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCategoriesAttribute()
-    {
-        return $this->tags;
     }
 
     /**

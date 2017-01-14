@@ -53,6 +53,14 @@ class Email extends BaseEloquentModel
         'primary'
     ];
 
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'primary' => 'boolean',
+        'verified' => 'boolean',
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -87,29 +95,11 @@ class Email extends BaseEloquentModel
     }
 
     /**
-     * @param $value
-     * @return bool
-     */
-    public function getPrimaryAttribute($value)
-    {
-        return (bool) $value;
-    }
-
-    /**
-     * @param $value
-     * @return bool
-     */
-    public function getVerifiedAttribute($value)
-    {
-        return (bool) $value;
-    }
-
-    /**
      * @return bool
      */
     public function isPrimary()
     {
-        return (bool) $this->primary;
+        return $this->primary;
     }
 
     /**
@@ -117,7 +107,7 @@ class Email extends BaseEloquentModel
      */
     public function isVerified()
     {
-        return (bool) $this->verified;
+        return $this->verified;
     }
 
     /**

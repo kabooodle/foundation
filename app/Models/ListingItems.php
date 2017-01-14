@@ -7,6 +7,7 @@
 namespace Kabooodle\Models;
 
 use Carbon\Carbon;
+use JonnyPickett\EloquentSTI\SingleTableInheritance;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Models\Traits\WatchableTrait;
@@ -23,7 +24,13 @@ use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
  */
 class ListingItems extends AbstractListingModel implements ShoppableInterface, WatchableInterface
 {
-    use ObfuscatesIdTrait, PresentableTrait, ShoppableTrait, SoftDeletes, UuidableTrait, WatchableTrait;
+    use ObfuscatesIdTrait,
+        PresentableTrait,
+        ShoppableTrait,
+        SoftDeletes,
+        UuidableTrait,
+        WatchableTrait,
+        SingleTableInheritance;
 
     /**
      * @var array
@@ -101,7 +108,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status',
         'status_updated_at',
         'status_history',
-        'ignore'
+        'ignore',
+        'subclass_name',
     ];
 
     /**

@@ -187,7 +187,8 @@ return [
         Collective\IronQueue\IronQueueServiceProvider::class,
         Vinkla\Pusher\PusherServiceProvider::class,
         Cmgmyr\Messenger\MessengerServiceProvider::class,
-        Nexmo\Laravel\NexmoServiceProvider::class
+        Nexmo\Laravel\NexmoServiceProvider::class,
+        JonnyPickett\EloquentSTI\ServiceProvider::class,
     ],
 
     /*
