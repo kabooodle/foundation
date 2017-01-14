@@ -87,7 +87,7 @@
         <div class="form-group row m-t-md">
             <div class="col-sm-12">
                     <div class="box inline p-a-sm b b-a no-shadow r"
-                         :class="cover_photo == image.location ? 'b-primary' : null "
+                         :class="cover_photo == image.key ? 'b-primary' : null "
                          v-for="image in images" style="margin-right:.78rem; margin-bottom:.78rem;">
                          <div style="z-index: 999;" class="item-overlay active p-r-sm">
                                 <a
@@ -109,12 +109,12 @@
                                     :value="image.json">
                         </span>
                         <button
-                                @click="setCoverPhoto(image.location, $event)"
-                                :disabled="cover_photo == image.location"
-                                :class="this.cover_photo == image.location ? true: false"
+                                @click="setCoverPhoto(image.key, $event)"
+                                :disabled="cover_photo == image.key"
+                                :class="this.cover_photo == image.key ? true: false"
                                 class="btn white btn-xs block text-center center-block"
                         >
-                            <span v-if="cover_photo == image.location">Cover photo</span>
+                            <span v-if="cover_photo == image.key">Cover photo</span>
                             <span v-else>Make cover</span>
                         </button>
                     </div>
@@ -168,13 +168,13 @@
             images: function(){
                 $Bus.$emit('images:changed', this.images);
                 if (this.images.length == 1) {
-                    this.cover_photo = this.images[0].location;
+                    this.cover_photo = this.images[0].key;
                 }
             }
         },
         created(){
 
-            this.cover_photo = this.item.cover_photo_file_location;
+            this.cover_photo = this.item.cover_photo_file_key;
 
             if(this.tags && this.tags != '') {
                 _.each(this.tags.split(','), (tag)=>{

@@ -84,12 +84,12 @@ class UpdateInventoryItemCommandHandler
             // Lets make sure all the images that need to be deleted, are deleted.
             $this->checkAndDeleteUnusedImages($item, $existingImagesArray, $addedImagesArray);
 
-            $coverPhotoLocation = $command->getCoverPhotoKey();
-            $coverPhotoFile = $existingImages->first(function($value, $file) use ($coverPhotoLocation) {
-                return $file->location == $coverPhotoLocation;
+            $coverPhotoKey = $command->getCoverPhotoKey();
+            $coverPhotoFile = $existingImages->first(function($value, $file) use ($coverPhotoKey) {
+                return $file->key == $coverPhotoKey;
             });
 
-            $item->cover_photo_file_location = $coverPhotoFile->getOriginal('location');
+            $item->cover_photo_file_key = $coverPhotoFile->getOriginal('key');
             $item->cover_photo_file_id = $coverPhotoFile->id;
 
             $item->save();

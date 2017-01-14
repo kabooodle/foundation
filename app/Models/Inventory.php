@@ -120,7 +120,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_sizes_id',
         'price_usd',
         'wholesale_price_usd',
-        'cover_photo_file_location',
+        'cover_photo_file_key',
         'cover_photo_file_id',
         'name',
         'description',
@@ -348,15 +348,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function getCoverPhotoAttribute()
     {
-        return $this->cover_photo_file_location;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function coverPhoto()
-    {
-        return $this->belongsTo(Files::class, 'cover_photo_file_id', 'id');
+//        return $this->files()->find($this->cover_photo_file_id)->location;
+        return useCDN() ? staticAsset($this->cover_photo_file_key, false) : 'https://'.env('AWS_BUCKET').'.s3.amazonaws.com/'.$this->cover_photo_file_key;
     }
 
     /**
