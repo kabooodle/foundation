@@ -21,7 +21,7 @@
 
             <div class="row row-horizon clearfix" >
                 <div class="col-sm-4 thumbnail-container"  v-for="(image, $index) in images">
-                    <div class="box no-shadow m-b-0 p-t-1 p-b-1 r b-1 b b-a" :class="cover_photo == image.key ? '  b-primary ' : null" >
+                    <div class="box no-shadow m-b-0 p-t-1 p-b-1 r b-1 b b-a" >
                         <div class="item" >
                             <div class="item-overlay active p-l p-r " style="z-index: 999;">
                                 <a type="button" style=""
@@ -47,23 +47,9 @@
                                        :name="'sizings['+id+'][images]['+image.key+'][qty]'"
                                        class="text-center image_qty_btn"  />
                             </div>
-                            <div class="clearfix">
-
-                                <button
-                                        type="button"
-                                        :disabled="cover_photo == image.key ? true : false"
-                                        @click="setCoverPhoto(image.key, $event)"
-                                        class="m-t-1 btn btn-block pull-right white"
-                                >
-                                    <span v-if="cover_photo != image.key">Set as cover photo</span>
-                                    <span v-else>Cover photo</span>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
-
-                <input type="hidden" v-model="cover_photo" :name="'sizings['+id+'][cover_photo]'" :value="cover_photo">
             </div>
 
         </div>
@@ -134,24 +120,9 @@
                 },
                 categories: [],
                 category: [],
-                cover_photo: this.images.length > 0 ? this.images[0].key : null
             }
         },
-        watch: {
-            images(){
-                if (this.images.length >= 1) {
-                    this.cover_photo = this.images[0].key;
-                }
-            },
-        },
         methods:{
-            moveCoverPhoto(){
-
-            },
-            setCoverPhoto(imageKey, event){
-                event.preventDefault();
-                this.cover_photo = imageKey;
-            },
             toggleCategory(){
                 this.display.categories == true ? this.display.categories = false : this.display.categories = true;
             },
@@ -173,9 +144,6 @@
                 let index = this.images.indexOf(image);
                 if (index > -1) {
                     this.images.splice(index, 1);
-                    if (this.cover_photo == image.key && this.images.length > 1) {
-                        this.cover_photo = this.images[0].key;
-                    }
                 }
             }
         },
