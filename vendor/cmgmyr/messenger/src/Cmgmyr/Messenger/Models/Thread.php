@@ -49,7 +49,7 @@ class Thread extends Eloquent
      */
     public function messages()
     {
-        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->orderBy('created_at');
+        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id');
     }
 
     /**
@@ -174,8 +174,9 @@ class Thread extends Eloquent
      */
     public function scopeBetween($query, array $participants)
     {
-        $query->whereHas('participants', function ($query) use ($participants) {
-            $query->whereIn('user_id', $participants)
+        return $query->whereHas('participants', function ($q) use ($participants) {
+            $q->whereIn('user_id', $participants)
+                ->select($this->getConnection()->raw('DISTINCT(thread_id)'))
                 ->groupBy('thread_id')
                 ->havingRaw('COUNT(thread_id)=' . count($participants));
         });
@@ -285,16 +286,17 @@ class Thread extends Eloquent
     {
         $participantsTable = Models::table('participants');
         $usersTable = Models::table('users');
+        $userPrimaryKey = Models::user()->getKeyName();
 
         $selectString = $this->createSelectString($columns);
 
         $participantNames = $this->getConnection()->table($usersTable)
-            ->join($participantsTable, $usersTable . '.id', '=', $participantsTable . '.user_id')
+            ->join($participantsTable, $usersTable . '.' . $userPrimaryKey, '=', $participantsTable . '.user_id')
             ->where($participantsTable . '.thread_id', $this->id)
             ->select($this->getConnection()->raw($selectString));
 
         if ($userId !== null) {
-            $participantNames->where($usersTable . '.id', '!=', $userId);
+            $participantNames->where($usersTable . '.' . $userPrimaryKey, '!=', $userId);
         }
 
         return $participantNames->implode('name', ', ');
