@@ -81,7 +81,8 @@ class AddInventoryCommandHandler
                         $data['price_usd'],
                         $data['wholesale_price_usd'],
                         $categories,
-                        $sizeImage
+                        $sizeImage,
+                        $sizing['cover_photo']
                     );
 
                     // Add the item to the array of items.
@@ -106,6 +107,7 @@ class AddInventoryCommandHandler
      * @param             $wholesalePrice
      * @param string      $categories
      * @param array       $image
+     * @param string      $coverPhotoKey
      *
      * @return Inventory
      */
@@ -118,7 +120,8 @@ class AddInventoryCommandHandler
         $price,
         $wholesalePrice,
         string $categories = null,
-        array $image
+        array $image,
+        string $coverPhotoKey
     ) {
 
         // Build our item.
@@ -133,20 +136,28 @@ class AddInventoryCommandHandler
             'initial_qty' => $image['qty']
         ]);
 
-        // Associate files(images) to the item.
-        $item->files()->save(new Files([
+
+        $file = Files::create([
             'location' => $image['location'],
             'key' => $image['key'],
             'bucket_name' => $image['bucket'],
             'fileable_type' => get_class($item),
             'fileable_id' => $item->id
-        ]));
+        ]);
+        // Associate files(images) to the item.
+        $item->files()->save($file);
 
         // Associate categories to the item.
         // They are passed as a comma separated string.
         if ($categories) {
             $item->tag($categories);
         }
+
+        if ($coverPhotoKey && $image['key'] == $coverPhotoKey) {
+            $item->cover_photo_file_location = $file->getOriginal('location');
+            $item->cover_photo_file_id = $file->id;
+        }
+
 
         $item->save();
 

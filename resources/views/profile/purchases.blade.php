@@ -45,7 +45,7 @@
                         <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
                                 @if($claim->inventoryItem->firstImage())
-                                    <img src="{{ $claim->inventoryItem->firstImage()->location }}">
+                                    <img src="{{ $claim->inventoryItem->cover_photo }}">
                                 @endif
                             </div>
                             <span>{{ $claim->inventoryItem->name_with_variant }}</span>

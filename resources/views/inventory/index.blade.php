@@ -239,7 +239,7 @@
                                             @click="removeFromAlbum(item, facebook_album, selected.fb_group, $event)"
                                             class="img-thumb" v-for="item in facebook_album.items" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
                                             <img
-                                                    v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)"
+                                                    v-bind:src="item.cover_photo"
                                                     class="img-responsive"
                                                     style="width: 24px; height: 24px;">
                                             <i class="fa fa-times fa-2x"></i>

@@ -20,7 +20,7 @@
                     ></followable>
                 </div>
                 <a :href="show_endpoint">
-                    <img :src="inventory_item.files[0].location" class="img-responsive">
+                    <img :src="inventory_item.cover_photo" class="img-responsive">
                 </a>
             </span>
             <div class="p-a-sm p-b-0">

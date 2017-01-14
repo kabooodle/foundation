@@ -63,8 +63,7 @@
                     </div>
                 </div>
 
-
-                <input type="hidden" v-model="cover_photo" :value="cover_photo">
+                <input type="hidden" v-model="cover_photo" :name="'sizings['+id+'][cover_photo]'" :value="cover_photo">
             </div>
 
         </div>
