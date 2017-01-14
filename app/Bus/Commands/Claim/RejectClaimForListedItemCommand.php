@@ -9,12 +9,12 @@ namespace Kabooodle\Bus\Commands\Claim;
 use Kabooodle\Models\User;
 
 /**
- * Class RejectClaimForInventoryItemCommand.
+ * Class RejectClaimForListedItemCommand.
  */
-class RejectClaimForInventoryItemCommand
+class RejectClaimForListedItemCommand
 {
     /**
-     * RejectClaimForInventoryItemCommand constructor.
+     * RejectClaimForListedItemCommand constructor.
      *
      * @param User $user
      * @param      $claimId

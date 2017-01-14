@@ -3,9 +3,9 @@
 
     </td>
     <td style="vertical-align: middle !important">
-        <a href="{{ route('shop.inventory.show', [user()->username, $claim->inventoryItem->obfuscateToURIStringFromModel()]) }}"
+        <a href="{{ route('shop.inventory.show', [user()->username, $claim->listedItem->obfuscateToURIStringFromModel()]) }}"
            class="_500 h6"><span class="@if($claim->wasRejected()) w-24 @else w-40 @endif avatar">
-                                            <img src="{{ $claim->inventoryItem->firstImage() ? $claim->inventoryItem->firstImage()->location : 'https://placekitten.com/g/30/30' }}">
+                                            <img src="{{ $claim->listedItem->firstImage() ? $claim->listedItem->firstImage()->location : 'https://placekitten.com/g/30/30' }}">
                                           </span></a>
     </td>
     <td style="vertical-align: middle !important">${{ $claim->inventory_item_object_data['price_usd'] }}</td>
@@ -14,8 +14,8 @@
     <td style="vertical-align: middle !important" class="action-column">
         <div class="pull-right">
             @if($claim->isPending())
-                <a data-toggle="modal" data-target="#modal_claim_rejected" class="btn white btn-xs btn-action--rejected btn-action-claim" v-on:click="toggleActionModal" data-action="reject" data-id="{{ $claim->uuid }}" data-method="delete" data-route="{{ route('shop.claims.destroy', [$claim->inventoryItem->user->username, $claim->uuid]) }}">Reject</a>
-                <a data-toggle="modal" data-target="#modal_claim_accepted" class="btn white btn-xs  btn-action--accepted btn-action-claim" v-on:click="toggleActionModal" data-action="accept" data-id="{{ $claim->uuid }}" data-method="put" data-route="{{ route('shop.claims.update', [$claim->inventoryItem->user->username, $claim->uuid]) }}" >Accept</a>
+                <a data-toggle="modal" data-target="#modal_claim_rejected" class="btn white btn-xs btn-action--rejected btn-action-claim" v-on:click="toggleActionModal" data-action="reject" data-id="{{ $claim->uuid }}" data-method="delete" data-route="{{ route('shop.claims.destroy', [$claim->listedItem->user->username, $claim->uuid]) }}">Reject</a>
+                <a data-toggle="modal" data-target="#modal_claim_accepted" class="btn white btn-xs  btn-action--accepted btn-action-claim" v-on:click="toggleActionModal" data-action="accept" data-id="{{ $claim->uuid }}" data-method="put" data-route="{{ route('shop.claims.update', [$claim->listedItem->user->username, $claim->uuid]) }}" >Accept</a>
             @endif
         </div>
     </td>

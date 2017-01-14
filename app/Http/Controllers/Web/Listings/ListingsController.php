@@ -26,7 +26,7 @@ class ListingsController extends Controller
      */
     public function show(Request $request, $listingUuid)
     {
-        $listing = Listings::with(['items', 'items.inventoryItem'])
+        $listing = Listings::with(['items', 'items.listedItem'])
             ->where('uuid', $listingUuid)
             ->first();
 
@@ -35,7 +35,7 @@ class ListingsController extends Controller
         }
 
         $items = $listing->items->sortBy(function($item){
-            return $item->inventoryItem->style->name;
+            return $item->listedItem->style->name;
         });
 
         $items = $this->paginateData($request, $items);

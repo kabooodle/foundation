@@ -185,7 +185,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
      */
     public function getListingImage(ListingItems $listingItem)
     {
-        return $listingItem->inventoryItem->firstImage();
+        return $listingItem->listedItem->firstImage();
     }
 
     /**

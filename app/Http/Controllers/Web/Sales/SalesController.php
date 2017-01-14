@@ -39,7 +39,7 @@ class SalesController extends Controller
             'purchasers' => $request->has('purchasers') ? array_filter(Binput::get('purchasers')) : false
         ];
 
-        $sales = user()->acceptedClaimsOnMyInventory()->noEagerLoads()->with(['inventoryItem']);
+        $sales = user()->acceptedClaimsOnMyInventory()->noEagerLoads()->with(['listedItem']);
 
         // Categories filter
         if ($filters['categories']) {
@@ -55,7 +55,7 @@ class SalesController extends Controller
 
         // Styles, Size, Price filters
         if (count($filters['style'])>0 || count($filters['size'])>0) {
-            $sales = $sales->whereHas('inventoryItem', function ($q) use ($filters) {
+            $sales = $sales->whereHas('listedItem', function ($q) use ($filters) {
                 // Styles
                 if (count($filters['style'])>0) {
                     $q->whereIn('inventory_type_styles_id', $filters['style']);

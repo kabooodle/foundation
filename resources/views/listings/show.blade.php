@@ -55,21 +55,21 @@
                                             ></followable>
                                 </div>
                                     <a href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">
-                                        <img src="{{ $item->inventoryItem->firstImage() ? $item->inventoryItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
+                                        <img src="{{ $item->listedItem->firstImage() ? $item->listedItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
                                     </a>
                             </span>
                             <div class="p-a-sm p-b-0">
                                 <div class="clearfix">
-                                    <h6 class="m-b-0"><a class="" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">{!! $item->inventoryItem->name !!}</a></h6>
+                                    <h6 class="m-b-0"><a class="" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">{!! $item->listedItem->name !!}</a></h6>
                                     <div class="m-b-0 text-sm clearfix">
                                         <div class="pull-left">
                                             <div class="block">
-                                                <span class="text-muted">Size:</span> <span class="">{!! $item->inventoryItem->styleSize->name !!}</span>
+                                                <span class="text-muted">Size:</span> <span class="">{!! $item->listedItem->styleSize->name !!}</span>
                                             </div>
 
                                         </div>
                                         <div class="pull-right" style="text-align: right">
-                                            <span class="text-muted ">Qty:</span> <span class="">{{ $item->inventoryItem->getAvailableQuantity() }}</span>
+                                            <span class="text-muted ">Qty:</span> <span class="">{{ $item->listedItem->getAvailableQuantity() }}</span>
                                         </div>
                                     </div>
                                 </div>

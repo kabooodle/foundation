@@ -11,27 +11,27 @@ use Kabooodle\Bus\Events\Claim\NewGuestClaimEvent;
 use Kabooodle\Models\Claims;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Events\Claim\NewItemWasClaimedEvent;
-use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
+use Kabooodle\Bus\Commands\Claim\ClaimListedItemCommand;
 use Kabooodle\Foundation\Exceptions\Claim\RequestedQuantityCannotBeSatisfiedException;
 
 /**
- * Class ClaimInventoryItemCommandHandler
+ * Class ClaimListedItemCommandHandler
  * @package Kabooodle\Bus\Handlers\Commands\Claim
  */
-class ClaimInventoryItemCommandHandler
+class ClaimListedItemCommandHandler
 {
     use DispatchesJobs;
 
     /**
-     * @param ClaimInventoryItemCommand $command
+     * @param ClaimListedItemCommand $command
      *
      * @return bool|mixed
      * @throws RequestedQuantityCannotBeSatisfiedException
      */
-    public function handle(ClaimInventoryItemCommand $command)
+    public function handle(ClaimListedItemCommand $command)
     {
         // confirm quantity of 1 is still available for this particular item
-        $quantityIsAvailable = $command->getInventoryItem()->canSatisfyRequestedQuantityOf(1);
+        $quantityIsAvailable = $command->getListedItem()->canSatisfyRequestedQuantityOf(1);
         if (!$quantityIsAvailable) {
             throw new RequestedQuantityCannotBeSatisfiedException('Item no longer available due to insufficient quantity.');
         }
@@ -39,18 +39,18 @@ class ClaimInventoryItemCommandHandler
         $claim = DB::transaction(function () use ($command) {
             // Claim the item (put it into an escrow type account)
             $claim = Claims::create([
-                'inventory_id' => $command->getInventoryItem()->id,
+                'inventory_id' => $command->getListedItem()->id,
                 'claimed_by' => $command->getClaimedBy()->id,
-                'inventory_item_object_data' => $command->getInventoryItem(),
+                'inventory_item_object_data' => $command->getListedItem(),
                 'verified' => !$command->isGuest(),
-                'price' => $command->getInventoryItem()->getPrice(),
+                'price' => $command->getListedItem()->getPrice(),
                 'shoppable_id' => $command->getShoppable()->id,
                 'shoppable_type' => get_class($command->getShoppable())
             ]);
 
             // Decrement the inventory item's quantity
             if ($claim->isVerified()) {
-                $command->getInventoryItem()->decrement('initial_qty');
+                $command->getListedItem()->decrement('initial_qty');
             }
 
             return $claim;

@@ -25,10 +25,10 @@ use Kabooodle\Models\Contracts\LikeableInterface;
 use Kabooodle\Models\Contracts\CommentableInterface;
 
 /**
- * Class InventoryGroupings
+ * Class InventoryGrouping
  * @package Kabooodle\Models
  */
-class InventoryGroupings extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable
+class InventoryGrouping extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable
 {
     use ClaimableTrait,
         CommentableTrait,

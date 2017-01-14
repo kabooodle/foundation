@@ -10,10 +10,10 @@
         </div>
         <div class="btn-toolbar pull-right">
 
-            @if(! $listingItem->inventoryItem->canSatisfyRequestedQuantityOf(1))
+            @if(! $listingItem->listedItem->canSatisfyRequestedQuantityOf(1))
                 <div class="inline" data-toggle="tooltip" data-placement="bottom" title="Watch the item to be notified of availability">
                     <a class="btn btn-sm claim  _800 disabled" disabled href="#">
-                        @if($listingItem->inventoryItem->getOnHoldQuantity())
+                        @if($listingItem->listedItem->getOnHoldQuantity())
                             On hold!
                         @else
                             Out of stock!
@@ -60,7 +60,7 @@
         </div>
 
     @include('inventory.partials._show', [
-        'item' => $listingItem->inventoryItem
+        'item' => $listingItem->listedItem
     ])
 
     @include('inventory.partials._claimmodal', [
@@ -70,9 +70,9 @@
     ])
 
     @include('comments.container', [
-        'comment_model' => $listingItem->inventoryItem,
-        'comment_index_route' => apiRoute('inventory.comments.index', [$listingItem->inventoryItem->id]),
-        'comment_post_route' => apiRoute('inventory.comments.store', [$listingItem->inventoryItem->id])
+        'comment_model' => $listingItem->listedItem,
+        'comment_index_route' => apiRoute('inventory.comments.index', [$listingItem->listedItem->id]),
+        'comment_post_route' => apiRoute('inventory.comments.store', [$listingItem->listedItem->id])
     ])
 @endsection
 

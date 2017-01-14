@@ -12,34 +12,34 @@ use Kabooodle\Models\Inventory;
 use Kabooodle\Models\Contracts\ShoppableInterface;
 
 /**
- * Class ClaimInventoryItemCommand.
+ * Class ClaimListedItemCommand.
  */
-class ClaimInventoryItemCommand
+class ClaimListedItemCommand
 {
     protected $claimedBy;
     protected $shoppable;
-    protected $inventoryItem;
+    protected $listedItem;
     protected $guest;
     protected $email;
 
     /**
-     * ClaimInventoryItemCommand constructor.
+     * ClaimListedItemCommand constructor.
      * @param User $claimedBy
      * @param ShoppableInterface $shoppable
-     * @param Inventory $inventoryItem
+     * @param Inventory $listedItem
      * @param bool $guest
      * @param Email|null $email
      */
     public function __construct(
         User $claimedBy,
         ShoppableInterface $shoppable,
-        Inventory $inventoryItem,
+        Inventory $listedItem,
         $guest = false,
         Email $email = null)
     {
         $this->claimedBy = $claimedBy;
         $this->shoppable = $shoppable;
-        $this->inventoryItem = $inventoryItem;
+        $this->listedItem = $listedItem;
         $this->guest = $guest;
         $this->email = $email;
     }
@@ -55,9 +55,9 @@ class ClaimInventoryItemCommand
     /**
      * @return Inventory
      */
-    public function getInventoryItem()
+    public function getListedItem()
     {
-        return $this->inventoryItem;
+        return $this->listedItem;
     }
 
     /**

@@ -73,24 +73,24 @@ class ScheduleListingCommandHandler
 
             // We have some special logic for facebook listings
             if ($this->isFacebookListing) {
-                // Build an array of InventoryItems containing facebook listings associated
+                // Build an array of ListedItems containing facebook listings associated
                 // to the parent listing just created.
-                $facebookInventoryItems = $this->buildFacebookListingItems($listing, $command);
+                $facebookListedItems = $this->buildFacebookListingItems($listing, $command);
 
                 // Because facebook throttles API requests to 200/calls an hour, we need to make sure
                 // The requested time schedule doesn't already have "200 calls" scheduled.
                 // If it does, an exception will be thrown.
-                $this->assertListingDoesNotConflictWithExistingListing($scheduledFor, $actor, $facebookInventoryItems);
+                $this->assertListingDoesNotConflictWithExistingListing($scheduledFor, $actor, $facebookListedItems);
 
-                $listing->listingItems()->saveMany($facebookInventoryItems);
+                $listing->listingItems()->saveMany($facebookListedItems);
 
-                $totalSavedListings[] = $facebookInventoryItems;
+                $totalSavedListings[] = $facebookListedItems;
             } else {
-                $flashsaleInventoryItems = $this->buildFlashsaleListingItems($listing, $command);
+                $flashsaleListedItems = $this->buildFlashsaleListingItems($listing, $command);
 
-                $listing->listingItems()->saveMany($flashsaleInventoryItems);
+                $listing->listingItems()->saveMany($flashsaleListedItems);
 
-                $totalSavedListings[] = $flashsaleInventoryItems;
+                $totalSavedListings[] = $flashsaleListedItems;
             }
 
             event(new ListingScheduledEvent($actor, $listing));
@@ -217,10 +217,10 @@ class ScheduleListingCommandHandler
                 }
 
                 // Loop over each of the items
-                foreach ($facebookAlbum['items'] as $inventoryItem) {
+                foreach ($facebookAlbum['items'] as $listedItem) {
 
                     // Skip inventory items that do not belong to the user.
-                    if (! $this->inventoryItemBelongsToUser($inventoryItem['id'], $actor)) {
+                    if (! $this->listedItemBelongsToUser($listedItem['id'], $actor)) {
                         continue;
                     }
 
@@ -229,7 +229,7 @@ class ScheduleListingCommandHandler
                     $listingItem->owner_id = $actor->id;
                     $listingItem->fb_group_node_id = $command->getFacebookGroupId();
                     $listingItem->fb_album_node_id = $facebookAlbum['id'];
-                    $listingItem->inventory_id = $inventoryItem['id'];
+                    $listingItem->inventory_id = $listedItem['id'];
 
                     // Copy the type and status from the parent listing.
                     // Status may actually change and be different, below otherwise they start the same.
@@ -239,7 +239,7 @@ class ScheduleListingCommandHandler
 
                     // Flag duplicates as ignored listings.
                     // We do not actually "skip" them because we want to provide full transparency to the user.
-                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $inventoryItem['id'])) {
+                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $listedItem['id'])) {
                         $listingItem->ignore = true;
                         $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
                     }
@@ -269,7 +269,7 @@ class ScheduleListingCommandHandler
             foreach ($selectedItems as $selectedItem) {
 
                 // Skip inventory items that do not belong to the user.
-                if (! $this->inventoryItemBelongsToUser($selectedItem['id'], $actor)) {
+                if (! $this->listedItemBelongsToUser($selectedItem['id'], $actor)) {
                     continue;
                 }
 
@@ -307,7 +307,7 @@ class ScheduleListingCommandHandler
      *
      * @return mixed
      */
-    public function inventoryItemBelongsToUser(int $inventoryId, User $actor)
+    public function listedItemBelongsToUser(int $inventoryId, User $actor)
     {
         return $actor->inventory->find($inventoryId);
     }
@@ -318,12 +318,12 @@ class ScheduleListingCommandHandler
      *
      * @param Carbon $dateTime
      * @param User   $actor
-     * @param array $facebookInventoryItems
+     * @param array $facebookListedItems
      *
      * @return bool
      * @throws ListingConflictsWithExistingListingException
      */
-    public function assertListingDoesNotConflictWithExistingListing(Carbon $dateTime, User $actor, array $facebookInventoryItems)
+    public function assertListingDoesNotConflictWithExistingListing(Carbon $dateTime, User $actor, array $facebookListedItems)
     {
         // Get the date time, and find 60 minutes from this time as the max and the min is the scheduled time.
         $minDateTime = $dateTime->format('Y-m-d H:i:s.u');
@@ -333,7 +333,7 @@ class ScheduleListingCommandHandler
             $actor->id,
             $minDateTime,
             $maxDateTime,
-            count($facebookInventoryItems)
+            count($facebookListedItems)
         );
 
         if ($hourlyQuoteExceeded) {

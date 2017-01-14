@@ -344,7 +344,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function inventoryItems()
+    public function listedItems()
     {
         return $this->belongsToMany(Inventory::class, 'flashsale_items', 'flashsale_id', 'inventory_id')->withTimestamps()->withPivot('inventory_id');
     }
@@ -354,9 +354,9 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function enabledInventoryItems()
+    public function enabledListedItems()
     {
-        return $this->inventoryItems();
+        return $this->listedItems();
     }
 
     /**

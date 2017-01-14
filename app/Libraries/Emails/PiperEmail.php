@@ -64,8 +64,8 @@ class PiperEmail extends AbstractEmail
         $this->setView('emails.claims.pending-verification')
             ->setParameters([
                 'claim' => $claim,
-                'item' => $claim->inventoryItem,
-                'user' => $claim->inventoryItem->owner,
+                'item' => $claim->listedItem,
+                'user' => $claim->listedItem->owner,
                 'itemLink' => null,
                 'claimsLink' => null,
             ])

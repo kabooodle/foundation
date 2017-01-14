@@ -8,12 +8,12 @@
             @foreach($shipment->claims as $claim)
                 <div class="box-body">
                     <div class="avatar-thumbnail-container">
-                    @if($claim->inventoryItem->files->count() > 0)
+                    @if($claim->listedItem->files->count() > 0)
                         <div class="avatar-thumbnail _32">
-                            <img src="{{$claim->inventoryItem->files[0]->location}}">
+                            <img src="{{$claim->listedItem->files[0]->location}}">
                         </div>
                     @endif
-                    <span>{{ $claim->claimer->name }} - {{ $claim->inventoryItem->name }} - {{ $claim->inventoryItem->size->name }} - ${{ $claim->inventoryItem->price_usd }}</span>
+                    <span>{{ $claim->claimer->name }} - {{ $claim->listedItem->name }} - {{ $claim->listedItem->size->name }} - ${{ $claim->listedItem->price_usd }}</span>
                     </div>
                 </div>
             @endforeach

@@ -48,7 +48,7 @@ trait ListableTrait
     /**
      * @return string
      */
-    public function getPrice()
+    public function getPrice(): string
     {
         return number_format($this->price_usd, 2);
     }
@@ -58,7 +58,7 @@ trait ListableTrait
      *
      * @return bool
      */
-    public function canSatisfyRequestedQuantityOf($qty = 1)
+    public function canSatisfyRequestedQuantityOf($qty = 1): bool
     {
         return $this->getAvailableQuantity() >= $qty;
     }
@@ -66,7 +66,7 @@ trait ListableTrait
     /**
      * @return int
      */
-    public function getAvailableQuantity()
+    public function getAvailableQuantity(): int
     {
         return $this->initial_qty - $this->getOnHoldQuantity();
     }
@@ -74,7 +74,7 @@ trait ListableTrait
     /**
      * @return int
      */
-    public function getOnHoldQuantity()
+    public function getOnHoldQuantity(): int
     {
         return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
     }

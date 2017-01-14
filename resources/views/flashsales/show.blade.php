@@ -10,7 +10,7 @@
 
     @include('flashsales.partials._flashsaleheader')
 
-        @if($item->inventoryItems->count() > 0)
+        @if($item->listedItems->count() > 0)
         <div class="row">
             <div class="col-md-3">
                 <div class="list-group m-b">
@@ -39,26 +39,26 @@
             </div>
             <div class="col-md-9">
                 <div class="row">
-                @foreach($item->inventoryItems as $inventoryItem)
+                @foreach($item->listedItems as $listedItem)
                         <div class="col-md-4">
                             <div class="box p-a-xs p-b-0">
                                 <div class="item">
-                                    <a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}">
-                                        <img src="{{ $inventoryItem->firstImage() ? $inventoryItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
+                                    <a href="{{ route('flashsales.shop.show', [$item->getUUID(), $listedItem->getUUID()]) }}">
+                                        <img src="{{ $listedItem->firstImage() ? $listedItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
                                     </a>
                                 </div>
                                 <div class="p-a p-b-0">
                                     <div class="clearfix">
-                                        <h6 class="m-b-0"><a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}" class="_800">{!! $inventoryItem->name !!}</a></h6>
+                                        <h6 class="m-b-0"><a href="{{ route('flashsales.shop.show', [$item->getUUID(), $listedItem->getUUID()]) }}" class="_800">{!! $listedItem->name !!}</a></h6>
                                         <div class="m-b-0 text-sm clearfix">
                                             <div class="pull-left">
                                                 <div class="block">
-                                                    <span class="text-muted">Size:</span> <span class="">{!! $inventoryItem->styleSize->name !!}</span>
+                                                    <span class="text-muted">Size:</span> <span class="">{!! $listedItem->styleSize->name !!}</span>
                                                 </div>
 
                                             </div>
                                             <div class="pull-right" style="text-align: right">
-                                                <span class="text-muted ">Qty:</span> <span class="">{{ $inventoryItem->getAvailableQuantity() }}</span>
+                                                <span class="text-muted ">Qty:</span> <span class="">{{ $listedItem->getAvailableQuantity() }}</span>
                                             </div>
                                         </div>
                                     </div>

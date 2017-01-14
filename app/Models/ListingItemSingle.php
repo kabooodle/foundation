@@ -11,5 +11,5 @@ namespace Kabooodle\Models;
  */
 class ListingItemSingle extends ListingItems
 {
-
+    const LISTED_ITEM_CLASS = Inventory::class;
 }

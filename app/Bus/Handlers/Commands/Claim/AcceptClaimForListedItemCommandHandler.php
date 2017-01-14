@@ -11,22 +11,22 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Commands\Claim\VerifyClaimCommand;
 use Kabooodle\Models\Claims;
 use Kabooodle\Bus\Events\Claim\ClaimWasAcceptedEvent;
-use Kabooodle\Bus\Commands\Claim\AcceptClaimForInventoryItemCommand;
+use Kabooodle\Bus\Commands\Claim\AcceptClaimForListedItemCommand;
 
 /**
- * Class AcceptClaimForInventoryItemCommandHandler
+ * Class AcceptClaimForListedItemCommandHandler
  * @package Kabooodle\Bus\Handlers\Commands\Claim
  */
-class AcceptClaimForInventoryItemCommandHandler
+class AcceptClaimForListedItemCommandHandler
 {
     use DispatchesJobs;
 
     /**
-     * @param AcceptClaimForInventoryItemCommand $command
+     * @param AcceptClaimForListedItemCommand $command
      *
      * @return mixed
      */
-    public function handle(AcceptClaimForInventoryItemCommand $command)
+    public function handle(AcceptClaimForListedItemCommand $command)
     {
         $claim = Claims::where('uuid', $command->getClaimId())->first();
         if (!$claim->isVerified()) {

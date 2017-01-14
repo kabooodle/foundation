@@ -112,12 +112,17 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'subclass_name',
     ];
 
+    public function getListedItemClass(): string
+    {
+        return static::LISTED_ITEM_CLASS;
+    }
+
     /**
      * @return mixed
      */
     public function getNameAttribute()
     {
-        return $this->inventoryItem->name;
+        return $this->listedItem->name;
     }
 
     /**
@@ -155,9 +160,9 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function inventoryItem(): BelongsTo
+    public function listedItem(): BelongsTo
     {
-        return $this->belongsTo(Inventory::class, 'inventory_id');
+        return $this->belongsTo($this->getListedItemClass(), 'listed_id');
     }
 
     /**

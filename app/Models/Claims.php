@@ -41,7 +41,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'shipments',
         'shipments.transaction',
         'claimer',
-//        'inventoryItem',
+//        'listedItem',
     ];
 
     /**
@@ -141,7 +141,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         });
     }
 
-    public function setInventoryItemObjectDataAttribute($value)
+    public function setListedItemObjectDataAttribute($value)
     {
         $this->attributes['inventory_item_object_data'] = $value->toJson();
     }
@@ -151,7 +151,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      *
      * @return array
      */
-    public function getInventoryItemObjectDataAttribute($value)
+    public function getListedItemObjectDataAttribute($value)
     {
         return (array) json_decode($value, true);
     }
@@ -229,9 +229,9 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function inventoryItem()
+    public function listedItem()
     {
-        return $this->belongsTo(Inventory::class, 'inventory_id');
+        return $this->belongsTo(Inventory::class, 'claimed_id');
     }
 
     /**
@@ -296,7 +296,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function getClaimerItemDatePriceAttribute()
     {
         $claimer = $this->claimer;
-        $item = $this->inventoryItem;
+        $item = $this->listedItem;
         $date = $this->updatedAtHuman();
         $price = $this->price;
 

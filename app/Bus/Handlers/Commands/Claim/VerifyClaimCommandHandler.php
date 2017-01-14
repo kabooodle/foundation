@@ -43,14 +43,14 @@ class VerifyClaimCommandHandler
             throw new ClaimRejectedException('Your claim has been rejected by the seller.');
         }
         // confirm quantity of 1 is still available for this particular item
-        $quantityIsAvailable = $claim->inventoryItem->canSatisfyRequestedQuantityOf(1);
+        $quantityIsAvailable = $claim->listedItem->canSatisfyRequestedQuantityOf(1);
         if (!$quantityIsAvailable) {
             throw new RequestedQuantityCannotBeSatisfiedException('Item no longer available due to insufficient quantity.');
         }
         $claim->verify();
 
         if ($claim->isVerified()) {
-            $claim->inventoryItem->decrement('initial_qty');
+            $claim->listedItem->decrement('initial_qty');
 
             event(new NewItemWasClaimedEvent($claim));
         }

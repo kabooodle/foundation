@@ -690,15 +690,15 @@ class User extends BaseEloquentModel implements
      */
     public function claimsAsSellerNoShipping()
     {
-        $inventoryItems = $this->claimsOnMyInventory;
-        if ($inventoryItems->count() > 0) {
-            return $inventoryItems->filter(function (Claims $claim) {
+        $claims = $this->claimsOnMyInventory;
+        if ($claims->count() > 0) {
+            return $claims->filter(function (Claims $claim) {
                 // Ignore claims still pending and ones that have already shipped
                 return ($claim->wasAccepted() && ! $claim->shipmentTransaction() ? true : false);
             })->values();
         }
 
-        return $inventoryItems;
+        return $claims;
     }
 
     /**

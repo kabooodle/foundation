@@ -42,11 +42,11 @@
                     <td><input type="checkbox"></td>
                     <td> <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
-                                @if($item->inventoryItem->firstImage())
-                                    <img src="{{ $item->inventoryItem->firstImage()->location }}">
+                                @if($item->listedItem->firstImage())
+                                    <img src="{{ $item->listedItem->firstImage()->location }}">
                                 @endif
                             </div>
-                            <span>{{ $item->inventoryItem->name_with_variant }}</span>
+                            <span>{{ $item->listedItem->name_with_variant }}</span>
                         </div></td>
                     <td>{{ $item->sales->count() }}</td>
                     <td>{{ $item->pendingSales->count() }}</td>

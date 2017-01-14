@@ -40,7 +40,7 @@ class NotifyClaimWasAccepted implements ShouldQueue
     {
         $mail = new PiperEmail;
         $mail->setView('inventory.claims.emails.accepted_toclaimer')
-            ->setParameters(['item' => $claim->inventoryItem, 'claim' => $claim])
+            ->setParameters(['item' => $claim->listedItem, 'claim' => $claim])
             ->setCallable(function ($mail) use ($claimedBy) {
                 $mail->to($claimedBy->email)->subject('Item claim accepted.');
             })
@@ -53,7 +53,7 @@ class NotifyClaimWasAccepted implements ShouldQueue
      */
     public function toDatabase(Claims $claim, User $claimedBy)
     {
-        $title = 'Your claim on '.$claim->inventoryItem->getNameAndSize().' - $'.$claim->price.', was accepted by '. $claim->inventoryItem->owner->full_name;
+        $title = 'Your claim on '.$claim->listedItem->getNameAndSize().' - $'.$claim->price.', was accepted by '. $claim->listedItem->owner->full_name;
 
         $notification = new NotificationNotices;
         $notification->user_id = $claimedBy->id;

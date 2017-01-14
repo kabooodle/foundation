@@ -10,20 +10,20 @@ use DB;
 use Carbon\Carbon;
 use Kabooodle\Models\Claims;
 use Kabooodle\Bus\Events\Claim\ClaimWasRejectedEvent;
-use Kabooodle\Bus\Commands\Claim\RejectClaimForInventoryItemCommand;
+use Kabooodle\Bus\Commands\Claim\RejectClaimForListedItemCommand;
 
 /**
- * Class RejectClaimForInventoryItemCommandHandler
+ * Class RejectClaimForListedItemCommandHandler
  * @package Kabooodle\Bus\Handlers\Commands\Claim\
  */
-class RejectClaimForInventoryItemCommandHandler
+class RejectClaimForListedItemCommandHandler
 {
     /**
-     * @param RejectClaimForInventoryItemCommand $command
+     * @param RejectClaimForListedItemCommand $command
      *
      * @return mixed|Claims
      */
-    public function handle(RejectClaimForInventoryItemCommand $command)
+    public function handle(RejectClaimForListedItemCommand $command)
     {
         return DB::transaction(function () use ($command) {
             $claim = Claims::where('uuid', $command->getClaimId())->first();
@@ -34,9 +34,9 @@ class RejectClaimForInventoryItemCommandHandler
             $claim->save();
 
             // Increment doesn't trigger any eloquent events.
-            $currentQty = $claim->inventoryItem->initial_qty;
-            $claim->inventoryItem->initial_qty = $currentQty+1;
-            $claim->inventoryItem->save();
+            $currentQty = $claim->listedItem->initial_qty;
+            $claim->listedItem->initial_qty = $currentQty+1;
+            $claim->listedItem->save();
 
             event(new ClaimWasRejectedEvent($command->getUser(), $claim));
 

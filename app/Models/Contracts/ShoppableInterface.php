@@ -22,5 +22,5 @@ interface ShoppableInterface
     /**
      * @return BelongsTo
      */
-    public function inventoryItem(): BelongsTo;
+    public function listedItem(): BelongsTo;
 }

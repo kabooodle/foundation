@@ -3,11 +3,11 @@
 <td>
     <div class="avatar-thumbnail-container">
         <div class="avatar-thumbnail _32">
-            @if($sale->inventoryItem->firstImage())
-            <img src="{{ $sale->inventoryItem->firstImage()->location }}">
+            @if($sale->listedItem->firstImage())
+            <img src="{{ $sale->listedItem->firstImage()->location }}">
             @endif
         </div>
-        <span>{{ $sale->inventoryItem->name_with_variant }}</span>
+        <span>{{ $sale->listedItem->name_with_variant }}</span>
     </div>
 </td>
 <td>${{ $sale->accepted_price ? : $sale->price }}</td>

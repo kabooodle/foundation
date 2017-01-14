@@ -10,12 +10,12 @@ use Carbon\Carbon;
 use Kabooodle\Models\User;
 
 /**
- * Class AcceptClaimForInventoryItemCommand.
+ * Class AcceptClaimForListedItemCommand.
  */
-class AcceptClaimForInventoryItemCommand
+class AcceptClaimForListedItemCommand
 {
     /**
-     * AcceptClaimForInventoryItemCommand constructor.
+     * AcceptClaimForListedItemCommand constructor.
      *
      * @param User        $user
      * @param             $claimId

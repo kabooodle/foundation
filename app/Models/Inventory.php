@@ -382,7 +382,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      * @param $value
      * @return float
      */
-    public function getWholesalePriceUsdAttribute($value)
+    public function getWholesalePriceUsdAttribute($value): float
     {
         return $value ? $value : $this->style->wholesale_price_usd;
     }

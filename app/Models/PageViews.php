@@ -37,7 +37,7 @@ class PageViews extends BaseEloquentModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function inventoryItem()
+    public function listedItem()
     {
         return $this->belongsTo(Inventory::class, 'inventory_id');
     }

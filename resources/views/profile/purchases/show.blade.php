@@ -23,8 +23,8 @@
                 <tr>
                     <td >
                         {{--<span class="w-40 avatar"><img src="https://placekitten.com/g/32/32"></span>--}}
-                        {{ $claim->inventoryItem->owner->name }}</td>
-                    <td ><a class="text-primary" href="mailto:{{ $claim->inventoryItem->owner->email }}">{{ $claim->inventoryItem->owner->email }}</a></td>
+                        {{ $claim->listedItem->owner->name }}</td>
+                    <td ><a class="text-primary" href="mailto:{{ $claim->listedItem->owner->email }}">{{ $claim->listedItem->owner->email }}</a></td>
                     <td >${{ $claim->price }}</td>
                     <td >{{ $claim->createdAtHumanNoTime() }} <i data-placement="top" class="fa fa-clock-o" data-toggle="tooltip" title="{{ $claim->created_at->format('g:i A') }}"></i></td>
                     <td>{{ $claim->shoppable->sale_name }}</td>
@@ -114,7 +114,7 @@
     @endif
 
     @include('inventory.partials._show', [
-        'item' => $claim->inventoryItem,
+        'item' => $claim->listedItem,
         '_price' => $claim->price
     ])
 
