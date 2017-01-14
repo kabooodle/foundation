@@ -3,7 +3,7 @@
         <div class="avatar-thumbnail-container">
             <div class="avatar-thumbnail _32">
                 @if($watch->watchable->listedItem->firstImage())
-                    <img src="{{ $watch->watchable->listedItem->firstImage()->location }}">
+                    <img src="{{ $watch->watchable->listedItem->cover_photo }}">
                 @else
 
                 @endif

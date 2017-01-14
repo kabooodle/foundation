@@ -197,19 +197,27 @@ abstract class AbstractListingModel extends BaseEloquentModel
     }
 
     /**
-     * @param array $listingIds
+     * @param array  $listingIds
      * @param Carbon $timestamp
      * @param string $status
-     * @return bool|int
+     * @param array  $additionalAttributes
+     *
+     * @return mixed
      */
-    public static function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST)
+    public static function updateListingItemsStatus(array $listingIds, Carbon $timestamp, string $status = Listings::STATUS_QUEUED_LIST, array $additionalAttributes = [])
     {
+        $attributes = [
+            'status' => $status,
+            'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
+        ];
+
+        if ($additionalAttributes && count($additionalAttributes) > 0) {
+            $attributes = array_merge($attributes, $additionalAttributes);
+        }
+
         return ListingItems::whereIn('id', $listingIds)
             ->noEagerLoads()
-            ->update([
-                'status' => $status,
-                'status_updated_at' => $timestamp->format('Y-m-d H:i:s')
-            ]);
+            ->update($attributes);
     }
 
     /**
@@ -219,16 +227,20 @@ abstract class AbstractListingModel extends BaseEloquentModel
      */
     public static function getStyleGroupings(string $listingUuid)
     {
-        return InventoryTypeStyles::with('sizes')
+        return DB::table('inventory_type_styles')
             ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
-            ->join('listing_items', 'listing_items.inventory_id', '=', 'inventory.id')
+            ->join('inventory_sizes', 'inventory_sizes.id', '=', 'inventory.inventory_sizes_id')
+            ->join('listing_items', 'listing_items.listed_id', '=', 'inventory.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listings.uuid', $listingUuid)
-            ->groupBy('inventory_type_styles.id')
+            ->groupBy('inventory.id')
+            ->groupBy('inventory_type_styles_id')
+            ->groupBy('inventory_sizes_id')
             ->select([
-                'inventory_type_styles.id',
-                'inventory_type_styles.name',
-                DB::raw('count(inventory_type_styles.id) as count_per_style')
+                'inventory_sizes.id as size_id',
+                'inventory_type_styles.id as style_id',
+                'inventory_type_styles.name as style_name',
+                'inventory_sizes.name as size_name'
             ])
             ->get();
     }

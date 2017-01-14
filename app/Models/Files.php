@@ -16,7 +16,8 @@ class Files extends BaseEloquentModel
      * @var array
      */
     protected $appends = [
-        'json'
+        'json',
+        'original_location'
     ];
 
     /**
@@ -92,5 +93,23 @@ class Files extends BaseEloquentModel
     public function getURL()
     {
         return $this->location;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    public function getLocationAttribute($value)
+    {
+        return useCDN() ? staticAsset($this->key, false) : $value;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOriginalLocationAttribute()
+    {
+        return $this->getOriginal('location');
     }
 }

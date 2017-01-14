@@ -4,7 +4,7 @@
             <label class="col-sm-3 form-control-label">Added</label>
             <div class="col-sm-6">
                 <p style="margin-top: 6px;" class="m-b-0">
-                    <timestamp :timestamp="item.created_at.date"></timestamp>
+                    <timestamp :timestamp="item.created_at"></timestamp>
                 </p>
             </div>
         </div>
@@ -67,14 +67,28 @@
                 <small class="block text-muted text-sm">(Optional)</small>
             </label>
             <div class="col-sm-7">
-                <input type="text" name="categories" class="selectized" id="tags" placeholder="Type categories" :value="tags">
+                <multiselect
+                        v-model="category_value"
+                        tag-placeholder="Add this as a new category"
+                        placeholder="Add categories"
+                        label="name"
+                        track-by="name"
+                        :options="categories"
+                        :multiple="true"
+                        :taggable="true"
+                        @remove="removeTag"
+                        @tag="addTag">
+                </multiselect>
+                <template v-for="category in categories"><input type="hidden" name="categories[]" :value="category.name"></template>
             </div>
         </div>
 
         <hr>
         <div class="form-group row m-t-md">
             <div class="col-sm-12">
-                    <div class="box inline p-a-sm" v-for="image in images" style="margin-right:.78rem; margin-bottom:.78rem;">
+                    <div class="box inline p-a-sm b b-a no-shadow r"
+                         :class="cover_photo == image.key ? 'b-primary' : null "
+                         v-for="image in images" style="margin-right:.78rem; margin-bottom:.78rem;">
                          <div style="z-index: 999;" class="item-overlay active p-r-sm">
                                 <a
                                         @click="deleteImage(image, $event)"
@@ -94,9 +108,20 @@
                                     :name="'images[]'"
                                     :value="image.json">
                         </span>
+                        <button
+                                @click="setCoverPhoto(image.key, $event)"
+                                :disabled="cover_photo == image.key"
+                                :class="this.cover_photo == image.key ? true: false"
+                                class="btn white btn-xs block text-center center-block"
+                        >
+                            <span v-if="cover_photo == image.key">Cover photo</span>
+                            <span v-else>Make cover</span>
+                        </button>
                     </div>
             </div>
         </div>
+
+        <input type="hidden" v-model="cover_photo" name="cover_photo" :value="cover_photo">
 
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-7">
@@ -105,35 +130,58 @@
                             btn-class-size=""
                             :user_hash="item.user.public_hash"
                             :s3_key_url="api_route"
-                            multiple="false"></image-attach>
+                            multiple="true"></image-attach>
                 </span>
-                <button type="submit" class="btn primary"     @click="validateForm(item, $event)">Save</button>
+                <button
+                        type="submit"
+                        class="btn primary"
+                        :disabled="processing"
+                        :class="processing ? 'disabled' : null"
+                        @click="validateForm(item, $event)"> Save <spinny v-if="processing"></spinny>
+                </button>
             </div>
         </div>
     </div>
 </template>
 <script>
+    import Multiselect from 'vue-multiselect';
     import FileUpload from '../../FileUpload.vue';
     import Timestamp from '../../Timestamp.vue';
+    import Spinny from  '../../Spinner.vue';
 
     export default{
         props: ["styles", "existingimages", "item", "tags", "api_route"],
         data : function() {
             return {
+                processing: false,
+                categories: [],
+                category_value: [],
                 images : [],
                 sizes : [],
                 selected_style : '',
-                categories : '',
                 wholesale_price_usd : null,
-                price_usd : null
+                price_usd : null,
+                cover_photo: null,
             }
         },
         watch : {
             images: function(){
                 $Bus.$emit('images:changed', this.images);
+                if (this.images.length == 1) {
+                    this.cover_photo = this.images[0].key;
+                }
             }
         },
         created(){
+
+            this.cover_photo = this.item.cover_photo_file_key;
+
+            if(this.tags && this.tags != '') {
+                _.each(this.tags.split(','), (tag)=>{
+                    this.addTag(tag);
+                });
+            }
+
             const scope = this;
             this.wholesale_price_usd = this.item.wholesale_price_usd_less_5_percent;
             this.price_usd = this.item.price_usd;
@@ -154,24 +202,22 @@
 
             // set the selected style' sizes
             this.setSizes(this.item.style.sizes);
-
-            this.$nextTick(function(){
-                $('.selectized').selectize({
-                    delimiter: ',',
-                    persist: false,
-                    valueField: 'tag',
-                    labelField: 'tag',
-                    searchField: 'tag',
-                    plugins: ['remove_button'],
-                    create: function (input) {
-                        return {
-                            tag: input
-                        }
-                    }
-                });
-            });
         },
         methods : {
+            setCoverPhoto(imageKey, event){
+                event.preventDefault();
+                this.cover_photo = imageKey;
+            },
+            removeTag(option) {
+                this.categories.splice(this.categories.indexOf(option));
+            },
+            addTag (newTag) {
+                const tag = {
+                    name: newTag,
+                }
+                this.categories.push(tag)
+                this.category_value.push(tag)
+            },
             setSizes : function(sizes){
                 this.sizes = sizes;
             },
@@ -224,6 +270,7 @@
             },
             validateForm: function (item, event) {
                 event.preventDefault();
+                this.processing = true;
                 const scope = this;
                 let $form = $(event.target).closest('form');
                 let btn = $(event.target);
@@ -232,9 +279,8 @@
                 if (this.images.length == 0) {
                     notify({text:  'Must have at least 1 image'});
                     return false;
+                    this.processing = false;
                 }
-
-                btn.prop('disabled', true).html(btnHtml + ' <i class="fa fa-spin fa-spinner"></i>');
 
                 this.$http.put($form.prop('action'), $form.serializeObject()).then(function(response){
                     notify({text:  response.body.data.msg, type: 'success'});
@@ -244,24 +290,15 @@
                     notify({text:  response.body.data.msg});
                     return false;
                 }).finally(function(){
-                    btn.prop('disabled', false).html(btnHtml);
+                    this.processing = false;
                 });
-
-
-//                this.$validate(true, function () {
-//                    if (scope.$inventory_validation.invalid || scope.images.length == 0) {
-//                        e.preventDefault();
-//                        if (scope.images.length == 0) {
-//                            alert('Must have at least 1 image');
-//                        }
-//                        return false;
-//                    }
-//                });
             },
         },
         components: {
             'image-attach' : FileUpload,
-            'timestamp' : Timestamp
+            'timestamp' : Timestamp,
+            'multiselect' : Multiselect,
+            'spinny' : Spinny
         }
     }
 </script>

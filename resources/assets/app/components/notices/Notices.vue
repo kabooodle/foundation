@@ -11,7 +11,7 @@
                         :is_read="notice.is_read"
                         :priority="notice.priority"
                         :title="notice.title"
-                        :created_at="notice.created_at.date"
+                        :created_at="notice.created_at"
                         :model="notice"
                         :ref_url="notice.reference_url"
                 ></notice>
@@ -25,6 +25,7 @@
     </div>
 </template>
 <script>
+    import currentUser from '../current-user';
     import Spinny from '../Spinner.vue';
     import Notice from './Notice.vue';
     export default{
@@ -45,7 +46,7 @@
             }
         },
         created : function() {
-            let noticeChannel = KABOOODLE_APP.pusher.subscribe('private.'+KABOOODLE_APP.env+'.notices.'+KABOOODLE_APP.currentUser.id);
+            let noticeChannel = KABOOODLE_APP.pusher.subscribe('private.'+KABOOODLE_APP.env+'.notices.'+currentUser().id);
             noticeChannel.bind('created', (data)=>{
                 this.notices.unshift(data.model);
                 this.updateUnreadTotal(this.unread);

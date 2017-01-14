@@ -14,16 +14,16 @@
             </span>
         </div>
         <div class="col-sm-3">
-            <div v-show="isPrimary">
+            <div v-show="isPrimaryEmail">
                 <div class="text-primary text-center">Primary</div>
             </div>
-            <div v-show="!isPrimary">
+            <div v-show="!isPrimaryEmail">
                 <button v-if="isVerified" @click="makePrimary" class="btn white btn-sm">Make Primary</button>
                 <button v-else @click="notifyNeedsToVerify" disabled class="btn disabled white btn-sm">Make Primary</button>
             </div>
         </div>
         <div class="col-sm-1">
-            <a href="javascript:;" v-show="!isPrimary" @click="destroy">
+            <a href="javascript:;" v-show="!isPrimaryEmail" @click="destroy">
                 <i class="fa fa-times text-danger" aria-hidden="true"></i>
             </a>
         </div>
@@ -78,7 +78,7 @@
             }
         },
         computed: {
-            isPrimary: function () {
+            isPrimaryEmail: function () {
                 return this.primaryId == this.id
             },
             updatePrimaryData: function () {

@@ -19,6 +19,11 @@
   }
 }
 
+.open >.dropdown-menu,
+.show >.dropdown-menu{
+  display: block !important;
+}
+
 .dropdown-toggle.no-caret::after {
   display: none;
   width: 0;
@@ -209,4 +214,12 @@
 }
 .dropdown.open.prpl-hover .dropdown-menu {
 
+}
+
+.bg-danger-hover:hover {
+  background: $danger;
+}
+
+.text-white-hover:hover {
+  color: #fff !important;
 }

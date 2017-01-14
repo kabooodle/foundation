@@ -6,10 +6,10 @@
     <script>
         window.fbAsyncInit = function() {
             FB.init({
-                appId: '513860408823933',
+                appId: '1716604341984103',
                 cookie: true,
                 xfbml: true,
-                version: 'v2.7',
+                version: 'v2.8',
                 scope: 'email,user_managed_groups,publish_actions,publish_pages'
             });
             $(document).trigger('fbload');
@@ -18,7 +18,7 @@
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) {return;}
             js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/en_US/sdk.js";
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));</script>
 

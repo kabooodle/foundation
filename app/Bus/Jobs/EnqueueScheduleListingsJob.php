@@ -8,6 +8,7 @@ namespace Kabooodle\Bus\Jobs;
 
 use Carbon\Carbon;
 use Kabooodle\Bus\Events\Listings\ListingItemWasQueued;
+use Kabooodle\Libraries\QueueHelper;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
@@ -33,11 +34,6 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
      * @var
      */
     public $timestamp;
-
-    /**
-     * @var string
-     */
-    public $queueConnectionGroupName = 'iron-facebook-lister';
 
     /**
      * @param Collection $listingModels
@@ -131,12 +127,13 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
      */
     public function buildJob(ListingItems $item)
     {
+        $queueConnectionName = QueueHelper::pickFacebookLister();
         // Create our job class.
         $job = new EnqueueScheduleListingItemJob($item);
-        $job->onConnection($this->queueConnectionGroupName);
+        $job->onConnection($queueConnectionName);
 
         // Store details about the job in the DB for our own personal records.
-        $localQueueDb = $this->createQueueStatus($this->queueConnectionGroupName, $this->queueConnectionGroupName, Queues::STATUS_QUEUED, serialize($job));
+        $localQueueDb = $this->createQueueStatus($queueConnectionName, $queueConnectionName, Queues::STATUS_QUEUED, serialize($job));
 
         // Tell the job which queue id it is associated with.
         $job->setQueuesId($localQueueDb->id);

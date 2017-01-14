@@ -6622,11 +6622,18 @@ module.exports = Vue$2;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":1}],4:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _spinner = require('./spinner');
+
+var _spinner2 = _interopRequireDefault(_spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         size: {
@@ -6635,13 +6642,13 @@ exports.default = {
         }
     },
     computed: {
-        img_url: function img_url() {
-            return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        img: function img() {
+            return (0, _spinner2.default)(this.size);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <span v-html=\"img\"></span>\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6652,7 +6659,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2}],5:[function(require,module,exports){
+},{"./spinner":10,"vue":3,"vue-hot-reload-api":2}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6692,6 +6699,17 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : false;
+};
+
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6746,12 +6764,16 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-a5d58ed6", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Timestamp.vue":5,"vue":3,"vue-hot-reload-api":2}],7:[function(require,module,exports){
+},{"../Timestamp.vue":5,"vue":3,"vue-hot-reload-api":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 var _Spinner = require('../Spinner.vue');
 
@@ -6783,7 +6805,7 @@ exports.default = {
     created: function created() {
         var _this = this;
 
-        var noticeChannel = KABOOODLE_APP.pusher.subscribe('private.' + KABOOODLE_APP.env + '.notices.' + KABOOODLE_APP.currentUser.id);
+        var noticeChannel = KABOOODLE_APP.pusher.subscribe('private.' + KABOOODLE_APP.env + '.notices.' + (0, _currentUser2.default)().id);
         noticeChannel.bind('created', function (data) {
             _this.notices.unshift(data.model);
             _this.updateUnreadTotal(_this.unread);
@@ -6814,7 +6836,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <template v-if=\"!fetched\">\n        <spinny class=\"text-center center-block\"></spinny>\n    </template>\n    <template v-else=\"\">\n        <template v-if=\"notices.length\">\n            <notice v-for=\"notice in notices\" :id=\"notice.id\" :is_read=\"notice.is_read\" :priority=\"notice.priority\" :title=\"notice.title\" :created_at=\"notice.created_at.date\" :model=\"notice\" :ref_url=\"notice.reference_url\"></notice>\n        </template>\n        <template v-else=\"\">\n            <li class=\"dropdown-item\">\n                You have no notifications.\n            </li>\n        </template>\n    </template>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <template v-if=\"!fetched\">\n        <spinny class=\"text-center center-block\"></spinny>\n    </template>\n    <template v-else=\"\">\n        <template v-if=\"notices.length\">\n            <notice v-for=\"notice in notices\" :id=\"notice.id\" :is_read=\"notice.is_read\" :priority=\"notice.priority\" :title=\"notice.title\" :created_at=\"notice.created_at\" :model=\"notice\" :ref_url=\"notice.reference_url\"></notice>\n        </template>\n        <template v-else=\"\">\n            <li class=\"dropdown-item\">\n                You have no notifications.\n            </li>\n        </template>\n    </template>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6825,7 +6847,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0d8509a4", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":4,"./Notice.vue":6,"vue":3,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+},{"../Spinner.vue":4,"../current-user":6,"./Notice.vue":7,"vue":3,"vue-hot-reload-api":2}],9:[function(require,module,exports){
 'use strict';
 
 var _Notices = require('./Notices.vue');
@@ -6886,6 +6908,43 @@ new Vue({
     }
 });
 
-},{"./Notices.vue":7}]},{},[8]);
+},{"./Notices.vue":8}],10:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (size) {
+    if (browserSupportsAnimation()) {
+        return '<span class="kabooodle__spinner"></span>';
+    } else {
+        var src = KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        return '<img  src="' + src + '" style="margin:-2px 2px 0 0; padding:0;" height="' + size + '" width="' + size + '" >';
+    }
+};
+
+/**
+ *
+ * @returns {boolean}
+ */
+function browserSupportsAnimation() {
+    var property = 'animation';
+    var elm = document.createElement('div');
+    property = property.toLowerCase();
+
+    if (elm.style[property] != undefined) return true;
+
+    var propertyNameCapital = property.charAt(0).toUpperCase() + property.substr(1),
+        domPrefixes = 'Webkit Moz ms O'.split(' ');
+
+    for (var i = 0; i < domPrefixes.length; i++) {
+        if (elm.style[domPrefixes[i] + propertyNameCapital] != undefined) return true;
+    }
+
+    return false;
+}
+
+},{}]},{},[9]);
 
 //# sourceMappingURL=notice-handler.js.map

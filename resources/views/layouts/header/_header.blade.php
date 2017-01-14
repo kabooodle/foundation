@@ -84,7 +84,7 @@
                                 class="dropdown-item {{ Request::is('merchant/sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
 
                             <div class="divider"></div>
-                            <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Listings</span></a>
+                            <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Manage Listings</span></a>
 
                             @if(user()->isSubscribedToMerchantPlus())
                                 <div class="divider"></div>
@@ -96,7 +96,7 @@
                         </div>
                     </li>
                 @endif
-                @if(user()->claimsAsBuyer->count() > 0)
+                @if(user() && user()->claimsAsBuyer->count() > 0)
                     <li class ="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> <span class="nav-text">Purchases</span></a>
                         <div class="dropdown-menu">

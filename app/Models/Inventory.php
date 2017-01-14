@@ -45,7 +45,9 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     protected $appends = [
         'name_with_variant',
-        'name_uuid'
+        'name_uuid',
+        'available_quantity',
+        'cover_photo'
     ];
 
     /**
@@ -89,6 +91,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_sizes_id' => 0,
         'name' => '',
         'description' => '',
+        'cover_photo_file_location' => null,
+        'cover_photo_file_id' => null,
         'barcode' => null,
         'initial_qty' => null,
         'date_received' => '',
@@ -124,6 +128,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_sizes_id',
         'price_usd',
         'wholesale_price_usd',
+        'cover_photo_file_key',
+        'cover_photo_file_id',
         'name',
         'description',
         'barcode',
@@ -222,7 +228,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function getName() : string
     {
-        return $this->style ? $this->style->name : $this->name;
+        return $this->getNameAndSize();
     }
 
     /**
@@ -230,7 +236,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function getNameAndSize(): string
     {
-        return $this->getName(). ' '.$this->styleSize->name;
+        return $this->style->name. ' '.$this->styleSize->name;
     }
 
     /**
@@ -319,6 +325,15 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function images()
     {
         return $this->files();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCoverPhotoAttribute()
+    {
+//        return $this->files()->find($this->cover_photo_file_id)->location;
+        return useCDN() ? staticAsset($this->cover_photo_file_key, false) : 'https://'.env('AWS_BUCKET').'.s3.amazonaws.com/'.$this->cover_photo_file_key;
     }
 
     /**

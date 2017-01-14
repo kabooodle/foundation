@@ -64,7 +64,7 @@ class NotifyNewMessageForThreadCreated
         $email->setView('messenger.emails.newmessage')
             ->setCallable(function($m) use ($recipient, $sender) {
                 $m->to($recipient->primaryEmail->address)
-                    ->subject($sender->full_name.' added a new response to a message.');
+                    ->subject($sender->username.' added a new response to a message.');
             })
             ->setParameters([
                 'message' => $message

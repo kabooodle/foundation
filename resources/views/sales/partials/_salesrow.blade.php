@@ -4,7 +4,7 @@
     <div class="avatar-thumbnail-container">
         <div class="avatar-thumbnail _32">
             @if($sale->listedItem->firstImage())
-            <img src="{{ $sale->listedItem->firstImage()->location }}">
+                 <img src="{{ $sale->listedItem->cover_photo }}">
             @endif
         </div>
         <span>{{ $sale->listedItem->name_with_variant }}</span>

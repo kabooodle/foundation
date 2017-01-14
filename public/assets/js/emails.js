@@ -6642,11 +6642,18 @@ exports.insert = function (css) {
 }
 
 },{}],5:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _spinner = require('./spinner');
+
+var _spinner2 = _interopRequireDefault(_spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         size: {
@@ -6655,13 +6662,13 @@ exports.default = {
         }
     },
     computed: {
-        img_url: function img_url() {
-            return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        img: function img() {
+            return (0, _spinner2.default)(this.size);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <span v-html=\"img\"></span>\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6672,7 +6679,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
+},{"./spinner":9,"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
@@ -6726,7 +6733,7 @@ exports.default = {
     },
 
     computed: {
-        isPrimary: function isPrimary() {
+        isPrimaryEmail: function isPrimaryEmail() {
             return this.primaryId == this.id;
         },
         updatePrimaryData: function updatePrimaryData() {
@@ -6818,7 +6825,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row\">\n    <div class=\"col-sm-8\">\n        <span>{{ address }}</span>\n        <span v-show=\"isVerified\" data-toggle=\"tooltip\" title=\"Verified\">\n            <i class=\"fa fa-check-circle text-success\" aria-hidden=\"true\"></i>\n        </span>\n        <span v-show=\"!isVerified\">\n            <div class=\"pull-right\">\n                <button @click=\"resendVerification\" class=\"btn white btn-sm\">\n                    Resend Verification\n                </button>\n            </div>\n        </span>\n    </div>\n    <div class=\"col-sm-3\">\n        <div v-show=\"isPrimary\">\n            <div class=\"text-primary text-center\">Primary</div>\n        </div>\n        <div v-show=\"!isPrimary\">\n            <button v-if=\"isVerified\" @click=\"makePrimary\" class=\"btn white btn-sm\">Make Primary</button>\n            <button v-else=\"\" @click=\"notifyNeedsToVerify\" disabled=\"\" class=\"btn disabled white btn-sm\">Make Primary</button>\n        </div>\n    </div>\n    <div class=\"col-sm-1\">\n        <a href=\"javascript:;\" v-show=\"!isPrimary\" @click=\"destroy\">\n            <i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i>\n        </a>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row\">\n    <div class=\"col-sm-8\">\n        <span>{{ address }}</span>\n        <span v-show=\"isVerified\" data-toggle=\"tooltip\" title=\"Verified\">\n            <i class=\"fa fa-check-circle text-success\" aria-hidden=\"true\"></i>\n        </span>\n        <span v-show=\"!isVerified\">\n            <div class=\"pull-right\">\n                <button @click=\"resendVerification\" class=\"btn white btn-sm\">\n                    Resend Verification\n                </button>\n            </div>\n        </span>\n    </div>\n    <div class=\"col-sm-3\">\n        <div v-show=\"isPrimaryEmail\">\n            <div class=\"text-primary text-center\">Primary</div>\n        </div>\n        <div v-show=\"!isPrimaryEmail\">\n            <button v-if=\"isVerified\" @click=\"makePrimary\" class=\"btn white btn-sm\">Make Primary</button>\n            <button v-else=\"\" @click=\"notifyNeedsToVerify\" disabled=\"\" class=\"btn disabled white btn-sm\">Make Primary</button>\n        </div>\n    </div>\n    <div class=\"col-sm-1\">\n        <a href=\"javascript:;\" v-show=\"!isPrimaryEmail\" @click=\"destroy\">\n            <i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i>\n        </a>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6964,6 +6971,43 @@ new Vue({
     }
 });
 
-},{"../email/Emails.vue":7}]},{},[8]);
+},{"../email/Emails.vue":7}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (size) {
+    if (browserSupportsAnimation()) {
+        return '<span class="kabooodle__spinner"></span>';
+    } else {
+        var src = KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        return '<img  src="' + src + '" style="margin:-2px 2px 0 0; padding:0;" height="' + size + '" width="' + size + '" >';
+    }
+};
+
+/**
+ *
+ * @returns {boolean}
+ */
+function browserSupportsAnimation() {
+    var property = 'animation';
+    var elm = document.createElement('div');
+    property = property.toLowerCase();
+
+    if (elm.style[property] != undefined) return true;
+
+    var propertyNameCapital = property.charAt(0).toUpperCase() + property.substr(1),
+        domPrefixes = 'Webkit Moz ms O'.split(' ');
+
+    for (var i = 0; i < domPrefixes.length; i++) {
+        if (elm.style[domPrefixes[i] + propertyNameCapital] != undefined) return true;
+    }
+
+    return false;
+}
+
+},{}]},{},[8]);
 
 //# sourceMappingURL=emails.js.map

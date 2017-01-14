@@ -66,7 +66,7 @@ class NotifyNewThreadWasCreatedEvent
         $email->setView('messenger.emails.newthread')
             ->setCallable(function($m) use ($recipient, $sender, $thread) {
                 $m->to($recipient->primaryEmail->address)
-                    ->subject($sender->full_name.' send you a new message : '.$thread->subject);
+                    ->subject($sender->username.' send you a new message : '.$thread->subject);
             })
             ->setParameters([
                 'message' => $message

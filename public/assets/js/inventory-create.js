@@ -493,6 +493,8 @@ function format (id) {
 }
 
 },{}],6:[function(require,module,exports){
+!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.VueMultiselect=t():e.VueMultiselect=t()}(this,function(){return function(e){function t(n){if(i[n])return i[n].exports;var o=i[n]={exports:{},id:n,loaded:!1};return e[n].call(o.exports,o,o.exports,t),o.loaded=!0,o.exports}var i={};return t.m=e,t.c=i,t.p="/",t(0)}([function(e,t,i){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(t,"__esModule",{value:!0}),t.deepClone=t.pointerMixin=t.multiselectMixin=t.Multiselect=void 0;var o=i(7),l=n(o),s=i(1),r=n(s),a=i(2),u=n(a),c=i(3),p=n(c);t.default=l.default,t.Multiselect=l.default,t.multiselectMixin=r.default,t.pointerMixin=u.default,t.deepClone=p.default},function(e,t,i){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function o(e,t,i){return t in e?Object.defineProperty(e,t,{value:i,enumerable:!0,configurable:!0,writable:!0}):e[t]=i,e}function l(e,t){if(!e)return!1;var i=e.toString().toLowerCase();return i.indexOf(t)!==-1}function s(e,t,i){return i?e.filter(function(e){return l(e[i],t)}):e.filter(function(e){return l(e,t)})}function r(e){return e.filter(function(e){return!e.$isLabel})}function a(e,t){return function(i){return i.reduce(function(i,n){return n[e]&&n[e].length?(i.push({$groupLabel:n[t],$isLabel:!0}),i.concat(n[e])):i.concat(n)},[])}}function u(e,t,i,n){return function(l){return l.map(function(l){var r,a=s(l[i],e,t);return a.length?(r={},o(r,n,l[n]),o(r,i,a),r):[]})}}var c="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},p=i(3),d=n(p),h=function(){for(var e=arguments.length,t=Array(e),i=0;i<e;i++)t[i]=arguments[i];return function(e){return t.reduce(function(e,t){return t(e)},e)}};e.exports={data:function(){return{search:"",isOpen:!1,internalValue:this.value||0===this.value?(0,d.default)(this.value):this.multiple?[]:null}},props:{internalSearch:{type:Boolean,default:!0},options:{type:Array,required:!0},multiple:{type:Boolean,default:!1},value:{type:null,default:null},trackBy:{type:String},label:{type:String},searchable:{type:Boolean,default:!0},clearOnSelect:{type:Boolean,default:!0},hideSelected:{type:Boolean,default:!1},placeholder:{type:String,default:"Select option"},allowEmpty:{type:Boolean,default:!0},resetAfter:{type:Boolean,default:!1},closeOnSelect:{type:Boolean,default:!0},customLabel:{type:Function,default:function(e,t){return t?e[t]:e}},taggable:{type:Boolean,default:!1},tagPlaceholder:{type:String,default:"Press enter to create a tag"},max:{type:Number},id:{default:null},optionsLimit:{type:Number,default:1e3},groupValues:{type:String},groupLabel:{type:String},blockKeys:{type:Array,default:function(){return[]}}},created:function(){this.searchable&&this.adjustSearch()},computed:{filteredOptions:function(){var e=this.search.toLowerCase()||"",t=this.options;return this.internalSearch&&(t=this.groupValues?this.filterAndFlat(t,e,this.label):s(t,e,this.label),t=this.hideSelected?t.filter(this.isNotSelected):t),this.taggable&&e.length&&!this.isExistingOption(e)&&t.unshift({isTag:!0,label:e}),t.slice(0,this.optionsLimit)},valueKeys:function(){var e=this;return this.trackBy?this.multiple?this.internalValue.map(function(t){return t[e.trackBy]}):this.internalValue[this.trackBy]:this.internalValue},optionKeys:function(){var e=this,t=this.groupValues?this.flatAndStrip(this.options):this.options;return this.label?t.map(function(t){return t[e.label].toString().toLowerCase()}):t.map(function(e){return e.toString().toLowerCase()})},currentOptionLabel:function(){return this.getOptionLabel(this.internalValue)+""}},watch:{internalValue:function(){this.resetAfter&&(this.internalValue=null,this.search=""),this.adjustSearch()},search:function(){this.search!==this.currentOptionLabel&&this.$emit("search-change",this.search,this.id)},value:function(){this.internalValue=(0,d.default)(this.value)}},methods:{filterAndFlat:function(e){return h(u(this.search,this.label,this.groupValues,this.groupLabel),a(this.groupValues,this.groupLabel))(e)},flatAndStrip:function(e){return h(a(this.groupValues,this.groupLabel),r)(e)},updateSearch:function(e){this.search=e.trim().toString()},isExistingOption:function(e){return!!this.options&&this.optionKeys.indexOf(e)>-1},isSelected:function(e){if(!this.internalValue)return!1;var t=this.trackBy?e[this.trackBy]:e;return this.multiple?this.valueKeys.indexOf(t)>-1:this.valueKeys===t},isNotSelected:function(e){return!this.isSelected(e)},getOptionLabel:function(e){return e||0===e?e.isTag?e.label:this.customLabel(e,this.label)||"":""},select:function(e,t){if(this.blockKeys.indexOf(t)===-1&&!this.disabled&&!(this.max&&this.multiple&&this.internalValue.length===this.max||e.$isLabel))if(e.isTag)this.$emit("tag",e.label,this.id),this.search="";else{if(this.multiple){if(this.isSelected(e))return void("Tab"!==t&&this.removeElement(e));this.internalValue.push(e)}else{var i=this.isSelected(e);if(i&&(!this.allowEmpty||"Tab"===t))return;this.internalValue=i?null:e}this.$emit("select",(0,d.default)(e),this.id),this.$emit("input",(0,d.default)(this.internalValue),this.id),this.closeOnSelect&&this.deactivate()}},removeElement:function(e){if(!this.disabled&&(this.allowEmpty||!(this.internalValue.length<=1))){var t=this.multiple&&"object"===("undefined"==typeof e?"undefined":c(e))?this.valueKeys.indexOf(e[this.trackBy]):this.valueKeys.indexOf(e);this.internalValue.splice(t,1),this.$emit("remove",(0,d.default)(e),this.id),this.$emit("input",(0,d.default)(this.internalValue),this.id)}},removeLastElement:function(){this.blockKeys.indexOf("Delete")===-1&&0===this.search.length&&Array.isArray(this.internalValue)&&this.removeElement(this.internalValue[this.internalValue.length-1])},activate:function(){this.isOpen||this.disabled||(this.isOpen=!0,this.searchable?(this.search="",this.$refs.search.focus()):this.$el.focus(),this.$emit("open",this.id))},deactivate:function(){this.isOpen&&(this.isOpen=!1,this.searchable?(this.$refs.search.blur(),this.adjustSearch()):this.$el.blur(),this.$emit("close",(0,d.default)(this.internalValue),this.id))},adjustSearch:function(){this.searchable&&this.clearOnSelect&&(this.search=this.multiple?"":this.currentOptionLabel)},toggle:function(){this.isOpen?this.deactivate():this.activate()}}}},function(e,t){"use strict";e.exports={data:function(){return{pointer:0,visibleElements:this.maxHeight/this.optionHeight}},props:{showPointer:{type:Boolean,default:!0},optionHeight:{type:Number,default:40}},computed:{pointerPosition:function(){return this.pointer*this.optionHeight}},watch:{filteredOptions:function(){this.pointerAdjust()}},methods:{optionHighlight:function(e,t){return{"multiselect__option--highlight":e===this.pointer&&this.showPointer,"multiselect__option--selected":this.isSelected(t)}},addPointerElement:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"Enter",t=e.key;this.filteredOptions[this.pointer].isLabel||(this.filteredOptions.length>0&&this.select(this.filteredOptions[this.pointer],t),this.pointerReset())},pointerForward:function(){this.pointer<this.filteredOptions.length-1&&(this.pointer++,this.$refs.list.scrollTop<=this.pointerPosition-this.visibleElements*this.optionHeight&&(this.$refs.list.scrollTop=this.pointerPosition-(this.visibleElements-1)*this.optionHeight),this.filteredOptions[this.pointer].$isLabel&&this.pointerForward())},pointerBackward:function(){this.pointer>0?(this.pointer--,this.$refs.list.scrollTop>=this.pointerPosition&&(this.$refs.list.scrollTop=this.pointerPosition),this.filteredOptions[this.pointer].$isLabel&&this.pointerBackward()):this.filteredOptions[0].$isLabel&&this.pointerForward()},pointerReset:function(){this.closeOnSelect&&(this.pointer=0,this.$refs.list&&(this.$refs.list.scrollTop=0))},pointerAdjust:function(){this.pointer>=this.filteredOptions.length-1&&(this.pointer=this.filteredOptions.length?this.filteredOptions.length-1:0)},pointerSet:function(e){this.pointer=e}}}},function(e,t){"use strict";var i="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},n=function e(t){if(Array.isArray(t))return t.map(e);if(t&&"object"===("undefined"==typeof t?"undefined":i(t))){for(var n={},o=Object.keys(t),l=0,s=o.length;l<s;l++){var r=o[l];n[r]=e(t[r])}return n}return t};e.exports=n},function(e,t,i){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(t,"__esModule",{value:!0});var o=i(1),l=n(o),s=i(2),r=n(s);t.default={name:"vue-multiselect",mixins:[l.default,r.default],props:{selectLabel:{type:String,default:"Press enter to select"},selectedLabel:{type:String,default:"Selected"},deselectLabel:{type:String,default:"Press enter to remove"},showLabels:{type:Boolean,default:!0},limit:{type:Number,default:99999},maxHeight:{type:Number,default:300},limitText:{type:Function,default:function(e){return"and "+e+" more"}},loading:{type:Boolean,default:!1},disabled:{type:Boolean,default:!1}},computed:{visibleValue:function(){return this.multiple?this.internalValue.slice(0,this.limit):[]},deselectLabelText:function(){return this.showLabels?this.deselectLabel:""},selectLabelText:function(){return this.showLabels?this.selectLabel:""},selectedLabelText:function(){return this.showLabels?this.selectedLabel:""}}}},function(e,t,i){t=e.exports=i(6)(),t.push([e.id,'fieldset[disabled] .multiselect{pointer-events:none}.multiselect__spinner{position:absolute;right:1px;top:1px;width:48px;height:35px;background:#fff;display:block}.multiselect__spinner:after,.multiselect__spinner:before{position:absolute;content:"";top:50%;left:50%;margin:-8px 0 0 -8px;width:16px;height:16px;border-radius:100%;border-color:#41b883 transparent transparent;border-style:solid;border-width:2px;box-shadow:0 0 0 1px transparent}.multiselect__spinner:before{animation:spinning 2.4s cubic-bezier(.41,.26,.2,.62);animation-iteration-count:infinite}.multiselect__spinner:after{animation:spinning 2.4s cubic-bezier(.51,.09,.21,.8);animation-iteration-count:infinite}.multiselect__loading-enter-active,.multiselect__loading-leave-active{transition:opacity .4s ease-in-out;opacity:1}.multiselect__loading-enter,.multiselect__loading-leave-active{opacity:0}.multiselect,.multiselect__input,.multiselect__single{font-family:inherit;font-size:14px;-ms-touch-action:manipulation;touch-action:manipulation}.multiselect{box-sizing:content-box;display:block;position:relative;width:100%;min-height:40px;text-align:left;color:#35495e}.multiselect *{box-sizing:border-box}.multiselect:focus{outline:none}.multiselect--disabled{pointer-events:none;opacity:.6}.multiselect--active{z-index:50}.multiselect--active .multiselect__current,.multiselect--active .multiselect__input,.multiselect--active .multiselect__tags{border-bottom-left-radius:0;border-bottom-right-radius:0}.multiselect--active .multiselect__select{transform:rotate(180deg)}.multiselect__input,.multiselect__single{position:relative;display:inline-block;min-height:20px;line-height:20px;border:none;border-radius:5px;background:#fff;padding:1px 0 0 5px;width:100%;transition:border .1s ease;box-sizing:border-box;margin-bottom:8px}.multiselect__tag~.multiselect__input,.multiselect__tag~.multiselect__single{width:auto}.multiselect__input:hover,.multiselect__single:hover{border-color:#cfcfcf}.multiselect__input:focus,.multiselect__single:focus{border-color:#a8a8a8;outline:none}.multiselect__single{padding-left:6px;margin-bottom:8px}.multiselect__tags{min-height:40px;display:block;padding:8px 40px 0 8px;border-radius:5px;border:1px solid #e8e8e8;background:#fff}.multiselect__tag{position:relative;display:inline-block;padding:4px 26px 4px 10px;border-radius:5px;margin-right:10px;color:#fff;line-height:1;background:#41b883;margin-bottom:8px;white-space:nowrap}.multiselect__tag-icon{cursor:pointer;margin-left:7px;position:absolute;right:0;top:0;bottom:0;font-weight:700;font-style:normal;width:22px;text-align:center;line-height:22px;transition:all .2s ease;border-radius:5px}.multiselect__tag-icon:after{content:"\\D7";color:#266d4d;font-size:14px}.multiselect__tag-icon:focus,.multiselect__tag-icon:hover{background:#369a6e}.multiselect__tag-icon:focus:after,.multiselect__tag-icon:hover:after{color:#fff}.multiselect__current{min-height:40px;overflow:hidden;padding:8px 12px 0;padding-right:30px;white-space:nowrap;border-radius:5px;border:1px solid #e8e8e8}.multiselect__current,.multiselect__select{line-height:16px;box-sizing:border-box;display:block;margin:0;text-decoration:none;cursor:pointer}.multiselect__select{position:absolute;width:40px;height:38px;right:1px;top:1px;padding:4px 8px;text-align:center;transition:transform .2s ease}.multiselect__select:before{position:relative;right:0;top:65%;color:#999;margin-top:4px;border-style:solid;border-width:5px 5px 0;border-color:#999 transparent transparent;content:""}.multiselect__placeholder{color:#adadad;display:inline-block;margin-bottom:10px;padding-top:2px}.multiselect--active .multiselect__placeholder{display:none}.multiselect__content{position:absolute;list-style:none;display:block;background:#fff;width:100%;max-height:240px;overflow:auto;padding:0;margin:0;border:1px solid #e8e8e8;border-top:none;border-bottom-left-radius:5px;border-bottom-right-radius:5px;z-index:50}.multiselect__content::webkit-scrollbar{display:none}.multiselect__element{display:block}.multiselect__option{display:block;padding:12px;min-height:40px;line-height:16px;text-decoration:none;text-transform:none;vertical-align:middle;position:relative;cursor:pointer;white-space:nowrap}.multiselect__option:after{top:0;right:0;position:absolute;line-height:40px;padding-right:12px;padding-left:20px}.multiselect__option--highlight{background:#41b883;outline:none;color:#fff}.multiselect__option--highlight:after{content:attr(data-select);background:#41b883;color:#fff}.multiselect__option--selected{background:#f3f3f3;color:#35495e;font-weight:700}.multiselect__option--selected:after{content:attr(data-selected);color:silver}.multiselect__option--selected.multiselect__option--highlight{background:#ff6a6a;color:#fff}.multiselect__option--selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff}.multiselect--disabled{background:#ededed;pointer-events:none}.multiselect--disabled .multiselect__current,.multiselect--disabled .multiselect__select,.multiselect__option--disabled{background:#ededed;color:#a6a6a6}.multiselect__option--disabled{cursor:text;pointer-events:none}.multiselect__option--disabled.multiselect__option--highlight{background:#dedede!important}.multiselect-enter-active,.multiselect-leave-active{transition:all .3s ease}.multiselect-enter,.multiselect-leave-active{opacity:0}@keyframes spinning{0%{transform:rotate(0)}to{transform:rotate(2turn)}}',""])},function(e,t){e.exports=function(){var e=[];return e.toString=function(){for(var e=[],t=0;t<this.length;t++){var i=this[t];i[2]?e.push("@media "+i[2]+"{"+i[1]+"}"):e.push(i[1])}return e.join("")},e.i=function(t,i){"string"==typeof t&&(t=[[null,t,""]]);for(var n={},o=0;o<this.length;o++){var l=this[o][0];"number"==typeof l&&(n[l]=!0)}for(o=0;o<t.length;o++){var s=t[o];"number"==typeof s[0]&&n[s[0]]||(i&&!s[2]?s[2]=i:i&&(s[2]="("+s[2]+") and ("+i+")"),e.push(s))}},e}},function(e,t,i){var n,o;i(10),n=i(4);var l=i(8);o=n=n||{},"object"!=typeof n.default&&"function"!=typeof n.default||(o=n=n.default),"function"==typeof o&&(o=o.options),o.render=l.render,o.staticRenderFns=l.staticRenderFns,e.exports=n},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,i=e._self._c||t;return i("div",{staticClass:"multiselect",class:{"multiselect--active":e.isOpen,"multiselect--disabled":e.disabled},attrs:{tabindex:e.searchable?-1:0},on:{focus:function(t){e.activate()},blur:function(t){!e.searchable&&e.deactivate()},keydown:[function(t){e._k(t.keyCode,"down",40)||t.target===t.currentTarget&&(t.preventDefault(),e.pointerForward())},function(t){e._k(t.keyCode,"up",38)||t.target===t.currentTarget&&(t.preventDefault(),e.pointerBackward())},function(t){e._k(t.keyCode,"enter",13)&&e._k(t.keyCode,"tab",9)||(t.stopPropagation(),t.target===t.currentTarget&&e.addPointerElement(t))}],keyup:function(t){e._k(t.keyCode,"esc",27)||e.deactivate()}}},[i("div",{staticClass:"multiselect__select",on:{mousedown:function(t){t.preventDefault(),e.toggle()}}}),e._v(" "),i("div",{ref:"tags",staticClass:"multiselect__tags"},[e._l(e.visibleValue,function(t){return i("span",{staticClass:"multiselect__tag",attrs:{onmousedown:"event.preventDefault()"}},[i("span",{domProps:{textContent:e._s(e.getOptionLabel(t))}}),e._v(" "),i("i",{staticClass:"multiselect__tag-icon",attrs:{"aria-hidden":"true",tabindex:"1"},on:{keydown:function(i){e._k(i.keyCode,"enter",13)||(i.preventDefault(),e.removeElement(t))},mousedown:function(i){i.preventDefault(),e.removeElement(t)}}})])}),e._v(" "),e.internalValue&&e.internalValue.length>e.limit?[i("strong",{domProps:{textContent:e._s(e.limitText(e.internalValue.length-e.limit))}})]:e._e(),e._v(" "),i("transition",{attrs:{name:"multiselect__loading"}},[i("div",{directives:[{name:"show",rawName:"v-show",value:e.loading,expression:"loading"}],staticClass:"multiselect__spinner"})]),e._v(" "),e.searchable?i("input",{ref:"search",staticClass:"multiselect__input",attrs:{type:"text",autocomplete:"off",placeholder:e.placeholder,disabled:e.disabled},domProps:{value:e.search},on:{input:function(t){e.updateSearch(t.target.value)},focus:function(t){t.preventDefault(),e.activate()},blur:function(t){t.preventDefault(),e.deactivate()},keyup:function(t){e._k(t.keyCode,"esc",27)||e.deactivate()},keydown:[function(t){e._k(t.keyCode,"down",40)||(t.preventDefault(),e.pointerForward())},function(t){e._k(t.keyCode,"up",38)||(t.preventDefault(),e.pointerBackward())},function(t){e._k(t.keyCode,"enter",13)&&e._k(t.keyCode,"tab",9)||(t.stopPropagation(),t.target===t.currentTarget&&e.addPointerElement(t))},function(t){e._k(t.keyCode,"delete",[8,46])||e.removeLastElement()}]}}):e._e(),e._v(" "),e.searchable?e._e():i("span",{staticClass:"multiselect__single",domProps:{textContent:e._s(e.currentOptionLabel||e.placeholder)}})],2),e._v(" "),i("transition",{attrs:{name:"multiselect"}},[i("ul",{directives:[{name:"show",rawName:"v-show",value:e.isOpen,expression:"isOpen"}],ref:"list",staticClass:"multiselect__content",style:{maxHeight:e.maxHeight+"px"}},[e._t("beforeList"),e._v(" "),e.multiple&&e.max===e.internalValue.length?i("li",[i("span",{staticClass:"multiselect__option"},[e._t("maxElements",[e._v("Maximum of "+e._s(e.max)+" options selected. First remove a selected option to select another.")])],2)]):e._e(),e._v(" "),!e.max||e.internalValue.length<e.max?e._l(e.filteredOptions,function(t,n){return i("li",{key:n,staticClass:"multiselect__element"},[t.$isLabel?e._e():i("span",{staticClass:"multiselect__option",class:e.optionHighlight(n,t),attrs:{tabindex:"0","data-select":t.isTag?e.tagPlaceholder:e.selectLabelText,"data-selected":e.selectedLabelText,"data-deselect":e.deselectLabelText},on:{mousedown:function(i){i.preventDefault(),e.select(t)},mouseenter:function(t){e.pointerSet(n)}}},[e._t("option",[i("span",[e._v(e._s(e.getOptionLabel(t)))])],{option:t,search:e.search})],2),e._v(" "),t.$isLabel?i("span",{staticClass:"multiselect__option multiselect__option--disabled",class:e.optionHighlight(n,t)},[e._v("\n              "+e._s(t.$groupLabel)+"\n            ")]):e._e()])}):e._e(),e._v(" "),i("li",{directives:[{name:"show",rawName:"v-show",value:0===e.filteredOptions.length&&e.search,expression:"filteredOptions.length === 0 && search"}]},[i("span",{staticClass:"multiselect__option"},[e._t("noResult",[e._v("No elements found. Consider changing the search query.")])],2)]),e._v(" "),e._t("afterList")],2)])],1)},staticRenderFns:[]}},function(e,t,i){function n(e,t){for(var i=0;i<e.length;i++){var n=e[i],o=p[n.id];if(o){o.refs++;for(var l=0;l<o.parts.length;l++)o.parts[l](n.parts[l]);for(;l<n.parts.length;l++)o.parts.push(a(n.parts[l],t))}else{for(var s=[],l=0;l<n.parts.length;l++)s.push(a(n.parts[l],t));p[n.id]={id:n.id,refs:1,parts:s}}}}function o(e){for(var t=[],i={},n=0;n<e.length;n++){var o=e[n],l=o[0],s=o[1],r=o[2],a=o[3],u={css:s,media:r,sourceMap:a};i[l]?i[l].parts.push(u):t.push(i[l]={id:l,parts:[u]})}return t}function l(e,t){var i=f(),n=b[b.length-1];if("top"===e.insertAt)n?n.nextSibling?i.insertBefore(t,n.nextSibling):i.appendChild(t):i.insertBefore(t,i.firstChild),b.push(t);else{if("bottom"!==e.insertAt)throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");i.appendChild(t)}}function s(e){e.parentNode.removeChild(e);var t=b.indexOf(e);t>=0&&b.splice(t,1)}function r(e){var t=document.createElement("style");return t.type="text/css",l(e,t),t}function a(e,t){var i,n,o;if(t.singleton){var l=g++;i=m||(m=r(t)),n=u.bind(null,i,l,!1),o=u.bind(null,i,l,!0)}else i=r(t),n=c.bind(null,i),o=function(){s(i)};return n(e),function(t){if(t){if(t.css===e.css&&t.media===e.media&&t.sourceMap===e.sourceMap)return;n(e=t)}else o()}}function u(e,t,i,n){var o=i?"":n.css;if(e.styleSheet)e.styleSheet.cssText=_(t,o);else{var l=document.createTextNode(o),s=e.childNodes;s[t]&&e.removeChild(s[t]),s.length?e.insertBefore(l,s[t]):e.appendChild(l)}}function c(e,t){var i=t.css,n=t.media,o=t.sourceMap;if(n&&e.setAttribute("media",n),o&&(i+="\n/*# sourceURL="+o.sources[0]+" */",i+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(o))))+" */"),e.styleSheet)e.styleSheet.cssText=i;else{for(;e.firstChild;)e.removeChild(e.firstChild);e.appendChild(document.createTextNode(i))}}var p={},d=function(e){var t;return function(){return"undefined"==typeof t&&(t=e.apply(this,arguments)),t}},h=d(function(){return/msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase())}),f=d(function(){return document.head||document.getElementsByTagName("head")[0]}),m=null,g=0,b=[];e.exports=function(e,t){t=t||{},"undefined"==typeof t.singleton&&(t.singleton=h()),"undefined"==typeof t.insertAt&&(t.insertAt="bottom");var i=o(e);return n(i,t),function(e){for(var l=[],s=0;s<i.length;s++){var r=i[s],a=p[r.id];a.refs--,l.push(a)}if(e){var u=o(e);n(u,t)}for(var s=0;s<l.length;s++){var a=l[s];if(0===a.refs){for(var c=0;c<a.parts.length;c++)a.parts[c]();delete p[a.id]}}}};var _=function(){var e=[];return function(t,i){return e[t]=i,e.filter(Boolean).join("\n")}}()},function(e,t,i){var n=i(5);"string"==typeof n&&(n=[[e.id,n,""]]);i(9)(n,{});n.locals&&(e.exports=n.locals)}])});
+},{}],7:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.1.8
@@ -6632,7 +6634,7 @@ setTimeout(function () {
 module.exports = Vue$2;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":4}],7:[function(require,module,exports){
+},{"_process":4}],8:[function(require,module,exports){
 var inserted = exports.cache = {}
 
 exports.insert = function (css) {
@@ -6652,7 +6654,7 @@ exports.insert = function (css) {
   return elem
 }
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.fileinput-button {\n    position: relative;\n    overflow: hidden;\n    display: inline-block;\n}\n.fileinput-button input {\n    position: absolute;\n    top: 0;\n    right: 0;\n    margin: 0;\n    opacity: 0;\n    -ms-filter: 'alpha(opacity=0)';\n    font-size: 200px !important;\n    direction: ltr;\n    cursor: pointer;\n}\n\n/* Fixes for IE < 8 */\n@media screen\\9 {\n    .fileinput-button input {\n        filter: alpha(opacity=0);\n        font-size: 100%;\n        height: 100%;\n    }\n}\n\n\n.fileupload-buttonbar .btn,\n.fileupload-buttonbar .toggle {\n    margin-bottom: 5px;\n}\n.progress-animated .progress-bar,\n.progress-animated .bar {\n    background: url(\"../img/progressbar.gif\") !important;\n    -webkit-filter: none;\n            filter: none;\n}\n.fileupload-process {\n    float: right;\n    display: none;\n}\n.fileupload-processing .fileupload-process,\n.files .processing .preview {\n    display: block;\n    width: 32px;\n    height: 32px;\n    background: url(\"../img/loading.gif\") center no-repeat;\n    background-size: contain;\n}\n.files audio,\n.files video {\n    max-width: 300px;\n}\n\n@media (max-width: 767px) {\n    .fileupload-buttonbar .toggle,\n    .files .toggle,\n    .files .btn span {\n        display: none;\n    }\n    .files .name {\n        width: 80px;\n        word-wrap: break-word;\n    }\n    .files audio,\n    .files video {\n        max-width: 80px;\n    }\n    .files img,\n    .files canvas {\n        max-width: 100%;\n    }\n}\n")
 'use strict';
@@ -6669,6 +6671,10 @@ var _s3uploader = require('../../app/s3uploader');
 
 var _s3uploader2 = _interopRequireDefault(_s3uploader);
 
+var _currentUser = require('./current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 require('../../vendor/fileupload/js/vendor/jquery.ui.widget');
@@ -6682,7 +6688,8 @@ require('../../vendor/fileupload/js/jquery.fileupload-ui');
 exports.default = {
     props: {
         user_hash: {
-            required: true
+            type: String,
+            default: (0, _currentUser2.default)() ? (0, _currentUser2.default)().public_hash : false
         },
         s3_key_url: {
             required: true
@@ -6786,18 +6793,242 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-08ae0c66", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../../app/s3uploader":11,"../../vendor/fileupload/js/jquery.fileupload":15,"../../vendor/fileupload/js/jquery.fileupload-image":12,"../../vendor/fileupload/js/jquery.fileupload-process":13,"../../vendor/fileupload/js/jquery.fileupload-ui":14,"../../vendor/fileupload/js/jquery.iframe-transport":16,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":17,"../../vendor/fileupload/js/vendor/jquery.ui.widget":18,"../../vendor/fileupload/js/vendor/load-image":19,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5,"vueify/lib/insert-css":7}],9:[function(require,module,exports){
+},{"../../app/s3uploader":14,"../../vendor/fileupload/js/jquery.fileupload":18,"../../vendor/fileupload/js/jquery.fileupload-image":15,"../../vendor/fileupload/js/jquery.fileupload-process":16,"../../vendor/fileupload/js/jquery.fileupload-ui":17,"../../vendor/fileupload/js/jquery.iframe-transport":19,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":20,"../../vendor/fileupload/js/vendor/jquery.ui.widget":21,"../../vendor/fileupload/js/vendor/load-image":22,"./current-user":10,"babel-runtime/core-js/json/stringify":1,"vue":7,"vue-hot-reload-api":5,"vueify/lib/insert-css":8}],10:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : false;
+};
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
-var _inventorySizing = require('./inventory-sizing.vue');
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-var _inventorySizing2 = _interopRequireDefault(_inventorySizing);
+var _FileUpload = require('../../FileUpload.vue');
+
+var _FileUpload2 = _interopRequireDefault(_FileUpload);
+
+var _vueMultiselect = require('vue-multiselect');
+
+var _vueMultiselect2 = _interopRequireDefault(_vueMultiselect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: {
+        id: {
+            require: true
+        },
+        images: {
+            type: Array,
+            default: function _default() {
+                return [];
+            }
+        },
+        s3_key_url: {
+            required: true,
+            type: String
+        },
+        sizings: {
+            require: true,
+            type: Array
+        }
+    },
+    data: function data() {
+        return {
+            display: {
+                categories: false
+            },
+            categories: [],
+            category: []
+        };
+    },
+
+    methods: {
+        toggleCategory: function toggleCategory() {
+            this.display.categories == true ? this.display.categories = false : this.display.categories = true;
+        },
+        removeTag: function removeTag(option) {
+            var index = this.categories.indexOf(option);
+            if (index > -1) {
+                this.categories.splice(index, 1);
+            }
+        },
+        addTag: function addTag(newTag) {
+            var tag = {
+                name: newTag
+            };
+
+            this.categories.push(tag);
+            this.category.push(tag);
+        },
+        deleteImage: function deleteImage(image, event) {
+            var index = this.images.indexOf(image);
+            if (index > -1) {
+                this.images.splice(index, 1);
+            }
+        }
+    },
+    components: {
+        'multiselect': _vueMultiselect2.default,
+        'image-attach': _FileUpload2.default
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div :id=\"'size_'+id\" class=\"sizing_container\" :data-id=\"id\">\n    <div class=\"box-body clearfix\">\n        <div class=\"form-group row\">\n            <label class=\"col-sm-3 form-control-label\">Size</label>\n            <div class=\"col-sm-9\">\n                <div class=\"btn-group-prpl\" data-toggle=\"buttons\">\n                    <label class=\"form-control-label btn white\" v-for=\"size in sizings\" style=\"margin-right: 3px;\">\n                        <input required=\"\" aria-required=\"true\" validation=\"required\" type=\"radio\" :name=\"'sizings['+id +'][size_id]'\" id=\"option1\" autocomplete=\"off\" :value=\"size.id\"> {{ size.name }}\n                    </label>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row row-horizon clearfix\">\n            <div class=\"col-sm-4 thumbnail-container\" v-for=\"(image, $index) in images\">\n                <div class=\"box no-shadow m-b-0 p-t-1 p-b-1 r b-1 b b-a\">\n                    <div class=\"item\">\n                        <div class=\"item-overlay active p-l p-r \" style=\"z-index: 999;\">\n                            <a type=\"button\" style=\"\" @click=\"deleteImage(image, $event)\" :data-id=\"image.id\" class=\"pull-right text-danger\"><i class=\"fa fa-times fa-fw\"></i></a>\n                            <span class=\"pull-left label dark-white text-color\">{{ images.length - $index }}</span>\n                        </div>\n\n                        <div class=\"thumbnail\">\n                            <img :src=\"image.location\" :data-gallery=\"'image-thumbs_'+id\" data-width=\"100%\" class=\"w-full\" data-toggle=\"lightbox\" :data-remote=\"image.location\">\n                        </div>\n                    </div>\n                    <input type=\"hidden\" :name=\"'sizings['+id +'][images]['+image.key+'][data]'\" :value=\"image.json\">\n                    <div class=\"box-body m-t-0 p-b-0 p-t-0\">\n                        <div class=\"image_item_component\">\n                            <label class=\"text-muted text-sm m-b-0 p-b-0\">Quantity:</label>\n                            <input type=\"text\" value=\"1\" :name=\"'sizings['+id+'][images]['+image.key+'][qty]'\" class=\"text-center image_qty_btn\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n\n    </div>\n    <div class=\"box-footer\">\n        <div class=\"form-group categories_wrapper\">\n            <multiselect v-if=\"images.length > 0 &amp;&amp; display.categories\" v-model=\"category\" tag-placeholder=\"Add this as a new category\" placeholder=\"Add categories\" label=\"name\" track-by=\"name\" :options=\"categories\" :multiple=\"true\" :taggable=\"true\" @remove=\"removeTag\" @tag=\"addTag\">\n            </multiselect>\n            <template v-for=\"category in categories\">\n                <input type=\"hidden\" :value=\"category.name\" :name=\"'sizings['+id+'][categories][]'\" class=\"selectized\">\n            </template>\n        </div>\n        <div class=\"clearfix\">\n            <div class=\"row\">\n                <div class=\"col-sm-offset-3 col-sm-7\">\n                                    <span class=\"pull-left\">\n                                        <image-attach :s3_key_url=\"s3_key_url\"></image-attach>\n                                    </span>\n\n                    <button type=\"button\" class=\"pull-left btn white btn-sm \" :disabled=\"images.length == 0\" @click=\"toggleCategory\">Categories</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-4979ec48", module.exports)
+  } else {
+    hotAPI.update("_v-4979ec48", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"../../FileUpload.vue":9,"vue":7,"vue-hot-reload-api":5,"vue-multiselect":6}],12:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _SizeContainer = require('./Size-Container.vue');
+
+var _SizeContainer2 = _interopRequireDefault(_SizeContainer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: {
+        s3_key_url: {
+            required: true,
+            type: String
+        }
+    },
+    data: function data() {
+        return {
+            sizings: [],
+            size_containers: [],
+            inventory_types: KABOOODLE_APP.inventory_types
+        };
+    },
+    created: function created() {
+        var _this = this;
+
+        $Bus.$on('image:uploaded', function (el, responseData) {
+
+            responseData.json = (0, _stringify2.default)(responseData);
+            var sizeEl = el.closest('.sizing_container'),
+                sizeContainerId = sizeEl.data('id');
+
+            var container = $.findFirst(_this.size_containers, function (obj) {
+                return obj.id == sizeContainerId;
+            });
+
+            container.images.unshift(responseData);
+
+            _this.$nextTick(function () {
+                $('#size_' + sizeContainerId).find("input.image_qty_btn").TouchSpin({
+                    min: 1
+                });
+            });
+        });
+
+        $Bus.$on('add-size', function () {
+            _this.addSizeContainer();
+        });
+
+        /**
+         * When the style is changed, the available sizings change also.
+         * Update the sizings.
+         */
+        $Bus.$on('style-changed', function (styleId) {
+            var styleSizes = _this.getStyleSizes(styleId);
+            if (styleSizes.length > 0) {
+                _this.setSizings(styleSizes);
+            }
+        });
+    },
+
+    methods: {
+        setSizings: function setSizings(sizings) {
+            this.sizings = sizings;
+        },
+        getStyleSizes: function getStyleSizes(styleId) {
+            var style = $.grep(this.inventory_types[0].styles, function (e) {
+                return parseInt(e.id) === parseInt(styleId);
+            });
+
+            if (style.length > 0) {
+                return style[0].sizes;
+            }
+
+            return [];
+        },
+        createSizeObject: function createSizeObject() {
+            var rand = Math.random().toString(36).slice(2);
+            this.setSizings(this.getStyleSizes($('#inventory-styles-el').val()));
+            return { id: rand, images: [] };
+        },
+        addSizeContainer: function addSizeContainer() {
+            var sizeContainerData = this.createSizeObject();
+            this.size_containers.push(sizeContainerData);
+            //                $Bus.$emit('size-container:added', sizeContainerData);
+        },
+        deleteSizeContainer: function deleteSizeContainer(size) {
+            var _this2 = this;
+
+            confirmModal(function ($noty) {
+                var index = _this2.size_containers.indexOf(size);
+                if (index != -1) {
+                    _this2.size_containers.splice(index, 1);
+                }
+                $Bus.$emit('size-container:removed', size);
+                $noty.close();
+            });
+        }
+    },
+    components: {
+        'size-container': _SizeContainer2.default
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"box\" v-for=\"size_container in size_containers\">\n        <button type=\"button\" @click=\"deleteSizeContainer(size_container, $event)\" style=\"position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3\" class=\" m-l-1 pull-right btn white btn-xs text-muted \"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button>\n        <size-container :images=\"size_container.images\" :s3_key_url=\"s3_key_url\" :sizings=\"sizings\" :id=\"size_container.id\"></size-container>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-de6c5a72", module.exports)
+  } else {
+    hotAPI.update("_v-de6c5a72", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"./Size-Container.vue":11,"babel-runtime/core-js/json/stringify":1,"vue":7,"vue-hot-reload-api":5}],13:[function(require,module,exports){
+'use strict';
+
+var _SizeContainers = require('./create/Size-Containers.vue');
+
+var _SizeContainers2 = _interopRequireDefault(_SizeContainers);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 new Vue({
     el: '#inventory',
     data: {
+        wholesale_price: '0.00',
         price: '0.00',
         size_containers: [],
         submitting: false,
@@ -6850,6 +7081,10 @@ new Vue({
             return parseInt($('#inventory-styles-el').val());
         },
 
+        /**
+         * When the style is changed, the available sizings change also.
+         * Tell the world of our new sizings.
+         */
         styleChanged: function styleChanged(e) {
             var styleId = this.getSelectedStyleId();
             this.updateDefaultPricings();
@@ -6858,11 +7093,9 @@ new Vue({
         updateDefaultPricings: function updateDefaultPricings() {
             var styleId = this.getSelectedStyleId();
             var style = _.findWhere(this.inventory_types[0].styles, { id: styleId });
-            var ws_price = moneyfy(style.wholesale_price_usd_less_5_percent);
-            var suggested_price = moneyfy(style.suggested_price_usd);
-            $('#inventory-wholesale-el').val(ws_price).prop('placeholder', ws_price);
 
-            $('#inventory-price-el').val(suggested_price).prop('placeholder', suggested_price);
+            this.wholesale_price = moneyfy(style.wholesale_price_usd_less_5_percent);
+            this.price = moneyfy(style.suggested_price_usd);
         }
     },
     mounted: function mounted() {
@@ -6870,170 +7103,11 @@ new Vue({
         this.updateDefaultPricings();
     },
     components: {
-        'inventory-sizing': _inventorySizing2.default
+        'size-containers': _SizeContainers2.default
     }
 });
 
-},{"./inventory-sizing.vue":10}],10:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _stringify = require("babel-runtime/core-js/json/stringify");
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
-var _FileUpload = require("../FileUpload.vue");
-
-var _FileUpload2 = _interopRequireDefault(_FileUpload);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    props: ["size_containers", "user_hash", "s3_key_url"],
-    data: function data() {
-        return {
-            size: { images: [{}], id: null },
-            size_container: null,
-            sizings: [],
-            inventory_types: KABOOODLE_APP.inventory_types
-        };
-    },
-    created: function created() {
-        console.log('Size component ready');
-
-        var scope = this;
-
-        $Bus.$on('size-container:added', function (sizeContainerData) {
-            scope.$nextTick(function () {
-                $('#categories_input_' + sizeContainerData.id).selectize({
-                    delimiter: ',',
-                    persist: false,
-                    plugins: ['remove_button'],
-                    create: function create(input) {
-                        return {
-                            value: input,
-                            text: input
-                        };
-                    }
-                });
-            });
-        });
-
-        $Bus.$on('style-changed', function (id) {
-            var styleSizes = scope.getStyleSizes(id);
-            if (styleSizes.length > 0) {
-                scope.setSizings(styleSizes);
-            }
-        });
-
-        $Bus.$on('add-size', function () {
-            scope.addSizeContainer();
-        });
-
-        $Bus.$on('image:deleted', function (size_container, image) {
-            if (size_container.images.length == 0) {
-                var $wrapperEl = $('#size_' + size_container.id).find('.categories_wrapper');
-                $wrapperEl.hide();
-                $wrapperEl.find('input:first-of-type').addClass('disabled').prop('disabled', true);
-            }
-        });
-
-        $Bus.$on('image:uploaded', function (el, image) {
-            image.json = (0, _stringify2.default)(image);
-            var sizeEl = el.closest('.sizing_container'),
-                sizeContainerId = sizeEl.data('container-id');
-
-            var container = $.findFirst(scope.size_containers, function (obj) {
-                return obj.id == sizeContainerId;
-            });
-
-            container.images.unshift(image);
-            setTimeout(function () {
-                $('#size_' + container.id).find("input.image_qty_btn").TouchSpin({
-                    min: 1
-                });
-            }, 0);
-        });
-
-        this.addSizeContainer();
-    },
-    methods: {
-        setSizings: function setSizings(sizings) {
-            this.sizings = sizings;
-        },
-        getStyleSizes: function getStyleSizes(styleId) {
-            var style = $.grep(this.inventory_types[0].styles, function (e) {
-                return parseInt(e.id) === parseInt(styleId);
-            });
-
-            if (style.length > 0) {
-                return style[0].sizes;
-            }
-
-            return [];
-        },
-        deleteSizeImage: function deleteSizeImage(size_container, img) {
-            var that = this;
-            var index = size_container.images.indexOf(img);
-            if (index != -1) {
-                size_container.images.splice(index, 1);
-                $Bus.$emit('image:deleted', size_container, img);
-            }
-        },
-        createSizeObject: function createSizeObject() {
-            var rand = Math.random().toString(36).slice(2);
-            this.setSizings(this.getStyleSizes($('#inventory-styles-el').val()));
-            return { id: rand, images: [] };
-        },
-        addSizeContainer: function addSizeContainer() {
-            var sizeContainerData = this.createSizeObject();
-            this.size_containers.push(sizeContainerData);
-            $Bus.$emit('size-container:added', sizeContainerData);
-        },
-        deleteSizeContainer: function deleteSizeContainer(size) {
-            var that = this;
-            confirmModal(function ($noty) {
-                var index = that.size_containers.indexOf(size);
-                if (index != -1) {
-                    that.size_containers.splice(index, 1);
-                }
-                $Bus.$emit('size-container:removed', size);
-                $noty.close();
-            });
-        },
-        toggleCategory: function toggleCategory(e) {
-            e.preventDefault();
-            var $el = $(e.target),
-                $categoryWrapperEl = $el.closest('.box-footer').find('.categories_wrapper');
-            if ($categoryWrapperEl.is(':visible')) {
-                $categoryWrapperEl.hide();
-            } else {
-                $categoryWrapperEl.show();
-                $categoryWrapperEl.find('input:first-of-type').prop('disabled', false).removeClass('disabled');
-            }
-        }
-
-    },
-    components: {
-        'image-attach': _FileUpload2.default
-    }
-};
-if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-for=\"size_container in size_containers\">\n        <div class=\"box sizing_container\" v-bind:id=\"'size_'+size_container.id\" v-bind:data-container-id=\"size_container.id\">\n            <div class=\"box-body clearfix\">\n                <div class=\"form-group row\">\n                    <label class=\"col-sm-3 form-control-label\">Size</label>\n                    <div class=\"col-sm-9\">\n                        <div class=\"btn-group-prpl\" data-toggle=\"buttons\">\n                            <label class=\"form-control-label btn white\" v-for=\"size in sizings\" style=\"margin-right: 3px;\">\n                                <input required=\"\" aria-required=\"true\" validation=\"required\" type=\"radio\" v-bind:name=\"'sizings['+size_container.id +'][size_id]'\" id=\"option1\" autocomplete=\"off\" v-bind:value=\"size.id\"> {{ size.name }}\n                            </label>\n                        </div>\n                    </div>\n                    <button type=\"button\" v-on:click=\"deleteSizeContainer(size_container)\" style=\"position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3\" class=\" m-l-1 pull-right btn white btn-xs text-muted \"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button>\n                </div>\n\n                <div class=\"row row-horizon clearfix\">\n\n                    <div class=\"col-sm-4 thumbnail-container\" v-for=\"(image, $index) in size_container.images\">\n                        <div class=\"box m-b-0\">\n                            <div class=\"item\">\n                                <div class=\"item-overlay active p-l p-r \" style=\"z-index: 999;\">\n                                    <a type=\"button\" style=\"\" v-on:click=\"deleteSizeImage(size_container, image, $event)\" v-bind:data-id=\"image.id\" class=\"pull-right text-danger\"><i class=\"fa fa-times fa-fw\"></i></a>\n                                    <span class=\"pull-left label dark-white text-color\">{{ size_container.images.length - $index }}</span>\n                                </div>\n\n                                <div class=\"thumbnail\">\n                                    <img :src=\"image.location\" :data-gallery=\"'image-thumbs_'+size_container.id\" data-width=\"100%\" class=\"w-full\" data-toggle=\"lightbox\" :data-remote=\"image.location\">\n                                </div>\n                            </div>\n                            <input type=\"hidden\" :name=\"'sizings['+size_container.id +'][images]['+image.key+'][data]'\" :value=\"image.json\">\n                            <div class=\"box-body m-t-0 p-t-0\">\n                                <div class=\"image_item_component\">\n                                    <label class=\"text-muted text-sm m-b-0 p-b-0\">Quantity:</label>\n                                    <input type=\"text\" value=\"1\" v-bind:name=\"'sizings['+size_container.id+'][images]['+image.key+'][qty]'\" class=\"text-center image_qty_btn\">\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n\n            </div>\n            <div class=\"box-footer\">\n                <div class=\"form-group categories_wrapper\" style=\"display: none\">\n                    <input type=\"text\" :disabled=\"size_container.images.length > 0\" v-bind:id=\"'categories_input_'+size_container.id\" v-bind:name=\"'sizings['+size_container.id+'][categories]'\" class=\"selectized\" placeholder=\"Type categories or keywords\">\n                </div>\n                <div class=\"clearfix\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-offset-3 col-sm-7\">\n\n                                    <span class=\"pull-left\">\n                                        <image-attach :s3_key_url=\"s3_key_url\" :user_hash=\"user_hash\"></image-attach>\n                                    </span>\n\n                            <button type=\"button\" class=\"pull-left btn white btn-sm \" :disabled=\"size_container.images.length == 0\" @click=\"toggleCategory\">Categories</button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
-if (module.hot) {(function () {  module.hot.accept()
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  if (!module.hot.data) {
-    hotAPI.createRecord("_v-3c230f8b", module.exports)
-  } else {
-    hotAPI.update("_v-3c230f8b", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
-  }
-})()}
-},{"../FileUpload.vue":8,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5}],11:[function(require,module,exports){
+},{"./create/Size-Containers.vue":12}],14:[function(require,module,exports){
 'use strict';
 
 ;
@@ -7121,7 +7195,6 @@ if (module.hot) {(function () {  module.hot.accept()
                         success: function success(response) {
                             $(document).trigger('s3uploader.s3_key_retrieved', response);
                             that.log('api.files.s3key: done', response);
-                            console.log(response);
                             data.url = response.data.url;
                             data.formData = {
                                 AWSAccessKeyId: response.data.AWSAccessKeyId,
@@ -7321,7 +7394,7 @@ if (module.hot) {(function () {  module.hot.accept()
     };
 })(jQuery, window, document);
 
-},{}],12:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7618,7 +7691,7 @@ if (module.hot) {(function () {  module.hot.accept()
     });
 });
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7780,7 +7853,7 @@ if (module.hot) {(function () {  module.hot.accept()
     });
 });
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 /*
@@ -8378,7 +8451,7 @@ if (module.hot) {(function () {  module.hot.accept()
     });
 });
 
-},{}],15:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9712,7 +9785,7 @@ if (module.hot) {(function () {  module.hot.accept()
     });
 });
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9906,7 +9979,7 @@ if (module.hot) {(function () {  module.hot.accept()
     });
 });
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -9944,7 +10017,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 }(window);
 
 
-},{}],18:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 
 /*! jQuery UI - v1.11.4+CommonJS - 2015-08-28
@@ -10492,7 +10565,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var widget = $.widget;
 });
 
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 !function (e) {
@@ -10929,6 +11002,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 
-},{}]},{},[9]);
+},{}]},{},[13]);
 
 //# sourceMappingURL=inventory-create.js.map

@@ -11,7 +11,10 @@ use ReflectionProperty;
 use Illuminate\Foundation\Testing\TestCase as L_TestCase;
 use Kabooodle\Foundation\Application\KabooodleApplication;
 
-/**
+/*
+ * ARRANGE -- setup
+ * ACT-- run code to test outcome
+ * ASSERT -- about what happened verifying what happened
  * Class TestCase
  * @package Kabooodle\Tests
  */

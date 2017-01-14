@@ -5,7 +5,11 @@
     <td style="vertical-align: middle !important">
         <a href="{{ route('shop.inventory.show', [user()->username, $claim->listedItem->obfuscateToURIStringFromModel()]) }}"
            class="_500 h6"><span class="@if($claim->wasRejected()) w-24 @else w-40 @endif avatar">
+<<<<<<< HEAD
                                             <img src="{{ $claim->listedItem->firstImage() ? $claim->listedItem->firstImage()->location : 'https://placekitten.com/g/30/30' }}">
+=======
+                                            <img src="{{ $claim->inventoryItem->cover_photo }}">
+>>>>>>> develop
                                           </span></a>
     </td>
     <td style="vertical-align: middle !important">${{ $claim->inventory_item_object_data['price_usd'] }}</td>

@@ -150,7 +150,7 @@ new Vue({
                         value: parseInt(this.id),
                         claimer_id: this.claimer.id,
                         date: this.updated_at_human,
-                        image: this.inventory_item_object_data.files && this.inventory_item_object_data.files.length > 0 ? this.inventory_item_object_data.files[0].location : null,
+                        image: this.inventory_item_object_data.cover_photo,
                         name: this.claimer.name+', '+this.inventory_item_object_data.name+' - '+this.inventory_item_object_data.style_size.name+', $'+this.price
                     });
                 });

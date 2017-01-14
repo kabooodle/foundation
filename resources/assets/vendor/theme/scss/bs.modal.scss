@@ -104,3 +104,19 @@
 .noty_buttons {
   border-top: none !important;
 }
+
+.modal-backdrop,
+.noty_modal {
+  &.show {
+    opacity: .5;
+  }
+  background-color: #501f88 !important;
+}
+
+.modal.ekko-lightbox {
+  padding: 5px !important;
+  .modal-dialog {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

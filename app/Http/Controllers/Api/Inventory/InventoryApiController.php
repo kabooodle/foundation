@@ -63,7 +63,8 @@ class InventoryApiController extends AbstractApiController
                         'images' => $item->files->toArray(),
                         'initial_qty' => $item->initial_qty,
                         'price_usd' => $item->price_usd,
-                        'files' => $item->files
+                        'files' => $item->files,
+                        'cover_photo' => $item->cover_photo
                     ];
                 }
 
@@ -91,6 +92,8 @@ class InventoryApiController extends AbstractApiController
             $item = $this->getUser()->inventory()->findOrFail($id);
             $this->validate($request, Inventory::getUpdateRules(), ['uuid.required' => 'The Unique ID field is required.', 'images.required' =>'You must add at least 1 image.']);
 
+            $categories = implode(',',Binput::get('categories', []));
+
             $this->dispatchNow(new UpdateInventoryItemCommand(
                 $this->getUser(),
                 $item,
@@ -100,8 +103,9 @@ class InventoryApiController extends AbstractApiController
                 (float) Binput::get('wholesale_price_usd', 0),
                 (int) Binput::get('initial_qty'),
                 Binput::get('images'),
+                Binput::get('cover_photo'),
                 Binput::get('description'),
-                Binput::get('categories'),
+                $categories,
                 Binput::get('uuid')
             ));
 
@@ -112,7 +116,7 @@ class InventoryApiController extends AbstractApiController
                 ->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)
-                ->setData(['msg' => 'An unknown error occurred, please try again.'])
+                ->setData(['msg' => $e])
                 ->respond();
         }
     }
@@ -141,7 +145,7 @@ class InventoryApiController extends AbstractApiController
         // Date range you can claim.
         $claimableAt = array_get($options, 'available_at', null);
         $claimableUntil = array_get($options, 'available_until', null);
-        $includeText = (bool) array_get($options, 'include_text', false);
+        $itemMessage = array_get($options, 'item_message', false);
 
         try {
             // You must have either a flashsaleid or facebookalbum
@@ -157,7 +161,7 @@ class InventoryApiController extends AbstractApiController
                 throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
             }
 
-            $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $includeText === true);
+            $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $itemMessage);
 
             $command = new ScheduleListingCommand(
                 $this->getUser(),

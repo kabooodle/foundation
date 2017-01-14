@@ -1,5 +1,4 @@
 <div id="inventory_manage">
-@include('widgets._fileuploadscripts')
 
     <form
     id="form_inventory_manage"

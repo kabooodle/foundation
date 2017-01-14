@@ -14,7 +14,7 @@
                             class="p-a p-y-sm inline  r"
                     ><span class="message_body" v-html="message.body"></span></div>
                 </div>
-                <timestamp :timestamp="message.created_at.date" class="text-muted text-xs m-t-xs"></timestamp>
+                <timestamp :timestamp="message.created_at" class="text-muted text-xs m-t-xs"></timestamp>
             </div>
         </div>
     </div>
@@ -26,6 +26,7 @@
     }
 </style>
 <script>
+    import currentUser from '../current-user';
     import Timestamp from '../Timestamp.vue';
     export default{
         props: {
@@ -36,7 +37,7 @@
         },
         computed : {
             author_is_self(){
-                return parseInt(this.message.user.id) == parseInt(KABOOODLE_APP.currentUser.id);
+                return parseInt(this.message.user.id) == parseInt(currentUser().id);
             },
         },
         components:{

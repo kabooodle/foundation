@@ -41,7 +41,7 @@ class FilesApiController extends AbstractApiController
         $expiresOn = date('Y-m-d\TG:i:s\Z', strtotime('+ 48 hours', strtotime(date("c"))));
 
         // Preface the filename with the object path which for now is the user id.
-        $filePath = $user->id.'/'.$filename;
+        $filePath = 'resources/'.$user->id.'/'.$filename;
 
         $policyDocument = '
 		{"expiration": "'.$expiresOn.'",

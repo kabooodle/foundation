@@ -45,19 +45,22 @@ class UpdateInventoryItemCommandHandler
             $item->uuid = $command->getUuid();
             $item->wholesale_price_usd = $command->getWholesalePrice();
 
+            $existingImages = $item->images;
+
             // New array containing all images associated to the item
             // this includes existing and new.
-            $addedImages = [];
+            $addedImagesArray = [];
 
             // Get a separate array of existing images so we can compare it against $addedImages.
             // The difference will yield id's that need to be deleted.
-            $existingImages = $item->images->pluck('id')->toArray();
+            $existingImagesArray = $existingImages->pluck('id')->toArray();
 
             $images = $command->getImages();
             foreach ($images as $image) {
                 $image = $this->normalizeImageData($image);
-                if (in_array($image['id'], $existingImages)) {
-                    $addedImages[] = $image['id'];
+                if (in_array($image['id'], $existingImagesArray)) {
+                    $addedImagesArray[] = $image['id'];
+                    $existingImages->push($image);
                     continue;
                 }
                 $file = Files::create([
@@ -67,7 +70,8 @@ class UpdateInventoryItemCommandHandler
                     'fileable_type' => get_class($item),
                     'fileable_id' => $item->id
                 ]);
-                $addedImages[] = $file->id;
+                $addedImagesArray[] = $file->id;
+                $existingImages->push($file);
             }
 
             if (!empty($command->getCategories())) {
@@ -78,7 +82,15 @@ class UpdateInventoryItemCommandHandler
 
             // We may have new images, and existing images may have been deleted.
             // Lets make sure all the images that need to be deleted, are deleted.
-            $this->checkAndDeleteUnusedImages($item, $existingImages, $addedImages);
+            $this->checkAndDeleteUnusedImages($item, $existingImagesArray, $addedImagesArray);
+
+            $coverPhotoKey = $command->getCoverPhotoKey();
+            $coverPhotoFile = $existingImages->first(function($value, $file) use ($coverPhotoKey) {
+                return $file->key == $coverPhotoKey;
+            });
+
+            $item->cover_photo_file_key = $coverPhotoFile->getOriginal('key');
+            $item->cover_photo_file_id = $coverPhotoFile->id;
 
             $item->save();
 

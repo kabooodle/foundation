@@ -45,7 +45,7 @@
                 :disabled="actions.refreshing_data || inventory_items.length == 0"
                 v-bind:class="{'disabled' : actions.refreshing_data || inventory_items.length == 0}"
                 class="btn primary btn-sm "
-                id="navbarSideButton">Post To Sales
+                id="navbarSideButton">List inventory to sales
         </button>
         {{--<button class="btn white btn-sm " id="navbarSideButton">Filter Items</button>--}}
     </div>
@@ -172,9 +172,9 @@
                             </div>
                             <template v-if="selected.fb_group">
                                 <div v-if="postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums.length > 0">
-                                    <button type="button" class="btn white btn-block btn-sm m-b-1" data-toggle="modal" data-target="#kbdl-mdl-listings">
-                                        Facebook listing settings
-                                    </button>
+                                    {{--<button type="button" class="btn white btn-block btn-sm m-b-1" data-toggle="modal" data-target="#kbdl-mdl-listings">--}}
+                                        {{--Facebook listing settings--}}
+                                    {{--</button>--}}
 
                                     {{--<template v-if="actions.fb_advanced_menu">--}}
                                     {{--<div class="p-a-md dker box m-t-0">--}}
@@ -239,7 +239,7 @@
                                             @click="removeFromAlbum(item, facebook_album, selected.fb_group, $event)"
                                             class="img-thumb" v-for="item in facebook_album.items" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
                                             <img
-                                                    v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)"
+                                                    v-bind:src="item.cover_photo"
                                                     class="img-responsive"
                                                     style="width: 24px; height: 24px;">
                                             <i class="fa fa-times fa-2x"></i>
@@ -258,15 +258,19 @@
             </div>
             <div class="savesales clearfix">
                 <div class="pull-right ">
-                    <button
-                            :disabled="( actions.posting_to_sales )"
-                            :class="{'disabled' : actions.posting_to_sales }"
-                    @click="postSelectedItemsToSales"
-                    type="button"
-                    class="btn btn-lg primary"
-                    >
-                    List Items <spinner v-show="actions.posting_to_sales" size="24"></spinner>
+                    <button type="button"
+                            class="btn btn-lg primary" data-toggle="modal" data-target="#kbdl-mdl-listings">
+                        Continue <spinner v-show="actions.posting_to_sales" size="24"></spinner>
                     </button>
+                    {{--<button--}}
+                            {{--:disabled="( actions.posting_to_sales )"--}}
+                            {{--:class="{'disabled' : actions.posting_to_sales }"--}}
+                    {{--@click="postSelectedItemsToSales"--}}
+                    {{--type="button"--}}
+                    {{--class="btn btn-lg primary"--}}
+                    {{-->--}}
+                    {{--List Items <spinner v-show="actions.posting_to_sales" size="24"></spinner>--}}
+                    {{--</button>--}}
                     <button
                             :disabled="( actions.posting_to_sales )"
                             :class="{'disabled' : actions.posting_to_sales }"

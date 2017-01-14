@@ -185,7 +185,7 @@ return [
         Spatie\Analytics\AnalyticsServiceProvider::class,
 //        Kabooodle\Foundation\Providers\IronQueueServiceProvider::class,
         Collective\IronQueue\IronQueueServiceProvider::class,
-        Vinkla\Pusher\PusherServiceProvider::class,
+        Kabooodle\Foundation\Providers\PusherServiceProvider::class,
         Cmgmyr\Messenger\MessengerServiceProvider::class,
         Nexmo\Laravel\NexmoServiceProvider::class,
         JonnyPickett\EloquentSTI\ServiceProvider::class,

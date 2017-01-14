@@ -68,7 +68,7 @@
                                                         type="button"
                                                         class="btn white btn-xs">
                                                             <span class="item block">
-                                                                <img v-bind:src="(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)" class="img-responsive" style="width: 80px; height: 80px;">
+                                                                <img v-bind:src="item.cover_photo" class="img-responsive" style="width: 80px; height: 80px;">
                                                             </span>
                                                     <span class="p-a-o text-sm clearfix block">
                                                         <span class="pull-left">Qty: <span class="text-muted">{{ item.initial_qty }}</span></span>

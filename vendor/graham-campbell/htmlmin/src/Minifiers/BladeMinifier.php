@@ -76,11 +76,27 @@ class BladeMinifier implements MinifierInterface
      */
     protected function shouldMinify($value)
     {
+        if ($skip = $this->shouldSkip($value)) {
+            return false;
+        }
+            
         if ($this->force) {
             return true;
         }
 
-        return !$this->containsBadHtml($value) && !$this->containsBadComments($value);
+        return !$this->containsBadHtml($value) && !$this->containsBadComments($value) && !$skip;
+    }
+    
+    /**
+     * Does the code contain skip?
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function shouldSkip($value)
+    {
+        return preg_match('/skipmin/', $value);
     }
 
     /**

@@ -1,6 +1,5 @@
 <?php
 
-
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'workers' . DIRECTORY_SEPARATOR . 'routes.php';
 
 Route::get('privacy', function(){

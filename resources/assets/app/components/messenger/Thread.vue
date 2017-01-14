@@ -6,12 +6,10 @@
                 :data-href="endpoint"
                 :class="is_read ? null : ' b-l-primary list-item-unread '"
         >
-                <!--<div class="list-left">-->
-                <!--</div>-->
                 <div class="list-body">
                     <div class="pull-right text-muted">
                         <div class="text-sm text-right">{{ thread.participants_names_excluding_creator}}</div>
-                        <div class="text-right text-muted text-sm"><timestamp :timestamp="most_recent_message.created_at.date"></timestamp></div>
+                        <div class="text-right text-muted text-sm"><timestamp :timestamp="most_recent_message.created_at"></timestamp></div>
                     </div>
                     <a :href="endpoint" class="_500 block">{{ thread.subject }}</a>
                     <div class="text-ellipsis text-muted text-sm p-r-3">
@@ -22,6 +20,7 @@
     </div>
 </template>
 <script>
+    import currentUser from '../current-user';
     import Timestamp from '../Timestamp.vue';
     export default{
         props: {
@@ -37,10 +36,10 @@
         computed:{
             is_read(){
                 const thread_updated_at = this.thread.updated_at;
-                const myself = _.find(this.thread.participants, function(v){  return parseInt(v.user_id) == parseInt(KABOOODLE_APP.currentUser.id);  });
+                const myself = _.find(this.thread.participants, function(v){  return parseInt(v.user_id) == parseInt(currentUser().id);  });
 
-                if (_.has(myself.last_read, 'date')) {
-                    return moment(myself.last_read.date).isAfter(thread_updated_at.date);
+                if (myself.last_read) {
+                    return moment(myself.last_read).isAfter(thread_updated_at);
                 }
 
                 return false;

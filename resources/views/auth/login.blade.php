@@ -34,5 +34,5 @@
 @endsection
 
 @push('footer-scripts')
-<script src="/assets/js/sign-in.js"></script>
+<script src="{{ staticAsset('/assets/js/sign-in.js') }}"></script>
 @endpush

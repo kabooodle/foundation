@@ -22,6 +22,17 @@ class ListingsController extends Controller
      * @param Request $request
      * @param         $listingUuid
      *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function shorthand(Request $request, $listingUuid)
+    {
+        return redirect()->route('listings.show', [$listingUuid]);
+    }
+
+    /**
+     * @param Request $request
+     * @param         $listingUuid
+     *
      * @return $this|\Illuminate\Http\RedirectResponse
      */
     public function show(Request $request, $listingUuid)
@@ -34,14 +45,12 @@ class ListingsController extends Controller
             return $this->redirect()->to('/');
         }
 
-        $items = $listing->items->sortBy(function($item){
-            return $item->listedItem->style->name;
+        $rawCategories = collect(Listings::getStyleGroupings($listingUuid));
+
+        $categories = $rawCategories->groupBy('style_name')->transform(function($item, $k){
+            return $item->groupBy('size_name');
         });
 
-        $items = $this->paginateData($request, $items);
-
-        $categories = Listings::getStyleGroupings($listingUuid);
-
-        return $this->view('listings.show')->with(compact('categories', 'items', 'listing'));
+        return $this->view('listings.show')->with(compact('categories', 'listing'));
     }
 }

@@ -39,28 +39,36 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input
-                                    id="options_include_text"
-                                    v-model="$data.options.include_link"
-                                    name="options[include_link]"
-                                    type="checkbox"
-                            >
-                            Include link to Kabooodle claim page, in description
-                        </label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="control-label">Photo message</label>
+                            <textarea class="form-control" id="options_item_message" rows="5" v-model="$data.options.item_message" placeholder="An example: Claim here {url}"></textarea>
+                            <small class="text-xs block text-muted">Pre-defined tags you can optionally use</small>
+                            <button class="btn btn-clipboard white btn-xs" data-clipboard-action="copy" data-clipboard-text="{price}">{price}</button>
+                            <button class="btn btn-clipboard white btn-xs"  data-clipboard-action="copy" data-clipboard-text="{url}">{url}</button>
+                            <button class="btn btn-clipboard white btn-xs"  data-clipboard-action="copy" data-clipboard-text="{style}">{style}</button>
+                            <button class="btn btn-clipboard white btn-xs"  data-clipboard-action="copy" data-clipboard-text="{size}">{size}</button>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Example message (with fake data)</label>
+                            <pre style="background: white; white-space: pre-wrap; word-wrap: break-word; font-family: inherit;" class="bg-white text-sm text-muted m-t-sm">{{ message_preview }}</pre>
+                        </div>
                     </div>
                 </div>
             </template>
             <template slot="modal_footer">
-                <button class="btn primary btn-sm" @click="saveOptions" type="button">Save</button>
-                <button class="btn white btn-sm" @click="clearOptions" type="button">Clear</button>
+                <button class="btn primary btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="saveOptions" type="button">Save &amp; list items to Facebook
+                <spinny v-if="processing_listing"></spinny>
+                </button>
+                <button class="btn white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="clearOptions" type="button">Clear settings</button>
+                <button class="btn-link white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="closeModal" type="button">Close</button>
             </template>
         </modal>
     </span>
 </template>
 <script>
     import Modal from '../Modal.vue';
+    import Spinny from '../Spinner.vue';
     export default{
         props: {
             modal_id: {
@@ -70,28 +78,58 @@
         },
         data(){
             return {
+                processing_listing: false,
                 options : {
                     list_at: null,
                     remove_at:null,
                     available_at: null,
                     available_until: null,
                     include_link: true,
+                    item_message: null
                 }
             }
         },
         mounted(){
+            $.fn.modal.Constructor.prototype._enforceFocus = function() {};
             this.registerDateTimePicker();
         },
         created(){
-            $Bus.$on('listing.options:get', ()=>{
-                $Bus.$emit('listing.options:saved', this.options);
+            $Bus.$on('inventory:posting_listing', (status)=>{
+                if (status === true) {
+                    this.processing_listing = true;
+                } else {
+                    this.processing_listing = false;
+                }
             });
         },
+        computed: {
+            message_preview(){
+                if (this.options.item_message) {
+                    const price = Math.floor(Math.random() * 20);
+                    const url = 'kabooodle.com/i/'+randomAlphaStr(3)+' ';
+                    let style = 'Amelia';
+                    let size = ['XS', 'S', 'M'];
+                    let text = this.options.item_message;
+
+                    text = text.replace(/{price}/g, '$'+price);
+                    text = text.replace(/{size}/g, size[Math.floor(Math.random() * size.length)]);
+                    text = text.replace(/{style}/g, style);
+                    text = text.replace(/{url}/g, url);
+
+                    return text;
+                }
+
+                return this.options.item_message;
+            },
+        },
         methods: {
+            closeModal(){
+                $('#'+this.modal_id).modal('hide');
+            },
             saveOptions(event){
                 event.preventDefault();
-                $('#'+this.modal_id).modal('hide');
                 $Bus.$emit('listing.options:saved', this.options);
+                this.processing_listing = true;
             },
             clearOption(option, optionElId, event){
                 const $el = $('#'+optionElId);
@@ -104,12 +142,41 @@
                     remove_at: null,
                     available_at: null,
                     available_until: null,
-                    include_link: false,
+                    item_message: null,
+                    include_link: false
                 }
                 $('.needs-datetimepicker').val('').trigger('change');
             },
             registerDateTimePicker(){
+
+                $('.btn-clipboard').tooltip({
+                    container: 'body',
+                    trigger: 'click',
+                    placement: 'bottom'
+                });
+
+                var clipboard = new Clipboard('.btn-clipboard');
+
+                clipboard.on('success', function(e) {
+                    try {
+                        $(e.trigger)
+                                .attr('title', 'Copied!')
+                                .attr('data-original-title', 'Copied!')
+                                .tooltip('show');
+
+                        setTimeout(function(){
+                            $(e.trigger).tooltip('hide');
+                        }, 500);
+                    } catch (e) {
+                        try {
+                            $(e.trigger).tooltip('dispose');
+                        } catch (e) {}
+                    }
+                    e.clearSelection();
+                });
+
                 this.$nextTick(function(){
+
                     let minDate = moment().add('1', 'hour');
                     let options = {
                         format: "MM/DD/YYYY hh:mma",
@@ -154,10 +221,39 @@
             updateDateTimeEl(option, event){
                 const $el = $(event.target);
                 this.options[option] = $el.val();
+            },
+            addVariableToMessage(text, event){
+                event.preventDefault();
+                console.log(text);
+                let $textareaEl = $('#options_item_message');
+
+                // in the event user has selected/highlighted text for replacement
+                // get the start and end of cursor selection.
+                let cursorPosStart = $textareaEl.prop('selectionStart');
+                let cursorPosEnd = $textareaEl.prop('selectionEnd');
+
+                // current value
+                let v = $textareaEl.val();
+
+                // Get the value of the selected text
+                let textBefore = v.substring(0,  cursorPosStart );
+                let textAfter  = v.substring( cursorPosEnd, v.length );
+
+                // Create our new string with the newly added text
+                let newText = textBefore+ text +textAfter;
+
+                // Textarea is a v-model so set the data and it will update
+                // automatically.
+                this.options.item_message = newText;
+
+                // place the cursor back in the text area.
+                $textareaEl.focus();
+//                $textareaEl.val( textBefore+ text +textAfter );
             }
         },
         components: {
-            'modal': Modal
+            'modal': Modal,
+            'spinny' : Spinny
         }
     }
 </script>

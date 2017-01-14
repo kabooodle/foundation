@@ -6,9 +6,10 @@ Route::get('listing/{listing}', [
     'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@show'
 ]);
 // Shortened url, possible for sharing?
-Route::get('l/{listing}', function($listing){
-    return redirect()->route('listings.show', [$listing]);
-});;
+Route::get('l/{listing}', [
+    'as' =>'listings.shorthand',
+    'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@shorthand'
+]);
 
 Route::get('listingitems/{listingItem}', [
     'as' => 'listingitems.show',

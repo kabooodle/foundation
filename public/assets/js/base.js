@@ -524,6 +524,9 @@ function confirmModal(confirmCB, closeCB, options) {
 }));
 
 function notify(options){
+
+    $.noty.clearQueue();
+
     var defaults = {
         text: '',
         layout: 'top',
@@ -542,11 +545,43 @@ function notify(options){
     noty(options);
 };
 
+function browserSupportsAnimation(){
+    var property = 'animation';
+    var elm = document.createElement('div');
+    property = property.toLowerCase();
+
+    if (elm.style[property] != undefined) {
+        console.log('true');
+        return true;
+    }
+
+
+    var propertyNameCapital = property.charAt(0).toUpperCase() + property.substr(1),
+        domPrefixes = 'Webkit Moz ms O'.split(' ');
+
+    for (var i = 0; i < domPrefixes.length; i++) {
+        if (elm.style[domPrefixes[i] + propertyNameCapital] != undefined) {
+            console.log('true');
+            return true;
+        }
+    }
+
+    console.log('false');
+
+    return false;
+}
+
 function spinny(size){
     if(typeof size === 'undefined') {
         size = 14;
     }
-    return ' <img style="margin:-2px 0 0 0; padding:0;" height="'+size+'" width="'+size+'" src="'+KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif")+'">';
+
+    if (browserSupportsAnimation()) {
+        return '<span class="kabooodle__spinner"></span>';
+    } else {
+        var src = KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        return '<img  src="'+src+'" style="margin:-2px 2px 0 0; padding:0;" height="'+size+'" width="'+size+'" >';
+    }
 };
 
 function snakeToCamel(s){

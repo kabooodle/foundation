@@ -4,7 +4,6 @@
 $notification-box-size : 24px;
 
 body.on-trial {
-
   #kabooodle_app,
   .app,
   #kabooodle_app.app {
@@ -38,13 +37,23 @@ body.on-trial {
     }
   }
   #view{
-    padding-top: 4rem;
+    //padding-top: 4rem;
   }
   .app-header.navbar-md~.bodymenu~.app-body {
     padding-top: 7rem !important;
   }
+
   .bodymenu {
     top: ($notification-box-size + 64px);
+  }
+
+  &.header-condensed {
+    .bodymenu {
+      top: ($notification-box-size + 46px);
+    }
+    &~.kabooodle_app_inner {
+      padding-top: 5rem !important;
+    }
   }
 }
 

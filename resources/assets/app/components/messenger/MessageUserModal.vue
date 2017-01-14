@@ -34,6 +34,9 @@
                                             :options-limit="10"
                                             :limit="10"
                                             @search-change="searchIt">
+                                        <template slot="noResult" v-show="!isLoading">
+                                            <span class="" v-show="!isLoading" >No results found</span>
+                                        </template>
                                         <template slot="option" scope="props">
                                             <div class="option__desc">
                                                 <span class="option__title">{{ props.option.full_name }}</span>
@@ -65,6 +68,7 @@
     </div>
 </template>
 <script>
+    import currentUser from '../current-user';
     import Multiselect from 'vue-multiselect';
     import Spinny from '../Spinner.vue';
     export default{
@@ -119,9 +123,10 @@
                 return `${full_name} (${username})`;
             },
             searchIt(query){
-                if (query.trim() == '') {
+                if (query.trim() == '' || ! currentUser()) {
                     return;
                 }
+
                 this.isLoading = true;
                 this.$http.post(this.search_endpoint, {q: query},  {
                     before(request) {
@@ -150,6 +155,17 @@
             },
             storeResponse(event){
                 this.sending = true;
+
+                if (! currentUser()) {
+                    notify({
+                        type : 'information',
+                        text : 'You must be signed in to send a message'
+                    });
+
+                    this.sending = false;
+                    return false;
+                }
+
                 this.$http.post(this.endpoint, {
                     message: this.message,
                     subject: this.subject,

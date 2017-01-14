@@ -6669,6 +6669,10 @@ var _s3uploader = require('../../app/s3uploader');
 
 var _s3uploader2 = _interopRequireDefault(_s3uploader);
 
+var _currentUser = require('./current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 require('../../vendor/fileupload/js/vendor/jquery.ui.widget');
@@ -6682,7 +6686,8 @@ require('../../vendor/fileupload/js/jquery.fileupload-ui');
 exports.default = {
     props: {
         user_hash: {
-            required: true
+            type: String,
+            default: (0, _currentUser2.default)() ? (0, _currentUser2.default)().public_hash : false
         },
         s3_key_url: {
             required: true
@@ -6786,7 +6791,18 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-08ae0c66", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../../app/s3uploader":10,"../../vendor/fileupload/js/jquery.fileupload":14,"../../vendor/fileupload/js/jquery.fileupload-image":11,"../../vendor/fileupload/js/jquery.fileupload-process":12,"../../vendor/fileupload/js/jquery.fileupload-ui":13,"../../vendor/fileupload/js/jquery.iframe-transport":15,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":16,"../../vendor/fileupload/js/vendor/jquery.ui.widget":17,"../../vendor/fileupload/js/vendor/load-image":18,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5,"vueify/lib/insert-css":7}],9:[function(require,module,exports){
+},{"../../app/s3uploader":11,"../../vendor/fileupload/js/jquery.fileupload":15,"../../vendor/fileupload/js/jquery.fileupload-image":12,"../../vendor/fileupload/js/jquery.fileupload-process":13,"../../vendor/fileupload/js/jquery.fileupload-ui":14,"../../vendor/fileupload/js/jquery.iframe-transport":16,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":17,"../../vendor/fileupload/js/vendor/jquery.ui.widget":18,"../../vendor/fileupload/js/vendor/load-image":19,"./current-user":9,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5,"vueify/lib/insert-css":7}],9:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : false;
+};
+
+},{}],10:[function(require,module,exports){
 'use strict';
 
 var _FileUpload = require('../FileUpload.vue');
@@ -6819,7 +6835,7 @@ new Vue({
     }
 });
 
-},{"../FileUpload.vue":8}],10:[function(require,module,exports){
+},{"../FileUpload.vue":8}],11:[function(require,module,exports){
 'use strict';
 
 ;
@@ -6907,7 +6923,6 @@ new Vue({
                         success: function success(response) {
                             $(document).trigger('s3uploader.s3_key_retrieved', response);
                             that.log('api.files.s3key: done', response);
-                            console.log(response);
                             data.url = response.data.url;
                             data.formData = {
                                 AWSAccessKeyId: response.data.AWSAccessKeyId,
@@ -7107,7 +7122,7 @@ new Vue({
     };
 })(jQuery, window, document);
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7404,7 +7419,7 @@ new Vue({
     });
 });
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7566,7 +7581,7 @@ new Vue({
     });
 });
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /*
@@ -8164,7 +8179,7 @@ new Vue({
     });
 });
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9498,7 +9513,7 @@ new Vue({
     });
 });
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9692,7 +9707,7 @@ new Vue({
     });
 });
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -9730,7 +9745,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 }(window);
 
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 /*! jQuery UI - v1.11.4+CommonJS - 2015-08-28
@@ -10278,7 +10293,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var widget = $.widget;
 });
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 !function (e) {
@@ -10715,6 +10730,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 
-},{}]},{},[9]);
+},{}]},{},[10]);
 
 //# sourceMappingURL=settings.js.map

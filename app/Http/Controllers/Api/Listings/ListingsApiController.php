@@ -7,7 +7,10 @@
 namespace Kabooodle\Http\Controllers\Api\Listings;
 
 use Binput;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
+use Kabooodle\Models\Listings;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 
 /**
@@ -15,6 +18,8 @@ use Kabooodle\Http\Controllers\Api\AbstractApiController;
  */
 class ListingsApiController extends AbstractApiController
 {
+    use PaginatesTrait;
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\Response
@@ -24,5 +29,51 @@ class ListingsApiController extends AbstractApiController
         $listings = $this->getUser()->listings;
 
         return $this->setData($listings)->respond();
+    }
+
+    /**
+     * @param Request $request
+     * @param string  $listingUuid
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $listingUuid)
+    {
+        try {
+            $listing = Listings::with(['items', 'items.inventoryItem'])
+                ->where('uuid', $listingUuid)
+                ->first();
+
+            if (! $listing) {
+                throw new ModelNotFoundException;
+            }
+
+            $items = $listing->items;
+
+            $style_query = Binput::get('styles');
+            $size_query = Binput::get('sizes');
+
+            if ($style_query ) {
+                $items = $items->filter(function($item) use ($style_query){
+                    return in_array($item->inventoryItem->inventory_type_styles_id, $style_query);
+                });
+            }
+
+            if ($size_query ) {
+                $items = $items->filter(function($item) use ($size_query){
+                    return in_array($item->inventoryItem->inventory_sizes_id, $size_query);
+                });
+            }
+
+            $items = $items->sortBy(function($item){
+                return $item->inventoryItem->style->name;
+            })->values();
+
+            $items = $this->paginateData($request, $items);
+
+            return $this->setData($items)->respond();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->respond();
+        }
     }
 }

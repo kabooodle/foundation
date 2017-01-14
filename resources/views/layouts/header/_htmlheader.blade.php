@@ -8,7 +8,7 @@
 
     @push('header-styles')
     <link rel="stylesheet" href="{{ staticAsset('/assets/css/vendor.css') }}" type="text/css"/>
-    <link rel="stylesheet" href="{{ staticAsset('/assets/css/app.css') }}?" type="text/css"/>
+    <link rel="stylesheet" href="{{ staticAsset('/assets/css/app.css') }}" type="text/css"/>
     <link rel="stylesheet" href="{{ staticAsset('/assets/css/merchant.css') }}" type="text/css"/>
     @endpush
 
@@ -21,7 +21,7 @@
             return staticAsset.replace('[URL]', url);
         };
     </script>
-    <script src="//js.pusher.com/3.2/pusher.min.js"></script>
+    <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
     <script>KABOOODLE_APP.pusher = new Pusher('{{ env('PUSHER_KEY') }}', {
             authEndpoint: '{{ route('webhooks.pusher') }}',
             auth: {

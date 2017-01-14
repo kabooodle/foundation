@@ -57,7 +57,7 @@ class MessengerApiController extends AbstractApiController
 
             $recipients = explode(',', Binput::get('recipient'));
 
-            $this->dispatch(new CreateNewThreadCommand($this->getUser(), $recipients, Binput::get('subject'), Binput::get('message')));
+            $this->dispatch(new CreateNewThreadCommand($this->getUser(), $recipients, Binput::get('subject'), Binput::get('message', '')));
 
             return $this->noContent();
         } catch (ValidationException $e) {
@@ -108,6 +108,10 @@ class MessengerApiController extends AbstractApiController
     public function update(Request $request, $threadId)
     {
         try {
+            $this->validate($request, [
+                'msg' => 'required|filled'
+            ]);
+
             $thread = Threads::ForUser(user()->id)
                 ->where('messenger_threads.id', $threadId)
                 ->first();
@@ -116,11 +120,15 @@ class MessengerApiController extends AbstractApiController
                 throw new ModelNotFoundException;
             }
 
-            $this->dispatch(new CreateNewMessageForThreadCommand($thread, user(), Binput::get('msg')));
+            $this->dispatch(new CreateNewMessageForThreadCommand($thread, user(), Binput::get('msg', '')));
 
             return $this->noContent();
         } catch (Exception $e) {
             return $this->setStatusCode(500)->respond();
+        } catch (ValidationException $e) {
+            return $this->setStatusCode(500)->setData([
+                'msg' => $e->validator->messages()->first()
+            ])->respond();
         }
     }
 

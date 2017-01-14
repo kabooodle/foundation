@@ -9,6 +9,7 @@
     </div>
 </template>
 <script>
+    import currentUser from '../current-user';
     import Spinny from  '../Spinner.vue';
     import Message from './Message.vue';
     export default{
@@ -56,7 +57,7 @@
                 }, (response)=>{});
             },
             flagAsRead(thread, messages){
-                this.$http.post(this.read_endpoint, {participant_id: KABOOODLE_APP.currentUser.id});
+                this.$http.post(this.read_endpoint, {participant_id: currentUser().id});
             },
         },
         components: {

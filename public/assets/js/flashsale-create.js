@@ -6671,6 +6671,10 @@ var _s3uploader = require('../../app/s3uploader');
 
 var _s3uploader2 = _interopRequireDefault(_s3uploader);
 
+var _currentUser = require('./current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 require('../../vendor/fileupload/js/vendor/jquery.ui.widget');
@@ -6684,7 +6688,8 @@ require('../../vendor/fileupload/js/jquery.fileupload-ui');
 exports.default = {
     props: {
         user_hash: {
-            required: true
+            type: String,
+            default: (0, _currentUser2.default)() ? (0, _currentUser2.default)().public_hash : false
         },
         s3_key_url: {
             required: true
@@ -6788,7 +6793,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-08ae0c66", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../../app/s3uploader":15,"../../vendor/fileupload/js/jquery.fileupload":19,"../../vendor/fileupload/js/jquery.fileupload-image":16,"../../vendor/fileupload/js/jquery.fileupload-process":17,"../../vendor/fileupload/js/jquery.fileupload-ui":18,"../../vendor/fileupload/js/jquery.iframe-transport":20,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":21,"../../vendor/fileupload/js/vendor/jquery.ui.widget":22,"../../vendor/fileupload/js/vendor/load-image":23,"babel-runtime/core-js/json/stringify":1,"vue":7,"vue-hot-reload-api":5,"vueify/lib/insert-css":8}],10:[function(require,module,exports){
+},{"../../app/s3uploader":17,"../../vendor/fileupload/js/jquery.fileupload":21,"../../vendor/fileupload/js/jquery.fileupload-image":18,"../../vendor/fileupload/js/jquery.fileupload-process":19,"../../vendor/fileupload/js/jquery.fileupload-ui":20,"../../vendor/fileupload/js/jquery.iframe-transport":22,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":23,"../../vendor/fileupload/js/vendor/jquery.ui.widget":24,"../../vendor/fileupload/js/vendor/load-image":25,"./current-user":13,"babel-runtime/core-js/json/stringify":1,"vue":7,"vue-hot-reload-api":5,"vueify/lib/insert-css":8}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6846,11 +6851,18 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":7,"vue-hot-reload-api":5}],12:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _spinner = require('./spinner');
+
+var _spinner2 = _interopRequireDefault(_spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         size: {
@@ -6859,13 +6871,13 @@ exports.default = {
         }
     },
     computed: {
-        img_url: function img_url() {
-            return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        img: function img() {
+            return (0, _spinner2.default)(this.size);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <span v-html=\"img\"></span>\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6876,7 +6888,18 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":7,"vue-hot-reload-api":5}],13:[function(require,module,exports){
+},{"./spinner":16,"vue":7,"vue-hot-reload-api":5}],13:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : false;
+};
+
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7037,7 +7060,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-43665be4", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../FileUpload.vue":9,"../InlineField.vue":10,"../Modal.vue":11,"../Spinner.vue":12,"vue":7,"vue-hot-reload-api":5,"vue-multiselect":6}],14:[function(require,module,exports){
+},{"../FileUpload.vue":9,"../InlineField.vue":10,"../Modal.vue":11,"../Spinner.vue":12,"vue":7,"vue-hot-reload-api":5,"vue-multiselect":6}],15:[function(require,module,exports){
 'use strict';
 
 var _BuildFlashsale = require('./Build-Flashsale.vue');
@@ -7053,7 +7076,44 @@ new Vue({
     }
 });
 
-},{"./Build-Flashsale.vue":13}],15:[function(require,module,exports){
+},{"./Build-Flashsale.vue":14}],16:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (size) {
+    if (browserSupportsAnimation()) {
+        return '<span class="kabooodle__spinner"></span>';
+    } else {
+        var src = KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        return '<img  src="' + src + '" style="margin:-2px 2px 0 0; padding:0;" height="' + size + '" width="' + size + '" >';
+    }
+};
+
+/**
+ *
+ * @returns {boolean}
+ */
+function browserSupportsAnimation() {
+    var property = 'animation';
+    var elm = document.createElement('div');
+    property = property.toLowerCase();
+
+    if (elm.style[property] != undefined) return true;
+
+    var propertyNameCapital = property.charAt(0).toUpperCase() + property.substr(1),
+        domPrefixes = 'Webkit Moz ms O'.split(' ');
+
+    for (var i = 0; i < domPrefixes.length; i++) {
+        if (elm.style[domPrefixes[i] + propertyNameCapital] != undefined) return true;
+    }
+
+    return false;
+}
+
+},{}],17:[function(require,module,exports){
 'use strict';
 
 ;
@@ -7141,7 +7201,6 @@ new Vue({
                         success: function success(response) {
                             $(document).trigger('s3uploader.s3_key_retrieved', response);
                             that.log('api.files.s3key: done', response);
-                            console.log(response);
                             data.url = response.data.url;
                             data.formData = {
                                 AWSAccessKeyId: response.data.AWSAccessKeyId,
@@ -7341,7 +7400,7 @@ new Vue({
     };
 })(jQuery, window, document);
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7638,7 +7697,7 @@ new Vue({
     });
 });
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7800,7 +7859,7 @@ new Vue({
     });
 });
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 /*
@@ -8398,7 +8457,7 @@ new Vue({
     });
 });
 
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9732,7 +9791,7 @@ new Vue({
     });
 });
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9926,7 +9985,7 @@ new Vue({
     });
 });
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -9964,7 +10023,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 }(window);
 
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 /*! jQuery UI - v1.11.4+CommonJS - 2015-08-28
@@ -10512,7 +10571,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var widget = $.widget;
 });
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 !function (e) {
@@ -10949,6 +11008,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 
-},{}]},{},[14]);
+},{}]},{},[15]);
 
 //# sourceMappingURL=flashsale-create.js.map

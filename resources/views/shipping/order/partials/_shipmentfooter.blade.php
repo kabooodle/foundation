@@ -10,7 +10,7 @@
                     <div class="avatar-thumbnail-container">
                     @if($claim->listedItem->files->count() > 0)
                         <div class="avatar-thumbnail _32">
-                            <img src="{{$claim->listedItem->files[0]->location}}">
+                            <img src="{{$claim->listedItem->cover_photo}}">
                         </div>
                     @endif
                     <span>{{ $claim->claimer->name }} - {{ $claim->listedItem->name }} - {{ $claim->listedItem->size->name }} - ${{ $claim->listedItem->price_usd }}</span>

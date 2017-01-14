@@ -6624,11 +6624,18 @@ module.exports = Vue$2;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":1}],5:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _spinner = require('./spinner');
+
+var _spinner2 = _interopRequireDefault(_spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         size: {
@@ -6637,13 +6644,13 @@ exports.default = {
         }
     },
     computed: {
-        img_url: function img_url() {
-            return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        img: function img() {
+            return (0, _spinner2.default)(this.size);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <span v-html=\"img\"></span>\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6654,7 +6661,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2}],6:[function(require,module,exports){
+},{"./spinner":12,"vue":4,"vue-hot-reload-api":2}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6694,11 +6701,26 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":4,"vue-hot-reload-api":2}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : false;
+};
+
+},{}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 var _vueMultiselect = require('vue-multiselect');
 
@@ -6769,9 +6791,10 @@ exports.default = {
         searchIt: function searchIt(query) {
             var _this = this;
 
-            if (query.trim() == '') {
+            if (query.trim() == '' || !(0, _currentUser2.default)()) {
                 return;
             }
+
             this.isLoading = true;
             this.$http.post(this.search_endpoint, { q: query }, {
                 before: function before(request) {
@@ -6802,6 +6825,17 @@ exports.default = {
             var _this2 = this;
 
             this.sending = true;
+
+            if (!(0, _currentUser2.default)()) {
+                notify({
+                    type: 'information',
+                    text: 'You must be signed in to send a message'
+                });
+
+                this.sending = false;
+                return false;
+            }
+
             this.$http.post(this.endpoint, {
                 message: this.message,
                 subject: this.subject,
@@ -6826,7 +6860,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"modal\" :id=\"modal_el_id\">\n        <div class=\"modal-dialog\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h6 class=\"modal-title\">{{ title }}</h6>\n                </div>\n                <div class=\"modal-body\">\n                    <div v-if=\"! display_success\">\n                        <div class=\"form-group row\">\n                            <label class=\"control-label col-sm-3\">Subject</label>\n                            <div class=\"col-sm-9\">\n                                <input type=\"text\" name=\"subject\" v-model.trim=\"subject\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\" v-if=\"! is_direct_to_user\">\n                            <label class=\"control-label col-sm-3\">Recipient</label>\n                            <div class=\"col-sm-9\">\n                                <multiselect v-model=\"recipient\" id=\"ajax\" label=\"full_name\" track-by=\"id\" placeholder=\"\" :custom-label=\"nameWithUsername\" :options=\"recipients\" :multiple=\"false\" :searchable=\"true\" :loading=\"isLoading\" :internal-search=\"false\" :clear-on-select=\"true\" :close-on-select=\"true\" :options-limit=\"10\" :limit=\"10\" @search-change=\"searchIt\">\n                                    <template slot=\"option\" scope=\"props\">\n                                        <div class=\"option__desc\">\n                                            <span class=\"option__title\">{{ props.option.full_name }}</span>\n                                            <small class=\"option__small text-muted text-small\">({{ props.option.username }})</small>\n                                        </div>\n                                    </template>\n                                </multiselect>\n                            </div>\n                        </div>\n                        <div v-else=\"\">\n                            <input type=\"hidden\" name=\"recipient\" v-model.trim=\"recipient\" :value=\"recipient_id\">\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"control-label col-sm-3\">Message</label>\n                            <div class=\"col-sm-9\">\n                                <textarea class=\"form-control \" v-model.trim=\"message\" placeholder=\"Write a message...\" name=\"message\" rows=\"4\"></textarea>\n                            </div>\n                        </div>\n                    </div>\n                    <div v-if=\"display_success\">Your message has been sent.</div>\n                </div>\n                <div class=\"modal-footer\">\n                    <button v-if=\"! display_success\" type=\"button\" class=\"btn primary btn-sm btn-messenger\" @click=\"storeResponse\" :class=\"sending ? 'disabled' : null\" :disabled=\"sending ? true: false\">Send <spinny v-if=\"sending\"></spinny> </button>\n                    <button type=\"button\" class=\"btn white btn-sm btn-messenger\" @click=\"closeModal\" :class=\"sending ? 'disabled' : null\" :disabled=\"sending ? true: false\">Close</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"modal\" :id=\"modal_el_id\">\n        <div class=\"modal-dialog\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h6 class=\"modal-title\">{{ title }}</h6>\n                </div>\n                <div class=\"modal-body\">\n                    <div v-if=\"! display_success\">\n                        <div class=\"form-group row\">\n                            <label class=\"control-label col-sm-3\">Subject</label>\n                            <div class=\"col-sm-9\">\n                                <input type=\"text\" name=\"subject\" v-model.trim=\"subject\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\" v-if=\"! is_direct_to_user\">\n                            <label class=\"control-label col-sm-3\">Recipient</label>\n                            <div class=\"col-sm-9\">\n                                <multiselect v-model=\"recipient\" id=\"ajax\" label=\"full_name\" track-by=\"id\" placeholder=\"\" :custom-label=\"nameWithUsername\" :options=\"recipients\" :multiple=\"false\" :searchable=\"true\" :loading=\"isLoading\" :internal-search=\"false\" :clear-on-select=\"true\" :close-on-select=\"true\" :options-limit=\"10\" :limit=\"10\" @search-change=\"searchIt\">\n                                    <template slot=\"noResult\" v-show=\"!isLoading\">\n                                        <span class=\"\" v-show=\"!isLoading\">No results found</span>\n                                    </template>\n                                    <template slot=\"option\" scope=\"props\">\n                                        <div class=\"option__desc\">\n                                            <span class=\"option__title\">{{ props.option.full_name }}</span>\n                                            <small class=\"option__small text-muted text-small\">({{ props.option.username }})</small>\n                                        </div>\n                                    </template>\n                                </multiselect>\n                            </div>\n                        </div>\n                        <div v-else=\"\">\n                            <input type=\"hidden\" name=\"recipient\" v-model.trim=\"recipient\" :value=\"recipient_id\">\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"control-label col-sm-3\">Message</label>\n                            <div class=\"col-sm-9\">\n                                <textarea class=\"form-control \" v-model.trim=\"message\" placeholder=\"Write a message...\" name=\"message\" rows=\"4\"></textarea>\n                            </div>\n                        </div>\n                    </div>\n                    <div v-if=\"display_success\">Your message has been sent.</div>\n                </div>\n                <div class=\"modal-footer\">\n                    <button v-if=\"! display_success\" type=\"button\" class=\"btn primary btn-sm btn-messenger\" @click=\"storeResponse\" :class=\"sending ? 'disabled' : null\" :disabled=\"sending ? true: false\">Send <spinny v-if=\"sending\"></spinny> </button>\n                    <button type=\"button\" class=\"btn white btn-sm btn-messenger\" @click=\"closeModal\" :class=\"sending ? 'disabled' : null\" :disabled=\"sending ? true: false\">Close</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6837,12 +6871,16 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-1e4860c0", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":5,"vue":4,"vue-hot-reload-api":2,"vue-multiselect":3}],8:[function(require,module,exports){
+},{"../Spinner.vue":5,"../current-user":7,"vue":4,"vue-hot-reload-api":2,"vue-multiselect":3}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 var _Timestamp = require('../Timestamp.vue');
 
@@ -6865,11 +6903,11 @@ exports.default = {
         is_read: function is_read() {
             var thread_updated_at = this.thread.updated_at;
             var myself = _.find(this.thread.participants, function (v) {
-                return parseInt(v.user_id) == parseInt(KABOOODLE_APP.currentUser.id);
+                return parseInt(v.user_id) == parseInt((0, _currentUser2.default)().id);
             });
 
-            if (_.has(myself.last_read, 'date')) {
-                return moment(myself.last_read.date).isAfter(thread_updated_at.date);
+            if (myself.last_read) {
+                return moment(myself.last_read).isAfter(thread_updated_at);
             }
 
             return false;
@@ -6883,7 +6921,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"list-item b-l b-l-2x b-b\" :data-id=\"thread.id\" :data-href=\"endpoint\" :class=\"is_read ? null : ' b-l-primary list-item-unread '\">\n            <!--<div class=\"list-left\">-->\n            <!--</div>-->\n            <div class=\"list-body\">\n                <div class=\"pull-right text-muted\">\n                    <div class=\"text-sm text-right\">{{ thread.participants_names_excluding_creator}}</div>\n                    <div class=\"text-right text-muted text-sm\"><timestamp :timestamp=\"most_recent_message.created_at.date\"></timestamp></div>\n                </div>\n                <a :href=\"endpoint\" class=\"_500 block\">{{ thread.subject }}</a>\n                <div class=\"text-ellipsis text-muted text-sm p-r-3\">\n                    <span v-html=\"most_recent_message.body\"></span>\n                </div>\n            </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"list-item b-l b-l-2x b-b\" :data-id=\"thread.id\" :data-href=\"endpoint\" :class=\"is_read ? null : ' b-l-primary list-item-unread '\">\n            <div class=\"list-body\">\n                <div class=\"pull-right text-muted\">\n                    <div class=\"text-sm text-right\">{{ thread.participants_names_excluding_creator}}</div>\n                    <div class=\"text-right text-muted text-sm\"><timestamp :timestamp=\"most_recent_message.created_at\"></timestamp></div>\n                </div>\n                <a :href=\"endpoint\" class=\"_500 block\">{{ thread.subject }}</a>\n                <div class=\"text-ellipsis text-muted text-sm p-r-3\">\n                    <span v-html=\"most_recent_message.body\"></span>\n                </div>\n            </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6894,7 +6932,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-03ffd5e2", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Timestamp.vue":6,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"../Timestamp.vue":6,"../current-user":7,"vue":4,"vue-hot-reload-api":2}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6972,7 +7010,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-74a3a418", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":5,"./Thread.vue":8,"vue":4,"vue-hot-reload-api":2}],10:[function(require,module,exports){
+},{"../Spinner.vue":5,"./Thread.vue":9,"vue":4,"vue-hot-reload-api":2}],11:[function(require,module,exports){
 'use strict';
 
 var _Threads = require('./Threads.vue');
@@ -6993,6 +7031,43 @@ new Vue({
     }
 });
 
-},{"./MessageUserModal.vue":7,"./Threads.vue":9}]},{},[10]);
+},{"./MessageUserModal.vue":8,"./Threads.vue":10}],12:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (size) {
+    if (browserSupportsAnimation()) {
+        return '<span class="kabooodle__spinner"></span>';
+    } else {
+        var src = KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        return '<img  src="' + src + '" style="margin:-2px 2px 0 0; padding:0;" height="' + size + '" width="' + size + '" >';
+    }
+};
+
+/**
+ *
+ * @returns {boolean}
+ */
+function browserSupportsAnimation() {
+    var property = 'animation';
+    var elm = document.createElement('div');
+    property = property.toLowerCase();
+
+    if (elm.style[property] != undefined) return true;
+
+    var propertyNameCapital = property.charAt(0).toUpperCase() + property.substr(1),
+        domPrefixes = 'Webkit Moz ms O'.split(' ');
+
+    for (var i = 0; i < domPrefixes.length; i++) {
+        if (elm.style[domPrefixes[i] + propertyNameCapital] != undefined) return true;
+    }
+
+    return false;
+}
+
+},{}]},{},[11]);
 
 //# sourceMappingURL=messenger-index.js.map

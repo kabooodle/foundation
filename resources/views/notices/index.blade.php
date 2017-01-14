@@ -9,8 +9,11 @@
 @endsection
 
 @section('body-content')
-    @foreach($notices as $notice)
-        <p>{{ $notice->title }}</p>
-    @endforeach
+
 
 @endsection
+
+
+@push('footer-scripts')
+
+@endpush

@@ -120,11 +120,12 @@
     require('../../vendor/fileupload/js/jquery.fileupload-image');
     require('../../vendor/fileupload/js/jquery.fileupload-ui');
     import s3uploader from '../../app/s3uploader';
-
+    import currentUser from './current-user';
     export default{
         props : {
             user_hash: {
-                required: true
+                type: String,
+                default: currentUser() ? currentUser().public_hash : false,
             },
             s3_key_url : {
                 required: true

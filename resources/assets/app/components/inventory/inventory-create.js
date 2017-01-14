@@ -1,8 +1,9 @@
-import InventorySizing from './inventory-sizing.vue';
+import SizeContainers from './create/Size-Containers.vue';
 
 new Vue({
     el: '#inventory',
     data: {
+        wholesale_price : '0.00',
         price : '0.00',
         size_containers : [],
         submitting : false,
@@ -54,6 +55,10 @@ new Vue({
         getSelectedStyleId(){
             return parseInt($('#inventory-styles-el').val());
         },
+        /**
+         * When the style is changed, the available sizings change also.
+         * Tell the world of our new sizings.
+         */
         styleChanged : function(e) {
             let styleId = this.getSelectedStyleId();
             this.updateDefaultPricings();
@@ -62,15 +67,9 @@ new Vue({
         updateDefaultPricings(){
             let styleId = this.getSelectedStyleId();
             let style = _.findWhere(this.inventory_types[0].styles, {id: styleId});
-            let ws_price = moneyfy(style.wholesale_price_usd_less_5_percent);
-            let suggested_price = moneyfy(style.suggested_price_usd);
-            $('#inventory-wholesale-el')
-                .val(ws_price)
-                .prop('placeholder', ws_price);
 
-            $('#inventory-price-el')
-                .val(suggested_price)
-                .prop('placeholder', suggested_price);
+            this.wholesale_price = moneyfy(style.wholesale_price_usd_less_5_percent);
+            this.price = moneyfy(style.suggested_price_usd);
         },
     },
     mounted: function(){
@@ -78,6 +77,6 @@ new Vue({
         this.updateDefaultPricings();
     },
     components: {
-        'inventory-sizing' : InventorySizing
+        'size-containers' : SizeContainers
     }
 });

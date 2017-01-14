@@ -25,6 +25,7 @@ new Vue({
 
         $Bus.$on('listing.options:saved', (options)=>{
             this.options = options;
+            this.postSelectedItemsToSales();
         });
 
         $Bus.$on('facebook:refreshed', (fbAuth, postables)=>{
@@ -190,12 +191,9 @@ new Vue({
         // Method for performing an AJAX post request
         // of the selected flash sales, facebook album items
         postSelectedItemsToSales(event){
-            event.preventDefault();
+            $Bus.$emit('inventory:posting_listing', true);
 
-            $Bus.$emit('listing.options:get');
-
-            let $el = $(event.target);
-            let form = $el.closest('form');
+            let form = $('#post_sales_form');
             const selectedPostables = this.selected.postables;
             selectedPostables.fb_group = this.selected.fb_group;
             selectedPostables.options = {};
@@ -203,7 +201,7 @@ new Vue({
             selectedPostables.options.list_at = this.options.list_at;
             selectedPostables.options.available_at = this.options.available_at;
             selectedPostables.options.available_until = this.options.available_until;
-            selectedPostables.options.include_text = this.options.include_link;
+            selectedPostables.options.item_message = this.options.item_message;
 
             selectedPostables.items = this.selected.items;
 
@@ -221,6 +219,7 @@ new Vue({
                 notify({text: response.body.data.msg});
             }).finally(()=>{
                 this.setPostingToSales(false);
+                $Bus.$emit('inventory:posting_listing', false);
             });
         },
         toggleFlashSale(i, event){

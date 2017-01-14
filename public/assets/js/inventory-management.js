@@ -7248,6 +7248,7 @@ exports.default = {
         openOverlay: function openOverlay(content) {
             $('body').addClass('noscroll');
             $('.inventory-overlay').show();
+            $('.pop-out-overlay').show();
             if (content) {
                 this.changeOverlayContent(content);
             }
@@ -7256,6 +7257,7 @@ exports.default = {
         resetOverlay: function resetOverlay() {
             $('body').removeClass('noscroll');
             $('.inventory-overlay').hide(200);
+            $('.pop-out-overlay').hide(200);
             this.changeOverlayContent(this.defaultContent, true);
             $Bus.$emit('popout-overlay:closed');
         },
@@ -7279,12 +7281,12 @@ exports.default = {
             if (typeof promptOnClose !== 'undefined') {
                 this.setPromptOnClose(promptOnClose);
             }
-            $('.inventory-overlay').find('.overlay-content').html(content);
+            $('.pop-out-overlay').find('.overlay-content').html(content);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"pop-out-overlay inventory-overlay\" style=\"display: none;\">\n        <a href=\"javascript:;\" class=\"close-overlay\" v-on:click=\"closeOverlay\" aria-label=\"close\">\n            <img :src=\"img_url\" alt=\"Icon shot x light\">\n        </a>\n        <div class=\"overlay-content group\">\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"inventory-overlay\" style=\"display: none;\"></div>\n    <div class=\"pop-out-overlay\" style=\"display: none;\">\n        <a href=\"javascript:;\" class=\"close-overlay\" v-on:click=\"closeOverlay\" aria-label=\"close\">\n            <img :src=\"img_url\" alt=\"Icon shot x light\">\n        </a>\n        <div class=\"overlay-content group\">\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -7296,11 +7298,18 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2}],8:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _spinner = require('./spinner');
+
+var _spinner2 = _interopRequireDefault(_spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         size: {
@@ -7309,13 +7318,13 @@ exports.default = {
         }
     },
     computed: {
-        img_url: function img_url() {
-            return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        img: function img() {
+            return (0, _spinner2.default)(this.size);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <span v-html=\"img\"></span>\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -7326,7 +7335,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"./spinner":16,"vue":3,"vue-hot-reload-api":2}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7509,6 +7518,10 @@ var _Modal = require('../Modal.vue');
 
 var _Modal2 = _interopRequireDefault(_Modal);
 
+var _Spinner = require('../Spinner.vue');
+
+var _Spinner2 = _interopRequireDefault(_Spinner);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
@@ -7520,31 +7533,61 @@ exports.default = {
     },
     data: function data() {
         return {
+            processing_listing: false,
             options: {
                 list_at: null,
                 remove_at: null,
                 available_at: null,
                 available_until: null,
-                include_link: true
+                include_link: true,
+                item_message: null
             }
         };
     },
     mounted: function mounted() {
+        $.fn.modal.Constructor.prototype._enforceFocus = function () {};
         this.registerDateTimePicker();
     },
     created: function created() {
         var _this = this;
 
-        $Bus.$on('listing.options:get', function () {
-            $Bus.$emit('listing.options:saved', _this.options);
+        $Bus.$on('inventory:posting_listing', function (status) {
+            if (status === true) {
+                _this.processing_listing = true;
+            } else {
+                _this.processing_listing = false;
+            }
         });
     },
 
+    computed: {
+        message_preview: function message_preview() {
+            if (this.options.item_message) {
+                var price = Math.floor(Math.random() * 20);
+                var url = 'kabooodle.com/i/' + randomAlphaStr(3) + ' ';
+                var style = 'Amelia';
+                var size = ['XS', 'S', 'M'];
+                var text = this.options.item_message;
+
+                text = text.replace(/{price}/g, '$' + price);
+                text = text.replace(/{size}/g, size[Math.floor(Math.random() * size.length)]);
+                text = text.replace(/{style}/g, style);
+                text = text.replace(/{url}/g, url);
+
+                return text;
+            }
+
+            return this.options.item_message;
+        }
+    },
     methods: {
+        closeModal: function closeModal() {
+            $('#' + this.modal_id).modal('hide');
+        },
         saveOptions: function saveOptions(event) {
             event.preventDefault();
-            $('#' + this.modal_id).modal('hide');
             $Bus.$emit('listing.options:saved', this.options);
+            this.processing_listing = true;
         },
         clearOption: function clearOption(option, optionElId, event) {
             var $el = $('#' + optionElId);
@@ -7557,12 +7600,38 @@ exports.default = {
                 remove_at: null,
                 available_at: null,
                 available_until: null,
+                item_message: null,
                 include_link: false
             };
             $('.needs-datetimepicker').val('').trigger('change');
         },
         registerDateTimePicker: function registerDateTimePicker() {
+
+            $('.btn-clipboard').tooltip({
+                container: 'body',
+                trigger: 'click',
+                placement: 'bottom'
+            });
+
+            var clipboard = new Clipboard('.btn-clipboard');
+
+            clipboard.on('success', function (e) {
+                try {
+                    $(e.trigger).attr('title', 'Copied!').attr('data-original-title', 'Copied!').tooltip('show');
+
+                    setTimeout(function () {
+                        $(e.trigger).tooltip('hide');
+                    }, 500);
+                } catch (e) {
+                    try {
+                        $(e.trigger).tooltip('dispose');
+                    } catch (e) {}
+                }
+                e.clearSelection();
+            });
+
             this.$nextTick(function () {
+
                 var minDate = moment().add('1', 'hour');
                 var options = {
                     format: "MM/DD/YYYY hh:mma",
@@ -7606,14 +7675,43 @@ exports.default = {
         updateDateTimeEl: function updateDateTimeEl(option, event) {
             var $el = $(event.target);
             this.options[option] = $el.val();
+        },
+        addVariableToMessage: function addVariableToMessage(text, event) {
+            event.preventDefault();
+            console.log(text);
+            var $textareaEl = $('#options_item_message');
+
+            // in the event user has selected/highlighted text for replacement
+            // get the start and end of cursor selection.
+            var cursorPosStart = $textareaEl.prop('selectionStart');
+            var cursorPosEnd = $textareaEl.prop('selectionEnd');
+
+            // current value
+            var v = $textareaEl.val();
+
+            // Get the value of the selected text
+            var textBefore = v.substring(0, cursorPosStart);
+            var textAfter = v.substring(cursorPosEnd, v.length);
+
+            // Create our new string with the newly added text
+            var newText = textBefore + text + textAfter;
+
+            // Textarea is a v-model so set the data and it will update
+            // automatically.
+            this.options.item_message = newText;
+
+            // place the cursor back in the text area.
+            $textareaEl.focus();
+            //                $textareaEl.val( textBefore+ text +textAfter );
         }
     },
     components: {
-        'modal': _Modal2.default
+        'modal': _Modal2.default,
+        'spinny': _Spinner2.default
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <modal use_header=\"false\" :modal_id=\"modal_id\">\n        <template slot=\"modal_header\">\n            <h6 class=\"m-b-0\">Optional settings for listing to facebook</h6>\n        </template>\n        <template slot=\"modal_body\">\n            <div class=\"form-group m-b-1\">\n                <div class=\"card b p-a dker\">\n                    <div class=\"row\">\n                        <div class=\"col-md-6\">\n                            <label class=\"control-label\">Date to list the items</label><button type=\"button\" @click=\"clearOption('list_at', 'options_list_at', $event)\" class=\"btn-link btn-text text-primary text-xs\">Clear</button>\n                            <input @blur=\"updateDateTimeEl('list_at', $event)\" placeholder=\"optional\" class=\"form-control needs-datetimepicker\" id=\"options_list_at\" name=\"options[list_at]\" type=\"text\">\n                        </div>\n                        <div class=\"col-md-6\">\n                            <label class=\"control-label\">Date to remove the listing</label><button type=\"button\" @click=\"clearOption('remove_at', 'options_remove_at', $event)\" class=\"btn-link btn-text text-primary text-xs\">Clear</button>\n                            <input @blur=\"updateDateTimeEl('remove_at', $event)\" placeholder=\"optional\" class=\"form-control needs-datetimepicker\" id=\"options_remove_at\" name=\"options[remove_at]\" type=\"text\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"form-group m-b-1\">\n                <div class=\"card b p-a dker\">\n                    <div class=\"row\">\n                        <div class=\"col-md-6\">\n                            <label class=\"control-label\">Start date for claiming</label><button type=\"button\" @click=\"clearOption('available_at', 'options_available_at', $event)\" class=\"btn-link btn-text text-primary text-xs\">Clear</button>\n                            <input @blur=\"updateDateTimeEl('available_at', $event)\" placeholder=\"optional\" class=\"form-control needs-datetimepicker\" id=\"options_available_at\" name=\"options[available_at]\" type=\"text\">\n                        </div>\n                        <div class=\"col-md-6\">\n                            <label class=\"control-label\">Last date for claiming</label><button type=\"button\" @click=\"clearOption('available_until', 'options_available_until', $event)\" class=\"btn-link btn-text text-primary text-xs\">Clear</button>\n                            <input @blur=\"updateDateTimeEl('available_until', $event)\" class=\"form-control needs-datetimepicker\" id=\"options_available_until\" name=\"options[available_until]\" placeholder=\"optional\" type=\"text\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"form-group\">\n                <div class=\"checkbox\">\n                    <label>\n                        <input id=\"options_include_text\" v-model=\"$data.options.include_link\" name=\"options[include_link]\" type=\"checkbox\">\n                        Include link to Kabooodle claim page, in description\n                    </label>\n                </div>\n            </div>\n        </template>\n        <template slot=\"modal_footer\">\n            <button class=\"btn primary btn-sm\" @click=\"saveOptions\" type=\"button\">Save</button>\n            <button class=\"btn white btn-sm\" @click=\"clearOptions\" type=\"button\">Clear</button>\n        </template>\n    </modal>\n</span>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <modal use_header=\"false\" :modal_id=\"modal_id\">\n        <template slot=\"modal_header\">\n            <h6 class=\"m-b-0\">Optional settings for listing to facebook</h6>\n        </template>\n        <template slot=\"modal_body\">\n            <div class=\"form-group m-b-1\">\n                <div class=\"card b p-a dker\">\n                    <div class=\"row\">\n                        <div class=\"col-md-6\">\n                            <label class=\"control-label\">Date to list the items</label><button type=\"button\" @click=\"clearOption('list_at', 'options_list_at', $event)\" class=\"btn-link btn-text text-primary text-xs\">Clear</button>\n                            <input @blur=\"updateDateTimeEl('list_at', $event)\" placeholder=\"optional\" class=\"form-control needs-datetimepicker\" id=\"options_list_at\" name=\"options[list_at]\" type=\"text\">\n                        </div>\n                        <div class=\"col-md-6\">\n                            <label class=\"control-label\">Date to remove the listing</label><button type=\"button\" @click=\"clearOption('remove_at', 'options_remove_at', $event)\" class=\"btn-link btn-text text-primary text-xs\">Clear</button>\n                            <input @blur=\"updateDateTimeEl('remove_at', $event)\" placeholder=\"optional\" class=\"form-control needs-datetimepicker\" id=\"options_remove_at\" name=\"options[remove_at]\" type=\"text\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"form-group m-b-1\">\n                <div class=\"card b p-a dker\">\n                    <div class=\"row\">\n                        <div class=\"col-md-6\">\n                            <label class=\"control-label\">Start date for claiming</label><button type=\"button\" @click=\"clearOption('available_at', 'options_available_at', $event)\" class=\"btn-link btn-text text-primary text-xs\">Clear</button>\n                            <input @blur=\"updateDateTimeEl('available_at', $event)\" placeholder=\"optional\" class=\"form-control needs-datetimepicker\" id=\"options_available_at\" name=\"options[available_at]\" type=\"text\">\n                        </div>\n                        <div class=\"col-md-6\">\n                            <label class=\"control-label\">Last date for claiming</label><button type=\"button\" @click=\"clearOption('available_until', 'options_available_until', $event)\" class=\"btn-link btn-text text-primary text-xs\">Clear</button>\n                            <input @blur=\"updateDateTimeEl('available_until', $event)\" class=\"form-control needs-datetimepicker\" id=\"options_available_until\" name=\"options[available_until]\" placeholder=\"optional\" type=\"text\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"form-group\">\n                <div class=\"row\">\n                    <div class=\"col-md-6\">\n                        <label class=\"control-label\">Photo message</label>\n                        <textarea class=\"form-control\" id=\"options_item_message\" rows=\"5\" v-model=\"$data.options.item_message\" placeholder=\"An example: Claim here {url}\"></textarea>\n                        <small class=\"text-xs block text-muted\">Pre-defined tags you can optionally use</small>\n                        <button class=\"btn btn-clipboard white btn-xs\" data-clipboard-action=\"copy\" data-clipboard-text=\"{price}\">{price}</button>\n                        <button class=\"btn btn-clipboard white btn-xs\" data-clipboard-action=\"copy\" data-clipboard-text=\"{url}\">{url}</button>\n                        <button class=\"btn btn-clipboard white btn-xs\" data-clipboard-action=\"copy\" data-clipboard-text=\"{style}\">{style}</button>\n                        <button class=\"btn btn-clipboard white btn-xs\" data-clipboard-action=\"copy\" data-clipboard-text=\"{size}\">{size}</button>\n                    </div>\n                    <div class=\"col-md-6\">\n                        <label class=\"control-label\">Example message (with fake data)</label>\n                        <pre style=\"background: white; white-space: pre-wrap; word-wrap: break-word; font-family: inherit;\" class=\"bg-white text-sm text-muted m-t-sm\">{{ message_preview }}</pre>\n                    </div>\n                </div>\n            </div>\n        </template>\n        <template slot=\"modal_footer\">\n            <button class=\"btn primary btn-sm\" :disabled=\"processing_listing\" :class=\"processing_listing ? 'disabled' : null\" @click=\"saveOptions\" type=\"button\">Save &amp; list items to Facebook\n            <spinny v-if=\"processing_listing\"></spinny>\n            </button>\n            <button class=\"btn white btn-sm\" :disabled=\"processing_listing\" :class=\"processing_listing ? 'disabled' : null\" @click=\"clearOptions\" type=\"button\">Clear settings</button>\n            <button class=\"btn-link white btn-sm\" :disabled=\"processing_listing\" :class=\"processing_listing ? 'disabled' : null\" @click=\"closeModal\" type=\"button\">Close</button>\n        </template>\n    </modal>\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -7624,7 +7722,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-63a07888", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Modal.vue":6,"vue":3,"vue-hot-reload-api":2}],11:[function(require,module,exports){
+},{"../Modal.vue":6,"../Spinner.vue":8,"vue":3,"vue-hot-reload-api":2}],11:[function(require,module,exports){
 'use strict';
 
 var _store = require('./manage/store');
@@ -7675,6 +7773,7 @@ new Vue({
 
         $Bus.$on('listing.options:saved', function (options) {
             _this.options = options;
+            _this.postSelectedItemsToSales();
         });
 
         $Bus.$on('facebook:refreshed', function (fbAuth, postables) {
@@ -7848,12 +7947,9 @@ new Vue({
         postSelectedItemsToSales: function postSelectedItemsToSales(event) {
             var _this2 = this;
 
-            event.preventDefault();
+            $Bus.$emit('inventory:posting_listing', true);
 
-            $Bus.$emit('listing.options:get');
-
-            var $el = $(event.target);
-            var form = $el.closest('form');
+            var form = $('#post_sales_form');
             var selectedPostables = this.selected.postables;
             selectedPostables.fb_group = this.selected.fb_group;
             selectedPostables.options = {};
@@ -7861,7 +7957,7 @@ new Vue({
             selectedPostables.options.list_at = this.options.list_at;
             selectedPostables.options.available_at = this.options.available_at;
             selectedPostables.options.available_until = this.options.available_until;
-            selectedPostables.options.include_text = this.options.include_link;
+            selectedPostables.options.item_message = this.options.item_message;
 
             selectedPostables.items = this.selected.items;
 
@@ -7879,6 +7975,7 @@ new Vue({
                 notify({ text: response.body.data.msg });
             }).finally(function () {
                 _this2.setPostingToSales(false);
+                $Bus.$emit('inventory:posting_listing', false);
             });
         },
         toggleFlashSale: function toggleFlashSale(i, event) {
@@ -8420,7 +8517,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"actions.refreshing_data\" class=\"text-block text-center\" style=\"min-height: 300px\">\n    <div style=\"margin:200px auto 0;\">\n        <spinny size=\"40\"></spinny>\n    </div>\n</div>\n<div v-else=\"\">\n        <popout-overlay></popout-overlay>\n        <div class=\"box style-container\" v-for=\"style in listed_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\">\n                            <template v-for=\"size in style.sizes\">\n                            <button class=\"btn white btn-xs\" v-bind:aria-pressed=\"(selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id ) ? ' true ' : null )\" v-bind:class=\"[ selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id )  ? 'sex active' : '' ] \" @click=\"( selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id ) ? removeSizes(style, size, size.items, $event) : addSizes(style, size, size.items, $event) )\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                            </template>\n                            <button @click=\"selectAllOfStyle(style, $event)\" class=\"btn white btn-xs\" style=\"margin-left: 12px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">ALL</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ style.sizes.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"(opened_drawers.indexOf(style.id+'_'+size.id) > -1 ? closeSizeDrawer(style.id, size.id, $event) : openSizeDrawer(style.id, size.id, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <template v-for=\"item in size.items\">\n                                        <div class=\"col-sm-2 btn-group-prpl\" style=\"width:122px !important;\">\n                                            <button v-bind:aria-pressed=\"(selectedItems.indexOf(item) > -1 ? ' true ' : null )\" @click=\"( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selectedItems.indexOf(item) > -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                        <span class=\"item block\">\n                                                            <img v-bind:src=\"(item.files &amp;&amp; item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)\" class=\"img-responsive\" style=\"width: 80px; height: 80px;\">\n                                                        </span>\n                                                <span class=\"p-a-o text-sm clearfix block\">\n                                                    <span class=\"pull-left\">Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span></span>\n                                                        <span class=\"text-muted pull-right\">${{ item.price_usd }}</span>\n                                                        </span>\n                                            </button>\n                                            <div class=\"clearfix\" style=\"margin-top: 5px;\">\n                                            <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs pull-left white\">Edit</button>\n                                            <a target=\"_blank\" v-bind:href=\"this.window.location.href+'/'+item.name_uuid\" class=\"btn btn-xs pull-right white\">Claim</a>\n                                            </div>\n                                        </div>\n                                    </template>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"actions.refreshing_data\" class=\"text-block text-center\" style=\"min-height: 300px\">\n    <div style=\"margin:200px auto 0;\">\n        <spinny size=\"40\"></spinny>\n    </div>\n</div>\n<div v-else=\"\">\n        <popout-overlay></popout-overlay>\n        <div class=\"box style-container\" v-for=\"style in listed_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\">\n                            <template v-for=\"size in style.sizes\">\n                            <button class=\"btn white btn-xs\" v-bind:aria-pressed=\"(selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id ) ? ' true ' : null )\" v-bind:class=\"[ selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id )  ? 'sex active' : '' ] \" @click=\"( selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id ) ? removeSizes(style, size, size.items, $event) : addSizes(style, size, size.items, $event) )\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                            </template>\n                            <button @click=\"selectAllOfStyle(style, $event)\" class=\"btn white btn-xs\" style=\"margin-left: 12px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">ALL</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ style.sizes.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"(opened_drawers.indexOf(style.id+'_'+size.id) > -1 ? closeSizeDrawer(style.id, size.id, $event) : openSizeDrawer(style.id, size.id, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <template v-for=\"item in size.items\">\n                                        <div class=\"col-sm-2 btn-group-prpl\" style=\"width:122px !important;\">\n                                            <button v-bind:aria-pressed=\"(selectedItems.indexOf(item) > -1 ? ' true ' : null )\" @click=\"( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selectedItems.indexOf(item) > -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                        <span class=\"item block\">\n                                                            <img v-bind:src=\"item.cover_photo\" class=\"img-responsive\" style=\"width: 80px; height: 80px;\">\n                                                        </span>\n                                                <span class=\"p-a-o text-sm clearfix block\">\n                                                    <span class=\"pull-left\">Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span></span>\n                                                        <span class=\"text-muted pull-right\">${{ item.price_usd }}</span>\n                                                        </span>\n                                            </button>\n                                            <div class=\"clearfix\" style=\"margin-top: 5px;\">\n                                            <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs pull-left white\">Edit</button>\n                                            <a target=\"_blank\" v-bind:href=\"this.window.location.href+'/'+item.name_uuid\" class=\"btn btn-xs pull-right white\">Claim</a>\n                                            </div>\n                                        </div>\n                                    </template>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -8435,6 +8532,43 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-60d90d78", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Popover.vue":7,"../Spinner.vue":8,"./manage/computed":12,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[11]);
+},{"../Popover.vue":7,"../Spinner.vue":8,"./manage/computed":12,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],16:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (size) {
+    if (browserSupportsAnimation()) {
+        return '<span class="kabooodle__spinner"></span>';
+    } else {
+        var src = KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        return '<img  src="' + src + '" style="margin:-2px 2px 0 0; padding:0;" height="' + size + '" width="' + size + '" >';
+    }
+};
+
+/**
+ *
+ * @returns {boolean}
+ */
+function browserSupportsAnimation() {
+    var property = 'animation';
+    var elm = document.createElement('div');
+    property = property.toLowerCase();
+
+    if (elm.style[property] != undefined) return true;
+
+    var propertyNameCapital = property.charAt(0).toUpperCase() + property.substr(1),
+        domPrefixes = 'Webkit Moz ms O'.split(' ');
+
+    for (var i = 0; i < domPrefixes.length; i++) {
+        if (elm.style[domPrefixes[i] + propertyNameCapital] != undefined) return true;
+    }
+
+    return false;
+}
+
+},{}]},{},[11]);
 
 //# sourceMappingURL=inventory-management.js.map

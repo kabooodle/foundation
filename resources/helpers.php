@@ -1,6 +1,21 @@
 <?php
 use Carbon\Carbon;
 
+if (!function_exists('current_timezone')) {
+
+    /**
+     * @return string
+     */
+    function current_timezone()
+    {
+        if (user()) {
+            return user()->timezone;
+        }
+
+        return 'UTC';
+    }
+}
+
 if (! function_exists('route')) {
     /**
      * Generate a URL to a named route.
@@ -29,9 +44,13 @@ if (! function_exists('humanizeDateTime')) {
     {
         if (! $value instanceof Carbon) {
             $value = Carbon::createFromTimestamp(strtotime($value));
+
+            if (user()){
+                $value = $value->setTimezone(user()->timezone);
+            }
         }
 
-        return $value->format('m-d-Y h:ia');
+        return $value->format('M j, Y h:ia');
     }
 }
 
@@ -45,9 +64,13 @@ if (! function_exists('humanizeDate')) {
     {
         if (! $value instanceof Carbon) {
             $value = Carbon::createFromTimestamp(strtotime($value));
+
+            if (user()){
+                $value = $value->setTimezone(user()->timezone);
+            }
         }
 
-        return $value->format('m-d-Y');
+        return $value->format('M j, Y');
     }
 }
 
@@ -131,6 +154,18 @@ if (! function_exists('dispatchNow')) {
             $dispatcher = app(\Illuminate\Contracts\Bus\Dispatcher::class);
         }
         return $dispatcher->dispatchNow($job);
+    }
+}
+
+if (!function_exists('useCDN')) {
+    /**
+     * @return bool
+     */
+    function useCDN()
+    {
+        $url = env('AWS_CLOUDFRONT_DISTRIBUTION', false);
+
+        return $url && env('AWS_USE_CLOUDFRONT', false);
     }
 }
 
@@ -1515,7 +1550,7 @@ if (! function_exists('getAppVersion')) {
      */
     function getAppVersion()
     {
-        return Kabooodle\Foundation\Application\KabooodleApplication::APP_VERSION;
+        return Kabooodle\Foundation\Application\KabooodleApplication::RELEASE_VERSION;
     }
 }
 
@@ -1535,7 +1570,17 @@ if (! function_exists('user')) {
      */
     function user()
     {
-        return Auth::user();
+        static $apiAuth;
+
+        if ($auth = Auth::user()) {
+            return $auth;
+        }
+
+        if ($apiAuth = app('Dingo\Api\Auth\Auth')->check()) {
+            return $apiAuth->user();
+        }
+
+        return $auth;
     }
 }
 

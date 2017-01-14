@@ -6642,11 +6642,18 @@ exports.insert = function (css) {
 }
 
 },{}],5:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _spinner = require('./spinner');
+
+var _spinner2 = _interopRequireDefault(_spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         size: {
@@ -6655,13 +6662,13 @@ exports.default = {
         }
     },
     computed: {
-        img_url: function img_url() {
-            return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        img: function img() {
+            return (0, _spinner2.default)(this.size);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <span v-html=\"img\"></span>\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6672,7 +6679,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
+},{"./spinner":12,"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6712,6 +6719,17 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":3,"vue-hot-reload-api":2}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : false;
+};
+
+},{}],8:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.message_body p {\n    margin: 0;\n    padding: 0;\n}\n")
 'use strict';
@@ -6719,6 +6737,10 @@ var __vueify_style__ = __vueify_insert__.insert("\n.message_body p {\n    margin
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 var _Timestamp = require('../Timestamp.vue');
 
@@ -6735,7 +6757,7 @@ exports.default = {
     },
     computed: {
         author_is_self: function author_is_self() {
-            return parseInt(this.message.user.id) == parseInt(KABOOODLE_APP.currentUser.id);
+            return parseInt(this.message.user.id) == parseInt((0, _currentUser2.default)().id);
         }
     },
     components: {
@@ -6743,7 +6765,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"m-b\" :class=\"author_is_self ? 'm-l-3' : 'm-r-3'\">\n        <div class=\"clear\" :class=\"author_is_self ? 'text-right' : ''\">\n            <div>\n                <div :class=\"author_is_self ? 'primary' : 'grey-200 b-a'\" class=\"p-a p-y-sm inline  r\"><span class=\"message_body\" v-html=\"message.body\"></span></div>\n            </div>\n            <timestamp :timestamp=\"message.created_at.date\" class=\"text-muted text-xs m-t-xs\"></timestamp>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"m-b\" :class=\"author_is_self ? 'm-l-3' : 'm-r-3'\">\n        <div class=\"clear\" :class=\"author_is_self ? 'text-right' : ''\">\n            <div>\n                <div :class=\"author_is_self ? 'primary' : 'grey-200 b-a'\" class=\"p-a p-y-sm inline  r\"><span class=\"message_body\" v-html=\"message.body\"></span></div>\n            </div>\n            <timestamp :timestamp=\"message.created_at\" class=\"text-muted text-xs m-t-xs\"></timestamp>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6758,7 +6780,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-1d7f1b52", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Timestamp.vue":6,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],8:[function(require,module,exports){
+},{"../Timestamp.vue":6,"../current-user":7,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6816,12 +6838,16 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-420a3a93", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":3,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"vue":3,"vue-hot-reload-api":2}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 var _Spinner = require('../Spinner.vue');
 
@@ -6883,7 +6909,7 @@ exports.default = {
             }, function (response) {});
         },
         flagAsRead: function flagAsRead(thread, messages) {
-            this.$http.post(this.read_endpoint, { participant_id: KABOOODLE_APP.currentUser.id });
+            this.$http.post(this.read_endpoint, { participant_id: (0, _currentUser2.default)().id });
         }
     },
     components: {
@@ -6903,7 +6929,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-d3e01fde", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":5,"./Message.vue":7,"vue":3,"vue-hot-reload-api":2}],10:[function(require,module,exports){
+},{"../Spinner.vue":5,"../current-user":7,"./Message.vue":8,"vue":3,"vue-hot-reload-api":2}],11:[function(require,module,exports){
 'use strict';
 
 var _Messages = require('./Messages.vue');
@@ -6932,6 +6958,43 @@ new Vue({
     }
 });
 
-},{"./MessageRespond.vue":8,"./Messages.vue":9}]},{},[10]);
+},{"./MessageRespond.vue":9,"./Messages.vue":10}],12:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (size) {
+    if (browserSupportsAnimation()) {
+        return '<span class="kabooodle__spinner"></span>';
+    } else {
+        var src = KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        return '<img  src="' + src + '" style="margin:-2px 2px 0 0; padding:0;" height="' + size + '" width="' + size + '" >';
+    }
+};
+
+/**
+ *
+ * @returns {boolean}
+ */
+function browserSupportsAnimation() {
+    var property = 'animation';
+    var elm = document.createElement('div');
+    property = property.toLowerCase();
+
+    if (elm.style[property] != undefined) return true;
+
+    var propertyNameCapital = property.charAt(0).toUpperCase() + property.substr(1),
+        domPrefixes = 'Webkit Moz ms O'.split(' ');
+
+    for (var i = 0; i < domPrefixes.length; i++) {
+        if (elm.style[domPrefixes[i] + propertyNameCapital] != undefined) return true;
+    }
+
+    return false;
+}
+
+},{}]},{},[11]);
 
 //# sourceMappingURL=messenger-thread-index.js.map

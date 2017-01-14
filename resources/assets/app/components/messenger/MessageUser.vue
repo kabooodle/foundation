@@ -19,6 +19,7 @@
     </span>
 </template>
 <script>
+    import currentUser from '../current-user';
     import MessageModal from './MessageUserModal.vue';
     import Spinny from  '../Spinner.vue';
     export default{
@@ -43,11 +44,15 @@
             }
         },
         created(){
-            if (this.recipient_id == KABOOODLE_APP.currentUser.id) {
-                this.disable = true;
-            } else {
-                this.disable = false;
+            if (currentUser()) {
+                if (this.recipient_id == currentUser().id) {
+                    this.disable = true;
+                    return;
+                }
             }
+
+            this.disable = false;
+            return;
         },
         computed: {
           modal_id(){

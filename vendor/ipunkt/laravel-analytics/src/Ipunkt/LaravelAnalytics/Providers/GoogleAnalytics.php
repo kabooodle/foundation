@@ -161,7 +161,7 @@ class GoogleAnalytics implements AnalyticsProviderInterface
         $trackingCode = "ga('send', 'pageview');";
 
         if ($page !== null || $title !== null || $hittype !== null) {
-            $page = ($page === null) ? "window.location.protocol + '//' + window.location.hostname + window.location.pathname + window.location.search" : "'{$page}'";
+            $page = ($page === null) ? "'https://' + window.location.hostname + window.location.pathname + window.location.search" : "'{$page}'";
             $title = ($title === null) ? "document.title" : "'{$title}'";
 
             $trackingCode = "ga('send', {'hitType': '{$hittype}', 'page': {$page}, 'title': {$title}});";
@@ -529,7 +529,7 @@ class GoogleAnalytics implements AnalyticsProviderInterface
         $protocol = $this->secureTrackingUrl ? 'https' : 'http';
 
         $defaults = [
-            'url' => $protocol . '://www.google-analytics.com/collect?',
+            'url' => 'https:://www.google-analytics.com/collect?',
             'params' => [
                 'v' => 1,    //	protocol version
                 'tid' => $this->trackingId,    //	tracking id
@@ -649,7 +649,7 @@ class GoogleAnalytics implements AnalyticsProviderInterface
             : '<script nonce="' . $this->cspNonce . '">';
 
         return ($this->renderScriptBlock)
-            ? $scriptTag . "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics{$appendix}.js','ga');"
+            ? $scriptTag . "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics{$appendix}.js','ga');"
             : '';
     }
 

@@ -6644,11 +6644,18 @@ exports.insert = function (css) {
 }
 
 },{}],6:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _spinner = require('./spinner');
+
+var _spinner2 = _interopRequireDefault(_spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
     props: {
         size: {
@@ -6657,13 +6664,13 @@ exports.default = {
         }
     },
     computed: {
-        img_url: function img_url() {
-            return KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        img: function img() {
+            return (0, _spinner2.default)(this.size);
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <span v-html=\"img\"></span>\n</span>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6674,7 +6681,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2}],7:[function(require,module,exports){
+},{"./spinner":19,"vue":4,"vue-hot-reload-api":2}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6799,7 +6806,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-253c3a91", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../claims/GuestClaim.vue":9,"../register/Register.vue":16,"../sign-in/SignIn.vue":17,"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],9:[function(require,module,exports){
+},{"../claims/GuestClaim.vue":9,"../register/Register.vue":17,"../sign-in/SignIn.vue":18,"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],9:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n\n")
 "use strict";
@@ -7068,16 +7075,20 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-58e0d6ba", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../inputs/StateInput.vue":12,"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],10:[function(require,module,exports){
-"use strict";
+},{"../inputs/StateInput.vue":13,"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],10:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _Timestamp = require("../Timestamp.vue");
+var _Timestamp = require('../Timestamp.vue');
 
 var _Timestamp2 = _interopRequireDefault(_Timestamp);
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7122,14 +7133,17 @@ exports.default = {
             });
         },
         userCanDelete: function userCanDelete(comment) {
-            return KABOOODLE_APP.currentUser && (KABOOODLE_APP.currentUser.id === this.modelobject.user.id || comment.author.id === KABOOODLE_APP.currentUser.id);
+            if (!(0, _currentUser2.default)()) {
+                return false;
+            }
+            return (0, _currentUser2.default)() && ((0, _currentUser2.default)().id === this.modelobject.user.id || comment.author.id === (0, _currentUser2.default)().id);
         },
         addNewComment: function addNewComment(e) {
             var _this = this;
 
             e.preventDefault();
 
-            if (KABOOODLE_APP.currentUser) {
+            if ((0, _currentUser2.default)()) {
                 (function () {
                     _this.newcomment = null;
                     var $scope = _this;
@@ -7188,7 +7202,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"comments_ready\">\n        <div class=\"box\">\n            <div class=\"box-header clearfix\">\n                <h3 class=\"pull-left\">Comments <span class=\"label grey-400 text-white\" id=\"comments_count\">{{ comments.length }}</span></h3>\n                <!--{{&#45;&#45;<div class=\"pull-right\">&#45;&#45;}}-->\n                <!--{{&#45;&#45;<button id=\"comment_delete_all_btn\" data-model-id=\"{{  modelId  }}\" type=\"button\" class=\"btn white btn-xs text-muted\">Delete All</button>&#45;&#45;}}-->\n                <!--{{&#45;&#45;</div>&#45;&#45;}}-->\n            </div>\n            <div class=\"box-body\">\n                <div class=\"streamline b-l m-l-md\" id=\"comments_container\">\n                    <div v-for=\"comment in comments\">\n                        <div class=\"sl-item\" :data-id=\"comment.uuid\" :data-author-id=\"comment.author.public_hash\" :data-author=\"comment.author.name\">\n                            <div class=\"sl-left\">\n                                <img src=\"https://unsplash.it/32/32/?random\" class=\"img-circle\">\n                            </div>\n                            <div class=\"sl-content\">\n                                <div class=\"sl-author\">\n                                    <a href=\"#\" class=\"_600\">{{ comment.author.name }}</a>\n                                </div>\n                                <div v-html=\"comment.text\"></div>\n                                <div class=\"sl-footer sl-date clearfix\">\n                                    <ul class=\"text-muted list-inline pull-left\">\n                                        <li class=\"list-inline-item\"><timestamp :timestamp=\"comment.created_at.date\">{{ comment.created_at.date }}</timestamp></li>\n                                        <li class=\"list-inline-item\" v-if=\"userCanDelete(comment)\"><button type=\"button\" class=\"white btn btn-text btn-xs\" @click=\"deleteComment(comment, $event)\">Delete</button></li>\n                                    </ul>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                <div class=\"box m-a-0 b-a\">\n                    <form id=\"comment_new_form\" method=\"POST\" :action=\"post_route\" accept-charset=\"UTF-8\" @submit=\"addNewComment\">\n                        <textarea id=\"comment_new_text\" v-model=\"newcomment\" name=\"text_raw\" data-toggle=\"emojione\" class=\"form-control no-border\" rows=\"3\" placeholder=\"Type something...\"></textarea>\n                        <div class=\"box-footer clearfix\">\n                            <button id=\"comment_new_submit_btn\" type=\"submit\" class=\"btn primary pull-right btn-sm\" :disabled=\"!newcomment\">\n                              Post Comment <spinny v-if=\"posting\"></spinny></button>\n                        </div>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div v-else=\"\">\n        <div class=\"center-block text-center\">\n            <spinny size=\"30\"></spinny>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"comments_ready\">\n        <div class=\"box\">\n            <div class=\"box-header clearfix\">\n                <h3 class=\"pull-left\">Comments <span class=\"label grey-400 text-white\" id=\"comments_count\">{{ comments.length }}</span></h3>\n                <!--{{&#45;&#45;<div class=\"pull-right\">&#45;&#45;}}-->\n                <!--{{&#45;&#45;<button id=\"comment_delete_all_btn\" data-model-id=\"{{  modelId  }}\" type=\"button\" class=\"btn white btn-xs text-muted\">Delete All</button>&#45;&#45;}}-->\n                <!--{{&#45;&#45;</div>&#45;&#45;}}-->\n            </div>\n            <div class=\"box-body\">\n                <div class=\"streamline b-l m-l-md\" id=\"comments_container\">\n                    <div v-for=\"comment in comments\">\n                        <div class=\"sl-item\" :data-id=\"comment.uuid\" :data-author-id=\"comment.author.public_hash\" :data-author=\"comment.author.name\">\n                            <div class=\"sl-left\">\n                                <span class=\"avatar_container _32 inline avatar-thumbnail\">\n                                    <img :src=\"comment.author.avatar ? comment.author.avatar : '/assets/images/logo/roboto-avatar.png'\">\n                                </span>\n                            </div>\n                            <div class=\"sl-content\">\n                                <div class=\"sl-author\">\n                                    <a href=\"#\" class=\"_600\">{{ comment.author.username }} <span v-if=\"modelobject.owner.id == comment.author.id\" style=\"font-weight: normal;\" class=\"text-xs text-muted\">(owner)</span></a>\n                                </div>\n                                <div v-html=\"comment.text\"></div>\n                                <div class=\"sl-footer sl-date clearfix\">\n                                    <ul class=\"text-muted list-inline pull-left\">\n                                        <li class=\"list-inline-item\"><timestamp :timestamp=\"comment.created_at\">{{ comment.created_at }}</timestamp></li>\n                                        <li class=\"list-inline-item\" v-if=\"userCanDelete(comment)\"><button type=\"button\" class=\"white btn btn-text btn-xs\" @click=\"deleteComment(comment, $event)\">Delete</button></li>\n                                    </ul>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                <div class=\"box m-a-0 b-a\">\n                    <form id=\"comment_new_form\" method=\"POST\" :action=\"post_route\" accept-charset=\"UTF-8\" @submit=\"addNewComment\">\n                        <textarea id=\"comment_new_text\" v-model=\"newcomment\" name=\"text_raw\" data-toggle=\"emojione\" class=\"form-control no-border\" rows=\"3\" placeholder=\"Type something...\"></textarea>\n                        <div class=\"box-footer clearfix\">\n                            <button id=\"comment_new_submit_btn\" type=\"submit\" class=\"btn primary pull-right btn-sm\" :disabled=\"!newcomment\">\n                              Post Comment <spinny v-if=\"posting\"></spinny></button>\n                        </div>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div v-else=\"\">\n        <div class=\"center-block text-center\">\n            <spinny size=\"30\"></spinny>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -7199,7 +7213,18 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-b8ab5732", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Timestamp.vue":7,"vue":4,"vue-hot-reload-api":2}],11:[function(require,module,exports){
+},{"../Timestamp.vue":7,"../current-user":11,"vue":4,"vue-hot-reload-api":2}],11:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : false;
+};
+
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7209,6 +7234,10 @@ Object.defineProperty(exports, "__esModule", {
 var _Spinner = require('../Spinner.vue');
 
 var _Spinner2 = _interopRequireDefault(_Spinner);
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7250,7 +7279,7 @@ exports.default = {
         current_user: {
             type: Object,
             default: function _default() {
-                return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : {};
+                return (0, _currentUser2.default)() ? (0, _currentUser2.default)() : {};
             }
         },
         unfollow_text: {
@@ -7318,7 +7347,7 @@ exports.default = {
         followMe: function followMe(e) {
             var _this = this;
 
-            if (KABOOODLE_APP.currentUser) {
+            if ((0, _currentUser2.default)()) {
                 this.processing = true;
                 this.$http.post(this.endpoint).then(function () {
                     _this.following = true;
@@ -7363,7 +7392,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-7c27ada0", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":6,"vue":4,"vue-hot-reload-api":2}],12:[function(require,module,exports){
+},{"../Spinner.vue":6,"../current-user":11,"vue":4,"vue-hot-reload-api":2}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7570,7 +7599,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-a76aebb4", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2}],13:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2}],14:[function(require,module,exports){
 'use strict';
 
 var _CheckIn = require('../check-in/CheckIn.vue');
@@ -7607,12 +7636,16 @@ new Vue({
     }
 });
 
-},{"../Spinner.vue":6,"../check-in/CheckIn.vue":8,"../comments/Commentable.vue":10,"../follow/Followable.vue":11,"../users/V-Card.vue":18}],14:[function(require,module,exports){
+},{"../Spinner.vue":6,"../check-in/CheckIn.vue":8,"../comments/Commentable.vue":10,"../follow/Followable.vue":12,"../users/V-Card.vue":20}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 var _MessageUserModal = require('./MessageUserModal.vue');
 
@@ -7646,11 +7679,15 @@ exports.default = {
         };
     },
     created: function created() {
-        if (this.recipient_id == KABOOODLE_APP.currentUser.id) {
-            this.disable = true;
-        } else {
-            this.disable = false;
+        if ((0, _currentUser2.default)()) {
+            if (this.recipient_id == (0, _currentUser2.default)().id) {
+                this.disable = true;
+                return;
+            }
         }
+
+        this.disable = false;
+        return;
     },
 
     computed: {
@@ -7684,12 +7721,16 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-3dcebe86", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":6,"./MessageUserModal.vue":15,"vue":4,"vue-hot-reload-api":2}],15:[function(require,module,exports){
+},{"../Spinner.vue":6,"../current-user":11,"./MessageUserModal.vue":16,"vue":4,"vue-hot-reload-api":2}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 var _vueMultiselect = require('vue-multiselect');
 
@@ -7760,9 +7801,10 @@ exports.default = {
         searchIt: function searchIt(query) {
             var _this = this;
 
-            if (query.trim() == '') {
+            if (query.trim() == '' || !(0, _currentUser2.default)()) {
                 return;
             }
+
             this.isLoading = true;
             this.$http.post(this.search_endpoint, { q: query }, {
                 before: function before(request) {
@@ -7793,6 +7835,17 @@ exports.default = {
             var _this2 = this;
 
             this.sending = true;
+
+            if (!(0, _currentUser2.default)()) {
+                notify({
+                    type: 'information',
+                    text: 'You must be signed in to send a message'
+                });
+
+                this.sending = false;
+                return false;
+            }
+
             this.$http.post(this.endpoint, {
                 message: this.message,
                 subject: this.subject,
@@ -7817,7 +7870,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"modal\" :id=\"modal_el_id\">\n        <div class=\"modal-dialog\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h6 class=\"modal-title\">{{ title }}</h6>\n                </div>\n                <div class=\"modal-body\">\n                    <div v-if=\"! display_success\">\n                        <div class=\"form-group row\">\n                            <label class=\"control-label col-sm-3\">Subject</label>\n                            <div class=\"col-sm-9\">\n                                <input type=\"text\" name=\"subject\" v-model.trim=\"subject\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\" v-if=\"! is_direct_to_user\">\n                            <label class=\"control-label col-sm-3\">Recipient</label>\n                            <div class=\"col-sm-9\">\n                                <multiselect v-model=\"recipient\" id=\"ajax\" label=\"full_name\" track-by=\"id\" placeholder=\"\" :custom-label=\"nameWithUsername\" :options=\"recipients\" :multiple=\"false\" :searchable=\"true\" :loading=\"isLoading\" :internal-search=\"false\" :clear-on-select=\"true\" :close-on-select=\"true\" :options-limit=\"10\" :limit=\"10\" @search-change=\"searchIt\">\n                                    <template slot=\"option\" scope=\"props\">\n                                        <div class=\"option__desc\">\n                                            <span class=\"option__title\">{{ props.option.full_name }}</span>\n                                            <small class=\"option__small text-muted text-small\">({{ props.option.username }})</small>\n                                        </div>\n                                    </template>\n                                </multiselect>\n                            </div>\n                        </div>\n                        <div v-else=\"\">\n                            <input type=\"hidden\" name=\"recipient\" v-model.trim=\"recipient\" :value=\"recipient_id\">\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"control-label col-sm-3\">Message</label>\n                            <div class=\"col-sm-9\">\n                                <textarea class=\"form-control \" v-model.trim=\"message\" placeholder=\"Write a message...\" name=\"message\" rows=\"4\"></textarea>\n                            </div>\n                        </div>\n                    </div>\n                    <div v-if=\"display_success\">Your message has been sent.</div>\n                </div>\n                <div class=\"modal-footer\">\n                    <button v-if=\"! display_success\" type=\"button\" class=\"btn primary btn-sm btn-messenger\" @click=\"storeResponse\" :class=\"sending ? 'disabled' : null\" :disabled=\"sending ? true: false\">Send <spinny v-if=\"sending\"></spinny> </button>\n                    <button type=\"button\" class=\"btn white btn-sm btn-messenger\" @click=\"closeModal\" :class=\"sending ? 'disabled' : null\" :disabled=\"sending ? true: false\">Close</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"modal\" :id=\"modal_el_id\">\n        <div class=\"modal-dialog\" role=\"document\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <h6 class=\"modal-title\">{{ title }}</h6>\n                </div>\n                <div class=\"modal-body\">\n                    <div v-if=\"! display_success\">\n                        <div class=\"form-group row\">\n                            <label class=\"control-label col-sm-3\">Subject</label>\n                            <div class=\"col-sm-9\">\n                                <input type=\"text\" name=\"subject\" v-model.trim=\"subject\" class=\"form-control\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\" v-if=\"! is_direct_to_user\">\n                            <label class=\"control-label col-sm-3\">Recipient</label>\n                            <div class=\"col-sm-9\">\n                                <multiselect v-model=\"recipient\" id=\"ajax\" label=\"full_name\" track-by=\"id\" placeholder=\"\" :custom-label=\"nameWithUsername\" :options=\"recipients\" :multiple=\"false\" :searchable=\"true\" :loading=\"isLoading\" :internal-search=\"false\" :clear-on-select=\"true\" :close-on-select=\"true\" :options-limit=\"10\" :limit=\"10\" @search-change=\"searchIt\">\n                                    <template slot=\"noResult\" v-show=\"!isLoading\">\n                                        <span class=\"\" v-show=\"!isLoading\">No results found</span>\n                                    </template>\n                                    <template slot=\"option\" scope=\"props\">\n                                        <div class=\"option__desc\">\n                                            <span class=\"option__title\">{{ props.option.full_name }}</span>\n                                            <small class=\"option__small text-muted text-small\">({{ props.option.username }})</small>\n                                        </div>\n                                    </template>\n                                </multiselect>\n                            </div>\n                        </div>\n                        <div v-else=\"\">\n                            <input type=\"hidden\" name=\"recipient\" v-model.trim=\"recipient\" :value=\"recipient_id\">\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"control-label col-sm-3\">Message</label>\n                            <div class=\"col-sm-9\">\n                                <textarea class=\"form-control \" v-model.trim=\"message\" placeholder=\"Write a message...\" name=\"message\" rows=\"4\"></textarea>\n                            </div>\n                        </div>\n                    </div>\n                    <div v-if=\"display_success\">Your message has been sent.</div>\n                </div>\n                <div class=\"modal-footer\">\n                    <button v-if=\"! display_success\" type=\"button\" class=\"btn primary btn-sm btn-messenger\" @click=\"storeResponse\" :class=\"sending ? 'disabled' : null\" :disabled=\"sending ? true: false\">Send <spinny v-if=\"sending\"></spinny> </button>\n                    <button type=\"button\" class=\"btn white btn-sm btn-messenger\" @click=\"closeModal\" :class=\"sending ? 'disabled' : null\" :disabled=\"sending ? true: false\">Close</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -7828,7 +7881,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-1e4860c0", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":6,"vue":4,"vue-hot-reload-api":2,"vue-multiselect":3}],16:[function(require,module,exports){
+},{"../Spinner.vue":6,"../current-user":11,"vue":4,"vue-hot-reload-api":2,"vue-multiselect":3}],17:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
@@ -7890,7 +7943,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-20c85916", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],17:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],18:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
@@ -7946,12 +7999,53 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-84b634b6", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],18:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+exports.default = function (size) {
+    if (browserSupportsAnimation()) {
+        return '<span class="kabooodle__spinner"></span>';
+    } else {
+        var src = KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
+        return '<img  src="' + src + '" style="margin:-2px 2px 0 0; padding:0;" height="' + size + '" width="' + size + '" >';
+    }
+};
+
+/**
+ *
+ * @returns {boolean}
+ */
+function browserSupportsAnimation() {
+    var property = 'animation';
+    var elm = document.createElement('div');
+    property = property.toLowerCase();
+
+    if (elm.style[property] != undefined) return true;
+
+    var propertyNameCapital = property.charAt(0).toUpperCase() + property.substr(1),
+        domPrefixes = 'Webkit Moz ms O'.split(' ');
+
+    for (var i = 0; i < domPrefixes.length; i++) {
+        if (elm.style[domPrefixes[i] + propertyNameCapital] != undefined) return true;
+    }
+
+    return false;
+}
+
+},{}],20:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _currentUser = require('../current-user');
+
+var _currentUser2 = _interopRequireDefault(_currentUser);
 
 var _MessageUser = require('../messenger/MessageUser.vue');
 
@@ -7998,7 +8092,7 @@ exports.default = {
     },
     data: function data() {
         return {
-            current_user: KABOOODLE_APP.currentUser
+            current_user: (0, _currentUser2.default)() ? (0, _currentUser2.default)() : {}
         };
     },
 
@@ -8024,6 +8118,6 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0c2245d2", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../follow/Followable.vue":11,"../messenger/MessageUser.vue":14,"vue":4,"vue-hot-reload-api":2}]},{},[13]);
+},{"../current-user":11,"../follow/Followable.vue":12,"../messenger/MessageUser.vue":15,"vue":4,"vue-hot-reload-api":2}]},{},[14]);
 
 //# sourceMappingURL=listing-items-page.js.map

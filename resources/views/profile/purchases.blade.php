@@ -45,7 +45,7 @@
                         <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
                                 @if($claim->listedItem->firstImage())
-                                    <img src="{{ $claim->listedItem->firstImage()->location }}">
+                                    <img src="{{ $claim->listedItem->cover_photo }}">
                                 @endif
                             </div>
                             <span>{{ $claim->listedItem->name_with_variant }}</span>
@@ -64,6 +64,7 @@
                 @endforeach
             </tbody>
         </table>
+            </div>
         </div>
     </div>
 

@@ -93,7 +93,7 @@ class ScheduleListingCommandHandler
                 $totalSavedListings[] = $flashsaleListedItems;
             }
 
-            event(new ListingScheduledEvent($actor, $listing));
+            event(new ListingScheduledEvent($actor->id, $listing->id));
 
             return $listing;
         });
@@ -113,7 +113,6 @@ class ScheduleListingCommandHandler
         $listing = new Listings;
         $listing->owner_id = $command->getActor()->id;
         $listing->scheduled_for = $scheduledFor;
-        $listing->include_link_in_descr = $options->getIncludeLink();
 
         if ($options->getEndsAt()) {
             $listing->scheduled_until = $options->getEndsAt();
@@ -230,6 +229,7 @@ class ScheduleListingCommandHandler
                     $listingItem->fb_group_node_id = $command->getFacebookGroupId();
                     $listingItem->fb_album_node_id = $facebookAlbum['id'];
                     $listingItem->inventory_id = $listedItem['id'];
+                    $listingItem->item_message = $command->getFacebookListingOptions()->getItemMessage();
 
                     // Copy the type and status from the parent listing.
                     // Status may actually change and be different, below otherwise they start the same.
@@ -237,6 +237,8 @@ class ScheduleListingCommandHandler
                     $listingItem->status = $listing->status;
                     $listingItem->status_updated_at = $this->now;
 
+                    // Disabled for now -- JT January 9, 2017
+                    // There really is no way to know if its a duplicate at this time.
                     // Flag duplicates as ignored listings.
                     // We do not actually "skip" them because we want to provide full transparency to the user.
                     if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $listedItem['id'])) {
@@ -278,6 +280,7 @@ class ScheduleListingCommandHandler
                 $listingItem->owner_id = $actor->id;
                 $listingItem->inventory_id = $selectedItem['id'];
                 $listingItem->flashsale_id = $command->getFlashSaleId();
+                $listingItem->item_message = $command->getFacebookListingOptions()->getItemMessage();
 
                 // Copy the type and status from the parent listing.
                 // Status may actually change and be different, below otherwise they start the same.

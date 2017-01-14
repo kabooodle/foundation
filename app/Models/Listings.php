@@ -26,7 +26,6 @@ class Listings extends AbstractListingModel
     protected $appends = [
         'albums_count',
         'items_count',
-        'use_link',
         'accepted_sales_count',
         'pending_sales_count',
         'gross',
@@ -69,15 +68,7 @@ class Listings extends AbstractListingModel
     /**
      * @var array
      */
-    protected $casts = [
-        'include_link_in_descr' => 'bool'
-    ];
-
-    /**
-     * @var array
-     */
     protected $attributes = [
-        'include_link_in_descr' => true,
         'scheduled_for' => null,
         'scheduled_until' => null,
         'claimable_until' => null,
@@ -96,7 +87,6 @@ class Listings extends AbstractListingModel
      * @var array
      */
     protected $fillable = [
-        'include_link_in_descr',
         'scheduled_for',
         'scheduled_until',
         'claimable_at',
@@ -128,14 +118,6 @@ class Listings extends AbstractListingModel
     public function getItemsCountAttribute()
     {
         return $this->listingItems->count();
-    }
-
-    /**
-     * @return bool
-     */
-    public function getUseLinkAttribute()
-    {
-        return $this->includeLinkInDescr();
     }
 
     public function getAcceptedSalesCountAttribute()
@@ -226,7 +208,6 @@ class Listings extends AbstractListingModel
         $sql = "SELECT
                 l.id as id,
                 l.scheduled_for AS scheduled_for,
-                l.include_link_in_descr as use_link,
                 l.status AS status,
                 l.type as type,
                 l.uuid AS uuid,
@@ -314,14 +295,6 @@ class Listings extends AbstractListingModel
     }
 
     /**
-     * @return bool
-     */
-    public function includeLinkInDescr()
-    {
-        return $this->include_link_in_descr;
-    }
-
-    /**
      * @param $scope
      * @param string $operator
      * @param $date
@@ -373,7 +346,7 @@ class Listings extends AbstractListingModel
         $claimableAt = $this->claimable_at ? : $scheduledFor;
         $claimableUntil = $this->claimable_until ? : ($scheduledUntil ? : null);
 
-        return $claimableAt.' - '.$claimableUntil;
+        return $claimableUntil ? $this->humanize($claimableAt).' - '.$this->humanize($claimableUntil) : $this->humanize($claimableAt);
     }
 
     /**
