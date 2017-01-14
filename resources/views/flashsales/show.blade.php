@@ -43,13 +43,8 @@
                         <div class="col-md-4">
                             <div class="box p-a-xs p-b-0">
                                 <div class="item">
-<<<<<<< HEAD
                                     <a href="{{ route('flashsales.shop.show', [$item->getUUID(), $listedItem->getUUID()]) }}">
-                                        <img src="{{ $listedItem->firstImage() ? $listedItem->firstImage()->location : 'https://placekitten.com/g/32/20'}}" class="img-responsive">
-=======
-                                    <a href="{{ route('flashsales.shop.show', [$item->getUUID(), $inventoryItem->getUUID()]) }}">
-                                        <img src="{{ $inventoryItem->cover_photo }}" class="img-responsive">
->>>>>>> develop
+                                        <img src="{{ $listedItem->cover_photo }}" class="img-responsive">
                                     </a>
                                 </div>
                                 <div class="p-a p-b-0">

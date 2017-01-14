@@ -318,11 +318,11 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
             $route = str_replace(['https://', 'http://'], '', str_replace(['api.', 'app.', 'api', 'app'], 'www.', route('externalclaim.show', [$id])));
             $itemMessage = str_ireplace($placeholders['url'], ' '.$route.' ', $itemMessage);
 
-            $itemMessage = str_ireplace($placeholders['price'], $this->inventoryItem->getPrice(), $itemMessage);
+            $itemMessage = str_ireplace($placeholders['price'], $this->listedItem->getPrice(), $itemMessage);
 
-            $itemMessage = str_ireplace($placeholders['style'], $this->inventoryItem->style->name, $itemMessage);
+            $itemMessage = str_ireplace($placeholders['style'], $this->listedItem->style->name, $itemMessage);
 
-            $itemMessage = str_ireplace($placeholders['size'], $this->inventoryItem->size->name, $itemMessage);
+            $itemMessage = str_ireplace($placeholders['size'], $this->listedItem->size->name, $itemMessage);
 
             return $itemMessage;
         }

@@ -34,7 +34,7 @@
             current_user: {
                 type: Object,
                 default: function () {
-                    return (currentUser() ? currentUser() : {})
+                    return currentUser() || {};
                 }
             },
             current_user_following: {

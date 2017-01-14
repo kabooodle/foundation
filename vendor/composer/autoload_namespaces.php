@@ -6,20 +6,4 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ZackKitzmiller' => array($vendorDir . '/zackkitzmiller/tiny/src'),
-    'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
-    'Postmark\\' => array($vendorDir . '/wildbit/swiftmailer-postmark/src', $vendorDir . '/wildbit/laravel-postmark-provider/src'),
-    'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
-    'Mockery' => array($vendorDir . '/mockery/mockery/library'),
-    'Maatwebsite\\Excel\\' => array($vendorDir . '/maatwebsite/excel/src'),
-    'JakubOnderka\\PhpConsoleHighlighter' => array($vendorDir . '/jakub-onderka/php-console-highlighter/src'),
-    'JakubOnderka\\PhpConsoleColor' => array($vendorDir . '/jakub-onderka/php-console-color/src'),
-    'Ipunkt\\LaravelAnalytics\\' => array($vendorDir . '/ipunkt/laravel-analytics/src'),
-    'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
-    'Doctrine\\Common\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib'),
-    'Cron' => array($vendorDir . '/mtdowling/cron-expression/src'),
-    'Cmgmyr\\Messenger\\' => array($vendorDir . '/cmgmyr/messenger/src'),
-    'Barryvdh' => array($vendorDir . '/barryvdh/reflection-docblock/src'),
-    'AlgoliaSearch\\Tests' => array($vendorDir . '/algolia/algoliasearch-client-php/tests'),
-    'AlgoliaSearch' => array($vendorDir . '/algolia/algoliasearch-client-php/src'),
 );

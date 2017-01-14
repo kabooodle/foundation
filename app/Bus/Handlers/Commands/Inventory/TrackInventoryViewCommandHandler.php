@@ -34,7 +34,7 @@ class TrackInventoryViewCommandHandler implements ShouldQueue
         $insert = PageViews::create([
             'shoppable_type' => get_class($resource),
             'shoppable_id' => $resource->id,
-            'inventory_id' => $resource->inventoryItem->id,
+            'inventory_id' => $resource->listedItem->id,
             'ip_address' => $ip,
         ]);
 

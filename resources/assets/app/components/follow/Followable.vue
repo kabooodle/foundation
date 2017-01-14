@@ -53,7 +53,7 @@
             current_user: {
                 type: Object,
                 default: function () {
-                    return (currentUser() ? currentUser() : {});
+                    return currentUser() || {};
                 }
             },
             unfollow_text: {
