@@ -105,11 +105,12 @@
   border-top: none !important;
 }
 
-.modal-backdrop {
+.modal-backdrop,
+.noty_modal {
   &.show {
     opacity: .5;
   }
-  background-color: #501f88;
+  background-color: #501f88 !important;
 }
 
 .modal.ekko-lightbox {

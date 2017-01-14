@@ -64,7 +64,7 @@ class AddInventoryCommandHandler
                 }
 
                 // Get the size categories.
-                $categories = isset($sizing['categories']) ? $sizing['categories'] : null;
+                $categories = isset($sizing['categories']) ? implode(',',$sizing['categories']) : null;
 
                 // Normalize the images array.
 

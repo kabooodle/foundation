@@ -42,14 +42,14 @@
                 <div class="form-group row {{ $errors->has('wholesale_price_usd') ? 'has-danger' : null }}"  >
                     <label for="wholesale_price_usd" class="col-sm-3 form-control-label">Wholesale Price in USD$</label>
                     <div class="col-sm-3">
-                        {{ Form::number('wholesale_price_usd', 0.00, ['class' => 'form-control float', 'required', 'step' => 'any', 'placeholder' => '0.00', 'id' => 'inventory-wholesale-el']) }}
+                        {{ Form::number('wholesale_price_usd', null, ['class' => 'form-control float', 'required', 'step' => 'any',  'v-model'=>'wholesale_price', 'placeholder' => '0.00', 'id' => 'inventory-wholesale-el']) }}
                     </div>
                 </div>
 
                 <div class="form-group row {{ $errors->has('price_usd') ? 'has-danger' : null }}"  >
                     <label for="price_usd" class="col-sm-3 form-control-label">Price in USD$</label>
                     <div class="col-sm-3">
-                        {{ Form::number('price_usd', 0.00, ['id' => 'inventory-price-el', 'class' => 'form-control float', 'required', 'step' => 'any', 'placeholder' => '0.00']) }}
+                        {{ Form::number('price_usd', null, ['id' => 'inventory-price-el', 'v-model' => 'price', 'class' => 'form-control float', 'required', 'step' => 'any', 'placeholder' => '0.00']) }}
                     </div>
                 </div>
 
@@ -62,14 +62,14 @@
             </div>
         </div>
 
-        <inventory-sizing
-                user_hash="{{ user()->public_hash }}"
+        <size-containers
                 s3_key_url="{{ apiRoute('api.files.sign') }}"
-                :size_containers.sync="size_containers"></inventory-sizing>
+        ></size-containers>
+
 
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-7">
-                <button style="margin-left: 6px;" type="button" class="btn white" id="size-add-btn" v-on:click="addSizeContainer" :disabled="submitting">Add Size</button>
+                <button style="margin-left: 6px;" type="button" class="btn white" id="size-add-btn" @click="addSizeContainer" :disabled="submitting">Add Size</button>
                 <button type="submit" class="btn primary" id="btn-form-save">Save</button>
             </div>
         </div>
