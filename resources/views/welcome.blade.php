@@ -180,7 +180,7 @@
                             <followable
                                     able_type="{{ get_class($user) }}"
                                     able_id="{{ $user->id }}"
-                                    already_following="{{ auth()->user()->is_following ? 1 : 0 }}"
+                                    :already_following="{{ $user->is_followed ? 1 : 0 }}"
                                     endpoint="{{ apiRoute('user.followers.store', [$user->id]) }}"
                                     followable_entity_name="user"
                                     followable_type="user"

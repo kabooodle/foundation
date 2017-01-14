@@ -192,6 +192,307 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],5:[function(require,module,exports){
+var Vue // late bind
+var map = Object.create(null)
+var shimmed = false
+var isBrowserify = false
+
+/**
+ * Determine compatibility and apply patch.
+ *
+ * @param {Function} vue
+ * @param {Boolean} browserify
+ */
+
+exports.install = function (vue, browserify) {
+  if (shimmed) return
+  shimmed = true
+
+  Vue = vue
+  isBrowserify = browserify
+
+  exports.compatible = !!Vue.internalDirectives
+  if (!exports.compatible) {
+    console.warn(
+      '[HMR] vue-loader hot reload is only compatible with ' +
+      'Vue.js 1.0.0+.'
+    )
+    return
+  }
+
+  // patch view directive
+  patchView(Vue.internalDirectives.component)
+  console.log('[HMR] Vue component hot reload shim applied.')
+  // shim router-view if present
+  var routerView = Vue.elementDirective('router-view')
+  if (routerView) {
+    patchView(routerView)
+    console.log('[HMR] vue-router <router-view> hot reload shim applied.')
+  }
+}
+
+/**
+ * Shim the view directive (component or router-view).
+ *
+ * @param {Object} View
+ */
+
+function patchView (View) {
+  var unbuild = View.unbuild
+  View.unbuild = function (defer) {
+    if (!this.hotUpdating) {
+      var prevComponent = this.childVM && this.childVM.constructor
+      removeView(prevComponent, this)
+      // defer = true means we are transitioning to a new
+      // Component. Register this new component to the list.
+      if (defer) {
+        addView(this.Component, this)
+      }
+    }
+    // call original
+    return unbuild.call(this, defer)
+  }
+}
+
+/**
+ * Add a component view to a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function addView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    if (!map[id]) {
+      map[id] = {
+        Component: Component,
+        views: [],
+        instances: []
+      }
+    }
+    map[id].views.push(view)
+  }
+}
+
+/**
+ * Remove a component view from a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function removeView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    map[id].views.$remove(view)
+  }
+}
+
+/**
+ * Create a record for a hot module, which keeps track of its construcotr,
+ * instnaces and views (component directives or router-views).
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+exports.createRecord = function (id, options) {
+  if (typeof options === 'function') {
+    options = options.options
+  }
+  if (typeof options.el !== 'string' && typeof options.data !== 'object') {
+    makeOptionsHot(id, options)
+    map[id] = {
+      Component: null,
+      views: [],
+      instances: []
+    }
+  }
+}
+
+/**
+ * Make a Component options object hot.
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+function makeOptionsHot (id, options) {
+  options.hotID = id
+  injectHook(options, 'created', function () {
+    var record = map[id]
+    if (!record.Component) {
+      record.Component = this.constructor
+    }
+    record.instances.push(this)
+  })
+  injectHook(options, 'beforeDestroy', function () {
+    map[id].instances.$remove(this)
+  })
+}
+
+/**
+ * Inject a hook to a hot reloadable component so that
+ * we can keep track of it.
+ *
+ * @param {Object} options
+ * @param {String} name
+ * @param {Function} hook
+ */
+
+function injectHook (options, name, hook) {
+  var existing = options[name]
+  options[name] = existing
+    ? Array.isArray(existing)
+      ? existing.concat(hook)
+      : [existing, hook]
+    : [hook]
+}
+
+/**
+ * Update a hot component.
+ *
+ * @param {String} id
+ * @param {Object|null} newOptions
+ * @param {String|null} newTemplate
+ */
+
+exports.update = function (id, newOptions, newTemplate) {
+  var record = map[id]
+  // force full-reload if an instance of the component is active but is not
+  // managed by a view
+  if (!record || (record.instances.length && !record.views.length)) {
+    console.log('[HMR] Root or manually-mounted instance modified. Full reload may be required.')
+    if (!isBrowserify) {
+      window.location.reload()
+    } else {
+      // browserify-hmr somehow sends incomplete bundle if we reload here
+      return
+    }
+  }
+  if (!isBrowserify) {
+    // browserify-hmr already logs this
+    console.log('[HMR] Updating component: ' + format(id))
+  }
+  var Component = record.Component
+  // update constructor
+  if (newOptions) {
+    // in case the user exports a constructor
+    Component = record.Component = typeof newOptions === 'function'
+      ? newOptions
+      : Vue.extend(newOptions)
+    makeOptionsHot(id, Component.options)
+  }
+  if (newTemplate) {
+    Component.options.template = newTemplate
+  }
+  // handle recursive lookup
+  if (Component.options.name) {
+    Component.options.components[Component.options.name] = Component
+  }
+  // reset constructor cached linker
+  Component.linker = null
+  // reload all views
+  record.views.forEach(function (view) {
+    updateView(view, Component)
+  })
+  // flush devtools
+  if (window.__VUE_DEVTOOLS_GLOBAL_HOOK__) {
+    window.__VUE_DEVTOOLS_GLOBAL_HOOK__.emit('flush')
+  }
+}
+
+/**
+ * Update a component view instance
+ *
+ * @param {Directive} view
+ * @param {Function} Component
+ */
+
+function updateView (view, Component) {
+  if (!view._bound) {
+    return
+  }
+  view.Component = Component
+  view.hotUpdating = true
+  // disable transitions
+  view.vm._isCompiled = false
+  // save state
+  var state = extractState(view.childVM)
+  // remount, make sure to disable keep-alive
+  var keepAlive = view.keepAlive
+  view.keepAlive = false
+  view.mountComponent()
+  view.keepAlive = keepAlive
+  // restore state
+  restoreState(view.childVM, state, true)
+  // re-eanble transitions
+  view.vm._isCompiled = true
+  view.hotUpdating = false
+}
+
+/**
+ * Extract state from a Vue instance.
+ *
+ * @param {Vue} vm
+ * @return {Object}
+ */
+
+function extractState (vm) {
+  return {
+    cid: vm.constructor.cid,
+    data: vm.$data,
+    children: vm.$children.map(extractState)
+  }
+}
+
+/**
+ * Restore state to a reloaded Vue instance.
+ *
+ * @param {Vue} vm
+ * @param {Object} state
+ */
+
+function restoreState (vm, state, isRoot) {
+  var oldAsyncConfig
+  if (isRoot) {
+    // set Vue into sync mode during state rehydration
+    oldAsyncConfig = Vue.config.async
+    Vue.config.async = false
+  }
+  // actual restore
+  if (isRoot || !vm._props) {
+    vm.$data = state.data
+  } else {
+    Object.keys(state.data).forEach(function (key) {
+      if (!vm._props[key]) {
+        // for non-root, only restore non-props fields
+        vm.$data[key] = state.data[key]
+      }
+    })
+  }
+  // verify child consistency
+  var hasSameChildren = vm.$children.every(function (c, i) {
+    return state.children[i] && state.children[i].cid === c.constructor.cid
+  })
+  if (hasSameChildren) {
+    // rehydrate children
+    vm.$children.forEach(function (c, i) {
+      restoreState(c, state.children[i])
+    })
+  }
+  if (isRoot) {
+    Vue.config.async = oldAsyncConfig
+  }
+}
+
+function format (id) {
+  var match = id.match(/[^\/]+\.vue$/)
+  return match ? match[0] : id
+}
+
+},{}],6:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.1.8
@@ -6331,13 +6632,11 @@ setTimeout(function () {
 module.exports = Vue$2;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":4}],6:[function(require,module,exports){
+},{"_process":4}],7:[function(require,module,exports){
 var inserted = exports.cache = {}
 
-function noop () {}
-
 exports.insert = function (css) {
-  if (inserted[css]) return noop
+  if (inserted[css]) return
   inserted[css] = true
 
   var elem = document.createElement('style')
@@ -6350,141 +6649,12 @@ exports.insert = function (css) {
   }
 
   document.getElementsByTagName('head')[0].appendChild(elem)
-  return function () {
-    document.getElementsByTagName('head')[0].removeChild(elem)
-    inserted[css] = false
-  }
+  return elem
 }
-
-},{}],7:[function(require,module,exports){
-var Vue // late bind
-var map = window.__VUE_HOT_MAP__ = Object.create(null)
-var installed = false
-var isBrowserify = false
-var initHookName = 'beforeCreate'
-
-exports.install = function (vue, browserify) {
-  if (installed) return
-  installed = true
-
-  Vue = vue
-  isBrowserify = browserify
-
-  // compat with < 2.0.0-alpha.7
-  if (Vue.config._lifecycleHooks.indexOf('init') > -1) {
-    initHookName = 'init'
-  }
-
-  exports.compatible = Number(Vue.version.split('.')[0]) >= 2
-  if (!exports.compatible) {
-    console.warn(
-      '[HMR] You are using a version of vue-hot-reload-api that is ' +
-      'only compatible with Vue.js core ^2.0.0.'
-    )
-    return
-  }
-}
-
-/**
- * Create a record for a hot module, which keeps track of its constructor
- * and instances
- *
- * @param {String} id
- * @param {Object} options
- */
-
-exports.createRecord = function (id, options) {
-  var Ctor = null
-  if (typeof options === 'function') {
-    Ctor = options
-    options = Ctor.options
-  }
-  makeOptionsHot(id, options)
-  map[id] = {
-    Ctor: Vue.extend(options),
-    instances: []
-  }
-}
-
-/**
- * Make a Component options object hot.
- *
- * @param {String} id
- * @param {Object} options
- */
-
-function makeOptionsHot (id, options) {
-  injectHook(options, initHookName, function () {
-    map[id].instances.push(this)
-  })
-  injectHook(options, 'beforeDestroy', function () {
-    var instances = map[id].instances
-    instances.splice(instances.indexOf(this), 1)
-  })
-}
-
-/**
- * Inject a hook to a hot reloadable component so that
- * we can keep track of it.
- *
- * @param {Object} options
- * @param {String} name
- * @param {Function} hook
- */
-
-function injectHook (options, name, hook) {
-  var existing = options[name]
-  options[name] = existing
-    ? Array.isArray(existing)
-      ? existing.concat(hook)
-      : [existing, hook]
-    : [hook]
-}
-
-function tryWrap (fn) {
-  return function (id, arg) {
-    try { fn(id, arg) } catch (e) {
-      console.error(e)
-      console.warn('Something went wrong during Vue component hot-reload. Full reload required.')
-    }
-  }
-}
-
-exports.rerender = tryWrap(function (id, fns) {
-  var record = map[id]
-  record.Ctor.options.render = fns.render
-  record.Ctor.options.staticRenderFns = fns.staticRenderFns
-  record.instances.slice().forEach(function (instance) {
-    instance.$options.render = fns.render
-    instance.$options.staticRenderFns = fns.staticRenderFns
-    instance._staticTrees = [] // reset static trees
-    instance.$forceUpdate()
-  })
-})
-
-exports.reload = tryWrap(function (id, options) {
-  makeOptionsHot(id, options)
-  var record = map[id]
-  record.Ctor.extendOptions = options
-  var newCtor = Vue.extend(options)
-  record.Ctor.options = newCtor.options
-  record.Ctor.cid = newCtor.cid
-  if (newCtor.release) {
-    // temporary global mixin strategy used in < 2.0.0-alpha.6
-    newCtor.release()
-  }
-  record.instances.slice().forEach(function (instance) {
-    if (instance.$vnode && instance.$vnode.context) {
-      instance.$vnode.context.$forceUpdate()
-    } else {
-      console.warn('Root or manually mounted instance modified. Full reload required.')
-    }
-  })
-})
 
 },{}],8:[function(require,module,exports){
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".fileinput-button {\n    position: relative;\n    overflow: hidden;\n    display: inline-block;\n}\n.fileinput-button input {\n    position: absolute;\n    top: 0;\n    right: 0;\n    margin: 0;\n    opacity: 0;\n    -ms-filter: 'alpha(opacity=0)';\n    font-size: 200px !important;\n    direction: ltr;\n    cursor: pointer;\n}\n\n/* Fixes for IE < 8 */\n@media screen\\9 {\n    .fileinput-button input {\n        filter: alpha(opacity=0);\n        font-size: 100%;\n        height: 100%;\n    }\n}\n\n\n.fileupload-buttonbar .btn,\n.fileupload-buttonbar .toggle {\n    margin-bottom: 5px;\n}\n.progress-animated .progress-bar,\n.progress-animated .bar {\n    background: url(\"../img/progressbar.gif\") !important;\n    filter: none;\n}\n.fileupload-process {\n    float: right;\n    display: none;\n}\n.fileupload-processing .fileupload-process,\n.files .processing .preview {\n    display: block;\n    width: 32px;\n    height: 32px;\n    background: url(\"../img/loading.gif\") center no-repeat;\n    background-size: contain;\n}\n.files audio,\n.files video {\n    max-width: 300px;\n}\n\n@media (max-width: 767px) {\n    .fileupload-buttonbar .toggle,\n    .files .toggle,\n    .files .btn span {\n        display: none;\n    }\n    .files .name {\n        width: 80px;\n        word-wrap: break-word;\n    }\n    .files audio,\n    .files video {\n        max-width: 80px;\n    }\n    .files img,\n    .files canvas {\n        max-width: 100%;\n    }\n}")
-;(function(){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n.fileinput-button {\n    position: relative;\n    overflow: hidden;\n    display: inline-block;\n}\n.fileinput-button input {\n    position: absolute;\n    top: 0;\n    right: 0;\n    margin: 0;\n    opacity: 0;\n    -ms-filter: 'alpha(opacity=0)';\n    font-size: 200px !important;\n    direction: ltr;\n    cursor: pointer;\n}\n\n/* Fixes for IE < 8 */\n@media screen\\9 {\n    .fileinput-button input {\n        filter: alpha(opacity=0);\n        font-size: 100%;\n        height: 100%;\n    }\n}\n\n\n.fileupload-buttonbar .btn,\n.fileupload-buttonbar .toggle {\n    margin-bottom: 5px;\n}\n.progress-animated .progress-bar,\n.progress-animated .bar {\n    background: url(\"../img/progressbar.gif\") !important;\n    -webkit-filter: none;\n            filter: none;\n}\n.fileupload-process {\n    float: right;\n    display: none;\n}\n.fileupload-processing .fileupload-process,\n.files .processing .preview {\n    display: block;\n    width: 32px;\n    height: 32px;\n    background: url(\"../img/loading.gif\") center no-repeat;\n    background-size: contain;\n}\n.files audio,\n.files video {\n    max-width: 300px;\n}\n\n@media (max-width: 767px) {\n    .fileupload-buttonbar .toggle,\n    .files .toggle,\n    .files .btn span {\n        display: none;\n    }\n    .files .name {\n        width: 80px;\n        word-wrap: break-word;\n    }\n    .files audio,\n    .files video {\n        max-width: 80px;\n    }\n    .files img,\n    .files canvas {\n        max-width: 100%;\n    }\n}\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6600,24 +6770,23 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{class:_vm.outer_class,attrs:{"id":_vm.imageEl}},[_c('div',{staticClass:"upload-template",staticStyle:{"margin-right":"3px"}},[_c('button',{class:'btn white '+_vm.btnClassSize+' fileinput-button',staticStyle:{"display":"inline-block"},attrs:{"type":"button"}},[_vm._v("\n                "+_vm._s(_vm.button_title)+"\n                "),(_vm.has_multiple || _vm.multiple)?[_c('input',{staticClass:"js-s3_fileupload",attrs:{"type":"file","name":"file","accept":_vm.acceptRegEx,"multiple":"multiple"}})]:[_c('input',{staticClass:"js-s3_fileupload",attrs:{"type":"file","name":"file","accept":_vm.acceptRegEx}})]],2),_vm._v(" "),_c('button',{class:'btn danger '+_vm.btnClassSize+' js-cancel_button',staticStyle:{"display":"none"},attrs:{"type":"button"}},[_vm._v("\n                Cancel\n                "),_vm._m(0)])])])])}
-__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"js-fileupload-progress fileupload-progress m-b-0 p-b-0",staticStyle:{"display":"none","margin-left":"-9px","margin-right":"-9px"}},[_c('div',{staticClass:"progress progress-striped active m-b-0 p-b-0",staticStyle:{"height":"8px"},attrs:{"role":"progressbar","aria-valuemin":"0","aria-valuemax":"100","aria-valuenow":"5"}},[_c('div',{staticClass:"progress-bar progress-bar-success",staticStyle:{"width":"5%"}})])])}]
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div :id=\"imageEl\" :class=\"outer_class\">\n        <div style=\"margin-right: 3px\" class=\"upload-template\">\n            <button type=\"button\" :class=\"'btn white '+btnClassSize+' fileinput-button'\" style=\"display: inline-block;\">\n                {{ button_title }}\n                <template v-if=\"has_multiple || multiple\">\n                <input type=\"file\" name=\"file\" class=\"js-s3_fileupload\" :accept=\"acceptRegEx\" multiple=\"multiple\">\n                </template>\n                <template v-else=\"\">\n                    <input type=\"file\" name=\"file\" class=\"js-s3_fileupload\" :accept=\"acceptRegEx\">\n                </template>\n            </button>\n            <button type=\"button\" :class=\"'btn danger '+btnClassSize+' js-cancel_button'\" style=\"display: none;\">\n                Cancel\n                <div class=\"js-fileupload-progress fileupload-progress m-b-0 p-b-0\" style=\"display: none;  margin-left: -9px; margin-right: -9px;\">\n                    <div style=\"height: 8px;\" class=\"progress progress-striped active m-b-0 p-b-0\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"5\">\n                        <div class=\"progress-bar progress-bar-success\" style=\"width: 5%;\"></div>\n                    </div>\n                </div>\n            </button>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
-  module.hot.dispose(__vueify_style_dispose__)
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n.fileinput-button {\n    position: relative;\n    overflow: hidden;\n    display: inline-block;\n}\n.fileinput-button input {\n    position: absolute;\n    top: 0;\n    right: 0;\n    margin: 0;\n    opacity: 0;\n    -ms-filter: 'alpha(opacity=0)';\n    font-size: 200px !important;\n    direction: ltr;\n    cursor: pointer;\n}\n\n/* Fixes for IE < 8 */\n@media screen\\9 {\n    .fileinput-button input {\n        filter: alpha(opacity=0);\n        font-size: 100%;\n        height: 100%;\n    }\n}\n\n\n.fileupload-buttonbar .btn,\n.fileupload-buttonbar .toggle {\n    margin-bottom: 5px;\n}\n.progress-animated .progress-bar,\n.progress-animated .bar {\n    background: url(\"../img/progressbar.gif\") !important;\n    -webkit-filter: none;\n            filter: none;\n}\n.fileupload-process {\n    float: right;\n    display: none;\n}\n.fileupload-processing .fileupload-process,\n.files .processing .preview {\n    display: block;\n    width: 32px;\n    height: 32px;\n    background: url(\"../img/loading.gif\") center no-repeat;\n    background-size: contain;\n}\n.files audio,\n.files video {\n    max-width: 300px;\n}\n\n@media (max-width: 767px) {\n    .fileupload-buttonbar .toggle,\n    .files .toggle,\n    .files .btn span {\n        display: none;\n    }\n    .files .name {\n        width: 80px;\n        word-wrap: break-word;\n    }\n    .files audio,\n    .files video {\n        max-width: 80px;\n    }\n    .files img,\n    .files canvas {\n        max-width: 100%;\n    }\n}\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-fd500f54", __vue__options__)
+    hotAPI.createRecord("_v-08ae0c66", module.exports)
   } else {
-    hotAPI.reload("data-v-fd500f54", __vue__options__)
+    hotAPI.update("_v-08ae0c66", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../../app/s3uploader":11,"../../vendor/fileupload/js/jquery.fileupload":15,"../../vendor/fileupload/js/jquery.fileupload-image":12,"../../vendor/fileupload/js/jquery.fileupload-process":13,"../../vendor/fileupload/js/jquery.fileupload-ui":14,"../../vendor/fileupload/js/jquery.iframe-transport":16,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":17,"../../vendor/fileupload/js/vendor/jquery.ui.widget":18,"../../vendor/fileupload/js/vendor/load-image":19,"babel-runtime/core-js/json/stringify":1,"vue":5,"vueify/lib/insert-css":6,"vueify/node_modules/vue-hot-reload-api":7}],9:[function(require,module,exports){
+},{"../../app/s3uploader":11,"../../vendor/fileupload/js/jquery.fileupload":15,"../../vendor/fileupload/js/jquery.fileupload-image":12,"../../vendor/fileupload/js/jquery.fileupload-process":13,"../../vendor/fileupload/js/jquery.fileupload-ui":14,"../../vendor/fileupload/js/jquery.iframe-transport":16,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":17,"../../vendor/fileupload/js/vendor/jquery.ui.widget":18,"../../vendor/fileupload/js/vendor/load-image":19,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5,"vueify/lib/insert-css":7}],9:[function(require,module,exports){
 'use strict';
 
 var _inventorySizing = require('./inventory-sizing.vue');
@@ -6706,7 +6875,6 @@ new Vue({
 });
 
 },{"./inventory-sizing.vue":10}],10:[function(require,module,exports){
-;(function(){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6853,23 +7021,19 @@ exports.default = {
         'image-attach': _FileUpload2.default
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',_vm._l((_vm.size_containers),function(size_container){return _c('div',[_c('div',{staticClass:"box sizing_container",attrs:{"id":'size_'+size_container.id,"data-container-id":size_container.id}},[_c('div',{staticClass:"box-body clearfix"},[_c('div',{staticClass:"form-group row"},[_c('label',{staticClass:"col-sm-3 form-control-label"},[_vm._v("Size")]),_vm._v(" "),_c('div',{staticClass:"col-sm-9"},[_c('div',{staticClass:"btn-group-prpl",attrs:{"data-toggle":"buttons"}},_vm._l((_vm.sizings),function(size){return _c('label',{staticClass:"form-control-label btn white",staticStyle:{"margin-right":"3px"}},[_c('input',{attrs:{"required":"","aria-required":"true","validation":"required","type":"radio","name":'sizings['+size_container.id +'][size_id]',"id":"option1","autocomplete":"off"},domProps:{"value":size.id}}),_vm._v(" "+_vm._s(size.name)+"\n                            ")])}))]),_vm._v(" "),_c('button',{staticClass:" m-l-1 pull-right btn white btn-xs text-muted ",staticStyle:{"position":"absolute","top":"0","right":"0","border":"0","border-radius":"0","opacity":".3"},attrs:{"type":"button"},on:{"click":function($event){_vm.deleteSizeContainer(size_container)}}},[_c('i',{staticClass:"fa fa-times",attrs:{"aria-hidden":"true"}})])]),_vm._v(" "),_c('div',{staticClass:"row row-horizon clearfix"},_vm._l((size_container.images),function(image,$index){return _c('div',{staticClass:"col-sm-4 thumbnail-container"},[_c('div',{staticClass:"box m-b-0"},[_c('div',{staticClass:"item"},[_c('div',{staticClass:"item-overlay active p-l p-r ",staticStyle:{"z-index":"999"}},[_c('a',{staticClass:"pull-right text-danger",attrs:{"type":"button","data-id":image.id},on:{"click":function($event){_vm.deleteSizeImage(size_container, image, $event)}}},[_c('i',{staticClass:"fa fa-times fa-fw"})]),_vm._v(" "),_c('span',{staticClass:"pull-left label dark-white text-color"},[_vm._v(_vm._s(size_container.images.length - $index))])]),_vm._v(" "),_c('div',{staticClass:"thumbnail"},[_c('img',{staticClass:"w-full",attrs:{"src":image.location,"data-gallery":'image-thumbs_'+size_container.id,"data-width":"100%","data-toggle":"lightbox","data-remote":image.location}})])]),_vm._v(" "),_c('input',{attrs:{"type":"hidden","name":'sizings['+size_container.id +'][images]['+image.key+'][data]'},domProps:{"value":image.json}}),_vm._v(" "),_c('div',{staticClass:"box-body m-t-0 p-t-0"},[_c('div',{staticClass:"image_item_component"},[_c('label',{staticClass:"text-muted text-sm m-b-0 p-b-0"},[_vm._v("Quantity:")]),_vm._v(" "),_c('input',{staticClass:"text-center image_qty_btn",attrs:{"type":"text","value":"1","name":'sizings['+size_container.id+'][images]['+image.key+'][qty]'},domProps:{"value":"1"}})])])])])}))]),_vm._v(" "),_c('div',{staticClass:"box-footer"},[_c('div',{staticClass:"form-group categories_wrapper",staticStyle:{"display":"none"}},[_c('input',{staticClass:"selectized",attrs:{"type":"text","disabled":size_container.images.length > 0,"id":'categories_input_'+size_container.id,"name":'sizings['+size_container.id+'][categories]',"placeholder":"Type categories or keywords"}})]),_vm._v(" "),_c('div',{staticClass:"clearfix"},[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-sm-offset-3 col-sm-7"},[_c('span',{staticClass:"pull-left"},[_c('image-attach',{attrs:{"s3_key_url":_vm.s3_key_url,"user_hash":_vm.user_hash}})],1),_vm._v(" "),_c('button',{staticClass:"pull-left btn white btn-sm ",attrs:{"type":"button","disabled":size_container.images.length == 0},on:{"click":_vm.toggleCategory}},[_vm._v("Categories")])])])])])])])}))}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-for=\"size_container in size_containers\">\n        <div class=\"box sizing_container\" v-bind:id=\"'size_'+size_container.id\" v-bind:data-container-id=\"size_container.id\">\n            <div class=\"box-body clearfix\">\n                <div class=\"form-group row\">\n                    <label class=\"col-sm-3 form-control-label\">Size</label>\n                    <div class=\"col-sm-9\">\n                        <div class=\"btn-group-prpl\" data-toggle=\"buttons\">\n                            <label class=\"form-control-label btn white\" v-for=\"size in sizings\" style=\"margin-right: 3px;\">\n                                <input required=\"\" aria-required=\"true\" validation=\"required\" type=\"radio\" v-bind:name=\"'sizings['+size_container.id +'][size_id]'\" id=\"option1\" autocomplete=\"off\" v-bind:value=\"size.id\"> {{ size.name }}\n                            </label>\n                        </div>\n                    </div>\n                    <button type=\"button\" v-on:click=\"deleteSizeContainer(size_container)\" style=\"position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3\" class=\" m-l-1 pull-right btn white btn-xs text-muted \"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button>\n                </div>\n\n                <div class=\"row row-horizon clearfix\">\n\n                    <div class=\"col-sm-4 thumbnail-container\" v-for=\"(image, $index) in size_container.images\">\n                        <div class=\"box m-b-0\">\n                            <div class=\"item\">\n                                <div class=\"item-overlay active p-l p-r \" style=\"z-index: 999;\">\n                                    <a type=\"button\" style=\"\" v-on:click=\"deleteSizeImage(size_container, image, $event)\" v-bind:data-id=\"image.id\" class=\"pull-right text-danger\"><i class=\"fa fa-times fa-fw\"></i></a>\n                                    <span class=\"pull-left label dark-white text-color\">{{ size_container.images.length - $index }}</span>\n                                </div>\n\n                                <div class=\"thumbnail\">\n                                    <img :src=\"image.location\" :data-gallery=\"'image-thumbs_'+size_container.id\" data-width=\"100%\" class=\"w-full\" data-toggle=\"lightbox\" :data-remote=\"image.location\">\n                                </div>\n                            </div>\n                            <input type=\"hidden\" :name=\"'sizings['+size_container.id +'][images]['+image.key+'][data]'\" :value=\"image.json\">\n                            <div class=\"box-body m-t-0 p-t-0\">\n                                <div class=\"image_item_component\">\n                                    <label class=\"text-muted text-sm m-b-0 p-b-0\">Quantity:</label>\n                                    <input type=\"text\" value=\"1\" v-bind:name=\"'sizings['+size_container.id+'][images]['+image.key+'][qty]'\" class=\"text-center image_qty_btn\">\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n\n            </div>\n            <div class=\"box-footer\">\n                <div class=\"form-group categories_wrapper\" style=\"display: none\">\n                    <input type=\"text\" :disabled=\"size_container.images.length > 0\" v-bind:id=\"'categories_input_'+size_container.id\" v-bind:name=\"'sizings['+size_container.id+'][categories]'\" class=\"selectized\" placeholder=\"Type categories or keywords\">\n                </div>\n                <div class=\"clearfix\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-offset-3 col-sm-7\">\n\n                                    <span class=\"pull-left\">\n                                        <image-attach :s3_key_url=\"s3_key_url\" :user_hash=\"user_hash\"></image-attach>\n                                    </span>\n\n                            <button type=\"button\" class=\"pull-left btn white btn-sm \" :disabled=\"size_container.images.length == 0\" @click=\"toggleCategory\">Categories</button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-07ba4328", __vue__options__)
+    hotAPI.createRecord("_v-3c230f8b", module.exports)
   } else {
-    hotAPI.reload("data-v-07ba4328", __vue__options__)
+    hotAPI.update("_v-3c230f8b", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../FileUpload.vue":8,"babel-runtime/core-js/json/stringify":1,"vue":5,"vueify/node_modules/vue-hot-reload-api":7}],11:[function(require,module,exports){
+},{"../FileUpload.vue":8,"babel-runtime/core-js/json/stringify":1,"vue":6,"vue-hot-reload-api":5}],11:[function(require,module,exports){
 'use strict';
 
 ;

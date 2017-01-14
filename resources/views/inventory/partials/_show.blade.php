@@ -50,7 +50,7 @@
                     <div class="list-body">
                         <small class="_500 text-ellipsis">{{ $item->user->username }}</small>
                         <followable
-                                already_following="{{ $item->user->is_following ? 1 : 0}}"
+                                :already_following="{{ $item->user->is_following ? 1 : 0 }}"
                                 endpoint="{{ apiRoute('user.followers.store', [$item->user->id]) }}"
                                 able_type="{{ get_class($item->user) }}"
                                 able_id="{{ $item->user->id }}">

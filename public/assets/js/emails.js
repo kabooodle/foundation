@@ -181,6 +181,307 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],2:[function(require,module,exports){
+var Vue // late bind
+var map = Object.create(null)
+var shimmed = false
+var isBrowserify = false
+
+/**
+ * Determine compatibility and apply patch.
+ *
+ * @param {Function} vue
+ * @param {Boolean} browserify
+ */
+
+exports.install = function (vue, browserify) {
+  if (shimmed) return
+  shimmed = true
+
+  Vue = vue
+  isBrowserify = browserify
+
+  exports.compatible = !!Vue.internalDirectives
+  if (!exports.compatible) {
+    console.warn(
+      '[HMR] vue-loader hot reload is only compatible with ' +
+      'Vue.js 1.0.0+.'
+    )
+    return
+  }
+
+  // patch view directive
+  patchView(Vue.internalDirectives.component)
+  console.log('[HMR] Vue component hot reload shim applied.')
+  // shim router-view if present
+  var routerView = Vue.elementDirective('router-view')
+  if (routerView) {
+    patchView(routerView)
+    console.log('[HMR] vue-router <router-view> hot reload shim applied.')
+  }
+}
+
+/**
+ * Shim the view directive (component or router-view).
+ *
+ * @param {Object} View
+ */
+
+function patchView (View) {
+  var unbuild = View.unbuild
+  View.unbuild = function (defer) {
+    if (!this.hotUpdating) {
+      var prevComponent = this.childVM && this.childVM.constructor
+      removeView(prevComponent, this)
+      // defer = true means we are transitioning to a new
+      // Component. Register this new component to the list.
+      if (defer) {
+        addView(this.Component, this)
+      }
+    }
+    // call original
+    return unbuild.call(this, defer)
+  }
+}
+
+/**
+ * Add a component view to a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function addView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    if (!map[id]) {
+      map[id] = {
+        Component: Component,
+        views: [],
+        instances: []
+      }
+    }
+    map[id].views.push(view)
+  }
+}
+
+/**
+ * Remove a component view from a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function removeView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    map[id].views.$remove(view)
+  }
+}
+
+/**
+ * Create a record for a hot module, which keeps track of its construcotr,
+ * instnaces and views (component directives or router-views).
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+exports.createRecord = function (id, options) {
+  if (typeof options === 'function') {
+    options = options.options
+  }
+  if (typeof options.el !== 'string' && typeof options.data !== 'object') {
+    makeOptionsHot(id, options)
+    map[id] = {
+      Component: null,
+      views: [],
+      instances: []
+    }
+  }
+}
+
+/**
+ * Make a Component options object hot.
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+function makeOptionsHot (id, options) {
+  options.hotID = id
+  injectHook(options, 'created', function () {
+    var record = map[id]
+    if (!record.Component) {
+      record.Component = this.constructor
+    }
+    record.instances.push(this)
+  })
+  injectHook(options, 'beforeDestroy', function () {
+    map[id].instances.$remove(this)
+  })
+}
+
+/**
+ * Inject a hook to a hot reloadable component so that
+ * we can keep track of it.
+ *
+ * @param {Object} options
+ * @param {String} name
+ * @param {Function} hook
+ */
+
+function injectHook (options, name, hook) {
+  var existing = options[name]
+  options[name] = existing
+    ? Array.isArray(existing)
+      ? existing.concat(hook)
+      : [existing, hook]
+    : [hook]
+}
+
+/**
+ * Update a hot component.
+ *
+ * @param {String} id
+ * @param {Object|null} newOptions
+ * @param {String|null} newTemplate
+ */
+
+exports.update = function (id, newOptions, newTemplate) {
+  var record = map[id]
+  // force full-reload if an instance of the component is active but is not
+  // managed by a view
+  if (!record || (record.instances.length && !record.views.length)) {
+    console.log('[HMR] Root or manually-mounted instance modified. Full reload may be required.')
+    if (!isBrowserify) {
+      window.location.reload()
+    } else {
+      // browserify-hmr somehow sends incomplete bundle if we reload here
+      return
+    }
+  }
+  if (!isBrowserify) {
+    // browserify-hmr already logs this
+    console.log('[HMR] Updating component: ' + format(id))
+  }
+  var Component = record.Component
+  // update constructor
+  if (newOptions) {
+    // in case the user exports a constructor
+    Component = record.Component = typeof newOptions === 'function'
+      ? newOptions
+      : Vue.extend(newOptions)
+    makeOptionsHot(id, Component.options)
+  }
+  if (newTemplate) {
+    Component.options.template = newTemplate
+  }
+  // handle recursive lookup
+  if (Component.options.name) {
+    Component.options.components[Component.options.name] = Component
+  }
+  // reset constructor cached linker
+  Component.linker = null
+  // reload all views
+  record.views.forEach(function (view) {
+    updateView(view, Component)
+  })
+  // flush devtools
+  if (window.__VUE_DEVTOOLS_GLOBAL_HOOK__) {
+    window.__VUE_DEVTOOLS_GLOBAL_HOOK__.emit('flush')
+  }
+}
+
+/**
+ * Update a component view instance
+ *
+ * @param {Directive} view
+ * @param {Function} Component
+ */
+
+function updateView (view, Component) {
+  if (!view._bound) {
+    return
+  }
+  view.Component = Component
+  view.hotUpdating = true
+  // disable transitions
+  view.vm._isCompiled = false
+  // save state
+  var state = extractState(view.childVM)
+  // remount, make sure to disable keep-alive
+  var keepAlive = view.keepAlive
+  view.keepAlive = false
+  view.mountComponent()
+  view.keepAlive = keepAlive
+  // restore state
+  restoreState(view.childVM, state, true)
+  // re-eanble transitions
+  view.vm._isCompiled = true
+  view.hotUpdating = false
+}
+
+/**
+ * Extract state from a Vue instance.
+ *
+ * @param {Vue} vm
+ * @return {Object}
+ */
+
+function extractState (vm) {
+  return {
+    cid: vm.constructor.cid,
+    data: vm.$data,
+    children: vm.$children.map(extractState)
+  }
+}
+
+/**
+ * Restore state to a reloaded Vue instance.
+ *
+ * @param {Vue} vm
+ * @param {Object} state
+ */
+
+function restoreState (vm, state, isRoot) {
+  var oldAsyncConfig
+  if (isRoot) {
+    // set Vue into sync mode during state rehydration
+    oldAsyncConfig = Vue.config.async
+    Vue.config.async = false
+  }
+  // actual restore
+  if (isRoot || !vm._props) {
+    vm.$data = state.data
+  } else {
+    Object.keys(state.data).forEach(function (key) {
+      if (!vm._props[key]) {
+        // for non-root, only restore non-props fields
+        vm.$data[key] = state.data[key]
+      }
+    })
+  }
+  // verify child consistency
+  var hasSameChildren = vm.$children.every(function (c, i) {
+    return state.children[i] && state.children[i].cid === c.constructor.cid
+  })
+  if (hasSameChildren) {
+    // rehydrate children
+    vm.$children.forEach(function (c, i) {
+      restoreState(c, state.children[i])
+    })
+  }
+  if (isRoot) {
+    Vue.config.async = oldAsyncConfig
+  }
+}
+
+function format (id) {
+  var match = id.match(/[^\/]+\.vue$/)
+  return match ? match[0] : id
+}
+
+},{}],3:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.1.8
@@ -6320,134 +6621,27 @@ setTimeout(function () {
 module.exports = Vue$2;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":1}],3:[function(require,module,exports){
-var Vue // late bind
-var map = window.__VUE_HOT_MAP__ = Object.create(null)
-var installed = false
-var isBrowserify = false
-var initHookName = 'beforeCreate'
+},{"_process":1}],4:[function(require,module,exports){
+var inserted = exports.cache = {}
 
-exports.install = function (vue, browserify) {
-  if (installed) return
-  installed = true
+exports.insert = function (css) {
+  if (inserted[css]) return
+  inserted[css] = true
 
-  Vue = vue
-  isBrowserify = browserify
+  var elem = document.createElement('style')
+  elem.setAttribute('type', 'text/css')
 
-  // compat with < 2.0.0-alpha.7
-  if (Vue.config._lifecycleHooks.indexOf('init') > -1) {
-    initHookName = 'init'
+  if ('textContent' in elem) {
+    elem.textContent = css
+  } else {
+    elem.styleSheet.cssText = css
   }
 
-  exports.compatible = Number(Vue.version.split('.')[0]) >= 2
-  if (!exports.compatible) {
-    console.warn(
-      '[HMR] You are using a version of vue-hot-reload-api that is ' +
-      'only compatible with Vue.js core ^2.0.0.'
-    )
-    return
-  }
+  document.getElementsByTagName('head')[0].appendChild(elem)
+  return elem
 }
 
-/**
- * Create a record for a hot module, which keeps track of its constructor
- * and instances
- *
- * @param {String} id
- * @param {Object} options
- */
-
-exports.createRecord = function (id, options) {
-  var Ctor = null
-  if (typeof options === 'function') {
-    Ctor = options
-    options = Ctor.options
-  }
-  makeOptionsHot(id, options)
-  map[id] = {
-    Ctor: Vue.extend(options),
-    instances: []
-  }
-}
-
-/**
- * Make a Component options object hot.
- *
- * @param {String} id
- * @param {Object} options
- */
-
-function makeOptionsHot (id, options) {
-  injectHook(options, initHookName, function () {
-    map[id].instances.push(this)
-  })
-  injectHook(options, 'beforeDestroy', function () {
-    var instances = map[id].instances
-    instances.splice(instances.indexOf(this), 1)
-  })
-}
-
-/**
- * Inject a hook to a hot reloadable component so that
- * we can keep track of it.
- *
- * @param {Object} options
- * @param {String} name
- * @param {Function} hook
- */
-
-function injectHook (options, name, hook) {
-  var existing = options[name]
-  options[name] = existing
-    ? Array.isArray(existing)
-      ? existing.concat(hook)
-      : [existing, hook]
-    : [hook]
-}
-
-function tryWrap (fn) {
-  return function (id, arg) {
-    try { fn(id, arg) } catch (e) {
-      console.error(e)
-      console.warn('Something went wrong during Vue component hot-reload. Full reload required.')
-    }
-  }
-}
-
-exports.rerender = tryWrap(function (id, fns) {
-  var record = map[id]
-  record.Ctor.options.render = fns.render
-  record.Ctor.options.staticRenderFns = fns.staticRenderFns
-  record.instances.slice().forEach(function (instance) {
-    instance.$options.render = fns.render
-    instance.$options.staticRenderFns = fns.staticRenderFns
-    instance._staticTrees = [] // reset static trees
-    instance.$forceUpdate()
-  })
-})
-
-exports.reload = tryWrap(function (id, options) {
-  makeOptionsHot(id, options)
-  var record = map[id]
-  record.Ctor.extendOptions = options
-  var newCtor = Vue.extend(options)
-  record.Ctor.options = newCtor.options
-  record.Ctor.cid = newCtor.cid
-  if (newCtor.release) {
-    // temporary global mixin strategy used in < 2.0.0-alpha.6
-    newCtor.release()
-  }
-  record.instances.slice().forEach(function (instance) {
-    if (instance.$vnode && instance.$vnode.context) {
-      instance.$vnode.context.$forceUpdate()
-    } else {
-      console.warn('Root or manually mounted instance modified. Full reload required.')
-    }
-  })
-})
-
-},{}],4:[function(require,module,exports){
-;(function(){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6466,24 +6660,21 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('img',{staticStyle:{"margin":"-2px 2px 0 0","padding":"0"},attrs:{"src":_vm.img_url,"height":_vm.size,"width":_vm.size}})])}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3c8f0230", __vue__options__)
+    hotAPI.createRecord("_v-0fbfe820", module.exports)
   } else {
-    hotAPI.rerender("data-v-3c8f0230", __vue__options__)
+    hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],5:[function(require,module,exports){
-;(function(){
+},{"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6606,24 +6797,25 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"form-group row"},[_c('div',{staticClass:"col-sm-8"},[_c('span',[_vm._v(_vm._s(_vm.address))]),_vm._v(" "),_c('span',{directives:[{name:"show",rawName:"v-show",value:(_vm.isVerified),expression:"isVerified"}]},[_c('i',{staticClass:"fa fa-check-circle text-success",attrs:{"aria-hidden":"true"}})]),_vm._v(" "),_c('span',{directives:[{name:"show",rawName:"v-show",value:(!_vm.isVerified),expression:"!isVerified"}]},[_c('div',{staticClass:"pull-right"},[_c('button',{staticClass:"btn primary btn-sm",on:{"click":_vm.resendVerification}},[_vm._v("\n                    Resend Verification\n                ")])])])]),_vm._v(" "),_c('div',{staticClass:"col-sm-3"},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.isPrimary),expression:"isPrimary"}]},[_c('div',{staticClass:"text-primary text-center"},[_vm._v("Primary")])]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(!_vm.isPrimary),expression:"!isPrimary"}]},[(_vm.isVerified)?_c('button',{staticClass:"btn white btn-sm",on:{"click":_vm.makePrimary}},[_vm._v("Make Primary")]):_c('button',{staticClass:"btn disabled white btn-sm",on:{"click":_vm.notifyNeedsToVerify}},[_vm._v("Make Primary")])])]),_vm._v(" "),_c('div',{staticClass:"col-sm-1"},[_c('a',{directives:[{name:"show",rawName:"v-show",value:(!_vm.isPrimary),expression:"!isPrimary"}],attrs:{"href":"javascript:;"},on:{"click":_vm.destroy}},[_c('i',{staticClass:"fa fa-times text-danger",attrs:{"aria-hidden":"true"}})])])])}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row\">\n    <div class=\"col-sm-8\">\n        <span>{{ address }}</span>\n        <span v-show=\"isVerified\">\n            <i class=\"fa fa-check-circle text-success\" aria-hidden=\"true\"></i>\n        </span>\n        <span v-show=\"!isVerified\">\n            <div class=\"pull-right\">\n                <button @click=\"resendVerification\" class=\"btn primary btn-sm\">\n                    Resend Verification\n                </button>\n            </div>\n        </span>\n    </div>\n    <div class=\"col-sm-3\">\n        <div v-show=\"isPrimary\">\n            <div class=\"text-primary text-center\">Primary</div>\n        </div>\n        <div v-show=\"!isPrimary\">\n            <button v-if=\"isVerified\" @click=\"makePrimary\" class=\"btn white btn-sm\">Make Primary</button>\n            <button v-else=\"\" @click=\"notifyNeedsToVerify\" class=\"btn disabled white btn-sm\">Make Primary</button>\n        </div>\n    </div>\n    <div class=\"col-sm-1\">\n        <a href=\"javascript:;\" v-show=\"!isPrimary\" @click=\"destroy\">\n            <i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i>\n        </a>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3b72db1a", __vue__options__)
+    hotAPI.createRecord("_v-54ca1df0", module.exports)
   } else {
-    hotAPI.reload("data-v-3b72db1a", __vue__options__)
+    hotAPI.update("_v-54ca1df0", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],6:[function(require,module,exports){
-;(function(){
+},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],7:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6710,23 +6902,23 @@ exports.default = {
         'spinny': _Spinner2.default
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._l((_vm.emails),function(email,index){return _c('email',{key:email.id,attrs:{"address":email.address,"id":email.id,"primary-id":_vm.primaryId,"is-verified":email.verified,"update-primary-endpoint":_vm.updatePrimaryEndpoint,"resend-verification-endpoint":_vm.resendVerificationEndpoint,"emails-endpoint":_vm.emailsEndpoint},on:{"new-primary":_vm.setNewPrimary,"resend-verification":_vm.resendVerification,"remove-email":function($event){_vm.emails.splice(index, 1)}}})}),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-sm-12"},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.addingEmail),expression:"addingEmail"}]},[_c('div',{staticClass:"form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.newAddress),expression:"newAddress"}],staticClass:"form-control",attrs:{"type":"text"},domProps:{"value":_vm._s(_vm.newAddress)},on:{"input":function($event){if($event.target.composing){ return; }_vm.newAddress=$event.target.value}}})]),_vm._v(" "),_c('div',{staticClass:"pull-left"},[_c('button',{staticClass:"btn btn-sm white",on:{"click":function($event){_vm.addingEmail = !_vm.addingEmail}}},[_vm._v("Cancel")])]),_vm._v(" "),_c('div',{staticClass:"pull-right"},[_c('button',{staticClass:"btn primary  btn-sm ",on:{"click":_vm.saveEmail}},[_vm._v("Save")])])]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(!_vm.addingEmail),expression:"!addingEmail"}]},[_c('div',{staticClass:"pull-left"},[_c('button',{staticClass:"btn btn-sm white ",on:{"click":function($event){_vm.addingEmail = !_vm.addingEmail}}},[_vm._v("Add Email")])])])])])],2)}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <email v-for=\"(email, index) in emails\" :key=\"email.id\" :address=\"email.address\" :id=\"email.id\" :primary-id=\"primaryId\" :is-verified=\"email.verified\" :update-primary-endpoint=\"updatePrimaryEndpoint\" :resend-verification-endpoint=\"resendVerificationEndpoint\" :emails-endpoint=\"emailsEndpoint\" v-on:new-primary=\"setNewPrimary\" v-on:resend-verification=\"resendVerification\" v-on:remove-email=\"emails.splice(index, 1)\"></email>\n    <div class=\"row\">\n        <div class=\"col-sm-12\">\n            <div v-show=\"addingEmail\">\n                <div class=\"form-group\">\n                    <input type=\"text\" v-model=\"newAddress\" class=\"form-control\">\n                </div>\n                <div class=\"pull-left\">\n                    <button @click=\"addingEmail = !addingEmail\" class=\"btn btn-sm white\">Cancel</button>\n                </div>\n                <div class=\"pull-right\">\n                    <button @click=\"saveEmail\" class=\"btn primary  btn-sm \">Save</button>\n                </div>\n            </div>\n            <div v-show=\"!addingEmail\">\n                <div class=\"pull-left\">\n                    <button @click=\"addingEmail = !addingEmail\" class=\"btn btn-sm white \">Add Email</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6a375d10", __vue__options__)
+    hotAPI.createRecord("_v-48254133", module.exports)
   } else {
-    hotAPI.reload("data-v-6a375d10", __vue__options__)
+    hotAPI.update("_v-48254133", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":4,"./Email.vue":5,"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],7:[function(require,module,exports){
+},{"../Spinner.vue":5,"./Email.vue":6,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],8:[function(require,module,exports){
 'use strict';
 
 var _Emails = require('../email/Emails.vue');
@@ -6742,6 +6934,6 @@ new Vue({
     }
 });
 
-},{"../email/Emails.vue":6}]},{},[7]);
+},{"../email/Emails.vue":7}]},{},[8]);
 
 //# sourceMappingURL=emails.js.map

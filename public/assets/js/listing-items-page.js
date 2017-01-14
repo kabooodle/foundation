@@ -181,6 +181,307 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],2:[function(require,module,exports){
+var Vue // late bind
+var map = Object.create(null)
+var shimmed = false
+var isBrowserify = false
+
+/**
+ * Determine compatibility and apply patch.
+ *
+ * @param {Function} vue
+ * @param {Boolean} browserify
+ */
+
+exports.install = function (vue, browserify) {
+  if (shimmed) return
+  shimmed = true
+
+  Vue = vue
+  isBrowserify = browserify
+
+  exports.compatible = !!Vue.internalDirectives
+  if (!exports.compatible) {
+    console.warn(
+      '[HMR] vue-loader hot reload is only compatible with ' +
+      'Vue.js 1.0.0+.'
+    )
+    return
+  }
+
+  // patch view directive
+  patchView(Vue.internalDirectives.component)
+  console.log('[HMR] Vue component hot reload shim applied.')
+  // shim router-view if present
+  var routerView = Vue.elementDirective('router-view')
+  if (routerView) {
+    patchView(routerView)
+    console.log('[HMR] vue-router <router-view> hot reload shim applied.')
+  }
+}
+
+/**
+ * Shim the view directive (component or router-view).
+ *
+ * @param {Object} View
+ */
+
+function patchView (View) {
+  var unbuild = View.unbuild
+  View.unbuild = function (defer) {
+    if (!this.hotUpdating) {
+      var prevComponent = this.childVM && this.childVM.constructor
+      removeView(prevComponent, this)
+      // defer = true means we are transitioning to a new
+      // Component. Register this new component to the list.
+      if (defer) {
+        addView(this.Component, this)
+      }
+    }
+    // call original
+    return unbuild.call(this, defer)
+  }
+}
+
+/**
+ * Add a component view to a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function addView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    if (!map[id]) {
+      map[id] = {
+        Component: Component,
+        views: [],
+        instances: []
+      }
+    }
+    map[id].views.push(view)
+  }
+}
+
+/**
+ * Remove a component view from a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function removeView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    map[id].views.$remove(view)
+  }
+}
+
+/**
+ * Create a record for a hot module, which keeps track of its construcotr,
+ * instnaces and views (component directives or router-views).
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+exports.createRecord = function (id, options) {
+  if (typeof options === 'function') {
+    options = options.options
+  }
+  if (typeof options.el !== 'string' && typeof options.data !== 'object') {
+    makeOptionsHot(id, options)
+    map[id] = {
+      Component: null,
+      views: [],
+      instances: []
+    }
+  }
+}
+
+/**
+ * Make a Component options object hot.
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+function makeOptionsHot (id, options) {
+  options.hotID = id
+  injectHook(options, 'created', function () {
+    var record = map[id]
+    if (!record.Component) {
+      record.Component = this.constructor
+    }
+    record.instances.push(this)
+  })
+  injectHook(options, 'beforeDestroy', function () {
+    map[id].instances.$remove(this)
+  })
+}
+
+/**
+ * Inject a hook to a hot reloadable component so that
+ * we can keep track of it.
+ *
+ * @param {Object} options
+ * @param {String} name
+ * @param {Function} hook
+ */
+
+function injectHook (options, name, hook) {
+  var existing = options[name]
+  options[name] = existing
+    ? Array.isArray(existing)
+      ? existing.concat(hook)
+      : [existing, hook]
+    : [hook]
+}
+
+/**
+ * Update a hot component.
+ *
+ * @param {String} id
+ * @param {Object|null} newOptions
+ * @param {String|null} newTemplate
+ */
+
+exports.update = function (id, newOptions, newTemplate) {
+  var record = map[id]
+  // force full-reload if an instance of the component is active but is not
+  // managed by a view
+  if (!record || (record.instances.length && !record.views.length)) {
+    console.log('[HMR] Root or manually-mounted instance modified. Full reload may be required.')
+    if (!isBrowserify) {
+      window.location.reload()
+    } else {
+      // browserify-hmr somehow sends incomplete bundle if we reload here
+      return
+    }
+  }
+  if (!isBrowserify) {
+    // browserify-hmr already logs this
+    console.log('[HMR] Updating component: ' + format(id))
+  }
+  var Component = record.Component
+  // update constructor
+  if (newOptions) {
+    // in case the user exports a constructor
+    Component = record.Component = typeof newOptions === 'function'
+      ? newOptions
+      : Vue.extend(newOptions)
+    makeOptionsHot(id, Component.options)
+  }
+  if (newTemplate) {
+    Component.options.template = newTemplate
+  }
+  // handle recursive lookup
+  if (Component.options.name) {
+    Component.options.components[Component.options.name] = Component
+  }
+  // reset constructor cached linker
+  Component.linker = null
+  // reload all views
+  record.views.forEach(function (view) {
+    updateView(view, Component)
+  })
+  // flush devtools
+  if (window.__VUE_DEVTOOLS_GLOBAL_HOOK__) {
+    window.__VUE_DEVTOOLS_GLOBAL_HOOK__.emit('flush')
+  }
+}
+
+/**
+ * Update a component view instance
+ *
+ * @param {Directive} view
+ * @param {Function} Component
+ */
+
+function updateView (view, Component) {
+  if (!view._bound) {
+    return
+  }
+  view.Component = Component
+  view.hotUpdating = true
+  // disable transitions
+  view.vm._isCompiled = false
+  // save state
+  var state = extractState(view.childVM)
+  // remount, make sure to disable keep-alive
+  var keepAlive = view.keepAlive
+  view.keepAlive = false
+  view.mountComponent()
+  view.keepAlive = keepAlive
+  // restore state
+  restoreState(view.childVM, state, true)
+  // re-eanble transitions
+  view.vm._isCompiled = true
+  view.hotUpdating = false
+}
+
+/**
+ * Extract state from a Vue instance.
+ *
+ * @param {Vue} vm
+ * @return {Object}
+ */
+
+function extractState (vm) {
+  return {
+    cid: vm.constructor.cid,
+    data: vm.$data,
+    children: vm.$children.map(extractState)
+  }
+}
+
+/**
+ * Restore state to a reloaded Vue instance.
+ *
+ * @param {Vue} vm
+ * @param {Object} state
+ */
+
+function restoreState (vm, state, isRoot) {
+  var oldAsyncConfig
+  if (isRoot) {
+    // set Vue into sync mode during state rehydration
+    oldAsyncConfig = Vue.config.async
+    Vue.config.async = false
+  }
+  // actual restore
+  if (isRoot || !vm._props) {
+    vm.$data = state.data
+  } else {
+    Object.keys(state.data).forEach(function (key) {
+      if (!vm._props[key]) {
+        // for non-root, only restore non-props fields
+        vm.$data[key] = state.data[key]
+      }
+    })
+  }
+  // verify child consistency
+  var hasSameChildren = vm.$children.every(function (c, i) {
+    return state.children[i] && state.children[i].cid === c.constructor.cid
+  })
+  if (hasSameChildren) {
+    // rehydrate children
+    vm.$children.forEach(function (c, i) {
+      restoreState(c, state.children[i])
+    })
+  }
+  if (isRoot) {
+    Vue.config.async = oldAsyncConfig
+  }
+}
+
+function format (id) {
+  var match = id.match(/[^\/]+\.vue$/)
+  return match ? match[0] : id
+}
+
+},{}],3:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.1.8
@@ -6320,134 +6621,27 @@ setTimeout(function () {
 module.exports = Vue$2;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":1}],3:[function(require,module,exports){
-var Vue // late bind
-var map = window.__VUE_HOT_MAP__ = Object.create(null)
-var installed = false
-var isBrowserify = false
-var initHookName = 'beforeCreate'
+},{"_process":1}],4:[function(require,module,exports){
+var inserted = exports.cache = {}
 
-exports.install = function (vue, browserify) {
-  if (installed) return
-  installed = true
+exports.insert = function (css) {
+  if (inserted[css]) return
+  inserted[css] = true
 
-  Vue = vue
-  isBrowserify = browserify
+  var elem = document.createElement('style')
+  elem.setAttribute('type', 'text/css')
 
-  // compat with < 2.0.0-alpha.7
-  if (Vue.config._lifecycleHooks.indexOf('init') > -1) {
-    initHookName = 'init'
+  if ('textContent' in elem) {
+    elem.textContent = css
+  } else {
+    elem.styleSheet.cssText = css
   }
 
-  exports.compatible = Number(Vue.version.split('.')[0]) >= 2
-  if (!exports.compatible) {
-    console.warn(
-      '[HMR] You are using a version of vue-hot-reload-api that is ' +
-      'only compatible with Vue.js core ^2.0.0.'
-    )
-    return
-  }
+  document.getElementsByTagName('head')[0].appendChild(elem)
+  return elem
 }
 
-/**
- * Create a record for a hot module, which keeps track of its constructor
- * and instances
- *
- * @param {String} id
- * @param {Object} options
- */
-
-exports.createRecord = function (id, options) {
-  var Ctor = null
-  if (typeof options === 'function') {
-    Ctor = options
-    options = Ctor.options
-  }
-  makeOptionsHot(id, options)
-  map[id] = {
-    Ctor: Vue.extend(options),
-    instances: []
-  }
-}
-
-/**
- * Make a Component options object hot.
- *
- * @param {String} id
- * @param {Object} options
- */
-
-function makeOptionsHot (id, options) {
-  injectHook(options, initHookName, function () {
-    map[id].instances.push(this)
-  })
-  injectHook(options, 'beforeDestroy', function () {
-    var instances = map[id].instances
-    instances.splice(instances.indexOf(this), 1)
-  })
-}
-
-/**
- * Inject a hook to a hot reloadable component so that
- * we can keep track of it.
- *
- * @param {Object} options
- * @param {String} name
- * @param {Function} hook
- */
-
-function injectHook (options, name, hook) {
-  var existing = options[name]
-  options[name] = existing
-    ? Array.isArray(existing)
-      ? existing.concat(hook)
-      : [existing, hook]
-    : [hook]
-}
-
-function tryWrap (fn) {
-  return function (id, arg) {
-    try { fn(id, arg) } catch (e) {
-      console.error(e)
-      console.warn('Something went wrong during Vue component hot-reload. Full reload required.')
-    }
-  }
-}
-
-exports.rerender = tryWrap(function (id, fns) {
-  var record = map[id]
-  record.Ctor.options.render = fns.render
-  record.Ctor.options.staticRenderFns = fns.staticRenderFns
-  record.instances.slice().forEach(function (instance) {
-    instance.$options.render = fns.render
-    instance.$options.staticRenderFns = fns.staticRenderFns
-    instance._staticTrees = [] // reset static trees
-    instance.$forceUpdate()
-  })
-})
-
-exports.reload = tryWrap(function (id, options) {
-  makeOptionsHot(id, options)
-  var record = map[id]
-  record.Ctor.extendOptions = options
-  var newCtor = Vue.extend(options)
-  record.Ctor.options = newCtor.options
-  record.Ctor.cid = newCtor.cid
-  if (newCtor.release) {
-    // temporary global mixin strategy used in < 2.0.0-alpha.6
-    newCtor.release()
-  }
-  record.instances.slice().forEach(function (instance) {
-    if (instance.$vnode && instance.$vnode.context) {
-      instance.$vnode.context.$forceUpdate()
-    } else {
-      console.warn('Root or manually mounted instance modified. Full reload required.')
-    }
-  })
-})
-
-},{}],4:[function(require,module,exports){
-;(function(){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6466,24 +6660,19 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('img',{staticStyle:{"margin":"-2px 2px 0 0","padding":"0"},attrs:{"src":_vm.img_url,"height":_vm.size,"width":_vm.size}})])}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3c8f0230", __vue__options__)
+    hotAPI.createRecord("_v-0fbfe820", module.exports)
   } else {
-    hotAPI.rerender("data-v-3c8f0230", __vue__options__)
+    hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],5:[function(require,module,exports){
-;(function(){
+},{"vue":3,"vue-hot-reload-api":2}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6511,24 +6700,21 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.older_than_week)?_c('div',[_vm._v("\n    "+_vm._s(_vm.humanized)+"\n")]):_c('div',[_c('timeago',{attrs:{"since":_vm.timestamp}})],1)}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"older_than_week\">\n    {{ humanized }}\n</div>\n<div v-else=\"\">\n    <timeago :since=\"timestamp\"></timeago>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-a471a226", __vue__options__)
+    hotAPI.createRecord("_v-785658dd", module.exports)
   } else {
-    hotAPI.rerender("data-v-a471a226", __vue__options__)
+    hotAPI.update("_v-785658dd", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],6:[function(require,module,exports){
-;(function(){
+},{"vue":3,"vue-hot-reload-api":2}],7:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6596,24 +6782,25 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[(_vm.guestSuccess)?_c('div',[_c('div',{staticClass:"text-center text-muted"},[_vm._v("\n            Fantastic! This item is on hold for you for 5 minutes in order to allow you time to verify the claim through the email we just sent you.\n        ")])]):_vm._e(),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(!_vm.guestSuccess),expression:"!guestSuccess"}]},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.checkInType === null || _vm.checkInType === 'user'),expression:"checkInType === null || checkInType === 'user'"}]},[_c('p',{staticClass:"text-center"},[_c('a',{staticClass:"text-primary",on:{"click":function($event){_vm.checkInType = 'user'}}},[_vm._v("Sign In")]),_vm._v(" "),_c('span',{directives:[{name:"show",rawName:"v-show",value:(_vm.checkInType === 'user'),expression:"checkInType === 'user'"}]},[_vm._v("\n                    or\n                    "),_c('a',{staticClass:"text-muted",on:{"click":function($event){_vm.checkInType = null}}},[_vm._v("Go Back")])])]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.checkInType === 'user'),expression:"checkInType === 'user'"}]},[_c('sign-in',{attrs:{"sign-in-route":_vm.signInRoute,"password-reset-route":_vm.passwordResetRoute,"csrf":_vm.csrf,"redirect":_vm.redirect},on:{"success":_vm.performUserSuccess}})],1)]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.checkInType === null || _vm.checkInType === 'register'),expression:"checkInType === null || checkInType === 'register'"}]},[_c('p',{staticClass:"text-center"},[_c('a',{staticClass:"text-primary",on:{"click":function($event){_vm.checkInType = 'register'}}},[_vm._v("Register")]),_vm._v(" "),_c('span',{directives:[{name:"show",rawName:"v-show",value:(_vm.checkInType === 'register'),expression:"checkInType === 'register'"}]},[_vm._v("\n                    or\n                    "),_c('a',{staticClass:"text-muted",on:{"click":function($event){_vm.checkInType = null}}},[_vm._v("Go Back")])])]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.checkInType === 'register'),expression:"checkInType === 'register'"}]},[_c('register',{attrs:{"route":_vm.registerRoute,"csrf":_vm.csrf,"redirect":_vm.redirect},on:{"success":_vm.performUserSuccess}})],1)]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.checkInType === null || _vm.checkInType === 'guest'),expression:"checkInType === null || checkInType === 'guest'"}]},[_c('p',{staticClass:"text-center"},[_c('a',{staticClass:"text-primary selected",on:{"click":function($event){_vm.checkInType = 'guest'}}},[_vm._v("Continue as a Guest")]),_vm._v(" "),_c('span',{directives:[{name:"show",rawName:"v-show",value:(_vm.checkInType === 'guest'),expression:"checkInType === 'guest'"}]},[_vm._v("\n                    or\n                    "),_c('a',{staticClass:"text-muted",on:{"click":function($event){_vm.checkInType = null}}},[_vm._v("Go Back")])])]),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.checkInType === 'guest'),expression:"checkInType === 'guest'"}]},[_c('guest-claim',{attrs:{"endpoint":_vm.guestClaimEndpoint},on:{"success":_vm.performGuestSuccess}})],1)])])])}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"guestSuccess\">\n        <div class=\"text-center text-muted\">\n            Fantastic! This item is on hold for you for 5 minutes in order to allow you time to verify the claim through the email we just sent you.\n        </div>\n    </div>\n    <div v-show=\"!guestSuccess\">\n        <div v-show=\"checkInType === null || checkInType === 'user'\">\n            <p class=\"text-center\">\n                <a @click=\"checkInType = 'user'\" class=\"text-primary\">Sign In</a>\n                <span v-show=\"checkInType === 'user'\">\n                    or\n                    <a @click=\"checkInType = null\" class=\"text-muted\">Go Back</a>\n                </span>\n            </p>\n            <div v-show=\"checkInType === 'user'\">\n                <sign-in :sign-in-route=\"signInRoute\" :password-reset-route=\"passwordResetRoute\" :csrf=\"csrf\" :redirect=\"redirect\" v-on:success=\"performUserSuccess\">\n                </sign-in>\n            </div>\n        </div>\n        <div v-show=\"checkInType === null || checkInType === 'register'\">\n            <p class=\"text-center\">\n                <a @click=\"checkInType = 'register'\" class=\"text-primary\">Register</a>\n                <span v-show=\"checkInType === 'register'\">\n                    or\n                    <a @click=\"checkInType = null\" class=\"text-muted\">Go Back</a>\n                </span>\n            </p>\n            <div v-show=\"checkInType === 'register'\">\n                <register :route=\"registerRoute\" :csrf=\"csrf\" :redirect=\"redirect\" v-on:success=\"performUserSuccess\">\n                </register>\n            </div>\n        </div>\n        <div v-show=\"checkInType === null || checkInType === 'guest'\">\n            <p class=\"text-center\">\n                <a @click=\"checkInType = 'guest'\" class=\"text-primary selected\">Continue as a Guest</a>\n                <span v-show=\"checkInType === 'guest'\">\n                    or\n                    <a @click=\"checkInType = null\" class=\"text-muted\">Go Back</a>\n                </span>\n            </p>\n            <div v-show=\"checkInType === 'guest'\">\n                <guest-claim :endpoint=\"guestClaimEndpoint\" v-on:success=\"performGuestSuccess\">\n                </guest-claim>\n            </div>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-059b8434", __vue__options__)
+    hotAPI.createRecord("_v-253c3a91", module.exports)
   } else {
-    hotAPI.reload("data-v-059b8434", __vue__options__)
+    hotAPI.update("_v-253c3a91", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../claims/GuestClaim.vue":7,"../register/Register.vue":12,"../sign-in/SignIn.vue":13,"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],7:[function(require,module,exports){
-;(function(){
+},{"../claims/GuestClaim.vue":8,"../register/Register.vue":13,"../sign-in/SignIn.vue":14,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],8:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n\n")
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6864,24 +7051,23 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[(_vm.claimSuccess)?_c('div',[_c('span',{staticClass:"text-center text-muted"},[_vm._v("\n            Boo Yah!!\n        ")])]):_c('div',[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-xs-6"},[_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.firstName),expression:"firstName"}],staticClass:"md-input",attrs:{"type":"text","name":"first_name"},domProps:{"value":_vm._s(_vm.firstName)},on:{"input":function($event){if($event.target.composing){ return; }_vm.firstName=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("First Name")])])]),_vm._v(" "),_c('div',{staticClass:"col-xs-6"},[_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.lastName),expression:"lastName"}],staticClass:"md-input",attrs:{"type":"text","name":"last_name"},domProps:{"value":_vm._s(_vm.lastName)},on:{"input":function($event){if($event.target.composing){ return; }_vm.lastName=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Last Name")])])])]),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.email),expression:"email"}],staticClass:"md-input",attrs:{"type":"text","name":"email"},domProps:{"value":_vm._s(_vm.email)},on:{"input":function($event){if($event.target.composing){ return; }_vm.email=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Email Address")])]),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.company),expression:"company"}],staticClass:"md-input",attrs:{"type":"text","name":"company"},domProps:{"value":_vm._s(_vm.company)},on:{"input":function($event){if($event.target.composing){ return; }_vm.company=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Company Name "),_c('small',[_vm._v("(Optional)")])])]),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.street1),expression:"street1"}],staticClass:"md-input",attrs:{"type":"text","name":"street1"},domProps:{"value":_vm._s(_vm.street1)},on:{"input":function($event){if($event.target.composing){ return; }_vm.street1=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Street 1")])]),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.street2),expression:"street2"}],staticClass:"md-input",attrs:{"type":"text","name":"street2"},domProps:{"value":_vm._s(_vm.street2)},on:{"input":function($event){if($event.target.composing){ return; }_vm.street2=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Street 2 "),_c('small',[_vm._v("(Optional)")])])]),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-xs-6"},[_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.city),expression:"city"}],staticClass:"md-input",attrs:{"type":"text","name":"city"},domProps:{"value":_vm._s(_vm.city)},on:{"input":function($event){if($event.target.composing){ return; }_vm.city=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("City")])])]),_vm._v(" "),_c('div',{staticClass:"col-xs-6"},[_c('div',{staticClass:"md-form-group"},[_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.state),expression:"state"}],staticClass:"md-input",attrs:{"type":"text","name":"state"},on:{"change":function($event){_vm.state=Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val})[0]}}},_vm._l((_vm.stateOptions),function(option){return _c('option',{domProps:{"value":option.abbreviation}},[_vm._v("\n                            "+_vm._s(option.name)+"\n                        ")])})),_vm._v(" "),_c('label',[_vm._v("State")])])])]),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-xs-6"},[_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.zip),expression:"zip"}],staticClass:"md-input",attrs:{"type":"text","name":"zip"},domProps:{"value":_vm._s(_vm.zip)},on:{"input":function($event){if($event.target.composing){ return; }_vm.zip=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Zip")])])]),_vm._v(" "),_c('div',{staticClass:"col-xs-6"},[_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.phone),expression:"phone"}],staticClass:"md-input",attrs:{"type":"text","name":"phone"},domProps:{"value":_vm._s(_vm.phone)},on:{"input":function($event){if($event.target.composing){ return; }_vm.phone=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Phone "),_c('small',[_vm._v("(Optional)")])])])])]),_vm._v(" "),_c('p',{},[_vm._v("By clicking on \"Claim\" below, you are agreeing to the "),_c('a',{staticClass:"text-info",attrs:{"href":""}},[_vm._v("Terms of Service")]),_vm._v(" and the "),_c('a',{staticClass:"text-info",attrs:{"href":""}},[_vm._v("Privacy Policy")]),_vm._v(".")]),_vm._v(" "),_c('button',{staticClass:"btn primary btn-block p-x-md",attrs:{"type":"submit"},on:{"click":_vm.claim}},[_vm._v("Claim")])])])}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"claimSuccess\">\n        <span class=\"text-center text-muted\">\n            Boo Yah!!\n        </span>\n    </div>\n    <div v-else=\"\">\n        <div class=\"row\">\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"firstName\" type=\"text\" name=\"first_name\" class=\"md-input\">\n                    <label>First Name</label>\n                </div>\n            </div>\n\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"lastName\" type=\"text\" name=\"last_name\" class=\"md-input\">\n                    <label>Last Name</label>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"md-form-group\">\n            <input v-model=\"email\" type=\"text\" name=\"email\" class=\"md-input\">\n            <label>Email Address</label>\n        </div>\n\n        <div class=\"md-form-group\">\n            <input v-model=\"company\" type=\"text\" name=\"company\" class=\"md-input\">\n            <label>Company Name <small>(Optional)</small></label>\n        </div>\n\n        <div class=\"md-form-group\">\n            <input v-model=\"street1\" type=\"text\" name=\"street1\" class=\"md-input\">\n            <label>Street 1</label>\n        </div>\n\n        <div class=\"md-form-group\">\n            <input v-model=\"street2\" type=\"text\" name=\"street2\" class=\"md-input\">\n            <label>Street 2 <small>(Optional)</small></label>\n        </div>\n\n        <div class=\"row\">\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"city\" type=\"text\" name=\"city\" class=\"md-input\">\n                    <label>City</label>\n                </div>\n            </div>\n\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <select v-model=\"state\" type=\"text\" name=\"state\" class=\"md-input\">\n                        <option v-for=\"option in stateOptions\" :value=\"option.abbreviation\">\n                            {{ option.name }}\n                        </option>\n                    </select>\n                    <label>State</label>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row\">\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"zip\" type=\"text\" name=\"zip\" class=\"md-input\">\n                    <label>Zip</label>\n                </div>\n            </div>\n\n            <div class=\"col-xs-6\">\n                <div class=\"md-form-group\">\n                    <input v-model=\"phone\" type=\"text\" name=\"phone\" class=\"md-input\">\n                    <label>Phone <small>(Optional)</small></label>\n                </div>\n            </div>\n        </div>\n\n        <p class=\"\">By clicking on \"Claim\" below, you are agreeing to the <a href=\"\" class=\"text-info\">Terms of Service</a> and the <a href=\"\" class=\"text-info\">Privacy Policy</a>.</p>\n\n        <button @click=\"claim\" type=\"submit\" class=\"btn primary btn-block p-x-md\">Claim</button>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-44b9efc0", __vue__options__)
+    hotAPI.createRecord("_v-58e0d6ba", module.exports)
   } else {
-    hotAPI.reload("data-v-44b9efc0", __vue__options__)
+    hotAPI.update("_v-58e0d6ba", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../inputs/StateInput.vue":10,"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],8:[function(require,module,exports){
-;(function(){
+},{"../inputs/StateInput.vue":11,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6999,24 +7185,19 @@ exports.default = {
         'timestamp': _Timestamp2.default
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[(_vm.comments_ready)?_c('div',[_c('div',{staticClass:"box"},[_c('div',{staticClass:"box-header clearfix"},[_c('h3',{staticClass:"pull-left"},[_vm._v("Comments "),_c('span',{staticClass:"label grey-400 text-white",attrs:{"id":"comments_count"}},[_vm._v(_vm._s(_vm.comments.length))])])]),_vm._v(" "),_c('div',{staticClass:"box-body"},[_c('div',{staticClass:"streamline b-l m-l-md",attrs:{"id":"comments_container"}},_vm._l((_vm.comments),function(comment){return _c('div',[_c('div',{staticClass:"sl-item",attrs:{"data-id":comment.uuid,"data-author-id":comment.author.public_hash,"data-author":comment.author.name}},[_vm._m(0,true),_vm._v(" "),_c('div',{staticClass:"sl-content"},[_c('div',{staticClass:"sl-author"},[_c('a',{staticClass:"_600",attrs:{"href":"#"}},[_vm._v(_vm._s(comment.author.name))])]),_vm._v(" "),_c('div',{domProps:{"innerHTML":_vm._s(comment.text)}}),_vm._v(" "),_c('div',{staticClass:"sl-footer sl-date clearfix"},[_c('ul',{staticClass:"text-muted list-inline pull-left"},[_c('li',{staticClass:"list-inline-item"},[_c('timestamp',{attrs:{"timestamp":comment.created_at.date}},[_vm._v(_vm._s(comment.created_at.date))])],1),_vm._v(" "),(_vm.userCanDelete(comment))?_c('li',{staticClass:"list-inline-item"},[_c('button',{staticClass:"white btn btn-text btn-xs",attrs:{"type":"button"},on:{"click":function($event){_vm.deleteComment(comment, $event)}}},[_vm._v("Delete")])]):_vm._e()])])])])])})),_vm._v(" "),_c('div',{staticClass:"box m-a-0 b-a"},[_c('form',{attrs:{"id":"comment_new_form","method":"POST","action":_vm.post_route,"accept-charset":"UTF-8"},on:{"submit":_vm.addNewComment}},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.newcomment),expression:"newcomment"}],staticClass:"form-control no-border",attrs:{"id":"comment_new_text","name":"text_raw","data-toggle":"emojione","rows":"3","placeholder":"Type something..."},domProps:{"value":_vm._s(_vm.newcomment)},on:{"input":function($event){if($event.target.composing){ return; }_vm.newcomment=$event.target.value}}}),_vm._v(" "),_c('div',{staticClass:"box-footer clearfix"},[_c('button',{staticClass:"btn primary pull-right btn-sm",attrs:{"id":"comment_new_submit_btn","type":"submit","disabled":!_vm.newcomment}},[_vm._v("\n                              Post Comment "),(_vm.posting)?_c('spinny'):_vm._e()],1)])])])])])]):_c('div',[_c('div',{staticClass:"center-block text-center"},[_c('spinny',{attrs:{"size":"30"}})],1)])])}
-__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"sl-left"},[_c('img',{staticClass:"img-circle",attrs:{"src":"https://unsplash.it/32/32/?random"}})])}]
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div v-if=\"comments_ready\">\n        <div class=\"box\">\n            <div class=\"box-header clearfix\">\n                <h3 class=\"pull-left\">Comments <span class=\"label grey-400 text-white\" id=\"comments_count\">{{ comments.length }}</span></h3>\n                <!--{{&#45;&#45;<div class=\"pull-right\">&#45;&#45;}}-->\n                <!--{{&#45;&#45;<button id=\"comment_delete_all_btn\" data-model-id=\"{{  modelId  }}\" type=\"button\" class=\"btn white btn-xs text-muted\">Delete All</button>&#45;&#45;}}-->\n                <!--{{&#45;&#45;</div>&#45;&#45;}}-->\n            </div>\n            <div class=\"box-body\">\n                <div class=\"streamline b-l m-l-md\" id=\"comments_container\">\n                    <div v-for=\"comment in comments\">\n                        <div class=\"sl-item\" :data-id=\"comment.uuid\" :data-author-id=\"comment.author.public_hash\" :data-author=\"comment.author.name\">\n                            <div class=\"sl-left\">\n                                <img src=\"https://unsplash.it/32/32/?random\" class=\"img-circle\">\n                            </div>\n                            <div class=\"sl-content\">\n                                <div class=\"sl-author\">\n                                    <a href=\"#\" class=\"_600\">{{ comment.author.name }}</a>\n                                </div>\n                                <div v-html=\"comment.text\"></div>\n                                <div class=\"sl-footer sl-date clearfix\">\n                                    <ul class=\"text-muted list-inline pull-left\">\n                                        <li class=\"list-inline-item\"><timestamp :timestamp=\"comment.created_at.date\">{{ comment.created_at.date }}</timestamp></li>\n                                        <li class=\"list-inline-item\" v-if=\"userCanDelete(comment)\"><button type=\"button\" class=\"white btn btn-text btn-xs\" @click=\"deleteComment(comment, $event)\">Delete</button></li>\n                                    </ul>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                <div class=\"box m-a-0 b-a\">\n                    <form id=\"comment_new_form\" method=\"POST\" :action=\"post_route\" accept-charset=\"UTF-8\" @submit=\"addNewComment\">\n                        <textarea id=\"comment_new_text\" v-model=\"newcomment\" name=\"text_raw\" data-toggle=\"emojione\" class=\"form-control no-border\" rows=\"3\" placeholder=\"Type something...\"></textarea>\n                        <div class=\"box-footer clearfix\">\n                            <button id=\"comment_new_submit_btn\" type=\"submit\" class=\"btn primary pull-right btn-sm\" :disabled=\"!newcomment\">\n                              Post Comment <spinny v-if=\"posting\"></spinny></button>\n                        </div>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div v-else=\"\">\n        <div class=\"center-block text-center\">\n            <spinny size=\"30\"></spinny>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4a36148a", __vue__options__)
+    hotAPI.createRecord("_v-b8ab5732", module.exports)
   } else {
-    hotAPI.reload("data-v-4a36148a", __vue__options__)
+    hotAPI.update("_v-b8ab5732", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Timestamp.vue":5,"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],9:[function(require,module,exports){
-;(function(){
+},{"../Timestamp.vue":6,"vue":3,"vue-hot-reload-api":2}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7046,7 +7227,8 @@ exports.default = {
             type: String
         },
         already_following: {
-            type: String
+            type: Number,
+            default: 0
         },
         btn_active_class: {
             type: String,
@@ -7096,6 +7278,9 @@ exports.default = {
     },
     mounted: function mounted() {
         this.disable = false;
+        //            if (! this.entityIsMe()) {
+        //                this.disable = false;
+        //            }
     },
 
     computed: {
@@ -7112,17 +7297,17 @@ exports.default = {
         },
         is_following: function is_following() {
             if (this.doWeHaveCurrentUser()) {
-                return this.already_following === true || this.already_following === 'true' || this.following === 'true' || this.following === true;
+                return this.already_following || this.following;
             }
+        },
+        entityIsMe: function entityIsMe() {
+            if (this.doWeHaveCurrentUser()) {
+                return this.able_type.toLowerCase().includes('user') && parseInt(this.current_user.id) == parseInt(this.able_id);
+            }
+            return false;
         }
     },
     methods: {
-        entityIsMe: function entityIsMe() {
-            if (this.doWeHaveCurrentUser()) {
-                return parseInt(this.current_user.id) == parseInt(this.able_id);
-            }
-            return false;
-        },
         doWeHaveCurrentUser: function doWeHaveCurrentUser() {
             return this.current_user;
         },
@@ -7165,24 +7350,19 @@ exports.default = {
         'spinner': _Spinner2.default
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('button',{staticClass:"btn-follow btn ",class:_vm.btnclass,attrs:{"disabled":_vm.processing || _vm.disable,"type":"button"},on:{"click":function($event){_vm.is_following ? _vm.unfollowMe($event) : _vm.followMe($event)}}},[_c('span',{domProps:{"innerHTML":_vm._s(_vm.is_following ? _vm.unfollow_text : _vm.follow_text)}}),_vm._v(" "),(_vm.processing)?_c('spinner',{attrs:{"size":'' + 10}}):_vm._e()],1)])}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <button v-if=\"!entityIsMe\" :disabled=\"processing || disable\" type=\"button\" @click=\"is_following ? unfollowMe($event) : followMe($event)\" class=\"btn-follow btn \" :class=\"btnclass\">\n        <span v-html=\"is_following ? unfollow_text : follow_text\"></span>\n        <spinner v-if=\"processing\" :size=\"'' + 10\"></spinner>\n    </button>\n</span>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6800c6a6", __vue__options__)
+    hotAPI.createRecord("_v-7c27ada0", module.exports)
   } else {
-    hotAPI.reload("data-v-6800c6a6", __vue__options__)
+    hotAPI.update("_v-7c27ada0", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":4,"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],10:[function(require,module,exports){
-;(function(){
+},{"../Spinner.vue":5,"vue":3,"vue-hot-reload-api":2}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7377,23 +7557,19 @@ exports.default = {
         states: function states() {}
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('select',{class:_vm.classes,attrs:{"type":"text","name":"state"}},_vm._l((_vm.options),function(option){return _c('option',{domProps:{"value":option.abbreviation}},[_vm._v("\n        "+_vm._s(option.name)+"\n    ")])}))}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<select type=\"text\" name=\"state\" :class=\"classes\">\n    <option v-for=\"option in options\" :value=\"option.abbreviation\">\n        {{ option.name }}\n    </option>\n</select>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-934404ba", __vue__options__)
+    hotAPI.createRecord("_v-a76aebb4", module.exports)
   } else {
-    hotAPI.reload("data-v-934404ba", __vue__options__)
+    hotAPI.update("_v-a76aebb4", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],11:[function(require,module,exports){
+},{"vue":3,"vue-hot-reload-api":2}],12:[function(require,module,exports){
 'use strict';
 
 var _CheckIn = require('../check-in/CheckIn.vue');
@@ -7425,8 +7601,9 @@ new Vue({
     }
 });
 
-},{"../Spinner.vue":4,"../check-in/CheckIn.vue":6,"../comments/Commentable.vue":8,"../follow/Followable.vue":9}],12:[function(require,module,exports){
-;(function(){
+},{"../Spinner.vue":5,"../check-in/CheckIn.vue":7,"../comments/Commentable.vue":9,"../follow/Followable.vue":10}],13:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7470,24 +7647,25 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('form',{attrs:{"action":_vm.route,"method":"POST"}},[_c('input',{attrs:{"type":"hidden","name":"_token"},domProps:{"value":_vm.csrf}}),_vm._v(" "),_c('input',{attrs:{"type":"hidden","name":"_redirect"},domProps:{"value":_vm.redirect}}),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-xs-12"},[_c('div',{staticClass:"md-form-group"},[_c('select',{staticClass:"md-input",attrs:{"name":"account_type","data-toggle":"selectpicker","data-style":"btn white","data-width":"100%"}},[_c('option',{attrs:{"data-subtext":"Always free","value":"basic","selected":"selected"},domProps:{"value":"basic","selected":true}},[_vm._v("Basic")]),_vm._v(" "),_c('option',{attrs:{"data-subtext":"30 day free trial","value":"merchant"},domProps:{"value":"merchant"}},[_vm._v("Merchant")])]),_vm._v(" "),_c('label',[_vm._v("Account Type:")])])])]),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-xs-6"},[_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.firstName),expression:"firstName"}],staticClass:"md-input",attrs:{"type":"text","name":"first_name"},domProps:{"value":_vm._s(_vm.firstName)},on:{"input":function($event){if($event.target.composing){ return; }_vm.firstName=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("First Name")])])]),_vm._v(" "),_c('div',{staticClass:"col-xs-6"},[_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.lastName),expression:"lastName"}],staticClass:"md-input",attrs:{"type":"text","name":"last_name"},domProps:{"value":_vm._s(_vm.lastName)},on:{"input":function($event){if($event.target.composing){ return; }_vm.lastName=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Last Name")])])])]),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.username),expression:"username"}],staticClass:"md-input",attrs:{"type":"text","name":"username"},domProps:{"value":_vm._s(_vm.username)},on:{"input":function($event){if($event.target.composing){ return; }_vm.username=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Username")])]),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.email),expression:"email"}],staticClass:"md-input",attrs:{"type":"text","name":"email"},domProps:{"value":_vm._s(_vm.email)},on:{"input":function($event){if($event.target.composing){ return; }_vm.email=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Email Address")])]),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.password),expression:"password"}],staticClass:"md-input",attrs:{"type":"password","name":"password"},domProps:{"value":_vm._s(_vm.password)},on:{"input":function($event){if($event.target.composing){ return; }_vm.password=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Password")])]),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.referredBy),expression:"referredBy"}],staticClass:"md-input",attrs:{"type":"text","name":"referred_by"},domProps:{"value":_vm._s(_vm.referredBy)},on:{"input":function($event){if($event.target.composing){ return; }_vm.referredBy=$event.target.value}}}),_vm._v(" "),_vm._m(0)]),_vm._v(" "),_vm._m(1),_vm._v(" "),_c('button',{staticClass:"btn primary btn-block p-x-md",attrs:{"type":"submit"}},[_vm._v("Create Account")])])}
-__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('label',[_vm._v("Referred By User "),_c('small',{},[_vm._v("(username or email)")])])},function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('p',{},[_vm._v("By clicking on \"Create Account\" below, you are agreeing to the "),_c('a',{staticClass:"text-info",attrs:{"href":""}},[_vm._v("Terms of Service")]),_vm._v(" and the "),_c('a',{staticClass:"text-info",attrs:{"href":""}},[_vm._v("Privacy Policy")]),_vm._v(".")])}]
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<form :action=\"route\" method=\"POST\">\n    <input type=\"hidden\" name=\"_token\" :value=\"csrf\">\n    <input type=\"hidden\" name=\"_redirect\" :value=\"redirect\">\n\n    <div class=\"row\">\n        <div class=\"col-xs-12\">\n            <div class=\"md-form-group\">\n                <select class=\"md-input\" name=\"account_type\" data-toggle=\"selectpicker\" data-style=\"btn white\" data-width=\"100%\">\n                    <option data-subtext=\"Always free\" value=\"basic\" selected=\"selected\">Basic</option>\n                    <option data-subtext=\"30 day free trial\" value=\"merchant\">Merchant</option>\n                </select>\n                <label>Account Type:</label>\n            </div>\n        </div>\n    </div>\n\n    <div class=\"row\">\n        <div class=\"col-xs-6\">\n            <div class=\"md-form-group\">\n                <input v-model=\"firstName\" type=\"text\" name=\"first_name\" class=\"md-input\">\n                <label>First Name</label>\n            </div>\n        </div>\n\n        <div class=\"col-xs-6\">\n            <div class=\"md-form-group\">\n                <input v-model=\"lastName\" type=\"text\" name=\"last_name\" class=\"md-input\">\n                <label>Last Name</label>\n            </div>\n        </div>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"username\" type=\"text\" name=\"username\" class=\"md-input\">\n        <label>Username</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"email\" type=\"text\" name=\"email\" class=\"md-input\">\n        <label>Email Address</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"password\" type=\"password\" name=\"password\" class=\"md-input\">\n        <label>Password</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"referredBy\" type=\"text\" name=\"referred_by\" class=\"md-input\">\n        <label>Referred By User <small class=\"\">(username or email)</small></label>\n    </div>\n\n    <p class=\"\">By clicking on \"Create Account\" below, you are agreeing to the <a href=\"\" class=\"text-info\">Terms of Service</a> and the <a href=\"\" class=\"text-info\">Privacy Policy</a>.</p>\n\n    <button type=\"submit\" class=\"btn primary btn-block p-x-md\">Create Account</button>\n</form>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4c5243d3", __vue__options__)
+    hotAPI.createRecord("_v-20c85916", module.exports)
   } else {
-    hotAPI.reload("data-v-4c5243d3", __vue__options__)
+    hotAPI.update("_v-20c85916", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":2,"vueify/node_modules/vue-hot-reload-api":3}],13:[function(require,module,exports){
-;(function(){
+},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}],14:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7525,22 +7703,22 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('form',{attrs:{"action":_vm.signInRoute,"method":"POST"}},[_c('input',{attrs:{"type":"hidden","name":"_token"},domProps:{"value":_vm.csrf}}),_vm._v(" "),_c('input',{attrs:{"type":"hidden","name":"_redirect"},domProps:{"value":_vm.redirect}}),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.username),expression:"username"}],staticClass:"md-input",attrs:{"type":"text","name":"username"},domProps:{"value":_vm._s(_vm.username)},on:{"input":function($event){if($event.target.composing){ return; }_vm.username=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Username")])]),_vm._v(" "),_c('div',{staticClass:"md-form-group"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.password),expression:"password"}],staticClass:"md-input",attrs:{"type":"password","name":"password"},domProps:{"value":_vm._s(_vm.password)},on:{"input":function($event){if($event.target.composing){ return; }_vm.password=$event.target.value}}}),_vm._v(" "),_c('label',[_vm._v("Password "),_c('a',{staticClass:"text-accent text-primary _500 m-l-lg font-italic",attrs:{"href":_vm.passwordResetRoute}},[_vm._v("Forgot password?")])])]),_vm._v(" "),_c('button',{staticClass:"btn primary btn-block p-x-md",attrs:{"type":"submit"}},[_vm._v("Login")])])}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<form :action=\"signInRoute\" method=\"POST\">\n    <input type=\"hidden\" name=\"_token\" :value=\"csrf\">\n    <input type=\"hidden\" name=\"_redirect\" :value=\"redirect\">\n    <div class=\"md-form-group\">\n        <input v-model=\"username\" type=\"text\" name=\"username\" class=\"md-input\">\n        <label>Username</label>\n    </div>\n\n    <div class=\"md-form-group\">\n        <input v-model=\"password\" type=\"password\" name=\"password\" class=\"md-input\">\n        <label>Password <a :href=\"passwordResetRoute\" class=\"text-accent text-primary _500 m-l-lg font-italic\">Forgot password?</a></label>\n    </div>\n\n    <button type=\"submit\" class=\"btn primary btn-block p-x-md\">Login</button>\n</form>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3a6a74fc", __vue__options__)
+    hotAPI.createRecord("_v-84b634b6", module.exports)
   } else {
-    hotAPI.reload("data-v-3a6a74fc", __vue__options__)
+    hotAPI.update("_v-84b634b6", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":2,"vueify/node_modules/vue-hot-reload-api":3}]},{},[11]);
+},{"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[12]);
 
 //# sourceMappingURL=listing-items-page.js.map

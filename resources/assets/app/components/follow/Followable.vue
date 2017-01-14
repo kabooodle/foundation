@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button
+        <button v-if="!entityIsMe"
                 :disabled="processing || disable"
                 type="button"
                 @click="is_following ? unfollowMe($event) : followMe($event)"
@@ -31,7 +31,8 @@
                 type: String
             },
             already_following: {
-                type: String
+                type: Number,
+                default: 0
             },
             btn_active_class : {
                 type: String,
@@ -97,19 +98,19 @@
 
                 return theClass;
             },
-            is_following(){
+            is_following: function () {
                 if (this.doWeHaveCurrentUser()) {
-                    return (this.already_following === true || this.already_following === 'true' || this.following === 'true' || this.following === true);
+                    return this.already_following || this.following;
                 }
             },
-        },
-        methods: {
             entityIsMe: function(){
                 if(this.doWeHaveCurrentUser()) {
-                    return parseInt(this.current_user.id) == parseInt(this.able_id);
+                    return this.able_type.toLowerCase().includes('user') && parseInt(this.current_user.id) == parseInt(this.able_id);
                 }
                 return false;
             },
+        },
+        methods: {
             doWeHaveCurrentUser: function () {
                 return this.current_user;
             },

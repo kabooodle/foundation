@@ -181,6 +181,307 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],2:[function(require,module,exports){
+var Vue // late bind
+var map = Object.create(null)
+var shimmed = false
+var isBrowserify = false
+
+/**
+ * Determine compatibility and apply patch.
+ *
+ * @param {Function} vue
+ * @param {Boolean} browserify
+ */
+
+exports.install = function (vue, browserify) {
+  if (shimmed) return
+  shimmed = true
+
+  Vue = vue
+  isBrowserify = browserify
+
+  exports.compatible = !!Vue.internalDirectives
+  if (!exports.compatible) {
+    console.warn(
+      '[HMR] vue-loader hot reload is only compatible with ' +
+      'Vue.js 1.0.0+.'
+    )
+    return
+  }
+
+  // patch view directive
+  patchView(Vue.internalDirectives.component)
+  console.log('[HMR] Vue component hot reload shim applied.')
+  // shim router-view if present
+  var routerView = Vue.elementDirective('router-view')
+  if (routerView) {
+    patchView(routerView)
+    console.log('[HMR] vue-router <router-view> hot reload shim applied.')
+  }
+}
+
+/**
+ * Shim the view directive (component or router-view).
+ *
+ * @param {Object} View
+ */
+
+function patchView (View) {
+  var unbuild = View.unbuild
+  View.unbuild = function (defer) {
+    if (!this.hotUpdating) {
+      var prevComponent = this.childVM && this.childVM.constructor
+      removeView(prevComponent, this)
+      // defer = true means we are transitioning to a new
+      // Component. Register this new component to the list.
+      if (defer) {
+        addView(this.Component, this)
+      }
+    }
+    // call original
+    return unbuild.call(this, defer)
+  }
+}
+
+/**
+ * Add a component view to a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function addView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    if (!map[id]) {
+      map[id] = {
+        Component: Component,
+        views: [],
+        instances: []
+      }
+    }
+    map[id].views.push(view)
+  }
+}
+
+/**
+ * Remove a component view from a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function removeView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    map[id].views.$remove(view)
+  }
+}
+
+/**
+ * Create a record for a hot module, which keeps track of its construcotr,
+ * instnaces and views (component directives or router-views).
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+exports.createRecord = function (id, options) {
+  if (typeof options === 'function') {
+    options = options.options
+  }
+  if (typeof options.el !== 'string' && typeof options.data !== 'object') {
+    makeOptionsHot(id, options)
+    map[id] = {
+      Component: null,
+      views: [],
+      instances: []
+    }
+  }
+}
+
+/**
+ * Make a Component options object hot.
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+function makeOptionsHot (id, options) {
+  options.hotID = id
+  injectHook(options, 'created', function () {
+    var record = map[id]
+    if (!record.Component) {
+      record.Component = this.constructor
+    }
+    record.instances.push(this)
+  })
+  injectHook(options, 'beforeDestroy', function () {
+    map[id].instances.$remove(this)
+  })
+}
+
+/**
+ * Inject a hook to a hot reloadable component so that
+ * we can keep track of it.
+ *
+ * @param {Object} options
+ * @param {String} name
+ * @param {Function} hook
+ */
+
+function injectHook (options, name, hook) {
+  var existing = options[name]
+  options[name] = existing
+    ? Array.isArray(existing)
+      ? existing.concat(hook)
+      : [existing, hook]
+    : [hook]
+}
+
+/**
+ * Update a hot component.
+ *
+ * @param {String} id
+ * @param {Object|null} newOptions
+ * @param {String|null} newTemplate
+ */
+
+exports.update = function (id, newOptions, newTemplate) {
+  var record = map[id]
+  // force full-reload if an instance of the component is active but is not
+  // managed by a view
+  if (!record || (record.instances.length && !record.views.length)) {
+    console.log('[HMR] Root or manually-mounted instance modified. Full reload may be required.')
+    if (!isBrowserify) {
+      window.location.reload()
+    } else {
+      // browserify-hmr somehow sends incomplete bundle if we reload here
+      return
+    }
+  }
+  if (!isBrowserify) {
+    // browserify-hmr already logs this
+    console.log('[HMR] Updating component: ' + format(id))
+  }
+  var Component = record.Component
+  // update constructor
+  if (newOptions) {
+    // in case the user exports a constructor
+    Component = record.Component = typeof newOptions === 'function'
+      ? newOptions
+      : Vue.extend(newOptions)
+    makeOptionsHot(id, Component.options)
+  }
+  if (newTemplate) {
+    Component.options.template = newTemplate
+  }
+  // handle recursive lookup
+  if (Component.options.name) {
+    Component.options.components[Component.options.name] = Component
+  }
+  // reset constructor cached linker
+  Component.linker = null
+  // reload all views
+  record.views.forEach(function (view) {
+    updateView(view, Component)
+  })
+  // flush devtools
+  if (window.__VUE_DEVTOOLS_GLOBAL_HOOK__) {
+    window.__VUE_DEVTOOLS_GLOBAL_HOOK__.emit('flush')
+  }
+}
+
+/**
+ * Update a component view instance
+ *
+ * @param {Directive} view
+ * @param {Function} Component
+ */
+
+function updateView (view, Component) {
+  if (!view._bound) {
+    return
+  }
+  view.Component = Component
+  view.hotUpdating = true
+  // disable transitions
+  view.vm._isCompiled = false
+  // save state
+  var state = extractState(view.childVM)
+  // remount, make sure to disable keep-alive
+  var keepAlive = view.keepAlive
+  view.keepAlive = false
+  view.mountComponent()
+  view.keepAlive = keepAlive
+  // restore state
+  restoreState(view.childVM, state, true)
+  // re-eanble transitions
+  view.vm._isCompiled = true
+  view.hotUpdating = false
+}
+
+/**
+ * Extract state from a Vue instance.
+ *
+ * @param {Vue} vm
+ * @return {Object}
+ */
+
+function extractState (vm) {
+  return {
+    cid: vm.constructor.cid,
+    data: vm.$data,
+    children: vm.$children.map(extractState)
+  }
+}
+
+/**
+ * Restore state to a reloaded Vue instance.
+ *
+ * @param {Vue} vm
+ * @param {Object} state
+ */
+
+function restoreState (vm, state, isRoot) {
+  var oldAsyncConfig
+  if (isRoot) {
+    // set Vue into sync mode during state rehydration
+    oldAsyncConfig = Vue.config.async
+    Vue.config.async = false
+  }
+  // actual restore
+  if (isRoot || !vm._props) {
+    vm.$data = state.data
+  } else {
+    Object.keys(state.data).forEach(function (key) {
+      if (!vm._props[key]) {
+        // for non-root, only restore non-props fields
+        vm.$data[key] = state.data[key]
+      }
+    })
+  }
+  // verify child consistency
+  var hasSameChildren = vm.$children.every(function (c, i) {
+    return state.children[i] && state.children[i].cid === c.constructor.cid
+  })
+  if (hasSameChildren) {
+    // rehydrate children
+    vm.$children.forEach(function (c, i) {
+      restoreState(c, state.children[i])
+    })
+  }
+  if (isRoot) {
+    Vue.config.async = oldAsyncConfig
+  }
+}
+
+function format (id) {
+  var match = id.match(/[^\/]+\.vue$/)
+  return match ? match[0] : id
+}
+
+},{}],3:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.1.8
@@ -6320,13 +6621,11 @@ setTimeout(function () {
 module.exports = Vue$2;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":1}],3:[function(require,module,exports){
+},{"_process":1}],4:[function(require,module,exports){
 var inserted = exports.cache = {}
 
-function noop () {}
-
 exports.insert = function (css) {
-  if (inserted[css]) return noop
+  if (inserted[css]) return
   inserted[css] = true
 
   var elem = document.createElement('style')
@@ -6339,141 +6638,12 @@ exports.insert = function (css) {
   }
 
   document.getElementsByTagName('head')[0].appendChild(elem)
-  return function () {
-    document.getElementsByTagName('head')[0].removeChild(elem)
-    inserted[css] = false
-  }
+  return elem
 }
-
-},{}],4:[function(require,module,exports){
-var Vue // late bind
-var map = window.__VUE_HOT_MAP__ = Object.create(null)
-var installed = false
-var isBrowserify = false
-var initHookName = 'beforeCreate'
-
-exports.install = function (vue, browserify) {
-  if (installed) return
-  installed = true
-
-  Vue = vue
-  isBrowserify = browserify
-
-  // compat with < 2.0.0-alpha.7
-  if (Vue.config._lifecycleHooks.indexOf('init') > -1) {
-    initHookName = 'init'
-  }
-
-  exports.compatible = Number(Vue.version.split('.')[0]) >= 2
-  if (!exports.compatible) {
-    console.warn(
-      '[HMR] You are using a version of vue-hot-reload-api that is ' +
-      'only compatible with Vue.js core ^2.0.0.'
-    )
-    return
-  }
-}
-
-/**
- * Create a record for a hot module, which keeps track of its constructor
- * and instances
- *
- * @param {String} id
- * @param {Object} options
- */
-
-exports.createRecord = function (id, options) {
-  var Ctor = null
-  if (typeof options === 'function') {
-    Ctor = options
-    options = Ctor.options
-  }
-  makeOptionsHot(id, options)
-  map[id] = {
-    Ctor: Vue.extend(options),
-    instances: []
-  }
-}
-
-/**
- * Make a Component options object hot.
- *
- * @param {String} id
- * @param {Object} options
- */
-
-function makeOptionsHot (id, options) {
-  injectHook(options, initHookName, function () {
-    map[id].instances.push(this)
-  })
-  injectHook(options, 'beforeDestroy', function () {
-    var instances = map[id].instances
-    instances.splice(instances.indexOf(this), 1)
-  })
-}
-
-/**
- * Inject a hook to a hot reloadable component so that
- * we can keep track of it.
- *
- * @param {Object} options
- * @param {String} name
- * @param {Function} hook
- */
-
-function injectHook (options, name, hook) {
-  var existing = options[name]
-  options[name] = existing
-    ? Array.isArray(existing)
-      ? existing.concat(hook)
-      : [existing, hook]
-    : [hook]
-}
-
-function tryWrap (fn) {
-  return function (id, arg) {
-    try { fn(id, arg) } catch (e) {
-      console.error(e)
-      console.warn('Something went wrong during Vue component hot-reload. Full reload required.')
-    }
-  }
-}
-
-exports.rerender = tryWrap(function (id, fns) {
-  var record = map[id]
-  record.Ctor.options.render = fns.render
-  record.Ctor.options.staticRenderFns = fns.staticRenderFns
-  record.instances.slice().forEach(function (instance) {
-    instance.$options.render = fns.render
-    instance.$options.staticRenderFns = fns.staticRenderFns
-    instance._staticTrees = [] // reset static trees
-    instance.$forceUpdate()
-  })
-})
-
-exports.reload = tryWrap(function (id, options) {
-  makeOptionsHot(id, options)
-  var record = map[id]
-  record.Ctor.extendOptions = options
-  var newCtor = Vue.extend(options)
-  record.Ctor.options = newCtor.options
-  record.Ctor.cid = newCtor.cid
-  if (newCtor.release) {
-    // temporary global mixin strategy used in < 2.0.0-alpha.6
-    newCtor.release()
-  }
-  record.instances.slice().forEach(function (instance) {
-    if (instance.$vnode && instance.$vnode.context) {
-      instance.$vnode.context.$forceUpdate()
-    } else {
-      console.warn('Root or manually mounted instance modified. Full reload required.')
-    }
-  })
-})
 
 },{}],5:[function(require,module,exports){
 /**
- * vuex v2.1.1
+ * vuex v2.0.0
  * (c) 2016 Evan You
  * @license MIT
  */
@@ -6538,39 +6708,27 @@ function applyMixin (Vue) {
   }
 }
 
-var mapState = normalizeNamespace(function (namespace, states) {
+function mapState (states) {
   var res = {}
   normalizeMap(states).forEach(function (ref) {
     var key = ref.key;
     var val = ref.val;
 
     res[key] = function mappedState () {
-      var state = this.$store.state
-      var getters = this.$store.getters
-      if (namespace) {
-        var module = this.$store._modulesNamespaceMap[namespace]
-        if (!module) {
-          warnNamespace('mapState', namespace)
-          return
-        }
-        state = module.state
-        getters = module.context.getters
-      }
       return typeof val === 'function'
-        ? val.call(this, state, getters)
-        : state[val]
+        ? val.call(this, this.$store.state, this.$store.getters)
+        : this.$store.state[val]
     }
   })
   return res
-})
+}
 
-var mapMutations = normalizeNamespace(function (namespace, mutations) {
+function mapMutations (mutations) {
   var res = {}
   normalizeMap(mutations).forEach(function (ref) {
     var key = ref.key;
     var val = ref.val;
 
-    val = namespace + val
     res[key] = function mappedMutation () {
       var args = [], len = arguments.length;
       while ( len-- ) args[ len ] = arguments[ len ];
@@ -6579,15 +6737,14 @@ var mapMutations = normalizeNamespace(function (namespace, mutations) {
     }
   })
   return res
-})
+}
 
-var mapGetters = normalizeNamespace(function (namespace, getters) {
+function mapGetters (getters) {
   var res = {}
   normalizeMap(getters).forEach(function (ref) {
     var key = ref.key;
     var val = ref.val;
 
-    val = namespace + val
     res[key] = function mappedGetter () {
       if (!(val in this.$store.getters)) {
         console.error(("[vuex] unknown getter: " + val))
@@ -6596,15 +6753,14 @@ var mapGetters = normalizeNamespace(function (namespace, getters) {
     }
   })
   return res
-})
+}
 
-var mapActions = normalizeNamespace(function (namespace, actions) {
+function mapActions (actions) {
   var res = {}
   normalizeMap(actions).forEach(function (ref) {
     var key = ref.key;
     var val = ref.val;
 
-    val = namespace + val
     res[key] = function mappedAction () {
       var args = [], len = arguments.length;
       while ( len-- ) args[ len ] = arguments[ len ];
@@ -6613,35 +6769,12 @@ var mapActions = normalizeNamespace(function (namespace, actions) {
     }
   })
   return res
-})
+}
 
 function normalizeMap (map) {
   return Array.isArray(map)
     ? map.map(function (key) { return ({ key: key, val: key }); })
     : Object.keys(map).map(function (key) { return ({ key: key, val: map[key] }); })
-}
-
-function normalizeNamespace (fn) {
-  return function (namespace, map) {
-    if (typeof namespace !== 'string') {
-      map = namespace
-      namespace = ''
-    } else if (namespace.charAt(namespace.length - 1) !== '/') {
-      namespace += '/'
-    }
-    return fn(namespace, map)
-  }
-}
-
-function warnNamespace (helper, namespace) {
-  console.error(("[vuex] module namespace not found in " + helper + "(): " + namespace))
-}
-
-/**
- * forEach for object
- */
-function forEachValue (obj, fn) {
-  Object.keys(obj).forEach(function (key) { return fn(obj[key], key); })
 }
 
 function isObject (obj) {
@@ -6654,146 +6787,6 @@ function isPromise (val) {
 
 function assert (condition, msg) {
   if (!condition) { throw new Error(("[vuex] " + msg)) }
-}
-
-var Module = function Module (rawModule, runtime) {
-  this.runtime = runtime
-  this._children = Object.create(null)
-  this._rawModule = rawModule
-};
-
-var prototypeAccessors$1 = { state: {},namespaced: {} };
-
-prototypeAccessors$1.state.get = function () {
-  return this._rawModule.state || {}
-};
-
-prototypeAccessors$1.namespaced.get = function () {
-  return !!this._rawModule.namespaced
-};
-
-Module.prototype.addChild = function addChild (key, module) {
-  this._children[key] = module
-};
-
-Module.prototype.removeChild = function removeChild (key) {
-  delete this._children[key]
-};
-
-Module.prototype.getChild = function getChild (key) {
-  return this._children[key]
-};
-
-Module.prototype.update = function update (rawModule) {
-  this._rawModule.namespaced = rawModule.namespaced
-  if (rawModule.actions) {
-    this._rawModule.actions = rawModule.actions
-  }
-  if (rawModule.mutations) {
-    this._rawModule.mutations = rawModule.mutations
-  }
-  if (rawModule.getters) {
-    this._rawModule.getters = rawModule.getters
-  }
-};
-
-Module.prototype.forEachChild = function forEachChild (fn) {
-  forEachValue(this._children, fn)
-};
-
-Module.prototype.forEachGetter = function forEachGetter (fn) {
-  if (this._rawModule.getters) {
-    forEachValue(this._rawModule.getters, fn)
-  }
-};
-
-Module.prototype.forEachAction = function forEachAction (fn) {
-  if (this._rawModule.actions) {
-    forEachValue(this._rawModule.actions, fn)
-  }
-};
-
-Module.prototype.forEachMutation = function forEachMutation (fn) {
-  if (this._rawModule.mutations) {
-    forEachValue(this._rawModule.mutations, fn)
-  }
-};
-
-Object.defineProperties( Module.prototype, prototypeAccessors$1 );
-
-var ModuleCollection = function ModuleCollection (rawRootModule) {
-  var this$1 = this;
-
-  // register root module (Vuex.Store options)
-  this.root = new Module(rawRootModule, false)
-
-  // register all nested modules
-  if (rawRootModule.modules) {
-    forEachValue(rawRootModule.modules, function (rawModule, key) {
-      this$1.register([key], rawModule, false)
-    })
-  }
-};
-
-ModuleCollection.prototype.get = function get (path) {
-  return path.reduce(function (module, key) {
-    return module.getChild(key)
-  }, this.root)
-};
-
-ModuleCollection.prototype.getNamespace = function getNamespace (path) {
-  var module = this.root
-  return path.reduce(function (namespace, key) {
-    module = module.getChild(key)
-    return namespace + (module.namespaced ? key + '/' : '')
-  }, '')
-};
-
-ModuleCollection.prototype.update = function update$1 (rawRootModule) {
-  update(this.root, rawRootModule)
-};
-
-ModuleCollection.prototype.register = function register (path, rawModule, runtime) {
-    var this$1 = this;
-    if ( runtime === void 0 ) runtime = true;
-
-  var parent = this.get(path.slice(0, -1))
-  var newModule = new Module(rawModule, runtime)
-  parent.addChild(path[path.length - 1], newModule)
-
-  // register nested modules
-  if (rawModule.modules) {
-    forEachValue(rawModule.modules, function (rawChildModule, key) {
-      this$1.register(path.concat(key), rawChildModule, runtime)
-    })
-  }
-};
-
-ModuleCollection.prototype.unregister = function unregister (path) {
-  var parent = this.get(path.slice(0, -1))
-  var key = path[path.length - 1]
-  if (!parent.getChild(key).runtime) { return }
-
-  parent.removeChild(key)
-};
-
-function update (targetModule, newModule) {
-  // update target module
-  targetModule.update(newModule)
-
-  // update nested modules
-  if (newModule.modules) {
-    for (var key in newModule.modules) {
-      if (!targetModule.getChild(key)) {
-        console.warn(
-          "[vuex] trying to add a new module '" + key + "' on hot reloading, " +
-          'manual reload is needed'
-        )
-        return
-      }
-      update(targetModule.getChild(key), newModule.modules[key])
-    }
-  }
 }
 
 var Vue // bind on install
@@ -6810,34 +6803,34 @@ var Store = function Store (options) {
   var strict = options.strict; if ( strict === void 0 ) strict = false;
 
   // store internal state
+  this._options = options
   this._committing = false
   this._actions = Object.create(null)
   this._mutations = Object.create(null)
   this._wrappedGetters = Object.create(null)
-  this._modules = new ModuleCollection(options)
-  this._modulesNamespaceMap = Object.create(null)
+  this._runtimeModules = Object.create(null)
   this._subscribers = []
   this._watcherVM = new Vue()
 
-  // bind commit and dispatch to self
+    // bind commit and dispatch to self
   var store = this
   var ref = this;
   var dispatch = ref.dispatch;
   var commit = ref.commit;
-    this.dispatch = function boundDispatch (type, payload) {
+  this.dispatch = function boundDispatch (type, payload) {
     return dispatch.call(store, type, payload)
-  }
-  this.commit = function boundCommit (type, payload, options) {
-    return commit.call(store, type, payload, options)
     }
+    this.commit = function boundCommit (type, payload, options) {
+    return commit.call(store, type, payload, options)
+  }
 
-    // strict mode
+  // strict mode
   this.strict = strict
 
   // init root module.
   // this also recursively registers all sub-modules
   // and collects all module getters inside this._wrappedGetters
-  installModule(this, state, [], this._modules.root)
+  installModule(this, state, [], options)
 
   // initialize the store vm, which is responsible for the reactivity
   // (also registers _wrappedGetters as computed properties)
@@ -6850,22 +6843,22 @@ var Store = function Store (options) {
 var prototypeAccessors = { state: {} };
 
 prototypeAccessors.state.get = function () {
-  return this._vm.$data.state
+  return this._vm.state
 };
 
 prototypeAccessors.state.set = function (v) {
   assert(false, "Use store.replaceState() to explicit replace store state.")
 };
 
-Store.prototype.commit = function commit (_type, _payload, _options) {
+Store.prototype.commit = function commit (type, payload, options) {
     var this$1 = this;
 
   // check object-style commit
-  var ref = unifyObjectStyle(_type, _payload, _options);
-    var type = ref.type;
-    var payload = ref.payload;
-    var options = ref.options;
-
+  if (isObject(type) && type.type) {
+    options = payload
+    payload = type
+    type = type.type
+  }
   var mutation = { type: type, payload: payload }
   var entry = this._mutations[type]
   if (!entry) {
@@ -6877,22 +6870,17 @@ Store.prototype.commit = function commit (_type, _payload, _options) {
       handler(payload)
     })
   })
-  this._subscribers.forEach(function (sub) { return sub(mutation, this$1.state); })
-
-  if (options && options.silent) {
-    console.warn(
-      "[vuex] mutation type: " + type + ". Silent option has been removed. " +
-      'Use the filter functionality in the vue-devtools'
-    )
+  if (!options || !options.silent) {
+    this._subscribers.forEach(function (sub) { return sub(mutation, this$1.state); })
   }
 };
 
-Store.prototype.dispatch = function dispatch (_type, _payload) {
+Store.prototype.dispatch = function dispatch (type, payload) {
   // check object-style dispatch
-  var ref = unifyObjectStyle(_type, _payload);
-    var type = ref.type;
-    var payload = ref.payload;
-
+  if (isObject(type) && type.type) {
+    payload = type
+    type = type.type
+  }
   var entry = this._actions[type]
   if (!entry) {
     console.error(("[vuex] unknown action type: " + type))
@@ -6920,7 +6908,7 @@ Store.prototype.watch = function watch (getter, cb, options) {
     var this$1 = this;
 
   assert(typeof getter === 'function', "store.watch only accepts a function.")
-  return this._watcherVM.$watch(function () { return getter(this$1.state, this$1.getters); }, cb, options)
+  return this._watcherVM.$watch(function () { return getter(this$1.state); }, cb, options)
 };
 
 Store.prototype.replaceState = function replaceState (state) {
@@ -6931,11 +6919,11 @@ Store.prototype.replaceState = function replaceState (state) {
   })
 };
 
-Store.prototype.registerModule = function registerModule (path, rawModule) {
+Store.prototype.registerModule = function registerModule (path, module) {
   if (typeof path === 'string') { path = [path] }
   assert(Array.isArray(path), "module path must be a string or an Array.")
-  this._modules.register(path, rawModule)
-  installModule(this, this.state, path, this._modules.get(path))
+  this._runtimeModules[path.join('.')] = module
+  installModule(this, this.state, path, module)
   // reset store to update getters...
   resetStoreVM(this, this.state)
 };
@@ -6945,7 +6933,7 @@ Store.prototype.unregisterModule = function unregisterModule (path) {
 
   if (typeof path === 'string') { path = [path] }
   assert(Array.isArray(path), "module path must be a string or an Array.")
-    this._modules.unregister(path)
+    delete this._runtimeModules[path.join('.')]
   this._withCommit(function () {
     var parentState = getNestedState(this$1.state, path.slice(0, -1))
     Vue.delete(parentState, path[path.length - 1])
@@ -6954,7 +6942,7 @@ Store.prototype.unregisterModule = function unregisterModule (path) {
 };
 
 Store.prototype.hotUpdate = function hotUpdate (newOptions) {
-  this._modules.update(newOptions)
+  updateModule(this._options, newOptions)
   resetStore(this)
 };
 
@@ -6967,14 +6955,41 @@ Store.prototype._withCommit = function _withCommit (fn) {
 
 Object.defineProperties( Store.prototype, prototypeAccessors );
 
+function updateModule (targetModule, newModule) {
+  if (newModule.actions) {
+    targetModule.actions = newModule.actions
+  }
+  if (newModule.mutations) {
+    targetModule.mutations = newModule.mutations
+  }
+  if (newModule.getters) {
+    targetModule.getters = newModule.getters
+  }
+  if (newModule.modules) {
+    for (var key in newModule.modules) {
+      if (!(targetModule.modules && targetModule.modules[key])) {
+        console.warn(
+          "[vuex] trying to add a new module '" + key + "' on hot reloading, " +
+          'manual reload is needed'
+        )
+        return
+      }
+      updateModule(targetModule.modules[key], newModule.modules[key])
+    }
+  }
+}
+
 function resetStore (store) {
   store._actions = Object.create(null)
   store._mutations = Object.create(null)
   store._wrappedGetters = Object.create(null)
-  store._modulesNamespaceMap = Object.create(null)
   var state = store.state
-  // init all modules
-  installModule(store, state, [], store._modules.root, true)
+  // init root module
+  installModule(store, state, [], store._options, true)
+  // init all runtime modules
+  Object.keys(store._runtimeModules).forEach(function (key) {
+    installModule(store, state, key.split('.'), store._runtimeModules[key], true)
+  })
   // reset vm
   resetStoreVM(store, state)
 }
@@ -6986,12 +7001,12 @@ function resetStoreVM (store, state) {
   store.getters = {}
   var wrappedGetters = store._wrappedGetters
   var computed = {}
-  forEachValue(wrappedGetters, function (fn, key) {
+  Object.keys(wrappedGetters).forEach(function (key) {
+    var fn = wrappedGetters[key]
     // use computed to leverage its lazy-caching mechanism
     computed[key] = function () { return fn(store); }
     Object.defineProperty(store.getters, key, {
-      get: function () { return store._vm[key]; },
-      enumerable: true // for local getters
+      get: function () { return store._vm[key]; }
     })
   })
 
@@ -7023,135 +7038,65 @@ function resetStoreVM (store, state) {
 
 function installModule (store, rootState, path, module, hot) {
   var isRoot = !path.length
-  var namespace = store._modules.getNamespace(path)
-
-  // register in namespace map
-  if (namespace) {
-    store._modulesNamespaceMap[namespace] = module
-  }
+  var state = module.state;
+  var actions = module.actions;
+  var mutations = module.mutations;
+  var getters = module.getters;
+  var modules = module.modules;
 
   // set state
   if (!isRoot && !hot) {
     var parentState = getNestedState(rootState, path.slice(0, -1))
     var moduleName = path[path.length - 1]
     store._withCommit(function () {
-      Vue.set(parentState, moduleName, module.state)
+      Vue.set(parentState, moduleName, state || {})
     })
   }
 
-  var local = module.context = makeLocalContext(store, namespace)
-
-  module.forEachMutation(function (mutation, key) {
-    var namespacedType = namespace + key
-    registerMutation(store, namespacedType, mutation, path)
-  })
-
-  module.forEachAction(function (action, key) {
-    var namespacedType = namespace + key
-    registerAction(store, namespacedType, action, local, path)
-  })
-
-  module.forEachGetter(function (getter, key) {
-    var namespacedType = namespace + key
-    registerGetter(store, namespacedType, getter, local, path)
-  })
-
-  module.forEachChild(function (child, key) {
-    installModule(store, rootState, path.concat(key), child, hot)
-  })
-}
-
-/**
- * make localized dispatch, commit and getters
- * if there is no namespace, just use root ones
- */
-function makeLocalContext (store, namespace) {
-  var noNamespace = namespace === ''
-
-  var local = {
-    dispatch: noNamespace ? store.dispatch : function (_type, _payload, _options) {
-      var args = unifyObjectStyle(_type, _payload, _options)
-      var payload = args.payload;
-      var options = args.options;
-      var type = args.type;
-
-      if (!options || !options.root) {
-        type = namespace + type
-        if (!store._actions[type]) {
-          console.error(("[vuex] unknown local action type: " + (args.type) + ", global type: " + type))
-          return
-        }
-      }
-
-      return store.dispatch(type, payload)
-    },
-
-    commit: noNamespace ? store.commit : function (_type, _payload, _options) {
-      var args = unifyObjectStyle(_type, _payload, _options)
-      var payload = args.payload;
-      var options = args.options;
-      var type = args.type;
-
-      if (!options || !options.root) {
-        type = namespace + type
-        if (!store._mutations[type]) {
-          console.error(("[vuex] unknown local mutation type: " + (args.type) + ", global type: " + type))
-          return
-        }
-      }
-
-      store.commit(type, payload, options)
-    }
+  if (mutations) {
+    Object.keys(mutations).forEach(function (key) {
+      registerMutation(store, key, mutations[key], path)
+    })
   }
 
-  // getters object must be gotten lazily
-  // because store.getters will be changed by vm update
-  Object.defineProperty(local, 'getters', {
-    get: noNamespace ? function () { return store.getters; } : function () { return makeLocalGetters(store, namespace); }
-  })
-
-  return local
-}
-
-function makeLocalGetters (store, namespace) {
-  var gettersProxy = {}
-
-  var splitPos = namespace.length
-  Object.keys(store.getters).forEach(function (type) {
-    // skip if the target getter is not match this namespace
-    if (type.slice(0, splitPos) !== namespace) { return }
-
-    // extract local getter type
-    var localType = type.slice(splitPos)
-
-    // Add a port to the getters proxy.
-    // Define as getter property because
-    // we do not want to evaluate the getters in this time.
-    Object.defineProperty(gettersProxy, localType, {
-      get: function () { return store.getters[type]; },
-      enumerable: true
+  if (actions) {
+    Object.keys(actions).forEach(function (key) {
+      registerAction(store, key, actions[key], path)
     })
-  })
+  }
 
-  return gettersProxy
+  if (getters) {
+    wrapGetters(store, getters, path)
+  }
+
+  if (modules) {
+    Object.keys(modules).forEach(function (key) {
+      installModule(store, rootState, path.concat(key), modules[key], hot)
+    })
+  }
 }
 
 function registerMutation (store, type, handler, path) {
+  if ( path === void 0 ) path = [];
+
   var entry = store._mutations[type] || (store._mutations[type] = [])
   entry.push(function wrappedMutationHandler (payload) {
     handler(getNestedState(store.state, path), payload)
   })
 }
 
-function registerAction (store, type, handler, local, path) {
+function registerAction (store, type, handler, path) {
+  if ( path === void 0 ) path = [];
+
   var entry = store._actions[type] || (store._actions[type] = [])
+  var dispatch = store.dispatch;
+  var commit = store.commit;
   entry.push(function wrappedActionHandler (payload, cb) {
     var res = handler({
-      dispatch: local.dispatch,
-      commit: local.commit,
-      getters: local.getters,
+      dispatch: dispatch,
+      commit: commit,
+      getters: store.getters,
       state: getNestedState(store.state, path),
-      rootGetters: store.getters,
       rootState: store.state
     }, payload, cb)
     if (!isPromise(res)) {
@@ -7168,19 +7113,21 @@ function registerAction (store, type, handler, local, path) {
   })
 }
 
-function registerGetter (store, type, rawGetter, local, path) {
-  if (store._wrappedGetters[type]) {
-    console.error(("[vuex] duplicate getter key: " + type))
-    return
-  }
-  store._wrappedGetters[type] = function wrappedGetter (store) {
-    return rawGetter(
-      getNestedState(store.state, path), // local state
-      local.getters, // local getters
-      store.state, // root state
-      store.getters // root getters
-    )
-  }
+function wrapGetters (store, moduleGetters, modulePath) {
+  Object.keys(moduleGetters).forEach(function (getterKey) {
+    var rawGetter = moduleGetters[getterKey]
+    if (store._wrappedGetters[getterKey]) {
+      console.error(("[vuex] duplicate getter key: " + getterKey))
+      return
+    }
+    store._wrappedGetters[getterKey] = function wrappedGetter (store) {
+      return rawGetter(
+        getNestedState(store.state, modulePath), // local state
+        store.getters, // getters
+        store.state // root state
+      )
+    }
+  })
 }
 
 function enableStrictMode (store) {
@@ -7193,15 +7140,6 @@ function getNestedState (state, path) {
   return path.length
     ? path.reduce(function (state, key) { return state[key]; }, state)
     : state
-}
-
-function unifyObjectStyle (type, payload, options) {
-  if (isObject(type) && type.type) {
-    options = payload
-    payload = type
-    type = type.type
-  }
-  return { type: type, payload: payload, options: options }
 }
 
 function install (_Vue) {
@@ -7223,7 +7161,6 @@ if (typeof window !== 'undefined' && window.Vue) {
 var index = {
   Store: Store,
   install: install,
-  version: '2.1.1',
   mapState: mapState,
   mapMutations: mapMutations,
   mapGetters: mapGetters,
@@ -7234,7 +7171,6 @@ return index;
 
 })));
 },{}],6:[function(require,module,exports){
-;(function(){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7253,24 +7189,19 @@ exports.default = {
         }
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('img',{staticStyle:{"margin":"-2px 2px 0 0","padding":"0"},attrs:{"src":_vm.img_url,"height":_vm.size,"width":_vm.size}})])}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <img :src=\"img_url\" style=\"margin:-2px 2px 0 0; padding:0;\" :height=\"size\" :width=\"size\">\n</span>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3c8f0230", __vue__options__)
+    hotAPI.createRecord("_v-0fbfe820", module.exports)
   } else {
-    hotAPI.reload("data-v-3c8f0230", __vue__options__)
+    hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":2,"vueify/node_modules/vue-hot-reload-api":4}],7:[function(require,module,exports){
-;(function(){
+},{"vue":3,"vue-hot-reload-api":2}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7312,7 +7243,7 @@ exports.default = {
             fbAuth: {
                 token: null,
                 userId: null,
-                expiresIn: null,
+                expiresIn: null, // days
                 signedRequest: null
             }
         };
@@ -7430,23 +7361,19 @@ exports.default = {
         'spinny': _Spinner2.default
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',{staticClass:"fb-img-wrapper"},[(_vm.authorizedAndLoggedIn)?[(_vm.refreshing)?_c('spinny'):_vm._e(),_vm._v(" "),_c('a',{class:_vm.refreshing ? 'disabled' : null,attrs:{"href":"javascript:;","type":"button"},on:{"click":_vm.FBRefresh}},[_c('img',{attrs:{"src":_vm.refresh_icon}})])]:_vm._e(),_vm._v(" "),(!_vm.authorizedAndLoggedIn)?[_c('a',{class:_vm.refreshing ? 'disabled' : null,attrs:{"href":"javascript:;","type":"button"},on:{"click":_vm.FBLogin}},[_c('img',{attrs:{"src":_vm.login_icon}})])]:_vm._e()],2)}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span class=\"fb-img-wrapper\">\n    <template v-if=\"authorizedAndLoggedIn\">\n            <spinny v-if=\"refreshing\"></spinny>\n            <a :class=\"refreshing ? 'disabled' : null\" href=\"javascript:;\" @click=\"FBRefresh\" type=\"button\">\n                <img :src=\"refresh_icon\">\n            </a>\n    </template>\n    <template v-if=\"!authorizedAndLoggedIn\">\n            <a :class=\"refreshing ? 'disabled' : null\" href=\"javascript:;\" @click=\"FBLogin\" type=\"button\">\n                <img :src=\"login_icon\">\n            </a>\n    </template>\n</span>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-26cf94b4", __vue__options__)
+    hotAPI.createRecord("_v-8c081b7a", module.exports)
   } else {
-    hotAPI.reload("data-v-26cf94b4", __vue__options__)
+    hotAPI.update("_v-8c081b7a", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":6,"vue":2,"vueify/node_modules/vue-hot-reload-api":4}],8:[function(require,module,exports){
+},{"../Spinner.vue":6,"vue":3,"vue-hot-reload-api":2}],8:[function(require,module,exports){
 'use strict';
 
 var _store = require('./manage/store');
@@ -8006,8 +7933,8 @@ exports.default = new _vuex2.default.Store({
 });
 
 },{"./state":10,"vuex":5}],12:[function(require,module,exports){
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("div.col-sm-2.btn-group-prpl {\n    width:122px !important;\n}")
-;(function(){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\ndiv.col-sm-2.btn-group-prpl {\n    width:122px !important;\n}\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8055,7 +7982,7 @@ exports.default = {
 
         $Bus.$on('facebook-album:changed', function () {
             _this.clearSelectedItems();
-
+            // We want to open the drawers where items are selected.
             var selected_items = scope.selected.items;
             if (selected_items && selected_items.length > 0) {
                 _.each(selected_items, function (item) {
@@ -8064,29 +7991,39 @@ exports.default = {
             }
         });
 
+        // Each time an inventory is updated using ajax, we want to update the item's state.
+        // Once the item state is updated, everywhere referencing the state will update seamlessly.
         $Bus.$on('inventory-item:updated', function (item, updatedItem) {
             var styleIndex = -1;
             var sizeIndex = -1;
             var itemIndex = -1;
 
+            // Because we want to update state and not a local variable, we need the full
+            // "path" to the state so we can set it.  This is about 3 indexes deep so we have to
+            // find each ones index individually :o
+
+            // find the style index.
             _.each(_this.inventory_items, function (style, index) {
                 if (style.id == item.style.id) {
                     styleIndex = index;
                 }
             });
 
+            // find the size index.
             _.each(_this.inventory_items[styleIndex].sizes, function (size, index) {
                 if (size.id == item.style_size.id) {
                     sizeIndex = index;
                 }
             });
 
+            // find the item index/
             _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, function (inventoryItem, index) {
                 if (inventoryItem.id == item.id) {
                     itemIndex = index;
                 }
             });
 
+            // update the state.
             _this.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
             _this.selected.items = [];
             $Bus.$emit('popout-overlay:close');
@@ -8095,6 +8032,7 @@ exports.default = {
         $Bus.$on('inventory:request-reset', function () {});
 
         $Bus.$on('popout-overlay:closed', function () {
+            // Cancel all pending ajax requests when we close the popout.
             if (scope.active_http_requests.length > 0) {
                 $.each(scope.active_http_requests, function () {
                     _this.abort();
@@ -8123,6 +8061,8 @@ exports.default = {
             this.$http.get(window.location.href + '/' + item.name_uuid + '/edit', {
                 async: false,
                 before: function before(request) {
+                    // Before each ajax request, abort the previous request
+                    // and add this request to an array of requests for reference.
                     $Bus.$emit('popout-overlay:change-prompt', false);
                     if (this.previousRequest) {
                         this.previousRequest.abort();
@@ -8177,6 +8117,8 @@ exports.default = {
             this.removeFromOpenedDrawers(styleid, sizeid);
             this.$emit('drawer:closed', styleid, sizeid);
         },
+
+        // Remove size from selected list
         removeSizes: function removeSizes(style, size, items, event) {
             var scope = this;
             $.each(items, function (i, v) {
@@ -8213,23 +8155,22 @@ exports.default = {
         'spinny': _Spinner2.default
     }
 };
-})()
 if (module.exports.__esModule) module.exports = module.exports.default
-var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.actions.refreshing_data)?_c('div',{staticClass:"text-block text-center",staticStyle:{"min-height":"300px"}},[_c('div',{staticStyle:{"margin":"200px auto 0"}},[_c('spinny',{attrs:{"size":"40"}})],1)]):_c('div',_vm._l((_vm.inventory_items),function(style){return _c('div',{staticClass:"box style-container"},[_c('div',{staticClass:"box-header clearfix"},[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-sm-2",staticStyle:{"margin-top":"13px"}},[_c('h6',{staticClass:"m-a-0"},[_c('a',{attrs:{"href":"javascript:;"},on:{"click":function($event){_vm.openAllSizeDrawers(style, $event)}}},[_vm._v(_vm._s(style.name)+" "),_c('span',{staticClass:"text-muted text-sm"},[_c('i',{staticClass:"fa fa-angle-down"})])]),_vm._v(" "),_c('small',{staticClass:"text-sm text-muted"},[_vm._v("("+_vm._s(style.total)+")")])])]),_vm._v(" "),_c('div',{staticClass:"col-sm-10",staticStyle:{"margin-top":"3px"}},[_c('div',{staticClass:"pull-left btn-group-prpl"},[_vm._l((style.sizes),function(size){return [_c('button',{staticClass:"btn white btn-xs",class:[ _vm.selectedItems.find(function (s) { return s.style_id === style.id && s.size_id === size.id; } )  ? 'sex active' : '' ],staticStyle:{"margin-right":"3px"},attrs:{"aria-pressed":(_vm.selectedItems.find(function (s) { return s.style_id === style.id && s.size_id === size.id; } ) ? ' true ' : null )},on:{"click":function($event){( _vm.selectedItems.find(function (s) { return s.style_id === style.id && s.size_id === size.id; } ) ? _vm.removeSizes(style, size, size.items, $event) : _vm.addSizes(style, size, size.items, $event) )}}},[_c('input',{staticStyle:{"position":"absolute","clip":"rect(0,0,0,0)","pointer-events":"none"},attrs:{"type":"checkbox"}}),_vm._v(" "),_c('span',{staticClass:"text-md"},[_vm._v(_vm._s(size.name))]),_vm._v(" "),_c('small',{staticClass:"text-sm text-muted block",staticStyle:{"margin-top":"-2px"}},[_vm._v("("+_vm._s(size.items.length)+")")])])]}),_vm._v(" "),_c('button',{staticClass:"btn white btn-xs",staticStyle:{"margin-left":"12px"},on:{"click":function($event){_vm.selectAllOfStyle(style, $event)}}},[_c('input',{staticStyle:{"position":"absolute","clip":"rect(0,0,0,0)","pointer-events":"none"},attrs:{"type":"checkbox"}}),_vm._v(" "),_c('span',{staticClass:"text-md"},[_vm._v("ALL")]),_vm._v(" "),_c('small',{staticClass:"text-sm text-muted block",staticStyle:{"margin-top":"-2px"}},[_vm._v("("+_vm._s(style.sizes.length)+")")])])],2)])])]),_vm._v(" "),_vm._l((style.sizes),function(size){return (_vm.opened_drawers.indexOf(style.id+'_'+size.id) > -1)?_c('div',{staticClass:"box-size-drawer",on:{"data-id":function($event){{{ size.id }}}}},[_c('div',{staticClass:"box-divider"}),_vm._v(" "),_c('div',{staticClass:"box-body"},[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-sm-2"},[_c('a',{staticClass:" _500 drawer-toggle",attrs:{"href":"javascript:;"},on:{"click":function($event){(_vm.opened_drawers.indexOf(style.id+'_'+size.id) > -1 ? _vm.closeSizeDrawer(style.id, size.id, $event) : _vm.openSizeDrawer(style.id, size.id, $event) )}}},[_vm._v("\n                                "+_vm._s(size.name)+" "),_c('span',{staticClass:"text-muted text-sm"},[_c('i',{staticClass:"fa fa-angle-up"})])])]),_vm._v(" "),_c('div',{staticClass:"col-sm-10"},[(_vm.opened_drawers.indexOf(style.id+'_'+size.id) > -1)?_c('div',{staticClass:"item-box"},[_c('div',{staticClass:"row row-horizon"},[_vm._l((size.items),function(item){return [_c('div',{staticClass:"col-sm-2 btn-group-prpl",staticStyle:{"width":"122px !important"}},[_c('button',{staticClass:"btn white btn-xs",class:[ _vm.selectedItems.indexOf(item) > -1 ? 'active' : '' ],staticStyle:{"border-radius":".25rem"},attrs:{"aria-pressed":(_vm.selectedItems.indexOf(item) > -1 ? ' true ' : null ),"type":"button"},on:{"click":function($event){( _vm.selectedItems.indexOf(item) > -1 ? _vm.removeSizeFromSelected(item, $event) : _vm.addSizeToSelected(item, $event) )}}},[_c('span',{staticClass:"item block"},[_c('img',{staticClass:"img-responsive",staticStyle:{"width":"80px","height":"80px"},attrs:{"src":(item.files && item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)}})]),_vm._v(" "),_c('span',{staticClass:"p-a-o text-sm clearfix block"},[_c('span',{staticClass:"pull-left"},[_vm._v("Qty: "),_c('span',{staticClass:"text-muted"},[_vm._v(_vm._s(item.initial_qty))])]),_vm._v(" "),_c('span',{staticClass:"text-muted pull-right"},[_vm._v("$"+_vm._s(item.price_usd))])])]),_vm._v(" "),_c('div',{staticClass:"clearfix",staticStyle:{"margin-top":"5px"}},[_c('button',{staticClass:"btn btn-xs pull-left white",attrs:{"type":"button"},on:{"click":function($event){_vm.editItemButtonClicked(item, $event)}}},[_vm._v("Edit")]),_vm._v(" "),_c('a',{staticClass:"btn btn-xs pull-right white",attrs:{"target":"_blank","href":this.window.location.href+'/'+item.name_uuid}},[_vm._v("View")])])])]})],2)]):_vm._e()])])])]):_vm._e()})],2)}))}
-__vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vueify/node_modules/vue-hot-reload-api")
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"actions.refreshing_data\" class=\"text-block text-center\" style=\"min-height: 300px\">\n    <div style=\"margin:200px auto 0;\">\n        <spinny size=\"40\"></spinny>\n    </div>\n</div>\n<div v-else=\"\">\n        <div class=\"box style-container\" v-for=\"style in inventory_items\">\n            <div class=\"box-header clearfix\">\n                <div class=\"row\">\n                    <div class=\"col-sm-2\" style=\"margin-top: 13px;\">\n                        <h6 class=\"m-a-0\">\n                            <a href=\"javascript:;\" @click=\"openAllSizeDrawers(style, $event)\">{{ style.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-down\"></i></span></a>\n                            <small class=\"text-sm text-muted\">({{ style.total }})</small>\n                        </h6>\n                    </div>\n                    <div class=\"col-sm-10\" style=\"margin-top: 3px;\">\n                        <div class=\"pull-left btn-group-prpl\">\n                            <template v-for=\"size in style.sizes\">\n                            <button class=\"btn white btn-xs\" v-bind:aria-pressed=\"(selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id ) ? ' true ' : null )\" v-bind:class=\"[ selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id )  ? 'sex active' : '' ] \" @click=\"( selectedItems.find(s => s.style_id === style.id &amp;&amp; s.size_id === size.id ) ? removeSizes(style, size, size.items, $event) : addSizes(style, size, size.items, $event) )\" style=\"margin-right: 3px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">{{ size.name }}</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ size.items.length }})</small>\n                            </button>\n                            </template>\n                            <button @click=\"selectAllOfStyle(style, $event)\" class=\"btn white btn-xs\" style=\"margin-left: 12px;\">\n                                <input type=\"checkbox\" style=\"position: absolute; clip: rect(0,0,0,0); pointer-events: none;\"> <span class=\"text-md\">ALL</span>\n                                <small class=\"text-sm text-muted block\" style=\"margin-top: -2px;\">({{ style.sizes.length }})</small>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div v-for=\"size in style.sizes\" class=\"box-size-drawer\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\" @data-id=\"{{ size.id }}\">\n                <div class=\"box-divider\"></div>\n                <div class=\"box-body\">\n                    <div class=\"row\">\n                        <div class=\"col-sm-2\">\n                            <a href=\"javascript:;\" class=\" _500 drawer-toggle\" @click=\"(opened_drawers.indexOf(style.id+'_'+size.id) > -1 ? closeSizeDrawer(style.id, size.id, $event) : openSizeDrawer(style.id, size.id, $event) )\">\n                                {{ size.name }} <span class=\"text-muted text-sm\"><i class=\"fa fa-angle-up\"></i></span>\n                            </a>\n                        </div>\n                        <div class=\"col-sm-10\">\n                            <div class=\"item-box\" v-if=\"opened_drawers.indexOf(style.id+'_'+size.id) > -1\">\n                                <div class=\"row row-horizon\">\n                                    <template v-for=\"item in size.items\">\n                                        <div class=\"col-sm-2 btn-group-prpl\" style=\"width:122px !important;\">\n                                            <button v-bind:aria-pressed=\"(selectedItems.indexOf(item) > -1 ? ' true ' : null )\" @click=\"( selectedItems.indexOf(item) > -1 ? removeSizeFromSelected(item, $event) : addSizeToSelected(item, $event) )\" v-bind:class=\"[ selectedItems.indexOf(item) > -1 ? 'active' : '' ] \" style=\"border-radius: .25rem;\" type=\"button\" class=\"btn white btn-xs\">\n                                                        <span class=\"item block\">\n                                                            <img v-bind:src=\"(item.files &amp;&amp; item.files.length > 0 ? item.files[0].location : 'http://lorempizza.com/64/64/'+item.id)\" class=\"img-responsive\" style=\"width: 80px; height: 80px;\">\n                                                        </span>\n                                                <span class=\"p-a-o text-sm clearfix block\">\n                                                    <span class=\"pull-left\">Qty: <span class=\"text-muted\">{{ item.initial_qty }}</span></span>\n                                                        <span class=\"text-muted pull-right\">${{ item.price_usd }}</span>\n                                                        </span>\n                                            </button>\n                                            <div class=\"clearfix\" style=\"margin-top: 5px;\">\n                                            <button @click=\"editItemButtonClicked(item, $event)\" type=\"button\" class=\"btn btn-xs pull-left white\">Edit</button>\n                                            <a target=\"_blank\" v-bind:href=\"this.window.location.href+'/'+item.name_uuid\" class=\"btn btn-xs pull-right white\">View</a>\n                                            </div>\n                                        </div>\n                                    </template>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.accept()
-  module.hot.dispose(__vueify_style_dispose__)
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\ndiv.col-sm-2.btn-group-prpl {\n    width:122px !important;\n}\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3bacf021", __vue__options__)
+    hotAPI.createRecord("_v-60d90d78", module.exports)
   } else {
-    hotAPI.reload("data-v-3bacf021", __vue__options__)
+    hotAPI.update("_v-60d90d78", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../Spinner.vue":6,"./manage/computed":9,"vue":2,"vueify/lib/insert-css":3,"vueify/node_modules/vue-hot-reload-api":4}]},{},[8]);
+},{"../Spinner.vue":6,"./manage/computed":9,"vue":3,"vue-hot-reload-api":2,"vueify/lib/insert-css":4}]},{},[8]);
 
 //# sourceMappingURL=inventory-management.js.map
