@@ -55,4 +55,9 @@ Route::get('c/{hash}', [
         'as' => 'invite.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@invite'
     ]);
+
+    Route::get('/users/{userName}', [
+        'as' => 'user.profile',
+        'uses' => \Kabooodle\Http\Controllers\Web\Users\UsersController::class.'@userProfile'
+    ]);
 //});
