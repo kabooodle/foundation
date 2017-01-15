@@ -6725,7 +6725,7 @@ exports.default = {
         current_user: {
             type: Object,
             default: function _default() {
-                return (0, _currentUser2.default)() ? (0, _currentUser2.default)() : {};
+                return (0, _currentUser2.default)() || {};
             }
         },
         unfollow_text: {
@@ -7067,7 +7067,7 @@ exports.default = {
         current_user: {
             type: Object,
             default: function _default() {
-                return (0, _currentUser2.default)() ? (0, _currentUser2.default)() : {};
+                return (0, _currentUser2.default)() || {};
             }
         },
         current_user_following: {

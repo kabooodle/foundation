@@ -1,12 +1,7 @@
-# jonnypickett/eloquent-sti
+# Eloquent Single Table Inheritance
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
-[![Build Status][ico-travis]][link-travis]
-[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
-[![Quality Score][ico-code-quality]][link-code-quality]
-[![Total Downloads][ico-downloads]][link-downloads]
-
+[![Latest Version on Packagist][ico-version]][link-packagist]
 
 Single Table Inheritance for Laravel's Eloquent ORM.
 
@@ -37,7 +32,7 @@ Schema::table('animals', function(Blueprint $table)
 }
 ```
 
-Once this field is added to your database table, you will need to add the `SingleTableInheritance` trait to the parent model, and add the subclass name field to its `$fillable` array
+Once this field is added to your database table, you will need to add the `SingleTableInheritance` trait, make sure to specify the table property, and add the subclass name field to the `$fillable` array all on the parent model definition
 
 ``` php
 class Animal extends Model
@@ -87,14 +82,13 @@ By default, the subclass names will be stored in a field named `subclass_name`. 
 ELOQUENT_STI_SUBCLASS_FIELD=your_subclass_field_name_here
 ```
 
-or publishing and updating the package configuration file
+or publishing and updating the package configuration file in app/config/eloquent-sti.php
 
 ```bash
 php artisan vendor:publish --provider="JonnyPickett\EloquentSTI\ServiceProvider"
 ```
 
 ```php
-// app/config/eloquent-sti.php
 <?php
 
 return [
@@ -121,7 +115,7 @@ or can be changed on a per model basis by adding a `$subclassNameField` property
 ```php
 class Animal extends Model
 {
-    protected $subclassFieldName = 'your_subclass_field_name_here'
+    protected $subclassField = 'your_subclass_field_name_here'
 }
 ```
 
@@ -129,14 +123,14 @@ class Animal extends Model
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/:vendor/:package_name.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/jonnypickett/eloquent-sti.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
 [ico-travis]: https://img.shields.io/travis/:vendor/:package_name/master.svg?style=flat-square
 [ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/:vendor/:package_name.svg?style=flat-square
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/:vendor/:package_name.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/:vendor/:package_name.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/:vendor/:package_name
+[link-packagist]: https://packagist.org/packages/jonnypickett/eloquent-sti
 [link-travis]: https://travis-ci.org/:vendor/:package_name
 [link-scrutinizer]: https://scrutinizer-ci.com/g/:vendor/:package_name/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/:vendor/:package_name
