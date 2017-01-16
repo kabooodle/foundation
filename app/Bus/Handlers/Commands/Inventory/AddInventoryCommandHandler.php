@@ -152,7 +152,7 @@ class AddInventoryCommandHandler
 
         // When CREATING a new inventory item, we only allow 1 photo to be added.
         // This means, each photo is also the cover photo.  :)
-        $item->cover_photo_file_location = $file->getOriginal('location');
+        $item->cover_photo_file_key = $file->getOriginal('location');
         $item->cover_photo_file_id = $file->id;
 
         $item->save();
