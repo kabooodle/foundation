@@ -35,10 +35,13 @@ class EventServiceProvider extends ServiceProvider
             \Kabooodle\Bus\Handlers\Events\Claim\GuestClaimedEventHandler::class
         ],
 
-        // GROUP EVENTS
-        \Kabooodle\Bus\Events\Group\GroupWasCreatedEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\Group\GroupWasCreatedEventHandler::class
+
+
+        // FLASHSALE EVENTS
+        \Kabooodle\Bus\Events\Flashsale\FlashsaleWasCreatedEvent::class => [
+
         ],
+
 
         // INVENTORY EVENTS
         \Kabooodle\Bus\Events\Inventory\InventoryItemWasAddedEvent::class => [

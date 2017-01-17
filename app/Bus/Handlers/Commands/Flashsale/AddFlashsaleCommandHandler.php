@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Flashsale;
 
 use DB;
+use Kabooodle\Models\Files;
 use Kabooodle\Models\FlashSales;
 use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
 use Kabooodle\Bus\Events\Flashsale\FlashsaleWasCreatedEvent;
@@ -35,6 +36,22 @@ class AddFlashsaleCommandHandler
                 'privacy' => $command->getPrivacy(),
             ]);
 
+            if ($image = $command->getCoverPhoto()) {
+
+                $image = json_decode($image['json'], true);
+
+                $file = Files::create([
+                    'location' => $image['location'],
+                    'key' => $image['key'],
+                    'bucket_name' => $image['bucket'],
+                    'fileable_type' => get_class($flashsale),
+                    'fileable_id' => $flashsale->id
+                ]);
+
+                // Associate files(images) to the item.
+                $flashsale->coverimage()->save($file);
+            }
+
             if ($command->getSellerGroups()) {
                 $groups = [];
                 foreach ($command->getSellerGroups() as $group) {
@@ -44,10 +61,11 @@ class AddFlashsaleCommandHandler
                         $groups[$group['id']]['time_slot'] = $slot;
                     }
                 }
+
                 $flashsale->sellerGroups()->sync($groups, true);
             }
 
-//        event(new FlashsaleWasCreatedEvent($flashsale));
+            event(new FlashsaleWasCreatedEvent($flashsale));
 
             return $flashsale;
         });

@@ -51,6 +51,11 @@ class AddFlashsaleCommand
     public $sellerGroups;
 
     /**
+     * @var null
+     */
+    public $coverPhoto;
+
+    /**
      * @param User            $user
      * @param string          $name
      * @param string|null     $description
@@ -58,6 +63,7 @@ class AddFlashsaleCommand
      * @param string          $privacy
      * @param array           $adminIds
      * @param array           $sellerGroups
+     * @param null            $coverPhoto
      */
     public function __construct(
         User $user,
@@ -66,7 +72,8 @@ class AddFlashsaleCommand
         StartsAndEndsAt $startsAndEndsAt,
         string $privacy = 'public',
         array $adminIds = [],
-        array $sellerGroups
+        array $sellerGroups,
+        $coverPhoto = null
     ) {
         $this->user = $user;
         $this->name = $name;
@@ -75,6 +82,7 @@ class AddFlashsaleCommand
         $this->privacy = $privacy;
         $this->adminIds = $adminIds;
         $this->sellerGroups = $sellerGroups;
+        $this->coverPhoto = $coverPhoto;
     }
 
     /**
@@ -131,5 +139,13 @@ class AddFlashsaleCommand
     public function getSellerGroups(): array
     {
         return $this->sellerGroups;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCoverPhoto()
+    {
+        return $this->coverPhoto;
     }
 }

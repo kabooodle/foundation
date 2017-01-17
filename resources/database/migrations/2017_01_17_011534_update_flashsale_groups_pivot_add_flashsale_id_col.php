@@ -15,7 +15,7 @@ class UpdateFlashsaleGroupsPivotAddFlashsaleIdCol extends Migration
         Schema::dropIfExists('flashsales_admins');
         Schema::dropIfExists('flashsales_sellers');
 
-        DB::statement('ALTER TABLE flashsales MODIFY COLUMN id BIGINT unsigned;');
+        DB::statement('ALTER TABLE flashsales MODIFY COLUMN id BIGINT unsigned auto_increment;');
 
         Schema::create('flashsales_sellers_groups', function(Blueprint $table){
             $table->bigIncrements('id')->unsigned();
@@ -24,7 +24,7 @@ class UpdateFlashsaleGroupsPivotAddFlashsaleIdCol extends Migration
             $table->timestamp('time_slot')->nullable();
             $table->timestamps();
 
-            $table->foreign('flashsale_id')
+            $table->foreign('flashsale_id', 'fk_fs')
                 ->references('id')->on('flashsales')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');

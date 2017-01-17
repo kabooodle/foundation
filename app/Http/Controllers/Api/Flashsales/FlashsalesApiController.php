@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Api\Flashsales;
 
 use Binput;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\Dates\StartsAndEndsAt;
@@ -14,6 +15,8 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleInvalidEndDateException;
+use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleInvalidStartDateException;
 
 /**
  * Class FlashsalesApiController
@@ -42,6 +45,18 @@ class FlashsalesApiController extends AbstractApiController
                 strtotime(Binput::get('ends_at'))
             );
 
+            if ($startsEnds->getStartsAt() <= Carbon::now()) {
+                throw new FlashsaleInvalidStartDateException('Start date must be before now.');
+            }
+
+            if ($startsEnds->getEndsAt() <= Carbon::now()) {
+                throw new FlashsaleInvalidEndDateException('End date must be before now.');
+            }
+
+            if ($startsEnds->getEndsAt() < $startsEnds->getStartsAt()) {
+                throw new FlashsaleInvalidEndDateException('End date must be after the start date.');
+            }
+
             $this->dispatchNow(new AddFlashsaleCommand(
                 $this->getUser(),
                 Binput::get('name'),
@@ -49,13 +64,24 @@ class FlashsalesApiController extends AbstractApiController
                 $startsEnds,
                 Binput::get('privacy'),
                 $admins,
-                Binput::get('seller_groups', [])
+                Binput::get('seller_groups', []),
+                Binput::get('cover_photo', null)
             ));
 
-            return $this->noContent();
+            return $this->setData([
+                'msg' => 'Flash sale successfully created. You can manage or update the settings at anytime.'
+            ])->respond();
         } catch (ValidationException $e) {
             return $this->setStatusCode(400)
-                ->setData(['msg' => 'Attention', 'errors' => $e->validator->messages()])
+                ->setData(['errors' => $e->validator->messages()])
+                ->respond();
+        } catch (FlashsaleInvalidStartDateException $e) {
+            return $this->setStatusCode(500)
+                ->setData(['errors' => ['starts_at' => [$e->getMessage()]]])
+                ->respond();
+        } catch (FlashsaleInvalidEndDateException $e) {
+            return $this->setStatusCode(500)
+                ->setData(['errors' => ['ends_at' => [$e->getMessage()]]])
                 ->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)

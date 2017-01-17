@@ -10,11 +10,11 @@
                 <inline-field :errors="form_errors.cover_photo">
                     <template slot="label">
                         <div class="avatar_container _128 pull-right avatar-thumbnail" v-if="cover_photo">
-                            <img :src="cover_photo">
+                            <img :src="cover_photo.location">
                         </div>
                     </template>
                     <template slot="input">
-                        <input type="hidden" name="cover_photo" v-model="cover_photo" :value="cover_photo">
+                        <input type="hidden" name="cover_photo" v-model="cover_photo" :value="cover_photo ? cover_photo.json : null">
                         <image-attach
                                 :s3_key_url="s3_key_url"
                                 multiple="false"
@@ -218,7 +218,7 @@
             });
 
             $Bus.$on('image:uploaded', (el, data)=> {
-                this.cover_photo = data.location;
+                this.cover_photo = data;
             });
 
             $Bus.$on('flashsale:data:request', ()=> {
@@ -290,6 +290,9 @@
                         }
                     }
 
+                    // Reset some annoying data.
+                    this.seller_groups = [];
+
                     $noty.close();
                 })
             },
@@ -299,23 +302,43 @@
 
                 $Bus.$emit('flashsale:saving');
 
+
+                // I have seller groups that may have erroneous data
+                // I need to loop over each one and only return the ones that
+                // have a matching resource found in sellers_groups_containers
+                // HACKY until we can vuex the state.
+                const actualIds = _.pluck(_.pluck(this.sellers_groups_containers, 'selected_group'), 'id');
+                this.seller_groups = _.filter(this.seller_groups, (group)=>{
+                    return _.contains(actualIds, group.id);
+                });
+
                 this.$http.post(this.save_endpoint, this.$data).then((response)=>{
                     this.resetState();
+                    notify({
+                        text: response.body.data.msg,
+                        type: 'success'
+                    });
                 }, (response)=>{
                     this.isSaving = false;
-                    if (response.body.hasOwnProperty('data')) {
+                    if (response.body.hasOwnProperty('data') && response.body.data.hasOwnProperty('errors')) {
                         this.form_errors = response.body.data.errors;
+                    }
+
+                    if (response.body.data.hasOwnProperty('msg')) {
+                        notify({
+                           text: response.body.data.msg
+                        });
                     }
                 });
             },
         },
         components: {
             'build-group': BuildGroup,
-            'multiselect': Multiselect,
             'image-attach': FileUpload,
             'inline-field': InlineField,
-            'spinny': Spinny,
-            'seller-group': SellerGroup
+            'multiselect': Multiselect,
+            'seller-group': SellerGroup,
+            'spinny': Spinny
         }
     }
 </script>

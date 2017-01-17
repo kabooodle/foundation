@@ -238,7 +238,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function sellerGroups()
     {
-        return $this->belongsToMany(FlashsaleGroups::class, 'flashsales_sellers_groups', 'flashsale_group_id', 'flashsale_id')
+        return $this->belongsToMany(FlashsaleGroups::class, 'flashsales_sellers_groups', 'flashsale_id',  'flashsale_group_id')
             ->withPivot('time_slot')
             ->withTimestamps();
     }
@@ -268,7 +268,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function coverimage()
     {
-        return $this->morphOne(Images::class, 'imageable');
+        return $this->morphOne(Files::class, 'fileable');
     }
 
     /**
