@@ -64,6 +64,7 @@ class FollowsController extends AbstractApiController
 
             return $this->noContent();
         } catch (Exception $e) {
+            dd($e->getMessage());
             return $this->setStatusCode(500)->respond();
         }
     }

@@ -23,15 +23,14 @@ class FollowController extends Controller
     public function followers(Request $request)
     {
         $user = User::where('username', $request->username)->first();
-        $followers = $user->followers;
 
-        return view('follow.followers')->with(compact('followers'));
+        return view('follow.followers')->with(compact('user'));
     }
 
-    public function following()
+    public function following(Request $request)
     {
-        $follow = user()->following;
+        $user = User::where('username', $request->username)->first();
 
-        return view('follow.follow')->with(compact('follow'));
+        return view('follow.following')->with(compact('user'));
     }
 }

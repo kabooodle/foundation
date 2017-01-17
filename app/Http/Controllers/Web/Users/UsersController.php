@@ -24,7 +24,7 @@ class UsersController extends Controller
     public function userProfile(Request $request)
     {
         $user = User::where('username', $request->userName)->first();
-        return view('welcome')->with(compact('user'));
+        return view('userprofile')->with(compact('user'));
     }
 
 }
