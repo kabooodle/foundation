@@ -110,8 +110,7 @@ class Groups extends BaseEloquentModel implements Revisionable
     {
         return [
             'name' => 'required|unique:groups,name',
-            'emails' => 'array|email',
-            'privacy' => 'required|in:'.self::PRIVACY_PRIVATE.','.self::PRIVACY_PUBLIC.','.self::PRIVACY_SECRET
+            'members' => 'array',
         ];
     }
 

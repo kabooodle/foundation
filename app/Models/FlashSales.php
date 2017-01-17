@@ -169,11 +169,11 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public static function getRules()
     {
         return [
-            'name' => 'required',
-            'description' => 'required',
+            'name' => 'required|unique:flashsales,name',
+            'description' => '',
             'starts_at' => 'required|date',
             'ends_at' => 'required|date',
-            'hosted_by' => 'required|in:group,self',
+//            'hosted_by' => 'required|in:group,self',
 //            'host_id' => 'exists:groups,id',
             'privacy' => 'required|in:private,public'
         ];
@@ -199,7 +199,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
         });
 
         self::created(function (self $model) {
-            $model->admins()->save($model->owner);
+//            $model->admins()->save($model->owner);
         });
     }
 
@@ -231,6 +231,16 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public function scopeWithoutSecret($scope)
     {
         return $scope->where('privacy', '<>', 'secret');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function sellerGroups()
+    {
+        return $this->belongsToMany(FlashsaleGroups::class, 'flashsales_sellers_groups', 'flashsale_group_id', 'flashsale_id')
+            ->withPivot('time_slot')
+            ->withTimestamps();
     }
 
     /**
@@ -280,57 +290,9 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function group()
-    {
-        return $this->belongsTo(Groups::class, 'host_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function host()
     {
-        return $this->hostIsGroup() ? $this->group() : $this->belongsTo(User::class, 'host_id');
-    }
-
-    /**
-     * @return bool
-     */
-    public function hostIsGroup()
-    {
-        return $this->type == self::HOST_GROUP;
-    }
-
-    /**
-     * This is protected because admins should also include the creator of the flash sale.
-     * The public method combines this collection and the other user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    protected function onlyAdmins()
-    {
-        return $this->belongsToMany(User::class, 'flashsales_admins', 'flashsales_id', 'user_id')->withTimestamps();
-    }
-
-    /**
-     * TODO: Identify better way for returning a collection of the admins + owner.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function admins()
-    {
-        //        $owner = $this->owner->toArray();
-//        $admins = $this->onlyAdmins->toArray();
-//        return collect($owner)->merge(collect($admins));
-        return $this->onlyAdmins();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function sellers()
-    {
-        return $this->belongsToMany(User::class, 'flashsales_sellers', 'flashsales_id', 'user_id')->withTimestamps();
+        return $this->belongsTo(User::class, 'host_id');
     }
 
     /**
@@ -339,24 +301,6 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public function invitations()
     {
         return $this->morphMany(Invitations::class, 'invitable')->orderBy('invited_at', 'desc');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function inventoryItems()
-    {
-        return $this->belongsToMany(Inventory::class, 'flashsale_items', 'flashsale_id', 'inventory_id')->withTimestamps()->withPivot('inventory_id');
-    }
-
-    /**
-     * TODO: Identify a way to check whether the item was enabled or enabled by date.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function enabledInventoryItems()
-    {
-        return $this->inventoryItems();
     }
 
     /**

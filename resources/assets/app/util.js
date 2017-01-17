@@ -8,6 +8,12 @@ function moneyfy(n) {
     return n;
 };
 
+function validateEmail(email){
+    let re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return re.test(email);
+};
+
 function getAllUrlParams(url) {
 
     var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
@@ -342,6 +348,7 @@ function notify(options){
     $.noty.clearQueue();
 
     var defaults = {
+        el: false,
         text: '',
         layout: 'top',
         theme: 'relax',
@@ -354,9 +361,20 @@ function notify(options){
         closeWith: ['button','click']
     };
 
+    if (options.el) {
+        defaults.animation = {
+            open: 'animated fadeIn',
+            close: 'animated fadeOut'
+        };
+    }
+
     options = $.extend({}, defaults, options);
 
-    noty(options);
+    if (options.el && options.el instanceof jQuery) {
+        options.el.noty(options);
+    } else {
+        noty(options);
+    }
 };
 
 function browserSupportsAnimation(){

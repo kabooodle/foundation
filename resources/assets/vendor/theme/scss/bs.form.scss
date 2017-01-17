@@ -109,8 +109,9 @@ option{
   }
 }
 
-.has-danger   .form-control-label {
-  border-color: $danger;
+.has-danger   .form-control-label,
+.has-danger .control-label {
+  color: $danger;
 }
 .has-danger .form-control {
   border-color: $danger;

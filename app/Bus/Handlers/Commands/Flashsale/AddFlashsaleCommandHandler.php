@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Flashsale;
 
+use DB;
 use Kabooodle\Models\FlashSales;
 use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
 use Kabooodle\Bus\Events\Flashsale\FlashsaleWasCreatedEvent;
@@ -23,25 +24,32 @@ class AddFlashsaleCommandHandler
      */
     public function handle(AddFlashsaleCommand $command)
     {
-        if ($command->getType() == FlashSales::TYPE_GROUP) {
-            $hostId = $command->getUser()->allMyGroups()->find($command->getHostId());
-        } else {
-            $hostId = $command->getUser()->id;
-        }
+        return DB::transaction(function() use ($command) {
+            $flashsale = FlashSales::factory([
+                'user_id' => $command->getUser()->id,
+                'host_id' => $command->getUser()->id,
+                'name' => $command->getName(),
+                'description' => $command->getDescription(),
+                'starts_at' => $command->getStartsAndEndsAt()->getStartsAt(),
+                'ends_at' => $command->getStartsAndEndsAt()->getEndsAt(),
+                'privacy' => $command->getPrivacy(),
+            ]);
 
-        $flashsale = FlashSales::factory([
-            'user_id' => $command->getUser()->id,
-            'name' => $command->getName(),
-            'description' => $command->getDescription(),
-            'starts_at' => $command->getStartTime(),
-            'ends_at' => $command->getEndTime(),
-            'type' => $command->getType(),
-            'seller_rules' => $command->getSellerRules(),
-            'host_id' => $hostId
-        ]);
+            if ($command->getSellerGroups()) {
+                $groups = [];
+                foreach ($command->getSellerGroups() as $group) {
+                    $groupId = isset($group['id']) ? $group['id'] : false;
+                    $slot = isset($group['time_slot']) ? $group['time_slot'] : null;
+                    if ($groupId) {
+                        $groups[$group['id']]['time_slot'] = $slot;
+                    }
+                }
+                $flashsale->sellerGroups()->sync($groups, true);
+            }
 
-        event(new FlashsaleWasCreatedEvent($flashsale));
+//        event(new FlashsaleWasCreatedEvent($flashsale));
 
-        return $flashsale;
+            return $flashsale;
+        });
     }
 }

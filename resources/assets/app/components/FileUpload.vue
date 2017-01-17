@@ -144,6 +144,14 @@
             },
             outer_class: {
                 default: null
+            },
+            // Set this to a unique string and when the image is uploaded,
+            // the broadcast key will have this appended to it.
+            // Example, if ukey == 983j : $Bus.$emit('image:uploaded:983j')
+            // and you can now listen for image:uploaded:983j
+            ukey: {
+                type: String,
+                default: null
             }
         },
         data: function() {
@@ -198,7 +206,12 @@
 
                             responseData.json = JSON.stringify(responseData);
 
-                            $Bus.$emit('image:uploaded', el, responseData);
+                            let key = 'image:uploaded';
+                            if (that.ukey) {
+                                key = key+':'+that.ukey;
+                            }
+
+                            $Bus.$emit(key, el, responseData);
                         },
                         on_file_add: function (element, data) {
                             if (data.files[0].type.indexOf("image") == -1) {

@@ -3,37 +3,46 @@
 
 
 @section('body-content-left-nav')
-    @include('flashsales.partials._leftnav')
+
+    <a href="{{ route('flashsales.index') }}" class="nav-link {{ Request::is('flashsales') ? 'active' : null }}">
+        View Flash Sales
+    </a>
+
+    @if (user()->hasAtLeastMerchantSubscription())
+        <a href="{{ route('flashsales.create') }}" class="nav-link {{ Request::is('flashsales/create') ? 'active' : null }}">
+            Create Flash Sale
+        </a>
+        <a  @click.prevent="buildGroup" class="nav-link">
+            Create Group
+        </a>
+    @endif
+    @if(user())
+        <a href="#" class="nav-link {{ Request::is('flashsales/favorite') ? 'active' : null }}">
+            Favorited
+        </a>
+
+        @if(user()->flashsales->count() > 0)
+        <hr>
+
+        @foreach(user()->flashsales as $flashSale)
+            <a href="{{ route('flashsales.show', [$flashSale->getUUID()]) }}" class="nav-link {{ Request::is("flashsales/{$flashSale->getUUID()}") ? 'active' : null }}">
+                {!! $flashSale->name !!}
+            </a>
+        @endforeach
+        @endif
+    @endif
 @endsection
 
 @section('body-inner-content')
-
-    {{ Form::open(['route' => 'flashsales.store']) }}
-
-    <div class="box">
-        <div class="box-header">
-            <h2>Create a flash sale</h2>
-        </div>
-        <div class="box-divider m-a-0"></div>
-        <div class="box-body">
 
             <build-flashsale
                     user_hash="{{ user()->public_hash }}"
                     s3_key_url="{{ apiRoute('api.files.sign') }}"
                     search_endpoint="{{ apiRoute('users.search') }}"
-                    :form_errors="{{ $errors->toJson() }}"
+                    save_endpoint="{{ apiRoute('flashsales.store') }}"
+                    group_search_endpoint="{{ apiRoute('flashsales.groups.search') }}"
+                    group_save_endpoint="{{ apiRoute('flashsales.groups.store') }}"
             ></build-flashsale>
-
-        </div>
-    </div>
-
-
-    <div class="form-group row m-t-md">
-        <div class="col-sm-offset-3 col-sm-9">
-            <button type="submit" class="btn primary">Save</button>
-        </div>
-    </div>
-    {{ Form::close() }}
 
 @endsection
 

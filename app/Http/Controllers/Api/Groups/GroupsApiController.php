@@ -6,7 +6,10 @@
 
 namespace Kabooodle\Http\Controllers\Api\Groups;
 
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Kabooodle\Models\Groups;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 
@@ -37,13 +40,21 @@ class GroupsApiController extends AbstractApiController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @param Request $request
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
+        try {
+            $this->validate($request, Groups::getRules());
+
+            return $this->respond();
+        } catch (ValidationException $e) {
+            return $this->setStatusCode(500)->setData(['msg' => $e->validator->messages()->first()])->respond();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->setData(['msg' => 'An error occurred, please try again.'])->respond();
+        }
     }
 
     /**
