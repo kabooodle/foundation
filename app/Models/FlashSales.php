@@ -450,4 +450,14 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
             return $user->id == $user->id;
         })->first();
     }
+
+    /**
+     * @param $userId
+     *
+     * @return bool
+     */
+    public function canSellerListToFlashsaleAnytime($userId)
+    {
+        return $this->owner->id == $userId || $this->admins->filter(function($admin) use ($userId) { return $admin->id == $userId; });
+    }
 }

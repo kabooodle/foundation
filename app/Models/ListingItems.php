@@ -55,7 +55,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status_updated_at',
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
+        'make_available_at'
     ];
 
     /**
@@ -87,6 +88,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status' => self::STATUS_SCHEDULED,
         'status_updated_at' => '',
         'status_history' => '',
+        'make_available_at' => null,
         'ignore' => false,
         'item_message' => null,
     ];
@@ -107,6 +109,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status',
         'status_updated_at',
         'status_history',
+        'make_available_at',
         'ignore',
         'item_message'
     ];

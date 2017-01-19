@@ -8,6 +8,8 @@ namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use DB;
 use Carbon\Carbon;
+use Kabooodle\Foundation\Exceptions\Listings\ListingUserIsNotSellerInFlashsaleException;
+use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
@@ -110,27 +112,41 @@ class ScheduleListingCommandHandler
         /** @var FacebookListingOptions $options */
         $options = $command->getFacebookListingOptions();
 
-        $listing = new Listings;
+        // If this is a flash sale listing, we want to merge items into the flashsale instead of
+        // creating new listings for the same flash sale/user.  So check first if the listing for the flashsale exists.
+        $createNewEntry = true;
+        if (! $this->isFacebookListing) {
+            $listing = Listings::where('flashsale_id', '=', $command->getFlashSaleId())
+                ->where('owner_id', '=', $command->getActor()->id)->first();
+            if ($listing) {
+                $createNewEntry = false;
+            }
+        }
+
+        if ($createNewEntry) {
+            $listing = new Listings;
+        }
+
+        // General settings.
         $listing->owner_id = $command->getActor()->id;
         $listing->scheduled_for = $scheduledFor;
-
-        if ($options->getEndsAt()) {
-            $listing->scheduled_until = $options->getEndsAt();
-        }
-
-        if ($options->getClaimingStartsAt()) {
-            $listing->claimable_at = $options->getClaimingStartsAt();
-        }
-
-        if ($options->getClaimingEndsAt()) {
-            $listing->claimable_until = $options->getClaimingEndsAt();
-        }
-
         $listing->status = Listings::STATUS_SCHEDULED;
         $listing->status_updated_at = $this->now;
 
+
         // Are we making a facebook post or flashsale?
         if ($this->isFacebookListing) {
+            if ($options->getEndsAt()) {
+                $listing->scheduled_until = $options->getEndsAt();
+            }
+
+            if ($options->getClaimingStartsAt()) {
+                $listing->claimable_at = $options->getClaimingStartsAt();
+            }
+
+            if ($options->getClaimingEndsAt()) {
+                $listing->claimable_until = $options->getClaimingEndsAt();
+            }
             $listing->fb_group_node_id = $command->getFacebookGroupId();
             $listing->type = Listings::TYPE_FACEBOOK;
         } else {
@@ -138,6 +154,7 @@ class ScheduleListingCommandHandler
             $listing->flashsale_id = $command->getFlashSaleId();
             $listing->type = Listings::TYPE_FLASHSALE;
         }
+
         $listing->save();
 
         return $listing;
@@ -255,9 +272,15 @@ class ScheduleListingCommandHandler
     }
 
     /**
+     * Flashsale listings are tricky.  A flashsale has "seller groups" - groups of users who are permitted to
+     * sell/list items in a sale.  Each group has an optional "time slot"at which a groups items will "appear" within
+     * a flash sale.  We need to make sure we identify the user's group and grab this (optional) date so that
+     * we can assign it to the listing items->make_available_at
+     *
+     *
      * @param Listings               $listing
      * @param ScheduleListingCommand $command
-     *
+     * @throws ListingUserIsNotSellerInFlashsaleException
      * @return array
      */
     public function buildFlashsaleListingItems(Listings $listing, ScheduleListingCommand $command)
@@ -265,13 +288,16 @@ class ScheduleListingCommandHandler
         $selectedItems = $command->getSelectedItems();
         $actor = $command->getActor();
         $listedItems = [];
+        $flashsale = FlashSales::with('sellerGroups', 'sellerGroups.users', 'admins', 'owner')
+            ->findOrFail($command->getFlashSaleId());
 
         if (count($selectedItems) > 0) {
             // Iterate over the facebook albums and figure out what items were assigned to each album
             foreach ($selectedItems as $selectedItem) {
 
                 // Skip inventory items that do not belong to the user.
-                if (! $this->inventoryItemBelongsToUser($selectedItem['id'], $actor)) {
+                // Skip items already in the flash sale by the user.
+                if (! $this->inventoryItemBelongsToUser($selectedItem['id'], $actor) || $this->itemAlreadyInFlashsale($actor, $command->getFlashSaleId(), $selectedItem['id'])) {
                     continue;
                 }
 
@@ -288,11 +314,19 @@ class ScheduleListingCommandHandler
                 $listingItem->status = $listing->status;
                 $listingItem->status_updated_at = $this->now;
 
-                // Flag duplicates as ignored listings.
-                // We do not actually "skip" them because we want to provide full transparency to the user.
-                if ($this->itemAlreadyInFlashsale($actor, $command->getFlashSaleId(), $selectedItem['id'])) {
-                    $listingItem->ignore = true;
-                    $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
+                // Is the user excempt for posting at a specific time
+                if (! $this->canActorListToFlashsaleAnytime($flashsale, $actor)) {
+                    // IF not, does the user belong to a seller group
+                    // They may have at one point, but its possible that they've since
+                    // been removed from the group.
+                    if (! $group = $this->getFlashsaleSellerGroupForUser($flashsale, $actor)){
+                        throw new ListingUserIsNotSellerInFlashsaleException;
+                    } else {
+                        if ($timeslot = $group->pivot->time_slot) {
+                            // GROUP is restricted to a time slot for listing!
+                            $listingItem->make_available_at = $timeslot;
+                        }
+                    }
                 }
 
                 $listedItems[] = $listingItem;
@@ -344,6 +378,30 @@ class ScheduleListingCommandHandler
         }
 
         return true;
+    }
+
+    /**
+     * @param FlashSales $flashsale
+     * @param User       $actor
+     *
+     * @return mixed
+     */
+    public function getFlashsaleSellerGroupForUser(FlashSales $flashsale, User $actor)
+    {
+        return $flashsale->sellerGroups->filter(function($group) use ($actor) {
+            return $group->users->whereLoose('id', $actor->id);
+        });
+    }
+
+    /**
+     * @param FlashSales $flashsale
+     * @param User       $actor
+     *
+     * @return bool
+     */
+    public function canActorListToFlashsaleAnytime(FlashSales $flashsale, User $actor)
+    {
+        return $flashsale->canSellerListToFlashsaleAnytime($actor->id);
     }
 
     /**

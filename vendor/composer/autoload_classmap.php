@@ -826,6 +826,7 @@ return array(
     'UpdateFlashsalesTblAddHostId' => $baseDir . '/resources/database/migrations/2016_08_29_010711_update_flashsales_tbl_add_host_id.php',
     'UpdateGroupsTbl' => $baseDir . '/resources/database/migrations/2016_08_16_050807_update_groups_tbl.php',
     'UpdateInventoryAddWholesalePrice' => $baseDir . '/resources/database/migrations/2016_11_23_171523_update_inventory_add_wholesale_price.php',
+    'UpdateInventoryItemsAddMakeAvailableAtDateCol' => $baseDir . '/resources/database/migrations/2017_01_19_041933_update_inventory_items_add_make_available_at_date_col.php',
     'UpdateInventoryStyleAddWholesale' => $baseDir . '/resources/database/migrations/2016_11_23_172319_update_inventory_style_add_wholesale.php',
     'UpdateInventoryTblAddCoverPhotoData' => $baseDir . '/resources/database/migrations/2017_01_14_051010_update_inventory_tbl_add_cover_photo_data.php',
     'UpdateInventoryTblAddPricing' => $baseDir . '/resources/database/migrations/2016_08_29_034929_update_inventory_tbl_add_pricing.php',
