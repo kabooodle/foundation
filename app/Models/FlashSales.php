@@ -17,6 +17,7 @@ use Kabooodle\Models\Traits\FollowableTrait;
 use Kabooodle\Models\Traits\AuthorableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use Kabooodle\Models\Traits\EloquentDatesTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
@@ -30,6 +31,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
 {
     use AuthorableTrait,
         ClaimableTrait,
+        EloquentDatesTrait,
         FollowableTrait,
         LikeableTrait,
         ObfuscatesIdTrait,
@@ -171,6 +173,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
         return [
             'name' => 'required|unique:flashsales,name',
             'description' => '',
+            'cover_photo' => 'required',
             'starts_at' => 'required|date',
             'ends_at' => 'required|date',
 //            'hosted_by' => 'required|in:group,self',
@@ -228,6 +231,16 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      *
      * @return mixed
      */
+    public function scopeOrderByStartDate($scope)
+    {
+        return $scope->orderBy('starts_at', 'asc');
+    }
+
+    /**
+     * @param $scope
+     *
+     * @return mixed
+     */
     public function scopeWithoutSecret($scope)
     {
         return $scope->where('privacy', '<>', 'secret');
@@ -244,23 +257,27 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     }
 
     /**
-     * @param $v
-     *
-     * @return Carbon
+     * @return mixed
      */
-    public function getStartsAtAttribute($v)
+    public function sellers()
     {
-        return Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
-    }
+        $sellers = collect([$this->owner]);
+        if($admins = $this->admins) {
+            foreach($admins as $admin) {
+                $sellers->push($admin);
+            }
+        }
 
-    /**
-     * @param $v
-     *
-     * @return Carbon
-     */
-    public function getEndsAtAttribute($v)
-    {
-        return Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
+        $groups = $this->sellerGroups;
+        if ($groups) {
+            foreach($groups as $group) {
+                foreach($group->users as $user) {
+                    $sellers->push($user);
+                }
+            }
+        }
+
+        return $sellers;
     }
 
     /**
@@ -306,6 +323,22 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function listings()
+    {
+        return $this->hasMany(ListingItems::class, 'flashsale_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function listingItems()
+    {
+        return $this->hasManyThrough(ListingItems::class, Listings::class, 'flashsale_id', 'listing_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function pendingInvitations()
     {
         return $this->invitations()->where('accepted', 0);
@@ -325,6 +358,15 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public function adminsAndSellers()
     {
         return $this->admins->merge($this->sellers);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function admins()
+    {
+        return $this->belongsToMany(User::class, 'flashsales_admins', 'flashsale_id', 'user_id')
+            ->withTimestamps();
     }
 
     /**
@@ -364,7 +406,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function saleHasStarted()
     {
-        return $this->starts_at->lte(Carbon::now());
+        return $this->starts_at->lte(Carbon::now(current_timezone()));
     }
 
     /**
@@ -372,7 +414,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function saleHasEnded()
     {
-        return $this->ends_at->lt(Carbon::now());
+        return $this->ends_at->lt(Carbon::now(current_timezone()));
     }
 
     /**

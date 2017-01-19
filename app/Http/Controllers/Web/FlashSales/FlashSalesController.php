@@ -6,18 +6,16 @@
 
 namespace Kabooodle\Http\Controllers\Web\FlashSales;
 
-use DB;
 use Binput;
 use Illuminate\Http\Request;
+use Messages;
+use Kabooodle\Models\FlashSales;
+use Kabooodle\Models\Dates\StartsAndEndsAt;
+use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Illuminate\Validation\ValidationException;
-use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
-use Kabooodle\Bus\Commands\Flashsale\UpdateFlashsaleCommand;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Http\Requests\Flashsale\FlashsaleViewRequest;
-use Kabooodle\Models\Dates\StartsAndEndsAt;
-use Kabooodle\Models\FlashSales;
-use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use Messages;
+use Kabooodle\Bus\Commands\Flashsale\UpdateFlashsaleCommand;
 
 /**
  * Class FlashSalesController
@@ -32,10 +30,34 @@ class FlashSalesController extends Controller
      */
     public function index()
     {
-        $data = FlashSales::withoutExpired()->paginate();
+        $data = FlashSales::withoutExpired()->orderByStartDate();
+
+        if ($searchName = Binput::get('q_name', false)) {
+            $data = $data->where('name', 'LIKE', '%'. $searchName .'.%');
+        }
+
+        $data = $data->paginate();
 
         return $this->view('flashsales.index')->with(compact('data'));
     }
+
+    /**
+     * @param FlashsaleViewRequest $request
+     * @param                      $idAndName
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function show(FlashsaleViewRequest $request, $idAndName)
+    {
+        $flashsale = $request->getFlashsale();
+
+        return $this->view('flashsales.show')->with(compact('flashsale'));
+    }
+
+
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -47,60 +69,6 @@ class FlashSalesController extends Controller
         return $this->view('flashsales.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        try {
-            $this->validate($request, FlashSales::getRules());
-
-            $startsEnds = new StartsAndEndsAt(
-                strtotime(Binput::get('starts_at')),
-                strtotime(Binput::get('ends_at'))
-            );
-
-            $flashsale = $this->dispatchNow(new AddFlashsaleCommand(
-                user(),
-                Binput::get('name'),
-                Binput::get('description'),
-                $startsEnds,
-                Binput::get('type', FlashSales::HOST_SELF),
-                Binput::get('group_id', null),
-                Binput::get('rules')
-            ));
-
-            Messages::success("The flash sale, {$flashsale->name}, was successfully created!");
-
-            return $this->redirect(route('flashsales.index'));
-        } catch (ValidationException $e) {
-            Messages::error('Some fields require input!');
-
-            return $this->redirect(route('flashsales.create'))
-                ->withErrors($e->validator->getMessageBag());
-        }
-    }
-
-    /**
-     * @param FlashsaleViewRequest $request
-     * @param                      $idAndName
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function show(FlashsaleViewRequest $request, $idAndName)
-    {
-        $item = $request->getFlashsale();
-
-        if ($item && ! $item->saleHasEnded()) {
-            return $this->view('flashsales.show')->with(compact('item'));
-        }
-
-        return $this->redirect('/');
-    }
 
     /**
      * @param FlashsaleViewRequest $request

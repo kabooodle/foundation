@@ -7,7 +7,7 @@
             <slot name="input"></slot>
             <slot name="text-help"></slot>
             <template v-if="has_error">
-                <span class="text-danger text-xs">{{ errors[0] }}</span>
+                <span class="text-danger block text-xs">{{ errors[0] }}</span>
             </template>
         </div>
     </div>

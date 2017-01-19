@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Flashsale;
 
 use DB;
+use Kabooodle\Models\User;
 use Kabooodle\Models\Files;
 use Kabooodle\Models\FlashSales;
 use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
@@ -36,10 +37,15 @@ class AddFlashsaleCommandHandler
                 'privacy' => $command->getPrivacy(),
             ]);
 
+            // Add admins
+            if ($adminIds = $command->getAdminIds()) {
+                $users = User::whereIn('id', $adminIds)->get();
+                $flashsale->admins()->sync($users->pluck('id')->toArray(), true);
+            }
+
+            // Add cover photo
             if ($image = $command->getCoverPhoto()) {
-
                 $image = json_decode($image['json'], true);
-
                 $file = Files::create([
                     'location' => $image['location'],
                     'key' => $image['key'],
@@ -52,6 +58,7 @@ class AddFlashsaleCommandHandler
                 $flashsale->coverimage()->save($file);
             }
 
+            // Add seller groups
             if ($command->getSellerGroups()) {
                 $groups = [];
                 foreach ($command->getSellerGroups() as $group) {

@@ -6,13 +6,19 @@
             </div>
             <div class="box-divider m-a-0"></div>
             <div class="box-body">
+                <div class="cover-photo-wrapper item m-b-1" v-if="cover_photo">
+                    <div class="item-overlay active p-a">
+                        <span v-if="privacy=='private'" class="pull-left text-u-c label danger label-md"
+                        >{{ privacy }}</span>
+                    </div>
+                    <div
+                            class="coverimage FlexEmbed FlexEmbed--3by1"
+                            :style="'background-image: url('+cover_photo.location+')'">
+                    </div>
+                    <div class="item-overlay-bottom p-a" v-if="name"><h2>{{ name }}</h2></div>
+                </div>
 
                 <inline-field :errors="form_errors.cover_photo">
-                    <template slot="label">
-                        <div class="avatar_container _128 pull-right avatar-thumbnail" v-if="cover_photo">
-                            <img :src="cover_photo.location">
-                        </div>
-                    </template>
                     <template slot="input">
                         <input type="hidden" name="cover_photo" v-model="cover_photo" :value="cover_photo ? cover_photo.json : null">
                         <image-attach
@@ -21,6 +27,9 @@
                                 :button_title="cover_photo ? 'Replace cover photo' : 'Add cover photo'"
                         ></image-attach>
                     </template>
+                    <small slot="text-help" class="text-sm text-muted">
+                        Recommended dimensions are <u>220px<u> tall by <u>850px</u> wide.
+                    </small>
                 </inline-field>
 
                 <inline-field :errors="form_errors.name">
@@ -43,14 +52,14 @@
                 <inline-field :errors="form_errors.starts_at">
                     <template slot="label">Starting date</template>
                     <template slot="input">
-                        <input type="text" name="starts_at" v-model="starts_at" class="form-control">
+                        <input type="text"  @blur="updateDateTimeEl('starts_at', $event)" id="starts_at" name="starts_at" v-model="starts_at" class="needs-datetimepicker form-control">
                     </template>
                 </inline-field>
 
                 <inline-field :errors="form_errors.ends_at">
                     <template slot="label">Ending date</template>
                     <template slot="input">
-                        <input type="text" name="ends_at" v-model="ends_at" class="form-control">
+                        <input type="text"  @blur="updateDateTimeEl('ends_at', $event)" id="ends_at" name="ends_at" v-model="ends_at" class="needs-datetimepicker form-control">
                     </template>
                 </inline-field>
 
@@ -76,7 +85,6 @@
                             <template slot="option" scope="props">
                                 <div class="option__desc">
                                     <span class="option__title">{{ props.option.username }} ({{ props.option.full_name}})</span>
-                                    </small>
                                 </div>
                             </template>
                         </multiselect>
@@ -203,6 +211,9 @@
         data(){
             return initialState()
         },
+        mounted(){
+            this.registerDateTimePicker();
+        },
         computed: {},
         created(){
             $Bus.$on('flashsale:component:data', (data)=>{
@@ -245,8 +256,52 @@
             });
         },
         methods: {
+            /**
+             * User when the date fields are blurred to actually set the data.
+             * @param option
+             * @param event
+             */
+            updateDateTimeEl(option, event){
+                const $el = $(event.target);
+                this.$data[option] = $el.val();
+            },
+            registerDateTimePicker(){
+                this.$nextTick(function(){
+                    let minDate = moment().add('1', 'hour');
+                    let options = {
+                        format: "MM/DD/YYYY hh:mma",
+                        allowInputToggle: true,
+                        useCurrent: false,
+                        sideBySide: true,
+                        defaultDate: minDate,
+                        minDate: minDate,
+                        icons: {
+                            time: 'fa fa-clock-o fa-lg',
+                            clear: 'fa fa-times-circle-o',
+                            date: 'fa fa-lg fa-calendar',
+                            up: 'fa fa-chevron-up',
+                            down: 'fa fa-chevron-down',
+                            previous: 'fa fa-chevron-left',
+                            next: 'fa fa-chevron-right'
+                        }
+                    };
+
+                    $('input.needs-datetimepicker').datetimepicker(options);
+
+                    // hack for clearing the inputs, except, checkbox.
+                    $('.needs-datetimepicker').val('').trigger('change');
+
+                    $("#starts_at").on("dp.change", function (e) {
+                        $('#ends_at').data("DateTimePicker").minDate(e.date);
+                    });
+                    $("#ends_at").on("dp.change", function (e) {
+                        $('#starts_at').data("DateTimePicker").maxDate(e.date);
+                    });
+                });
+            },
             resetState(){
-                Object.assign(this.$data, initialState())
+                Object.assign(this.$data, initialState());
+                $('.needs-datetimepicker').val('').trigger('change');
             },
             searchAdmins(query){
                 if (query.trim() == '') {
@@ -308,9 +363,9 @@
                 // have a matching resource found in sellers_groups_containers
                 // HACKY until we can vuex the state.
                 const actualIds = _.pluck(_.pluck(this.sellers_groups_containers, 'selected_group'), 'id');
-                this.seller_groups = _.filter(this.seller_groups, (group)=>{
+                this.seller_groups = _.uniq(_.filter(this.seller_groups, (group)=>{
                     return _.contains(actualIds, group.id);
-                });
+                }), 'id');
 
                 this.$http.post(this.save_endpoint, this.$data).then((response)=>{
                     this.resetState();
