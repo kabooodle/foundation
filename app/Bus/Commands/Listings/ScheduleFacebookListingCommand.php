@@ -12,17 +12,12 @@ use Kabooodle\Models\Listing\FacebookListingOptions;
 /**
  * Class ScheduleListingsCommand
  */
-final class ScheduleListingCommand
+final class ScheduleFacebookListingCommand
 {
     /**
      * @var User
      */
     public $actor;
-
-    /**
-     * @var int
-     */
-    public $flashSaleId;
 
     /**
      * @var array
@@ -46,7 +41,6 @@ final class ScheduleListingCommand
 
     /**
      * @param User                   $actor
-     * @param int|null               $flashSaleId
      * @param array                  $facebookAlbums
      * @param int|null               $facebookGroupId
      * @param array                  $selectedItems
@@ -54,7 +48,6 @@ final class ScheduleListingCommand
      */
     public function __construct(
         User $actor,
-        int $flashSaleId = null,
         array $facebookAlbums = [],
         int $facebookGroupId = null,
         array $selectedItems = [],
@@ -62,7 +55,6 @@ final class ScheduleListingCommand
     )
     {
         $this->actor = $actor;
-        $this->flashSaleId = $flashSaleId;
         $this->facebookAlbums = $facebookAlbums;
         $this->facebookGroupId = $facebookGroupId;
         $this->selectedItems = $selectedItems;
@@ -75,14 +67,6 @@ final class ScheduleListingCommand
     public function getActor(): User
     {
         return $this->actor;
-    }
-
-    /**
-     * @return int
-     */
-    public function getFlashSaleId(): int
-    {
-        return $this->flashSaleId;
     }
 
     /**

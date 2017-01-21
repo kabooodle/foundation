@@ -8,6 +8,8 @@ namespace Kabooodle\Models;
 
 use DB;
 use Carbon\Carbon;
+use Kabooodle\Models\Contracts\WatchableInterface;
+use Kabooodle\Models\Traits\WatchableTrait;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Queue\SerializesModels;
 use Kabooodle\Presenters\PresentableTrait;
@@ -17,26 +19,26 @@ use Kabooodle\Models\Traits\FollowableTrait;
 use Kabooodle\Models\Traits\AuthorableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
+use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
-use Kabooodle\Models\Contracts\LikeableInterface;
 use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
 
 /**
  * Class FlashSales
  * @package Kabooodle\Models
  */
-class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisionable
+class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInterface
 {
     use AuthorableTrait,
         ClaimableTrait,
+        EloquentDatesTrait,
         FollowableTrait,
-        LikeableTrait,
         ObfuscatesIdTrait,
         PresentableTrait,
         RevisionableTrait,
         SerializesModels,
-        SoftDeletes;
+        SoftDeletes,
+        WatchableTrait;
 
     const HOST_SELF = 'self';
     const HOST_GROUP = 'group';
@@ -57,14 +59,9 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      * @var array
      */
     protected $appends = [
-        'is_liked'
-    ];
-
-    /**
-     * @var array
-     */
-    protected $with = [
-        'likes',
+        'is_watched',
+        'id_to_string',
+        'uuid'
     ];
 
     /**
@@ -169,11 +166,12 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public static function getRules()
     {
         return [
-            'name' => 'required',
-            'description' => 'required',
+            'name' => 'required|unique:flashsales,name',
+            'description' => '',
+            'cover_photo' => 'required',
             'starts_at' => 'required|date',
             'ends_at' => 'required|date',
-            'hosted_by' => 'required|in:group,self',
+//            'hosted_by' => 'required|in:group,self',
 //            'host_id' => 'exists:groups,id',
             'privacy' => 'required|in:private,public'
         ];
@@ -199,7 +197,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
         });
 
         self::created(function (self $model) {
-            $model->admins()->save($model->owner);
+//            $model->admins()->save($model->owner);
         });
     }
 
@@ -220,7 +218,27 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function scopeWithoutExpired($scope)
     {
-        return $scope->where('ends_at', '>', DB::raw('NOW()'));
+        return $scope->where('ends_at', '>','NOW()');
+    }
+
+    /**
+     * @param $scope
+     *
+     * @return mixed
+     */
+    public function scopeNotYetEnded($scope)
+    {
+        return $scope->where('starts_at', '>=', 'NOW()');
+    }
+
+    /**
+     * @param $scope
+     *
+     * @return mixed
+     */
+    public function scopeOrderByStartDate($scope)
+    {
+        return $scope->orderBy('starts_at', 'asc');
     }
 
     /**
@@ -234,23 +252,37 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     }
 
     /**
-     * @param $v
-     *
-     * @return Carbon
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function getStartsAtAttribute($v)
+    public function sellerGroups()
     {
-        return Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
+        return $this->belongsToMany(FlashsaleGroups::class, 'flashsales_sellers_groups', 'flashsale_id',  'flashsale_group_id')
+            ->withPivot('time_slot')
+            ->withTimestamps();
     }
 
     /**
-     * @param $v
-     *
-     * @return Carbon
+     * @return mixed
      */
-    public function getEndsAtAttribute($v)
+    public function sellers()
     {
-        return Carbon::createFromFormat(DATE_ISO8601, $this->convertDateTimeTo8601($v));
+        $sellers = collect([$this->owner]);
+        if($admins = $this->admins) {
+            foreach($admins as $admin) {
+                $sellers->push($admin);
+            }
+        }
+
+        $groups = $this->sellerGroups;
+        if ($groups) {
+            foreach($groups as $group) {
+                foreach($group->users as $user) {
+                    $sellers->push($user);
+                }
+            }
+        }
+
+        return $sellers;
     }
 
     /**
@@ -258,7 +290,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function coverimage()
     {
-        return $this->morphOne(Images::class, 'imageable');
+        return $this->morphOne(Files::class, 'fileable');
     }
 
     /**
@@ -280,57 +312,9 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function group()
-    {
-        return $this->belongsTo(Groups::class, 'host_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function host()
     {
-        return $this->hostIsGroup() ? $this->group() : $this->belongsTo(User::class, 'host_id');
-    }
-
-    /**
-     * @return bool
-     */
-    public function hostIsGroup()
-    {
-        return $this->type == self::HOST_GROUP;
-    }
-
-    /**
-     * This is protected because admins should also include the creator of the flash sale.
-     * The public method combines this collection and the other user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    protected function onlyAdmins()
-    {
-        return $this->belongsToMany(User::class, 'flashsales_admins', 'flashsales_id', 'user_id')->withTimestamps();
-    }
-
-    /**
-     * TODO: Identify better way for returning a collection of the admins + owner.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function admins()
-    {
-        //        $owner = $this->owner->toArray();
-//        $admins = $this->onlyAdmins->toArray();
-//        return collect($owner)->merge(collect($admins));
-        return $this->onlyAdmins();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function sellers()
-    {
-        return $this->belongsToMany(User::class, 'flashsales_sellers', 'flashsales_id', 'user_id')->withTimestamps();
+        return $this->belongsTo(User::class, 'host_id');
     }
 
     /**
@@ -342,21 +326,19 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function listedItems()
+    public function listing()
     {
-        return $this->belongsToMany(Inventory::class, 'flashsale_items', 'flashsale_id', 'inventory_id')->withTimestamps()->withPivot('inventory_id');
+        return $this->hasOne(Listings::class, 'flashsale_id');
     }
 
     /**
-     * TODO: Identify a way to check whether the item was enabled or enabled by date.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
-    public function enabledListedItems()
+    public function listingItems()
     {
-        return $this->listedItems();
+        return $this->hasManyThrough(ListingItems::class, Listings::class, 'flashsale_id', 'listing_id');
     }
 
     /**
@@ -381,6 +363,15 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public function adminsAndSellers()
     {
         return $this->admins->merge($this->sellers);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function admins()
+    {
+        return $this->belongsToMany(User::class, 'flashsales_admins', 'flashsale_id', 'user_id')
+            ->withTimestamps();
     }
 
     /**
@@ -420,7 +411,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function saleHasStarted()
     {
-        return $this->starts_at->lte(Carbon::now());
+        return $this->starts_at->lte(Carbon::now(current_timezone()));
     }
 
     /**
@@ -428,7 +419,7 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function saleHasEnded()
     {
-        return $this->ends_at->lt(Carbon::now());
+        return $this->ends_at->lt(Carbon::now(current_timezone()));
     }
 
     /**
@@ -463,5 +454,31 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
         return $sellersAndAdmins->filter(function ($user) use ($user) {
             return $user->id == $user->id;
         })->first();
+    }
+
+    /**
+     * @param $userId
+     *
+     * @return bool
+     */
+    public function canSellerListToFlashsaleAnytime($userId)
+    {
+        return $this->owner->id == $userId || $this->admins->filter(function($admin) use ($userId) { return $admin->id == $userId; });
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdToStringAttribute()
+    {
+        return $this->obfuscateIdToString();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUUIDAttribute()
+    {
+        return $this->getUUID();
     }
 }

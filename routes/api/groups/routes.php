@@ -3,6 +3,13 @@
 
 
 $api->group(['middleware' => 'jwt.auth'], function ($api) {
+
+    $api->post('groups', [
+        'as' => 'groups.store',
+        'uses' => \Kabooodle\Http\Controllers\Api\Groups\GroupsApiController::class.'@store'
+    ]);
+
+
     $api->post('user/{id}/followers', [
         'as' => 'user.followers.store',
         'uses' => \Kabooodle\Http\Controllers\Api\User\FollowsController::class.'@store'

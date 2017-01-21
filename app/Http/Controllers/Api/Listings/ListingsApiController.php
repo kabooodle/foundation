@@ -42,6 +42,7 @@ class ListingsApiController extends AbstractApiController
         try {
             $listing = Listings::with(['items', 'items.listedItem'])
                 ->where('uuid', $listingUuid)
+                ->orderBy('scheduled_for')
                 ->first();
 
             if (! $listing) {
@@ -66,7 +67,9 @@ class ListingsApiController extends AbstractApiController
             }
 
             $items = $items->sortBy(function($item){
-                return $item->listedItem->style->name;
+                return $item->make_available_at;
+            })->sortBy(function($item){
+                return $item->id;
             })->values();
 
             $items = $this->paginateData($request, $items);

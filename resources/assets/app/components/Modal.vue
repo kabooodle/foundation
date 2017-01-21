@@ -2,7 +2,9 @@
     <div class="modal" :id="modal_id" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
         <div class="row-col h-v">
             <div class="row-cell v-m">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog"
+                     :class="size"
+                     role="document">
                     <div class="box white r">
                         <div class="box-header b-0">
                             <button v-if="display_header_close_btn" type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -16,8 +18,8 @@
                             <slot name="modal_body"></slot>
                         </div>
                         <div class="modal-footer box-footer">
-                            <button v-if="!this.$slots['modal_footer']" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <slot name="modal_footer"><div v-el:modal_footer></div></slot>
+                            <button v-if="!this.$slots['modal_footer']" type="button" class="btn-text btn-link" data-dismiss="modal">Close</button>
+                            <slot name="modal_footer"></slot>
                         </div>
                     </div>
                 </div>
@@ -31,6 +33,9 @@
             modal_id: {
                 type: String,
                 required: true
+            },
+            size: {
+                default : null
             },
             use_header_close: {
                 default: false

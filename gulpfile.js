@@ -46,7 +46,10 @@ elixir(function (mix) {
 
 
     mix.browserify('app/components/users/user-listings-index.js');
+
     mix.browserify('app/components/flashsales/flashsale-create.js');
+    mix.browserify('app/components/flashsales/flashsales-index.js');
+    mix.browserify('app/components/flashsales/flashsale-items-page.js');
 
 
 

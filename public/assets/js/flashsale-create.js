@@ -1,15 +1,369 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/json/stringify"), __esModule: true };
-},{"core-js/library/fn/json/stringify":2}],2:[function(require,module,exports){
+},{"core-js/library/fn/json/stringify":3}],2:[function(require,module,exports){
+module.exports = { "default": require("core-js/library/fn/object/assign"), __esModule: true };
+},{"core-js/library/fn/object/assign":4}],3:[function(require,module,exports){
 var core  = require('../../modules/_core')
   , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
 module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
   return $JSON.stringify.apply($JSON, arguments);
 };
-},{"../../modules/_core":3}],3:[function(require,module,exports){
+},{"../../modules/_core":9}],4:[function(require,module,exports){
+require('../../modules/es6.object.assign');
+module.exports = require('../../modules/_core').Object.assign;
+},{"../../modules/_core":9,"../../modules/es6.object.assign":39}],5:[function(require,module,exports){
+module.exports = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  return it;
+};
+},{}],6:[function(require,module,exports){
+var isObject = require('./_is-object');
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+},{"./_is-object":22}],7:[function(require,module,exports){
+// false -> Array#indexOf
+// true  -> Array#includes
+var toIObject = require('./_to-iobject')
+  , toLength  = require('./_to-length')
+  , toIndex   = require('./_to-index');
+module.exports = function(IS_INCLUDES){
+  return function($this, el, fromIndex){
+    var O      = toIObject($this)
+      , length = toLength(O.length)
+      , index  = toIndex(fromIndex, length)
+      , value;
+    // Array#includes uses SameValueZero equality algorithm
+    if(IS_INCLUDES && el != el)while(length > index){
+      value = O[index++];
+      if(value != value)return true;
+    // Array#toIndex ignores holes, Array#includes - not
+    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
+      if(O[index] === el)return IS_INCLUDES || index || 0;
+    } return !IS_INCLUDES && -1;
+  };
+};
+},{"./_to-index":32,"./_to-iobject":34,"./_to-length":35}],8:[function(require,module,exports){
+var toString = {}.toString;
+
+module.exports = function(it){
+  return toString.call(it).slice(8, -1);
+};
+},{}],9:[function(require,module,exports){
 var core = module.exports = {version: '2.4.0'};
 if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-},{}],4:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
+// optional / simple context binding
+var aFunction = require('./_a-function');
+module.exports = function(fn, that, length){
+  aFunction(fn);
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
+      return fn.call(that, a);
+    };
+    case 2: return function(a, b){
+      return fn.call(that, a, b);
+    };
+    case 3: return function(a, b, c){
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function(/* ...args */){
+    return fn.apply(that, arguments);
+  };
+};
+},{"./_a-function":5}],11:[function(require,module,exports){
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function(it){
+  if(it == undefined)throw TypeError("Can't call method on  " + it);
+  return it;
+};
+},{}],12:[function(require,module,exports){
+// Thank's IE8 for his funny defineProperty
+module.exports = !require('./_fails')(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
+},{"./_fails":16}],13:[function(require,module,exports){
+var isObject = require('./_is-object')
+  , document = require('./_global').document
+  // in old IE typeof document.createElement is 'object'
+  , is = isObject(document) && isObject(document.createElement);
+module.exports = function(it){
+  return is ? document.createElement(it) : {};
+};
+},{"./_global":17,"./_is-object":22}],14:[function(require,module,exports){
+// IE 8- don't enum bug keys
+module.exports = (
+  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+).split(',');
+},{}],15:[function(require,module,exports){
+var global    = require('./_global')
+  , core      = require('./_core')
+  , ctx       = require('./_ctx')
+  , hide      = require('./_hide')
+  , PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , IS_WRAP   = type & $export.W
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , expProto  = exports[PROTOTYPE]
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+    , key, own, out;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    if(own && key in exports)continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function(C){
+      var F = function(a, b, c){
+        if(this instanceof C){
+          switch(arguments.length){
+            case 0: return new C;
+            case 1: return new C(a);
+            case 2: return new C(a, b);
+          } return new C(a, b, c);
+        } return C.apply(this, arguments);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+    if(IS_PROTO){
+      (exports.virtual || (exports.virtual = {}))[key] = out;
+      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
+    }
+  }
+};
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+module.exports = $export;
+},{"./_core":9,"./_ctx":10,"./_global":17,"./_hide":19}],16:[function(require,module,exports){
+module.exports = function(exec){
+  try {
+    return !!exec();
+  } catch(e){
+    return true;
+  }
+};
+},{}],17:[function(require,module,exports){
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+},{}],18:[function(require,module,exports){
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function(it, key){
+  return hasOwnProperty.call(it, key);
+};
+},{}],19:[function(require,module,exports){
+var dP         = require('./_object-dp')
+  , createDesc = require('./_property-desc');
+module.exports = require('./_descriptors') ? function(object, key, value){
+  return dP.f(object, key, createDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
+},{"./_descriptors":12,"./_object-dp":24,"./_property-desc":29}],20:[function(require,module,exports){
+module.exports = !require('./_descriptors') && !require('./_fails')(function(){
+  return Object.defineProperty(require('./_dom-create')('div'), 'a', {get: function(){ return 7; }}).a != 7;
+});
+},{"./_descriptors":12,"./_dom-create":13,"./_fails":16}],21:[function(require,module,exports){
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+var cof = require('./_cof');
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+  return cof(it) == 'String' ? it.split('') : Object(it);
+};
+},{"./_cof":8}],22:[function(require,module,exports){
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+},{}],23:[function(require,module,exports){
+'use strict';
+// 19.1.2.1 Object.assign(target, source, ...)
+var getKeys  = require('./_object-keys')
+  , gOPS     = require('./_object-gops')
+  , pIE      = require('./_object-pie')
+  , toObject = require('./_to-object')
+  , IObject  = require('./_iobject')
+  , $assign  = Object.assign;
+
+// should work with symbols and should have deterministic property order (V8 bug)
+module.exports = !$assign || require('./_fails')(function(){
+  var A = {}
+    , B = {}
+    , S = Symbol()
+    , K = 'abcdefghijklmnopqrst';
+  A[S] = 7;
+  K.split('').forEach(function(k){ B[k] = k; });
+  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
+}) ? function assign(target, source){ // eslint-disable-line no-unused-vars
+  var T     = toObject(target)
+    , aLen  = arguments.length
+    , index = 1
+    , getSymbols = gOPS.f
+    , isEnum     = pIE.f;
+  while(aLen > index){
+    var S      = IObject(arguments[index++])
+      , keys   = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S)
+      , length = keys.length
+      , j      = 0
+      , key;
+    while(length > j)if(isEnum.call(S, key = keys[j++]))T[key] = S[key];
+  } return T;
+} : $assign;
+},{"./_fails":16,"./_iobject":21,"./_object-gops":25,"./_object-keys":27,"./_object-pie":28,"./_to-object":36}],24:[function(require,module,exports){
+var anObject       = require('./_an-object')
+  , IE8_DOM_DEFINE = require('./_ie8-dom-define')
+  , toPrimitive    = require('./_to-primitive')
+  , dP             = Object.defineProperty;
+
+exports.f = require('./_descriptors') ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+},{"./_an-object":6,"./_descriptors":12,"./_ie8-dom-define":20,"./_to-primitive":37}],25:[function(require,module,exports){
+exports.f = Object.getOwnPropertySymbols;
+},{}],26:[function(require,module,exports){
+var has          = require('./_has')
+  , toIObject    = require('./_to-iobject')
+  , arrayIndexOf = require('./_array-includes')(false)
+  , IE_PROTO     = require('./_shared-key')('IE_PROTO');
+
+module.exports = function(object, names){
+  var O      = toIObject(object)
+    , i      = 0
+    , result = []
+    , key;
+  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while(names.length > i)if(has(O, key = names[i++])){
+    ~arrayIndexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+},{"./_array-includes":7,"./_has":18,"./_shared-key":30,"./_to-iobject":34}],27:[function(require,module,exports){
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+var $keys       = require('./_object-keys-internal')
+  , enumBugKeys = require('./_enum-bug-keys');
+
+module.exports = Object.keys || function keys(O){
+  return $keys(O, enumBugKeys);
+};
+},{"./_enum-bug-keys":14,"./_object-keys-internal":26}],28:[function(require,module,exports){
+exports.f = {}.propertyIsEnumerable;
+},{}],29:[function(require,module,exports){
+module.exports = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
+};
+},{}],30:[function(require,module,exports){
+var shared = require('./_shared')('keys')
+  , uid    = require('./_uid');
+module.exports = function(key){
+  return shared[key] || (shared[key] = uid(key));
+};
+},{"./_shared":31,"./_uid":38}],31:[function(require,module,exports){
+var global = require('./_global')
+  , SHARED = '__core-js_shared__'
+  , store  = global[SHARED] || (global[SHARED] = {});
+module.exports = function(key){
+  return store[key] || (store[key] = {});
+};
+},{"./_global":17}],32:[function(require,module,exports){
+var toInteger = require('./_to-integer')
+  , max       = Math.max
+  , min       = Math.min;
+module.exports = function(index, length){
+  index = toInteger(index);
+  return index < 0 ? max(index + length, 0) : min(index, length);
+};
+},{"./_to-integer":33}],33:[function(require,module,exports){
+// 7.1.4 ToInteger
+var ceil  = Math.ceil
+  , floor = Math.floor;
+module.exports = function(it){
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+},{}],34:[function(require,module,exports){
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = require('./_iobject')
+  , defined = require('./_defined');
+module.exports = function(it){
+  return IObject(defined(it));
+};
+},{"./_defined":11,"./_iobject":21}],35:[function(require,module,exports){
+// 7.1.15 ToLength
+var toInteger = require('./_to-integer')
+  , min       = Math.min;
+module.exports = function(it){
+  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+};
+},{"./_to-integer":33}],36:[function(require,module,exports){
+// 7.1.13 ToObject(argument)
+var defined = require('./_defined');
+module.exports = function(it){
+  return Object(defined(it));
+};
+},{"./_defined":11}],37:[function(require,module,exports){
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = require('./_is-object');
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function(it, S){
+  if(!isObject(it))return it;
+  var fn, val;
+  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+},{"./_is-object":22}],38:[function(require,module,exports){
+var id = 0
+  , px = Math.random();
+module.exports = function(key){
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+},{}],39:[function(require,module,exports){
+// 19.1.3.1 Object.assign(target, source)
+var $export = require('./_export');
+
+$export($export.S + $export.F, 'Object', {assign: require('./_object-assign')});
+},{"./_export":15,"./_object-assign":23}],40:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -191,7 +545,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],5:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 var Vue // late bind
 var map = Object.create(null)
 var shimmed = false
@@ -492,9 +846,9 @@ function format (id) {
   return match ? match[0] : id
 }
 
-},{}],6:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 !function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.VueMultiselect=t():e.VueMultiselect=t()}(this,function(){return function(e){function t(n){if(i[n])return i[n].exports;var o=i[n]={exports:{},id:n,loaded:!1};return e[n].call(o.exports,o,o.exports,t),o.loaded=!0,o.exports}var i={};return t.m=e,t.c=i,t.p="/",t(0)}([function(e,t,i){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(t,"__esModule",{value:!0}),t.deepClone=t.pointerMixin=t.multiselectMixin=t.Multiselect=void 0;var o=i(7),l=n(o),s=i(1),r=n(s),a=i(2),u=n(a),c=i(3),p=n(c);t.default=l.default,t.Multiselect=l.default,t.multiselectMixin=r.default,t.pointerMixin=u.default,t.deepClone=p.default},function(e,t,i){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function o(e,t,i){return t in e?Object.defineProperty(e,t,{value:i,enumerable:!0,configurable:!0,writable:!0}):e[t]=i,e}function l(e,t){if(!e)return!1;var i=e.toString().toLowerCase();return i.indexOf(t)!==-1}function s(e,t,i){return i?e.filter(function(e){return l(e[i],t)}):e.filter(function(e){return l(e,t)})}function r(e){return e.filter(function(e){return!e.$isLabel})}function a(e,t){return function(i){return i.reduce(function(i,n){return n[e]&&n[e].length?(i.push({$groupLabel:n[t],$isLabel:!0}),i.concat(n[e])):i.concat(n)},[])}}function u(e,t,i,n){return function(l){return l.map(function(l){var r,a=s(l[i],e,t);return a.length?(r={},o(r,n,l[n]),o(r,i,a),r):[]})}}var c="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},p=i(3),d=n(p),h=function(){for(var e=arguments.length,t=Array(e),i=0;i<e;i++)t[i]=arguments[i];return function(e){return t.reduce(function(e,t){return t(e)},e)}};e.exports={data:function(){return{search:"",isOpen:!1,internalValue:this.value||0===this.value?(0,d.default)(this.value):this.multiple?[]:null}},props:{internalSearch:{type:Boolean,default:!0},options:{type:Array,required:!0},multiple:{type:Boolean,default:!1},value:{type:null,default:null},trackBy:{type:String},label:{type:String},searchable:{type:Boolean,default:!0},clearOnSelect:{type:Boolean,default:!0},hideSelected:{type:Boolean,default:!1},placeholder:{type:String,default:"Select option"},allowEmpty:{type:Boolean,default:!0},resetAfter:{type:Boolean,default:!1},closeOnSelect:{type:Boolean,default:!0},customLabel:{type:Function,default:function(e,t){return t?e[t]:e}},taggable:{type:Boolean,default:!1},tagPlaceholder:{type:String,default:"Press enter to create a tag"},max:{type:Number},id:{default:null},optionsLimit:{type:Number,default:1e3},groupValues:{type:String},groupLabel:{type:String},blockKeys:{type:Array,default:function(){return[]}}},created:function(){this.searchable&&this.adjustSearch()},computed:{filteredOptions:function(){var e=this.search.toLowerCase()||"",t=this.options;return this.internalSearch&&(t=this.groupValues?this.filterAndFlat(t,e,this.label):s(t,e,this.label),t=this.hideSelected?t.filter(this.isNotSelected):t),this.taggable&&e.length&&!this.isExistingOption(e)&&t.unshift({isTag:!0,label:e}),t.slice(0,this.optionsLimit)},valueKeys:function(){var e=this;return this.trackBy?this.multiple?this.internalValue.map(function(t){return t[e.trackBy]}):this.internalValue[this.trackBy]:this.internalValue},optionKeys:function(){var e=this,t=this.groupValues?this.flatAndStrip(this.options):this.options;return this.label?t.map(function(t){return t[e.label].toString().toLowerCase()}):t.map(function(e){return e.toString().toLowerCase()})},currentOptionLabel:function(){return this.getOptionLabel(this.internalValue)+""}},watch:{internalValue:function(){this.resetAfter&&(this.internalValue=null,this.search=""),this.adjustSearch()},search:function(){this.search!==this.currentOptionLabel&&this.$emit("search-change",this.search,this.id)},value:function(){this.internalValue=(0,d.default)(this.value)}},methods:{filterAndFlat:function(e){return h(u(this.search,this.label,this.groupValues,this.groupLabel),a(this.groupValues,this.groupLabel))(e)},flatAndStrip:function(e){return h(a(this.groupValues,this.groupLabel),r)(e)},updateSearch:function(e){this.search=e.trim().toString()},isExistingOption:function(e){return!!this.options&&this.optionKeys.indexOf(e)>-1},isSelected:function(e){if(!this.internalValue)return!1;var t=this.trackBy?e[this.trackBy]:e;return this.multiple?this.valueKeys.indexOf(t)>-1:this.valueKeys===t},isNotSelected:function(e){return!this.isSelected(e)},getOptionLabel:function(e){return e||0===e?e.isTag?e.label:this.customLabel(e,this.label)||"":""},select:function(e,t){if(this.blockKeys.indexOf(t)===-1&&!this.disabled&&!(this.max&&this.multiple&&this.internalValue.length===this.max||e.$isLabel))if(e.isTag)this.$emit("tag",e.label,this.id),this.search="";else{if(this.multiple){if(this.isSelected(e))return void("Tab"!==t&&this.removeElement(e));this.internalValue.push(e)}else{var i=this.isSelected(e);if(i&&(!this.allowEmpty||"Tab"===t))return;this.internalValue=i?null:e}this.$emit("select",(0,d.default)(e),this.id),this.$emit("input",(0,d.default)(this.internalValue),this.id),this.closeOnSelect&&this.deactivate()}},removeElement:function(e){if(!this.disabled&&(this.allowEmpty||!(this.internalValue.length<=1))){var t=this.multiple&&"object"===("undefined"==typeof e?"undefined":c(e))?this.valueKeys.indexOf(e[this.trackBy]):this.valueKeys.indexOf(e);this.internalValue.splice(t,1),this.$emit("remove",(0,d.default)(e),this.id),this.$emit("input",(0,d.default)(this.internalValue),this.id)}},removeLastElement:function(){this.blockKeys.indexOf("Delete")===-1&&0===this.search.length&&Array.isArray(this.internalValue)&&this.removeElement(this.internalValue[this.internalValue.length-1])},activate:function(){this.isOpen||this.disabled||(this.isOpen=!0,this.searchable?(this.search="",this.$refs.search.focus()):this.$el.focus(),this.$emit("open",this.id))},deactivate:function(){this.isOpen&&(this.isOpen=!1,this.searchable?(this.$refs.search.blur(),this.adjustSearch()):this.$el.blur(),this.$emit("close",(0,d.default)(this.internalValue),this.id))},adjustSearch:function(){this.searchable&&this.clearOnSelect&&(this.search=this.multiple?"":this.currentOptionLabel)},toggle:function(){this.isOpen?this.deactivate():this.activate()}}}},function(e,t){"use strict";e.exports={data:function(){return{pointer:0,visibleElements:this.maxHeight/this.optionHeight}},props:{showPointer:{type:Boolean,default:!0},optionHeight:{type:Number,default:40}},computed:{pointerPosition:function(){return this.pointer*this.optionHeight}},watch:{filteredOptions:function(){this.pointerAdjust()}},methods:{optionHighlight:function(e,t){return{"multiselect__option--highlight":e===this.pointer&&this.showPointer,"multiselect__option--selected":this.isSelected(t)}},addPointerElement:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"Enter",t=e.key;this.filteredOptions[this.pointer].isLabel||(this.filteredOptions.length>0&&this.select(this.filteredOptions[this.pointer],t),this.pointerReset())},pointerForward:function(){this.pointer<this.filteredOptions.length-1&&(this.pointer++,this.$refs.list.scrollTop<=this.pointerPosition-this.visibleElements*this.optionHeight&&(this.$refs.list.scrollTop=this.pointerPosition-(this.visibleElements-1)*this.optionHeight),this.filteredOptions[this.pointer].$isLabel&&this.pointerForward())},pointerBackward:function(){this.pointer>0?(this.pointer--,this.$refs.list.scrollTop>=this.pointerPosition&&(this.$refs.list.scrollTop=this.pointerPosition),this.filteredOptions[this.pointer].$isLabel&&this.pointerBackward()):this.filteredOptions[0].$isLabel&&this.pointerForward()},pointerReset:function(){this.closeOnSelect&&(this.pointer=0,this.$refs.list&&(this.$refs.list.scrollTop=0))},pointerAdjust:function(){this.pointer>=this.filteredOptions.length-1&&(this.pointer=this.filteredOptions.length?this.filteredOptions.length-1:0)},pointerSet:function(e){this.pointer=e}}}},function(e,t){"use strict";var i="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},n=function e(t){if(Array.isArray(t))return t.map(e);if(t&&"object"===("undefined"==typeof t?"undefined":i(t))){for(var n={},o=Object.keys(t),l=0,s=o.length;l<s;l++){var r=o[l];n[r]=e(t[r])}return n}return t};e.exports=n},function(e,t,i){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(t,"__esModule",{value:!0});var o=i(1),l=n(o),s=i(2),r=n(s);t.default={name:"vue-multiselect",mixins:[l.default,r.default],props:{selectLabel:{type:String,default:"Press enter to select"},selectedLabel:{type:String,default:"Selected"},deselectLabel:{type:String,default:"Press enter to remove"},showLabels:{type:Boolean,default:!0},limit:{type:Number,default:99999},maxHeight:{type:Number,default:300},limitText:{type:Function,default:function(e){return"and "+e+" more"}},loading:{type:Boolean,default:!1},disabled:{type:Boolean,default:!1}},computed:{visibleValue:function(){return this.multiple?this.internalValue.slice(0,this.limit):[]},deselectLabelText:function(){return this.showLabels?this.deselectLabel:""},selectLabelText:function(){return this.showLabels?this.selectLabel:""},selectedLabelText:function(){return this.showLabels?this.selectedLabel:""}}}},function(e,t,i){t=e.exports=i(6)(),t.push([e.id,'fieldset[disabled] .multiselect{pointer-events:none}.multiselect__spinner{position:absolute;right:1px;top:1px;width:48px;height:35px;background:#fff;display:block}.multiselect__spinner:after,.multiselect__spinner:before{position:absolute;content:"";top:50%;left:50%;margin:-8px 0 0 -8px;width:16px;height:16px;border-radius:100%;border-color:#41b883 transparent transparent;border-style:solid;border-width:2px;box-shadow:0 0 0 1px transparent}.multiselect__spinner:before{animation:spinning 2.4s cubic-bezier(.41,.26,.2,.62);animation-iteration-count:infinite}.multiselect__spinner:after{animation:spinning 2.4s cubic-bezier(.51,.09,.21,.8);animation-iteration-count:infinite}.multiselect__loading-enter-active,.multiselect__loading-leave-active{transition:opacity .4s ease-in-out;opacity:1}.multiselect__loading-enter,.multiselect__loading-leave-active{opacity:0}.multiselect,.multiselect__input,.multiselect__single{font-family:inherit;font-size:14px;-ms-touch-action:manipulation;touch-action:manipulation}.multiselect{box-sizing:content-box;display:block;position:relative;width:100%;min-height:40px;text-align:left;color:#35495e}.multiselect *{box-sizing:border-box}.multiselect:focus{outline:none}.multiselect--disabled{pointer-events:none;opacity:.6}.multiselect--active{z-index:50}.multiselect--active .multiselect__current,.multiselect--active .multiselect__input,.multiselect--active .multiselect__tags{border-bottom-left-radius:0;border-bottom-right-radius:0}.multiselect--active .multiselect__select{transform:rotate(180deg)}.multiselect__input,.multiselect__single{position:relative;display:inline-block;min-height:20px;line-height:20px;border:none;border-radius:5px;background:#fff;padding:1px 0 0 5px;width:100%;transition:border .1s ease;box-sizing:border-box;margin-bottom:8px}.multiselect__tag~.multiselect__input,.multiselect__tag~.multiselect__single{width:auto}.multiselect__input:hover,.multiselect__single:hover{border-color:#cfcfcf}.multiselect__input:focus,.multiselect__single:focus{border-color:#a8a8a8;outline:none}.multiselect__single{padding-left:6px;margin-bottom:8px}.multiselect__tags{min-height:40px;display:block;padding:8px 40px 0 8px;border-radius:5px;border:1px solid #e8e8e8;background:#fff}.multiselect__tag{position:relative;display:inline-block;padding:4px 26px 4px 10px;border-radius:5px;margin-right:10px;color:#fff;line-height:1;background:#41b883;margin-bottom:8px;white-space:nowrap}.multiselect__tag-icon{cursor:pointer;margin-left:7px;position:absolute;right:0;top:0;bottom:0;font-weight:700;font-style:normal;width:22px;text-align:center;line-height:22px;transition:all .2s ease;border-radius:5px}.multiselect__tag-icon:after{content:"\\D7";color:#266d4d;font-size:14px}.multiselect__tag-icon:focus,.multiselect__tag-icon:hover{background:#369a6e}.multiselect__tag-icon:focus:after,.multiselect__tag-icon:hover:after{color:#fff}.multiselect__current{min-height:40px;overflow:hidden;padding:8px 12px 0;padding-right:30px;white-space:nowrap;border-radius:5px;border:1px solid #e8e8e8}.multiselect__current,.multiselect__select{line-height:16px;box-sizing:border-box;display:block;margin:0;text-decoration:none;cursor:pointer}.multiselect__select{position:absolute;width:40px;height:38px;right:1px;top:1px;padding:4px 8px;text-align:center;transition:transform .2s ease}.multiselect__select:before{position:relative;right:0;top:65%;color:#999;margin-top:4px;border-style:solid;border-width:5px 5px 0;border-color:#999 transparent transparent;content:""}.multiselect__placeholder{color:#adadad;display:inline-block;margin-bottom:10px;padding-top:2px}.multiselect--active .multiselect__placeholder{display:none}.multiselect__content{position:absolute;list-style:none;display:block;background:#fff;width:100%;max-height:240px;overflow:auto;padding:0;margin:0;border:1px solid #e8e8e8;border-top:none;border-bottom-left-radius:5px;border-bottom-right-radius:5px;z-index:50}.multiselect__content::webkit-scrollbar{display:none}.multiselect__element{display:block}.multiselect__option{display:block;padding:12px;min-height:40px;line-height:16px;text-decoration:none;text-transform:none;vertical-align:middle;position:relative;cursor:pointer;white-space:nowrap}.multiselect__option:after{top:0;right:0;position:absolute;line-height:40px;padding-right:12px;padding-left:20px}.multiselect__option--highlight{background:#41b883;outline:none;color:#fff}.multiselect__option--highlight:after{content:attr(data-select);background:#41b883;color:#fff}.multiselect__option--selected{background:#f3f3f3;color:#35495e;font-weight:700}.multiselect__option--selected:after{content:attr(data-selected);color:silver}.multiselect__option--selected.multiselect__option--highlight{background:#ff6a6a;color:#fff}.multiselect__option--selected.multiselect__option--highlight:after{background:#ff6a6a;content:attr(data-deselect);color:#fff}.multiselect--disabled{background:#ededed;pointer-events:none}.multiselect--disabled .multiselect__current,.multiselect--disabled .multiselect__select,.multiselect__option--disabled{background:#ededed;color:#a6a6a6}.multiselect__option--disabled{cursor:text;pointer-events:none}.multiselect__option--disabled.multiselect__option--highlight{background:#dedede!important}.multiselect-enter-active,.multiselect-leave-active{transition:all .3s ease}.multiselect-enter,.multiselect-leave-active{opacity:0}@keyframes spinning{0%{transform:rotate(0)}to{transform:rotate(2turn)}}',""])},function(e,t){e.exports=function(){var e=[];return e.toString=function(){for(var e=[],t=0;t<this.length;t++){var i=this[t];i[2]?e.push("@media "+i[2]+"{"+i[1]+"}"):e.push(i[1])}return e.join("")},e.i=function(t,i){"string"==typeof t&&(t=[[null,t,""]]);for(var n={},o=0;o<this.length;o++){var l=this[o][0];"number"==typeof l&&(n[l]=!0)}for(o=0;o<t.length;o++){var s=t[o];"number"==typeof s[0]&&n[s[0]]||(i&&!s[2]?s[2]=i:i&&(s[2]="("+s[2]+") and ("+i+")"),e.push(s))}},e}},function(e,t,i){var n,o;i(10),n=i(4);var l=i(8);o=n=n||{},"object"!=typeof n.default&&"function"!=typeof n.default||(o=n=n.default),"function"==typeof o&&(o=o.options),o.render=l.render,o.staticRenderFns=l.staticRenderFns,e.exports=n},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,i=e._self._c||t;return i("div",{staticClass:"multiselect",class:{"multiselect--active":e.isOpen,"multiselect--disabled":e.disabled},attrs:{tabindex:e.searchable?-1:0},on:{focus:function(t){e.activate()},blur:function(t){!e.searchable&&e.deactivate()},keydown:[function(t){e._k(t.keyCode,"down",40)||t.target===t.currentTarget&&(t.preventDefault(),e.pointerForward())},function(t){e._k(t.keyCode,"up",38)||t.target===t.currentTarget&&(t.preventDefault(),e.pointerBackward())},function(t){e._k(t.keyCode,"enter",13)&&e._k(t.keyCode,"tab",9)||(t.stopPropagation(),t.target===t.currentTarget&&e.addPointerElement(t))}],keyup:function(t){e._k(t.keyCode,"esc",27)||e.deactivate()}}},[i("div",{staticClass:"multiselect__select",on:{mousedown:function(t){t.preventDefault(),e.toggle()}}}),e._v(" "),i("div",{ref:"tags",staticClass:"multiselect__tags"},[e._l(e.visibleValue,function(t){return i("span",{staticClass:"multiselect__tag",attrs:{onmousedown:"event.preventDefault()"}},[i("span",{domProps:{textContent:e._s(e.getOptionLabel(t))}}),e._v(" "),i("i",{staticClass:"multiselect__tag-icon",attrs:{"aria-hidden":"true",tabindex:"1"},on:{keydown:function(i){e._k(i.keyCode,"enter",13)||(i.preventDefault(),e.removeElement(t))},mousedown:function(i){i.preventDefault(),e.removeElement(t)}}})])}),e._v(" "),e.internalValue&&e.internalValue.length>e.limit?[i("strong",{domProps:{textContent:e._s(e.limitText(e.internalValue.length-e.limit))}})]:e._e(),e._v(" "),i("transition",{attrs:{name:"multiselect__loading"}},[i("div",{directives:[{name:"show",rawName:"v-show",value:e.loading,expression:"loading"}],staticClass:"multiselect__spinner"})]),e._v(" "),e.searchable?i("input",{ref:"search",staticClass:"multiselect__input",attrs:{type:"text",autocomplete:"off",placeholder:e.placeholder,disabled:e.disabled},domProps:{value:e.search},on:{input:function(t){e.updateSearch(t.target.value)},focus:function(t){t.preventDefault(),e.activate()},blur:function(t){t.preventDefault(),e.deactivate()},keyup:function(t){e._k(t.keyCode,"esc",27)||e.deactivate()},keydown:[function(t){e._k(t.keyCode,"down",40)||(t.preventDefault(),e.pointerForward())},function(t){e._k(t.keyCode,"up",38)||(t.preventDefault(),e.pointerBackward())},function(t){e._k(t.keyCode,"enter",13)&&e._k(t.keyCode,"tab",9)||(t.stopPropagation(),t.target===t.currentTarget&&e.addPointerElement(t))},function(t){e._k(t.keyCode,"delete",[8,46])||e.removeLastElement()}]}}):e._e(),e._v(" "),e.searchable?e._e():i("span",{staticClass:"multiselect__single",domProps:{textContent:e._s(e.currentOptionLabel||e.placeholder)}})],2),e._v(" "),i("transition",{attrs:{name:"multiselect"}},[i("ul",{directives:[{name:"show",rawName:"v-show",value:e.isOpen,expression:"isOpen"}],ref:"list",staticClass:"multiselect__content",style:{maxHeight:e.maxHeight+"px"}},[e._t("beforeList"),e._v(" "),e.multiple&&e.max===e.internalValue.length?i("li",[i("span",{staticClass:"multiselect__option"},[e._t("maxElements",[e._v("Maximum of "+e._s(e.max)+" options selected. First remove a selected option to select another.")])],2)]):e._e(),e._v(" "),!e.max||e.internalValue.length<e.max?e._l(e.filteredOptions,function(t,n){return i("li",{key:n,staticClass:"multiselect__element"},[t.$isLabel?e._e():i("span",{staticClass:"multiselect__option",class:e.optionHighlight(n,t),attrs:{tabindex:"0","data-select":t.isTag?e.tagPlaceholder:e.selectLabelText,"data-selected":e.selectedLabelText,"data-deselect":e.deselectLabelText},on:{mousedown:function(i){i.preventDefault(),e.select(t)},mouseenter:function(t){e.pointerSet(n)}}},[e._t("option",[i("span",[e._v(e._s(e.getOptionLabel(t)))])],{option:t,search:e.search})],2),e._v(" "),t.$isLabel?i("span",{staticClass:"multiselect__option multiselect__option--disabled",class:e.optionHighlight(n,t)},[e._v("\n              "+e._s(t.$groupLabel)+"\n            ")]):e._e()])}):e._e(),e._v(" "),i("li",{directives:[{name:"show",rawName:"v-show",value:0===e.filteredOptions.length&&e.search,expression:"filteredOptions.length === 0 && search"}]},[i("span",{staticClass:"multiselect__option"},[e._t("noResult",[e._v("No elements found. Consider changing the search query.")])],2)]),e._v(" "),e._t("afterList")],2)])],1)},staticRenderFns:[]}},function(e,t,i){function n(e,t){for(var i=0;i<e.length;i++){var n=e[i],o=p[n.id];if(o){o.refs++;for(var l=0;l<o.parts.length;l++)o.parts[l](n.parts[l]);for(;l<n.parts.length;l++)o.parts.push(a(n.parts[l],t))}else{for(var s=[],l=0;l<n.parts.length;l++)s.push(a(n.parts[l],t));p[n.id]={id:n.id,refs:1,parts:s}}}}function o(e){for(var t=[],i={},n=0;n<e.length;n++){var o=e[n],l=o[0],s=o[1],r=o[2],a=o[3],u={css:s,media:r,sourceMap:a};i[l]?i[l].parts.push(u):t.push(i[l]={id:l,parts:[u]})}return t}function l(e,t){var i=f(),n=b[b.length-1];if("top"===e.insertAt)n?n.nextSibling?i.insertBefore(t,n.nextSibling):i.appendChild(t):i.insertBefore(t,i.firstChild),b.push(t);else{if("bottom"!==e.insertAt)throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");i.appendChild(t)}}function s(e){e.parentNode.removeChild(e);var t=b.indexOf(e);t>=0&&b.splice(t,1)}function r(e){var t=document.createElement("style");return t.type="text/css",l(e,t),t}function a(e,t){var i,n,o;if(t.singleton){var l=g++;i=m||(m=r(t)),n=u.bind(null,i,l,!1),o=u.bind(null,i,l,!0)}else i=r(t),n=c.bind(null,i),o=function(){s(i)};return n(e),function(t){if(t){if(t.css===e.css&&t.media===e.media&&t.sourceMap===e.sourceMap)return;n(e=t)}else o()}}function u(e,t,i,n){var o=i?"":n.css;if(e.styleSheet)e.styleSheet.cssText=_(t,o);else{var l=document.createTextNode(o),s=e.childNodes;s[t]&&e.removeChild(s[t]),s.length?e.insertBefore(l,s[t]):e.appendChild(l)}}function c(e,t){var i=t.css,n=t.media,o=t.sourceMap;if(n&&e.setAttribute("media",n),o&&(i+="\n/*# sourceURL="+o.sources[0]+" */",i+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(o))))+" */"),e.styleSheet)e.styleSheet.cssText=i;else{for(;e.firstChild;)e.removeChild(e.firstChild);e.appendChild(document.createTextNode(i))}}var p={},d=function(e){var t;return function(){return"undefined"==typeof t&&(t=e.apply(this,arguments)),t}},h=d(function(){return/msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase())}),f=d(function(){return document.head||document.getElementsByTagName("head")[0]}),m=null,g=0,b=[];e.exports=function(e,t){t=t||{},"undefined"==typeof t.singleton&&(t.singleton=h()),"undefined"==typeof t.insertAt&&(t.insertAt="bottom");var i=o(e);return n(i,t),function(e){for(var l=[],s=0;s<i.length;s++){var r=i[s],a=p[r.id];a.refs--,l.push(a)}if(e){var u=o(e);n(u,t)}for(var s=0;s<l.length;s++){var a=l[s];if(0===a.refs){for(var c=0;c<a.parts.length;c++)a.parts[c]();delete p[a.id]}}}};var _=function(){var e=[];return function(t,i){return e[t]=i,e.filter(Boolean).join("\n")}}()},function(e,t,i){var n=i(5);"string"==typeof n&&(n=[[e.id,n,""]]);i(9)(n,{});n.locals&&(e.exports=n.locals)}])});
-},{}],7:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.1.8
@@ -6634,7 +6988,7 @@ setTimeout(function () {
 module.exports = Vue$2;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":4}],8:[function(require,module,exports){
+},{"_process":40}],44:[function(require,module,exports){
 var inserted = exports.cache = {}
 
 exports.insert = function (css) {
@@ -6654,7 +7008,7 @@ exports.insert = function (css) {
   return elem
 }
 
-},{}],9:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.fileinput-button {\n    position: relative;\n    overflow: hidden;\n    display: inline-block;\n}\n.fileinput-button input {\n    position: absolute;\n    top: 0;\n    right: 0;\n    margin: 0;\n    opacity: 0;\n    -ms-filter: 'alpha(opacity=0)';\n    font-size: 200px !important;\n    direction: ltr;\n    cursor: pointer;\n}\n\n/* Fixes for IE < 8 */\n@media screen\\9 {\n    .fileinput-button input {\n        filter: alpha(opacity=0);\n        font-size: 100%;\n        height: 100%;\n    }\n}\n\n\n.fileupload-buttonbar .btn,\n.fileupload-buttonbar .toggle {\n    margin-bottom: 5px;\n}\n.progress-animated .progress-bar,\n.progress-animated .bar {\n    background: url(\"../img/progressbar.gif\") !important;\n    -webkit-filter: none;\n            filter: none;\n}\n.fileupload-process {\n    float: right;\n    display: none;\n}\n.fileupload-processing .fileupload-process,\n.files .processing .preview {\n    display: block;\n    width: 32px;\n    height: 32px;\n    background: url(\"../img/loading.gif\") center no-repeat;\n    background-size: contain;\n}\n.files audio,\n.files video {\n    max-width: 300px;\n}\n\n@media (max-width: 767px) {\n    .fileupload-buttonbar .toggle,\n    .files .toggle,\n    .files .btn span {\n        display: none;\n    }\n    .files .name {\n        width: 80px;\n        word-wrap: break-word;\n    }\n    .files audio,\n    .files video {\n        max-width: 80px;\n    }\n    .files img,\n    .files canvas {\n        max-width: 100%;\n    }\n}\n")
 'use strict';
@@ -6707,6 +7061,14 @@ exports.default = {
             default: true
         },
         outer_class: {
+            default: null
+        },
+        // Set this to a unique string and when the image is uploaded,
+        // the broadcast key will have this appended to it.
+        // Example, if ukey == 983j : $Bus.$emit('image:uploaded:983j')
+        // and you can now listen for image:uploaded:983j
+        ukey: {
+            type: String,
             default: null
         }
     },
@@ -6762,7 +7124,12 @@ exports.default = {
 
                         responseData.json = (0, _stringify2.default)(responseData);
 
-                        $Bus.$emit('image:uploaded', el, responseData);
+                        var key = 'image:uploaded';
+                        if (that.ukey) {
+                            key = key + ':' + that.ukey;
+                        }
+
+                        $Bus.$emit(key, el, responseData);
                     },
                     on_file_add: function on_file_add(element, data) {
                         if (data.files[0].type.indexOf("image") == -1) {
@@ -6793,7 +7160,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-08ae0c66", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../../app/s3uploader":17,"../../vendor/fileupload/js/jquery.fileupload":21,"../../vendor/fileupload/js/jquery.fileupload-image":18,"../../vendor/fileupload/js/jquery.fileupload-process":19,"../../vendor/fileupload/js/jquery.fileupload-ui":20,"../../vendor/fileupload/js/jquery.iframe-transport":22,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":23,"../../vendor/fileupload/js/vendor/jquery.ui.widget":24,"../../vendor/fileupload/js/vendor/load-image":25,"./current-user":13,"babel-runtime/core-js/json/stringify":1,"vue":7,"vue-hot-reload-api":5,"vueify/lib/insert-css":8}],10:[function(require,module,exports){
+},{"../../app/s3uploader":55,"../../vendor/fileupload/js/jquery.fileupload":59,"../../vendor/fileupload/js/jquery.fileupload-image":56,"../../vendor/fileupload/js/jquery.fileupload-process":57,"../../vendor/fileupload/js/jquery.fileupload-ui":58,"../../vendor/fileupload/js/jquery.iframe-transport":60,"../../vendor/fileupload/js/vendor/canvas-to-blob.min":61,"../../vendor/fileupload/js/vendor/jquery.ui.widget":62,"../../vendor/fileupload/js/vendor/load-image":63,"./current-user":49,"babel-runtime/core-js/json/stringify":1,"vue":43,"vue-hot-reload-api":41,"vueify/lib/insert-css":44}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6801,11 +7168,21 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
     props: {
-        errors: null
+        errors: null,
+        type: Object,
+        use_error_helper: {
+            type: Boolean,
+            default: true
+        }
+    },
+    computed: {
+        has_error: function has_error() {
+            return this.use_error_helper && this.errors && this.errors[0];
+        }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row \" :class=\"errors ? 'has-error has-danger' : null\">\n    <label class=\"col-sm-3 control-label form-control-label\">\n        <slot name=\"label\"></slot>\n    </label>\n    <div class=\"col-sm-9 \">\n        <slot name=\"input\"></slot>\n        <slot name=\"text-help\"></slot>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"form-group row \" :class=\"errors ? 'has-error has-danger' : null\">\n    <label class=\"col-sm-3 control-label form-control-label\">\n        <slot name=\"label\"></slot>\n    </label>\n    <div class=\"col-sm-9 \">\n        <slot name=\"input\"></slot>\n        <slot name=\"text-help\"></slot>\n        <template v-if=\"has_error\">\n            <span class=\"text-danger block text-xs\">{{ errors[0] }}</span>\n        </template>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6816,7 +7193,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-20974868", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":7,"vue-hot-reload-api":5}],11:[function(require,module,exports){
+},{"vue":43,"vue-hot-reload-api":41}],47:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6827,6 +7204,9 @@ exports.default = {
         modal_id: {
             type: String,
             required: true
+        },
+        size: {
+            default: null
         },
         use_header_close: {
             default: false
@@ -6839,7 +7219,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"modal\" :id=\"modal_id\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"\" aria-hidden=\"true\">\n    <div class=\"row-col h-v\">\n        <div class=\"row-cell v-m\">\n            <div class=\"modal-dialog\" role=\"document\">\n                <div class=\"box white r\">\n                    <div class=\"box-header b-0\">\n                        <button v-if=\"display_header_close_btn\" type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                            <span aria-hidden=\"true\">×</span>\n                        </button>\n                        <h6 v-if=\"!this.$slots['modal_header']\" class=\"m-b-0\">Title</h6>\n                        <slot name=\"modal_header\"></slot>\n                    </div>\n                    <div class=\"box-divider\"></div>\n                    <div class=\"modal-body box-body\">\n                        <slot name=\"modal_body\"></slot>\n                    </div>\n                    <div class=\"modal-footer box-footer\">\n                        <button v-if=\"!this.$slots['modal_footer']\" type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>\n                        <slot name=\"modal_footer\"><div v-el:modal_footer=\"\"></div></slot>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"modal\" :id=\"modal_id\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"\" aria-hidden=\"true\">\n    <div class=\"row-col h-v\">\n        <div class=\"row-cell v-m\">\n            <div class=\"modal-dialog\" :class=\"size\" role=\"document\">\n                <div class=\"box white r\">\n                    <div class=\"box-header b-0\">\n                        <button v-if=\"display_header_close_btn\" type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                            <span aria-hidden=\"true\">×</span>\n                        </button>\n                        <h6 v-if=\"!this.$slots['modal_header']\" class=\"m-b-0\">Title</h6>\n                        <slot name=\"modal_header\"></slot>\n                    </div>\n                    <div class=\"box-divider\"></div>\n                    <div class=\"modal-body box-body\">\n                        <slot name=\"modal_body\"></slot>\n                    </div>\n                    <div class=\"modal-footer box-footer\">\n                        <button v-if=\"!this.$slots['modal_footer']\" type=\"button\" class=\"btn-text btn-link\" data-dismiss=\"modal\">Close</button>\n                        <slot name=\"modal_footer\"></slot>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6850,7 +7230,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-6da9f674", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":7,"vue-hot-reload-api":5}],12:[function(require,module,exports){
+},{"vue":43,"vue-hot-reload-api":41}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6888,7 +7268,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0fbfe820", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./spinner":16,"vue":7,"vue-hot-reload-api":5}],13:[function(require,module,exports){
+},{"./spinner":54,"vue":43,"vue-hot-reload-api":41}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6899,16 +7279,20 @@ exports.default = function () {
     return KABOOODLE_APP && KABOOODLE_APP.currentUser ? KABOOODLE_APP.currentUser : false;
 };
 
-},{}],14:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _FileUpload = require('../FileUpload.vue');
+var _assign = require('babel-runtime/core-js/object/assign');
 
-var _FileUpload2 = _interopRequireDefault(_FileUpload);
+var _assign2 = _interopRequireDefault(_assign);
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
 
 var _InlineField = require('../InlineField.vue');
 
@@ -6928,21 +7312,19 @@ var _Spinner2 = _interopRequireDefault(_Spinner);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var HOST_GROUP = 'group';
-var HOST_SELF = 'self';
-var PRIVACY_PRIVATE = 'private';
-var PRIVACY_PUBLIC = 'public';
-
+function initialState() {
+    return {
+        form_errors: {},
+        saved_notice: null,
+        isSearching: false,
+        isSaving: false,
+        search_members: [],
+        users: [],
+        name: null
+    };
+}
 exports.default = {
     props: {
-        form_errors: {
-            default: function _default() {
-                return {};
-            }
-        },
-        groups_endpoint: {
-            type: String
-        },
         s3_key_url: {
             required: true,
             type: String
@@ -6951,55 +7333,301 @@ exports.default = {
             required: true,
             type: String
         },
-        user_hash: {
-            required: true
+        save_endpoint: {
+            required: true,
+            type: String
         }
     },
     data: function data() {
-        return {
-            admins: [],
-            admins_list: [],
-            cover_photo: null,
-            dates: {
-                start_date: null,
-                end_date: null
-            },
-            description: null,
-            group: {},
-            hosted_by: null,
-            host_options: [HOST_SELF, HOST_GROUP],
-            loading: {
-                admins: false,
-                sellers: false
-            },
-            name: null,
-            privacy: PRIVACY_PUBLIC,
-            privacy_options: [PRIVACY_PUBLIC, PRIVACY_PRIVATE],
-            previousRequest: null,
-            sellers: [],
-            sellers_list: []
-        };
-    },
-
-    computed: {
-        hosted_by_group: function hosted_by_group() {
-            return this.hosted_by === HOST_GROUP;
-        }
+        return initialState();
     },
     created: function created() {
         var _this = this;
 
+        $Bus.$on('build-group:click', function () {
+            _this.openModal();
+        });
+    },
+
+    computed: {
+        data_dirty: function data_dirty() {
+            return !((0, _stringify2.default)(this.$data) === (0, _stringify2.default)(initialState()));
+        }
+    },
+    methods: {
+        resetState: function resetState() {
+            (0, _assign2.default)(this.$data, initialState());
+        },
+        openModal: function openModal() {
+            $('#abc').modal('show');
+        },
+        closeModal: function closeModal(ignoreState) {
+            var _this2 = this;
+
+            if (ignoreState === true || !this.data_dirty) {
+                $('#abc').modal('hide');
+                this.resetState();
+            } else {
+                confirmModal(function ($noty) {
+                    $('#abc').modal('hide');
+                    _this2.resetState();
+                    $noty.close();
+                });
+            }
+        },
+        searchMembers: function searchMembers(query) {
+            var _this3 = this;
+
+            if (query.trim() == '') {
+                return;
+            }
+            this.isSearching = true;
+            this.$http.post(this.search_endpoint, { q: query }, {
+                before: function before(request) {
+                    if (this.previousRequest) {
+                        this.previousRequest.abort();
+                    }
+                    this.previousRequest = request;
+                }
+            }).then(function (response) {
+                _this3.search_members = response.body.data.data;
+                _this3.isSearching = false;
+            });
+        },
+        saveGroup: function saveGroup() {
+            var _this4 = this;
+
+            this.isSaving = true;
+            this.form_errors = [];
+            var userIds = _.pluck(this.users, 'id');
+
+            var payload = {
+                name: this.name,
+                users: userIds
+            };
+
+            this.$http.post(this.save_endpoint, payload).then(function (response) {
+                var notice = 'Group ' + _this4.name + ' successfully created!';
+                notify({ text: notice, type: 'success' });
+                setTimeout(function () {
+                    var ignoreState = true;
+                    _this4.closeModal(ignoreState);
+                }, 500);
+            }, function (response) {
+                if (response.body.data.errors) {
+                    _this4.form_errors = response.body.data.errors;
+                }
+                _this4.isSaving = false;
+            });
+        }
+    },
+    components: {
+        'inline-field': _InlineField2.default,
+        'modal': _Modal2.default,
+        'multiselect': _vueMultiselect2.default,
+        'spinny': _Spinner2.default
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span>\n    <modal size=\"modal-lg\" modal_id=\"abc\">\n        <h4 slot=\"modal_header\">Create a group of sellers</h4>\n        <template slot=\"modal_body\">\n\n            <div class=\"error_container block r\"></div>\n\n            <template v-if=\"!saved_notice\">\n\n                <p>Creating a group of sellers allows you to easily invite the group to participate as sellers to any flashsale, vs adding sellers one by one.  You can \"reuse\" groups anytime!</p>\n\n                <inline-field :errors=\"form_errors.name\">\n                    <template slot=\"label\">Flashsale group name</template>\n                    <input slot=\"input\" type=\"text\" v-model=\"name\" class=\"form-control\">\n                </inline-field>\n\n                <inline-field :errors=\"form_errors.users\">\n                    <template slot=\"label\">Add sellers</template>\n                        <multiselect slot=\"input\" id=\"admins_el\" label=\"username\" track-by=\"id\" placeholder=\"\" :options=\"search_members\" :multiple=\"true\" :searchable=\"true\" :loading=\"isSearching\" :internal-search=\"false\" :clear-on-select=\"true\" :close-on-select=\"true\" :options-limit=\"10\" :limit=\"10\" v-model=\"users\" @search-change=\"searchMembers\">\n                            <template slot=\"option\" scope=\"props\">\n                                <div class=\"option__desc\">\n                                    <span class=\"option__title\">{{ props.option.username }}</span>\n                                    <small class=\"option__small text-muted text-small\">({{ props.option.full_name }})</small>\n                                </div>\n                            </template>\n                        </multiselect>\n                </inline-field>\n            </template>\n            <template v-if=\"saved_notice\">\n                {{ saved_notice }}\n            </template>\n        </template>\n        <template slot=\"modal_footer\">\n            <template v-if=\"!saved_notice\">\n                <button type=\"button\" :disabled=\"isSaving\" :class=\"isSaving ?'disabled' :null\" class=\"btn btn-sm primary\" @click.prevent=\"saveGroup\">Save <spinny v-if=\"isSaving\"></spinny></button>\n                <button type=\"button\" :disabled=\"isSaving\" :class=\"isSaving ?'disabled' :null\" class=\"btn-text btn-sm btn-link\" @click.prevent=\"closeModal\">Cancel</button>\n            </template>\n            <template v-if=\"saved_notice\">\n                <button type=\"button\" class=\"btn-text btn-sm btn-link\" @click.prevent=\"closeModal\">Close</button>\n            </template>\n        </template>\n    </modal>\n</span>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-30e782e0", module.exports)
+  } else {
+    hotAPI.update("_v-30e782e0", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"../InlineField.vue":46,"../Modal.vue":47,"../Spinner.vue":48,"babel-runtime/core-js/json/stringify":1,"babel-runtime/core-js/object/assign":2,"vue":43,"vue-hot-reload-api":41,"vue-multiselect":42}],51:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
+var _BuildFlashsaleGroup = require('./Build-Flashsale-Group.vue');
+
+var _BuildFlashsaleGroup2 = _interopRequireDefault(_BuildFlashsaleGroup);
+
+var _FileUpload = require('../FileUpload.vue');
+
+var _FileUpload2 = _interopRequireDefault(_FileUpload);
+
+var _InlineField = require('../InlineField.vue');
+
+var _InlineField2 = _interopRequireDefault(_InlineField);
+
+var _vueMultiselect = require('vue-multiselect');
+
+var _vueMultiselect2 = _interopRequireDefault(_vueMultiselect);
+
+var _SellerGroup = require('./Seller-Group.vue');
+
+var _SellerGroup2 = _interopRequireDefault(_SellerGroup);
+
+var _Spinner = require('../Spinner.vue');
+
+var _Spinner2 = _interopRequireDefault(_Spinner);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var PRIVACY_PRIVATE = 'private';
+var PRIVACY_PUBLIC = 'public';
+
+function initialState() {
+    return {
+        admins: [],
+        cover_photo: null,
+        starts_at: null,
+        ends_at: null,
+        description: null,
+        form_errors: [],
+        loading: {
+            admins: false,
+            sellers: false
+        },
+        isSaving: false,
+        name: null,
+        privacy: PRIVACY_PUBLIC,
+        privacy_options: [PRIVACY_PUBLIC, PRIVACY_PRIVATE],
+        previousRequest: null,
+        search_admins: [],
+        sellers_groups_containers: [],
+        selected_groups: [],
+        seller_groups: []
+    };
+}
+
+exports.default = {
+    props: {
+        groups_endpoint: {
+            type: String
+        },
+        s3_key_url: {
+            required: true,
+            type: String
+        },
+        save_endpoint: {
+            required: true,
+            type: String
+        },
+        search_endpoint: {
+            required: true,
+            type: String
+        },
+        group_search_endpoint: {
+            required: true,
+            type: String
+        },
+        group_save_endpoint: {
+            required: true,
+            type: String
+        }
+    },
+    data: function data() {
+        return initialState();
+    },
+    mounted: function mounted() {
+        this.registerDateTimePicker();
+    },
+
+    computed: {},
+    created: function created() {
+        var _this = this;
+
+        $Bus.$on('flashsale:component:data', function (data) {
+            var seller_group_index = _this.seller_groups.indexOf(data);
+            if (seller_group_index > -1) {
+                _this.seller_groups.splice(seller_group_index, 1);
+            }
+            _this.seller_groups.push(data);
+        });
+
+        $Bus.$on('seller_container:add', function () {
+            _this.addSellerContainer();
+        });
+
         $Bus.$on('image:uploaded', function (el, data) {
-            _this.cover_photo = data.location;
+            _this.cover_photo = data;
+        });
+
+        $Bus.$on('flashsale:data:request', function () {
+            $Bus.$emit('flashsale:data:payload', _this.$data);
+        });
+
+        $Bus.$on('sellergroup:selected', function (group, containerId) {
+
+            // When a group inside a seller container is selected,
+            // this event is fired.  We handle this group by "assigning" it to
+            // the container wrapper, just for reference.
+
+            // Already exists? Remove it and re-add :)
+            var index = _this.selected_groups.indexOf(group.id);
+            if (index > -1) {
+                _this.selected_groups.splice(index, 1);
+            }
+
+            _this.selected_groups.push(group);
+
+            // Add the group to the corresponding container.
+            // This keeps the group associated to the container and a 1 to 1.
+            _this.sellers_groups_containers[containerId].selected_group = group;
         });
     },
 
     methods: {
-        nameWithUsername: function nameWithUsername(_ref) {
-            var full_name = _ref.full_name,
-                username = _ref.username;
+        /**
+         * User when the date fields are blurred to actually set the data.
+         * @param option
+         * @param event
+         */
+        updateDateTimeEl: function updateDateTimeEl(option, event) {
+            var $el = $(event.target);
+            this.$data[option] = $el.val();
+        },
+        registerDateTimePicker: function registerDateTimePicker() {
+            this.$nextTick(function () {
+                var minDate = moment().add('1', 'hour');
+                var options = {
+                    format: "MM/DD/YYYY hh:mma",
+                    allowInputToggle: true,
+                    useCurrent: false,
+                    sideBySide: true,
+                    defaultDate: minDate,
+                    minDate: minDate,
+                    icons: {
+                        time: 'fa fa-clock-o fa-lg',
+                        clear: 'fa fa-times-circle-o',
+                        date: 'fa fa-lg fa-calendar',
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right'
+                    }
+                };
 
-            return full_name + ' (' + username + ')';
+                $('input.needs-datetimepicker').datetimepicker(options);
+
+                // hack for clearing the inputs, except, checkbox.
+                $('.needs-datetimepicker').val('').trigger('change');
+
+                $("#starts_at").on("dp.change", function (e) {
+                    $('#ends_at').data("DateTimePicker").minDate(e.date);
+                });
+                $("#ends_at").on("dp.change", function (e) {
+                    $('#starts_at').data("DateTimePicker").maxDate(e.date);
+                });
+            });
+        },
+        resetState: function resetState() {
+            (0, _assign2.default)(this.$data, initialState());
+            $('.needs-datetimepicker').val('').trigger('change');
         },
         searchAdmins: function searchAdmins(query) {
             var _this2 = this;
@@ -7016,40 +7644,91 @@ exports.default = {
                     this.previousRequest = request;
                 }
             }).then(function (response) {
-                _this2.admins_list = response.body.data.data;
+                _this2.search_admins = response.body.data.data;
                 _this2.loading.admins = false;
             });
         },
-        searchSellers: function searchSellers(query) {
+        addSellerContainer: function addSellerContainer() {
+            this.sellers_groups_containers.push({ id: randomAlphaStr(4), selected_group: null });
+        },
+        removeSellerContainer: function removeSellerContainer(container) {
             var _this3 = this;
 
-            if (query.trim() == '') {
-                return;
-            }
-            this.loading.sellers = true;
-            this.$http.post(this.search_endpoint, { q: query }, {
-                before: function before(request) {
-                    if (this.previousRequest) {
-                        this.previousRequest.abort();
+            confirmModal(function ($noty) {
+
+                // We want to look at the selected container and see if a group has been associated to it.
+                // If it does, remove this group from the selected groups array.
+                var associated_group = container.selected_group;
+
+                // Get the index of the container in the sellers groups containers
+                var container_index = _this3.sellers_groups_containers.indexOf(container);
+
+                if (container_index > -1) {
+                    // Remove the container
+                    _this3.sellers_groups_containers.splice(container_index, 1);
+
+                    // Did the container have a group associated (selected) to it?
+                    // If it did, remove the group from the array.
+                    if (associated_group && associated_group.id) {
+                        var selected_group_index = _this3.selected_groups.indexOf(associated_group);
+                        _this3.selected_groups.splice(selected_group_index, 1);
                     }
-                    this.previousRequest = request;
                 }
-            }).then(function (response) {
-                _this3.sellers_list = response.body.data.data;
-                _this3.loading.sellers = false;
+
+                // Reset some annoying data.
+                _this3.seller_groups = [];
+
+                $noty.close();
+            });
+        },
+        saveFlashsale: function saveFlashsale() {
+            var _this4 = this;
+
+            this.isSaving = true;
+            this.form_errors = {};
+
+            $Bus.$emit('flashsale:saving');
+
+            // I have seller groups that may have erroneous data
+            // I need to loop over each one and only return the ones that
+            // have a matching resource found in sellers_groups_containers
+            // HACKY until we can vuex the state.
+            var actualIds = _.pluck(_.pluck(this.sellers_groups_containers, 'selected_group'), 'id');
+            this.seller_groups = _.uniq(_.filter(this.seller_groups, function (group) {
+                return _.contains(actualIds, group.id);
+            }), 'id');
+
+            this.$http.post(this.save_endpoint, this.$data).then(function (response) {
+                _this4.resetState();
+                notify({
+                    text: response.body.data.msg,
+                    type: 'success'
+                });
+            }, function (response) {
+                _this4.isSaving = false;
+                if (response.body.hasOwnProperty('data') && response.body.data.hasOwnProperty('errors')) {
+                    _this4.form_errors = response.body.data.errors;
+                }
+
+                if (response.body.data.hasOwnProperty('msg')) {
+                    notify({
+                        text: response.body.data.msg
+                    });
+                }
             });
         }
     },
     components: {
-        'modal': _Modal2.default,
-        'multiselect': _vueMultiselect2.default,
+        'build-group': _BuildFlashsaleGroup2.default,
         'image-attach': _FileUpload2.default,
         'inline-field': _InlineField2.default,
+        'multiselect': _vueMultiselect2.default,
+        'seller-group': _SellerGroup2.default,
         'spinny': _Spinner2.default
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <inline-field :errors=\"form_errors.cover_photo\">\n        <template slot=\"label\">\n            <div class=\"avatar_container _128 pull-right avatar-thumbnail\" v-if=\"cover_photo\">\n                <img :src=\"cover_photo\">\n            </div>\n        </template>\n        <template slot=\"input\">\n            <input type=\"hidden\" name=\"cover_photo\" v-model=\"cover_photo\" :value=\"cover_photo\">\n            <image-attach :s3_key_url=\"s3_key_url\" multiple=\"false\" :user_hash=\"user_hash\" :button_title=\"cover_photo ? 'Replace cover photo' : 'Add cover photo'\"></image-attach>\n        </template>\n    </inline-field>\n\n    <inline-field :errors=\"form_errors.name\">\n        <template slot=\"label\">Name</template>\n        <template slot=\"input\">\n            <input class=\"form-control\" name=\"name\" type=\"text\">\n        </template>\n    </inline-field>\n\n    <inline-field :errors=\"form_errors.description\">\n        <template slot=\"label\">Description</template>\n        <template slot=\"input\">\n            <textarea class=\"form-control\" name=\"description\"></textarea>\n        </template>\n    </inline-field>\n\n    <inline-field :errors=\"form_errors.starts_at\">\n        <template slot=\"label\">Starting date</template>\n        <template slot=\"input\">\n            <input type=\"text\" name=\"starts_at\" class=\"form-control\">\n        </template>\n    </inline-field>\n\n    <inline-field :errors=\"form_errors.ends_at\">\n        <template slot=\"label\">Ending date</template>\n        <template slot=\"input\">\n            <input type=\"text\" name=\"ends_at\" class=\"form-control\">\n        </template>\n    </inline-field>\n\n    <inline-field :errors=\"form_errors.hosted_by\">\n        <template slot=\"label\">Hosted by</template>\n        <template slot=\"input\">\n            <select name=\"host\" v-model=\"hosted_by\" class=\"form-control\">\n                <option v-for=\"host_option in host_options\" :value=\"host_option\">{{ host_option }}</option>\n            </select>\n        </template>\n    </inline-field>\n\n    <div v-if=\"hosted_by_group\">\n        <inline-field>\n            <template slot=\"label\">Admins</template>\n            <template slot=\"input\">\n                <multiselect id=\"admins_el\" label=\"full_name\" track-by=\"id\" placeholder=\"\" :custom-label=\"nameWithUsername\" :options=\"admins_list\" :multiple=\"true\" :searchable=\"true\" :loading=\"loading.admins\" :internal-search=\"false\" :clear-on-select=\"true\" :close-on-select=\"true\" :options-limit=\"10\" :limit=\"10\" v-model=\"admins\" @search-change=\"searchAdmins\">\n                    <template slot=\"option\" scope=\"props\">\n                        <div class=\"option__desc\">\n                            <span class=\"option__title\">{{ props.option.full_name }}</span>\n                            <small class=\"option__small text-muted text-small\">({{ props.option.username }})</small>\n                        </div>\n                    </template>\n                </multiselect>\n            </template>\n            <template slot=\"text-help\">\n                <small class=\"text-sm text-muted\">In addition to the users from the selected group, you can grant others admin permissions.</small>\n                <small class=\"text-sm text-muted\">Admin permissions allow users to make changes to name/sellers/etc;</small>\n            </template>\n        </inline-field>\n    </div>\n\n    <inline-field :errors=\"form_errors.privacy\">\n        <template slot=\"label\">Privacy</template>\n        <template slot=\"input\">\n            <div class=\"radio\" v-for=\"privacy_type in privacy_options\">\n                <label class=\"\">\n                    <input class=\"has-value\" name=\"privacy\" v-model=\"privacy\" type=\"radio\" :value=\"privacy_type\">\n                    {{ privacy_type }}\n                </label>\n            </div>\n        </template>\n    </inline-field>\n    <hr>\n    <inline-field>\n        <template slot=\"label\">Sellers</template>\n        <template slot=\"input\">\n            <multiselect id=\"sellers_el\" label=\"full_name\" track-by=\"id\" placeholder=\"\" :custom-label=\"nameWithUsername\" :options=\"sellers_list\" :multiple=\"true\" :searchable=\"true\" :loading=\"loading.sellers\" :internal-search=\"false\" :clear-on-select=\"true\" :close-on-select=\"true\" :options-limit=\"10\" :limit=\"10\" v-model=\"sellers\" @search-change=\"searchSellers\">\n                <template slot=\"option\" scope=\"props\">\n                    <div class=\"option__desc\">\n                        <span class=\"option__title\">{{ props.option.full_name }}</span>\n                        <small class=\"option__small text-muted text-small\">({{ props.option.username }})</small>\n                    </div>\n                </template>\n            </multiselect>\n        </template>\n    </inline-field>\n\n    <modal modal_id=\"flashsale_modal\">\n        <template slot=\"modal_header\">\n            <h6 class=\"m-b-0\">Create group</h6>\n        </template>\n        <template slot=\"modal_content\">\n\n        </template>\n        <template slot=\"modal_footer\">\n\n        </template>\n    </modal>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <div class=\"box\">\n        <div class=\"box-header\">\n            <h2>Create a flash sale</h2>\n        </div>\n        <div class=\"box-divider m-a-0\"></div>\n        <div class=\"box-body\">\n            <div class=\"cover-photo-wrapper item m-b-1\" v-if=\"cover_photo\">\n                <div class=\"item-overlay active p-a\">\n                    <span v-if=\"privacy=='private'\" class=\"pull-left text-u-c label danger label-md\">{{ privacy }}</span>\n                </div>\n                <div class=\"coverimage FlexEmbed FlexEmbed--3by1\" :style=\"'background-image: url('+cover_photo.location+')'\">\n                </div>\n                <div class=\"item-overlay-bottom p-a\" v-if=\"name\"><h2>{{ name }}</h2></div>\n            </div>\n\n            <inline-field :errors=\"form_errors.cover_photo\">\n                <template slot=\"input\">\n                    <input type=\"hidden\" name=\"cover_photo\" v-model=\"cover_photo\" :value=\"cover_photo ? cover_photo.json : null\">\n                    <image-attach :s3_key_url=\"s3_key_url\" multiple=\"false\" :button_title=\"cover_photo ? 'Replace cover photo' : 'Add cover photo'\"></image-attach>\n                </template>\n                <small slot=\"text-help\" class=\"text-sm text-muted\">\n                    Recommended dimensions are <u>220px</u> tall by <u>850px</u> wide.\n                </small>\n            </inline-field>\n\n            <inline-field :errors=\"form_errors.name\">\n                <template slot=\"label\">Name</template>\n                <template slot=\"input\">\n                    <input class=\"form-control\" name=\"name\" v-model=\"name\" type=\"text\">\n                </template>\n            </inline-field>\n\n            <inline-field :errors=\"form_errors.description\">\n                <template slot=\"label\">Description</template>\n                <template slot=\"input\">\n                    <textarea class=\"form-control\" v-model=\"description\" name=\"description\"></textarea>\n                </template>\n                <template slot=\"text-help\">\n                    <small class=\"text-sm text-muted\">(optional)</small>\n                </template>\n            </inline-field>\n\n            <inline-field :errors=\"form_errors.starts_at\">\n                <template slot=\"label\">Starting date</template>\n                <template slot=\"input\">\n                    <input type=\"text\" @blur=\"updateDateTimeEl('starts_at', $event)\" id=\"starts_at\" name=\"starts_at\" v-model=\"starts_at\" class=\"needs-datetimepicker form-control\">\n                </template>\n            </inline-field>\n\n            <inline-field :errors=\"form_errors.ends_at\">\n                <template slot=\"label\">Ending date</template>\n                <template slot=\"input\">\n                    <input type=\"text\" @blur=\"updateDateTimeEl('ends_at', $event)\" id=\"ends_at\" name=\"ends_at\" v-model=\"ends_at\" class=\"needs-datetimepicker form-control\">\n                </template>\n            </inline-field>\n\n            <inline-field>\n                <template slot=\"label\">Admins</template>\n                <template slot=\"input\">\n                    <multiselect id=\"admins_el\" label=\"username\" track-by=\"id\" placeholder=\"\" :options=\"search_admins\" :multiple=\"true\" :searchable=\"true\" :loading=\"loading.admins\" :internal-search=\"false\" :clear-on-select=\"true\" :close-on-select=\"true\" :options-limit=\"10\" :limit=\"10\" v-model=\"admins\" @search-change=\"searchAdmins\">\n                        <template slot=\"option\" scope=\"props\">\n                            <div class=\"option__desc\">\n                                <span class=\"option__title\">{{ props.option.username }} ({{ props.option.full_name}})</span>\n                            </div>\n                        </template>\n                    </multiselect>\n                </template>\n                <template slot=\"text-help\">\n                    <small class=\"text-sm text-muted\">Admins are allowed to make changes to this flash sales'\n                        settings.\n                    </small>\n                </template>\n            </inline-field>\n\n            <inline-field :errors=\"form_errors.privacy\">\n                <template slot=\"label\">Privacy</template>\n                <template slot=\"input\">\n                    <div class=\"radio\" v-for=\"privacy_type in privacy_options\">\n                        <label class=\"\">\n                            <input class=\"has-value\" name=\"privacy\" v-model=\"privacy\" type=\"radio\" :value=\"privacy_type\">\n                            {{ privacy_type }}\n                        </label>\n                    </div>\n                </template>\n            </inline-field>\n        </div>\n    </div>\n\n    <div v-for=\"(seller, $index) in sellers_groups_containers\" :key=\"seller.id\">\n        <div class=\"box white p-a p-t-2 p-b-2 p-b-0\">\n            <button @click.prevent=\"removeSellerContainer(seller, $event)\" type=\"button\" style=\"position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3\" class=\" m-l-1 pull-right btn white btn-xs text-muted \">\n                <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\n            </button>\n            <seller-group :id=\"$index\" :selected_groups=\"selected_groups\" :search_endpoint=\"group_search_endpoint\"></seller-group>\n        </div>\n    </div>\n\n    <div class=\"form-group row m-t-md\">\n        <div class=\"col-sm-offset-3 col-sm-9\">\n            <button type=\"button\" :disabled=\"isSaving\" :class=\"isSaving ? 'disabled' : null\" @click.prevent=\"addSellerContainer\" class=\"btn white\">Add sellers group</button>\n            <button type=\"button\" :disabled=\"isSaving\" :class=\"isSaving ? 'disabled' : null\" class=\"btn primary\" @click.prevent=\"saveFlashsale\">\n                Save <spinny v-if=\"isSaving\"></spinny>\n            </button>\n        </div>\n    </div>\n\n    <build-group :s3_key_url=\"s3_key_url\" :search_endpoint=\"search_endpoint\" :save_endpoint=\"group_save_endpoint\"></build-group>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -7060,7 +7739,138 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-43665be4", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../FileUpload.vue":9,"../InlineField.vue":10,"../Modal.vue":11,"../Spinner.vue":12,"vue":7,"vue-hot-reload-api":5,"vue-multiselect":6}],15:[function(require,module,exports){
+},{"../FileUpload.vue":45,"../InlineField.vue":46,"../Spinner.vue":48,"./Build-Flashsale-Group.vue":50,"./Seller-Group.vue":52,"babel-runtime/core-js/object/assign":2,"vue":43,"vue-hot-reload-api":41,"vue-multiselect":42}],52:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _InlineField = require('../InlineField.vue');
+
+var _InlineField2 = _interopRequireDefault(_InlineField);
+
+var _vueMultiselect = require('vue-multiselect');
+
+var _vueMultiselect2 = _interopRequireDefault(_vueMultiselect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: {
+        id: {
+            required: true
+        },
+        search_endpoint: {
+            required: true,
+            type: String
+        },
+        selected_groups: {
+            type: Array
+        }
+    },
+    data: function data() {
+        return {
+            previousRequest: null,
+            loading: {
+                groups: false
+            },
+            seller_groups: [],
+            group: [],
+            time_slot: null
+        };
+    },
+    mounted: function mounted() {
+        this.registerDateTimePicker();
+    },
+    created: function created() {
+        var _this = this;
+
+        $Bus.$on('flashsale:saving', function () {
+            $Bus.$emit('flashsale:component:data', {
+                id: _this.group.id,
+                time_slot: _this.time_slot
+            });
+        });
+    },
+
+    methods: {
+        clearTimeSlot: function clearTimeSlot() {
+            this.time_slot = null;
+            $('#group_' + this.id + ' .time_slot').val('').trigger('change');
+        },
+        updateDateTimeEl: function updateDateTimeEl(option, event) {
+            var $el = $(event.target);
+            this.$data[option] = $el.val();
+        },
+        registerDateTimePicker: function registerDateTimePicker() {
+            this.$nextTick(function () {
+                var minDate = moment().add('1', 'hour');
+                var options = {
+                    format: "MM/DD/YYYY hh:mma",
+                    allowInputToggle: true,
+                    useCurrent: false,
+                    sideBySide: true,
+                    defaultDate: minDate,
+                    minDate: minDate,
+                    icons: {
+                        time: 'fa fa-clock-o fa-lg',
+                        clear: 'fa fa-times-circle-o',
+                        date: 'fa fa-lg fa-calendar',
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down',
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right'
+                    }
+                };
+
+                $('#group_' + this.id + ' input.time_slot').datetimepicker(options);
+
+                // hack for clearing the inputs, except, checkbox.
+                $('#group_' + this.id + ' .time_slot').val('').trigger('change');
+            });
+        },
+        groupSelected: function groupSelected(option, id) {
+            $Bus.$emit('sellergroup:selected', option, this.id);
+        },
+        searchGroups: function searchGroups(query) {
+            var _this2 = this;
+
+            if (query.trim() == '') {
+                return;
+            }
+            this.loading.groups = true;
+            this.$http.post(this.search_endpoint, { q: query, exclude: _.pluck(this.selected_groups, 'id') }, {
+                before: function before(request) {
+                    if (this.previousRequest) {
+                        this.previousRequest.abort();
+                    }
+                    this.previousRequest = request;
+                }
+            }).then(function (response) {
+                _this2.seller_groups = response.body.data.data;
+                _this2.loading.groups = false;
+            });
+        }
+    },
+    components: {
+        'multiselect': _vueMultiselect2.default,
+        'inline-field': _InlineField2.default
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span :id=\"'group_'+id\">\n    <inline-field>\n        <template slot=\"label\">Group</template>\n        <template slot=\"input\">\n            <multiselect label=\"name\" track-by=\"id\" placeholder=\"Select a group\" v-model=\"group\" :options=\"seller_groups\" :multiple=\"false\" :searchable=\"true\" :loading=\"loading.groups\" :internal-search=\"false\" :clear-on-select=\"true\" :close-on-select=\"true\" :options-limit=\"10\" :limit=\"10\" @select=\"groupSelected\" @search-change=\"searchGroups\">\n                <template slot=\"option\" scope=\"props\">\n                    <div class=\"option__desc\">\n                        <span class=\"option__title\">{{ props.option.name }} ({{ props.option.users.length }} members)</span>\n                    </div>\n                </template>\n            </multiselect>\n        </template>\n    </inline-field>\n\n    <inline-field class=\"m-b-0\">\n        <template slot=\"label\">Time slot</template>\n        <div class=\"input-group\" slot=\"input\">\n            <input @blur=\"updateDateTimeEl('time_slot', $event)\" type=\"text\" class=\"time_slot form-control\" v-model=\"time_slot\" name=\"\">\n            <span class=\"input-group-btn\">\n                <button data-toggle=\"tooltip\" title=\"Clear\" data-placement=\"top\" class=\"btn white\" style=\"padding-bottom:5px\" @click.prevent=\"clearTimeSlot\"><i class=\"fa fa-times-circle-o\" aria-hidden=\"true\"></i></button>\n            </span>\n        </div>\n        <span class=\"text-xs text-muted\" slot=\"text-help\">(optional)</span>\n    </inline-field>\n</span>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-4dbdf56b", module.exports)
+  } else {
+    hotAPI.update("_v-4dbdf56b", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"../InlineField.vue":46,"vue":43,"vue-hot-reload-api":41,"vue-multiselect":42}],53:[function(require,module,exports){
 'use strict';
 
 var _BuildFlashsale = require('./Build-Flashsale.vue');
@@ -7071,12 +7881,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 new Vue({
     el: '#create_flashsale',
+    data: {},
+    methods: {
+        buildGroup: function buildGroup() {
+            $Bus.$emit('build-group:click');
+        }
+    },
     components: {
         'build-flashsale': _BuildFlashsale2.default
     }
 });
 
-},{"./Build-Flashsale.vue":14}],16:[function(require,module,exports){
+},{"./Build-Flashsale.vue":51}],54:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7113,7 +7929,7 @@ function browserSupportsAnimation() {
     return false;
 }
 
-},{}],17:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 ;
@@ -7400,7 +8216,7 @@ function browserSupportsAnimation() {
     };
 })(jQuery, window, document);
 
-},{}],18:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7697,7 +8513,7 @@ function browserSupportsAnimation() {
     });
 });
 
-},{}],19:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 'use strict';
 
 /*
@@ -7859,7 +8675,7 @@ function browserSupportsAnimation() {
     });
 });
 
-},{}],20:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict';
 
 /*
@@ -8457,7 +9273,7 @@ function browserSupportsAnimation() {
     });
 });
 
-},{}],21:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9791,7 +10607,7 @@ function browserSupportsAnimation() {
     });
 });
 
-},{}],22:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 'use strict';
 
 /*
@@ -9985,7 +10801,7 @@ function browserSupportsAnimation() {
     });
 });
 
-},{}],23:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 "use strict";
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -10023,7 +10839,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 }(window);
 
 
-},{}],24:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 "use strict";
 
 /*! jQuery UI - v1.11.4+CommonJS - 2015-08-28
@@ -10571,7 +11387,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var widget = $.widget;
 });
 
-},{}],25:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 "use strict";
 
 !function (e) {
@@ -11008,6 +11824,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 
-},{}]},{},[15]);
+},{}]},{},[53]);
 
 //# sourceMappingURL=flashsale-create.js.map

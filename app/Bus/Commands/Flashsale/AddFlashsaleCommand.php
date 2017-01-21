@@ -6,11 +6,8 @@
 
 namespace Kabooodle\Bus\Commands\Flashsale;
 
-use Carbon\Carbon;
-use Kabooodle\Models\FlashSales;
-use Kabooodle\Models\User;
-use Kabooodle\Models\Groups;
 use Kabooodle\Models\Dates\StartsAndEndsAt;
+use Kabooodle\Models\User;
 
 /**
  * Class AddFlashsaleCommand
@@ -19,50 +16,93 @@ use Kabooodle\Models\Dates\StartsAndEndsAt;
 class AddFlashsaleCommand
 {
     /**
-     * AddFlashsaleCommand constructor.
-     *
-     * @param User            $user
-     * @param                 $name
-     * @param                 $description
-     * @param StartsAndEndsAt $startsAndEndsAt
-     * @param string          $saleType
-     * @param                 $hostId
-     * @param string          $sellerRules
-     * @param array           $adminIds
-     * @param array           $sellerIds
+     * @var User
      */
-    public function __construct(User $user, $name, $description, StartsAndEndsAt $startsAndEndsAt, $saleType = FlashSales::TYPE_SINGLE, $hostId, $sellerRules = '', array $adminIds = [], array $sellerIds = [])
-    {
+    public $user;
+
+    /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @var null|string
+     */
+    public $description;
+
+    /**
+     * @var StartsAndEndsAt
+     */
+    public $startsAndEndsAt;
+
+    /**
+     * @var string
+     */
+    public $privacy;
+
+    /**
+     * @var array
+     */
+    public $adminIds;
+
+    /**
+     * @var array
+     */
+    public $sellerGroups;
+
+    /**
+     * @var null
+     */
+    public $coverPhoto;
+
+    /**
+     * @param User            $user
+     * @param string          $name
+     * @param string|null     $description
+     * @param StartsAndEndsAt $startsAndEndsAt
+     * @param string          $privacy
+     * @param array           $adminIds
+     * @param array           $sellerGroups
+     * @param null            $coverPhoto
+     */
+    public function __construct(
+        User $user,
+        string $name,
+        string $description = null,
+        StartsAndEndsAt $startsAndEndsAt,
+        string $privacy = 'public',
+        array $adminIds = [],
+        array $sellerGroups,
+        $coverPhoto = null
+    ) {
         $this->user = $user;
         $this->name = $name;
         $this->description = $description;
-        $this->startTime = $startsAndEndsAt->getStartsAt();
-        $this->endTime = $startsAndEndsAt->getEndsAt();
-        $this->saleType = $saleType;
-        $this->hostId = $hostId;
-        $this->sellerRules = $sellerRules;
+        $this->startsAndEndsAt = $startsAndEndsAt;
+        $this->privacy = $privacy;
         $this->adminIds = $adminIds;
-        $this->sellerIds = $sellerIds;
+        $this->sellerGroups = $sellerGroups;
+        $this->coverPhoto = $coverPhoto;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
     }
 
     /**
      * @return string
      */
-    public function getType()
+    public function getName(): string
     {
-        return $this->saleType;
+        return $this->name;
     }
 
     /**
-     * @return array
-     */
-    public function getAdminIds()
-    {
-        return $this->adminIds;
-    }
-
-    /**
-     * @return string
+     * @return null|string
      */
     public function getDescription()
     {
@@ -70,58 +110,42 @@ class AddFlashsaleCommand
     }
 
     /**
-     * @return Carbon
+     * @return StartsAndEndsAt
      */
-    public function getEndTime()
+    public function getStartsAndEndsAt(): StartsAndEndsAt
     {
-        return $this->endTime;
-    }
-
-    /**
-     * @return Groups
-     */
-    public function getHostId()
-    {
-        return $this->hostId;
+        return $this->startsAndEndsAt;
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getPrivacy(): string
     {
-        return $this->name;
-    }
-
-    /**
-     * @return Carbon
-     */
-    public function getStartTime()
-    {
-        return $this->startTime;
-    }
-
-    /**
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
+        return $this->privacy;
     }
 
     /**
      * @return array
      */
-    public function getSellerIds()
+    public function getAdminIds(): array
     {
-        return $this->sellerIds;
+        return $this->adminIds;
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getSellerRules()
+    public function getSellerGroups(): array
     {
-        return $this->sellerRules;
+        return $this->sellerGroups;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCoverPhoto()
+    {
+        return $this->coverPhoto;
     }
 }

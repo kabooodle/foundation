@@ -3,81 +3,42 @@
 
 
 @section('body-content-left-nav')
-    @include('flashsales.partials._leftnav')
+        <a href="{{ route('flashsales.index') }}" class="nav-link {{ Request::is('flashsales') ? 'active' : null }}">
+            View Flash Sales
+    </a>
+
+    @if (user()->hasAtLeastMerchantSubscription())
+        <a href="{{ route('flashsales.create') }}" class="nav-link {{ Request::is('flashsales/create') ? 'active' : null }}">
+            Create Flash Sale
+        </a>
+        <a  @click.prevent="buildGroup" class="nav-link">
+            Create Seller Group
+        </a>
+    @endif
+    @if(user())
+        @if(user()->flashsales->count() > 0)
+        <hr>
+        <small class="text-muted text-sm nav-link">Manage my flash sales</small>
+        @foreach(user()->flashsales as $flashSale)
+            <a href="{{ route('flashsales.show', [$flashSale->getUUID()]) }}" class="nav-link {{ Request::is("flashsales/{$flashSale->getUUID()}") ? 'active' : null }}">
+                {!! $flashSale->name !!}
+            </a>
+        @endforeach
+        @endif
+    @endif
 @endsection
 
 @section('body-inner-content')
-
-    {{ Form::open(['route' => 'flashsales.store']) }}
-
-    <div class="box">
-        <div class="box-header">
-            <h2>Create a flash sale</h2>
-        </div>
-        <div class="box-divider m-a-0"></div>
-        <div class="box-body">
-
             <build-flashsale
                     user_hash="{{ user()->public_hash }}"
                     s3_key_url="{{ apiRoute('api.files.sign') }}"
                     search_endpoint="{{ apiRoute('users.search') }}"
-                    :form_errors="{{ $errors->toJson() }}"
+                    save_endpoint="{{ apiRoute('flashsales.store') }}"
+                    group_search_endpoint="{{ apiRoute('flashsales.groups.search') }}"
+                    group_save_endpoint="{{ apiRoute('flashsales.groups.store') }}"
             ></build-flashsale>
-
-        </div>
-    </div>
-
-
-    <div class="form-group row m-t-md">
-        <div class="col-sm-offset-3 col-sm-9">
-            <button type="submit" class="btn primary">Save</button>
-        </div>
-    </div>
-    {{ Form::close() }}
-
 @endsection
 
 @push('footer-scripts')
 <script src="{{ staticAsset('/assets/js/flashsale-create.js') }}"></script>
-<script>
-    $(function(){
-
-        $('#datetimepicker1').datetimepicker({
-            format: "MM/DD/YYYY hh:mmA",
-            minDate: new Date(),
-            sideBySide: true,
-            icons: {
-                up: 'fa fa-chevron-up',
-                down: 'fa fa-chevron-down',
-                previous: 'fa fa-chevron-left',
-                next: 'fa fa-chevron-right'
-            }
-        });
-        $('#datetimepicker2').datetimepicker({
-            format: "MM/DD/YYYY hh:mmA",
-            minDate: new Date(),
-            sideBySide: true,
-            icons: {
-                up: 'fa fa-chevron-up',
-                down: 'fa fa-chevron-down',
-                previous: 'fa fa-chevron-left',
-                next: 'fa fa-chevron-right'
-            },
-            useCurrent: false
-        });
-        $("#datetimepicker1").on("dp.change", function (e) {
-            $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
-        });
-        $("#datetimepicker2").on("dp.change", function (e) {
-            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
-        });
-
-        $('select#admins').selectize({
-            persist: false,
-            maxItems: null,
-            plugins: ['remove_button'],
-            options: [ ]
-        });
-    })
-</script>
 @endpush

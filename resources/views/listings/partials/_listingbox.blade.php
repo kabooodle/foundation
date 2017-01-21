@@ -7,6 +7,6 @@
     </div>
     <div class="box-divider"></div>
     <div class="box-body">
-        <p class="clearfix p-b-0 m-b-0">Scheduled For: {{ $listing->humanize($listing->scheduled_for) }}         <span class="pull-right">{!! listingStatusHtml($listing->status) !!}</span></p>
+        <p class="clearfix p-b-0 m-b-0">Scheduled For: {{ $listing->humanize($listing->scheduled_for) }} <span class="pull-right">{!! listingStatusHtml($listing->status) !!}</span></p>
     </div>
 </div>

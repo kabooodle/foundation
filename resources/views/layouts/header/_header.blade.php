@@ -109,14 +109,16 @@
                         </div>
                     </li>
                 @endif
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('groups*') ? 'active' : null }}"
-                       href="{{ route('groups.index') }}" ui-sref-active="active"><span class=
-                                                                                        "nav-text">Groups</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('flashsales*') ? 'active' : null }}"
+                <li class="nav-item dropdown">
+                    <a class="dropdown-toggle nav-link"
+                       data-toggle="dropdown"
                        href="{{ route('flashsales.index') }}"><span class="nav-text">Flash Sales</span></a>
+                    <div class="dropdown-menu">
+                        <a href="{{ route('flashsales.index') }}"
+                           class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Browse</a>
+                        <a href="{{ route('flashsales.create') }}"
+                           class="dropdown-item {{ Request::is('flashsales/create') ? 'active' : null }}">Create</a>
+                    </div>
                 </li>
             </ul>
 

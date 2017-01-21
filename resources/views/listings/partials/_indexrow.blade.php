@@ -4,7 +4,7 @@
     @endunless
     <td>@include('listings._listingtype', ['_type' => $listing->type]) {{ $listing->type ==  Kabooodle\Models\Listings::TYPE_FACEBOOK ? $listing->fb_name : $listing->flashsale_name }}</td>
     <td>{{ humanizeDateTime($listing->scheduled_for) }}</td>
-    <td>{{ $listing->albums_count }}</td>
+    <td>{{ $listing->type ==  Kabooodle\Models\Listings::TYPE_FACEBOOK ? $listing->albums_count : 'n/a' }}</td>
     <td>{{ $listing->items_count }}</td>
     <td>{{ $listing->accepted_sales_count }}</td>
     <td>{{ $listing->pending_sales_count }}</td>
@@ -24,7 +24,11 @@
                     @if(Kabooodle\Models\Listings::isStillEditable($listing->status))
                         <a href="{{ route('merchant.listings.edit', [$listing->uuid]) }}" class="dropdown-item">Edit</a>
                     @endif
-                    <a href="{{ route('merchant.listings.show', [$listing->uuid]) }}" class="dropdown-item">Manage</a>
+                    @if($listing->type ==  Kabooodle\Models\Listings::TYPE_FLASHSALE )
+                    <a href="{{ route('merchant.listings.group.show', [ $listing->uuid, $listing->type, $listing->flashsale_id ]) }}" class="dropdown-item">Manage</a>
+                    @else
+                        <a href="{{ route('merchant.listings.show', [$listing->uuid]) }}" class="dropdown-item">Manage</a>
+                    @endif
                     <a href="{{ route('merchant.listings.show', [$listing->uuid]) }}" class="text-danger bg-danger-hover text-white-hover dropdown-item">Delete</a>
                 </div>
             </div>

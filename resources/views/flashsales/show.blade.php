@@ -1,87 +1,69 @@
-@extends('layouts.full')
+@extends('layouts.full', ['contentId' => 'flashsale-page'])
 
 @section('body-menu')
-    @include('flashsales.partials._bodymenu')
+    {{--@include('flashsales.partials._bodymenu')--}}
 @endsection
 
 
 @section('body-content')
-
-
-    @include('flashsales.partials._flashsaleheader')
-
-        @if($item->listedItems->count() > 0)
-        <div class="row">
-            <div class="col-md-3">
-                <div class="list-group m-b">
-                    <a href="" class="list-group-item">
-                        <span class="pull-right label">12</span>
-                        Carly
-                    </a>
-                    <a href="" class="list-group-item">
-                        <span class="pull-right label ">5</span>
-                        Lindsey's
-                    </a>
-                    <a href="" class="list-group-item">
-                        <span class="pull-right text-muted m-l-xs"></span>
-                        <span class="pull-right label ">4</span>
-                        Socks
-                    </a>
-                    <a href="" class="list-group-item">
-                        <span class="pull-right label ">9</span>
-                        Nike
-                    </a>
-                    <a href="" class="list-group-item">
-                        <span class="pull-right label ">10</span>
-                        Adidas
-                    </a>
-                </div>
-            </div>
-            <div class="col-md-9">
-                <div class="row">
-                @foreach($item->listedItems as $listedItem)
-                        <div class="col-md-4">
-                            <div class="box p-a-xs p-b-0">
-                                <div class="item">
-                                    <a href="{{ route('flashsales.shop.show', [$item->getUUID(), $listedItem->getUUID()]) }}">
-                                        <img src="{{ $listedItem->cover_photo }}" class="img-responsive">
-                                    </a>
-                                </div>
-                                <div class="p-a p-b-0">
-                                    <div class="clearfix">
-                                        <h6 class="m-b-0"><a href="{{ route('flashsales.shop.show', [$item->getUUID(), $listedItem->getUUID()]) }}" class="_800">{!! $listedItem->name !!}</a></h6>
-                                        <div class="m-b-0 text-sm clearfix">
-                                            <div class="pull-left">
-                                                <div class="block">
-                                                    <span class="text-muted">Size:</span> <span class="">{!! $listedItem->styleSize->name !!}</span>
-                                                </div>
-
-                                            </div>
-                                            <div class="pull-right" style="text-align: right">
-                                                <span class="text-muted ">Qty:</span> <span class="">{{ $listedItem->getAvailableQuantity() }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="navside white r box-shadow-z0 m-b">
+                <div class="nav-border b-primary p-b-sm">
+                    <ul class="nav">
+                        <li class="nav-header hidden-folded"><span class="text-xs text-muted">Search Filters</span></li>
+                        <li
+                                class="b-b style-list-item">
+                            <a  @click="toggleStyleListItem(0, $event)">
+                            <span class="nav-caret text-muted text-xs"><i class="fa fa-caret-down"></i></span>
+                            <i class="nav-label"><b class="label b label-sm no-bg text-muted ">1</b></i>
+                            <span class="nav-text">Styles</span>
+                            </a>
+                        </li>
+                        <li
+                                class="b-b style-list-item">
+                            <a  @click="toggleStyleListItem(1, $event)">
+                            <span class="nav-caret text-muted text-xs"><i class="fa fa-caret-down"></i></span>
+                            <i class="nav-label"><b class="label b label-sm no-bg text-muted ">1</b></i>
+                            <span class="nav-text">Sizes</span>
+                            </a>
+                        </li>
+                        <li
+                                class="b-b style-list-item">
+                            <a  @click="toggleStyleListItem(2, $event)">
+                            <span class="nav-caret text-muted text-xs"><i class="fa fa-caret-down"></i></span>
+                            <i class="nav-label"><b class="label b label-sm no-bg text-muted ">1</b></i>
+                            <span class="nav-text">Sellers</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="p-t-1 p-r-sm p-l-sm">
+                        <button
+                                class="btn btn-block white"
+                                :class="filtering ? 'disabled' : null"
+                                :disabled="filtering ? true : false"
+                        @click="filterListing"
+                        >Filter <spinny v-if="filtering"></spinny></button>
                     </div>
-                @endforeach
                 </div>
             </div>
+
         </div>
-        @endif
+        <div class="col-md-9">
+            @include('flashsales.partials._flashsaleheader', ['item' => $flashsale])
 
-    <hr>
-    <div id="about" class="anchor" style=" display: block;
-    position: relative;
-    top: -110px;
-    visibility: hidden;"></div>
-
-    <div class="">
-        <h5>About</h5>
-        <div class="text-muted text">
-            {!! nl2br($item->description) !!}
+            <div class="row content">
+                <listing-cards
+                        fetch_endpoint="{{ apiRoute('listings.show', [$flashsale->listing->uuid]) }}"
+                        watch_endpoint="{{ apiRoute('listings.listingitems.watchers.store', ['::1::','::2::']) }}"
+                        show_endpoint="{{ route('listingitems.show', ['::1::']) }}"
+                ></listing-cards>
+            </div>
         </div>
     </div>
 
 @endsection
+
+@push('footer-scripts')
+<script src="{{ staticAsset('/assets/js/flashsale-items-page.js') }}"></script>
+@endpush

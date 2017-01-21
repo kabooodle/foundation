@@ -449,7 +449,12 @@ class User extends BaseEloquentModel implements
      */
     public function flashsalesAsSeller()
     {
-        return $this->belongsToMany(FlashSales::class, 'flashsales_sellers', 'user_id', 'flashsales_id')->withTimestamps()->where('flashsales.active', 1);
+        return FlashSales::join('flashsales_sellers_groups', 'flashsales_sellers_groups.flashsale_id', '=', 'flashsales.id')
+            ->join('flashsales_groups_users', 'flashsales_groups_users.flashsales_group_id', '=', 'flashsales_sellers_groups.flashsale_group_id')
+            ->join('users', 'flashsales_groups_users.user_id', '=', 'users.id')
+            ->groupBy('flashsales.id')
+            ->where('users.id', '=', $this->id)
+            ->whereNull('flashsales.deleted_at');
     }
 
     /**
@@ -457,24 +462,92 @@ class User extends BaseEloquentModel implements
      */
     public function flashsalesAsAdmin()
     {
-        return $this->belongsToMany(FlashSales::class, 'flashsales_admins', 'user_id', 'flashsales_id')->withTimestamps()->where('flashsales.active', 1);
+        return $this->belongsToMany(FlashSales::class, 'flashsales_admins', 'user_id', 'flashsale_id')
+            ->withTimestamps();
     }
 
     /**
-     * @return null
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function flashsalesAsSellerAndAdmins()
+    public function flashsalesAsOwner()
     {
-        $asSeller = $this->flashsalesAsSeller;
-        $asAdmin = $this->flashsalesAsAdmin;
+        return $this->hasMany(FlashSales::class, 'user_id');
+    }
 
-        if (count($asSeller) > 0) {
-            return $asAdmin ? $this->asSeller->merge($asAdmin) : $this->flashsalesAsSeller();
-        } elseif (count($asAdmin) > 0) {
-            return $this->flashsalesAsAdmin();
+    /**
+     * @return mixed
+     */
+    public function currentFlashsales()
+    {
+        return $this->flashsales()->where('starts_at', '>=', 'NOW()')->where('ends_at' , '>=', 'NOW()');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function currentFlashsalesAsOwner()
+    {
+        return $this->flashsalesAsOwner()->where('starts_at', '>=', 'NOW()')
+            ->where('ends_at' , '>=', 'NOW()');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function currentFlashsalesAsAdmin()
+    {
+        return $this->flashsalesAsAdmin()->where('starts_at', '>=', 'NOW()')->where('ends_at' , '>=', 'NOW()');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function currentFlashsalesAsSeller()
+    {
+        return $this->flashsalesAsSeller()->where('flashsales.starts_at', '>=', 'NOW()')->where('ends_at' , '>=', 'NOW()');
+    }
+
+    /**
+     * @return $this|\Illuminate\Support\Collection
+     */
+    public function currentFlashsalesAsSellerAndAdmins()
+    {
+        // Start with empty collection
+        $flashsales = collect();
+
+        $asOwner = $this->currentFlashsalesAsOwner;
+        if ($asOwner) {
+            foreach ($asOwner as $ownerFlashsale) {
+                $ownerFlashsale->my_post_time = null;
+                $flashsales->push($ownerFlashsale);
+            }
         }
 
-        return $this->flashsalesAsAdmin();
+        $asAdmin = $this->currentFlashsalesAsAdmin;
+        if ($asAdmin){
+            foreach ($asAdmin as $adminFlashsale) {
+                $ownerFlashsale->my_post_time = null;
+                $flashsales->push($adminFlashsale);
+            }
+        }
+
+        $asSeller = $this->currentFlashsalesAsSeller()
+            ->get([
+                'flashsales.id',
+                'flashsales.name',
+                'flashsales.starts_at',
+                'flashsales.ends_at',
+                'flashsales.privacy',
+                'flashsales_sellers_groups.time_slot'
+            ]);
+        if ($asSeller->count() > 0) {
+            foreach ($asSeller as $asSellerFlashsale) {
+                $ownerFlashsale->my_post_time = $asSellerFlashsale->time_slot;
+                $flashsales = $flashsales->push($asSellerFlashsale);
+            }
+        }
+
+        return $flashsales->unique('id')->sortBy('starts_at')->values()->all();
     }
 
     /**

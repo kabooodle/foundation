@@ -11,10 +11,12 @@ export default {
     },
 
     selected: {
+        listingtype: 'facebook',
+
         // Holds postables that have been selected
         postables: {
             fb_albums: [],
-            flashsales: null
+            flashsale: null,
         },
 
         // Holds sizes that have been selected
@@ -27,7 +29,9 @@ export default {
         fb_group: null,
 
         // Toggle of the selected fb album
-        fb_album: null
+        fb_album: null,
+
+        flashsale: null
     },
 
     actions: {

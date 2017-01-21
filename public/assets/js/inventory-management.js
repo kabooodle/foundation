@@ -7182,6 +7182,9 @@ exports.default = {
             type: String,
             required: true
         },
+        size: {
+            default: null
+        },
         use_header_close: {
             default: false
         }
@@ -7193,7 +7196,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"modal\" :id=\"modal_id\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"\" aria-hidden=\"true\">\n    <div class=\"row-col h-v\">\n        <div class=\"row-cell v-m\">\n            <div class=\"modal-dialog\" role=\"document\">\n                <div class=\"box white r\">\n                    <div class=\"box-header b-0\">\n                        <button v-if=\"display_header_close_btn\" type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                            <span aria-hidden=\"true\">×</span>\n                        </button>\n                        <h6 v-if=\"!this.$slots['modal_header']\" class=\"m-b-0\">Title</h6>\n                        <slot name=\"modal_header\"></slot>\n                    </div>\n                    <div class=\"box-divider\"></div>\n                    <div class=\"modal-body box-body\">\n                        <slot name=\"modal_body\"></slot>\n                    </div>\n                    <div class=\"modal-footer box-footer\">\n                        <button v-if=\"!this.$slots['modal_footer']\" type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>\n                        <slot name=\"modal_footer\"><div v-el:modal_footer=\"\"></div></slot>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"modal\" :id=\"modal_id\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"\" aria-hidden=\"true\">\n    <div class=\"row-col h-v\">\n        <div class=\"row-cell v-m\">\n            <div class=\"modal-dialog\" :class=\"size\" role=\"document\">\n                <div class=\"box white r\">\n                    <div class=\"box-header b-0\">\n                        <button v-if=\"display_header_close_btn\" type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n                            <span aria-hidden=\"true\">×</span>\n                        </button>\n                        <h6 v-if=\"!this.$slots['modal_header']\" class=\"m-b-0\">Title</h6>\n                        <slot name=\"modal_header\"></slot>\n                    </div>\n                    <div class=\"box-divider\"></div>\n                    <div class=\"modal-body box-body\">\n                        <slot name=\"modal_body\"></slot>\n                    </div>\n                    <div class=\"modal-footer box-footer\">\n                        <button v-if=\"!this.$slots['modal_footer']\" type=\"button\" class=\"btn-text btn-link\" data-dismiss=\"modal\">Close</button>\n                        <slot name=\"modal_footer\"></slot>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -7773,7 +7776,7 @@ new Vue({
 
         $Bus.$on('listing.options:saved', function (options) {
             _this.options = options;
-            _this.postSelectedItemsToSales();
+            _this.postSelectedItemsToFacebook();
         });
 
         $Bus.$on('facebook:refreshed', function (fbAuth, postables) {
@@ -7833,6 +7836,14 @@ new Vue({
         }
     },
     methods: {
+        listingTypeChanged: function listingTypeChanged(type) {
+            this.resetSelectedItems();
+            this.resetSelectedFBAlbum();
+            this.resetSelectedFBGroup();
+
+            this.selected.listingtype = type;
+        },
+
         // Reset
         resetState: function resetState() {
             this.$store.commit('CLEAR_READER_STATE');
@@ -7895,6 +7906,12 @@ new Vue({
                 facebook.items.splice(index, 1);
             }
         },
+        removeItemFromFlashsale: function removeItemFromFlashsale(item, flashsale, flashsaleid, event) {
+            var index = this.selected.items.indexOf(item);
+            if (index > -1) {
+                this.selected.items.splice(index, 1);
+            }
+        },
 
 
         // Set the selected facebook album.
@@ -7940,16 +7957,19 @@ new Vue({
 
             this.$emit('post-menu:closed');
         },
+        postSelectedItemsToFlashsale: function postSelectedItemsToFlashsale() {
+            var selectedPostables = {};
+            selectedPostables.flashsale = this.selected.postables.flashsale;
+            if (!selectedPostables.flashsale) {
+                notify({
+                    text: 'You must select a flashsale.'
+                });
+                return false;
+            }
 
-
-        // Method for performing an AJAX post request
-        // of the selected flash sales, facebook album items
-        postSelectedItemsToSales: function postSelectedItemsToSales(event) {
-            var _this2 = this;
-
-            $Bus.$emit('inventory:posting_listing', true);
-
-            var form = $('#post_sales_form');
+            this.postSelectedItemsToSales(selectedPostables);
+        },
+        postSelectedItemsToFacebook: function postSelectedItemsToFacebook() {
             var selectedPostables = this.selected.postables;
             selectedPostables.fb_group = this.selected.fb_group;
             selectedPostables.options = {};
@@ -7959,7 +7979,21 @@ new Vue({
             selectedPostables.options.available_until = this.options.available_until;
             selectedPostables.options.item_message = this.options.item_message;
 
+            this.postSelectedItemsToSales(selectedPostables);
+        },
+
+
+        // Method for performing an AJAX post request
+        // of the selected flash sales, facebook album items
+        postSelectedItemsToSales: function postSelectedItemsToSales(selectedPostables, event) {
+            var _this2 = this;
+
+            $Bus.$emit('inventory:posting_listing', true);
+
+            var form = $('#post_sales_form');
+
             selectedPostables.items = this.selected.items;
+            selectedPostables.listingtype = this.selected.listingtype;
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
@@ -7967,6 +8001,7 @@ new Vue({
             this.$http.post(form.prop('action'), selectedPostables).then(function (response) {
                 $('[name="facebook_group"] option').prop("selected", false);
                 _this2.selected.items = [];
+                _this2.resetSelectedItems();
                 _this2.resetSelectedPostables();
                 _this2.resetSelectedFBGroup();
                 _this2.resetSelectedFBAlbum();
@@ -7982,7 +8017,7 @@ new Vue({
             var el = event.target;
             var isChecked = el.checked;
             if (isChecked) {
-                this.selected.postables.flashsales = i;
+                this.selected.postables.flashsale = i;
             }
         },
         selectAllInventory: function selectAllInventory(event) {
@@ -8094,7 +8129,7 @@ exports.default = {
 };
 
 },{}],13:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -8112,10 +8147,12 @@ exports.default = {
     },
 
     selected: {
+        listingtype: 'facebook',
+
         // Holds postables that have been selected
         postables: {
             fb_albums: [],
-            flashsales: null
+            flashsale: null
         },
 
         // Holds sizes that have been selected
@@ -8128,7 +8165,9 @@ exports.default = {
         fb_group: null,
 
         // Toggle of the selected fb album
-        fb_album: null
+        fb_album: null,
+
+        flashsale: null
     },
 
     actions: {

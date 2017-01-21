@@ -11,10 +11,10 @@
             ></listing-card>
             <infinite-loading :distance="100" :on-infinite="fetchInfinite" ref="listingFinite">
                 <span slot="no-more">
-                    No more listings.
+                    No more results.
                 </span>
                 <span slot="no-results">
-                    No more listings.
+                    No more results.
                 </span>
                 <span slot="spinner">
                     <spinny class="text-center center-block" :size="'' + 38"></spinny>

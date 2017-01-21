@@ -19,15 +19,18 @@
     top: 42%;
   }
 }
+
 .item-overlay{
+  z-index: 999;
   position: absolute;
   right: 0;
   left: 0;
-  display: none;
+  //display: none;
+  display: block;
   &.active,
   .item:focus,
   .item:hover & {
-    display: block;
+    //display: block;
   }
   &.w-full{
     text-align: center;
@@ -36,15 +39,16 @@
   }
 }
 .item-overlay-bottom{
+  z-index: 999;
   position: absolute;
   right: 0;
   left: 0;
   bottom: 0;
-  display: none;
+  display: block;
   &.active,
   .item:focus,
   .item:hover & {
-    display: block;
+    //display: block;
   }
   &.w-full{
     text-align: center;

@@ -92,7 +92,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_sizes_id' => 0,
         'name' => '',
         'description' => '',
-        'cover_photo_file_location' => null,
+        'cover_photo_file_key' => null,
         'cover_photo_file_id' => null,
         'barcode' => null,
         'initial_qty' => null,

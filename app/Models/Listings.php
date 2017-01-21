@@ -205,6 +205,8 @@ class Listings extends AbstractListingModel
     {
         //                IFNULL(COUNT(DISTINCT(p.id)), 0) AS pageviews_count,
         //                LEFT JOIN pageviews AS p ON p.shoppable_id = li.id AND p.inventory_id = li.inventory_id
+
+        //                IF(l.type = 'facebook', l.scheduled_for, fs.starts_at) as scheduled_for,
         $sql = "SELECT
                 l.id as id,
                 l.scheduled_for AS scheduled_for,
@@ -288,8 +290,9 @@ class Listings extends AbstractListingModel
             $sql = str_replace('::groupby::', " li.fb_album_node_id ", $sql);
         } else {
             $type = Listings::TYPE_FLASHSALE;
-            $sql = str_replace('::groupby::', "s.id ", $sql);
+            $sql = str_replace('::groupby::', "f.id ", $sql);
         }
+
 
         return DB::select($sql, [$this->uuid, $userId, $type]);
     }
