@@ -41,10 +41,6 @@
     @push('header-scripts')
     <script src="{{ staticAsset('/assets/js/vendor.js') }}"></script>
     <script type="text/javascript">
-        @if(user())
-            moment().tz('{{ user()->timezone}}').format();
-        @endif
-
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
         Vue.http.headers.common['Authorization'] = "Bearer " + $('meta[name=user_hash]').attr("content");
         $(function () {
@@ -65,6 +61,7 @@
                 }
             });
         });
+        @if(user())  moment().tz('{{ user()->timezone}}').format(); @endif
     </script>
     @endpush
 

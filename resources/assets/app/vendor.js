@@ -1,5 +1,5 @@
 global.$ = global.jQuery = require('jquery');
-global.Vue = require('vue/dist/vue.js');
+global.Vue = require('vue/dist/vue.common.js');
 global.VueResource = require('vue-resource');
 global.Tether = require('tether');
 require('bootstrap');
@@ -36,9 +36,6 @@ Vue.use(VueTimeago, {
     }
 });
 
-import Followable from './components/follow/Followable.vue';
-
-Vue.component('followable', Followable);
-// Vue.config.devtools = false;
-
 global.$Bus = new Vue();
+
+// Vue.config.devtools = false;
