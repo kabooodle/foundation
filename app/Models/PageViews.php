@@ -22,7 +22,8 @@ class PageViews extends BaseEloquentModel
     protected $fillable = [
         'shoppable_type',
         'shoppable_id',
-        'inventory_id',
+        'viewable_type',
+        'viewable_id',
         'ip_address'
     ];
 
@@ -35,10 +36,10 @@ class PageViews extends BaseEloquentModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function listedItem()
     {
-        return $this->belongsTo(Inventory::class, 'inventory_id');
+        return $this->morphTo('listable');
     }
 }

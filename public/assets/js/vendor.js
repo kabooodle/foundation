@@ -8263,6 +8263,8 @@ var Popover = function ($) {
     module.exports = Clipboard;
 });
 },{"./clipboard-action":5,"good-listener":14,"tiny-emitter":48}],7:[function(require,module,exports){
+var DOCUMENT_NODE_TYPE = 9;
+
 /**
  * A polyfill for Element.matches()
  */
@@ -8284,7 +8286,7 @@ if (Element && !Element.prototype.matches) {
  * @return {Function}
  */
 function closest (element, selector) {
-    while (element && element !== document) {
+    while (element && element.nodeType !== DOCUMENT_NODE_TYPE) {
         if (element.matches(selector)) return element;
         element = element.parentNode;
     }

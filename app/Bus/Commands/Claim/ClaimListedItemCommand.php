@@ -6,9 +6,9 @@
 
 namespace Kabooodle\Bus\Commands\Claim;
 
+use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Email;
 use Kabooodle\Models\User;
-use Kabooodle\Models\Inventory;
 use Kabooodle\Models\Contracts\ShoppableInterface;
 
 /**
@@ -26,14 +26,14 @@ class ClaimListedItemCommand
      * ClaimListedItemCommand constructor.
      * @param User $claimedBy
      * @param ShoppableInterface $shoppable
-     * @param Inventory $listedItem
+     * @param Claimable $listedItem
      * @param bool $guest
      * @param Email|null $email
      */
     public function __construct(
         User $claimedBy,
         ShoppableInterface $shoppable,
-        Inventory $listedItem,
+        Claimable $listedItem,
         $guest = false,
         Email $email = null)
     {
@@ -53,7 +53,7 @@ class ClaimListedItemCommand
     }
 
     /**
-     * @return Inventory
+     * @return Claimable
      */
     public function getListedItem()
     {

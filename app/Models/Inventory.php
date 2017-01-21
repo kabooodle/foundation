@@ -9,6 +9,7 @@ namespace Kabooodle\Models;
 use DB;
 use Carbon\Carbon;
 use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
+use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Contracts\Listable;
 use Kabooodle\Models\Traits\ListableTrait;
 use Sofa\Revisionable\Revisionable;
@@ -28,7 +29,7 @@ use Kabooodle\Models\Contracts\CommentableInterface;
  * Class Inventory
  * @package Kabooodle\Models
  */
-class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable
+class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable, Claimable
 {
     use ClaimableTrait,
         CommentableTrait,
@@ -288,11 +289,35 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function groupings()
+    {
+        return $this->belongsToMany(InventoryGrouping::class, 'inventory_grouping_inventory');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function lockedGroupings()
+    {
+        return $this->groupings()->whereLocked(true);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function unlockedGroupings()
+    {
+        return $this->groupings()->whereLocked(false);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function claims()
     {
-        return $this->hasMany(Claims::class, 'inventory_id');
+        return $this->morphMany(Claims::class, 'claimable');
     }
 
     /**
@@ -300,7 +325,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function pendingClaims()
     {
-        return $this->hasMany(Claims::class, 'inventory_id')->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
+        return $this->claims()->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
     }
 
     /**
@@ -400,6 +425,22 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getWholesalePriceUsdAttribute($value): float
     {
         return $value ? $value : $this->style->wholesale_price_usd;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAvailableQuantity(): int
+    {
+        return $this->initial_qty - ($this->lockedGroupings()->count() + $this->getOnHoldQuantity());
+    }
+
+    /**
+     * @return int
+     */
+    public function getOnHoldQuantity(): int
+    {
+        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count() + $this->unlockedGroupings->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
     }
 
     /**

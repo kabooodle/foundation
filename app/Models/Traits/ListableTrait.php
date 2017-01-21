@@ -5,7 +5,9 @@
  */
 
 namespace Kabooodle\Models\Traits;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Kabooodle\Models\Listings;
+use Kabooodle\Models\PageViews;
 
 /**
  * Class AuthorableTrait
@@ -54,32 +56,6 @@ trait ListableTrait
     }
 
     /**
-     * @param int $qty
-     *
-     * @return bool
-     */
-    public function canSatisfyRequestedQuantityOf($qty = 1): bool
-    {
-        return $this->getAvailableQuantity() >= $qty;
-    }
-
-    /**
-     * @return int
-     */
-    public function getAvailableQuantity(): int
-    {
-        return $this->initial_qty - $this->getOnHoldQuantity();
-    }
-
-    /**
-     * @return int
-     */
-    public function getOnHoldQuantity(): int
-    {
-        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
-    }
-
-    /**
      * @return string
      */
     public function getNameUuidAttribute() : string
@@ -93,5 +69,23 @@ trait ListableTrait
     public function getCategoriesAttribute()
     {
         return $this->tags;
+    }
+
+    /**
+     * @param int $qty
+     *
+     * @return bool
+     */
+    public function canSatisfyRequestedQuantityOf($qty = 1): bool
+    {
+        return $this->getAvailableQuantity() >= $qty;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function pageViews()
+    {
+        return $this->morphMany(PageViews::class, 'listable');
     }
 }

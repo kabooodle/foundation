@@ -661,7 +661,8 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class)
+        return $this->hasManyThrough(Claims::class,  Inventory::class, 'id', 'claimable_id')
+            ->where('claims.claimable_type', Inventory::class)
             ->where('inventory.user_id', $this->id)
             ->with(['shipments', 'shipments.transaction']);
     }

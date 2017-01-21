@@ -70,7 +70,8 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      * @var array
      */
     protected $attributes = [
-        'inventory_id' => 0,
+        'claimable_type' => null,
+        'claimable_id' => 0,
         'claimed_by' => 0,
         'inventory_item_object_data' => '',
         'shoppable_id' => 0,
@@ -89,7 +90,8 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      * @var array
      */
     protected $casts = [
-        'inventory_id' => 'int',
+        'claimable_type' => 'string',
+        'claimable_id' => 'int',
         'claimed_by' => 'int',
         'verified' => 'bool',
         'claim_accepted' => 'bool',
@@ -109,9 +111,9 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      * @var array
      */
     protected $fillable = [
-        'inventory_id',
+        'claimable_type',
+        'claimable_id',
         'claimed_by',
-        'inventory_id',
         'inventory_item_object_data',
         'price',
         'verified',
@@ -143,7 +145,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
 
     public function setListedItemObjectDataAttribute($value)
     {
-        $this->attributes['inventory_item_object_data'] = $value->toJson();
+        $this->attributes['listed_item_object_data'] = $value->toJson();
     }
 
     /**
@@ -227,11 +229,19 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function claimable()
+    {
+        return $this->morphTo();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function listedItem()
     {
-        return $this->belongsTo(Inventory::class, 'claimed_id');
+        return $this->claimable();
     }
 
     /**

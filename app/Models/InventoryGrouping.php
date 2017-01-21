@@ -9,6 +9,7 @@ namespace Kabooodle\Models;
 use DB;
 use Carbon\Carbon;
 use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
+use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Contracts\Listable;
 use Kabooodle\Models\Traits\ListableTrait;
 use Sofa\Revisionable\Revisionable;
@@ -28,7 +29,7 @@ use Kabooodle\Models\Contracts\CommentableInterface;
  * Class InventoryGrouping
  * @package Kabooodle\Models
  */
-class InventoryGrouping extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable
+class InventoryGrouping extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable, Claimable
 {
     use ClaimableTrait,
         CommentableTrait,
@@ -65,7 +66,7 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
     /**
      * @var string
      */
-    protected $listingItemClass = ListingItemMultiple::class;
+    protected $listingItemClass = ListingItemGrouping::class;
 
     /**
      * @return array
@@ -100,6 +101,7 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
         'user_id' => 'int',
         'name' => 'string',
         'description' => 'string',
+        'locked' => 'boolean',
         'barcode' => 'string',
         'initial_qty' => 'int',
         'date_received' => 'date',
@@ -240,11 +242,19 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function inventoryItems()
+    {
+        return $this->belongsToMany(Inventory::class, 'inventory_grouping_inventory');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function claims()
     {
-        return $this->hasMany(Claims::class, 'listed_id');
+        return $this->morphMany(Claims::class, 'claimable');
     }
 
     /**
@@ -312,7 +322,7 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
             ->join('watchables', 'watchables.user_id', '=', 'users.id')
             ->join('listing_items', 'listing_items.id', '=', 'watchables.watchable_id')
             ->join('inventory_groupings', 'listing_items.listed_id', '=', 'inventory_groupings.id')
-            ->where('watchables.watchable_type', ListingItemMultiple::class)
+            ->where('watchables.watchable_type', ListingItemGrouping::class)
             ->where('watchables.deleted_at', null)
             ->select('users.*')
             ->get();
@@ -335,6 +345,39 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
     public function getWholesalePriceUsdAttribute($value): float
     {
         return $value ? $value : $this->style->wholesale_price_usd;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAvailableQuantity(): int
+    {
+        $selfAvailableQuantity = $this->initial_qty - $this->getOnHoldQuantity();
+        if ($this->locked) {
+            return $selfAvailableQuantity;
+        } else {
+            return min([$selfAvailableQuantity] + $this->getItemsAvailableQuantity());
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getItemsAvailableQuantity(): array
+    {
+        $availableValues = [];
+        foreach ($this->inventoryItems as $item) {
+            $availableValues[] = $item->getAvailableQuantity();
+        }
+        return $availableValues;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOnHoldQuantity(): int
+    {
+        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
     }
 
     /**

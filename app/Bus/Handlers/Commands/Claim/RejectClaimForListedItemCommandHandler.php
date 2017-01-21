@@ -10,20 +10,20 @@ use DB;
 use Carbon\Carbon;
 use Kabooodle\Models\Claims;
 use Kabooodle\Bus\Events\Claim\ClaimWasRejectedEvent;
-use Kabooodle\Bus\Commands\Claim\RejectClaimForListedItemCommand;
+use Kabooodle\Bus\Commands\Claim\RejectClaimForClaimableCommand;
 
 /**
- * Class RejectClaimForListedItemCommandHandler
+ * Class RejectClaimForClaimableCommandHandler
  * @package Kabooodle\Bus\Handlers\Commands\Claim\
  */
-class RejectClaimForListedItemCommandHandler
+class RejectClaimForClaimableCommandHandler
 {
     /**
-     * @param RejectClaimForListedItemCommand $command
+     * @param RejectClaimForClaimableCommand $command
      *
      * @return mixed|Claims
      */
-    public function handle(RejectClaimForListedItemCommand $command)
+    public function handle(RejectClaimForClaimableCommand $command)
     {
         return DB::transaction(function () use ($command) {
             $claim = Claims::where('uuid', $command->getClaimId())->first();

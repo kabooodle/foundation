@@ -7,9 +7,9 @@
 namespace Kabooodle\Models;
 
 /**
- * Class ListingItemMultiple
+ * Class ListingItemGrouping
  */
-class ListingItemMultiple extends ListingItems
+class ListingItemGrouping extends ListingItems
 {
     const LISTED_ITEM_CLASS = InventoryGrouping::class;
 }
