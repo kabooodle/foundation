@@ -7,12 +7,12 @@ function moneyfy(n) {
     }
     return n;
 };
-
-function validateEmail(email){
-    let re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    return re.test(email);
-};
+//
+// function validateEmail(email){
+//     let re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//
+//     return re.test(email);
+// };
 
 function getAllUrlParams(url) {
 
@@ -386,7 +386,6 @@ function browserSupportsAnimation(){
         console.log('true');
         return true;
     }
-
 
     var propertyNameCapital = property.charAt(0).toUpperCase() + property.substr(1),
         domPrefixes = 'Webkit Moz ms O'.split(' ');
