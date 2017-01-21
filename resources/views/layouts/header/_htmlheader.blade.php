@@ -61,7 +61,9 @@
                 }
             });
         });
-        @if(user())  moment().tz('{{ user()->timezone}}').format(); @endif
+        @if(user())
+        moment.tz('{{ user()->timezone}}').format();
+        @endif
     </script>
     @endpush
 
