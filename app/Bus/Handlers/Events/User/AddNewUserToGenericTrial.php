@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Events\User;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToGenericTrialCommand;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToPlanCommand;
 
@@ -24,7 +25,7 @@ class AddNewUserToGenericTrial
     {
         $user = $event->getUser();
         if ($event->getAccountType() == 'merchant') {
-            $this->dispatchNow(new SubscribeUserToPlanCommand($user));
+            $this->dispatchNow(new SubscribeUserToGenericTrialCommand($user));
         }
     }
 }
