@@ -48,9 +48,7 @@ class Email extends BaseEloquentModel
      * @var array
      */
     protected $hidden = [
-        'verified',
         'token',
-        'primary'
     ];
 
     /**
