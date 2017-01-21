@@ -36,8 +36,8 @@ class FlashsalesApiController extends AbstractApiController
             ->orderByStartDate()
             ->with('coverimage', 'listingItems', 'watchers');
 
-        if ($searchName = Binput::get('q_name', false)) {
-            $data = $data->where('name', 'LIKE', '%'. $searchName .'.%');
+        if ($searchName = Binput::get('name', false)) {
+            $data = $data->where('name', 'LIKE', '%'. $searchName .'%');
         }
 
         $data = $data->paginate();

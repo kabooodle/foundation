@@ -1,8 +1,8 @@
 <template>
     <div>
         <spinny v-if="fetching" :size="'' + 28" class="text-center center-block" ></spinny>
-        <div v-if="flashsales.length > 0">
             <div
+                    v-if="flashsales.length"
                     v-for="flashsale in flashsales"
                     :key="flashsale.id"
                     class="col-md-3"
@@ -14,11 +14,10 @@
                 ></flashsale-card>
             </div>
             <infinite-loading :distance="100" :on-infinite="fetchInfinite" ref="listingFinite">
-                <span slot="no-more">End results.</span>
-                <span slot="no-results">End results.</span>
+                <span slot="no-more"><span v-if="!fetching">End results.</span></span>
+                <span slot="no-results"><span v-if="!fetching">End results.</span></span>
                 <span slot="spinner"><spinny class="text-center center-block" :size="'' + 38"></spinny></span>
             </infinite-loading>
-        </div>
     </div>
 </template>
 <script>
@@ -51,6 +50,13 @@
         mounted(){
             this.fetchItems(this.fetch_endpoint);
         },
+        created(){
+            $Bus.$on('flashsales:filter', (salename, sellers)=>{
+                this.filtering = true;
+                this.flashsales = [];
+                this.fetchItems(this.fetch_endpoint, {name: salename, sellers: sellers});
+            });
+        },
         methods: {
             /**
              * This method is called by the infiniteLoader
@@ -65,7 +71,6 @@
                 if (url) {
                     this.fetchItems(this.pagination.next_page_url);
                 } else {
-                    this.fetching = false;
                     this.$nextTick(()=>{
                         this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
                     });
@@ -85,6 +90,8 @@
                 }
 
                 this.fetching = true;
+
+                console.log(data);
                 this.$http.get(url, {params: data}).then((response)=>{
                     this.handleResponse(response);
                 });

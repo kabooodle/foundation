@@ -3,6 +3,10 @@
 
 @if($data->count() > 0)
 @section('body-menu')
+    <div class="pull-left">
+        <button type="button" id="" class="btn-toggle-filters btn btn-sm white">Filter Transactions</button>
+    </div>
+
     <div class="btn-toolbar center-block text-center">
         <div class="btn-group">
             <a href="{{ route('flashsales.create') }}" class="btn btn-sm primary pull-left" >Create New</a>
@@ -13,6 +17,9 @@
 @endif
 
 @section('body-content')
+
+            @include('flashsales.partials._indexaside', ['filters'=>[]])
+
 
             <div class="row content">
                 <flashsales-cards
@@ -44,4 +51,18 @@
 
 @push('footer-scripts')
 <script src="{{ staticAsset('/assets/js/flashsales-index.js') }}"></script>
+<script>
+    $(function () {
+        $('.btn-toggle-filters').click(function(event){
+            $('#navbarSide').css({
+                'top' :  $('.app-header').outerHeight()
+            }).toggleClass('reveal')
+        });
+
+        $('.btn-toggle-reset').click(function(event){
+            $('#navbarSide')
+                    .find('input, select').val(null).trigger('change').find('option').prop('selected', false);
+        });
+    })
+</script>
 @endpush

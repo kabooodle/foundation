@@ -8,8 +8,7 @@
             <div class="box-body">
                 <div class="cover-photo-wrapper item m-b-1" v-if="cover_photo">
                     <div class="item-overlay active p-a">
-                        <span v-if="privacy=='private'" class="pull-left text-u-c label danger label-md"
-                        >{{ privacy }}</span>
+                        <span v-if="privacy=='private'" class="pull-left text-u-c label danger label-md">{{ privacy }}</span>
                     </div>
                     <div
                             class="coverimage FlexEmbed FlexEmbed--3by1"
@@ -24,11 +23,10 @@
                         <image-attach
                                 :s3_key_url="s3_key_url"
                                 multiple="false"
-                                :button_title="cover_photo ? 'Replace cover photo' : 'Add cover photo'"
-                        ></image-attach>
+                                :button_title="cover_photo ? 'Replace cover photo' : 'Add cover photo'"></image-attach>
                     </template>
                     <small slot="text-help" class="text-sm text-muted">
-                        Recommended dimensions are <u>220px<u> tall by <u>850px</u> wide.
+                        Recommended dimensions are <u>220px</u> tall by <u>850px</u> wide.
                     </small>
                 </inline-field>
 
