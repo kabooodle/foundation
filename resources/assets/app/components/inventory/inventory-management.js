@@ -25,7 +25,7 @@ new Vue({
 
         $Bus.$on('listing.options:saved', (options)=>{
             this.options = options;
-            this.postSelectedItemsToSales();
+            this.postSelectedItemsToFacebook();
         });
 
         $Bus.$on('facebook:refreshed', (fbAuth, postables)=>{
@@ -85,6 +85,13 @@ new Vue({
         }
     },
     methods: {
+        listingTypeChanged(type){
+            this.resetSelectedItems();
+            this.resetSelectedFBAlbum();
+            this.resetSelectedFBGroup();
+
+            this.selected.listingtype = type;
+        },
         // Reset
         resetState(){
             this.$store.commit('CLEAR_READER_STATE');
@@ -145,6 +152,13 @@ new Vue({
             }
         },
 
+        removeItemFromFlashsale(item, flashsale, flashsaleid, event){
+            let index = this.selected.items.indexOf(item);
+            if (index > -1){
+                this.selected.items.splice(index, 1);
+            }
+        },
+
         // Set the selected facebook album.
         //
         selectFacebookAlbum(facebook, event){
@@ -188,12 +202,20 @@ new Vue({
             this.$emit('post-menu:closed');
         },
 
-        // Method for performing an AJAX post request
-        // of the selected flash sales, facebook album items
-        postSelectedItemsToSales(event){
-            $Bus.$emit('inventory:posting_listing', true);
+        postSelectedItemsToFlashsale(){
+            const selectedPostables = {};
+            selectedPostables.flashsale = this.selected.postables.flashsale;
+            if (!selectedPostables.flashsale) {
+                notify({
+                    text: 'You must select a flashsale.'
+                });
+                return false;
+            }
 
-            let form = $('#post_sales_form');
+            this.postSelectedItemsToSales(selectedPostables);
+        },
+
+        postSelectedItemsToFacebook(){
             const selectedPostables = this.selected.postables;
             selectedPostables.fb_group = this.selected.fb_group;
             selectedPostables.options = {};
@@ -203,7 +225,18 @@ new Vue({
             selectedPostables.options.available_until = this.options.available_until;
             selectedPostables.options.item_message = this.options.item_message;
 
+            this.postSelectedItemsToSales(selectedPostables);
+        },
+
+        // Method for performing an AJAX post request
+        // of the selected flash sales, facebook album items
+        postSelectedItemsToSales(selectedPostables, event){
+            $Bus.$emit('inventory:posting_listing', true);
+
+            let form = $('#post_sales_form');
+
             selectedPostables.items = this.selected.items;
+            selectedPostables.listingtype = this.selected.listingtype;
 
             // Perhaps fire event instead of calling method directly.
             this.setPostingToSales(true);
@@ -211,6 +244,7 @@ new Vue({
             this.$http.post(form.prop('action'), selectedPostables).then((response)=>{
                 $('[name="facebook_group"] option').prop("selected", false)
                 this.selected.items = [];
+                this.resetSelectedItems();
                 this.resetSelectedPostables();
                 this.resetSelectedFBGroup();
                 this.resetSelectedFBAlbum();
@@ -226,7 +260,7 @@ new Vue({
             let el = event.target;
             let isChecked = el.checked;
             if (isChecked) {
-                this.selected.postables.flashsales = i;
+                this.selected.postables.flashsale = i;
             }
         },
         selectAllInventory(event){

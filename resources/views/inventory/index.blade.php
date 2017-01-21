@@ -109,14 +109,14 @@
             <div class="navbar-side-inner p-a" data-scrollable="scrollable">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a data-toggle="tab" class="nav-link active" href="#post_facebook">Facebook
+                        <a data-toggle="tab" @click="listingTypeChanged('facebook')" class="nav-link active" href="#post_facebook">Facebook
                             {{--<small class="block text-sm text-center text-muted">--}}
                             {{--(@{{ get_selected_facebook_sales.length }} items assigned)--}}
                             {{--</small>--}}
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a data-toggle="tab" class="nav-link" href="#post_flashsales">
+                        <a data-toggle="tab" @click="listingTypeChanged('flashsale')" class="nav-link" href="#post_flashsales">
                             Flash Sales
                             {{--<small class="block text-sm text-center text-muted">--}}
                             {{--(@{{ get_selected_flashsales_sales.length }} selected)--}}
@@ -130,7 +130,9 @@
                     <div class="tab-content p-a">
                         <div class="tab-pane" id="post_flashsales">
                             <div v-if="postables.flashsales && postables.flashsales.length > 0"
-                                 v-for="flashsale in postables.flashsales">
+                                 v-for="flashsale in postables.flashsales"
+                            :key="flashsale.id"
+                            >
                                 <div class="radio">
                                     <label>
                                         <input
@@ -139,7 +141,23 @@
                                                 {{--v-bind:checked="( get_selected_flashsales_sales.indexOf(flashsale.id) > -1 ? 'checked' : false )"--}}
                                                 type="radio"
                                                 v-on:click="toggleFlashSale(flashsale.id, $event)"> @{{ flashsale.name }}
+                                        <span class="text-xs text-muted block">Sale dates: @{{ this.moment(flashsale.starts_at).format('MM/DD/YYYY') }} - @{{ this.moment(flashsale.ends_at).format('MM/DD/YYYY') }}</span>
+                                            <span v-if="flashsale.my_post_time" class="text-xs text-muted block">Your listing time: @{{ this.moment(flashsale.my_post_time).format('MM/DD/YYYY hh:mm a') }}</span>
                                     </label>
+                                    <div v-if="flashsale.id == selected.postables.flashsale && selected.items && selected.items.length">
+                                        <span class="block text-muted text-sm">(@{{  selected.items.length }} items assigned)</span>
+                                        <span
+                                        @click="removeItemFromFlashsale(item, flashsale, flashsale.id, $event)"
+                                        class="img-thumb" v-for="item in selected.items"
+                                        :key="item.id"
+                                        style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
+                                        <img
+                                                v-bind:src="item.cover_photo"
+                                                class="img-responsive"
+                                                style="width: 24px; height: 24px;">
+                                        <i class="fa fa-times fa-2x"></i>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -165,6 +183,7 @@
                                 <option
                                         v-if="postables.facebookgroups && postables.facebookgroups.length > 0"
                                         v-for="facebook_group in postables.facebookgroups"
+                                        :key="facebook_group.id"
                                         :value="facebook_group.id">@{{ facebook_group.name }}
                                     (@{{facebook_group.albums ? facebook_group.albums.length : 0}} albums)
                                 </option>
@@ -172,59 +191,11 @@
                             </div>
                             <template v-if="selected.fb_group">
                                 <div v-if="postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums.length > 0">
-                                    {{--<button type="button" class="btn white btn-block btn-sm m-b-1" data-toggle="modal" data-target="#kbdl-mdl-listings">--}}
-                                        {{--Facebook listing settings--}}
-                                    {{--</button>--}}
-
-                                    {{--<template v-if="actions.fb_advanced_menu">--}}
-                                    {{--<div class="p-a-md dker box m-t-0">--}}
-                                        {{--<div class="form-group">--}}
-                                            {{--<label>Date items are to be listed</label>--}}
-                                            {{--<div class="input-group">--}}
-                                                {{--{{ Form::text('options[ends_at]', null, ['class' => 'form-control needs-datetimepicker', 'id' => 'options_ends_at']) }}--}}
-                                                {{--<span class="input-group-btn">--}}
-                                                {{--<button--}}
-                                                    {{--@click="clearDateTimeInput('options_ends_at')"--}}
-                                                    {{--class="btn white"--}}
-                                                    {{--type="button"--}}
-                                                    {{--style="padding-bottom: .3rem--}}
-                                                    {{--;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>--}}
-                                            {{--</span>--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
-                                        {{--<hr>--}}
-                                        {{--<div class="checkbox">--}}
-                                            {{--<label>--}}
-                                                {{--<input--}}
-                                                        {{--@change="toggleIncludeLinkOption"--}}
-                                                        {{--id="options_include_text"--}}
-                                                        {{--checked--}}
-                                                        {{--name="options[include_text]"--}}
-                                                        {{--value="1"--}}
-                                                        {{--type="checkbox"> Include Link in description--}}
-                                            {{--</label>--}}
-                                        {{--</div>--}}
-
-                                        {{--<div class="form-group m-b-0" id="wrapper-if-include-link">--}}
-                                            {{--<hr>--}}
-                                            {{--<label>Earliest date items can be claimed</label>--}}
-                                            {{--<div class="input-group">--}}
-                                                {{--{{ Form::text('options[available_at]', null, ['class' => 'form-control needs-datetimepicker', 'id' => 'options_available_at']) }}--}}
-                                                {{--<span class="input-group-btn">--}}
-                                                {{--<button--}}
-                                                    {{--@click="clearDateTimeInput('options_available_at')"--}}
-                                                    {{--class="btn white"--}}
-                                                    {{--type="button"--}}
-                                                    {{--style="padding-bottom: .3rem--}}
-                                                    {{--;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>--}}
-                                            {{--</span>--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-
                                     <label class="control-label">Select Album</label>
                                     <div class="radio"
-                                         v-for="facebook_album in postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums">
+                                         v-for="facebook_album in postables.facebookgroups[postables.facebookgroups.indexOf(selected.fb_group)].albums"
+                                         :key="facebook_album.id"
+                                    >
                                         <label >
                                             <input
                                             @click="selectFacebookAlbum(facebook_album,$event)"
@@ -237,7 +208,11 @@
                                             <span class="block text-muted text-sm">(@{{  facebook_album.items.length }} items assigned)</span>
                                             <span
                                             @click="removeFromAlbum(item, facebook_album, selected.fb_group, $event)"
-                                            class="img-thumb" v-for="item in facebook_album.items" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
+                                            class="img-thumb"
+
+                                            v-for="item in facebook_album.items" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;"
+                                            :key="item.id"
+                                            >
                                             <img
                                                     v-bind:src="item.cover_photo"
                                                     class="img-responsive"
@@ -258,7 +233,13 @@
             </div>
             <div class="savesales clearfix">
                 <div class="pull-right ">
-                    <button type="button"
+                    <button :disabled="actions.posting_to_sales"
+                            :class="actions.posting_to_sales == true ? 'disabled' : null"
+                            v-if="selected.listingtype == 'flashsale'" type="button"
+                            class="btn btn-lg primary" @click="postSelectedItemsToFlashsale">
+                        Save <spinner v-show="actions.posting_to_sales" size="24"></spinner>
+                    </button>
+                    <button v-if="selected.listingtype == 'facebook'" type="button"
                             class="btn btn-lg primary" data-toggle="modal" data-target="#kbdl-mdl-listings">
                         Continue <spinner v-show="actions.posting_to_sales" size="24"></spinner>
                     </button>

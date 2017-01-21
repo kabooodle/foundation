@@ -1,33 +1,30 @@
 <template>
     <div>
         <spinny v-if="fetching" :size="'' + 28" class="text-center center-block" ></spinny>
-        <div v-if="items.length > 0">
-            <listing-card
-                    v-for="item in items"
-                    :item="item"
-                    :inventory_item="item.inventory_item"
-                    :watch_endpoint="watch_endpoint.replace(/::1::/, item.listing_id).replace(/::2::/, item.id)"
-                    :show_endpoint="show_endpoint.replace(/::1::/, item.id_to_string)"
-            ></listing-card>
+        <div v-if="flashsales.length > 0">
+            <div
+                    v-for="flashsale in flashsales"
+                    :key="flashsale.id"
+                    class="col-md-3"
+            >
+                <flashsale-card
+                        :flashsale="flashsale"
+                        :show_endpoint="show_endpoint.replace(/::0::/, flashsale.uuid)"
+                        :watch_endpoint="watch_endpoint.replace(/::0::/, flashsale.id)"
+                ></flashsale-card>
+            </div>
             <infinite-loading :distance="100" :on-infinite="fetchInfinite" ref="listingFinite">
-                <span slot="no-more">
-                    No more results.
-                </span>
-                <span slot="no-results">
-                    No more results.
-                </span>
-                <span slot="spinner">
-                    <spinny class="text-center center-block" :size="'' + 38"></spinny>
-                </span>
+                <span slot="no-more">End results.</span>
+                <span slot="no-results">End results.</span>
+                <span slot="spinner"><spinny class="text-center center-block" :size="'' + 38"></spinny></span>
             </infinite-loading>
         </div>
     </div>
 </template>
 <script>
-    import ListingCard from './ListingCard.vue';
-    import Followable from '../follow/Followable.vue';
-    import Spinner from '../Spinner.vue';
+    import FlashsaleCard from './Flashsale-card.vue';
     import InfiniteLoading from 'vue-infinite-loading';
+    import Spinny from  '../Spinner.vue';
     export default{
         props: {
             fetch_endpoint: {
@@ -45,29 +42,16 @@
         },
         data(){
             return{
-                infinite: false,
-                pagination : {},
-                items : [],
+                flashsales: [],
                 fetching: false,
                 filtering: false,
-                filters: {
-                    styles: [],
-                    sizes: []
-                }
+                pagination : {},
             }
         },
-        created(){
-            $Bus.$on('listing-filter:request', (styles, sizes)=>{
-                this.filtering = true;
-                this.filters.styles = styles;
-                this.filters.sizes = sizes;
-                this.items = [];
-                this.fetchItems(this.fetch_endpoint, {styles: styles, sizes: sizes});
-            });
-
+        mounted(){
             this.fetchItems(this.fetch_endpoint);
         },
-        methods:{
+        methods: {
             /**
              * This method is called by the infiniteLoader
              * Instead of calling fetch items directly, this allows us to set a few variables
@@ -112,11 +96,11 @@
              */
             handleResponse(response){
                 if (this.filtering) {
-                    this.items = response.body.data.data;
-                    $Bus.$emit('listing-filter:completed', this.items);
+                    this.flashsales = response.body.data.data;
+                    $Bus.$emit('listing-filter:completed', this.flashsales);
                 } else {
                     _.each(response.body.data.data, (a)=>{
-                        this.items.push(a);
+                        this.flashsales.push(a);
                     });
                 }
 
@@ -126,7 +110,7 @@
                 // If we have reached the end, tell our infinite loader we're completed,
                 // otherwise, tell it we're loaded and ready for next...
                 this.$nextTick(()=>{
-                    if (this.items.length >= this.pagination.total) {
+                    if (this.flashsales.length >= this.pagination.total) {
                         this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
                     } else {
                         this.$refs.listingFinite.$emit('$InfiniteLoading:loaded');
@@ -152,9 +136,9 @@
                 this.pagination = pagination;
             }
         },
-        components: {
-            'spinny' : Spinner,
-            'listing-card' : ListingCard,
+        components:{
+            'spinny' : Spinny,
+            'flashsale-card' : FlashsaleCard,
             InfiniteLoading,
         }
     }

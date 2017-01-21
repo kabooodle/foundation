@@ -28,6 +28,24 @@ class FlashsalesApiController extends AbstractApiController
     use DispatchesJobs;
 
     /**
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $data = FlashSales::withoutExpired()
+            ->orderByStartDate()
+            ->with('coverimage', 'listingItems', 'watchers');
+
+        if ($searchName = Binput::get('q_name', false)) {
+            $data = $data->where('name', 'LIKE', '%'. $searchName .'.%');
+        }
+
+        $data = $data->paginate();
+
+        return $this->setData($data)->respond();
+    }
+
+    /**
      * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response

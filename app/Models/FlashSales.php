@@ -8,6 +8,8 @@ namespace Kabooodle\Models;
 
 use DB;
 use Carbon\Carbon;
+use Kabooodle\Models\Contracts\WatchableInterface;
+use Kabooodle\Models\Traits\WatchableTrait;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Queue\SerializesModels;
 use Kabooodle\Presenters\PresentableTrait;
@@ -18,27 +20,25 @@ use Kabooodle\Models\Traits\AuthorableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Models\Traits\EloquentDatesTrait;
-use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
-use Kabooodle\Models\Contracts\LikeableInterface;
 use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
 
 /**
  * Class FlashSales
  * @package Kabooodle\Models
  */
-class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisionable
+class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInterface
 {
     use AuthorableTrait,
         ClaimableTrait,
         EloquentDatesTrait,
         FollowableTrait,
-        LikeableTrait,
         ObfuscatesIdTrait,
         PresentableTrait,
         RevisionableTrait,
         SerializesModels,
-        SoftDeletes;
+        SoftDeletes,
+        WatchableTrait;
 
     const HOST_SELF = 'self';
     const HOST_GROUP = 'group';
@@ -59,14 +59,9 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      * @var array
      */
     protected $appends = [
-        'is_liked'
-    ];
-
-    /**
-     * @var array
-     */
-    protected $with = [
-        'likes',
+        'is_watched',
+        'id_to_string',
+        'uuid'
     ];
 
     /**
@@ -223,7 +218,17 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
      */
     public function scopeWithoutExpired($scope)
     {
-        return $scope->where('ends_at', '>', DB::raw('NOW()'));
+        return $scope->where('ends_at', '>','NOW()');
+    }
+
+    /**
+     * @param $scope
+     *
+     * @return mixed
+     */
+    public function scopeNotYetEnded($scope)
+    {
+        return $scope->where('starts_at', '>=', 'NOW()');
     }
 
     /**
@@ -323,9 +328,9 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function listings()
+    public function listing()
     {
-        return $this->hasMany(ListingItems::class, 'flashsale_id');
+        return $this->hasOne(Listings::class, 'flashsale_id');
     }
 
     /**
@@ -459,5 +464,21 @@ class FlashSales extends BaseEloquentModel implements LikeableInterface, Revisio
     public function canSellerListToFlashsaleAnytime($userId)
     {
         return $this->owner->id == $userId || $this->admins->filter(function($admin) use ($userId) { return $admin->id == $userId; });
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdToStringAttribute()
+    {
+        return $this->obfuscateIdToString();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUUIDAttribute()
+    {
+        return $this->getUUID();
     }
 }

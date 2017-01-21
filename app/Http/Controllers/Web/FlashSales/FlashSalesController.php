@@ -49,7 +49,7 @@ class FlashSalesController extends Controller
      */
     public function show(FlashsaleViewRequest $request, $idAndName)
     {
-        $flashsale = $request->getFlashsale();
+        $flashsale = $request->getFlashsale()->load('listing');
 
         return $this->view('flashsales.show')->with(compact('flashsale'));
     }

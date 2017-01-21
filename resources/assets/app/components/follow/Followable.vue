@@ -8,7 +8,7 @@
                 :class="btnclass"
         >
             <span v-html="is_following ? unfollow_text : follow_text"></span>
-            <spinner v-if="processing" :size="'' + 10"></spinner>
+            <spinner v-if="processing" :size="'' + 6"></spinner>
         </button>
     </span>
 </template>

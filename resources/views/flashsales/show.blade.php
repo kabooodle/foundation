@@ -1,4 +1,4 @@
-@extends('layouts.full')
+@extends('layouts.full', ['contentId' => 'flashsale-page'])
 
 @section('body-menu')
     {{--@include('flashsales.partials._bodymenu')--}}
@@ -14,7 +14,7 @@
                         <li class="nav-header hidden-folded"><span class="text-xs text-muted">Search Filters</span></li>
                         <li
                                 class="b-b style-list-item">
-                            <a  @click="toggleStyleListItem(, $event)">
+                            <a  @click="toggleStyleListItem(0, $event)">
                             <span class="nav-caret text-muted text-xs"><i class="fa fa-caret-down"></i></span>
                             <i class="nav-label"><b class="label b label-sm no-bg text-muted ">1</b></i>
                             <span class="nav-text">Styles</span>
@@ -22,7 +22,7 @@
                         </li>
                         <li
                                 class="b-b style-list-item">
-                            <a  @click="toggleStyleListItem(, $event)">
+                            <a  @click="toggleStyleListItem(1, $event)">
                             <span class="nav-caret text-muted text-xs"><i class="fa fa-caret-down"></i></span>
                             <i class="nav-label"><b class="label b label-sm no-bg text-muted ">1</b></i>
                             <span class="nav-text">Sizes</span>
@@ -30,7 +30,7 @@
                         </li>
                         <li
                                 class="b-b style-list-item">
-                            <a  @click="toggleStyleListItem(, $event)">
+                            <a  @click="toggleStyleListItem(2, $event)">
                             <span class="nav-caret text-muted text-xs"><i class="fa fa-caret-down"></i></span>
                             <i class="nav-label"><b class="label b label-sm no-bg text-muted ">1</b></i>
                             <span class="nav-text">Sellers</span>
@@ -53,11 +53,17 @@
             @include('flashsales.partials._flashsaleheader', ['item' => $flashsale])
 
             <div class="row content">
-                <div class="col-md-3">
-                    asdf
-                </div>
+                <listing-cards
+                        fetch_endpoint="{{ apiRoute('listings.show', [$flashsale->listing->uuid]) }}"
+                        watch_endpoint="{{ apiRoute('listings.listingitems.watchers.store', ['::1::','::2::']) }}"
+                        show_endpoint="{{ route('listingitems.show', ['::1::']) }}"
+                ></listing-cards>
             </div>
         </div>
     </div>
 
 @endsection
+
+@push('footer-scripts')
+<script src="{{ staticAsset('/assets/js/flashsale-items-page.js') }}"></script>
+@endpush

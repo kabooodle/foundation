@@ -8,16 +8,16 @@ namespace Kabooodle\Http\Controllers\Api\Inventory;
 
 use Binput;
 use Exception;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
+use Kabooodle\Models\Listing\FacebookListingOptions;
 use Facebook\Exceptions\FacebookAuthenticationException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
-use Kabooodle\Bus\Commands\Listings\ScheduleListingCommand;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
-use Kabooodle\Models\Listing\FacebookListingOptions;
+use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
+use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingcommand;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
@@ -128,7 +128,8 @@ class InventoryApiController extends AbstractApiController
      */
     public function associate(Request $request)
     {
-        $flashsaleId = Binput::get('flashsales', null);
+        $listingType = Binput::get('listingtype');
+        $flashsaleId = Binput::get('flashsale', null);
         $selectedItems = (array) Binput::get('items', []);
 
         // Facebook data
@@ -149,11 +150,11 @@ class InventoryApiController extends AbstractApiController
 
         try {
             // You must have either a flashsaleid or facebookalbum
-            if (! $flashsaleId && count($facebookAlbums) == 0) {
-                throw new MissingMandatoryParametersException;
+            if (($listingType == 'flashsale' && ! $flashsaleId ) || ($listingType == 'facebook' && count($facebookAlbums) == 0)) {
+                throw new MissingMandatoryParametersException('You must select a sale');
             }
 
-            if ($flashsaleId && count($selectedItems) == 0) {
+            if (count($selectedItems) == 0) {
                 throw new MissingMandatoryParametersException;
             }
 
@@ -163,23 +164,26 @@ class InventoryApiController extends AbstractApiController
 
             $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $itemMessage);
 
-            $command = new ScheduleListingCommand(
-                $this->getUser(),
-                $flashsaleId,
-                $facebookAlbums,
-                $facebookGroupId,
-                $selectedItems,
-                $listingOptions
-            );
+            if ($listingType == 'flashsale' && $flashsaleId) {
+                $command = new ScheduleFlashsaleListingcommand($this->getUser(), $flashsaleId, $selectedItems);
+            } else {
+                $command = new ScheduleFacebookListingCommand(
+                    $this->getUser(),
+                    $facebookAlbums,
+                    $facebookGroupId,
+                    $selectedItems,
+                    $listingOptions
+                );
+            }
 
             $this->dispatchNow($command);
 
-            return $this->setData(['msg' =>'Items scheduled successfully for queuing.'])->respond();
+            return $this->setData(['msg' =>'Items scheduled successfully to sale.'])->respond();
         } catch (FacebookAuthenticationException $e) {
             $msg = 'Your facebook credentials are invalid. Please re-authorize '.env('APP_NAME').' for your facebook account, via our settings page.';
             return $this->setData(['msg' => $msg])->setStatusCode(500)->respond();
         }catch (MissingMandatoryParametersException $e) {
-            return $this->setStatusCode(500)->setData(['msg' => 'You must select as least 1 item for listing.'])->respond();
+            return $this->setStatusCode(500)->setData(['msg' => $e->getMessage() ? : 'You must select as least 1 item for listing.'])->respond();
         } catch (ListingConflictsWithExistingListingException $e) {
             return $this->setStatusCode(500)->setData(['msg' => 'The date and time block you selected conflicts with an existing listing. Please select a new block of time.'])->respond();
         } catch (Exception $e){
