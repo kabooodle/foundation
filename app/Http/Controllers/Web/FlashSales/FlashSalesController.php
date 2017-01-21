@@ -7,8 +7,8 @@
 namespace Kabooodle\Http\Controllers\Web\FlashSales;
 
 use Binput;
-use Illuminate\Http\Request;
 use Messages;
+use Illuminate\Http\Request;
 use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\Dates\StartsAndEndsAt;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
@@ -30,15 +30,7 @@ class FlashSalesController extends Controller
      */
     public function index()
     {
-        $data = FlashSales::withoutExpired()->orderByStartDate();
-
-        if ($searchName = Binput::get('q_name', false)) {
-            $data = $data->where('name', 'LIKE', '%'. $searchName .'.%');
-        }
-
-        $data = $data->paginate();
-
-        return $this->view('flashsales.index')->with(compact('data'));
+        return $this->view('flashsales.index');
     }
 
     /**
