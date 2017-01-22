@@ -7,6 +7,7 @@
 namespace Kabooodle\Libraries\Emails;
 
 use Closure;
+use SuperClosure;
 use InvalidArgumentException;
 use Illuminate\Queue\QueueManager;
 use Kabooodle\Libraries\QueueHelper;
@@ -165,20 +166,17 @@ abstract class AbstractEmail
 
         // The template we will be embedding the email's content into.
         // This is just a dot.object path representation.
-        $template = $this->getEmailTemplate();
+        $view = $this->getEmailTemplate();
 
         // Render the content that should be inserted into the template.
         // Inject the content parameters into this view
         $content = $this->getView()->make($this->getResourceView(), $this->getParameters())->render();
 
-        $this->getQueueManager()->connection(QueueHelper::pickEmails());
+        $data = ['emailContent' => $content] + $this->getParameters();
+        $callback =  $this->buildQueueCallable($this->getCallable());
 
-        // For now, we're implicitly queueing all emails.
-        return $this->getMailer()->queue(
-            $template,
-            ['emailContent' => $content] + $this->getParameters(),
-            $this->getCallable()
-        );
+        return $this->getQueueManager()->connection(QueueHelper::pickEmails())
+            ->push('mailer@handleQueuedMessage',  compact('view', 'data', 'callback'));
     }
 
     /**
@@ -215,5 +213,20 @@ abstract class AbstractEmail
         }
 
         return self::$queue;
+    }
+
+    /**
+     * Build the callable for a queued e-mail job.
+     *
+     * @param  \Closure|string  $callback
+     * @return string
+     */
+    public function buildQueueCallable($callback)
+    {
+        if (! $callback instanceof Closure) {
+            return $callback;
+        }
+
+        return (new Serializer)->serialize($callback);
     }
 }
