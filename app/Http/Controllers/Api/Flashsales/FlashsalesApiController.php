@@ -78,7 +78,7 @@ class FlashsalesApiController extends AbstractApiController
             // Seller groups with time_slot's must be within the flashsales date range.
             if ($sellerGroups) {
                 foreach ($sellerGroups as $sellerGroup) {
-                    if (isset($sellerGroup['time_slot']) && ! is_null($sellerGroup)) {
+                    if (isset($sellerGroup['time_slot']) && ! is_null($sellerGroup['time_slot']) && $sellerGroup['time_slot'] <> '') {
                         $timeSlot = Carbon::createFromFormat('m/d/Y h:ia', $sellerGroup['time_slot']);
                         if ($timeSlot < $startsEnds->getStartsAt()) {
                             throw new FlashsaleTimeSlotDateException('Time slot ('.$sellerGroup['time_slot'].' for seller group must be within flashsale date range.');
