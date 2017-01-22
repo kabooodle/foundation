@@ -51,6 +51,7 @@ class PhoneNumbersApiController extends AbstractApiController
         } catch (ValidationException $e) {
             return $this->setStatusCode(500)->setData(['msg' => $e->validator->messages()->first()])->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->setData(['msg' => $e->getMessage()])->respond();
         }
     }
@@ -79,6 +80,7 @@ class PhoneNumbersApiController extends AbstractApiController
         } catch (ValidationException $e) {
             return $this->setStatusCode(500)->setData(['msg' => $e->validator->messages()->first()])->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->setData(['msg' => $e->getMessage()])->respond();
         }
     }

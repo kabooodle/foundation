@@ -44,6 +44,7 @@ class RefreshFacebookGroupsController extends AbstractApiController
 
             return \Route::dispatch($l);
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
         }
     }

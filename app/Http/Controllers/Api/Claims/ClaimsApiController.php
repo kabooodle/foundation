@@ -47,6 +47,7 @@ class ClaimsApiController extends AbstractApiController
 
             return $this->setData($html)->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
         }
     }
