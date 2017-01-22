@@ -46,7 +46,9 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
      */
     protected $appends = [
         'name_with_variant',
-        'name_uuid'
+        'name_uuid',
+        'available_quantity',
+        'cover_photo',
     ];
 
     /**
@@ -130,7 +132,7 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
     /**
      * @var string
      */
-    protected $table = 'inventory_grouping';
+    protected $table = 'inventory_groupings';
 
     /**
      * @return array
@@ -246,7 +248,7 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
      */
     public function inventoryItems()
     {
-        return $this->belongsToMany(Inventory::class, 'inventory_grouping_inventory');
+        return $this->belongsToMany(Inventory::class, 'inventory_groupings_inventory');
     }
 
     /**
@@ -287,6 +289,15 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
     public function images()
     {
         return $this->files();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCoverPhotoAttribute()
+    {
+//        return $this->files()->find($this->cover_photo_file_id)->location;
+        return useCDN() ? staticAsset($this->cover_photo_file_key, false) : 'https://'.env('AWS_BUCKET').'.s3.amazonaws.com/'.$this->cover_photo_file_key;
     }
 
     /**
@@ -358,6 +369,14 @@ class InventoryGrouping extends BaseEloquentModel implements CommentableInterfac
         } else {
             return min([$selfAvailableQuantity] + $this->getItemsAvailableQuantity());
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function getAvailableQuantityAttribute()
+    {
+        return $this->getAvailableQuantity();
     }
 
     /**

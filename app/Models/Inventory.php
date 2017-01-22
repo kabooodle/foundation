@@ -48,7 +48,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'name_with_variant',
         'name_uuid',
         'available_quantity',
-        'cover_photo'
+        'cover_photo',
     ];
 
     /**
@@ -293,7 +293,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function groupings()
     {
-        return $this->belongsToMany(InventoryGrouping::class, 'inventory_grouping_inventory');
+        return $this->belongsToMany(InventoryGrouping::class, 'inventory_groupings_inventory');
     }
 
     /**
@@ -326,6 +326,36 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function pendingClaims()
     {
         return $this->claims()->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function groupingsClaims()
+    {
+        return $this->hasMany(Claims::class, 'claimable_id')
+            ->whereClaimableType(InventoryGrouping::class)
+            ->whereIn('claimable_id', $this->groupings()->lists('inventory_groupings.id'));
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function lockedGroupingsClaims()
+    {
+        return $this->hasMany(Claims::class, 'claimable_id')
+            ->whereClaimableType(InventoryGrouping::class)
+            ->whereIn('claimable_id', $this->lockedGroupings()->lists('inventory_groupings.id'));
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function unlockedGroupingsClaims()
+    {
+        return $this->hasMany(Claims::class, 'claimable_id')
+            ->whereClaimableType(InventoryGrouping::class)
+            ->whereIn('claimable_id', $this->unlockedGroupings()->lists('inventory_groupings.id'));
     }
 
     /**
@@ -438,9 +468,17 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @return int
      */
+    public function getAvailableQuantityAttribute()
+    {
+        return $this->getAvailableQuantity();
+    }
+
+    /**
+     * @return int
+     */
     public function getOnHoldQuantity(): int
     {
-        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count() + $this->unlockedGroupings->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
+        return $this->claims()->onHold()->count() + $this->unlockedGroupingsClaims()->onHold()->count();
     }
 
     /**

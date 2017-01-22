@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Sofa\Revisionable\Revisionable;
@@ -166,6 +167,11 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function getPriceAttribute($value)
     {
         return ! is_null($this->accepted_price) ? $this->accepted_price : $value;
+    }
+
+    public function scopeOnHold($query)
+    {
+        return $query->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()));
     }
 
     /**

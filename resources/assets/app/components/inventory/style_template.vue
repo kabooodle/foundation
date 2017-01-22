@@ -6,7 +6,7 @@
     </div>
     <div v-else>
             <popout-overlay></popout-overlay>
-            <div class="box style-container" v-for="style in listed_items">
+            <div class="box style-container" v-for="style in inventory_items">
                 <div class="box-header clearfix">
                     <div class="row">
                         <div class="col-sm-2" style="margin-top: 13px;">
@@ -125,7 +125,7 @@
             });
 
             $Bus.$on('inventory:select-all', ()=>{
-                $.each(this.listed_items, function(){
+                $.each(this.inventory_items, function(){
                     $.each(this.sizes,function(){
                         $.each(this.items, function(){
                             scope.addSizeToSelected(this);
@@ -157,28 +157,28 @@
                 // find each ones index individually :o
 
                 // find the style index.
-                _.each(this.listed_items, (style,index)=>{
+                _.each(this.inventory_items, (style,index)=>{
                     if(style.id == item.style.id) {
                         styleIndex = index;
                     }
                 });
 
                 // find the size index.
-                _.each(this.listed_items[styleIndex].sizes, (size, index)=>{
+                _.each(this.inventory_items[styleIndex].sizes, (size, index)=>{
                     if(size.id == item.style_size.id){
                         sizeIndex = index;
                     }
                 });
 
                 // find the item index/
-                _.each(scope.listed_items[styleIndex].sizes[sizeIndex].items, (listedItem, index)=>{
+                _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, (listedItem, index)=>{
                     if(listedItem.id == item.id) {
                         itemIndex = index;
                     }
                 });
 
                 // update the state.
-                this.listed_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
+                this.inventory_items[styleIndex].sizes[sizeIndex].items[itemIndex] = updatedItem;
                 this.selected.items = [];
                 $Bus.$emit('popout-overlay:close');
             });

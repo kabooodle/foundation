@@ -12,7 +12,7 @@ class CreateInventoryGroupingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('inventory_grouping', function(Blueprint $table){
+        Schema::create('inventory_groupings', function(Blueprint $table){
             $table->bigIncrements('id');
             $table->string('uuid');
             $table->bigInteger('user_id')->index()->unsigned();
@@ -30,7 +30,7 @@ class CreateInventoryGroupingsTable extends Migration
             $table->bigInteger('deleted_by')->unsigned()->nullable();
         });
 
-        Schema::table('inventory_grouping', function(Blueprint $table){
+        Schema::table('inventory_groupings', function(Blueprint $table){
             $table->foreign('user_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade');
@@ -61,6 +61,6 @@ class CreateInventoryGroupingsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('inventory_grouping');
+        Schema::drop('inventory_groupings');
     }
 }
