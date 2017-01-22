@@ -1093,4 +1093,12 @@ class User extends BaseEloquentModel implements
     {
         return $this->hasOne(PhoneNumber::class, 'user_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function viewed()
+    {
+        return $this->hasMany(View::class, 'viewer_id');
+    }
 }

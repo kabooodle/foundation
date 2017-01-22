@@ -6,18 +6,19 @@
 
 namespace Kabooodle\Models\Traits;
 
-use Kabooodle\Models\PageViews;
 use Illuminate\Cache\Repository;
+use Kabooodle\Models\View;
 
 /**
- * Class PageViewablesTrait
+ * Class ViewableTrait
+ * @package Kabooodle\Models\Traits
  */
-trait PageViewablesTrait
+trait ViewableTrait
 {
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function pageViews()
+    public function views()
     {
         $cacheKey = get_called_class().'::'.$this->id;
         $cache = $this->getCache();
@@ -26,7 +27,7 @@ trait PageViewablesTrait
             return $cache->get($cacheKey);
         }
 
-        $results = $this->morphMany(PageViews::class, 'shoppable')->get();
+        $results = $this->morphMany(View::class, 'viewable')->get();
         $cache->put($cacheKey, $results, 10);
 
         return $results;
@@ -35,9 +36,9 @@ trait PageViewablesTrait
     /**
      * @return mixed
      */
-    public function totalPageViews()
+    public function totalViews()
     {
-        return $this->pageViews()->count();
+        return $this->views()->count();
     }
 
     /**

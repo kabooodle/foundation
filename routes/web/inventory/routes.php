@@ -9,9 +9,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('shop.inventory', \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryController::class, [
             'parameters' => ['shop' => 'username'],
         ]);
-        Route::resource('shop.outfits', \Kabooodle\Http\Controllers\Web\Shop\InventoryGroupings\InventoryGroupingsController::class, [
-            'parameters' => ['shop' => 'username'],
-        ]);
         Route::get('inventory/postables', [
             'as' => 'inventory.postables',
             'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryController::class.'@postables'

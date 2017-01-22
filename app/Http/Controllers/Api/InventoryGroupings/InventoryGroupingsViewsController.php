@@ -4,7 +4,7 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Http\Controllers\Api\Inventory;
+namespace Kabooodle\Http\Controllers\Api\InventoryGroupings;
 
 use Binput;
 use Exception;
@@ -15,9 +15,9 @@ use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Views\TrackViewableViewCommand;
 
 /**
- * Class InventoryViewsController
+ * Class InventoryGroupingsViewsController
  */
-class InventoryViewsController extends AbstractApiController
+class InventoryGroupingsViewsController extends AbstractApiController
 {
     use ShoppableTrait;
 

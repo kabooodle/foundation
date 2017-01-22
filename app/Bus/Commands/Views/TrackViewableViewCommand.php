@@ -4,17 +4,17 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Commands\Inventory;
+namespace Kabooodle\Bus\Commands\Views;
 
+use Kabooodle\Models\Contracts\Viewable;
 use Kabooodle\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
-use Kabooodle\Models\Contracts\ShoppableInterface;
 
 /**
- * Class TrackInventoryViewCommand
+ * Class TrackViewableViewCommand
  */
-final class TrackInventoryViewCommand
+final class TrackViewableViewCommand
 {
     use InteractsWithQueue, Queueable;
 
@@ -34,12 +34,13 @@ final class TrackInventoryViewCommand
     public $ipAddress;
 
     /**
-     * TrackInventoryViewCommand constructor.
+     * TrackViewableViewCommand constructor.
+     *
      * @param User|null $actor
-     * @param ShoppableInterface $resource
+     * @param Viewable $resource
      * @param string $ipAddress
      */
-    public function __construct(User $actor = null, ShoppableInterface $resource, string $ipAddress)
+    public function __construct(User $actor = null, Viewable $resource, string $ipAddress)
     {
         $this->actor = $actor;
         $this->resource = $resource;
@@ -63,9 +64,9 @@ final class TrackInventoryViewCommand
     }
 
     /**
-     * @return ShoppableInterface
+     * @return Viewable
      */
-    public function getResource(): ShoppableInterface
+    public function getResource(): Viewable
     {
         return $this->resource;
     }

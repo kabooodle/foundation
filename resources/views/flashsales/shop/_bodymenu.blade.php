@@ -2,7 +2,7 @@
 <div class="clearfix">
     <div class="pull-left">
         <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ rand(0,50) }} <span class="text-muted">Sales</span></span>
-        <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ isset($shoppable) ? $shoppable->totalPageViews() : rand(0,10) }} <span class="text-muted">Views</span></span>
+        <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ isset($shoppable) ? $shoppable->totalViews() : rand(0,10) }} <span class="text-muted">Views</span></span>
     </div>
     <div class="btn-toolbar pull-right">
         @if(! $inventory->canSatisfyRequestedQuantityOf(1))

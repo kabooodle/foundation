@@ -5,12 +5,11 @@
  */
 
 namespace Kabooodle\Models\Traits;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+
 use Kabooodle\Models\Listings;
-use Kabooodle\Models\PageViews;
 
 /**
- * Class AuthorableTrait
+ * Class ListableTrait
  * @package Kabooodle\Models\Traits
  */
 trait ListableTrait
@@ -79,13 +78,5 @@ trait ListableTrait
     public function canSatisfyRequestedQuantityOf($qty = 1): bool
     {
         return $this->getAvailableQuantity() >= $qty;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function pageViews()
-    {
-        return $this->morphMany(PageViews::class, 'listable');
     }
 }

@@ -8,6 +8,8 @@ namespace Kabooodle\Models;
 
 use Carbon\Carbon;
 use JonnyPickett\EloquentSTI\SingleTableInheritance;
+use Kabooodle\Models\Contracts\Viewable;
+use Kabooodle\Models\Traits\ViewableTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Models\Traits\WatchableTrait;
@@ -22,7 +24,7 @@ use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
 /**
  * Class ListingItems
  */
-class ListingItems extends AbstractListingModel implements ShoppableInterface, WatchableInterface
+class ListingItems extends AbstractListingModel implements ShoppableInterface, WatchableInterface, Viewable
 {
     use ObfuscatesIdTrait,
         PresentableTrait,
@@ -30,7 +32,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         SoftDeletes,
         UuidableTrait,
         WatchableTrait,
-        SingleTableInheritance;
+        SingleTableInheritance,
+        ViewableTrait;
 
     /**
      * @var array
@@ -210,14 +213,6 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function pageViews()
-    {
-        return $this->morphMany(PageViews::class, 'shoppable');
-    }
-
-    /**
      * @return mixed
      */
     public function pendingSales()
@@ -331,5 +326,21 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         }
 
         return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasViewableChild(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getViewableChild()
+    {
+        return $this->listedItem;
     }
 }

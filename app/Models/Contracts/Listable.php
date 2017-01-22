@@ -64,9 +64,4 @@ interface Listable
      * @return float
      */
     public function getWholesalePriceUsdAttribute($value): float;
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function pageViews();
 }

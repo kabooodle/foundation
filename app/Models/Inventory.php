@@ -11,7 +11,9 @@ use Carbon\Carbon;
 use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
 use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Contracts\Viewable;
 use Kabooodle\Models\Traits\ListableTrait;
+use Kabooodle\Models\Traits\ViewableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
@@ -29,7 +31,7 @@ use Kabooodle\Models\Contracts\CommentableInterface;
  * Class Inventory
  * @package Kabooodle\Models
  */
-class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable, Claimable
+class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable, Claimable, Viewable
 {
     use ClaimableTrait,
         CommentableTrait,
@@ -39,7 +41,8 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         RevisionableTrait,
         SoftDeletes,
         TaggableTrait,
-        ListableTrait;
+        ListableTrait,
+        ViewableTrait;
 
     /**
      * @var array
@@ -494,5 +497,21 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         ];
 
         $filters = $base + $filters;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasViewableChild(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return null
+     */
+    public function getViewableChild()
+    {
+        return null;
     }
 }
