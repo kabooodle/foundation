@@ -72,7 +72,7 @@ class AddFlashsaleCommandHandler
                 $flashsale->sellerGroups()->sync($groups, true);
             }
 
-            event(new FlashsaleWasCreatedEvent($flashsale));
+            event(new FlashsaleWasCreatedEvent($flashsale->id));
 
             return $flashsale;
         });

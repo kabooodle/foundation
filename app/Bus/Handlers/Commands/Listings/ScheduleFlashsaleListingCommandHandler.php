@@ -197,9 +197,7 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
      */
     public function getFlashsaleSellerGroupForUser(FlashSales $flashsale, User $actor)
     {
-        return $flashsale->sellerGroups->filter(function ($group) use ($actor) {
-            return $group->users->whereLoose('id', $actor->id);
-        })->first();
+        return $flashsale->getFlashsaleSellerGroupForUser($actor->id);
     }
 
     /**

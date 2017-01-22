@@ -1,5 +1,6 @@
 import ListingCards from '../listings/ListingCards.vue';
 import Spinny from '../Spinner.vue';
+import Followable from '../follow/Followable.vue';
 
 new Vue({
     el: '#flashsale-page',
@@ -60,6 +61,7 @@ new Vue({
     },
     components: {
         'listing-cards' : ListingCards,
-        'spinny' : Spinny
+        'spinny' : Spinny,
+        'followable' : Followable
     },
 })

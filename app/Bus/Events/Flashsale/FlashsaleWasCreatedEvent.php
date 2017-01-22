@@ -6,29 +6,30 @@
 
 namespace Kabooodle\Bus\Events\Flashsale;
 
-use Kabooodle\Models\FlashSales;
-
 /**
  * Class FlashsaleWasCreatedEvent
  * @package Kabooodle\Bus\Events\Group
  */
-class FlashsaleWasCreatedEvent
+final class FlashsaleWasCreatedEvent
 {
     /**
-     * FlashsaleWasCreatedEvent constructor.
-     *
-     * @param FlashSales $flashSales
+     * @var int
      */
-    public function __construct(FlashSales $flashSales)
+    public $flashsaleId;
+
+    /**
+     * @param int $flashsaleId
+     */
+    public function __construct(int $flashsaleId)
     {
-        $this->flashSale = $flashSales;
+        $this->flashsaleId = $flashsaleId;
     }
 
     /**
-     * @return FlashSales
+     * @return int
      */
-    public function getFlashSale()
+    public function getFlashsaleId(): int
     {
-        return $this->flashSale;
+        return $this->flashsaleId;
     }
 }

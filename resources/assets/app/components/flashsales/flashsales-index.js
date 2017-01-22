@@ -19,6 +19,11 @@ new Vue({
         searchSellers(qry){
 
         },
+        resetSearch(){
+            this.search.sale_name = null;
+            this.search.sellers = null;
+            $Bus.$emit('flashsales:reset');
+        },
         performSearch(event){
             this.search.filtering = true;
             $Bus.$emit('flashsales:filter', this.search.sale_name, this.search.sellers);

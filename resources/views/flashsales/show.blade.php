@@ -54,7 +54,7 @@
 
             <div class="row content">
                 <listing-cards
-                        fetch_endpoint="{{ apiRoute('listings.show', [$flashsale->listing->uuid]) }}"
+                        fetch_endpoint="{{ $flashsale->listing ? apiRoute('listings.show', [$flashsale->listing->uuid]) : null }}"
                         watch_endpoint="{{ apiRoute('listings.listingitems.watchers.store', ['::1::','::2::']) }}"
                         show_endpoint="{{ route('listingitems.show', ['::1::']) }}"
                 ></listing-cards>

@@ -467,6 +467,18 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
     }
 
     /**
+     * @param $userId
+     *
+     * @return mixed
+     */
+    public function getFlashsaleSellerGroupForUser($userId)
+    {
+        return $this->sellerGroups->filter(function ($group) use ($userId) {
+            return $group->users->whereLoose('id', $userId);
+        })->first();
+    }
+
+    /**
      * @return mixed
      */
     public function getIdToStringAttribute()

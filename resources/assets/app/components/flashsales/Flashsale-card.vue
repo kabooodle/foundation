@@ -1,14 +1,13 @@
 <template>
     <div class="box p-a-xs">
         <div class="item">
-            <div class="item-overlay active p-a-xs">
+            <div class="item-overlay active p-a-xs" style="z-index:999">
                 <a
                         v-if="flashsale.privacy == 'private'"
                         :href="show_endpoint"
                         class="pull-left text-u-c label danger label-md">
                     {{ flashsale.privacy }}
                 </a>
-                <div class="item-overlay active p-a-xs" style="z-index:999">
                     <followable
                             able_name="watchable"
                             unfollow_text="Watching"
@@ -19,7 +18,6 @@
                             :already_following="flashsale.is_watched ? 'true' : 'false'"
                             :endpoint="watch_endpoint"
                     ></followable>
-                </div>
             </div>
             <div class="coverimage FlexEmbed FlexEmbed--3by1"
                  :style="'background-image: url('+flashsale.coverimage.location+')'"></div>

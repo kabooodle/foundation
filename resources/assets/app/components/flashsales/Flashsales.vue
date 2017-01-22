@@ -91,7 +91,6 @@
 
                 this.fetching = true;
 
-                console.log(data);
                 this.$http.get(url, {params: data}).then((response)=>{
                     this.handleResponse(response);
                 });

@@ -1496,6 +1496,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateNotificationUsersTblChangeNameToTitle' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_07_192822_update_notification_users_tbl_change_name_to_title.php',
         'UpdateNotificationsPivot' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_02_103104_update_notifications_pivot.php',
         'UpdateNotificationsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_02_063042_update_notifications_table.php',
+        'UpdateNotificationsTblAddFlashsaleNotifications' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_22_041938_update_notifications_tbl_add_flashsale_notifications.php',
         'UpdateQueuesTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_14_202217_update_queues_tbl.php',
         'UpdateRevisionsTblAddFk' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_26_065602_update_revisions_tbl_add_fk.php',
         'UpdateShipmentsRemoveClaimAddShipmentClaims' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_04_223232_update_shipments_remove_claim_add_shipment_claims.php',

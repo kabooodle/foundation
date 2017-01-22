@@ -6,6 +6,8 @@
 
 namespace Kabooodle\Presenters\Models\Flashsales;
 
+use Carbon\Carbon;
+use Kabooodle\Models\FlashSales;
 use Kabooodle\Presenters\PresenterAbstract;
 
 /**
@@ -14,4 +16,28 @@ use Kabooodle\Presenters\PresenterAbstract;
  */
 class FlashsaleModelPresenter extends PresenterAbstract
 {
+    /**
+     * @param null $timeslot
+     *
+     * @return string
+     */
+    public function timeslot($timeslot = null)
+    {
+        if ($timeslot) {
+            return Carbon::parse($timeslot)->format('M d,y G:i:a');
+        }
+
+        return 'anytime ';
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateRange()
+    {
+        /** @var FlashSales $entity */
+        $entity = $this->entity;
+
+        return $entity->startsAtHuman().' - '.$entity->endsAtHuman();
+    }
 }

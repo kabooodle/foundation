@@ -2,12 +2,10 @@
 
 
 @section('body-menu')
-    <div class="pull-left">
-        <button type="button" id="" class="btn-toggle-filters btn btn-sm white">Filter Transactions</button>
-    </div>
 
     <div class="btn-toolbar center-block text-center">
         <div class="btn-group">
+            <button type="button" id="" class="btn-toggle-filters btn btn-sm white">Filter Flash sales</button>
             <a href="{{ route('flashsales.create') }}" class="btn btn-sm primary pull-left" >Create New</a>
 
         </div>

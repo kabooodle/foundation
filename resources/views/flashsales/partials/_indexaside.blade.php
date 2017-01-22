@@ -36,8 +36,8 @@
                 {{--</div>--}}
                 <div class="form-group row p-b-0 m-b-0">
                     <div class="col-sm-9 col-sm-offset-3">
-                        <button type="button" @click.prevent="performSearch"class="btn-sm btn primary">Go</button>
-                        <button type="button" class="btn white btn-sm btn-toggle-reset" >Reset</button>
+                        <button type="button" @click.prevent="performSearch" class="btn-sm btn primary">Go</button>
+                        <button type="button" @click.prevent="resetSearch" class="btn white btn-sm btn-toggle-reset" >Reset</button>
                         <a  href="#" class=" m-l-sm text-sm btn-toggle-filters" >Close</a>
                     </div>
                 </div>
