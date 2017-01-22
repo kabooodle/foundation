@@ -25,7 +25,6 @@ function browserSupportsAnimation(){
 export default function(size) {
     if (browserSupportsAnimation()) {
 
-        console.log(size);
         let sizeclass = '';
         switch(size){
             case '6':

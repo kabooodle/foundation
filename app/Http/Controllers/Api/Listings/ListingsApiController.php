@@ -83,6 +83,7 @@ class ListingsApiController extends AbstractApiController
 
             return $this->setData($items)->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
         }
     }

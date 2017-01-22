@@ -43,7 +43,7 @@ class FlashsalesGroupsApiController extends AbstractApiController
         } catch (ValidationException $e) {
             return $this->setData(['msg' => 'Some fields require attention', 'errors' => $e->validator->errors()])->setStatusCode(400)->respond();
         } catch (Exception $e) {
-            dd($e->getMessage());
+            Bugsnag::notifyException($e);
             return $this->setData(['msg' => 'An error occurred, please try again'])->setStatusCode(500)->respond();
         }
     }
@@ -72,6 +72,7 @@ class FlashsalesGroupsApiController extends AbstractApiController
 
             return $this->setData($data)->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setData(['data' => []])->respond();
         }
     }

@@ -93,6 +93,7 @@ class ListingItemsClaimsController extends AbstractApiController
         } catch (RequestedQuantityCannotBeSatisfiedException $e) {
             return $this->setData(['msg' => $e->getMessage()])->setStatusCode(500)->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setData(['msg' => $e->getMessage()])->setStatusCode(500)->respond();
         }
     }

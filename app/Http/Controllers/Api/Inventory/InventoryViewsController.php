@@ -44,6 +44,7 @@ class InventoryViewsController extends AbstractApiController
 
             return $this->noContent();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
         }
     }

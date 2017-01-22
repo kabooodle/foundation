@@ -65,6 +65,7 @@ class MessengerApiController extends AbstractApiController
                 'msg' => $e->validator->messages()->first()
             ])->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
         }
     }
@@ -124,6 +125,7 @@ class MessengerApiController extends AbstractApiController
 
             return $this->noContent();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
         } catch (ValidationException $e) {
             return $this->setStatusCode(500)->setData([
@@ -154,6 +156,7 @@ class MessengerApiController extends AbstractApiController
 
             return $this->noContent();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
         }
     }

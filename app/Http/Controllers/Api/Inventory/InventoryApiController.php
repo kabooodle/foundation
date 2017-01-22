@@ -115,6 +115,7 @@ class InventoryApiController extends AbstractApiController
                 ->setData(['msg' => 'Some fields require input: '.$e->validator->messages()->first()])
                 ->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)
                 ->setData(['msg' => $e])
                 ->respond();
@@ -187,6 +188,7 @@ class InventoryApiController extends AbstractApiController
         } catch (ListingConflictsWithExistingListingException $e) {
             return $this->setStatusCode(500)->setData(['msg' => 'The date and time block you selected conflicts with an existing listing. Please select a new block of time.'])->respond();
         } catch (Exception $e){
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->setData(['msg' => $e->getMessage()])->respond();
         }
     }

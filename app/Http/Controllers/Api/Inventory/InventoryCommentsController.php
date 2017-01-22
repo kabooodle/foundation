@@ -68,6 +68,7 @@ class InventoryCommentsController extends AbstractApiController
         } catch (ValidationException $e) {
             return $this->setStatusCode(500)->response();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->response();
         }
     }
@@ -93,6 +94,7 @@ class InventoryCommentsController extends AbstractApiController
         } catch (ValidationException $e) {
             return $this->setStatusCode(500)->response();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->response();
         }
     }

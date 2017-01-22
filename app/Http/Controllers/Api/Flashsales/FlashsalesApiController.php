@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Api\Flashsales;
 
 use Binput;
+use Bugsnag;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -122,6 +123,7 @@ class FlashsalesApiController extends AbstractApiController
                 ->setData(['msg' => $e->getMessage()])
                 ->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             return $this->setStatusCode(500)
                 ->setData(['msg' => 'An error occurred please try again,'])
                 ->respond();
