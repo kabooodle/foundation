@@ -1,33 +1,54 @@
 <?php
 
-$api->put('inventory-grouping/{id}', [
-    'as' => 'inventory-grouping.update',
-    'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@update'
-]);
-$api->get('{username}/inventory-grouping', [
-    'as' => 'inventory-grouping.index',
+$api->get('{username}/inventory-groupings', [
+    'as' => 'inventory-groupings.index',
     'uses' =>  \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@index',
 ]);
-$api->get('inventory-grouping/{inventoryGroupingId}/comments', [
-    'as' => 'inventory-grouping.comments.index',
+$api->get('inventory-groupings/{groupingId}', [
+    'as' => 'inventory-groupings.show',
+    'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@show'
+]);
+$api->get('inventory-groupings/{groupingId}/comments', [
+    'as' => 'inventory-groupings.comments.index',
     'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsCommentsController::class.'@index'
 ]);
 
-$api->group(['middleware' => 'jwt.auth'], function($api){
-    $api->post('inventory-grouping/{username}/associate', [
-        'as' => 'inventory-grouping.associate.store',
-        'uses' =>  \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@associate',
+$api->group(['middleware' => 'jwt.auth'], function($api) {
+    // Inventory Groupings
+    $api->post('{username}/inventory-groupings', [
+        'as' => 'inventory-groupings.store',
+        'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@store'
     ]);
-    $api->delete('inventory-grouping/{username}/associate/{id}', [
-        'as' => 'inventory-grouping.associate.destroy',
-        'uses' =>  \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@destroyAssociation',
+    $api->put('{username}/inventory-groupings/{id}', [
+        'as' => 'inventory-groupings.update',
+        'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@update'
     ]);
-    $api->post('inventory-grouping/{inventoryGroupingId}/comments', [
-        'as' => 'inventory-grouping.comments.store',
+    $api->delete('{username}/inventory-groupings/{id}', [
+        'as' => 'inventory-groupings.destroy',
+        'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@destroy'
+    ]);
+
+    // Comments
+    $api->post('inventory-groupings/{groupingId}/comments', [
+        'as' => 'inventory-groupings.comments.store',
         'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsCommentsController::class.'@store'
     ]);
-    $api->delete('inventory-grouping/{inventoryGroupingId}/comments/{commentId}', [
-        'as' => 'inventory.comments.destroy',
+    $api->put('inventory-groupings/{groupingId}/comments/{commentId}', [
+        'as' => 'inventory-groupings.comments.update',
+        'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsCommentsController::class.'@update'
+    ]);
+    $api->delete('inventory-groupings/{groupingId}/comments/{commentId}', [
+        'as' => 'inventory-groupings.comments.destroy',
         'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsCommentsController::class.'@destroy'
+    ]);
+
+    // Associations
+    $api->post('{username}/inventory-groupings/{groupingId}/associate', [
+        'as' => 'inventory-groupings.associate.store',
+        'uses' =>  \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@associate',
+    ]);
+    $api->delete('{username}/inventory-groupings/{groupingId}/associate/{id}', [
+        'as' => 'inventory-groupings.associate.destroy',
+        'uses' =>  \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@destroyAssociation',
     ]);
 });

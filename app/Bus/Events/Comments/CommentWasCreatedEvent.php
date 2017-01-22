@@ -17,7 +17,7 @@ final class CommentWasCreatedEvent
     use SerializesModels;
 
     /**
-     * @var \Kabooodle\Models\Contracts\CommentableInterface
+     * @var \Kabooodle\Models\Contracts\Commentable
      */
     public $commentable;
 
@@ -30,9 +30,9 @@ final class CommentWasCreatedEvent
      * CommentWasCreatedEvent constructor.
      *
      * @param \Kabooodle\Models\Comments                       $comment
-     * @param \Kabooodle\Models\Contracts\CommentableInterface $commentable
+     * @param \Kabooodle\Models\Contracts\Commentable $commentable
      */
-    public function __construct(\Kabooodle\Models\Comments $comment, \Kabooodle\Models\Contracts\CommentableInterface $commentable)
+    public function __construct(\Kabooodle\Models\Comments $comment, \Kabooodle\Models\Contracts\Commentable $commentable)
     {
         $this->comment = $comment;
         $this->commentable = $commentable;
@@ -47,7 +47,7 @@ final class CommentWasCreatedEvent
     }
 
     /**
-     * @return \Kabooodle\Models\Contracts\CommentableInterface
+     * @return \Kabooodle\Models\Contracts\Commentable
      */
     public function getCommentable()
     {

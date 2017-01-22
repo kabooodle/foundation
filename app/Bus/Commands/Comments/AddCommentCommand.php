@@ -7,7 +7,7 @@
 namespace Kabooodle\Bus\Commands\Comments;
 
 use Kabooodle\Models\User;
-use Kabooodle\Models\Contracts\CommentableInterface;
+use Kabooodle\Models\Contracts\Commentable;
 
 /**
  * Class AddCommentCommand.
@@ -20,7 +20,7 @@ final class AddCommentCommand
     public $actor;
 
     /**
-     * @var CommentableInterface
+     * @var Commentable
      */
     public $commentable;
 
@@ -32,11 +32,11 @@ final class AddCommentCommand
     /**
      * AddCommentCommand constructor.
      *
-     * @param User                 $actor
-     * @param CommentableInterface $commentable
-     * @param string               $comment
+     * @param User $actor
+     * @param Commentable $commentable
+     * @param string $comment
      */
-    public function __construct(User $actor, CommentableInterface $commentable, $comment)
+    public function __construct(User $actor, Commentable $commentable, string $comment)
     {
         $this->actor = $actor;
         $this->commentable = $commentable;
@@ -52,7 +52,7 @@ final class AddCommentCommand
     }
 
     /**
-     * @return CommentableInterface
+     * @return Commentable
      */
     public function getCommentable()
     {

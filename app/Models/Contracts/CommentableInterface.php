@@ -9,10 +9,10 @@ namespace Kabooodle\Models\Contracts;
 use Kabooodle\Models\User;
 
 /**
- * Interface CommentableInterface
+ * Interface Commentable
  * @package Kabooodle\Models\Contracts
  */
-interface CommentableInterface
+interface Commentable
 {
     /**
      * @return User

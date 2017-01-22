@@ -7,36 +7,36 @@
 namespace Kabooodle\Bus\Handlers\Commands\Comments;
 
 use Exception;
-use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
-use Kabooodle\Bus\Events\Comments\CommentWasDeletedEvent;
+use Kabooodle\Bus\Events\Comments\CommentWasUpdatedEvent;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Comments;
 use Kabooodle\Models\Contracts\Commentable;
-use Kabooodle\Bus\Commands\Comments\DeleteCommentCommand;
+use Kabooodle\Bus\Commands\Comments\UpdateCommentCommand;
 
 /**
- * Class DeleteCommentCommandHandler
+ * Class UpdateCommentCommandHandler
  * @package Kabooodle\Bus\Handlers\Commands\Comments
  */
-class DeleteCommentCommandHandler
+class UpdateCommentCommandHandler
 {
     /**
-     * @param DeleteCommentCommand $command
+     * @param UpdateCommentCommand $command
      *
      * @throws Exception
      */
-    public function handle(DeleteCommentCommand $command)
+    public function handle(UpdateCommentCommand $command)
     {
         $actor = $command->getActor();
         $commentable = $command->getCommentable();
         $comment = $command->getComment();
 
-        if ($this->userCanDeleteComment($actor, $commentable, $comment)) {
-            $comment->delete();
+        if ($this->userCanUpdateComment($actor, $commentable, $comment)) {
+            $comment->text_raw = $command->getText();
+            $comment->save();
 
-            event(new CommentWasDeletedEvent($actor, $comment));
+            event(new CommentWasUpdatedEvent($actor, $comment));
         } else {
-            throw new Exception('User is not authorized to delete the comment');
+            throw new Exception('User is not authorized to Update the comment');
         }
     }
 
@@ -47,7 +47,7 @@ class DeleteCommentCommandHandler
      *
      * @return bool
      */
-    public function userCanDeleteComment(User $actor, Commentable $commentable, Comments $comment)
+    public function userCanUpdateComment(User $actor, Commentable $commentable, Comments $comment)
     {
         // Is actor author of comment?
         if ($actor->id === $comment->author->id) {

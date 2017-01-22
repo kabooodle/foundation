@@ -33,51 +33,13 @@ class InventoryGroupingsController extends AbstractApiController
      */
     public function index()
     {
-        // Begin the user inventory query.
-        $groupings = [];
-        $data = $this->getUser()->inventory()->NoEagerLoads()->with(['style', 'styleSize', 'files']);
-        $data = $data->get()->groupBy('inventory_type_styles_id');
-        foreach($data as $styleId => $items) {
-            $groupings[$styleId] = [
-                'name' => null,
-                'total' => $items->count(),
-                'id' => $styleId,
-            ];
-            if ($items->count() > 0) {
-                foreach($items as $item) {
-                    if(! $groupings[$styleId]['name']) {
-                        $groupings[$styleId]['name'] = $item->style->name;
-                    }
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['id'] = $item->styleSize->id;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['name'] = $item->styleSize->name;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['items'][] = [
-                        'id' => $item->id,
-                        'name_uuid' => $item->name_uuid,
-                        'uuid' => $item->uuid,
-                        'size_id' => $item->styleSize->id,
-                        'size_name' => $item->styleSize->name,
-                        'style_id' => $styleId,
-                        'style_name' => $item->style->name,
-                        'images' => $item->files->toArray(),
-                        'initial_qty' => $item->initial_qty,
-                        'price_usd' => $item->price_usd,
-                        'files' => $item->files,
-                        'cover_photo' => $item->cover_photo
-                    ];
-                }
+        $data = $this->getUser()
+            ->inventoryGroupings()
+            ->NoEagerLoads()
+            ->with(['inventory', 'files', 'views', 'comments'])
+            ->get();
 
-                // Sort based on the order key.
-                usort($groupings[$styleId]['sizes'], function ($item1, $item2) {
-                    return $item1['order'] <=> $item2['order'];
-                });
-            }
-        }
-
-        sort($groupings);
-
-        return $this->setData($groupings)->respond();
+        return $this->setData($data)->respond();
     }
 
     /**

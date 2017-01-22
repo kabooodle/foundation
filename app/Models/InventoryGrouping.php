@@ -25,13 +25,13 @@ use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
-use Kabooodle\Models\Contracts\CommentableInterface;
+use Kabooodle\Models\Contracts\Commentable;
 
 /**
  * Class InventoryGrouping
  * @package Kabooodle\Models
  */
-class InventoryGrouping extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, Listable, Claimable, Viewable
+class InventoryGrouping extends BaseEloquentModel implements Commentable, LikeableInterface, Revisionable, Listable, Claimable, Viewable
 {
     use ClaimableTrait,
         CommentableTrait,

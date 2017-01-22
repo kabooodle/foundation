@@ -357,6 +357,14 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function inventoryGroupings()
+    {
+        return $this->hasMany(InventoryGrouping::class, 'user_id');
+    }
+
+    /**
      * @return array
      */
     public function inventoryGroupByStyle()

@@ -6,14 +6,14 @@
 
 namespace Kabooodle\Bus\Commands\Comments;
 
-use Kabooodle\Models\User;
 use Kabooodle\Models\Comments;
 use Kabooodle\Models\Contracts\Commentable;
+use Kabooodle\Models\User;
 
 /**
- * Class DeleteCommentCommand.
+ * Class UpdateCommentCommand.
  */
-final class DeleteCommentCommand
+final class UpdateCommentCommand
 {
     /**
      * @var User
@@ -31,17 +31,24 @@ final class DeleteCommentCommand
     public $comment;
 
     /**
-     * DeleteCommentCommand constructor.
+     * @var string
+     */
+    public $text;
+
+    /**
+     * UpdateCommentCommand constructor.
      *
      * @param User $actor
      * @param Commentable $commentable
      * @param Comments $comment
+     * @param string $text
      */
-    public function __construct(User $actor, Commentable $commentable, Comments $comment)
+    public function __construct(User $actor, Commentable $commentable, Comments $comment, string $text)
     {
         $this->actor = $actor;
         $this->commentable = $commentable;
         $this->comment = $comment;
+        $this->text = $text;
     }
 
     /**
@@ -66,5 +73,13 @@ final class DeleteCommentCommand
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * @return string
+     */
+    public function getText(): string
+    {
+        return $this->text;
     }
 }

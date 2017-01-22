@@ -8,22 +8,22 @@ namespace Kabooodle\Bus\Handlers\Commands\InventoryGroupings;
 
 use DB;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Kabooodle\Bus\Commands\InventoryGroupings\CreateInventoryGroupingCommand;
+use Kabooodle\Bus\Commands\InventoryGroupings\DestroyInventoryGroupingCommand;
 
 /**
- * Class CreateInventoryGroupingCommandHandler
+ * Class DestroyInventoryGroupingCommandHandler
  * @package Kabooodle\Bus\Handlers\Commands\InventoryGroupings
  */
-class CreateInventoryGroupingCommandHandler
+class DestroyInventoryGroupingCommandHandler
 {
     use DispatchesJobs;
 
     /**
-     * @param CreateInventoryGroupingCommand $command
+     * @param DestroyInventoryGroupingCommand $command
      *
      * @return array
      */
-    public function handle(CreateInventoryGroupingCommand $command)
+    public function handle(DestroyInventoryGroupingCommand $command)
     {
 
     }
