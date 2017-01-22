@@ -41,10 +41,39 @@ class PushQueueController extends AbstractApiController
     }
 
 
+
+
+
     public function queueEmailHandler(Request $request)
     {
         return $this->handler($request, 'iron-emails');
     }
+    public function queueEmailBHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-emails-b');
+    }
+    public function queueEmailCHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-emails-c');
+    }
+    public function queueEmailDHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-emails-d');
+    }
+    public function queueEmailEHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-emails-e');
+    }
+    public function queueEmailFHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-emails-f');
+    }
+    public function queueEmailGHandler(Request $request)
+    {
+        return $this->handler($request, 'iron-emails-g');
+    }
+
+
 
 
 
@@ -53,7 +82,6 @@ class PushQueueController extends AbstractApiController
     {
         return $this->handler($request, 'iron-viewtracker');
     }
-
     public function queueViewTrackerBHandler(Request $request)
     {
         return $this->handler($request, 'iron-viewtracker-b');
@@ -89,6 +117,11 @@ class PushQueueController extends AbstractApiController
     {
         return $this->handler($request, 'iron-facebook-scheduler-e');
     }
+
+
+
+
+
 
     /**
      * @param Request $request
@@ -135,6 +168,8 @@ class PushQueueController extends AbstractApiController
     {
         return $this->handler($request, 'iron-facebook-lister-j');
     }
+
+
 
 
 

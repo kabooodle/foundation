@@ -7,7 +7,7 @@
 namespace Kabooodle\Libraries\Emails;
 
 use Closure;
-use SuperClosure;
+use SuperClosure\Serializer;
 use InvalidArgumentException;
 use Illuminate\Queue\QueueManager;
 use Kabooodle\Libraries\QueueHelper;

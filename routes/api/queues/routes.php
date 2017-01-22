@@ -3,8 +3,17 @@
 $api->post('/queues/errors', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@errorQueueHandler');
 
 $api->post('/queues/general', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueGeneralHandler');
-$api->post('/queues/email', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailHandler');
 
+// Email Queue
+$api->post('/queues/email', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailHandler');
+$api->post('/queues/email-b', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailBHandler');
+$api->post('/queues/email-c', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailCHandler');
+$api->post('/queues/email-d', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailDHandler');
+$api->post('/queues/email-e', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailEHandler');
+$api->post('/queues/email-f', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailFHandler');
+$api->post('/queues/email-g', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueEmailGHandler');
+
+// Views Tracker Queue
 $api->post('/queues/viewtracker', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueViewTrackerHandler');
 $api->post('/queues/viewtracker-b', \Kabooodle\Http\Controllers\Api\Queues\PushQueueController::class.'@queueViewTrackerBHandler');
 
