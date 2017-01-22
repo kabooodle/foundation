@@ -39,7 +39,8 @@ class EventServiceProvider extends ServiceProvider
 
         // FLASHSALE EVENTS
         \Kabooodle\Bus\Events\Flashsale\FlashsaleWasCreatedEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\Flashsales\NotifySellersFlashsaleWasCreated::class
+            \Kabooodle\Bus\Handlers\Events\Flashsales\NotifySellersFlashsaleWasCreated::class,
+            \Kabooodle\Bus\Handlers\Events\Flashsales\NotifyAdminsFlashsaleWasCreated::class,
         ],
 
 
