@@ -11,7 +11,7 @@ use Kabooodle\Models\User;
 /**
  * Class ScheduleFlashsaleListingcommand
  */
-final class ScheduleFlashsaleListingcommand
+final class ScheduleFlashsaleListingCommand
 {
     /**
      * @var User

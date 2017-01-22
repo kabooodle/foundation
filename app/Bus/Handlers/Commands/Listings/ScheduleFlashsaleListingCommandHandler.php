@@ -13,7 +13,7 @@ use Kabooodle\Models\Listings;
 use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\ListingItems;
 use Kabooodle\Bus\Events\Listings\ListingScheduledEvent;
-use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingcommand;
+use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
 use Kabooodle\Foundation\Exceptions\Listings\ListingUserIsNotSellerInFlashsaleException;
 
 /**
@@ -32,11 +32,11 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
     public $flashsale;
 
     /**
-     * @param ScheduleFlashsaleListingcommand $command
+     * @param ScheduleFlashsaleListingCommand $command
      *
      * @return mixed
      */
-    public function handle(ScheduleFlashsaleListingcommand $command)
+    public function handle(ScheduleFlashsaleListingCommand $command)
     {
         // Set a timestamp of now we can reuse for consistency.
         $this->now = Carbon::now();
@@ -133,12 +133,12 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
      *
      *
      * @param Listings               $listing
-     * @param ScheduleFlashsaleListingcommand $command
+     * @param ScheduleFlashsaleListingCommand $command
      *
      * @throws ListingUserIsNotSellerInFlashsaleException
      * @return array
      */
-    public function buildListingItems(Listings $listing, ScheduleFlashsaleListingcommand $command)
+    public function buildListingItems(Listings $listing, ScheduleFlashsaleListingCommand $command)
     {
         $selectedItems = $command->getSelectedItems();
         $actor = $command->getActor();

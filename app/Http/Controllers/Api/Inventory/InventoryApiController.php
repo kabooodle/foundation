@@ -17,7 +17,7 @@ use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
-use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingcommand;
+use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
@@ -166,7 +166,7 @@ class InventoryApiController extends AbstractApiController
             $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $itemMessage);
 
             if ($listingType == 'flashsale' && $flashsaleId) {
-                $command = new ScheduleFlashsaleListingcommand($this->getUser(), $flashsaleId, $selectedItems);
+                $command = new ScheduleFlashsaleListingCommand($this->getUser(), $flashsaleId, $selectedItems);
             } else {
                 $command = new ScheduleFacebookListingCommand(
                     $this->getUser(),
