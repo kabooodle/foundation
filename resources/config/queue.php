@@ -129,7 +129,60 @@ return [
             'encrypt' => true,
             'timeout' => 60
         ],
-
+        'iron-emails-b' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'email-queue-b',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-emails-c' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'email-queue-c',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-emails-d' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'email-queue-d',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-emails-e' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'email-queue-e',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-emails-f' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'email-queue-f',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
+        'iron-emails-g' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'email-queue-g',
+            'encrypt' => true,
+            'timeout' => 60
+        ],
 
 
         ////////////////////---------

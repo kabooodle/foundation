@@ -22,6 +22,19 @@ class QueueHelper
     /**
      * @var array
      */
+    public static $Q_EMAILS = [
+        'iron-emails',
+        'iron-emails-b',
+        'iron-emails-c',
+        'iron-emails-d',
+        'iron-emails-e',
+        'iron-emails-f',
+        'iron-emails-g'
+    ];
+
+    /**
+     * @var array
+     */
     public static $Q_FBSCHEDULER = [
         'iron-facebook-scheduler',
         'iron-facebook-scheduler-b',
@@ -101,5 +114,13 @@ class QueueHelper
     public static function pickFacebookDeleter()
     {
         return self::makeRandomSelection(self::$Q_FBDELETER);
+    }
+
+    /**
+     * @return string
+     */
+    public static function pickEmails()
+    {
+        return self::makeRandomSelection(self::$Q_EMAILS);
     }
 }

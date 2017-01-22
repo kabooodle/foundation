@@ -8,6 +8,8 @@ namespace Kabooodle\Libraries\Emails;
 
 use Closure;
 use InvalidArgumentException;
+use Illuminate\Queue\QueueManager;
+use Kabooodle\Libraries\QueueHelper;
 use Illuminate\Contracts\Mail\MailQueue;
 
 /**
@@ -27,24 +29,29 @@ abstract class AbstractEmail
     public static $view = null;
 
     /**
+     * @var \Illuminate\Queue\QueueManager
+     */
+    public static $queue = null;
+
+    /**
      * @var Closure
      */
-    protected $callable;
+    public $callable;
 
     /**
      * @var string
      */
-    protected $resourceView = null;
+    public $resourceView = null;
 
     /**
      * @var array
      */
-    protected $parameters = null;
+    public $parameters = null;
 
     /**
      * @var string
      */
-    protected $queueConnection = 'email-queue';
+    public $queueConnection = 'email-queue';
 
     /**
      * AbstractEmail constructor.
@@ -164,12 +171,13 @@ abstract class AbstractEmail
         // Inject the content parameters into this view
         $content = $this->getView()->make($this->getResourceView(), $this->getParameters())->render();
 
+        $this->getQueueManager()->connection(QueueHelper::pickEmails());
+
         // For now, we're implicitly queueing all emails.
         return $this->getMailer()->queue(
             $template,
             ['emailContent' => $content] + $this->getParameters(),
-            $this->getCallable(),
-            $this->getQueueConnectionName()
+            $this->getCallable()
         );
     }
 
@@ -195,5 +203,17 @@ abstract class AbstractEmail
         }
 
         return self::$view;
+    }
+
+    /**
+     * @return QueueManager|mixed
+     */
+    public function getQueueManager()
+    {
+        if(! self::$queue){
+            self::$queue = app()->make(QueueManager::class);
+        }
+
+        return self::$queue;
     }
 }

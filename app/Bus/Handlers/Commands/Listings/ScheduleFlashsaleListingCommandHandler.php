@@ -56,34 +56,7 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
             /** @var Listings $listing */
             $listing = $this->buildListing($command, $scheduledFor);
 
-            // If the user is an admin of the flashsale, then the timeslot is now regardless of
-            // whether they are posting early or late.
-            if ($this->canActorListToFlashsaleAnytime($this->flashsale, $actor)) {
-                $this->timeslot = $this->now;
-            } else {
-                // IF they are not an admin, does the user belong to a seller group
-                if (!$group = $this->getFlashsaleSellerGroupForUser($this->flashsale, $actor)) {
-                    // If they aren't an admin, or in a group, they can't post.
-                    // This could trigger when they are removed from the group while trying to list.
-                    throw new ListingUserIsNotSellerInFlashsaleException;
-                } else {
-                    // Timeslot assigned to them (nullable).
-                    $this->timeslot = $group->pivot->time_slot;
-
-                    // If the assigned timeslot is null, then they too can have timestamps of now, just like admins,
-                    // regardless of whether or not they are posting before the sale start.
-                    if (! $this->timeslot || is_null($this->timeslot)) {
-                        $this->timeslot =  $this->now;
-                    } else {
-                        // If they were assigned a time slot but they are posting after their time slot
-                        // We wont honor their time slot and instead use a timestamp of now.
-                        if ($this->timeslot && $this->isUserListingLaterThanTimeSlot($this->timeslot)) {
-                            $this->timeslot =  $this->now;
-                        }
-                    }
-                }
-            }
-
+            $this->timeslot = $this->getSellerTimeslot($actor);
             // Use the same timeslot value for both.
             $this->timeslot = $this->timeslot;
             $listing->scheduled_for = $this->timeslot;
@@ -190,6 +163,45 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
     }
 
     /**
+     * @param User $user
+     *
+     * @return Carbon
+     * @throws ListingUserIsNotSellerInFlashsaleException
+     */
+    public function getSellerTimeslot(User $user)
+    {
+        // If the user is an admin of the flashsale, then the timeslot is now regardless of
+        // whether they are posting early or late.
+        if ($this->isActorAdmin($this->flashsale, $user)) {
+           $timeslot = $this->now;
+        } else {
+            // IF they are not an admin, does the user belong to a seller group
+            if (!$group = $this->getFlashsaleSellerGroupForUser($this->flashsale, $user)) {
+                // If they aren't an admin, or in a group, they can't post.
+                // This could trigger when they are removed from the group while trying to list.
+                throw new ListingUserIsNotSellerInFlashsaleException;
+            } else {
+                // Timeslot assigned to them (nullable).
+                $timeslot = $group->pivot->time_slot;
+
+                // If the assigned timeslot is null, then they too can have timestamps of now, just like admins,
+                // regardless of whether or not they are posting before the sale start.
+                if (! $timeslot || is_null($timeslot)) {
+                    $timeslot =  $this->now;
+                } else {
+                    // If they were assigned a time slot but they are posting after their time slot
+                    // We wont honor their time slot and instead use a timestamp of now.
+                    if ($timeslot && $this->isUserListingLaterThanTimeSlot($timeslot)) {
+                        $timeslot =  $this->now;
+                    }
+                }
+            }
+        }
+
+        return $timeslot;
+    }
+
+    /**
      * @param FlashSales $flashsale
      * @param User       $actor
      *
@@ -206,7 +218,7 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
      *
      * @return bool
      */
-    public function canActorListToFlashsaleAnytime(FlashSales $flashsale, User $actor)
+    public function isActorAdmin(FlashSales $flashsale, User $actor)
     {
         return $flashsale->canSellerListToFlashsaleAnytime($actor->id);
     }
