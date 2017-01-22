@@ -26,8 +26,11 @@
         <div class="box-divider m-a-0"></div>
         <div class="box-body m-0 p-b-1">
             <div class="clearfix">
-                <p class="h6 _500 pull-left m-b-0">{{ $item->startsAtHuman() }} - {{ $item->endsAtHuman() }}</p>
-                <p class="pull-right m-b-0">{{ $item->sellers()->count() }} <span>Sellers</span></p>
+                <p class=" pull-left m-b-0">{{ $item->present()->getDateRange() }}</p>
+                <p class="pull-right m-b-0">
+                    <span class="">{{ $item->sellers()->count() }}</span> <span class="text-muted">Sellers</span>
+                    <span class="m-l-sm ">{{ $item->listingItems->count() }}</span> <span class="text-muted">Items</span>
+                </p>
                 {{--<div class="pull-right">--}}
                     {{--@if(! $item->saleIsActive())--}}
                         {{--@if($item->userIsAdminOrSeller(userOrGuest()))--}}

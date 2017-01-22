@@ -61,7 +61,9 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
     protected $appends = [
         'is_watched',
         'id_to_string',
-        'uuid'
+        'uuid',
+        'sellers',
+        'claimable_range'
     ];
 
     /**
@@ -264,6 +266,14 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
     /**
      * @return mixed
      */
+    public function getSellersAttribute()
+    {
+        return $this->sellers();
+    }
+
+    /**
+     * @return mixed
+     */
     public function sellers()
     {
         $sellers = collect([$this->owner]);
@@ -379,7 +389,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function startsAtHuman()
     {
-        return $this->starts_at->format('M d \'y \\a\\t h:ia');
+        return $this->starts_at->format('M d \\a\\t h:ia');
     }
 
     /**
@@ -387,7 +397,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function endsAtHuman()
     {
-        return $this->ends_at->format('M d \'y \\a\\t h:ia');
+        return $this->ends_at->format('M d \\a\\t h:ia');
     }
 
     /**
@@ -492,5 +502,27 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
     public function getUUIDAttribute()
     {
         return $this->getUUID();
+    }
+
+    /**
+     * @return string
+     */
+    public function getClaimableRangeAttribute()
+    {
+        return $this->present()->getDateRange();
+    }
+
+    /**
+     * @return bool
+     */
+    public function claimableBasedOnSchedule()
+    {
+        $now = Carbon::now();
+
+        if ($now >= $this->starts_at && $now <= $this->ends_at) {
+            return true;
+        }
+
+        return false;
     }
 }

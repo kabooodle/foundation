@@ -2,28 +2,24 @@
 
 
 @section('body-menu')
-
-    <div class="btn-toolbar center-block text-center">
-        <div class="btn-group">
-            <button type="button" id="" class="btn-toggle-filters btn btn-sm white">Filter Flash sales</button>
-            <a href="{{ route('flashsales.create') }}" class="btn btn-sm primary pull-left" >Create New</a>
-
+    <div class=" center-block text-center ">
+        <div class="row">
+            <div class="col-xs-4 col-xs-offset-4">
+                <input type="text" name="name" v-model="search.sale_name" class="form-control" @keyup.enter="performSearch" placeholder="Search by name">
+            </div>
         </div>
     </div>
 @endsection
 
 @section('body-content')
 
-            @include('flashsales.partials._indexaside', ['filters'=>[]])
-
-
-            <div class="row content">
-                <flashsales-cards
-                        fetch_endpoint="{{ apiRoute('flashsales.index') }}"
-                        watch_endpoint="{{ apiRoute('flashsales.watchers.store', ['::0::']) }}"
-                        show_endpoint="{{ route('flashsales.show', ['::0::']) }}"
-                ></flashsales-cards>
-            </div>
+    <div class="row content">
+        <flashsales-cards
+                fetch_endpoint="{{ apiRoute('flashsales.index') }}"
+                watch_endpoint="{{ apiRoute('flashsales.watchers.store', ['::0::']) }}"
+                show_endpoint="{{ route('flashsales.show', ['::0::']) }}"
+        ></flashsales-cards>
+    </div>
 
 @endsection
 

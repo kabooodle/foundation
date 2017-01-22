@@ -53,6 +53,7 @@ class ListingsApiController extends AbstractApiController
 
             $style_query = Binput::get('styles');
             $size_query = Binput::get('sizes');
+            $sellers_query = Binput::get('sellers');
 
             if ($style_query ) {
                 $items = $items->filter(function($item) use ($style_query){
@@ -63,6 +64,12 @@ class ListingsApiController extends AbstractApiController
             if ($size_query ) {
                 $items = $items->filter(function($item) use ($size_query){
                     return in_array($item->inventoryItem->inventory_sizes_id, $size_query);
+                });
+            }
+
+            if ($sellers_query) {
+                $items = $items->filter(function($item) use ($sellers_query){
+                    return in_array($item->owner_id, $sellers_query);
                 });
             }
 

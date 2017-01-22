@@ -116,6 +116,8 @@
                            class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Browse</a>
                         <a href="{{ route('flashsales.create') }}"
                            class="dropdown-item {{ Request::is('flashsales/create') ? 'active' : null }}">Create</a>
+                        <a href="{{ route('flashsales.index') }}"
+                           class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Manage</a>
                     </div>
                 </li>
             </ul>

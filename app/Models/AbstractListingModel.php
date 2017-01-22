@@ -97,6 +97,14 @@ abstract class AbstractListingModel extends BaseEloquentModel
     }
 
     /**
+     * @return bool
+     */
+    public function isFlashsale()
+    {
+        return $this->typeIs(self::TYPE_FLASHSALE);
+    }
+
+    /**
      * @param $type
      * @return bool
      */
@@ -233,6 +241,9 @@ abstract class AbstractListingModel extends BaseEloquentModel
             ->join('listing_items', 'listing_items.inventory_id', '=', 'inventory.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listings.uuid', $listingUuid)
+            ->whereNull('listing_items.deleted_at')
+            ->whereNull('listings.deleted_at')
+            ->whereNull('inventory.deleted_at')
             ->groupBy('inventory.id')
             ->groupBy('inventory_type_styles_id')
             ->groupBy('inventory_sizes_id')
@@ -241,6 +252,58 @@ abstract class AbstractListingModel extends BaseEloquentModel
                 'inventory_type_styles.id as style_id',
                 'inventory_type_styles.name as style_name',
                 'inventory_sizes.name as size_name'
+            ])
+            ->get();
+    }
+
+    /**
+     * @param int $flashsaleId
+     *
+     * @return array|static[]
+     */
+    public static function getStyleGroupingsForFlashsale(int $flashsaleId)
+    {
+        return DB::table('inventory_type_styles')
+            ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
+            ->join('inventory_sizes', 'inventory_sizes.id', '=', 'inventory.inventory_sizes_id')
+            ->join('listing_items', 'listing_items.inventory_id', '=', 'inventory.id')
+            ->join('listings','listings.id', '=', 'listing_items.listing_id')
+            ->where('listing_items.flashsale_id', $flashsaleId)
+            ->whereNull('listing_items.deleted_at')
+            ->whereNull('listings.deleted_at')
+            ->whereNull('inventory.deleted_at')
+            ->groupBy('inventory.id')
+            ->groupBy('inventory_type_styles_id')
+            ->groupBy('inventory_sizes_id')
+            ->select([
+                'inventory_sizes.id as size_id',
+                'inventory_type_styles.id as style_id',
+                'inventory_type_styles.name as style_name',
+                'inventory_sizes.name as size_name'
+            ])
+            ->get();
+    }
+
+    /**
+     * @param int $flashsaleId
+     *
+     * @return array|static[]
+     */
+    public static function getSellersForFlashsale(int $flashsaleId)
+    {
+        return DB::table('users')
+            ->join('listing_items', 'listing_items.owner_id', '=', 'users.id')
+            ->join('listings','listings.id', '=', 'listing_items.listing_id')
+            ->where('listing_items.flashsale_id', $flashsaleId)
+            ->whereNull('listing_items.deleted_at')
+            ->whereNull('listings.deleted_at')
+            ->groupBy('users.id')
+            ->select([
+                'users.id as id',
+                'users.username as username',
+                'users.first_name as firstname',
+                'users.last_name as lastname',
+                DB::raw('count(listing_items.id) AS items_count'),
             ])
             ->get();
     }

@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\FlashSales;
 
 use Binput;
+use Kabooodle\Models\Listings;
 use Messages;
 use Illuminate\Http\Request;
 use Kabooodle\Models\FlashSales;
@@ -41,9 +42,17 @@ class FlashSalesController extends Controller
      */
     public function show(FlashsaleViewRequest $request, $idAndName)
     {
-        $flashsale = $request->getFlashsale()->load('listing');
+        $flashsale = $request->getFlashsale(['listing']);
 
-        return $this->view('flashsales.show')->with(compact('flashsale'));
+        $rawCategories = collect(Listings::getStyleGroupingsForFlashsale($flashsale->id));
+
+        $categories = $rawCategories->groupBy('style_name')->transform(function($item, $k){
+            return $item->groupBy('size_name');
+        });
+
+        $sellersCategories = collect(Listings::getSellersForFlashsale($flashsale->id));
+
+        return $this->view('flashsales.show')->with(compact('flashsale', 'categories', 'sellersCategories'));
     }
 
 

@@ -270,6 +270,11 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     public function claimableBasedOnSchedule()
     {
         $now = Carbon::now();
+
+        if ($this->isFlashsale()) {
+            return $this->flashsale->claimableBasedOnSchedule();
+        }
+
         $claimableAt = $this->listing->claimable_at;
         $scheduledFor = $this->listing->scheduled_for;
 

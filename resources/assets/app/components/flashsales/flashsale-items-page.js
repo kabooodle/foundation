@@ -7,6 +7,7 @@ new Vue({
     data: {
         styles: [],
         sizes: [],
+        sellers: [],
         filtering: false,
         filtered: null
     },
@@ -18,45 +19,49 @@ new Vue({
     },
     computed: {
         has_filters(){
-            return (this.styles.length > 0 || this.sizes.length > 0);
+            return (this.styles.length > 0 || this.sizes.length > 0 || this.sellers.length > 0);
         },
     },
     methods: {
-        toggleStyleListItem(styleId, event){
+        toggleFilterParent(key, id, event){
             let $el = $(event.target).closest('.style-list-item');
-            styleId = parseInt(styleId);
+            id = parseInt(id);
             if ($el.hasClass('active')) {
                 $el.removeClass('active');
-                let index = this.styles.indexOf(styleId);
-                if (index >= 0) {
-                    this.styles.splice(index, 1);
+                if(id){
+                    let index = this.$data[key].indexOf(id);
+                    if (index >= 0) {
+                        this.$data[key].splice(index, 1);
+                    }
                 }
+
             } else {
                 $el.addClass('active');
-                this.styles.push(styleId);
+                if(id){
+                    this.$data[key].push(id);
+                }
             }
         },
-        toggleSizeListItem(sizeId, styleId, event){
+        toggleFilterChild(key, id, event){
             let $el = $(event.target).closest('.size-list-item');
-            sizeId = parseInt(sizeId);
-            styleId = parseInt(styleId);
+            id = parseInt(id);
 
             if ($el.hasClass('active')) {
                 $el.removeClass('active');
                 $el.find('.nav-text').find('i.selected-icon').remove();
-                let index = this.sizes.indexOf(sizeId);
+                let index = this.$data[key].indexOf(id);
                 if (index >= 0) {
-                    this.sizes.splice(index, 1);
+                    this.$data[key].splice(index, 1);
                 }
             } else {
                 $el.addClass('active');
                 $el.find('.nav-text').html($el.find('.nav-text').html()+' <i class="fa selected-icon fa-check-circle" aria-hidden="true"></i>');
-                this.sizes.push(sizeId);
+                this.$data[key].push(id);
             }
         },
         filterListing(){
             this.filtering = true;
-            $Bus.$emit('listing-filter:request', this.styles, this.sizes);
+            $Bus.$emit('listing-filter:request', this.styles, this.sizes, this.sellers);
         }
     },
     components: {

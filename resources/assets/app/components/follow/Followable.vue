@@ -8,7 +8,7 @@
                 :class="btnclass"
         >
             <span v-html="is_following ? unfollow_text : follow_text"></span>
-            <spinner v-if="processing" :size="'' + 6"></spinner>
+            <spinner v-if="processing" :size="'' + 8"></spinner>
         </button>
     </span>
 </template>
@@ -17,6 +17,9 @@
     import currentUser from '../current-user';
     export default{
         props: {
+            show_on_hover: {
+                default: 0
+            },
             able_name : {
                 type : String,
                 default: function(){
@@ -96,6 +99,12 @@
                     theClass = theClass + ' disabled ';
                 }
 
+                if (this.show_btn_on_hover) {
+                    if (! this.following && ! this.processing) {
+                        theClass = theClass + ' show-on-overlay-hover ';
+                    }
+                }
+
                 return theClass;
             },
             is_following(){
@@ -103,6 +112,9 @@
                     return (this.already_following === true || this.already_following === 'true' || this.following === 'true' || this.following === true);
                 }
             },
+            show_btn_on_hover(){
+                return this.show_on_hover === 1 || this.show_on_hover === '1';
+            }
         },
         methods: {
             entityIsMe: function(){

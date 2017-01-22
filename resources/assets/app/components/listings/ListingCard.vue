@@ -12,6 +12,7 @@
                             able_name="watchable"
                             unfollow_text="Watching"
                             follow_text="Watch"
+                            show_on_hover="1"
                             btn_size_class="pull-right label dark-white text-color btn-xs"
                             able_type="Kabooodle\Models\ListingItems"
                             :able_id="'' + item.id"

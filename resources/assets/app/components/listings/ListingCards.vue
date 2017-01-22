@@ -52,17 +52,19 @@
                 filtering: false,
                 filters: {
                     styles: [],
-                    sizes: []
+                    sizes: [],
+                    sellers: [],
                 }
             }
         },
         created(){
-            $Bus.$on('listing-filter:request', (styles, sizes)=>{
+            $Bus.$on('listing-filter:request', (styles, sizes, sellers)=>{
                 this.filtering = true;
                 this.filters.styles = styles;
                 this.filters.sizes = sizes;
+                this.filters.sellers = sellers;
                 this.items = [];
-                this.fetchItems(this.fetch_endpoint, {styles: styles, sizes: sizes});
+                this.fetchItems(this.fetch_endpoint, {styles: styles, sizes: sizes, sellers: sellers});
             });
 
             this.fetchItems(this.fetch_endpoint);

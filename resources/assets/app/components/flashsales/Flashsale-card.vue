@@ -12,7 +12,8 @@
                             able_name="watchable"
                             unfollow_text="Watching"
                             follow_text="Watch"
-                            btn_size_class="pull-right label dark-white text-color btn-xs"
+                            show_on_hover="1"
+                            btn_size_class="pull-right  label dark-white text-color btn-xs"
                             able_type="Kabooodle\Models\Flashsales"
                             :able_id="'' + flashsale.id"
                             :already_following="flashsale.is_watched ? 'true' : 'false'"
@@ -24,13 +25,13 @@
         </div>
         <div class="p-a-xs clearfix">
             <div class="text-muted ">
-                <span class="text-xs">{{ flashsale.starts_at }} - {{ flashsale.ends_at }}</span>
+                <span class="text-xs">{{ daterange }}</span>
             </div>
             <div class="m-b-0 h-2x"><a :href="show_endpoint" class="_800">{{ flashsale.name }}</a></div>
             <div class="text-xs pull-right">
                 <a :href="show_endpoint"><span class="_600">{{ flashsale.watchers.length }}</span> <span class="text-muted"> Watchers</span></a>
-                <!--<a class="m-l-1" :href="show_endpoint"><span class="_600">{{ flashsale.sellers.length }}</span>  <span class="text-muted">Sellers</span></a>-->
-                <a class="m-l-1" :href="show_endpoint"><span class="_600">{{ flashsale.listing_items.length }}</span><span class="text-muted"> Items</span></a>
+                <a class="m-l-sm" :href="show_endpoint"><span class="_600">{{ flashsale.sellers.length }}</span>  <span class="text-muted">Sellers</span></a>
+                <a class="m-l-sm" :href="show_endpoint"><span class="_600">{{ flashsale.listing_items.length }}</span><span class="text-muted"> Items</span></a>
             </div>
         </div>
     </div>
@@ -56,6 +57,12 @@
         data(){
             return{
                 msg:'hello vue'
+            }
+        },
+        computed: {
+            daterange(){
+                const format = 'MMM D h:mma';
+                return moment(this.flashsale.starts_at).format(format)+' - '+ moment(this.flashsale.ends_at).format(format);
             }
         },
         components:{

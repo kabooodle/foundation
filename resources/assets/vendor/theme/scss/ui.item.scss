@@ -99,3 +99,13 @@
 .opacity-3{
   opacity: 0.3;
 }
+.item {
+  .show-on-overlay-hover{
+    display:none;
+  }
+  &:hover {
+    .show-on-overlay-hover{
+      display: block;
+    }
+  }
+}

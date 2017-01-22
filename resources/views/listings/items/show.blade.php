@@ -51,12 +51,16 @@
                     <span class="pull-left">
                         @include('listings._listingtype', ['_type' => $listingItem->type]) {{ $listingItem->sale_name }} - {{ $listingItem->getNameOfResource() }}
                         @if($listingItem->type == 'flashsale')
-                            <a href="{{ route('flashsales.show', [$listingItem->flashsale->uuid] ) }}"class="m-t-xs block link btn-link text-primary">View flashsale</a>
+                            <a href="{{ route('flashsales.show', [$listingItem->flashsale->uuid] ) }}"class="m-t-xs block link btn-link text-primary">Back to flash sale</a>
                         @else
                             <a href="{{ route('listings.show', [$listingItem->listing->uuid] ) }}"class="m-t-xs block link btn-link text-primary">More items from {{ $listingItem->owner->username }}</a>
                         @endif
                     </span>
-                    <span class="pull-right m-b-0 text-muted text-sm">Items can be claimed {{ $listingItem->listing->claimable_range }}</span>
+                    @if($listingItem->type == 'flashsale')
+                        <span class="pull-right m-b-0 text-muted text-sm">Items can be claimed {{ $listingItem->flashsale->claimable_range }}</span>
+                    @else
+                        <span class="pull-right m-b-0 text-muted text-sm">Items can be claimed {{ $listingItem->listing->claimable_range }}</span>
+                    @endif
                 </h4>
             </div>
         </div>

@@ -1,9 +1,66 @@
 $size : 16px;
 
+.kabooodle__spinner.__size6{
+  height: 6px;
+  width: 8px;
+  &:before,
+  &:after {
+    height:6px;
+    width:6px;
+    margin: -3px 0 0 -3px;
+    border-width: 1px;
+  }
+}
+
+.kabooodle__spinner.__size8{
+  height: 8px;
+  width: 10px;
+  &:before,
+  &:after {
+    height:8px;
+    width:8px;
+    margin: -4px 0 0 -4px;
+    border-width: 1.8px;
+  }
+}
+
+.kabooodle__spinner.__size10{
+  height: 10px;
+  width:12px;
+  &:before,
+  &:after {
+    height:10px;
+    width:10px;
+    margin: -5px 0 0 -5px;
+    border-width: 1.8px;
+  }
+}
+
+.kabooodle__spinner.__size12{
+  height: 12px;
+  width:14px;
+  &:before,
+  &:after {
+    height:12px;
+    width:12px;
+    margin: -6px 0 0 -6px;
+  }
+}
+
+.kabooodle__spinner.__size14{
+  height: 14px;
+  width:16px;
+  &:before,
+  &:after {
+    height:14px;
+    width:14px;
+  }
+}
+
 .kabooodle__spinner {
   position: relative;
-  width: ($size * 2);
-  margin: 2px 2px -2px 2px;
+  width: ($size + 2);
+  margin: -2px 0px 0px 0px;
   height: $size;
   background: transparent;
   display: inline-block;

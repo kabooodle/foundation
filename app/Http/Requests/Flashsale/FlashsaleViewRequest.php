@@ -19,14 +19,16 @@ class FlashsaleViewRequest extends Request
     use ObfuscatesIdTrait;
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|FlashSales
+     * @param array $relations
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getFlashsale()
+    public function getFlashsale($relations = [])
     {
         $idAndName = $this->route('flashsales');
         $decryptedId = $this->obfuscateFromURIString($idAndName);
 
-        return FlashSales::findOrFail($decryptedId);
+        return $relations ? FlashSales::with($relations)->findOrFail($decryptedId) : FlashSales::findOrFail($decryptedId);
     }
 
     /**
