@@ -526,7 +526,7 @@ class User extends BaseEloquentModel implements
         $asAdmin = $this->currentFlashsalesAsAdmin;
         if ($asAdmin){
             foreach ($asAdmin as $adminFlashsale) {
-                $ownerFlashsale->my_post_time = null;
+                $adminFlashsale->my_post_time = null;
                 $flashsales->push($adminFlashsale);
             }
         }
