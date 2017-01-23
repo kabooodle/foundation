@@ -1,9 +1,9 @@
 <template>
     <div>
         <spinny v-if="fetching" :size="'' + 28" class="text-center center-block" ></spinny>
-        <div v-if="items.length > 0">
             <listing-card
                     v-for="item in items"
+                    :key="item.id"
                     :item="item"
                     :inventory_item="item.inventory_item"
                     :watch_endpoint="watch_endpoint.replace(/::1::/, item.listing_id).replace(/::2::/, item.id)"
@@ -20,7 +20,6 @@
                     <spinny class="text-center center-block" :size="'' + 38"></spinny>
                 </span>
             </infinite-loading>
-        </div>
     </div>
 </template>
 <script>
