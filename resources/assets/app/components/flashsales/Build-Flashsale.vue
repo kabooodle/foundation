@@ -145,9 +145,15 @@
 
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-9">
-                <button type="button" :disabled="isSaving" :class="isSaving ? 'disabled' : null" @click.prevent="addSellerContainer(null,null, $event)" class="btn white">Add sellers group</button>
-                <button type="button" :disabled="isSaving" :class="isSaving ? 'disabled' : null" class="btn primary" @click.prevent="saveFlashsale">
-                    Save <spinny v-if="isSaving"></spinny>
+                <button type="button" :disabled="isSaving || isDeleting" :class="isSaving || isDeleting ? 'disabled' : null" @click.prevent="addSellerContainer(null,null, $event)" class="btn white">Add sellers group</button>
+                <button type="button" :disabled="isSaving || isDeleting" :class="isSaving || isDeleting ? 'disabled' : null" class="btn primary" @click.prevent="saveFlashsale">
+                    <template v-if="isEditing">Update and Save</template>
+                    <template v-else>Save</template>
+                    <spinny v-if="isSaving"></spinny>
+                </button>
+                <button v-if="isEditing" type="button" :disabled="isSaving || isDeleting" :class="isSaving || isDeleting ? 'disabled' : null" class="btn warning"
+                        @click.prevent="deleteFlashsale">
+                    Delete <spinny v-if="isDeleting" color="white"></spinny>
                 </button>
             </div>
         </div>
@@ -190,6 +196,7 @@
                 admins: false,
                 sellers: false,
             },
+            isDeleting: false,
             isEditing: false,
             isSaving: false,
             privacy_options: [
@@ -469,6 +476,28 @@
                            text: response.body.data.msg
                         });
                     }
+                });
+            },
+            deleteFlashsale(event){
+                confirmModal(($noty)=>{
+                    $noty.close();
+                    this.isDeleting = true;
+                    this.$http.delete(this.save_endpoint).then((response)=>{
+                        notify({
+                            text: response.body.data.msg,
+                            type: 'success'
+                        });
+                        setTimeout(()=>{
+                           window.location.href = response.body.data.redirect;
+                        }, 1500);
+                    }, (response)=>{
+                        this.isDeleting = true;
+                        if (response.body.data.hasOwnProperty('msg')) {
+                            notify({
+                                text: response.body.data.msg
+                            });
+                        }
+                    });
                 });
             },
         },

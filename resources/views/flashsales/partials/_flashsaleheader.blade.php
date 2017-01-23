@@ -9,22 +9,6 @@
                 @if($item->saleHasEnded())
                         <span class="pull-left text-u-c label label-md info">Sale ended</span>
                 @endif
-                    <div class="pull-right">
-                    <followable
-                            able_name="watchable"
-                            unfollow_text="Watching"
-                            follow_text="Watch"
-                            btn_size_class="block label dark-white text-color btn-xs"
-                            able_type="Kabooodle\Models\Flashsales"
-                            :able_id="'' + {{ $item->id }}"
-                            already_following="{{ $item->is_watched ? 'true' : 'false' }}"
-                            endpoint="{{ apiRoute('flashsales.watchers.store', [$item->id]) }}"
-                    ></followable>
-                @if(user() && $item->canSellerListToFlashsaleAnytime(user()->id))
-                        <a href="{{ route('flashsales.edit', [$item->getUUID()]) }}"
-                           class="m-t-1 block btn dark-white text-color btn-xs"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                @endif
-                    </div>
             </div>
 
             <div class="item-overlay-bottom active p-a">

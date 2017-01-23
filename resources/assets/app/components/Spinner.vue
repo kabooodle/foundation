@@ -10,11 +10,15 @@
             size: {
                 type: String,
                 default: '12'
-            }
+            },
+            color: {
+                type: String,
+                default: null,
+            },
         },
         computed : {
             img(){
-                return spinner(this.size);
+                return spinner(this.size, this.color);
             }
         },
     }

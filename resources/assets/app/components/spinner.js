@@ -22,9 +22,8 @@ function browserSupportsAnimation(){
     return false;
 }
 
-export default function(size) {
+export default function(size, color) {
     if (browserSupportsAnimation()) {
-
         let sizeclass = '';
         switch(size){
             case '6':
@@ -46,7 +45,8 @@ export default function(size) {
                 sizeclass = '';
                 break;
         }
-        return '<span class="kabooodle__spinner '+sizeclass+' "></span>';
+        let colorClass = color && color == 'white' ? '__white' : '';
+        return '<span class="kabooodle__spinner '+sizeclass+' '+colorClass+' "></span>';
     } else {
         let src = KABOOODLE_APP.makeStaticAsset("assets/images/icons/ring-alt.gif");
         return '<img  src="'+src+'" style="margin:-2px 2px 0 0; padding:0;" height="'+size+'" width="'+size+'" >';

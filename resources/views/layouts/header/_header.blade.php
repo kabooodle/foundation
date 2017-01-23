@@ -117,18 +117,10 @@
                         @if(user())
                         <a href="{{ route('flashsales.create') }}"
                            class="dropdown-item {{ Request::is('flashsales/create') ? 'active' : null }}">Create</a>
-                        <a href="{{ route('flashsales.index') }}"
-                           class="dropdown-item {{ Request::is('flashsales/*/edit') ? 'active' : null }}">Manage</a>
                         @endif
                     </div>
                 </li>
             </ul>
-
-            {{--<div class="navbar-form form-inline pull-right pull-none-sm navbar-item v-m">--}}
-                {{--<div class="form-group l-h m-a-0">--}}
-                {{--<input type="text" id="app_search" class="nav-search-input half-rounded form-control b-a" placeholder="Search {{ appName() }}...">--}}
-                {{--</div>--}}
-            {{--</div>--}}
         </div>
     </div>
 </div>

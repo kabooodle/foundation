@@ -1,7 +1,25 @@
 @extends('layouts.full', ['contentId' => 'flashsale-page'])
 
 @section('body-menu')
-    {{--@include('flashsales.partials._bodymenu')--}}
+
+    <div class="pull-right">
+        <followable
+                able_name="watchable"
+                unfollow_text="Watching"
+                follow_text="Watch"
+                btn_size_class="btn white btn-sm"
+                able_type="Kabooodle\Models\Flashsales"
+                :able_id="'' + {{ $flashsale->id }}"
+                already_following="{{ $flashsale->is_watched ? 'true' : 'false' }}"
+                endpoint="{{ apiRoute('flashsales.watchers.store', [$flashsale->id]) }}"
+        ></followable>
+        @if(user() && $flashsale->canSellerListToFlashsaleAnytime(user()->id))
+            <span class="b-l m-l m-r"></span>
+            <a href="{{ route('flashsales.edit', [$flashsale->getUUID()]) }}"
+               class="btn white btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a>
+        @endif
+    </div>
+
 @endsection
 
 

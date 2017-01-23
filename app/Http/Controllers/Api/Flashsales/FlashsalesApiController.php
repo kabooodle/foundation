@@ -18,6 +18,7 @@ use Illuminate\Validation\ValidationException;
 use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Flashsale\UpdateFlashsaleCommand;
+use Kabooodle\Bus\Commands\Flashsale\DeleteFlashsaleCommand;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleTimeSlotDateException;
 use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleInvalidEndDateException;
@@ -92,11 +93,10 @@ class FlashsalesApiController extends AbstractApiController
             // Seller groups with time_slot's must be within the flashsales date range.
             if ($sellerGroups) {
                 foreach ($sellerGroups as $sellerGroup) {
-                    if (isset($sellerGroup['time_slot']) && !is_null($sellerGroup['time_slot']) && $sellerGroup['time_slot'] <> '') {
-                        $timeSlot = Carbon::createFromFormat('m/d/Y h:ia', $sellerGroup['time_slot']);
-                        if ($timeSlot < $startsEnds->getStartsAt()) {
-                            throw new FlashsaleTimeSlotDateException('Time slot (' . $sellerGroup['time_slot'] . ' for seller group must be within flashsale date range.');
-                        }
+                    $timeslot = $this->normalizeDate(array_get($sellerGroup, 'time_slot', null));
+                    $sellerGroup['time_slot'] = $timeslot;
+                    if ($timeslot && $timeslot < $startsEnds->getStartsAt()) {
+                        throw new FlashsaleTimeSlotDateException('Time slot (' . $sellerGroup['time_slot'] . ' for seller group must be within flashsale date range.');
                     }
                 }
             }
@@ -113,7 +113,7 @@ class FlashsalesApiController extends AbstractApiController
                 $startsEnds,
                 Binput::get('privacy'),
                 $admins,
-                Binput::get('seller_groups', []),
+                $sellerGroups,
                 Binput::get('cover_photo', null)
             ));
 
@@ -166,12 +166,11 @@ class FlashsalesApiController extends AbstractApiController
 
             // Seller groups with time_slot's must be within the flashsales date range.
             if ($sellerGroups) {
-                foreach ($sellerGroups as $sellerGroup) {
-                    if (isset($sellerGroup['time_slot']) && !is_null($sellerGroup['time_slot']) && $sellerGroup['time_slot'] <> '') {
-                        $timeSlot = Carbon::createFromFormat('m/d/Y h:ia', $sellerGroup['time_slot']);
-                        if ($timeSlot < $flashsale->starts_at) {
-                            throw new FlashsaleTimeSlotDateException('Time slot (' . $sellerGroup['time_slot'] . ' for seller group must be within flashsale date range.');
-                        }
+                foreach ($sellerGroups as &$sellerGroup) {
+                    $timeslot = $this->normalizeDate(array_get($sellerGroup, 'time_slot', null));
+                    $sellerGroup['time_slot'] = $timeslot;
+                    if ($timeslot && $timeslot < $flashsale->starts_at) {
+                        throw new FlashsaleTimeSlotDateException('Time slot (' . $sellerGroup['time_slot'] . ' for seller group must be within flashsale date range.');
                     }
                 }
             }
@@ -188,7 +187,7 @@ class FlashsalesApiController extends AbstractApiController
                 Binput::get('description'),
                 Binput::get('privacy'),
                 $admins,
-                Binput::get('seller_groups', []),
+                $sellerGroups,
                 Binput::get('cover_photo')
             ));
 
@@ -206,10 +205,50 @@ class FlashsalesApiController extends AbstractApiController
                 ->respond();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
-
+            dd($e);
             return $this->setStatusCode(500)
                 ->setData(['msg' => 'An error occurred please try again,'])
                 ->respond();
         }
+    }
+
+    /**
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, $id)
+    {
+        try {
+            $flashsale = FlashSales::findOrFail($id);
+
+            if (! $flashsale->canSellerListToFlashsaleAnytime($this->getUser()->id)) {
+                throw new AccessDeniedHttpException;
+            }
+
+            $this->dispatchNow(new DeleteFlashsaleCommand($flashsale, $this->getUser()));
+
+            return $this->setData([
+                'msg' => 'Flash sale deleted successfully. One moment...',
+                'redirect' => route('flashsales.index')
+            ])->respond();
+        } catch (Exception $e) {
+            dd($e);
+            Bugsnag::notifyException($e);
+            return $this->setStatusCode(500)
+                ->setData(['msg' => 'An error occurred please try again,'])
+                ->respond();
+        }
+    }
+
+    /**
+     * @param null $date
+     *
+     * @return null
+     */
+    public function normalizeDate($date = null)
+    {
+        return ($date && $date <> '' && $date <> '0000-00-00 00:00:00' && $date <> 'Invalid date') ? Carbon::createFromFormat('m/d/Y h:ia', $date) : null;
     }
 }

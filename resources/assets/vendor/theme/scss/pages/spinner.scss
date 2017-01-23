@@ -1,5 +1,10 @@
 $size : 16px;
 
+.kabooodle__spinner.__white:before,
+.kabooodle__spinner__white:after {
+  border-color: #fff transparent transparent;
+}
+
 .kabooodle__spinner.__size6{
   height: 6px;
   width: 8px;
@@ -32,7 +37,7 @@ $size : 16px;
     height:10px;
     width:10px;
     margin: -5px 0 0 -5px;
-    border-width: 1.8px;
+    border-width: 2px;
   }
 }
 
@@ -43,6 +48,7 @@ $size : 16px;
   &:after {
     height:12px;
     width:12px;
+    border-width: 2px;
     margin: -6px 0 0 -6px;
   }
 }

@@ -14,14 +14,14 @@ final class FlashsaleWasUpdatedEvent
     /**
      * @var int
      */
-    public $flashsaldId;
+    public $flashsaleId;
 
     /**
      * @param int $flashsaleId
      */
     public function __construct(int $flashsaleId)
     {
-        $this->flashSaleId = $flashsaleId;
+        $this->flashsaleId = $flashsaleId;
     }
 
     /**
