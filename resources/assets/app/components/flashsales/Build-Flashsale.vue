@@ -2,7 +2,7 @@
     <div>
         <div class="box">
             <div class="box-header">
-                <h2>Create a flash sale</h2>
+                <h2>{{ title }}</h2>
             </div>
             <div class="box-divider m-a-0"></div>
             <div class="box-body">
@@ -49,15 +49,29 @@
 
                 <inline-field :errors="form_errors.starts_at">
                     <template slot="label">Starting date</template>
-                    <template slot="input">
-                        <input type="text"  @blur="updateDateTimeEl('starts_at', $event)" id="starts_at" name="starts_at" v-model="starts_at" class="needs-datetimepicker form-control">
+                    <template slot="input" v-if="hidden_form_data.starts_at">
+                        <input type="text"
+                               disabled="true"
+                               readonly="true"
+                               v-model="starts_at"
+                               id="starts_at" name="starts_at" class="form-control">
+                    </template>
+                    <template slot="input" v-else>
+                        <input type="text" @blur="updateDateTimeEl('starts_at', $event)" id="starts_at" name="starts_at" v-model="starts_at" class="needs-datetimepicker form-control">
                     </template>
                 </inline-field>
 
                 <inline-field :errors="form_errors.ends_at">
                     <template slot="label">Ending date</template>
-                    <template slot="input">
-                        <input type="text"  @blur="updateDateTimeEl('ends_at', $event)" id="ends_at" name="ends_at" v-model="ends_at" class="needs-datetimepicker form-control">
+                    <template slot="input" v-if="hidden_form_data.ends_at">
+                        <input type="text"
+                               disabled="true"
+                               readonly="true"
+                               id="ends_at" name="ends_at" v-model="ends_at" class="form-control">
+                    </template>
+                    <template slot="input" v-else>
+                        <input type="text"
+                               @blur="updateDateTimeEl('ends_at', $event)" id="ends_at" name="ends_at" v-model="ends_at" class="needs-datetimepicker form-control">
                     </template>
                 </inline-field>
 
@@ -100,8 +114,9 @@
                         <div class="radio" v-for="privacy_type in privacy_options">
                             <label class="">
                                 <input class="has-value" name="privacy" v-model="privacy" type="radio"
-                                       :value="privacy_type">
-                                {{ privacy_type }}
+                                       :value="privacy_type.privacy">
+                                {{ privacy_type.privacy }}
+                                <span class="block text-xs text-muted">{{ privacy_type.help }}</span>
                             </label>
                         </div>
                     </template>
@@ -119,7 +134,9 @@
                     <i class="fa fa-times" aria-hidden="true"></i>
                 </button>
                 <seller-group
+                        :existing_time_slot="seller.selected_group ? seller.selected_group.pivot.time_slot : null"
                         :id="$index"
+                        :existing_group="seller.selected_group ? seller.selected_group : null"
                         :selected_groups="selected_groups"
                         :search_endpoint="group_search_endpoint"
                 ></seller-group>
@@ -128,7 +145,7 @@
 
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-9">
-                <button type="button" :disabled="isSaving" :class="isSaving ? 'disabled' : null" @click.prevent="addSellerContainer" class="btn white">Add sellers group</button>
+                <button type="button" :disabled="isSaving" :class="isSaving ? 'disabled' : null" @click.prevent="addSellerContainer(null,null, $event)" class="btn white">Add sellers group</button>
                 <button type="button" :disabled="isSaving" :class="isSaving ? 'disabled' : null" class="btn primary" @click.prevent="saveFlashsale">
                     Save <spinny v-if="isSaving"></spinny>
                 </button>
@@ -155,33 +172,48 @@
 
     function initialState(){
         return {
+            // Form data
+            name: null,
             admins: [],
             cover_photo: null,
             starts_at: null,
             ends_at: null,
             description: null,
+            privacy: PRIVACY_PUBLIC,
+            selected_groups: [],
+            seller_groups: [],
+
+            hidden_form_data: {},
+
             form_errors: [],
             loading: {
                 admins: false,
                 sellers: false,
             },
+            isEditing: false,
             isSaving: false,
-            name: null,
-            privacy: PRIVACY_PUBLIC,
             privacy_options: [
-                PRIVACY_PUBLIC,
-                PRIVACY_PRIVATE
+                {
+                    privacy: PRIVACY_PUBLIC,
+                    help: 'Accessible to anyone browsing.',
+                },
+                {
+                    privacy: PRIVACY_PRIVATE,
+                    help: 'Accessible only to admins, sellers and anyone with the link.',
+                },
             ],
             previousRequest: null,
             search_admins: [],
             sellers_groups_containers: [],
-            selected_groups: [],
-            seller_groups: [],
         }
     }
 
     export default{
         props: {
+            title:{
+                type: String,
+                default: 'Create a flash sale'
+            },
             groups_endpoint: {
                 type: String
             },
@@ -204,13 +236,26 @@
             group_save_endpoint: {
                 required: true,
                 type: String
-            }
+            },
+            existing_data: {
+                type: Object,
+                default (){
+                    return {};
+                }
+            },
+            fetch_model_endpoint: {
+                type: String
+            },
+            fetch_model: {
+                type: Boolean
+            },
         },
         data(){
             return initialState()
         },
         mounted(){
             this.registerDateTimePicker();
+            this._checkIfExistingData();
         },
         computed: {},
         created(){
@@ -254,6 +299,38 @@
             });
         },
         methods: {
+            _checkIfExistingData(){
+                if (this.existing_data && _.size(this.existing_data) > 0 ) {
+                    this.isEditing = true;
+
+                    let data = this.existing_data;
+
+                    this.hidden_form_data.starts_at = true;
+                    this.hidden_form_data.ends_at = true;
+
+                    this.name = data.name;
+                    this.admins = data.admins;
+                    this.starts_at = moment(data.starts_at).format('MM/DD/YYYY hh:mma');
+                    this.ends_at = moment(data.ends_at).format('MM/DD/YYYY hh:mma')
+                    this.description = data.description;
+                    this.privacy = data.privacy;
+                    this.cover_photo = data.coverimage;
+
+                    if (data.seller_groups.length > 0){
+                        _.each(data.seller_groups, (k,b)=>{
+                            this.addSellerContainer(k.id, k);
+                            this.selected_groups.push(k);
+                        });
+                    }
+
+//
+//                            cover_photo: null,
+//                            selected_groups: [],
+//                            seller_groups: [],
+
+
+                }
+            },
             /**
              * User when the date fields are blurred to actually set the data.
              * @param option
@@ -318,8 +395,10 @@
                     this.loading.admins = false;
                 });
             },
-            addSellerContainer(){
-                this.sellers_groups_containers.push({id: randomAlphaStr(4), selected_group: null});
+            addSellerContainer(id, selected_group, $event){
+                id = id ? id : randomAlphaStr(4);
+                selected_group = selected_group ? selected_group : null;
+                this.sellers_groups_containers.push({id: id, selected_group: selected_group});
             },
             removeSellerContainer(container){
                 confirmModal(($noty)=> {
@@ -365,12 +444,20 @@
                     return _.contains(actualIds, group.id);
                 }), 'id');
 
-                this.$http.post(this.save_endpoint, this.$data).then((response)=>{
-                    this.resetState();
+                let method = 'post';
+                if (this.isEditing) {
+                    method = 'put';
+                }
+
+                this.$http[method](this.save_endpoint, this.$data).then((response)=>{
                     notify({
                         text: response.body.data.msg,
                         type: 'success'
                     });
+                    if (!this.isEditing){
+                        this.resetState();
+                    }
+                    this.isSaving = false;
                 }, (response)=>{
                     this.isSaving = false;
                     if (response.body.hasOwnProperty('data') && response.body.data.hasOwnProperty('errors')) {

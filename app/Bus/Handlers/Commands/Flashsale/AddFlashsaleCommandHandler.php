@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Flashsale;
 
 use DB;
+use Carbon\Carbon;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Files;
 use Kabooodle\Models\FlashSales;
@@ -63,7 +64,7 @@ class AddFlashsaleCommandHandler
                 $groups = [];
                 foreach ($command->getSellerGroups() as $group) {
                     $groupId = isset($group['id']) ? $group['id'] : false;
-                    $slot = isset($group['time_slot']) ? $group['time_slot'] : null;
+                    $slot = (isset($group['time_slot']) && $group['time_slot'] <> '') ?  Carbon::parse($group['time_slot']) : null;
                     if ($groupId) {
                         $groups[$group['id']]['time_slot'] = $slot;
                     }

@@ -70,7 +70,6 @@ class FlashSalesController extends Controller
         return $this->view('flashsales.create');
     }
 
-
     /**
      * @param FlashsaleViewRequest $request
      * @param                      $idAndName
@@ -79,17 +78,17 @@ class FlashSalesController extends Controller
      */
     public function edit(FlashsaleViewRequest $request, $idAndName)
     {
-        $item = $request->getFlashsale();
+        $flashsale = $request->getFlashsale();
 
-        if ($item) {
-            if (!$item->owner->id == user()->id) {
+        if ($flashsale) {
+            if (!$flashsale->canSellerListToFlashsaleAnytime(user()->id)) {
                 return redirect()->route('flashsales.show', [$idAndName]);
             }
 
-            return $this->view('flashsales.edit')->with(compact('item'));
+            return $this->view('flashsales.edit')->with(compact('flashsale'));
         }
 
-        return $this->redirect(route('shop.index'));
+        return $this->redirect()->route('flashsales.index');
     }
 
     /**

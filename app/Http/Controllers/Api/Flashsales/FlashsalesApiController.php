@@ -17,6 +17,8 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Bus\Commands\Flashsale\UpdateFlashsaleCommand;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleTimeSlotDateException;
 use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleInvalidEndDateException;
 use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleInvalidStartDateException;
@@ -29,19 +31,31 @@ class FlashsalesApiController extends AbstractApiController
     use DispatchesJobs;
 
     /**
+     * @param Request $request
+     *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user = $this->getUser();
+
+        // We are using the query builder so we can paginate on the query vs
+        // returning everything, then chunking the collection of data.
         $data = FlashSales::withoutExpired()
             ->orderByStartDate()
             ->with('coverimage', 'listingItems', 'watchers');
 
         if ($searchName = Binput::get('name', false)) {
-            $data = $data->where('name', 'LIKE', '%'. $searchName .'%');
+            $data = $data->where('name', 'LIKE', '%' . $searchName . '%');
         }
 
         $data = $data->paginate();
+
+        // Filter through the items and hide private items where the user is not
+        // a seller.  Reminder, sellers include admins, owner, sellers.
+        $data->setCollection($data->filter(function ($flashsale) use ($user) {
+            return $flashsale->canUserViewPrivateSale($user);
+        }));
 
         return $this->setData($data)->respond();
     }
@@ -78,10 +92,10 @@ class FlashsalesApiController extends AbstractApiController
             // Seller groups with time_slot's must be within the flashsales date range.
             if ($sellerGroups) {
                 foreach ($sellerGroups as $sellerGroup) {
-                    if (isset($sellerGroup['time_slot']) && ! is_null($sellerGroup['time_slot']) && $sellerGroup['time_slot'] <> '') {
+                    if (isset($sellerGroup['time_slot']) && !is_null($sellerGroup['time_slot']) && $sellerGroup['time_slot'] <> '') {
                         $timeSlot = Carbon::createFromFormat('m/d/Y h:ia', $sellerGroup['time_slot']);
                         if ($timeSlot < $startsEnds->getStartsAt()) {
-                            throw new FlashsaleTimeSlotDateException('Time slot ('.$sellerGroup['time_slot'].' for seller group must be within flashsale date range.');
+                            throw new FlashsaleTimeSlotDateException('Time slot (' . $sellerGroup['time_slot'] . ' for seller group must be within flashsale date range.');
                         }
                     }
                 }
@@ -124,6 +138,75 @@ class FlashsalesApiController extends AbstractApiController
                 ->respond();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
+
+            return $this->setStatusCode(500)
+                ->setData(['msg' => 'An error occurred please try again,'])
+                ->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        try {
+            $this->validate($request, FlashSales::getUpdateRules());
+
+            $flashsale = FlashSales::findOrFail($id);
+
+            if (! $flashsale->canSellerListToFlashsaleAnytime($this->getUser()->id)) {
+                throw new AccessDeniedHttpException;
+            }
+
+            $sellerGroups = Binput::get('seller_groups', []);
+
+            // Seller groups with time_slot's must be within the flashsales date range.
+            if ($sellerGroups) {
+                foreach ($sellerGroups as $sellerGroup) {
+                    if (isset($sellerGroup['time_slot']) && !is_null($sellerGroup['time_slot']) && $sellerGroup['time_slot'] <> '') {
+                        $timeSlot = Carbon::createFromFormat('m/d/Y h:ia', $sellerGroup['time_slot']);
+                        if ($timeSlot < $flashsale->starts_at) {
+                            throw new FlashsaleTimeSlotDateException('Time slot (' . $sellerGroup['time_slot'] . ' for seller group must be within flashsale date range.');
+                        }
+                    }
+                }
+            }
+
+            $admins = Binput::get('admins', null);
+            if ($admins) {
+                $admins = collect($admins)->pluck('id')->toArray();
+            }
+
+            $this->dispatchNow(new UpdateFlashsaleCommand(
+                $flashsale,
+                $this->getUser(),
+                Binput::get('name'),
+                Binput::get('description'),
+                Binput::get('privacy'),
+                $admins,
+                Binput::get('seller_groups', []),
+                Binput::get('cover_photo')
+            ));
+
+            return $this->setData([
+                'msg' => 'Flash sale successfully updated.',
+                'redirect' => route('flashsales.edit', [$flashsale->getUUID()])
+            ])->respond();
+        } catch (ValidationException $e) {
+            return $this->setStatusCode(400)
+                ->setData(['errors' => $e->validator->messages()])
+                ->respond();
+        } catch (FlashsaleTimeSlotDateException $e) {
+            return $this->setStatusCode(400)
+                ->setData(['msg' => $e->getMessage()])
+                ->respond();
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+
             return $this->setStatusCode(500)
                 ->setData(['msg' => 'An error occurred please try again,'])
                 ->respond();

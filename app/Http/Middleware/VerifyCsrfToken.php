@@ -23,6 +23,7 @@ class VerifyCsrfToken extends BaseVerifier
         'stripe*',
         '__captainHook*',
         'api*',
+        'api',
         '*.api.*'
     ];
 }

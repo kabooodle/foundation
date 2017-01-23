@@ -114,10 +114,12 @@
                     <div class="dropdown-menu">
                         <a href="{{ route('flashsales.index') }}"
                            class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Browse</a>
+                        @if(user())
                         <a href="{{ route('flashsales.create') }}"
                            class="dropdown-item {{ Request::is('flashsales/create') ? 'active' : null }}">Create</a>
                         <a href="{{ route('flashsales.index') }}"
-                           class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Manage</a>
+                           class="dropdown-item {{ Request::is('flashsales/*/edit') ? 'active' : null }}">Manage</a>
+                        @endif
                     </div>
                 </li>
             </ul>

@@ -4,15 +4,15 @@
 
 @section('body-content-left-nav')
         <a href="{{ route('flashsales.index') }}" class="nav-link {{ Request::is('flashsales') ? 'active' : null }}">
-            View Flash Sales
+           Browse flash sales
     </a>
 
     @if (user()->hasAtLeastMerchantSubscription())
         <a href="{{ route('flashsales.create') }}" class="nav-link {{ Request::is('flashsales/create') ? 'active' : null }}">
-            Create Flash Sale
+            Create flash sale
         </a>
         <a  @click.prevent="buildGroup" class="nav-link">
-            Create Seller Group
+            Create seller group
         </a>
     @endif
     @if(user())
@@ -20,7 +20,7 @@
         <hr>
         <small class="text-muted text-sm nav-link">Manage my flash sales</small>
         @foreach(user()->flashsales as $flashSale)
-            <a href="{{ route('flashsales.show', [$flashSale->getUUID()]) }}" class="nav-link {{ Request::is("flashsales/{$flashSale->getUUID()}") ? 'active' : null }}">
+            <a href="{{ route('flashsales.edit', [$flashSale->getUUID()]) }}" class="nav-link {{ Request::is("flashsales/{$flashSale->getUUID()}") ? 'active' : null }}">
                 {!! $flashSale->name !!}
             </a>
         @endforeach

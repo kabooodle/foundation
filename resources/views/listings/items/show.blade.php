@@ -24,7 +24,13 @@
                 @if($listingItem->claimableBasedOnSchedule())
                     <a data-toggle="modal" data-target="#modal_claim_wrapper" data-backdrop="static" data-keyboard="false" href="" class="btn btn-sm claim  _800 ">Claim Item</a>
                 @else
-                    <a class="btn btn-sm claim  _800 disabled" disabled href="#">Not Yet Claimable</a>
+                    <a class="btn btn-sm claim  _800 disabled" disabled href="#">
+                        @if($listingItem->type == 'flashsale' && $listingItem->flashsale->saleHasEnded())
+                            Sale ended
+                        @else
+                            Not Yet Claimable
+                        @endif
+                    </a>
                 @endif
             @endif
             <followable

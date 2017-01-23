@@ -2,7 +2,6 @@
     <div>
         <spinny v-if="fetching" :size="'' + 28" class="text-center center-block" ></spinny>
             <div
-                    v-if="flashsales.length"
                     v-for="flashsale in flashsales"
                     :key="flashsale.id"
                     class="col-md-3"

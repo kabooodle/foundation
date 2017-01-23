@@ -46,6 +46,13 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
     /**
      * @var array
      */
+    protected $with = [
+        'coverimage'
+    ];
+
+    /**
+     * @var array
+     */
     protected $dates = [
         'created_at',
         'updated_at',
@@ -63,7 +70,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
         'id_to_string',
         'uuid',
         'sellers',
-        'claimable_range'
+        'claimable_range',
     ];
 
     /**
@@ -182,6 +189,21 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
     /**
      * @return array
      */
+    public static function getUpdateRules()
+    {
+        return [
+            'name' => 'required',
+            'description' => '',
+            'cover_photo' => 'required',
+            'starts_at' => 'required|date',
+            'ends_at' => 'required|date',
+            'privacy' => 'required|in:private,public'
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public static function getTypes()
     {
         return [
@@ -220,7 +242,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function scopeWithoutExpired($scope)
     {
-        return $scope->where('ends_at', '>','NOW()');
+        return $scope->where('ends_at', '>=', DB::raw('NOW()'));
     }
 
     /**
@@ -230,7 +252,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function scopeNotYetEnded($scope)
     {
-        return $scope->where('starts_at', '>=', 'NOW()');
+        return $scope->where('starts_at', '>=',  DB::raw('NOW()'));
     }
 
     /**
@@ -517,12 +539,27 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function claimableBasedOnSchedule()
     {
-        $now = Carbon::now();
+        $now = Carbon::now(current_timezone());
 
         if ($now >= $this->starts_at && $now <= $this->ends_at) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @param null $user
+     *
+     * @return bool
+     */
+    public function canUserViewPrivateSale($user = null)
+    {
+        $guest = ! $user || $user == null;
+        if ($this->privacy == 'private') {
+            return $guest ? false : $this->sellers->where('id', $user->id);
+        }
+
+        return true;
     }
 }

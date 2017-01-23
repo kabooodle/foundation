@@ -4,6 +4,7 @@
             <template slot="label">Group</template>
             <template slot="input">
                 <multiselect
+                        :disabled="this.existing_group ? true : false"
                         label="name"
                         track-by="id"
                         placeholder="Select a group"
@@ -30,8 +31,23 @@
 
         <inline-field class="m-b-0">
             <template slot="label">Time slot</template>
-            <div class="input-group" slot="input" >
-                <input  @blur="updateDateTimeEl('time_slot', $event)" type="text" class="time_slot form-control" v-model="time_slot" name="">
+            <div slot="input" v-if="existing_time_slot">
+                <input
+                        disabled="true"
+                        readonly="true"
+                        type="text"
+                        class="form-control"
+                        v-model="time_slot"
+                        :value="time_slot"
+                        name="">
+            </div>
+            <div class="input-group" slot="input" v-else>
+                <input  @blur="updateDateTimeEl('time_slot', $event)"
+                        type="text"
+                        class="time_slot form-control"
+                        v-model="time_slot"
+                        :value="time_slot"
+                        name="">
                 <span class="input-group-btn">
                     <button data-toggle="tooltip" title="Clear" data-placement="top" class="btn white" style="padding-bottom:5px" @click.prevent="clearTimeSlot"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
                 </span>
@@ -55,6 +71,12 @@
             selected_groups: {
                 type: Array
             },
+            existing_group: {
+                type: Object
+            },
+            existing_time_slot:{
+
+            },
         },
         data(){
             return{
@@ -68,6 +90,12 @@
             }
         },
         mounted(){
+            if(this.existing_time_slot){
+                this.time_slot = moment(this.existing_time_slot).format('MM/DD/YYYY hh:mma');
+            }
+            if(this.existing_group){
+                this.group = this.existing_group;
+            }
             this.registerDateTimePicker();
         },
         created(){
@@ -109,8 +137,6 @@
                     };
 
                     $('#group_'+this.id+' input.time_slot').datetimepicker(options);
-
-                    // hack for clearing the inputs, except, checkbox.
                     $('#group_'+this.id+' .time_slot').val('').trigger('change');
                 });
             },

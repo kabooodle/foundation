@@ -1,8 +1,8 @@
 <?php
 
-Route::group(['middleware' => 'auth'], function () {
+Route::resource('flashsales', \Kabooodle\Http\Controllers\Web\FlashSales\FlashSalesController::class);
 
-        Route::resource('flashsales', \Kabooodle\Http\Controllers\Web\FlashSales\FlashSalesController::class);
+Route::group(['middleware' => 'auth'], function () {
         Route::resource('flashsales.shop', \Kabooodle\Http\Controllers\Web\FlashSales\SellersInventoryController::class, ['only' => ['show', 'index','edit']]);
         Route::post('flashsales/{flashsales}/shop/{shop}/claim', [
             'as' => 'flashsales.shop.claim',

@@ -8,53 +8,110 @@ namespace Kabooodle\Bus\Commands\Flashsale;
 
 use Carbon\Carbon;
 use Kabooodle\Models\User;
-use Kabooodle\Models\Groups;
 use Kabooodle\Models\FlashSales;
-use Kabooodle\Models\Dates\StartsAndEndsAt;
 
 /**
  * Class UpdateFlashsaleCommand
  * @package Kabooodle\Bus\Commands\Flashsale
  */
-class UpdateFlashsaleCommand
+final class UpdateFlashsaleCommand
 {
     /**
-     * UpdateFlashsaleCommand constructor.
-     *
-     * @param FlashSales      $flashsale
-     * @param User            $user
-     * @param                 $name
-     * @param                 $description
-     * @param StartsAndEndsAt $startsAndEndsAt
-     * @param string          $sellerRules
-     * @param array           $adminIds
-     * @param array           $invitedSellerEmails
-     * @param                 $privacy
+     * @var FlashSales
      */
-    public function __construct(FlashSales $flashsale, User $user, $name, $description, StartsAndEndsAt $startsAndEndsAt, $sellerRules = '', array $adminIds = [], array $invitedSellerEmails = [], $privacy)
-    {
-        $this->flashsale = $flashsale;
+    public $flashsale;
+
+    /**
+     * @var User
+     */
+    public $user;
+
+    /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @var null|string
+     */
+    public $description;
+
+    /**
+     * @var string
+     */
+    public $privacy;
+
+    /**
+     * @var array
+     */
+    public $adminIds;
+
+    /**
+     * @var array
+     */
+    public $sellerGroups;
+
+    /**
+     * @var null
+     */
+    public $coverPhoto;
+
+    /**
+     * @param FlashSales  $flashSale
+     * @param User        $user
+     * @param string      $name
+     * @param string|null $description
+     * @param string      $privacy
+     * @param array       $adminIds
+     * @param array       $sellerGroups
+     * @param             $coverPhoto
+     */
+    public function __construct(
+        FlashSales $flashSale,
+        User $user,
+        string $name,
+        string $description = null,
+        string $privacy = 'public',
+        array $adminIds = [],
+        array $sellerGroups,
+        $coverPhoto
+    ) {
+        $this->flashsale = $flashSale;
         $this->user = $user;
         $this->name = $name;
         $this->description = $description;
-        $this->startTime = $startsAndEndsAt->getStartsAt();
-        $this->endTime = $startsAndEndsAt->getEndsAt();
-        $this->sellerRules = $sellerRules;
-        $this->adminIds = $adminIds;
-        $this->invitedSellerEmails = $invitedSellerEmails;
         $this->privacy = $privacy;
+        $this->adminIds = $adminIds;
+        $this->sellerGroups = $sellerGroups;
+        $this->coverPhoto = $coverPhoto;
     }
 
     /**
-     * @return array
+     * @return FlashSales
      */
-    public function getAdminIds()
+    public function getFlashsale(): FlashSales
     {
-        return $this->adminIds;
+        return $this->flashsale;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
     }
 
     /**
      * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return null|string
      */
     public function getDescription()
     {
@@ -62,49 +119,9 @@ class UpdateFlashsaleCommand
     }
 
     /**
-     * @return Carbon
-     */
-    public function getEndTime()
-    {
-        return $this->endTime;
-    }
-
-    /**
      * @return string
      */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return Carbon
-     */
-    public function getStartTime()
-    {
-        return $this->startTime;
-    }
-
-    /**
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * @return FlashSales
-     */
-    public function getFlashSale()
-    {
-        return $this->flashsale;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPrivacy()
+    public function getPrivacy(): string
     {
         return $this->privacy;
     }
@@ -112,16 +129,24 @@ class UpdateFlashsaleCommand
     /**
      * @return array
      */
-    public function getInvitedSellerEmails()
+    public function getAdminIds(): array
     {
-        return $this->invitedSellerEmails;
+        return $this->adminIds;
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getSellerRules()
+    public function getSellerGroups(): array
     {
-        return $this->sellerRules;
+        return $this->sellerGroups;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCoverPhoto()
+    {
+        return $this->coverPhoto;
     }
 }
