@@ -15,6 +15,7 @@ use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\Dates\StartsAndEndsAt;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Validation\ValidationException;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Flashsale\UpdateFlashsaleCommand;
@@ -29,7 +30,7 @@ use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleInvalidStartDateExceptio
  */
 class FlashsalesApiController extends AbstractApiController
 {
-    use DispatchesJobs;
+    use DispatchesJobs, PaginatesTrait;
 
     /**
      * @param Request $request
@@ -234,11 +235,66 @@ class FlashsalesApiController extends AbstractApiController
                 'redirect' => route('flashsales.index')
             ])->respond();
         } catch (Exception $e) {
-            dd($e);
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)
                 ->setData(['msg' => 'An error occurred please try again,'])
                 ->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $id)
+    {
+        try {
+            $listing = FlashSales::with(['listingItems'])
+                ->where('id', $id)
+                ->first();
+
+            if (! $listing) {
+                throw new ModelNotFoundException;
+            }
+
+            $items = $listing->listingItems;
+
+            $style_query = Binput::get('styles', false);
+            $size_query = Binput::get('sizes', false);
+            $sellers_query = Binput::get('sellers', false);
+
+            if ($style_query ) {
+                $items = $items->filter(function($item) use ($style_query){
+                    return in_array($item->inventoryItem->inventory_type_styles_id, $style_query);
+                });
+            }
+
+            if ($size_query ) {
+                $items = $items->filter(function($item) use ($size_query){
+                    return in_array($item->inventoryItem->inventory_sizes_id, $size_query);
+                });
+            }
+
+            if ($sellers_query) {
+                $items = $items->filter(function($item) use ($sellers_query){
+                    return in_array($item->owner_id, $sellers_query);
+                });
+            }
+
+            $items = $items->sortBy(function($item){
+                return $item->make_available_at;
+            })->sortBy(function($item){
+                return $item->id;
+            })->values();
+
+            $items = $this->paginateData($request, $items);
+
+            return $this->setData($items)->respond();
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            return $this->setStatusCode(500)->respond();
         }
     }
 

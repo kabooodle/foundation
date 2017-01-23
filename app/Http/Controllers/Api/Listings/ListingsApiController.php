@@ -51,9 +51,9 @@ class ListingsApiController extends AbstractApiController
 
             $items = $listing->items;
 
-            $style_query = Binput::get('styles');
-            $size_query = Binput::get('sizes');
-            $sellers_query = Binput::get('sellers');
+            $style_query = Binput::get('styles', false);
+            $size_query = Binput::get('sizes', false);
+            $sellers_query = Binput::get('sellers', false);
 
             if ($style_query ) {
                 $items = $items->filter(function($item) use ($style_query){

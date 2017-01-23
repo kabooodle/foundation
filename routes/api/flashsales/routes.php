@@ -12,6 +12,10 @@ $api->group(['middleware' => 'jwt.auth'], function ($api) {
         'as' => 'flashsales.store',
         'uses' => \Kabooodle\Http\Controllers\Api\Flashsales\FlashsalesApiController::class . '@store'
     ]);
+    $api->get('/flashsales/{flashsale}', [
+        'as' => 'flashsales.show',
+        'uses' => \Kabooodle\Http\Controllers\Api\Flashsales\FlashsalesApiController::class . '@show'
+    ]);
     $api->put('/flashsales/{flashsale}', [
         'as' => 'flashsales.update',
         'uses' => \Kabooodle\Http\Controllers\Api\Flashsales\FlashsalesApiController::class . '@update'
