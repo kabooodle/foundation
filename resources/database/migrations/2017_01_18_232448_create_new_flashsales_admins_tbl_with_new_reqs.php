@@ -18,12 +18,12 @@ class CreateNewFlashsalesAdminsTblWithNewReqs extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
 
-            $table->foreign('flashsale_id', 'fk_fs')
+            $table->foreign('flashsale_id', 'fk_flashsales_admins_fs')
                 ->references('id')->on('flashsales')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->foreign('user_id', 'fk_user')
+            $table->foreign('user_id', 'fk_flashsales_admins_user')
                 ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
