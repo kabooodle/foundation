@@ -40,7 +40,7 @@
                 <li class="nav-item dropdown ">
                     <a class="nav-link dropdown-toggle clear" data-toggle=
                     "dropdown" href=""><span class="avatar_container _32 inline avatar-thumbnail"><img alt="..."
-                                                                                                       src="{{ user()->avatar }}"> <i class=
+                                                                                                       src="{{ user()->avatar->location }}"> <i class=
                                                                                                                                       "busy b-white right"></i></span></a>
                     <div class="dropdown-menu pull-right">
                         <a class="dropdown-item" href="{{ route('profile.index') }}"><span>Account Settings</span></a>

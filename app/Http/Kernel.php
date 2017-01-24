@@ -22,8 +22,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
         \Fideloper\Proxy\TrustProxies::class,
         \Kabooodle\Http\Middleware\HTTPSMiddleware::class,
-//        \Kabooodle\Http\Middleware\IfTurbolinksMiddleware::class,
-        \Barryvdh\Cors\HandleCors::class
+        \Barryvdh\Cors\HandleCors::class,
+        \Kabooodle\Http\Middleware\TerminableMiddleware::class,
     ];
 
     /**
@@ -38,9 +38,6 @@ class Kernel extends HttpKernel
             \Kabooodle\Http\Middleware\StoreMessageBag::class,
             \Kabooodle\Http\Middleware\ReferralProgramMiddleware::class,
             \Kabooodle\Http\Middleware\VerifyCsrfToken::class,
-//            \PragmaRX\Tracker\Vendor\Laravel\Middlewares\Tracker::class,
-//            \Kabooodle\Http\Middleware\FilterIfPjax::class,
-//            \Kabooodle\Http\Middleware\AccountActive::class,
         ],
 
         'api' => [

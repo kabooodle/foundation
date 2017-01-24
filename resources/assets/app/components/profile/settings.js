@@ -8,7 +8,9 @@ new Vue({
     created : function(){
         const scope = this;
         $Bus.$on('image:uploaded', (el, data)=>{
-            $('.avatar_container').html('<img src="'+data.location+'"><input type="hidden" name="avatar" value="'+data.location+'">');
+            let json = (data.json).replace(/'/g, "\\'");
+            $('.avatar_container').html('' +
+                '<img src="'+data.location+'"><input type="hidden" name="avatar" value=\''+json+'\'>');
             scope.avatar = data.location;
         });
     },

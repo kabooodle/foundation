@@ -1481,6 +1481,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateInventoryTblAddCoverPhotoData' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_14_051010_update_inventory_tbl_add_cover_photo_data.php',
         'UpdateInventoryTblAddPricing' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_29_034929_update_inventory_tbl_add_pricing.php',
         'UpdateInventoryTblAddTypeStyleSize' => __DIR__ . '/../..' . '/resources/database/migrations/2016_10_08_025405_update_inventory_tbl_add_type_style_size.php',
+        'UpdateInventoryTblRemoveCoverPhotoColsAddCoverFilesIdCol' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_24_004348_update_inventory_tbl_remove_cover_photo_cols_add_cover_files_id_col.php',
         'UpdateInventoryTypeStylesSuggestedPrices' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_04_184307_update_inventory_type_styles_suggested_prices.php',
         'UpdateInventoryUnfuckQtyCols' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_03_053022_update_inventory_unfuck_qty_cols.php',
         'UpdateInvnetoryAddUuid' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_01_041205_update_invnetory_add_uuid.php',

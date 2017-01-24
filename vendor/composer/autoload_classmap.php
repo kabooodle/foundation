@@ -831,6 +831,7 @@ return array(
     'UpdateInventoryTblAddCoverPhotoData' => $baseDir . '/resources/database/migrations/2017_01_14_051010_update_inventory_tbl_add_cover_photo_data.php',
     'UpdateInventoryTblAddPricing' => $baseDir . '/resources/database/migrations/2016_08_29_034929_update_inventory_tbl_add_pricing.php',
     'UpdateInventoryTblAddTypeStyleSize' => $baseDir . '/resources/database/migrations/2016_10_08_025405_update_inventory_tbl_add_type_style_size.php',
+    'UpdateInventoryTblRemoveCoverPhotoColsAddCoverFilesIdCol' => $baseDir . '/resources/database/migrations/2017_01_24_004348_update_inventory_tbl_remove_cover_photo_cols_add_cover_files_id_col.php',
     'UpdateInventoryTypeStylesSuggestedPrices' => $baseDir . '/resources/database/migrations/2016_12_04_184307_update_inventory_type_styles_suggested_prices.php',
     'UpdateInventoryUnfuckQtyCols' => $baseDir . '/resources/database/migrations/2016_09_03_053022_update_inventory_unfuck_qty_cols.php',
     'UpdateInvnetoryAddUuid' => $baseDir . '/resources/database/migrations/2016_11_01_041205_update_invnetory_add_uuid.php',

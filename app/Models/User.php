@@ -74,6 +74,7 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $with = [
+        'avatar'
 //        'creditBalance'
     ];
 
@@ -137,7 +138,6 @@ class User extends BaseEloquentModel implements
         'last_name',
         'username',
         'password',
-        'avatar',
         'invited_by_user_id',
         'trial_ends_at',
         'activated',
@@ -277,16 +277,11 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * @param $value
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
      */
-    public function getAvatarAttribute($value)
+    public function avatar()
     {
-        if (!$value) {
-            $value = '/assets/images/logo/roboto-avatar.png';
-        }
-
-        return useCDN() ? staticAsset($value) : $value;
+        return $this->morphOne(Files::class, 'fileable');
     }
 
     /**

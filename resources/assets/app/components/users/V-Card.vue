@@ -3,7 +3,7 @@
         <div class="list-item p-a-sm p-sm" :class="extra_class" >
             <div class="list-left" v-if="use_avatar">
                 <span class="avatar_container inline avatar-thumbnail" :class="'_'+avatar_size">
-                    <img alt="..." :src="user.avatar ? user.avatar : '/assets/images/logo/roboto-avatar.png'">
+                    <img alt="..." :src="user.avatar ? user.avatar.location : '/assets/images/logo/roboto-avatar.png'">
                 </span>
             </div>
             <div class="list-body clearfix">

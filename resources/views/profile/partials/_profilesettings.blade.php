@@ -2,8 +2,8 @@
     <div class="col-sm-3 clearfix">
         <div class="avatar_container _64 pull-right  avatar-thumbnail" >
             @if($_user->avatar)
-                <img src="{{ $_user->avatar }}">
-                <input type="hidden" name="avatar" value="{{ $_user->avatar }}">
+                <img src="{{ $_user->avatar->location }}">
+                <input type="hidden" name="avatar" value="{{ $_user->avatar->toJson() }}">
             @endif
         </div>
     </div>

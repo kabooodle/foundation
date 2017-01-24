@@ -14,6 +14,7 @@
                 <select name="style_id" id="style-el" class="form-control" @change="changeStyle">
                     <option
                             v-for="style in styles"
+                            :key="style.id"
                             :value="style.id"
                             :selected="selected_style.id == style.id">{{ style.name }}
                 </select>
@@ -25,6 +26,7 @@
                 <select name="size_id" class="form-control" id="form_size_el">
                     <option
                             v-for="size in sizes"
+                            :key="size.id"
                             :value="size.id"
                             :selected="item.style_size.id == size.id">{{ size.name }}
                 </select>
@@ -87,8 +89,10 @@
         <div class="form-group row m-t-md">
             <div class="col-sm-12">
                     <div class="box inline p-a-sm b b-a no-shadow r"
-                         :class="cover_photo == image.key ? 'b-primary' : null "
-                         v-for="image in images" style="margin-right:.78rem; margin-bottom:.78rem;">
+                         :class="cover_photo == image.id ? 'b-primary' : null "
+                         v-for="image in images" style="margin-right:.78rem; margin-bottom:.78rem;"
+                        :key="image.id"
+                    >
                          <div style="z-index: 999;" class="item-overlay active p-r-sm">
                                 <a
                                         @click="deleteImage(image, $event)"
@@ -109,12 +113,12 @@
                                     :value="image.json">
                         </span>
                         <button
-                                @click="setCoverPhoto(image.key, $event)"
-                                :disabled="cover_photo == image.key"
-                                :class="this.cover_photo == image.key ? true: false"
+                                @click="setCoverPhoto(image.id, $event)"
+                                :disabled="cover_photo == image.id"
+                                :class="cover_photo == image.id ? true: false"
                                 class="btn white btn-xs block text-center center-block"
                         >
-                            <span v-if="cover_photo == image.key">Cover photo</span>
+                            <span v-if="cover_photo == image.id">Cover photo</span>
                             <span v-else>Make cover</span>
                         </button>
                     </div>
@@ -168,13 +172,13 @@
             images: function(){
                 $Bus.$emit('images:changed', this.images);
                 if (this.images.length == 1) {
-                    this.cover_photo = this.images[0].key;
+                    this.cover_photo = this.images[0].id;
                 }
             }
         },
         created(){
 
-            this.cover_photo = this.item.cover_photo_file_key;
+            this.cover_photo = this.item.cover_photo_file_id;
 
             if(this.tags && this.tags != '') {
                 _.each(this.tags.split(','), (tag)=>{

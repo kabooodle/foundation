@@ -9,6 +9,7 @@ namespace Kabooodle\Http\Controllers\Web\Profile;
 use Binput;
 use Kabooodle\Bus\Commands\Email\VerifyEmailCommand;
 use Kabooodle\Bus\Commands\Notifications\UpdateUserNotificationSettingCommand;
+use Kabooodle\Models\Files;
 use Response;
 use Illuminate\Support\Facades\Hash;
 use Kabooodle\Bus\Commands\Notifications\GetActiveNotifications;
@@ -76,7 +77,7 @@ class ProfileSettingsController extends Controller
             // TODO: profile updates email
 //            user()->email = $input['email'];
             user()->timezone = $input['timezone'];
-            user()->avatar = $request->has('avatar') ? $request->get('avatar') : null;
+            $avatar = $request->has('avatar') ? $request->get('avatar') : null;
 
             if ($input['newPassword']) {
                 if (!Hash::check($input['password'], user()->password)) {
@@ -86,6 +87,23 @@ class ProfileSettingsController extends Controller
                 }
                 $password = Hash::make($input['newPassword']);
                 user()->password = $password;
+            }
+
+            if ($avatar) {
+                $avatar = json_decode($avatar, true);
+                if (user()->avatar && user()->avatar->key <> $avatar['key']) {
+                    user()->avatar()->delete();
+
+                    $file = new Files;
+                    $file->fileable_id = user()->id;
+                    $file->fileable_type = User::class;
+                    $file->bucket_name = $avatar['bucket_name'];
+                    $file->location = $avatar['location'];
+                    $file->key = $avatar['key'];
+                    $file->save();
+
+                    user()->avatar()->save($file);
+                }
             }
 
             user()->save();

@@ -6,7 +6,7 @@
     </div>
     <div v-else>
             <popout-overlay></popout-overlay>
-            <div class="box style-container" v-for="style in inventory_items">
+            <div class="box style-container" v-for="style in inventory_items" :key="style.id">
                 <div class="box-header clearfix">
                     <div class="row">
                         <div class="col-sm-2" style="margin-top: 13px;">
@@ -17,7 +17,7 @@
                         </div>
                         <div class="col-sm-10" style="margin-top: 3px;">
                             <div class="pull-left btn-group-prpl">
-                                <template v-for="size in style.sizes">
+                                <span v-for="size in style.sizes" :key="size.id">
                                 <button
                                         class="btn white btn-xs"
                                         v-bind:aria-pressed="(selectedItems.find(s => s.style_id === style.id && s.size_id === size.id ) ? ' true ' : null )"
@@ -27,7 +27,7 @@
                                     <input  type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;"> <span class="text-md">{{ size.name }}</span>
                                     <small class="text-sm text-muted block" style="margin-top: -2px;">({{ size.items.length }})</small>
                                 </button>
-                                </template>
+                                </span>
                                 <button
                                         @click="selectAllOfStyle(style, $event)"
                                         class="btn white btn-xs"
@@ -43,6 +43,7 @@
                         v-for="size in style.sizes"
                         class="box-size-drawer"
                         v-if="opened_drawers.indexOf(style.id+'_'+size.id) > -1"
+                        :key="size.id"
                         @data-id="{{ size.id }}">
                     <div class="box-divider"></div>
                     <div class="box-body">
@@ -58,7 +59,7 @@
                             <div class="col-sm-10">
                                 <div class="item-box"  v-if="opened_drawers.indexOf(style.id+'_'+size.id) > -1" >
                                     <div class="row row-horizon">
-                                        <template v-for="item in size.items">
+                                        <span v-for="item in size.items" :key="item.id">
                                             <div class="col-sm-2 btn-group-prpl" style="width:122px !important;">
                                                 <button
                                                         v-bind:aria-pressed="(selectedItems.indexOf(item) > -1 ? ' true ' : null )"
@@ -68,7 +69,7 @@
                                                         type="button"
                                                         class="btn white btn-xs">
                                                             <span class="item block">
-                                                                <img v-bind:src="item.cover_photo" class="img-responsive" style="width: 80px; height: 80px;">
+                                                                <img v-bind:src="item.cover_photo.location" class="img-responsive" style="width: 80px; height: 80px;">
                                                             </span>
                                                     <span class="p-a-o text-sm clearfix block">
                                                         <span class="pull-left">Qty: <span class="text-muted">{{ item.initial_qty }}</span></span>
@@ -88,7 +89,7 @@
                                                 >Claim</a>
                                                 </div>
                                             </div>
-                                        </template>
+                                        </span>
                                     </div>
                                 </div>
                             </div>

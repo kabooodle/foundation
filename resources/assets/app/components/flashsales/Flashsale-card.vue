@@ -1,6 +1,6 @@
 <template>
     <div class="box p-a-xs">
-        <div class="item">
+        <div class="item" >
             <div class="item-overlay active p-a-xs" style="z-index:999">
                 <a
                         v-if="flashsale.privacy == 'private'"
@@ -74,7 +74,7 @@
                     if (currentUser().id == this.flashsale.owner.id) {
                         return true;
                     }
-                    return _.find(this.flashsale.admins, function(admin){
+                    _.find(this.flashsale.admins, function(admin){
                         if (admin) {
                             return parseInt(admin.id) == parseInt(currentUser().id);
                         }

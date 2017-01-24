@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Api\Inventory;
 
 use Binput;
+use Bugsnag;
 use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Inventory;

@@ -86,10 +86,9 @@ class UpdateInventoryItemCommandHandler
 
             $coverPhotoKey = $command->getCoverPhotoKey();
             $coverPhotoFile = $existingImages->first(function($value, $file) use ($coverPhotoKey) {
-                return $file->key == $coverPhotoKey;
+                return $file->id == $coverPhotoKey;
             });
 
-            $item->cover_photo_file_key = $coverPhotoFile->getOriginal('key');
             $item->cover_photo_file_id = $coverPhotoFile->id;
 
             $item->save();

@@ -435,7 +435,17 @@ $(function () {
         }
     } );
 
-    $(document).on('click', '[data-toggle="lightbox"]', function (e) {
+
+    $(document).on('click', '[data-href-click]', function (e) {
+        // const url = $(this).attr('data-href-click');
+        // console.log($(this));
+        // console.log($(e.target));
+        // if (url) {
+        //     window.location.href = url;
+        // }
+    });
+
+    $(document).on('click touchstart', '[data-toggle="lightbox"]', function (e) {
         e.preventDefault();
         $(this).ekkoLightbox();
     });

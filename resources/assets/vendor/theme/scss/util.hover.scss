@@ -20,3 +20,7 @@
 	position: relative;
 	z-index: 1000;
 }
+
+[data-href-click]:hover {
+  cursor: pointer;
+}

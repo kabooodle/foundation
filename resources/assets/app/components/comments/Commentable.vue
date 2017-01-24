@@ -17,7 +17,7 @@
                                  :data-author="comment.author.name">
                                 <div class="sl-left">
                                     <span class="avatar_container _32 inline avatar-thumbnail">
-                                        <img :src="comment.author.avatar ? comment.author.avatar : '/assets/images/logo/roboto-avatar.png'">
+                                        <img :src="comment.author.avatar ? comment.author.avatar.location : '/assets/images/logo/roboto-avatar.png'">
                                     </span>
                                 </div>
                                 <div class="sl-content">
