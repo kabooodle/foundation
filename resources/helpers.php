@@ -1,6 +1,16 @@
 <?php
 use Carbon\Carbon;
 
+if (!function_exists('defaultAvatar')) {
+    /**
+     * @return string
+     */
+    function defaultAvatar()
+    {
+        return 'https://kabooodle-storage.s3.amazonaws.com/resources/roboto-avatar.png';
+    }
+}
+
 if (!function_exists('current_timezone')) {
 
     /**

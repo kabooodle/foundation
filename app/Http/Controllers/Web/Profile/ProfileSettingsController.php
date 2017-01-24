@@ -61,6 +61,7 @@ class ProfileSettingsController extends Controller
         $rules = [
             'first_name' => 'required',
             'last_name' => 'required',
+            'avatar' =>'required',
             'username' => 'required|alpha_dash|min:5|max:30|unique:users,username,' . user()->id,
             'password' => 'required_with:newPassword,newPassword_confirmation',
             'newPassword' => 'required_with:newPassword_confirmation,password|min:6|confirmed',

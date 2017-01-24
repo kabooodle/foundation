@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'blade' => true,
+    'blade' => env('APP_ENV') == 'production' ? true : false,
 
     /*
     |--------------------------------------------------------------------------
@@ -44,6 +44,6 @@ return [
     |
     */
 
-    'force' => true,
+    'force' => env('APP_ENV') == 'production' ? true : false,
 
 ];

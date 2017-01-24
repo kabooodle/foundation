@@ -113,6 +113,7 @@ class EventServiceProvider extends ServiceProvider
             \Kabooodle\Bus\Handlers\Events\User\AddNewUserToGenericTrial::class,
             \Kabooodle\Bus\Handlers\Events\User\AddNewUserToAllNotificationTypes::class,
             \Kabooodle\Bus\Handlers\Events\User\SendNewUserWelcomeNotifications::class,
+            \Kabooodle\Bus\Handlers\Events\User\AssignUserGenericAvatar::class,
         ],
         \Kabooodle\Bus\Events\User\UserUpgradedToGenericTrial::class => [
             \Kabooodle\Bus\Handlers\Events\User\SendUserOnNewGenericTrialNotifications::class
