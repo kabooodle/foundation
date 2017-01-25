@@ -58,8 +58,8 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
      * @var array
      */
     protected $with = [
-        'style',
-        'styleSize',
+//        'style',
+//        'styleSize',
 //        'tagged',
 //        'flashsales',
 //        'claims', // <- deathtrap of recursion
@@ -92,8 +92,11 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         'uuid' => '',
         'name' => '',
         'description' => '',
+        'locked' => true,
         'barcode' => null,
         'initial_qty' => null,
+        'cover_photo_file_key' => null,
+        'cover_photo_file_id' => null,
         'date_received' => '',
         'price_usd' => 0.0,
     ];
@@ -125,6 +128,8 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         'locked',
         'barcode',
         'initial_qty',
+        'cover_photo_file_key',
+        'cover_photo_file_id',
         'date_received',
         'tags',
         'created_by',

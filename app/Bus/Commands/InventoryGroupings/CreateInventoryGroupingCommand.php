@@ -17,48 +17,70 @@ final class CreateInventoryGroupingCommand
     /**
      * @var User
      */
-    public $user;
+    protected $user;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
+
+    /**
+     * @var bool
+     */
+    protected $locked;
 
     /**
      * @var string
      */
-    public $price;
+    protected $price;
+
+    /**
+     * @var string
+     */
+    protected $initialQty;
 
     /**
      * @var array
      */
-    public $images;
+    protected $images;
 
     /**
      * @var array
      */
-    public $inventoryIds;
+    protected $inventoryIds;
 
     /**
      * @var null|string
      */
-    public $description;
+    protected $description;
 
     /**
      * CreateInventoryGroupingCommand constructor.
      *
      * @param User $user
      * @param string $name
+     * @param bool $locked
      * @param string $price
+     * @param $initialQty
      * @param array $images
      * @param array $inventoryIds
-     * @param string|null $description
+     * @param null $description
      */
-    public function __construct(User $user, string $name, string $price, array $images, array $inventoryIds, string $description = null)
+    public function __construct(
+        User $user,
+        string $name,
+        bool $locked,
+        string $price,
+        $initialQty,
+        array $images,
+        array $inventoryIds,
+        $description = null)
     {
         $this->user = $user;
         $this->name = $name;
+        $this->locked = $locked;
         $this->price = $price;
+        $this->initialQty = $initialQty;
         $this->images = $images;
         $this->inventoryIds = $inventoryIds;
         $this->description = $description;
@@ -81,11 +103,27 @@ final class CreateInventoryGroupingCommand
     }
 
     /**
+     * @return boolean
+     */
+    public function isLocked(): bool
+    {
+        return $this->locked;
+    }
+
+    /**
      * @return string
      */
     public function getPrice(): string
     {
         return $this->price;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInitialQty(): string
+    {
+        return $this->initialQty;
     }
 
     /**

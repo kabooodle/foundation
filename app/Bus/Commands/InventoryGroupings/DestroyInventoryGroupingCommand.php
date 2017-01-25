@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Commands\InventoryGroupings;
 
 use Kabooodle\Models\InventoryGrouping;
+use Kabooodle\Models\User;
 
 /**
  * Class DestroyInventoryGroupingCommand
@@ -15,18 +16,33 @@ use Kabooodle\Models\InventoryGrouping;
 final class DestroyInventoryGroupingCommand
 {
     /**
+     * @var User
+     */
+    protected $actor;
+
+    /**
      * @var InventoryGrouping
      */
-    public $inventoryGrouping;
+    protected $inventoryGrouping;
 
     /**
      * DestroyInventoryGroupingCommand constructor.
      *
+     * @param User $actor
      * @param InventoryGrouping $inventoryGrouping
      */
-    public function __construct(InventoryGrouping $inventoryGrouping)
+    public function __construct(User $actor, InventoryGrouping $inventoryGrouping)
     {
+        $this->actor = $actor;
         $this->inventoryGrouping = $inventoryGrouping;
+    }
+
+    /**
+     * @return User
+     */
+    public function getActor(): User
+    {
+        return $this->actor;
     }
 
     /**
