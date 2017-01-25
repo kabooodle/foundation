@@ -205,7 +205,7 @@
                         <li>Track Shipments Anywhere</li>
                         <li>Shipment Tracking Notifications</li>
                         <li>Print Shipping Labels</li>
-                        <li>Seriously, this is the only price</li>
+                        <li>$.03 cents per label</li>
                     </ul>
                 </div>
             </div>

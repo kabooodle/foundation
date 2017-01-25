@@ -7,7 +7,6 @@
 namespace Kabooodle\Composers;
 
 use JWTAuth;
-use Analytics;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,7 +24,6 @@ class CurrentUserComposer
         $user = Auth::user();
         if ($user) {
             $user->setRelations([])->load(['following', 'followers']);
-            Analytics::setUserId(md5($user->id));
         }
         $view->with_currentUser($user ? $user->toJson() : json_encode(null));
         $view->with_authToken($user ? JWTAuth::fromUser($user) : null);

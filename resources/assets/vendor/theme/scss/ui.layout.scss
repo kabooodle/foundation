@@ -1,4 +1,12 @@
 /*layout*/
+::selection {
+	background: #b589e7;
+	color: #fff;
+}
+::-moz-selection {
+	background: #b589e7;
+	color: #fff;
+}
 
 html{
 	height: 100%;

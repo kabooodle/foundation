@@ -1,6 +1,6 @@
 @extends('layouts.full', ['contentId' => 'shipping_index'])
 
-
+@if($shipments->count() <> 0)
 @section('body-menu')
     <div class="pull-left">
         <button type="button" id="" class="btn-toggle-filters btn btn-sm white">Filter Transactions</button>
@@ -10,7 +10,7 @@
         <a href="{{ route('merchant.shipping.create') }}" class="btn btn-sm white">Create new shipment</a>
     </div>
 @endsection
-
+@endif
 
 @section('body-content')
 
@@ -51,6 +51,21 @@
             </div>
         </div>
     </div>
+
+
+    @if($shipments->count() == 0)
+
+        <div class="onboard-card onboard_wrapper onboard-shipping">
+            <div class="onboard-body text-center">
+                <h1 class="onboard-card-title">Get started with shipping!</h1>
+                <h2 class="onboard-card-sub-title text-center">
+                    Shipping through Kabooodle is easy.  You and your customers will always know the status of their items.
+                </h2>
+                <button class="btn btn-lg btn-grn ">Create your first shipment!</button>
+            </div>
+        </div>
+
+    @else
 
     <div class="box">
         <div class="box-header">
@@ -95,6 +110,7 @@
             </table>
         </div>
     </div>
+    @endif
 @endsection
 
 

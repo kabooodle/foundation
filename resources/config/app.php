@@ -153,37 +153,28 @@ return [
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
 
         Kabooodle\Foundation\Providers\AppServiceProvider::class,
-
-        Aws\Laravel\AwsServiceProvider::class,
-
         Barryvdh\Cors\ServiceProvider::class,
         Dingo\Api\Provider\LaravelServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-
-
         Kabooodle\Foundation\Providers\AuthServiceProvider::class,
         Kabooodle\Foundation\Providers\EventServiceProvider::class,
         Kabooodle\Foundation\Providers\RouteServiceProvider::class,
         Kabooodle\Foundation\Providers\ComposerServiceProvider::class,
+        Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
+        Kabooodle\Foundation\Providers\HTMLServiceProvider::class,
 
+        Aws\Laravel\AwsServiceProvider::class,
         AlgoliaSearch\Laravel\AlgoliaServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
-        Kabooodle\Foundation\Providers\HTMLServiceProvider::class,
         Conner\Tagging\Providers\TaggingServiceProvider::class,
         GrahamCampbell\HTMLMin\HTMLMinServiceProvider::class,
         Sofa\Revisionable\Laravel\ServiceProvider::class,
-
         GrahamCampbell\Security\SecurityServiceProvider::class,
         GrahamCampbell\Binput\BinputServiceProvider::class,
         Laravel\Cashier\CashierServiceProvider::class,
-        Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
-
         Spatie\Fractal\FractalServiceProvider::class,
         ZackKitzmiller\Laravel5\TinyServiceProvider::class,
-        Ipunkt\LaravelAnalytics\AnalyticsServiceProvider::class,
-        Spatie\Analytics\AnalyticsServiceProvider::class,
-//        Kabooodle\Foundation\Providers\IronQueueServiceProvider::class,
         Collective\IronQueue\IronQueueServiceProvider::class,
         Kabooodle\Foundation\Providers\PusherServiceProvider::class,
         Cmgmyr\Messenger\MessengerServiceProvider::class,
@@ -250,8 +241,6 @@ return [
         'Binput' => GrahamCampbell\Binput\Facades\Binput::class,
         'Security' => GrahamCampbell\Security\Facades\Security::class,
         'Facebook' => Kabooodle\Services\Social\Facebook\FacebookSdkFacade::class,
-        'Analytics' => Ipunkt\LaravelAnalytics\AnalyticsFacade::class,
-        'AnalyticsReader' => Spatie\Analytics\AnalyticsFacade::class,
         'Bugsnag' => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
      ],
 

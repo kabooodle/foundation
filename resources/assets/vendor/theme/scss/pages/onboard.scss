@@ -1,0 +1,34 @@
+
+.btn-grn {
+  background: #30c283;
+  color:#fff;
+}
+.onboard-card {
+  .onboard-body {
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1140px;
+    padding: 30px 15px 500px;
+  }
+  background: #fff;
+  .onboard-card-title {
+    position: relative;
+    font-family: 'Kreon', serif;
+    font-size: 50px;
+    color: #565f7e;
+    line-height: 100px;
+  }
+  .onboard-card-sub-title {
+    position: relative;
+    font-size: 20px;
+    margin-bottom:50px;
+    line-height: 40px;
+    color: #a0a3b9;
+  }
+}
+
+.onboard-shipping {
+  background: url(/assets/images/onboarding/shipping.jpg) #fff no-repeat bottom center;
+  background-size: 1140px 364px;
+}

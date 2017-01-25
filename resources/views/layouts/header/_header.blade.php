@@ -89,14 +89,15 @@
                             @if(user()->isSubscribedToMerchantPlus())
                                 <div class="divider"></div>
                                 <a href="{{  route('merchant.shipping.create') }}"
-                                   class="dropdown-item {{ Request::is('merchant.shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
+                                   class="dropdown-item {{ Request::is('merchant/shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
                                 <a href="{{  route('merchant.shipping.index') }}"
                                    class="dropdown-item {{ Request::is('merchant/shipping') ? 'active' : null }}"><span>Shipments</span></a>
                             @endif
                         </div>
                     </li>
                 @endif
-                @if(user() && user()->claimsAsBuyer->count() > 0)
+                {{--@if(user() && (user()->claimsAsBuyer->count() > 0 || ! user()->hasAtLeastMerchantSubscription()))--}}
+                    @if(user())
                     <li class ="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> <span class="nav-text">Purchases</span></a>
                         <div class="dropdown-menu">
@@ -106,18 +107,20 @@
                                class="dropdown-item {{ Request::is('watching*') ? 'active' : null }}">Watching</a>
                         </div>
                     </li>
-                @endif
+                    @endif
+                {{--@endif--}}
                 <li class="nav-item dropdown">
                     <a class="dropdown-toggle nav-link"
                        data-toggle="dropdown"
                        href="{{ route('flashsales.index') }}"><span class="nav-text">Flash Sales</span></a>
                     <div class="dropdown-menu">
+                        @if(user())
+                            <a href="{{ route('flashsales.create') }}"
+                               class="dropdown-item {{ Request::is('flashsales/create') ? 'active' : null }}">Create</a>
+                        @endif
                         <a href="{{ route('flashsales.index') }}"
                            class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Browse</a>
-                        @if(user())
-                        <a href="{{ route('flashsales.create') }}"
-                           class="dropdown-item {{ Request::is('flashsales/create') ? 'active' : null }}">Create</a>
-                        @endif
+
                     </div>
                 </li>
             </ul>

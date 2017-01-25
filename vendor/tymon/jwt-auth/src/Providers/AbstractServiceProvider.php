@@ -114,9 +114,10 @@ abstract class AbstractServiceProvider extends ServiceProvider
         $this->app->singleton('tymon.jwt.provider.jwt', function ($app) {
             $provider = $this->config('providers.jwt');
 
-            return $app->make(
-                $provider,
-                [$this->config('secret'), $this->config('algo'), $this->config('keys')]
+            return new $provider(
+                $this->config('secret'),
+                $this->config('algo'),
+                $this->config('keys')
             );
         });
     }
