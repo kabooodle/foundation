@@ -23,6 +23,7 @@
     "gulp": "^3.9.1",
     "gulp-js-obfuscator": "^1.0.0",
     "imports-loader": "^0.6.5",
+    "intro.js": "^2.4.0",
     "jquery": "2.1.0",
     "laravel-elixir": "^5.0.0",
     "laravel-elixir-vueify": "^1.0.0",

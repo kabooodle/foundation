@@ -75,6 +75,7 @@ new Vue({
     mounted: function(){
         console.log('Inventory ready.');
         this.updateDefaultPricings();
+        this.addSizeContainer();
     },
     components: {
         'size-containers' : SizeContainers
