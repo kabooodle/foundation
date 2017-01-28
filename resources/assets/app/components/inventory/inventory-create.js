@@ -1,4 +1,6 @@
 import SizeContainers from './create/Size-Containers.vue';
+import onboard from './create/onboard';
+import Modal from '../Modal.vue';
 
 new Vue({
     el: '#inventory',
@@ -10,6 +12,10 @@ new Vue({
         inventory_types : KABOOODLE_APP.inventory_types
     },
     methods : {
+        /**
+         *
+         * @returns {boolean}
+         */
         validateSizeContainers : function() {
             var containers = this.size_containers;
             var valid = true;
@@ -30,9 +36,18 @@ new Vue({
 
             return valid;
         },
+        /**
+         *
+         * @param val
+         */
         setSubmitting : function(val) {
             this.submitting = val;
         },
+        /**
+         *
+         * @param e
+         * @returns {boolean}
+         */
         validateForm: function (e) {
             if(! this.validateSizeContainers()){
                 e.preventDefault();
@@ -41,13 +56,6 @@ new Vue({
             }
 
             this.setSubmitting(true);
-            // this.$validate(true, function () {
-            //     if (self.$inventory_validation.invalid || ! self.validateSizeContainers()) {
-            //         e.preventDefault();
-            //         self.setSubmitting(false);
-            //         return false;
-            //     }
-            // })
         },
         addSizeContainer : function() {
             $Bus.$emit('add-size');
@@ -71,6 +79,17 @@ new Vue({
             this.wholesale_price = moneyfy(style.wholesale_price_usd_less_5_percent);
             this.price = moneyfy(style.suggested_price_usd);
         },
+        showTourModal(){
+            $('#tour-modal').modal('show');
+        },
+        startTour(){
+            $(document).find('.tour-modal').modal('hide');
+            $(document).find('.onboard-show-btn').hide();
+            onboard().start();
+        },
+        noTour(){
+            $(document).find('.tour-modal').modal('hide');
+        },
     },
     mounted: function(){
         console.log('Inventory ready.');
@@ -78,6 +97,7 @@ new Vue({
         this.addSizeContainer();
     },
     components: {
+        'modal' : Modal,
         'size-containers' : SizeContainers
     }
 });

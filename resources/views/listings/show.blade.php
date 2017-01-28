@@ -1,8 +1,8 @@
 @extends('layouts.full', ['contentId' => 'listing-page'])
 
-@section('body-menu')
-    <button class="btn white btn-sm">Share</button>
-@endsection
+{{--@section('body-menu')--}}
+    {{--<button class="btn white btn-sm">Share</button>--}}
+{{--@endsection--}}
 
 @section('body-content')
 

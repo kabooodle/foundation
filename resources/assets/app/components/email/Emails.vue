@@ -18,9 +18,12 @@
                     <div class="form-group">
                         <input type="text" v-model="newAddress" class="form-control">
                     </div>
-                    <div class="pull-right">
-                        <button @click="saveEmail" class="btn primary  btn-sm ">Save</button>
-                        <button @click="addingEmail = !addingEmail" class="btn btn-sm white">Cancel</button>
+                    <div class="pull-left">
+                        <button :class="saving ? 'disabled' : null" :disabled="saving" @click.prevent="saveEmail" class="btn primary  btn-sm ">
+                            Save
+                            <spinny v-if="saving"></spinny>
+                        </button>
+                        <button :class="saving ? 'disabled' : null" :disabled="saving" @click.prevent="addingEmail = !addingEmail" class="btn btn-sm white">Cancel</button>
                     </div>
                 </div>
                 <div v-show="!addingEmail">
@@ -65,6 +68,7 @@
         },
         data() {
             return {
+                saving : false,
                 emails: this.initialEmails,
                 primaryId: this.initialPrimaryId,
                 addingEmail: false,
@@ -86,11 +90,7 @@
                 console.log(id);
             },
             saveEmail: function () {
-                let el = event.target;
-                let innerHtml = el.innerHTML;
-                el.disabled = true;
-                el.classList.add('disabled');
-                el.innerHTML = el.innerHTML + (spinny());
+                this.saving = true;
                 this.$http.post(this.newEmailEndpoint, this.newEmailData)
                     .then((response)=>{
                         this.emails.push(response.data.data.email);
@@ -105,10 +105,8 @@
                             'type': 'error'
                         });
                     }).finally(()=>{
+                        this.saving = false;
                         this.newAddress = null;
-                        el.disabled = false;
-                        el.classList.remove('disabled');
-                        el.innerHTML = innerHtml
                     });
             },
         },

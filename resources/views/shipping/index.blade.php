@@ -57,9 +57,15 @@
 
         <div class="onboard-card onboard_wrapper onboard-shipping">
             <div class="onboard-body text-center">
-                <h1 class="onboard-card-title">Get started with shipping!</h1>
-                <h2 class="onboard-card-sub-title text-center">
-                    Shipping through Kabooodle is easy.  You and your customers will always know the status of their items.
+                <h1 class="onboard-card-title">
+                   Ship inventory directly through USPS
+                </h1>
+                <h2 class="onboard-card-sub-title text-center m-b-3">
+                    Easily generate a USPS shipping label, for a single item, or multiple items at once.
+                    <br>
+                    Address information is filled in automatically based on the recipients shipping profile.
+                    <br>
+                    As the tracking information is updated, we update you and the recipient.
                 </h2>
                 <button class="btn btn-lg btn-grn ">Create your first shipment!</button>
             </div>

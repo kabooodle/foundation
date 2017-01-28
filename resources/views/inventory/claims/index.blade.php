@@ -1,6 +1,7 @@
 @extends('layouts.full', ['contentId' => 'claims_index'])
 
 
+@if($data->getCollection()->count() > 0)
 @section('body-menu')
     <div class="btn-toolbar center-block text-center">
             <div class="btn-group dropdown">
@@ -15,10 +16,12 @@
         </div>
     </div>
 @endsection
+@endif
 
 
 @section('body-content')
 
+    @if($data->getCollection()->count() > 0)
     <div class="box white">
         <div class="box-header">
             <h4>Pending claims on your inventory</h4>
@@ -48,6 +51,18 @@
     </div>
 
     @include('inventory.claims.partials._actionmodal')
+
+    @else
+
+        <onboard-card class="onboard-pendingclaims">
+            <template slot="title">No pending claims yet :(</template>
+            <template slot="subtext">                    When an item you have listed is claimed, it will be displayed on this page.
+                <br>
+                Decide which claims you wish to accept and treat as a completed sale,
+                <br> or reject it, returning the item to your inventory.</template>
+        </onboard-card>
+
+    @endif
 @endsection
 
 

@@ -1,12 +1,16 @@
 <div class="app-header navbar-md prpl-1000 box-shadow">
     <div class="navbar">
-
         <a class="navbar-item pull-right hidden-md-up m-a-0 m-l" data-target=
         "#navbar-4" data-toggle="collapse"><i class=
                                               "material-icons"></i></a><a href="/home"
                                                                            class="navbar-brand kabooodle-brand">
-<span class=
-      "hidden-folded inline">{{ env('APP_NAME') }}</span></a>
+            <span class="svg-logo">
+                @include('partials._logo_svg_lg')
+            </span>
+            <span class="svg-logo-sm">
+                @include('partials._logo_svg_sm')
+            </span>
+        </a>
 
         <ul class="nav navbar-nav pull-right nav-active-border">
             @if(user())
@@ -23,7 +27,7 @@
 
                 <li id="notices_wrapper" class="nav-item dropdown" @click="markUnreadAsRead('{{ apiRoute('notices.all.mark_as_read') }}')">
                 <a class="nav-link" data-toggle="dropdown" href="">
-                    <i class="fa fa-bell-o " aria-hidden="true"></i><span class="label up indicator warning hide" id="notify_total"></span>
+                    <i class="fa fa-bell-o " aria-hidden="true"></i><span class="label up indicator warning" id="notify_total"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg pull-right ">
                     <div class="scrollable" data-scrollable="scrollable">

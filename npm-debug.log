@@ -1,0 +1,108 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'rebuild', 'node-sass' ]
+2 info using npm@3.5.2
+3 info using node@v4.2.6
+4 info readInstalled object
+5 verbose rebuild path, id [ '/www/kabooodle/framework/node_modules/node-sass',
+5 verbose rebuild   'node-sass@3.13.1' ]
+6 silly rebuild set [ '/www/kabooodle/framework/node_modules/node-sass' ]
+7 info build /www/kabooodle/framework/node_modules/node-sass
+8 info lifecycle node-sass@3.13.1~preinstall: node-sass@3.13.1
+9 silly lifecycle node-sass@3.13.1~preinstall: no script for preinstall, continuing
+10 info linkStuff node-sass@3.13.1
+11 silly linkStuff node-sass@3.13.1 has /www/kabooodle/framework/node_modules as its parent node_modules
+12 verbose linkBins node-sass@3.13.1
+13 verbose link bins [ { 'node-sass': 'bin/node-sass' },
+13 verbose link bins   '/www/kabooodle/framework/node_modules/.bin',
+13 verbose link bins   false ]
+14 verbose linkMans node-sass@3.13.1
+15 verbose rebuildBundles node-sass@3.13.1
+16 verbose rebuildBundles [ 'gaze',
+16 verbose rebuildBundles   'glob',
+16 verbose rebuildBundles   'globule',
+16 verbose rebuildBundles   'lodash',
+16 verbose rebuildBundles   'lodash.clonedeep',
+16 verbose rebuildBundles   'minimatch' ]
+17 verbose rebuild bundle /www/kabooodle/framework/node_modules/node-sass/node_modules/globule
+18 info build /www/kabooodle/framework/node_modules/node-sass/node_modules/globule
+19 info lifecycle globule@1.1.0~preinstall: globule@1.1.0
+20 silly lifecycle globule@1.1.0~preinstall: no script for preinstall, continuing
+21 info linkStuff globule@1.1.0
+22 silly linkStuff globule@1.1.0 has /www/kabooodle/framework/node_modules/node-sass/node_modules as its parent node_modules
+23 verbose linkBins globule@1.1.0
+24 verbose linkMans globule@1.1.0
+25 verbose rebuildBundles globule@1.1.0
+26 info lifecycle globule@1.1.0~install: globule@1.1.0
+27 silly lifecycle globule@1.1.0~install: no script for install, continuing
+28 info lifecycle globule@1.1.0~postinstall: globule@1.1.0
+29 silly lifecycle globule@1.1.0~postinstall: no script for postinstall, continuing
+30 verbose rebuild bundle /www/kabooodle/framework/node_modules/node-sass/node_modules/lodash
+31 info build /www/kabooodle/framework/node_modules/node-sass/node_modules/lodash
+32 info lifecycle lodash@4.16.6~preinstall: lodash@4.16.6
+33 silly lifecycle lodash@4.16.6~preinstall: no script for preinstall, continuing
+34 info linkStuff lodash@4.16.6
+35 silly linkStuff lodash@4.16.6 has /www/kabooodle/framework/node_modules/node-sass/node_modules as its parent node_modules
+36 verbose linkBins lodash@4.16.6
+37 verbose linkMans lodash@4.16.6
+38 verbose rebuildBundles lodash@4.16.6
+39 info lifecycle lodash@4.16.6~install: lodash@4.16.6
+40 silly lifecycle lodash@4.16.6~install: no script for install, continuing
+41 info lifecycle lodash@4.16.6~postinstall: lodash@4.16.6
+42 silly lifecycle lodash@4.16.6~postinstall: no script for postinstall, continuing
+43 verbose rebuild bundle /www/kabooodle/framework/node_modules/node-sass/node_modules/minimatch
+44 info build /www/kabooodle/framework/node_modules/node-sass/node_modules/minimatch
+45 info lifecycle minimatch@3.0.3~preinstall: minimatch@3.0.3
+46 silly lifecycle minimatch@3.0.3~preinstall: no script for preinstall, continuing
+47 info linkStuff minimatch@3.0.3
+48 silly linkStuff minimatch@3.0.3 has /www/kabooodle/framework/node_modules/node-sass/node_modules as its parent node_modules
+49 verbose linkBins minimatch@3.0.3
+50 verbose linkMans minimatch@3.0.3
+51 verbose rebuildBundles minimatch@3.0.3
+52 info lifecycle minimatch@3.0.3~install: minimatch@3.0.3
+53 silly lifecycle minimatch@3.0.3~install: no script for install, continuing
+54 info lifecycle minimatch@3.0.3~postinstall: minimatch@3.0.3
+55 silly lifecycle minimatch@3.0.3~postinstall: no script for postinstall, continuing
+56 info lifecycle node-sass@3.13.1~install: node-sass@3.13.1
+57 verbose lifecycle node-sass@3.13.1~install: unsafe-perm in lifecycle false
+58 verbose lifecycle node-sass@3.13.1~install: PATH: /usr/share/npm/bin/node-gyp-bin:/www/kabooodle/framework/node_modules/node-sass/node_modules/.bin:/www/kabooodle/framework/node_modules/.bin:/usr/local/rvm/gems/ruby-2.3.0/bin:/usr/local/rvm/gems/ruby-2.3.0@global/bin:/usr/local/rvm/rubies/ruby-2.3.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/puppetlabs/bin:/usr/local/rvm/bin:/home/vagrant/bin
+59 verbose lifecycle node-sass@3.13.1~install: CWD: /www/kabooodle/framework/node_modules/node-sass
+60 silly lifecycle node-sass@3.13.1~install: Args: [ '-c', 'node scripts/install.js' ]
+61 silly lifecycle node-sass@3.13.1~install: Returned: code: 0  signal: null
+62 info lifecycle node-sass@3.13.1~postinstall: node-sass@3.13.1
+63 verbose lifecycle node-sass@3.13.1~postinstall: unsafe-perm in lifecycle false
+64 verbose lifecycle node-sass@3.13.1~postinstall: PATH: /usr/share/npm/bin/node-gyp-bin:/www/kabooodle/framework/node_modules/node-sass/node_modules/.bin:/www/kabooodle/framework/node_modules/.bin:/usr/local/rvm/gems/ruby-2.3.0/bin:/usr/local/rvm/gems/ruby-2.3.0@global/bin:/usr/local/rvm/rubies/ruby-2.3.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/puppetlabs/bin:/usr/local/rvm/bin:/home/vagrant/bin
+65 verbose lifecycle node-sass@3.13.1~postinstall: CWD: /www/kabooodle/framework/node_modules/node-sass
+66 silly lifecycle node-sass@3.13.1~postinstall: Args: [ '-c', 'node scripts/build.js' ]
+67 silly lifecycle node-sass@3.13.1~postinstall: Returned: code: 1  signal: null
+68 info lifecycle node-sass@3.13.1~postinstall: Failed to exec postinstall script
+69 verbose stack Error: node-sass@3.13.1 postinstall: `node scripts/build.js`
+69 verbose stack Exit status 1
+69 verbose stack     at EventEmitter.<anonymous> (/usr/share/npm/lib/utils/lifecycle.js:232:16)
+69 verbose stack     at emitTwo (events.js:87:13)
+69 verbose stack     at EventEmitter.emit (events.js:172:7)
+69 verbose stack     at ChildProcess.<anonymous> (/usr/share/npm/lib/utils/spawn.js:24:14)
+69 verbose stack     at emitTwo (events.js:87:13)
+69 verbose stack     at ChildProcess.emit (events.js:172:7)
+69 verbose stack     at maybeClose (internal/child_process.js:821:16)
+69 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+70 verbose pkgid node-sass@3.13.1
+71 verbose cwd /www/kabooodle/framework
+72 error Linux 4.4.0-45-generic
+73 error argv "/usr/bin/nodejs" "/usr/bin/npm" "rebuild" "node-sass"
+74 error node v4.2.6
+75 error npm  v3.5.2
+76 error code ELIFECYCLE
+77 error node-sass@3.13.1 postinstall: `node scripts/build.js`
+77 error Exit status 1
+78 error Failed at the node-sass@3.13.1 postinstall script 'node scripts/build.js'.
+78 error Make sure you have the latest version of node.js and npm installed.
+78 error If you do, this is most likely a problem with the node-sass package,
+78 error not with npm itself.
+78 error Tell the author that this fails on your system:
+78 error     node scripts/build.js
+78 error You can get information on how to open an issue for this project with:
+78 error     npm bugs node-sass
+78 error Or if that isn't available, you can get their info via:
+78 error     npm owner ls node-sass
+78 error There is likely additional logging output above.
+79 verbose exit [ 1, true ]

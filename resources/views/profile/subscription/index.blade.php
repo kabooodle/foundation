@@ -17,7 +17,7 @@
     </div>
 
     @if(user()->onGenericTrial())
-        <div class="box warning">
+        <div class="box info">
             <div class="box-body">
                 <div class="text-center center-block">
                     <p class="m-b-0">You are currently on a 30 day trial. Your trial ends on <strong>{{ $user->trial_ends_at->format('l, F jS \a\t h:ia') }}</strong></p>

@@ -63,16 +63,19 @@
                             <input type="text" v-model="phone" class="form-control">
                         </div>
                     </div>
-                    <div class="pull-left">
-                        <button @click="addingAddress = !addingAddress" class="btn white btn-block p-x-md">Cancel</button>
-                    </div>
-                    <div class="pull-right">
-                        <button @click="saveAddress" class="btn primary btn-block p-x-md">Save</button>
+                    <div class="form-group row">
+                        <label class="form-control-label col-sm-3"></label>
+                        <div class="col-sm-3">
+                            <button :class="saving ? 'disabled' : null" :disabled="saving" @click.prevent="saveAddress" class="btn primary btn-sm ">
+                                Save <spinny v-if="saving"></spinny>
+                            </button>
+                            <button :class="saving ? 'disabled' : null" :disabled="saving" @click.prevent="addingAddress = !addingAddress" class="btn btn-sm white  ">Cancel</button>
+                        </div>
                     </div>
                 </div>
                 <div v-show="!addingAddress">
                     <div class="pull-left">
-                        <button @click="addingAddress = !addingAddress" class="btn white btn-block p-x-md">Add Address</button>
+                        <button @click.prevent="addingAddress = !addingAddress" class="btn btn-sm white ">Add Address</button>
                     </div>
                 </div>
             </div>
@@ -81,6 +84,7 @@
 </template>
 <script>
     import Address from '../address/Address.vue'
+    import Spinny from '../Spinner.vue';
     export default {
         props: {
             type: {
@@ -103,6 +107,7 @@
         },
         data() {
             return {
+                saving:false,
                 addresses: this.initialAddresses,
                 primaryId: this.initialPrimaryId,
                 addingAddress: false,
@@ -356,6 +361,7 @@
         },
         components:{
             'user-address': Address,
+            'spinny' : Spinny
         },
         computed: {
             primary: function () {
@@ -381,6 +387,7 @@
                 this.primaryId = id;
             },
             saveAddress: function () {
+                this.saving = true;
                 this.$http.post(this.addressesEndpoint, this.addressData)
                     .then(function (response) {
                         this.addresses.push(response.data.data.address)
@@ -395,7 +402,9 @@
                             'text': 'We\'re sorry. Something went wrong. Please try again.',
                             'type': 'error'
                         });
-                    });
+                    }).finally(()=>{
+                        this.saving = false;
+                });
             },
             clearAddressData: function () {
                 this.name = null;

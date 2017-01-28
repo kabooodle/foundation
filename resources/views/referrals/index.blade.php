@@ -3,27 +3,41 @@
 
 @section('body-content')
 
-    <div class="text-center m-b-3 ">
-        <img src="/assets/images/513550806.jpg" width="100%">
-        <h1 style="line-height: 50px" class="m-b-3 _300 m-t-2">Share {{ env('APP_NAME') }} and Earn!</h1>
-        <h5 class="_400 text-muted" style="line-height: 30px;">For every friend you refer whom joins {{ env('APP_NAME') }}, we'll credit your account a free month, up to 6 months.
-            For each additional referral, your name will be entered in our biannual drawing to win 4 tickets to Disneyland or a $500 gift card.</h5>
-    </div>
 
-    <div class="box padding">
+    <div class="onboard-card onboard_wrapper onboard-referrals">
+        <div class="onboard-body text-center">
+            <h1 class="onboard-card-title">
+                Share {{ env('APP_NAME') }} and Earn!
+            </h1>
+            <h2 class="onboard-card-sub-title text-center m-b-3">
+                For every friend you refer whom joins {{ env('APP_NAME') }}, we'll credit your account a free month, up to 6 months.
+                <br>
+                For each additional referral, your name will be entered in our biannual drawing to win
+                <br>
+                4 tickets to Disneyland or a $500 gift card.
+            </h2>
+
             <div class="row">
-                <div class="col-md-6">
-                    <p class="m-b-0 p-b-0 text-center"><span id="link-text">http://kabooodle.dev/invite/{{ user()->username }}</span>
-                        <button class="btn btn-xs white" data-clipboard-target="#link-text">
-                            Copy Link
-                        </button>
-                    </p>
-                </div>
-                <div class="col-md-6">
-                    <p class="m-b-0 p-b-0 text-center">Share to Facebook <span class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></span>
-                    </p>
+                <div class="col-md-6 col-md-offset-3">
+
+                    <div class="input-group">
+                        <input type="text" readonly class="form-control" id="link-text" placeholder="Search for..." value="http://kabooodle.dev/invite/{{ user()->username }}">
+                        <span class="input-group-btn">
+                            <button data-animation="false" class="btn success" data-clipboard-target="#link-text" type="button">
+                                <small>COPY</small>
+                            </button>
+                        </span>
+                    </div>
+
+                    <div class="m-t-3">
+                        Share this on
+                        <button id="btn-social-facebook" class="btn btn-icon btn-social btn-sm white" data-href="https://www.facebook.com/kabooodle" type="button"><i class="fa fa-facebook"></i> <i class="fa fa-facebook indigo"></i></button>
+                        <a id="btn-social-twitter" class="btn btn-icon btn-social btn-sm white" href="https://twitter.com/home?status=http%3A//kabooodle.com%20%23abc" target="_blank"><i class="fa fa-twitter"></i> <i class="fa fa-twitter blue"></i></a>
+                    </div>
+
                 </div>
             </div>
+        </div>
     </div>
 
 
@@ -31,7 +45,6 @@
     <div class="padding white p-b-0">
         <div class="row">
             @foreach(user()->referrals as $referral)
-
                 <div class="col-md-4">
                     <ul class="list p-b-0 b-a {{ $referral->subscribed('main') ? 'b-success' : null }}">
                         <li class="list-item">
@@ -52,11 +65,32 @@
         </div>
     </div>
     @else
-        <p>No referrals yet!</p>
+        <div class="box m-t-3">
+            <div class="box-body">
+                <p class="text-center m-b-0">No referrals yet!</p>
+            </div>
+        </div>
+
     @endif
 
     @push('footer-scripts')
     <script>
+        $(function(){
+
+            $('#btn-social-facebook').click(function(e){
+                e.preventDefault();
+                let href = $(this).data('href');
+                console.log(href);
+                FB.ui({
+                    method: 'share',
+                    display: 'popup',
+                    href: href,
+                }, function(response){
+                });
+            });
+
+        });
+
         $('button').tooltip({
             trigger: 'click',
             placement: 'bottom'

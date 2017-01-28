@@ -9,18 +9,15 @@
 @section('body-content')
     @include('widgets._fileuploadscripts')
 
-
-
-        {{--<validator--}}
-            {{--name="inventory_validation"--}}
-            {{--:classes="{ invalid : ' has-danger ' }"--}}
-        {{-->--}}
-
         {{ Form::open(['route' => ['shop.inventory.store', user()->username], 'v-on:submit' => 'validateForm']) }}
 
-        <div class="box">
+        <div class="box" id="addItemsPrimaryContainer">
             <div class="box-header">
-                <h2>Add Items to your Inventory</h2>
+                <h2>Add Items to your Inventory
+                    <a class="text-success onboard-show-btn" @click.prevent="showTourModal">
+                        <i class="fa fa-question-circle" aria-hidden="true"></i>
+                    </a>
+                </h2>
                 <small>Once an item is in your inventory, you can add it to any sale, anytime!</small>
             </div>
             <div class="box-divider m-a-0"></div>
@@ -76,11 +73,22 @@
 
         {{ Form::close() }}
 
-        {{--</validator>--}}
+
+    <modal modal_id="tour-modal" modal_class="tour-modal" :display_header="false" :display_footer="false">
+        <div slot="modal_body">
+            <div class="m-a-2 p-a-2 center text-center block-center center-block">
+                <img src="/assets/images/kit1.png">
+                <h5 class="m-t-3 m-b-3">I'm Kit. If you need help, I'm here to help guide you anytime.</h5>
+                <button type="button" class="btn btn-success btn-lg" @click.prevent="startTour">Yes, take a tour</button>
+                <button type="button" class="m-l-1 btn btn-lg white" @click.prevent="noTour">No thanks Kit!</button>
+            </div>
+        </div>
+    </modal>
 
 @endsection
 
 @push('footer-scripts')
 
 <script src="{{staticAsset('/assets/js/inventory-create.js')}}"></script>
+
 @endpush

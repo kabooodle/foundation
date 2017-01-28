@@ -6,7 +6,7 @@
     {{ Form::open(['route' => 'profile.index', 'method' => 'POST']) }}
     <div class="box">
         <div class="box-header">
-            <h2>Account Settings</h2>
+            <h2>Profile Settings</h2>
         </div>
         <div class="box-divider m-a-0"></div>
         <div class="box-body">

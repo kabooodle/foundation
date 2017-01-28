@@ -1,14 +1,16 @@
 @extends('layouts.full')
 
-
+@if($listings)
 @section('body-menu')
     <div class="pull-left">
         <button class="btn btn-sm white">Filter Listings</button>
     </div>
 @endsection
-
+@endif
 
 @section('body-content')
+
+    @if($listings)
     <div class="box">
         <div class="box-header">
             <h4>Listings</h4>
@@ -38,7 +40,23 @@
             </table>
         </div>
     </div>
-
+    @else
+        <div class="onboard-card onboard_wrapper onboard-managelistings">
+            <div class="onboard-body text-center">
+                <h1 class="onboard-card-title">
+                    Manage listings
+                </h1>
+                <h2 class="onboard-card-sub-title text-center m-b-3">
+                    Inventory you've listed to facebook and flash sales will be shown on this page.
+                    <br>
+                    You'll be able to which sales generated the most revenue, views, claims, and more!
+                    <br>
+                    Need to adjust or remove a listing? Yup, you'll do that on this page too.
+                </h2>
+                <button class="btn btn-lg btn-grn m-b-2"><a href="{{ route('shop.inventory.index', [user()->username]) }}">Ok, I'll go list some items!</a></button>
+            </div>
+        </div>
+    @endif
 @endsection
 
 

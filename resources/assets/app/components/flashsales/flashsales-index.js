@@ -1,12 +1,13 @@
 import Flashsales from './Flashsales.vue';
 import Spinny from '../Spinner.vue';
 import Multiselect from 'vue-multiselect';
+import OnboardCard from '../OnboardCard.vue';
 
 new Vue({
     el: '#flashsales_index',
 
     data: {
-
+        flashsales: [],
         search: {
             sellers: [],
             sellers_query: [],
@@ -14,6 +15,11 @@ new Vue({
             filtering: false,
             sale_name: null,
         }
+    },
+    created(){
+        $Bus.$on('fetch:completed', (flashsales)=>{
+            this.flashsales = flashsales;
+        });
     },
     methods: {
         searchSellers(qry){
@@ -33,5 +39,6 @@ new Vue({
         'spinny': Spinny,
         'flashsales-cards': Flashsales,
         'multiselect': Multiselect,
+        'onboard-card' : OnboardCard
     },
 })

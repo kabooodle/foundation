@@ -4,6 +4,7 @@ import StyleTemplate from './style_template.vue';
 import FacebookLogin from '../facebook/FacebookLogin.vue';
 import ListingSettings from './Listing-Settings.vue';
 import Spinner from '../Spinner.vue';
+import OnboardCard from '../OnboardCard.vue';
 
 new Vue({
     el: '#manage_inventory',
@@ -301,9 +302,10 @@ new Vue({
         },
     },
     components: {
+        'spinner': Spinner,
         'style-template' : StyleTemplate,
         'facebook-login' : FacebookLogin,
         'listing-settings' : ListingSettings,
-        'spinner': Spinner
+        'onboard-card' : OnboardCard
     }
 });

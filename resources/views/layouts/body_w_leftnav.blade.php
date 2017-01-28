@@ -1,14 +1,24 @@
 @extends('layouts.full')
 
 @section('body-content')
-
+    <style>
+        .nav-pills .show .dropdown-menu {
+            position: static;
+            float: none;
+            width: auto;
+            margin-top: 0;
+            background-color: transparent;
+            border: 0;
+            box-shadow: none;
+        }
+    </style>
     <div class="row">
         <div class="col-md-3">
             <div class="hidden-xs-down" id="inner-left-menu">
                 <div class="nav-active-primary white">
-                    <div class="nav nav-pills nav-sm">
+                    <ul class="nav nav-pills nav-sm">
                         @yield('body-content-left-nav')
-                    </div>
+                    </ul>
                 </div>
             </div>
         </div>

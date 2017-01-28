@@ -1,4 +1,5 @@
 import Claims_index from './Claims-index.vue';
+import OnboardCard from '../OnboardCard.vue';
 
 new Vue({
     el: "#claims_index",
@@ -52,6 +53,7 @@ new Vue({
         },
     },
     components: {
+        'onboard-card' : OnboardCard,
         'claims-index' : Claims_index
     }
 });

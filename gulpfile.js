@@ -85,7 +85,8 @@ elixir(function (mix) {
             'vendor/bootstrap-slider/bootstrap-slider.css',
             'vendor/tablesaw/tablesaw.css',
             'vendor/theme/bootstrap-select/bootstrap-select.css',
-            'vendor/perfectscroll/perfect-scrollbar.css'
+            'vendor/perfectscroll/perfect-scrollbar.css',
+            'vendor/introjs/introjs.css',
         ], elixir.config.publicPath + 'css/merchant.css')
 
         .scripts([

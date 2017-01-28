@@ -1,31 +1,31 @@
-<a href="{{ route('profile.index') }}" class="nav-link {{ Request::is('profile') ? 'active' : null }}">
-    Account Settings
-</a>
-<a href="{{ route('profile.emails.index') }}" class="nav-link {{ Request::is('profile/emails') ? 'active' : null }}">
+<li><a href="{{ route('profile.index') }}" class="nav-link {{ Request::is('profile') ? 'active' : null }}">
+    Profile Settings
+</a></li>
+<li><a href="{{ route('profile.emails.index') }}" class="nav-link {{ Request::is('profile/emails') ? 'active' : null }}">
     Email Addresses
-</a>
-<a href="{{ route('profile.notifications.edit') }}" class="nav-link {{ Request::is('profile/notifications') ? 'active' : null }}">
+</a></li>
+<li><a href="{{ route('profile.notifications.edit') }}" class="nav-link {{ Request::is('profile/notifications') ? 'active' : null }}">
     Notification Settings
-</a>
-<a href="{{ route('profile.social.edit') }}" class="nav-link {{ Request::is('profile/socialprofiles') ? 'active' : null }}">
+</a></li>
+<li><a href="{{ route('profile.social.edit') }}" class="nav-link {{ Request::is('profile/socialprofiles') ? 'active' : null }}">
     Social Profiles
-</a>
-<a href="{{ route('profile.shippingprofile.edit') }}" class="nav-link {{ Request::is('profile/shippingprofile') ? 'active' : null }}">
+</a></li>
+<li><a href="{{ route('profile.shippingprofile.edit') }}" class="nav-link {{ Request::is('profile/shippingprofile') ? 'active' : null }}">
     Shipping Profile
-</a>
+</a></li>
 @if(user()->hasAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
-<a href="{{ route('profile.credits.index') }}" class="nav-link {{ Request::is('profile/credits') ? 'active' : null }}">
+<li><a href="{{ route('profile.credits.index') }}" class="nav-link {{ Request::is('profile/credits') ? 'active' : null }}">
     Credits
-</a>
+</a></li>
 @endif
-<a href="{{ route('profile.subscription.index') }}" class="nav-link {{ Request::is('profile/subscription') ? 'active' : null }}">
+<li><a href="{{ route('profile.subscription.index') }}" class="nav-link {{ Request::is('profile/subscription') ? 'active' : null }}">
     Subscription
-</a>
+</a></li>
 @if(user()->hasAtLeastMerchantSubscription())
-<a href="{{ route('profile.subscription.invoices.index') }}" class="nav-link {{ Request::is('profile/subscription/invoices') ? 'active' : null }}">
+<li><a href="{{ route('profile.subscription.invoices.index') }}" class="nav-link {{ Request::is('profile/subscription/invoices') ? 'active' : null }}">
     Receipts
-</a>
+</a></li>
 @endif
-<a href="{{ route('profile.creditcard.index') }}" class="nav-link {{ Request::is('profile/creditcard') ? 'active' : null }}">
+<li><a href="{{ route('profile.creditcard.index') }}" class="nav-link {{ Request::is('profile/creditcard') ? 'active' : null }}">
     Credit Card
-</a>
+</a></li>

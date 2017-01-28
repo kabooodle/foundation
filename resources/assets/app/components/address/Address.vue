@@ -8,7 +8,7 @@
                 <div class="text-primary text-center">Primary</div>
             </div>
             <div v-show="!isPrimary">
-                <button @click="makePrimary" class="btn white btn-block p-x-md">Make Primary</button>
+                <button @click="makePrimary" class="btn white btn-sm btn-block p-x-md">Make Primary</button>
             </div>
         </div>
         <div class="col-sm-1">

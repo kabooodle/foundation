@@ -4,10 +4,13 @@
             <div class="row">
                 <div class="col-md-9">
                     <div class="clearfix">
-                        <a class="navbar-brand kabooodle-brand"><span class="hidden-folded inline"><i aria-hidden="true" class="fa fa-archive"></i> {{ env('APP_NAME') }}</span></a>
+                        <a class="navbar-brand kabooodle-brand">
+                            <span class="svg-logo">
+                                @include('partials._logo_svg_lg')
+                            </span>
+                        </a>
                     </div>
-
-                    <div class="m-v-md">
+                    <div class="m-v-md m-t-xs">
                         <p>
                             <strong>Everything &amp; More!</strong>
                         </p>

@@ -1,7 +1,7 @@
 <template>
     <div :id="'size_'+id" class="sizing_container" :data-id="id">
-        <div class="box-body clearfix">
-            <div class="form-group row">
+        <div class="box-body clearfix " >
+            <div class="form-group sizing-row row">
                 <label class="col-sm-3 form-control-label">Size</label>
                 <div class="col-sm-9">
                     <div class="btn-group-prpl" data-toggle="buttons">
@@ -18,7 +18,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="row row-horizon clearfix" >
                 <div class="col-sm-4 thumbnail-container"  v-for="(image, $index) in images">
                     <div class="box no-shadow m-b-0 p-t-1 p-b-1 r b-1 b b-a" >
@@ -78,11 +77,11 @@
             <div class="clearfix">
                 <div class="row">
                     <div class="col-sm-offset-3 col-sm-7">
-                                        <span class="pull-left">
+                                        <span class="pull-left add-images-btn">
                                             <image-attach :s3_key_url="s3_key_url" ></image-attach>
                                         </span>
 
-                        <button type="button" class="pull-left btn white btn-sm "
+                        <button type="button" class="pull-left btn add-categories-btn white btn-sm "
                             :disabled="images.length == 0"
                                 @click="toggleCategory" >Categories</button>
                     </div>

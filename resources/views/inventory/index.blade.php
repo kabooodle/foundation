@@ -1,9 +1,7 @@
 @extends('layouts.full', ['contentId' => 'manage_inventory'])
 
 @section('body-menu')
-
-
-    <div class="center-block text-center">
+    <div class="center-block text-center" v-if="inventory_items.length > 0">
         <button
                 class="btn white btn-sm "
                 data-toggle="tooltip"
@@ -47,7 +45,6 @@
                 class="btn primary btn-sm "
                 id="navbarSideButton">List inventory to sales
         </button>
-        {{--<button class="btn white btn-sm " id="navbarSideButton">Filter Items</button>--}}
     </div>
 @endsection
 
@@ -268,6 +265,16 @@
 
     <style-template></style-template>
     <listing-settings></listing-settings>
+
+    <onboard-card class="onboard-manageinventory" v-if="inventory_items.length == 0 && ! actions.refreshing_data">
+        <template slot="title">No inventory to manage or list</template>
+        <template slot="subtext">
+            Once you've added inventory, you can list it to Facebook &amp; flash sales anytime!
+            <br>
+            Wish to edit an item? You would do that here too :)
+        </template>
+        <template slot="extra"><button class="btn btn-lg btn-grn m-b-2"><a href="{{ route('shop.inventory.create', [user()->username]) }}" >Got it! Take me to add inventory</a></button></template>
+    </onboard-card>
 
 @endsection
 

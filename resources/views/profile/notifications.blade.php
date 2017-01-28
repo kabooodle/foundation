@@ -14,17 +14,22 @@
                 <thead>
                     <tr>
                         <th>Event</th>
-                        <th>Group</th>
+                        {{--<th>Group</th>--}}
                         <th>Email</th>
                         <th>SMS*</th>
                     </tr>
                 </thead>
                 <tbody>
                 @foreach($notifications as $group => $notific)
+                    <tr>
+                        <td colspan="3">
+                            <small class="text-muted">{{ ucfirst($group) }}</small>
+                        </td>
+                    </tr>
                     @foreach($notific as $notification)
                     <tr>
                         <td>{{ $notification->description }}</td>
-                        <td>{{ ucfirst($notification->group) }}</td>
+                        {{--<td>{{ ucfirst($notification->group) }}</td>--}}
                         <td>
                             <div class="checkbox checkbox-slider--b-flat">
                                 <label>
