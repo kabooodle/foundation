@@ -111,11 +111,11 @@
 
                 this.makePagination(response.body.data);
                 this.filtering = false;
+                $Bus.$emit('fetch:completed', this.flashsales);
 
                 // If we have reached the end, tell our infinite loader we're completed,
                 // otherwise, tell it we're loaded and ready for next...
                 this.$nextTick(()=>{
-                    $Bus.$emit('fetch:completed', this.flashsales);
                     if (this.flashsales.length >= this.pagination.total) {
                         this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
                     } else {

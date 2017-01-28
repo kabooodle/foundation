@@ -1,7 +1,7 @@
 <!DOCTYPE html>
     <html lang="en">
     @include('layouts.header._htmlheader')
-    <body class=" @yield('body-class', null)  {{ user() && user()->onGenericTrial() ? ' on-trial ' : null }} @hasSection('body-menu') @if(!(trim($__env->yieldContent('body-menu'))) <> '') with-body-menu @else no-body-menu @endif @else  no-body-menu  @endif ">
+    <body class=" @yield('body-class', null)  {{ user() && user()->onGenericTrial() ? ' on-trial ' : null }} @hasSection('body-menu') @if(trim($__env->yieldContent('body-menu')) <> '') with-body-menu @else no-body-menu @endif @else  no-body-menu  @endif ">
     <div id="fb-root"></div>
     <script>
         window.fbAsyncInit = function() {
@@ -38,9 +38,7 @@
                     @endif
 
                     @hasSection('body-menu')
-                        @if (!(trim($__env->yieldContent('body-menu'))) <> '')
-                            @include('layouts.partials._bodymenu')
-                        @endif
+                        @include('layouts.partials._bodymenu')
                     @endif
 
                     <div ui-view class="app-body" id="view">

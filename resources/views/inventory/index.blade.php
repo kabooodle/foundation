@@ -1,7 +1,7 @@
 @extends('layouts.full', ['contentId' => 'manage_inventory'])
 
 @section('body-menu')
-    <div class="center-block text-center" v-if="inventory_items.length > 0">
+    <div class="center-block text-center" v-if="inventory_items.length > 0 && ! actions.refreshing_data">
         <button
                 class="btn white btn-sm "
                 data-toggle="tooltip"

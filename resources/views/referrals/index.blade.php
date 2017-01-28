@@ -24,7 +24,7 @@
                         <input type="text" readonly class="form-control" id="link-text" placeholder="Search for..." value="http://kabooodle.dev/invite/{{ user()->username }}">
                         <span class="input-group-btn">
                             <button data-animation="false" class="btn success" data-clipboard-target="#link-text" type="button">
-                                <small>COPY</small>
+                                <small class="small _500">COPY</small>
                             </button>
                         </span>
                     </div>

@@ -1,8 +1,12 @@
 <template>
     <div>
-        <div class="box">
+        <div class="box" id="create_flashsale_container">
             <div class="box-header">
-                <h2>{{ title }}</h2>
+                <h2>{{ title }}
+                    <a class="text-success onboard-show-btn" @click.prevent="showTourModal">
+                        <i class="fa fa-question-circle" aria-hidden="true"></i>
+                    </a>
+                </h2>
             </div>
             <div class="box-divider m-a-0"></div>
             <div class="box-body">
@@ -145,7 +149,7 @@
 
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-9">
-                <button type="button" :disabled="isSaving || isDeleting" :class="isSaving || isDeleting ? 'disabled' : null" @click.prevent="addSellerContainer(null,null, $event)" class="btn white">Add sellers group</button>
+                <button id="btn-add-sellersgroup" type="button" :disabled="isSaving || isDeleting" :class="isSaving || isDeleting ? 'disabled' : null" @click.prevent="addSellerContainer(null,null, $event)" class="btn white">Add sellers group</button>
                 <button type="button" :disabled="isSaving || isDeleting" :class="isSaving || isDeleting ? 'disabled' : null" class="btn primary" @click.prevent="saveFlashsale">
                     <template v-if="isEditing">Update and Save</template>
                     <template v-else>Save</template>
@@ -163,6 +167,19 @@
                 :search_endpoint="search_endpoint"
                 :save_endpoint="group_save_endpoint"
         ></build-group>
+
+
+        <modal modal_id="tour-modal" modal_class="tour-modal" :display_header="false" :display_footer="false">
+            <div slot="modal_body">
+                <div class="m-a-2 p-a-2 center text-center block-center center-block">
+                    <img src="/assets/images/kit1.png">
+                    <h5 class="m-t-3 m-b-3">I'm Kit. If you need help, I'm here to help guide you anytime.</h5>
+                    <button type="button" class="btn btn-success btn-lg" @click.prevent="startTour">Yes, take a tour</button>
+                    <button type="button" class="m-l-1 btn btn-lg white" @click.prevent="noTour">No thanks Kit!</button>
+                </div>
+            </div>
+        </modal>
+
     </div>
 </template>
 <script>
@@ -170,6 +187,8 @@
     import FileUpload from '../FileUpload.vue';
     import InlineField from '../InlineField.vue';
     import Multiselect from 'vue-multiselect';
+    import Modal from '../Modal.vue';
+    import onboard from './onboard';
     import SellerGroup from './Seller-Group.vue';
     import Spinny from  '../Spinner.vue';
 
@@ -500,11 +519,23 @@
                     });
                 });
             },
+            showTourModal(){
+                $('#tour-modal').modal('show');
+            },
+            startTour(){
+                $(document).find('.tour-modal').modal('hide');
+                $(document).find('.onboard-show-btn').hide();
+                onboard().start();
+            },
+            noTour(){
+                $(document).find('.tour-modal').modal('hide');
+            },
         },
         components: {
             'build-group': BuildGroup,
             'image-attach': FileUpload,
             'inline-field': InlineField,
+            'modal' : Modal,
             'multiselect': Multiselect,
             'seller-group': SellerGroup,
             'spinny': Spinny

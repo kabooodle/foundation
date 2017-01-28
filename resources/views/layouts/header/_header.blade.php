@@ -27,7 +27,7 @@
 
                 <li id="notices_wrapper" class="nav-item dropdown" @click="markUnreadAsRead('{{ apiRoute('notices.all.mark_as_read') }}')">
                 <a class="nav-link" data-toggle="dropdown" href="">
-                    <i class="fa fa-bell-o " aria-hidden="true"></i><span class="label up indicator warning" id="notify_total"></span>
+                    <i class="fa fa-bell-o " aria-hidden="true"></i><span class="label up indicator warning hide" id="notify_total"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg pull-right ">
                     <div class="scrollable" data-scrollable="scrollable">
@@ -51,7 +51,7 @@
                         @if(user()->hasAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
                             <a class="dropdown-item hidden-lg-up" href="{{ route('profile.credits.index') }}"><span>${{ user()->getAvailableBalance() }} Credits</span></a>
                         @endif
-                        <a class="dropdown-item" href="{{ route('referrals.index') }}"><span>Referrals</span></a>
+                        <a class="dropdown-item {{ Request::is('referrals') ? 'active' : null }}" href="{{ route('referrals.index') }}"><span>Referrals</span></a>
                         <a class=
                            "dropdown-item" href="{{ route('auth.logout') }}">Sign out</a>
                     </div>

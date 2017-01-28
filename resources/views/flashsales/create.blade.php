@@ -11,7 +11,7 @@
         <a href="{{ route('flashsales.create') }}" class="nav-link {{ Request::is('flashsales/create') ? 'active' : null }}">
             Create flash sale
         </a>
-        <a  @click.prevent="buildGroup" class="nav-link">
+        <a  id="btn-create-sellergroup" @click.prevent="buildGroup" class="nav-link">
             Create seller group
         </a>
     @endif

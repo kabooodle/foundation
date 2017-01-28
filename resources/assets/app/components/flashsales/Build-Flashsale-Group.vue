@@ -6,15 +6,11 @@
         >
             <h4 slot="modal_header">Create a group of sellers</h4>
             <template slot="modal_body">
-
                 <div class="error_container block r"></div>
-
                 <template v-if="!saved_notice">
-
                     <p>Creating a group of sellers allows you to easily invite the group to participate as sellers to any flashsale, vs adding sellers one by one.  You can "reuse" groups anytime!</p>
-
                     <inline-field :errors="form_errors.name">
-                        <template slot="label">Flashsale group name</template>
+                        <template slot="label">Seller group name</template>
                         <input slot="input" type="text" v-model="name" class="form-control">
                     </inline-field>
 
@@ -53,10 +49,10 @@
             <template slot="modal_footer">
                 <template v-if="!saved_notice">
                     <button type="button" :disabled="isSaving" :class="isSaving ?'disabled' :null" class="btn btn-sm primary" @click.prevent="saveGroup">Save <spinny v-if="isSaving"></spinny></button>
-                    <button type="button" :disabled="isSaving" :class="isSaving ?'disabled' :null" class="btn-text btn-sm btn-link" @click.prevent="closeModal">Cancel</button>
+                    <button type="button" :disabled="isSaving" :class="isSaving ?'disabled' :null" class="btn btn-sm white" @click.prevent="closeModal">Cancel</button>
                 </template>
                 <template v-if="saved_notice">
-                    <button type="button" class="btn-text btn-sm btn-link" @click.prevent="closeModal">Close</button>
+                    <button type="button" class="btn white btn-sm" @click.prevent="closeModal">Close</button>
                 </template>
             </template>
         </modal>

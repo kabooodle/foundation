@@ -2,7 +2,7 @@
 
 
 @section('body-menu')
-    <div class=" center-block text-center "   v-if="flashsales.length > 0">
+    <div class=" center-block text-center "  v-if="flashsales.length">
         <div class="row">
             <div class="col-xs-4 col-xs-offset-4">
                 <input type="text" name="name" v-model="search.sale_name" class="form-control" @keyup.enter="performSearch" placeholder="Search by name">

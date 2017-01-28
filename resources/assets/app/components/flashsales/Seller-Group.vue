@@ -53,6 +53,7 @@
                 </span>
             </div>
             <span class="text-xs text-muted" slot="text-help">(optional)</span>
+            <span class="text-xs text-muted block" slot="text-help">Assign a time slot for when the group's items will post to the flashsale</span>
         </inline-field>
     </span>
 </template>

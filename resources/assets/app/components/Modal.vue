@@ -10,7 +10,7 @@
                             <button v-if="display_header_close_btn" type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <h6 v-if="!this.$slots['modal_header']" class="m-b-0">Title</h6>
+                            <h6 v-if="!this.$slots['modal_header']" class="m-b-0"></h6>
                             <slot name="modal_header"></slot>
                         </div>
                         <div class="box-divider"></div>
