@@ -154,7 +154,7 @@ class AuthController extends Controller
         try {
             $this->parentLogin($request);
 
-            return redirect()->intended($request->get('_redirect', $this->redirectTo));
+            return redirect()->intended($request->get('/home', '/users/'.$request->username));
         } catch (\Illuminate\Validation\ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());
 

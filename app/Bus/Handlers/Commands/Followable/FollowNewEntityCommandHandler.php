@@ -31,11 +31,7 @@ class FollowNewEntityCommandHandler
         /** @var  */
         $followable = $command->getFollowable();
 
-        $alreadyFollowing = $followable->following->filter(function ($follow) use ($actor) {
-            return $follow->user_id = $actor->id;
-        })->first();
-
-        if ($alreadyFollowing) {
+        if ($followable->is_followed) {
             return true;
         }
 

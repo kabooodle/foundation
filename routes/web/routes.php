@@ -23,9 +23,10 @@ Route::get('c/{hash}', [
 //Route::group(['domain' => getEnvDomain(true)], function(){
 
     Route::group(['middleware' => 'auth'], function () {
-        Route::get('/', function () {
-            return View::make('welcome');
-        });
+        Route::get('/', [
+            'as' => 'user.profile',
+            'uses' => \Kabooodle\Http\Controllers\Web\Users\UsersController::class.'@getUser'
+        ]);
     });
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'auth' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'claims' . DIRECTORY_SEPARATOR . 'routes.php';

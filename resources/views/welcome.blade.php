@@ -3,7 +3,7 @@
 @section('body-content')
 
 
-    <div class="p-l p-r">
+    <div class="p-l p-r" id="profilePage">
         <div class="row">
         @yield('profile-body')
 
@@ -26,8 +26,8 @@
                     </div>
                     <div class="p-a-md text-center">
                         <p><img src="https://unsplash.it/90/90/?random" class="img-circle w-xs"></p>
-                        <a href class="text-md block">{{ $user->full_name }}</a>
-                        <p><small>{{ $user->email }}</small></p>
+                        <a href="{{ route('user.profile', [$viewedUser->username]) }}" class="text-md block">{{ $viewedUser->full_name }}</a>
+                        <p><small>{{ $viewedUser->email }}</small></p>
                         <div>
                             <a href="" class="btn btn-icon btn-social rounded white btn-sm">
                                 <i class="fa fa-facebook"></i>
@@ -43,29 +43,30 @@
                             </a>
                         </div>
                         <div class="text-center m-t">
-                            <div id="profilePage">
+
+
                             <followable
-                                    able_type="{{ get_class($user) }}"
-                                    able_id="{{ $user->id }}"
-                                    :already_following="{{ $user->is_followed ? 1 : 0 }}"
-                                    endpoint="{{ apiRoute('user.followers.store', [$user->id]) }}"
+                                    able_type="{{ get_class($viewedUser) }}"
+                                    able_id="{{ $viewedUser->id }}"
+                                    :already_following="{{ $viewedUser->is_followed ? 1 : 0 }}"
+                                    endpoint="{{ apiRoute('user.followers.store', [$viewedUser->id]) }}"
                                     followable_entity_name="user"
                                     followable_type="user"
-                                    followable_id="{{ $user->id }}">
+                                    followable_id="{{ $viewedUser->id }}">
                             </followable>
-                            </div>
+
                         </div>
                     </div>
                     <div class="row no-gutter b-t b-b">
                         <div class="col-xs-6 b-r">
-                            <a href="{{ route('follow.followers', [$user->username]) }}" class="p-a block text-center">
-                                <span class="block _600">{{ $user->followers->count() }}</span>
+                            <a href="{{ route('follow.followers', [$viewedUser->username]) }}" class="p-a block text-center">
+                                <span class="block _600">{{ $viewedUser->followers->count() }}</span>
                                 <span>Followers</span>
                             </a>
                         </div>
                         <div class="col-xs-6">
-                            <a href="{{ route('follow.following', [$user->username]) }}" class="p-a block text-center">
-                                <span class="block _600">{{ $user->following->count() }}</span>
+                            <a href="{{ route('follow.following', [$viewedUser->username]) }}" class="p-a block text-center">
+                                <span class="block _600">{{ $viewedUser->usersFollowing->count() }}</span>
                                 <span>Following</span>
                             </a>
                         </div>

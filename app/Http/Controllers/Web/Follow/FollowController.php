@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Follow;
 
 use Illuminate\Http\Request;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Watches;
 use Kabooodle\Http\Controllers\Web\Controller;
@@ -17,20 +18,28 @@ use Kabooodle\Http\Controllers\Web\Controller;
  */
 class FollowController extends Controller
 {
+    use PaginatesTrait;
+
     /**
      * @return \Illuminate\Contracts\View\View
      */
     public function followers(Request $request)
     {
-        $user = User::where('username', $request->username)->first();
+        $viewedUser = User::where('username', $request->username)->first();
 
-        return view('follow.followers')->with(compact('user'));
+        $followers = $viewedUser->followers;
+
+        //$followers = $this->paginateData($request, $user->followers);
+
+        return view('follow.followers')->with(compact('viewedUser', 'followers'));
     }
 
     public function following(Request $request)
     {
-        $user = User::where('username', $request->username)->first();
+        $viewedUser = User::where('username', $request->username)->first();
 
-        return view('follow.following')->with(compact('user'));
+        $usersFollowing = $this->paginateData($request, $viewedUser->usersFollowing);
+
+        return view('follow.following')->with(compact('viewedUser', 'usersFollowing'));
     }
 }

@@ -63,7 +63,8 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $appends = [
-        'is_following',
+        //'is_following',
+        //'is_followed',
         'full_name',
         'full_name_with_username',
         'name',
@@ -346,6 +347,22 @@ class User extends BaseEloquentModel implements
     public function isGuest()
     {
         return (bool) $this->guest;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function usersFollowing()
+    {
+        return $this->morphedByMany(User::class, 'followable')->where('followables.deleted_at', null)->orderBy('username');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function flashsalesFollowing()
+    {
+        return $this->morphedByMany(FlashSales::class, 'followable')->where('followables.deleted_at', null);
     }
 
     /**

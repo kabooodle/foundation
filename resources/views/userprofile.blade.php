@@ -4,7 +4,6 @@
             <div class="box">
                 <div class="box-header b-b">
                     <h3>What's  New</h3>
-                    {{ var_dump(auth()->user()) }}
                 </div>
                 <div class="box-body">
                     <div class="row row-sm">
