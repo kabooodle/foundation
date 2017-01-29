@@ -23,7 +23,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
 {
     use CreditTransactableTrait, PresentableTrait, RevisionableTrait, UuidableTrait;
 
-    const RATE_ADDON = 0.10;
+    const RATE_ADDON = 0.03;
 
     const SHIPPING_STATII = [
         'CREATED',

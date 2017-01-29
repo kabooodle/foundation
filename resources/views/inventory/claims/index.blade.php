@@ -55,7 +55,7 @@
     @else
 
         <onboard-card class="onboard-pendingclaims">
-            <template slot="title">No pending claims yet :(</template>
+            <template slot="title">No pending claims</template>
             <template slot="subtext">                    When an item you have listed is claimed, it will be displayed on this page.
                 <br>
                 Decide which claims you wish to accept and treat as a completed sale,

@@ -76,7 +76,8 @@ class CreateNewShippingTransactionCommandHandler
             $st->rate_id = $rateUUID;
             $st->label_url = $transaction['label_url'];
             $st->rate_data = $rate;
-            $st->rate_amount = $rate->getAdjustedTotalAmount();
+            $st->rate_amount = $rate->getAmount();
+            $st->rate_final_amount = $rate->getAdjustedTotalAmount();
             $st->tracking_number = $transaction['tracking_number'];
             $st->tracking_status = $transaction['tracking_status'];
             $st->tracking_url_provider = $transaction['tracking_url_provider'];

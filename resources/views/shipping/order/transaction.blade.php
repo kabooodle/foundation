@@ -70,7 +70,7 @@
                         <td><img src="{{ $transaction->rate_data['carrierLogos']['small'] }}" alt="{{ $transaction->rate_data['provider'] }}"></td>
                         <td>{{ $transaction->rate_data['serviceLevelName'] }}</td>
                         <td>{{ $transaction->rate_data['shippoRateObject']['days'] }} days</td>
-                        <td>${{ $transaction->rate_amount }}</td>
+                        <td>${{ $transaction->rate_final_amount }}</td>
                         <td><a class="text-primary" href="{{ $transaction->tracking_url_provider }}" target="_blank" >{{ $transaction->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>
                         <td>
                             <div class="pull-right">

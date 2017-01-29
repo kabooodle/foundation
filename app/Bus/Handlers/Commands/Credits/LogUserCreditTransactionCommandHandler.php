@@ -58,7 +58,7 @@ class LogUserCreditTransactionCommandHandler
         $transaction->user_id = $actor->id;
         $transaction->transactable_id = $transactable->id;
         $transaction->transactable_type = $transactable;
-        $transaction->amount = $transactable->creditTransactionAmount();
+        $transaction->abs_amount = $transactable->creditTransactionAmount();
         $transaction->type = CreditTransactionsLog::TYPE_DEBIT;
         $transaction->save();
 
