@@ -68,10 +68,21 @@ class ShippingParcelController extends AbstractApiController
                 'msg' => 'No pricing is available based on the parcel data (size/weight).',
             ])->setStatusCode(400)->respond();
         } catch (Shippo_Error $e) {
-            // TODO: Gracefully handle this kind of exception.  It's really a developer-eyes-only exception.
+            $msg = 'An error occurred, please try again';
+            $body = $e->getJsonBody();
+
+            // So we need to handle specific error messages in a certain way.
+            // Only share certain ones with end user, else, log the error and return
+            // generic error.
+            if ($body && is_array($body) && array_key_exists('__all__', $body)) {
+                $msg = $body['__all__'][0];
+                if ($msg == 'Invalid parcel details, From and To Addresses are identical. Addresses must be different to create a valid shipment.') {
+                    $msg = 'From and To Addresses are identical';
+                }
+            }
 
             return $this->setData([
-                'msg' => 'Invalid parcel details, '. $e->getMessage(),
+                'msg' => 'Invalid parcel details, '. $msg,
             ])->setStatusCode(400)->respond();
         }
     }

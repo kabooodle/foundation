@@ -26,8 +26,28 @@ new Vue({
             this.rates = [];
             this.shipment = {};
         },
-        purchaseLabel(){
+        purchaseLabel(url, uuid, event){
+            confirmModal(()=>{
+                $('.noty-btn').addClass('disabled').prop('disabled', true);
+                $('.noty-btn-primary').html(spinny());
 
+                const form_data = {
+                    rate_uuid : uuid,
+                    parcel_id : parseInt(this.shipment.id)
+                };
+
+                this.$http.post(url, form_data).then((response)=>{
+                    notify({type: 'success', text : response.body.data.msg});
+                    setTimeout(function(){
+                        window.location.href = response.body.data.redirect;
+                    }, 2000);
+                }, (response)=>{
+                    $.noty.closeAll();
+                    notify({'text' : response.body.data.msg});
+                });
+            }, ($noty)=>{
+                $noty.close();
+            });
         },
     },
     components: {

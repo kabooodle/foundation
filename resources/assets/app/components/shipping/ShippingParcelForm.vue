@@ -59,7 +59,7 @@
                                 <template slot="label">Length</template>
                                 <template slot="input">
                                     <div class="col-sm-3">
-                                        <input type="number" name="parcel[length]" class="form-control numeric float" numeric length="444">
+                                        <input type="number" name="parcel[length]" class="form-control numeric float" numeric min="0" length="444">
                                     </div>
                                 </template>
                             </inline-field>
@@ -68,7 +68,7 @@
                                 <template slot="label">Width</template>
                                 <template slot="input">
                                     <div class="col-sm-3">
-                                        <input type="number" name="parcel[width]" class="form-control numeric float" numeric length="444">
+                                        <input type="number" name="parcel[width]" class="form-control numeric float" numeric  min="0" length="444">
                                     </div>
                                 </template>
                             </inline-field>
@@ -77,7 +77,7 @@
                                 <template slot="label">Height</template>
                                 <template slot="input">
                                     <div class="col-sm-3">
-                                        <input type="number" name="parcel[height]" class="form-control numeric float" numeric length="444">
+                                        <input type="number" name="parcel[height]" class="form-control numeric float" numeric  min="0" length="444">
                                     </div>
                                 </template>
                             </inline-field>
@@ -99,11 +99,11 @@
                             <template slot="label">Weight</template>
                             <template slot="input">
                                 <div class="col-sm-3">
-                                <input type="number" name="parcel[weight]" class="form-control numeric float" numeric max="999">
+                                <input type="number" name="parcel[weight]" class="form-control numeric float"  min="0" numeric max="999">
                                 </div>
                                 <div class="col-sm-2">
                                     <select class="form-control" name="parcel[weight_uom]">
-                                        <option v-for="weight in parcel_weights" :value="weight">{{ weight }}</option>
+                                        <option v-for="weight in parcel_weights" :value="weight" :selected="weight == 'oz'">{{ weight }}</option>
                                     </select>
                                 </div>
                             </template>
@@ -489,7 +489,7 @@
             packagingSelectedTemplate: function(parcel){
                 if (!parcel.id || parcel.element.getAttribute('data-image') == null || parcel.element.getAttribute('data-image') == undefined) { return parcel.text; }
 
-                return $('<span><img  width="26" src="' + parcel.element.getAttribute('data-image')+'"  /> ' + parcel.text + '</span>');
+                return $('<span><img  width="20" src="' + parcel.element.getAttribute('data-image')+'"  /> ' + parcel.text + '</span>');
             },
 
             populatePackages: function(){
@@ -557,7 +557,7 @@
                             claimer_id: this.claimer.id,
                             date: this.updated_at_human,
                             image: this.inventory_item_object_data.cover_photo.location,
-                            name: this.claimer.name+', '+this.inventory_item_object_data.name+' - '+this.inventory_item_object_data.style_size.name+', $'+this.price
+                            name: this.claimer.username+', '+this.inventory_item_object_data.name+' - '+this.inventory_item_object_data.style_size.name+', $'+this.price
                         });
                     });
                 }

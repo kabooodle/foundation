@@ -27,7 +27,7 @@
     </div>
 
 
-    <div id="steps_2" class="hidden" v-if="completed_steps.parcel">
+    <div id="steps_2" class="hidden" v-show="completed_steps.parcel">
         <div class="box  m-b-0 no-shadow">
             <div class="box-header">
                 <h3 class="m-b-0"><span class="text-muted">Step 2:</span> Shipping Rates &amp; Label</h3>
@@ -64,9 +64,8 @@
                                     <td class="pull-right">
                                         <button
                                                 type="button"
-                                        @click.prevent="purchaseLabel"
-                                        class="btn btn-xs white btn-purchase-label-el"
-                                        :data-uuid="rate.shippoRateObject.object_id">
+                                        @click.prevent="purchaseLabel('{{ apiRoute('shipping.label.store') }}', rate.shippoRateObject.object_id, $event)"
+                                        class="btn btn-xs white btn-purchase-label-el">
                                         Purchase Label
                                         </button>
                                     </td>

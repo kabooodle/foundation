@@ -27,19 +27,18 @@ final class CreateNewShippingTransactionCommand
     /**
      * @var string
      */
-    public $shipmentUUID;
+    public $parcelId;
 
     /**
-     * CreateNewShippingTransactionCommand constructor.
-     * @param User $actor
+     * @param User   $actor
      * @param string $rateUUID
-     * @param string $shipmentUUID
+     * @param string $parcelId
      */
-    public function __construct(User $actor, string $rateUUID, string $shipmentUUID)
+    public function __construct(User $actor, string $rateUUID, string $parcelId)
     {
         $this->actor = $actor;
         $this->rateUUID = $rateUUID;
-        $this->shipmentUUID = $shipmentUUID;
+        $this->parcelId = $parcelId;
     }
 
     /**
@@ -61,8 +60,8 @@ final class CreateNewShippingTransactionCommand
     /**
      * @return string
      */
-    public function getShipmentUUID(): string
+    public function getParcelId(): string
     {
-        return $this->shipmentUUID;
+        return $this->parcelId;
     }
 }

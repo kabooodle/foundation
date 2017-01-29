@@ -97,7 +97,7 @@
                     @foreach($shipments as $shipment)
                         <tr>
                             <td><input type="checkbox" class="shipment_checkbox"></td>
-                            <td>{{ $shipment->shipment->claimer->name }}</td>
+                            <td>{{ $shipment->shipment->claimer->username }}</td>
                             <td>{{ $shipment->shipment->claims->count() }}</td>
                             <td>${{ $shipment->rate_amount }}</td>
                             <td><time datetime="{{ $shipment->createdAtHuman() }}">{{ $shipment->createdAtHumanNoTime() }} <i data-toggle="tooltip" title="{{ $shipment->createdAtHuman() }}" data-placement="top" class="fa fa-clock-o" aria-hidden="true"></i></time></td>

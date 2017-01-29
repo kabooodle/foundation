@@ -25,7 +25,8 @@ final class ShippingTransactionStatusUpdatedEvent
     public $status;
 
     /**
-     * @param ShippingTransactions $shippingTransaction
+     * @param ShippingTransactions       $shippingTransaction
+     * @param ShippingTransactionHistory $status
      */
     public function __construct(ShippingTransactions $shippingTransaction, ShippingTransactionHistory $status)
     {

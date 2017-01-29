@@ -33,18 +33,18 @@ class CreateNewShippingTransactionCommandHandler
      */
     public function handle(CreateNewShippingTransactionCommand $command)
     {
-        $shipmentUUID = $command->getShipmentUUID();
+        $parcelId = $command->getParcelId();
         $rateUUID = $command->getRateUUID();
         $user = $command->getActor();
 
-        $shipment = ShippingShipments::where('uuid', $shipmentUUID)->where('user_id', $user->id)->firstOrFail();
+        $shipment = ShippingShipments::where('id', $parcelId)->where('user_id', $user->id)->firstOrFail();
         $claimer = $shipment->claimer;
 
         /** @var RatesObject $rate */
         $rate = $shipment->getRateId($rateUUID);
 
         /** @var ShippingTransactions $transaction */
-        $transaction = DB::transaction(function () use ($rate, $shipment, $shipmentUUID, $user, $rateUUID, $claimer) {
+        return DB::transaction(function () use ($rate, $shipment, $parcelId, $user, $rateUUID, $claimer) {
             $shippr = new ShipprService;
 
             // Debit a shipping transaction with shippo.
@@ -85,12 +85,10 @@ class CreateNewShippingTransactionCommandHandler
             $st->messages = $transaction['messages'];
             $st->save();
 
+            event(new ShippingTransactionWasCreatedEvent($st));
+
             return $st;
         });
-
-        event(new ShippingTransactionWasCreatedEvent($transaction));
-
-        return $transaction;
     }
 
     /**
