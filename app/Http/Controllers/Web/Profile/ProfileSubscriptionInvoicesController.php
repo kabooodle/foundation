@@ -25,8 +25,9 @@ class ProfileSubscriptionInvoicesController extends Controller
     public function index(Request $request)
     {
         $user = user();
+        $invoices = $user->invoices();
 
-        return $this->view('profile.subscription.invoices')->with(compact('user'));
+        return $this->view('profile.subscription.invoices')->with(compact('user', 'invoices'));
     }
 
     /**

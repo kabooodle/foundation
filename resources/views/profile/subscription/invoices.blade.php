@@ -14,7 +14,7 @@
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Price</th>
+                            <th>Amount</th>
                             <th>Status</th>
                             <th></th>
                         </tr>

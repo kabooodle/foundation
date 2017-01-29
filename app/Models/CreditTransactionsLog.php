@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Ramsey\Uuid\Uuid;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
@@ -47,6 +48,10 @@ class CreditTransactionsLog extends BaseEloquentModel implements Revisionable
     {
         parent::boot();
 
+        self::creating(function($model){
+            $model->uuid = Uuid::uuid4();
+        });
+
         self::saving(function ($model) {
             if ($model->type == self::TYPE_DEBIT) {
                 $model->transaction_amount = '-'.$model->abs_amount;
@@ -85,5 +90,37 @@ class CreditTransactionsLog extends BaseEloquentModel implements Revisionable
     public function transactable()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function date()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function total()
+    {
+        return '$'.$this->abs_amount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getClosedAttribute()
+    {
+        return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function description()
+    {
+        return 'Credits purchase for ';
     }
 }

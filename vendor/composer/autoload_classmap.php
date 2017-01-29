@@ -817,6 +817,7 @@ return array(
     'UpdateClaimsTblMakePriceNullable' => $baseDir . '/resources/database/migrations/2016_11_28_191411_update_claims_tbl_make_price_nullable.php',
     'UpdateColLongblob' => $baseDir . '/resources/database/migrations/2016_11_08_165133_update_col_longblob.php',
     'UpdateCreditChargeTypesTbl' => $baseDir . '/resources/database/migrations/2016_12_23_070657_update_credit_charge_types_tbl.php',
+    'UpdateCreditTransactionsTblAmount' => $baseDir . '/resources/database/migrations/2017_01_29_213729_update_credit_transactions_tbl_amount.php',
     'UpdateFacebookNodesAddParentNode' => $baseDir . '/resources/database/migrations/2016_12_04_232446_update_facebook_nodes_add_parent_node.php',
     'UpdateFlashSalesAddGroup' => $baseDir . '/resources/database/migrations/2016_08_21_215811_update_flash_sales_add_group.php',
     'UpdateFlashsaleGroupsPivotAddFlashsaleIdCol' => $baseDir . '/resources/database/migrations/2017_01_17_011534_update_flashsale_groups_pivot_add_flashsale_id_col.php',

@@ -47,7 +47,6 @@ class User extends BaseEloquentModel implements
 {
     use Authenticatable,
         Authorizable,
-        Billable,
         CanResetPassword,
         DispatchesJobs,
         FollowableTrait,
@@ -58,6 +57,10 @@ class User extends BaseEloquentModel implements
         PresentableTrait,
         RevisionableTrait,
         SyncableGraphNodeTrait;
+
+    use Billable {
+        invoices as stripeInvoices;
+    }
 
     /**
      * @var array
@@ -1086,5 +1089,25 @@ class User extends BaseEloquentModel implements
     public function phoneNumber()
     {
         return $this->hasOne(PhoneNumber::class, 'user_id');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function invoices($includePending = false, $parameters = [])
+    {
+        // Decided to not do it this way
+//        $stripeInvoices = $this->stripeInvoices($includePending, $parameters)->each(function($invoice){
+//            $invoice->invoice_type = 'stripe';
+//        });
+//        $creditsInvoices = $this->creditTransactions->where('type', CreditTransactionsLog::TYPE_DEBIT)->each(function($invoice){
+//           $invoice->invoice_type = 'kabooodle';
+//        });
+//
+//        if ($stripeInvoices) {
+//            return $stripeInvoices->merge($creditsInvoices);
+//        }
+
+        return $this->stripeInvoices($includePending, $parameters);
     }
 }
