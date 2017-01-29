@@ -3,9 +3,7 @@
 <td>
     <div class="avatar-thumbnail-container">
         <div class="avatar-thumbnail _32">
-            @if($sale->inventoryItem->firstImage())
-            <img src="{{ $sale->inventoryItem->cover_photo }}">
-            @endif
+            <img src="{{ $sale->inventoryItem->cover_photo->location }}">
         </div>
         <span>{{ $sale->inventoryItem->name_with_variant }}</span>
     </div>

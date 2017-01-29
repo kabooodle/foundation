@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ staticAsset('/assets/css/vendor.css') }}" type="text/css"/>
     <link rel="stylesheet" href="{{ staticAsset('/assets/css/app.css') }}" type="text/css"/>
     <link rel="stylesheet" href="{{ staticAsset('/assets/css/merchant.css') }}" type="text/css"/>
+    <link href="https://fonts.googleapis.com/css?family=Kreon:400,700" rel="stylesheet">
     @endpush
 
     <script type="text/javascript">

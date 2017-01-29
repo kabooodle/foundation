@@ -1,14 +1,22 @@
 <template>
     <div class="form-group row">
         <div class="col-sm-8">
-            <span><strong>{{ address.name }}</strong> {{ address.street1 }}, {{ address.city }}, {{ address.state }}, {{ address.zip }}</span>
+            <span>
+                <strong>{{ address.name }}</strong>
+                <span class="block">{{ address.street1 }}, {{ address.city }}, {{ address.state }}, {{ address.zip }}</span>
+            </span>
         </div>
         <div class="col-sm-3">
             <div v-show="isPrimary">
                 <div class="text-primary text-center">Primary</div>
             </div>
             <div v-show="!isPrimary">
-                <button @click="makePrimary" class="btn white btn-sm btn-block p-x-md">Make Primary</button>
+                <button
+                        :disabled="makingprimary"
+                        :class="makingprimary ? 'disabled' : null"
+                        @click="makePrimary" class="btn white btn-sm btn-block p-x-md">
+                    Make Primary <spinny v-if="makingprimary"></spinny>
+                </button>
             </div>
         </div>
         <div class="col-sm-1">
@@ -19,6 +27,7 @@
     </div>
 </template>
 <script>
+    import Spinny from '../Spinner.vue';
     export default {
         props: {
             address: {
@@ -44,7 +53,7 @@
         },
         data() {
             return {
-                msg:'hello vue'
+                makingprimary : false
             }
         },
         computed: {
@@ -60,6 +69,7 @@
         },
         methods: {
             makePrimary: function () {
+                this.makingprimary = true;
                 this.$http.put(this.updatePrimaryEndpoint, this.updatePrimaryData)
                     .then(function (response) {
                         this.$emit('new-primary', this.address.id);
@@ -72,7 +82,9 @@
                             'text': 'We\'re sorry. Something went wrong. Please try again.',
                             'type': 'error'
                         });
-                    });
+                    }).finally(()=>{
+                        this.makingprimary = false;
+                });
             },
             destroy: function () {
                 var self = this;
@@ -97,5 +109,8 @@
                 }, {text: 'Are you sure you want to delete this address?'});
             }
         },
+        components: {
+            'spinny' : Spinny
+        }
     }
 </script>

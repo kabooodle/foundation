@@ -390,7 +390,11 @@
                 this.saving = true;
                 this.$http.post(this.addressesEndpoint, this.addressData)
                     .then(function (response) {
-                        this.addresses.push(response.data.data.address)
+                        let new_address = response.data.data.address;
+                        this.addresses.push(new_address)
+                        if (new_address.primary == true) {
+                            this.setNewPrimary(new_address.id);
+                        }
                         this.addingAddress = false;
                         this.clearAddressData();
                         notify({

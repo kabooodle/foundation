@@ -24,6 +24,9 @@ class AddAddressCommandHandler
     public function handle(AddAddressCommand $command)
     {
         return DB::transaction(function() use ($command) {
+
+            $actor = $command->getUser();
+
             $address = Address::factory([
                 'user_id' => $command->getUser()->id,
                 'object_id' => $command->getObjectId(),
@@ -40,7 +43,7 @@ class AddAddressCommandHandler
                 'metadata' => $command->getMetadata(),
             ]);
 
-            if ($address->isPrimary()) {
+            if ($address->isPrimary() || $actor->addresses->count() == 1) {
                 $address->user->makeAddressOnlyPrimary($address);
             }
 

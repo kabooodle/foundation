@@ -149,7 +149,7 @@
                                         :key="item.id"
                                         style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
                                         <img
-                                                v-bind:src="item.cover_photo"
+                                                v-bind:src="item.cover_photo.location"
                                                 class="img-responsive"
                                                 style="width: 24px; height: 24px;">
                                         <i class="fa fa-times fa-2x"></i>
@@ -211,7 +211,7 @@
                                             :key="item.id"
                                             >
                                             <img
-                                                    v-bind:src="item.cover_photo"
+                                                    v-bind:src="item.cover_photo.location"
                                                     class="img-responsive"
                                                     style="width: 24px; height: 24px;">
                                             <i class="fa fa-times fa-2x"></i>

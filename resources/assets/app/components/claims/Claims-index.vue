@@ -13,7 +13,7 @@
             </td>
             <td>
                 <div class="avatar-thumbnail-container">
-                    <div v-if="hasFiles(claim)" class="avatar-thumbnail _32">
+                    <div class="avatar-thumbnail _32">
                         <img :src="getFile(claim)">
                     </div>
                     <span>{{ claim.inventory_item_object_data.name_with_variant }}</span>
@@ -112,11 +112,8 @@
                 let index = this.selected_claims.indexOf(claim);
                 this.selected_claims.splice(index, 1);
             },
-            hasFiles : function(claim) {
-                return claim.inventory_item_object_data.files && claim.inventory_item_object_data.files.length;
-            },
             getFile : function(claim) {
-                return claim.inventory_item_object_data.cover_photo ? claim.inventory_item_object_data.cover_photo : (this.hasFiles(claim) ? claim.inventory_item_object_data.files[0].location : null);
+                return claim.inventory_item_object_data.cover_photo.location;
             },
             handleClaim : function(choice, claim, event){
                 event.preventDefault();

@@ -1,152 +1,93 @@
 @extends('layouts.full', ['contentId' => 'shipping_create'])
 
-
-@section('body-menu')
-    @include('shipping.order.partials._bodynav')
-@endsection
-
-
 @section('body-content')
-    <div class="row">
-        <div class="col-md-12">
-            {{ Form::open(['route' => ['merchant.shipping.store', user()->username]]) }}
-            <div class="box white">
-                <div class="box-header">
-                    <h4>Claimed Item Information</h4>
-                </div>
-                <div class="box-divider"></div>
-                <div class="box-body">
-                    <div class="form-group row {{ $errors->has('claim_id') ? 'has-danger' : null }}" id="packaging-wrapper">
-                        <label class="form-control-label col-sm-3">Approved Claim(s)
-                        <small class="text-muted block">You can also ship multiple claims together (from the same buyer)</small>
-                        </label>
-                        <div class="col-sm-6">
-                            {{ Form::select('claim_id[]', [], Binput::get('c', null), ['class' => 'pull-left disabled form-control', 'disabled', 'id' => 'claimer_select_el', '@change' => 'claimReferenceChanged'])  }}
-                            {!! spinnyAppendedToEl() !!}
-                            <div id="claimed_items_container"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="box white">
-                <div class="box-header">
-                    <h4>Parcel Information</h4>
-                </div>
-                <div class="box-divider"></div>
-                <div class="box-body">
-                    <div class="form-group row {{ $errors->has('parcel.id') ? 'has-danger' : null }}" id="packaging-wrapper">
-                        <label class="form-control-label col-sm-3">Packaging</label>
-                        <div class="col-sm-6">
-                            {{ Form::select('parcel[id]', [], null, ['data-size' => 'auto', 'data-width' => '100%', 'class' => 'disabled form-control', 'disabled', 'id' => 'parcel_el', '@change' => 'packagingChanged'])  }}
-                            {!! spinnyAppendedToEl() !!}
-                        </div>
-                    </div>
-                    <div id="packaging-self-wrapper">
-                        <div class="form-group row {{ $errors->has('parcel.length') ? 'has-danger' : null }}">
-                            <label class="form-control-label col-sm-3">Length</label>
-                            <div class="col-sm-3">
-                                {{ Form::number('parcel[length]', null, ['class' => 'form-control numberic float', 'length' => 444]) }}
-                            </div>
-                        </div>
-                        <div class="form-group row {{ $errors->has('parcel.width') ? 'has-danger' : null }}">
-                            <label class="form-control-label col-sm-3">Width</label>
-                            <div class="col-sm-3">
-                                {{ Form::number('parcel[width]', null, ['class' => 'form-control numberic float', 'length' => 444]) }}
-                            </div>
-                        </div>
-                        <div class="form-group row {{ $errors->has('parcel.height') ? 'has-danger' : null }}">
-                            <label class="form-control-label col-sm-3">Height</label>
-                            <div class="col-sm-3">
-                                {{ Form::number('parcel[height]', null, ['class' => 'form-control numberic float', 'length' => 444]) }}
-                            </div>
-                        </div>
-                        <div class="form-group row {{ $errors->has('parcel.dimensions_uom') ? 'has-danger' : null }}">
-                            <label class="form-control-label col-sm-3">Units</label>
-                            <div class="col-sm-3">
-                                {{ Form::select('parcel[distance_unit]', \Kabooodle\Services\Shippr\ParcelUnits::getUnits(), null, ['class' => 'form-control']) }}
-                            </div>
-                        </div>
-                        <hr>
-                    </div>
-                    <div class="form-group row {{ $errors->has('parcel.weight') ? 'has-danger' : null }}">
-                        <label class="form-control-label col-sm-3">Weight</label>
-                        <div class="col-sm-3">
-                            {{ Form::number('parcel[weight]', null, ['class' => 'form-control numeric float', 'numeric', 'max' => 999]) }}
-                        </div>
-                        <div class="col-sm-3">
-                            {{ Form::select('parcel[weight_uom]', \Kabooodle\Services\Shippr\WeightUnits::getUnits(), (old('parcel[weight_uom]', 'oz')), ['class' => 'form-control'])  }}
-                        </div>
-                    </div>
-                </div>
+    <div id="steps_1">
+        <div :class="completed_steps.parcel ? 'box-default' : null" class="box no-shadow">
+            <div class="box-header">
+                <h3 class="m-b-0"><span class="text-muted">Step 1:</span> Shipping Parcel &amp; Recipient Information
+                    <template v-if="completed_steps.parcel">
+                        <i class="fa text-success fa-check-circle"></i>
+                        <button class="btn white btn-xs" type="button" @click.prevent="viewParcelData">Edit</button>
+                    </template>
+                </h3>
             </div>
+        </div>
 
-            <div class="box white">
-                <div class="box-header">
-                    <h4>Recipient Address</h4>
-                </div>
-                <div class="box-divider"></div>
-                <div class="box-body">
-                    <div class="form-group row {{ $errors->has('to.name') ? 'has-danger' : null }}">
-                        <label class="form-control-label col-sm-3">Recipient Name</label>
-                        <div class="col-sm-4">
-                            {{ Form::text('to[name]', null, ['class' => 'form-control']) }}
-                        </div>
-                    </div>
-                    @include('profile.partials._addressform', ['_key' => 'to', '_from' => null])
-                    <div class="form-group row {{ $errors->has('to.email') ? 'has-danger' : null }}" >
-                        <label class="form-control-label col-sm-3">Email</label>
-                        <div class="col-sm-4">
-                            {{ Form::email('to[email]', null, ['class' => 'form-control']) }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="box white">
-                <div class="box-header">
-                    <h4>Sender Address</h4>
-                    <p class="text-muted m-b-0">This address is used on the return label.</p>
-                </div>
-                <div class="box-divider"></div>
-                <div class="box-body">
-                    <div class="form-group row {{ $errors->has('from.name') ? 'has-danger' : null }}">
-                        <label class="form-control-label col-sm-3">Sender Name</label>
-                        <div class="col-sm-4">
-                            {{ Form::text('from[name]', user()->first_name, ['class' => 'form-control']) }}
-                        </div>
-                    </div>
-                    @include('profile.partials._addressform', ['_key' => 'from','_from' => user()->primaryShipFromAddress])
-                    <div class="form-group row {{ $errors->has('from.email') ? 'has-danger' : null }}">
-                        <label class="form-control-label col-sm-3">Email</label>
-                        <div class="col-sm-4">
-                            {{ Form::email('from[email]', user()->email, ['class' => 'form-control']) }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{--<div class="box white">--}}
-            {{--<div class="box-body">--}}
-            <div class="form-group row m-b-0">
-                <div class="col-sm-9 col-sm-offset-3">
-                    <button class="btn primary">Continue to pricing</button>
-                </div>
-            </div>
-            {{--</div>--}}
-            {{--</div>--}}
-
-            {{ Form::close() }}
+        <div id="shipping_parcel_form" v-show="! completed_steps.parcel">
+            <shipping-parcel-form
+                    :parcel_units="{{ json_encode(\Kabooodle\Services\Shippr\ParcelUnits::getUnits())  }}"
+                    :parcel_weights="{{ json_encode(\Kabooodle\Services\Shippr\WeightUnits::getUnits())  }}"
+                    :packaging_data="{{ getParcelListByCarrier(true)->toJson() }}"
+                    :states="{{ json_encode(getStateAbbrevs()) }}"
+                    endpoint_submit_parcel="{{ apiRoute('shipping.parcel.store') }}"
+                    endpoint_claims="{{ apiRoute('claims.index') }}"
+            ></shipping-parcel-form>
         </div>
     </div>
 
 
-    @push('footer-scripts')
-    <script>
-        const claims_endpoint = "{{ apiRoute('claims.index') }}";
-        const packaging_data = JSON.parse('{!! getParcelListByCarrier(true)->toJson() !!}');
-    </script>
-    <script src="{{staticAsset('/assets/js/shipping-create.js')}}"></script>
-    @endpush
+    <div id="steps_2" class="hidden" v-if="completed_steps.parcel">
+        <div class="box  m-b-0 no-shadow">
+            <div class="box-header">
+                <h3 class="m-b-0"><span class="text-muted">Step 2:</span> Shipping Rates &amp; Label</h3>
+            </div>
+        </div>
+
+        <div id="shipping_label_form">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box no-shadow white" id="shipping_rates_wrapper">
+                        <div class="box-divider"></div>
+                        <div class="box-body">
+                            <table class="table table-condensed table-as-list white">
+                                <thead>
+                                <tr>
+                                    <th>Carrier</th>
+                                    <th>Service Name</th>
+                                    <th>*Transit Time</th>
+                                    <th>Cost</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="rate in rates">
+                                    <td><img
+                                                :src="rate.shippoRateObject.provider_image_75"
+                                                :alt="rate.provider"
+                                                :title="rate.provider"></td>
+                                    <td>@{{ rate.shippoRateObject.servicelevel_name }}</td>
+                                    <td>@{{ rate.days }} days
+                                        <small class="block text-muted">@{{ rate.durationTerms}}</small>
+                                    </td>
+                                    <td>$@{{ rate.adjustedTotalAmount }}</td>
+                                    <td class="pull-right">
+                                        <button
+                                                type="button"
+                                        @click.prevent="purchaseLabel"
+                                        class="btn btn-xs white btn-purchase-label-el"
+                                        :data-uuid="rate.shippoRateObject.object_id">
+                                        Purchase Label
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="box-footer p-t-0">
+                                <small class="font-italic">*Transit time is a non-guaranteed average. The number of days
+                                    is the best estimate available. Some carriers guarantee this delivery time.
+                                </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
+
+
+@push('footer-scripts')
+<script src="{{staticAsset('/assets/js/shipping-create.js')}}"></script>
+@endpush
