@@ -76,7 +76,9 @@
         <header class="hero-header" role="navigation">
             <div class="container">
                 <nav class="navbar">
-                    <a class="navbar-brand kabooodle-brand" href="#">kabooodle</a>
+                    <a class="navbar-brand kabooodle-brand" href="#">
+                        @include('partials._logo_svg_lg')
+                    </a>
                     <ul class="pull-right nav navbar-nav">
                         <li class="nav-item"><a href="#solutions">Solutions</a></li>
                         <li class="nav-item"><a href="#pricing">Pricing</a></li>
@@ -255,7 +257,7 @@
     <section class="section section-w-bg section-about">
         <div class="section-bg"></div>
         <h1 id="about" class="section-title text-center">About us</h1>
-        <h2 class="section-sub-title text-center">We are a dedicated team, ready and available to help you. We have over 25 years combined enterprise software and business experience, and over 40 years of happiness experience.</h2>
+        <h2 class="section-sub-title text-center">We are a dedicated team, ready and available to help you. We have over 25 years enterprise software and business experience, and over 40 years of combined happiness experience.</h2>
         <div class="row row-stats">
             <div class="col-md-3">
                 <h1 class="stat-title text-center">5</h1>
@@ -298,6 +300,7 @@
 
 <script>
     $(function() {
+        //---------
         $('a[href*=#]:not([href=#])').click(function() {
             if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
                     || location.hostname == this.hostname) {

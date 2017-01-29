@@ -16,7 +16,7 @@
             <div class="col-sm-12">
                 <div v-show="addingEmail">
                     <div class="form-group">
-                        <input type="text" v-model="newAddress" class="form-control">
+                        <input type="text" v-model="newAddress" class="form-control" placeholder="Enter a valid email address">
                     </div>
                     <div class="pull-left">
                         <button :class="saving ? 'disabled' : null" :disabled="saving" @click.prevent="saveEmail" class="btn primary  btn-sm ">

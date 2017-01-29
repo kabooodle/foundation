@@ -32,3 +32,27 @@
         </div>
     </div>
 </div>
+
+<a id="back-to-top" href="#" class="btn btn-grn btn-md back-to-top" role="button"  style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: none;"><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+
+
+@push('footer-scripts')
+<script>
+    $(function(){
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 100) {
+                $('#back-to-top').fadeIn();
+            } else {
+                $('#back-to-top').fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        $('#back-to-top').click(function () {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+</script>
+@endpush
