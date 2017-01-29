@@ -10,14 +10,14 @@
 </td>
 <td>${{ $sale->accepted_price ? : $sale->price }}</td>
 <td>{{ $sale->humanizeNoTime($sale->accepted_on) }}</td>
-<td>{!! $sale->claimer->name !!}</td>
+<td>{!! $sale->claimer->username !!}</td>
 <td>
     {!! $sale->present()->getShippingStatus() !!}
 </td>
 <td>
     <div class="pull-right">
         @if($sale->shipmentTransaction())
-            <a class="btn white btn-xs" href="{{ route('shipping.transactions.show', [$sale->shipmentTransaction()->shipping_shipments_uuid, $sale->shipmentTransaction()->uuid]) }}">Track Shipping</a>
+            <a class="btn white btn-xs" href="{{ route('merchant.shipping.transactions.show', [$sale->shipmentTransaction()->shipping_shipments_uuid, $sale->shipmentTransaction()->uuid]) }}">Track Shipping</a>
         @else
             @if($sale->queuedToShip())
                 <button
