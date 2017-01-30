@@ -44,7 +44,6 @@
                         </div>
                         <div class="text-center m-t">
 
-
                             <followable
                                     able_type="{{ get_class($viewedUser) }}"
                                     able_id="{{ $viewedUser->id }}"
@@ -57,7 +56,7 @@
 
                         </div>
                     </div>
-                    <div class="row no-gutter b-t b-b">
+                    <div class="row no-gutter b-t">
                         <div class="col-xs-6 b-r">
                             <a href="{{ route('follow.followers', [$viewedUser->username]) }}" class="p-a block text-center">
                                 <span class="block _600">{{ $viewedUser->followers->count() }}</span>
@@ -71,22 +70,10 @@
                             </a>
                         </div>
                     </div>
-                    <div class="p-a">
-                        <a href class="text-ellipsis"><i class="fa fa-link text-muted m-r-sm"></i> apack.com/subdomain</a>
-                        <a href class="text-ellipsis"><i class="fa fa-globe text-muted m-r-sm"></i> yourdomain.com</a>
-                    </div>
-                </div>
-                <div class="box light lt">
-                    <div class="box-body">
-                        <a href class="pull-left m-r">
-                            <img src="https://unsplash.it/32/32/?random" class="img-circle w-40">
-                        </a>
-                        <div class="clear p-a-xs">
-                            <a href>@Mike Mcalidek</a>
-                            <small class="block text-muted">2,415 followers / 225 tweets</small>
-                            <a href class="btn btn-sm btn-rounded white m-t-xs"><i class="fa fa-twitter m-t-xs"></i> Follow</a>
-                        </div>
-                    </div>
+                    {{--<div class="p-a">--}}
+                        {{--<a href class="text-ellipsis"><i class="fa fa-link text-muted m-r-sm"></i> apack.com/subdomain</a>--}}
+                        {{--<a href class="text-ellipsis"><i class="fa fa-globe text-muted m-r-sm"></i> yourdomain.com</a>--}}
+                    {{--</div>--}}
                 </div>
             </div>
 

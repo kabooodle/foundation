@@ -8,8 +8,9 @@
             <h3>Following</h3>
         </div>
         <div class="box-body">
-            <div class="row row-sm">
+
                 @if($usersFollowing->count() > 0)
+                <div class="row row-sm">
                     @foreach($usersFollowing as $user)
                         <div class="col-sm-5">
                             <div class="p-a-md text-center">
@@ -27,14 +28,15 @@
                             </div>
                         </div>
                     @endforeach
+                </div>
                     @else
-                        @if(auth()->user() == $user)
+                        @if(user()->id == $viewedUser->id)
                             <p>You aren't following anyone!</p>
                         @else
-                            <p>{{ $user->full_name }} is not following anyone.</p>
+                            <p>{{ $viewedUser->username }} is not following anyone.</p>
                         @endif
                     @endif
-            </div>
+
         </div>
     </div>
 </div>
