@@ -30,12 +30,12 @@ final class CreateInventoryGroupingCommand
     protected $locked;
 
     /**
-     * @var string
+     * @var float
      */
     protected $price;
 
     /**
-     * @var string
+     * @var int
      */
     protected $initialQty;
 
@@ -43,6 +43,11 @@ final class CreateInventoryGroupingCommand
      * @var array
      */
     protected $images;
+
+    /**
+     * @var array
+     */
+    protected $coverPhoto;
 
     /**
      * @var array
@@ -55,26 +60,35 @@ final class CreateInventoryGroupingCommand
     protected $description;
 
     /**
+     * @var string
+     */
+    protected $categories;
+
+    /**
      * CreateInventoryGroupingCommand constructor.
      *
      * @param User $user
      * @param string $name
      * @param bool $locked
-     * @param string $price
-     * @param $initialQty
+     * @param float $price
+     * @param int $initialQty
      * @param array $images
+     * @param array $coverPhoto
      * @param array $inventoryIds
      * @param null $description
+     * @param string $categories
      */
     public function __construct(
         User $user,
         string $name,
         bool $locked,
-        string $price,
-        $initialQty,
+        float $price,
+        int $initialQty,
         array $images,
+        array $coverPhoto,
         array $inventoryIds,
-        $description = null)
+        $description = null,
+        string $categories)
     {
         $this->user = $user;
         $this->name = $name;
@@ -82,8 +96,10 @@ final class CreateInventoryGroupingCommand
         $this->price = $price;
         $this->initialQty = $initialQty;
         $this->images = $images;
+        $this->coverPhoto = $coverPhoto;
         $this->inventoryIds = $inventoryIds;
         $this->description = $description;
+        $this->categories = $categories;
     }
 
     /**
@@ -111,17 +127,17 @@ final class CreateInventoryGroupingCommand
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getPrice(): string
+    public function getPrice(): float
     {
         return $this->price;
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getInitialQty(): string
+    public function getInitialQty(): int
     {
         return $this->initialQty;
     }
@@ -132,6 +148,14 @@ final class CreateInventoryGroupingCommand
     public function getImages(): array
     {
         return $this->images;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCoverPhoto(): array
+    {
+        return $this->coverPhoto;
     }
 
     /**
@@ -148,5 +172,13 @@ final class CreateInventoryGroupingCommand
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategories(): string
+    {
+        return $this->categories;
     }
 }

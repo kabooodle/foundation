@@ -52,6 +52,7 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         'name_uuid',
         'available_quantity',
         'cover_photo',
+        'wholesale_price_usd',
     ];
 
     /**
@@ -212,11 +213,20 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     }
 
     /**
+     * @param $value
+     * @return float
+     */
+    public function getWholesalePriceUsdAttribute($value): float
+    {
+        return $this->inventoryItems()->sum('wholesale_price_usd');
+    }
+
+    /**
      * @return string
      */
     public function getName(): string
     {
-        return $this->name;
+        return $this->attributes['name'];
     }
 
     /**
@@ -354,7 +364,7 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
      */
     public function getNameWithVariantAttribute() : string
     {
-        return $this->getName(). ' - '.$this->size->name;
+        return $this->getName(). ' - '.$this->description;
     }
 
     /**

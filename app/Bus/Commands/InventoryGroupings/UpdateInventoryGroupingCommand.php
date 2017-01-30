@@ -18,12 +18,12 @@ final class UpdateInventoryGroupingCommand
     /**
      * @var User
      */
-    protected $actor;
+    protected $user;
 
     /**
      * @var InventoryGrouping
      */
-    protected $inventoryGrouping;
+    protected $grouping;
 
     /**
      * @var string
@@ -36,12 +36,12 @@ final class UpdateInventoryGroupingCommand
     protected $locked;
 
     /**
-     * @var string
+     * @var float
      */
     protected $price;
 
     /**
-     * @var string
+     * @var int
      */
     protected $initialQty;
 
@@ -49,6 +49,11 @@ final class UpdateInventoryGroupingCommand
      * @var array
      */
     protected $images;
+
+    /**
+     * @var array
+     */
+    protected $coverPhoto;
 
     /**
      * @var array
@@ -61,54 +66,65 @@ final class UpdateInventoryGroupingCommand
     protected $description;
 
     /**
+     * @var string
+     */
+    protected $categories;
+
+    /**
      * UpdateInventoryGroupingCommand constructor.
      *
-     * @param User $actor
-     * @param InventoryGrouping $inventoryGrouping
+     * @param User $user
+     * @param InventoryGrouping $grouping
      * @param string $name
      * @param bool $locked
-     * @param string $price
-     * @param $initialQty
+     * @param float $price
+     * @param int $initialQty
      * @param array $images
+     * @param array $coverPhoto
      * @param array $inventoryIds
      * @param null $description
+     * @param string $categories
      */
     public function __construct(
-        User $actor,
-        InventoryGrouping $inventoryGrouping,
+        User $user,
+        InventoryGrouping $grouping,
         string $name,
         bool $locked,
-        string $price,
-        $initialQty,
+        float $price,
+        int $initialQty,
         array $images,
+        array $coverPhoto,
         array $inventoryIds,
-        $description = null)
+        $description = null,
+        string $categories)
     {
-        $this->actor = $actor;
-        $this->inventoryGrouping = $inventoryGrouping;
+        $this->user = $user;
+        $this->grouping = $grouping;
         $this->name = $name;
         $this->locked = $locked;
         $this->price = $price;
         $this->initialQty = $initialQty;
         $this->images = $images;
+        $this->coverPhoto = $coverPhoto;
         $this->inventoryIds = $inventoryIds;
         $this->description = $description;
+        $this->categories = $categories;
     }
 
     /**
      * @return User
      */
-    public function getActor(): User
+    public function getUser(): User
     {
-        return $this->actor;
+        return $this->user;
     }
 
     /**
      * @return InventoryGrouping
      */
-    public function getInventoryGrouping(): InventoryGrouping
+    public function getGrouping(): InventoryGrouping
     {
-        return $this->inventoryGrouping;
+        return $this->grouping;
     }
 
     /**
@@ -128,17 +144,17 @@ final class UpdateInventoryGroupingCommand
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getPrice(): string
+    public function getPrice(): float
     {
         return $this->price;
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getInitialQty(): string
+    public function getInitialQty(): int
     {
         return $this->initialQty;
     }
@@ -149,6 +165,14 @@ final class UpdateInventoryGroupingCommand
     public function getImages(): array
     {
         return $this->images;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCoverPhoto(): array
+    {
+        return $this->coverPhoto;
     }
 
     /**
@@ -165,5 +189,13 @@ final class UpdateInventoryGroupingCommand
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategories(): string
+    {
+        return $this->categories;
     }
 }

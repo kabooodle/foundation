@@ -4,11 +4,11 @@ $api->get('{username}/inventory-groupings', [
     'as' => 'inventory-groupings.index',
     'uses' =>  \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@index',
 ]);
-$api->get('inventory-groupings/{groupingId}', [
+$api->get('{username}/inventory-groupings/{groupingId}', [
     'as' => 'inventory-groupings.show',
     'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@show'
 ]);
-$api->get('inventory-groupings/{groupingId}/comments', [
+$api->get('{username}/inventory-groupings/{groupingId}/comments', [
     'as' => 'inventory-groupings.comments.index',
     'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsCommentsController::class.'@index'
 ]);
@@ -29,15 +29,15 @@ $api->group(['middleware' => 'jwt.auth'], function($api) {
     ]);
 
     // Comments
-    $api->post('inventory-groupings/{groupingId}/comments', [
+    $api->post('{username}/inventory-groupings/{groupingId}/comments', [
         'as' => 'inventory-groupings.comments.store',
         'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsCommentsController::class.'@store'
     ]);
-    $api->put('inventory-groupings/{groupingId}/comments/{commentId}', [
+    $api->put('{username}/inventory-groupings/{groupingId}/comments/{commentId}', [
         'as' => 'inventory-groupings.comments.update',
         'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsCommentsController::class.'@update'
     ]);
-    $api->delete('inventory-groupings/{groupingId}/comments/{commentId}', [
+    $api->delete('{username}/inventory-groupings/{groupingId}/comments/{commentId}', [
         'as' => 'inventory-groupings.comments.destroy',
         'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsCommentsController::class.'@destroy'
     ]);

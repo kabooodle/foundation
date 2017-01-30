@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Web\Shop\InventoryGroupings;
 
+use Dingo\Api\Routing\Helpers;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Models\InventoryGrouping;
 use Messages;
@@ -37,7 +38,7 @@ use Kabooodle\Models\User;
  */
 class InventoryGroupingsController extends Controller
 {
-    use ObfuscatesIdTrait, PaginatesTrait;
+    use ObfuscatesIdTrait, PaginatesTrait, Helpers;
 
     /**
      * @param Request $request
@@ -64,7 +65,11 @@ class InventoryGroupingsController extends Controller
     public function show(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $data['grouping'] = InventoryGrouping::find($decryptedId);
+
+        $apiData = $this->api->get($username.'/inventory-groupings/'.$decryptedId);
+        $data = [
+            'grouping' => array_get($apiData['data'], 'grouping')
+        ];
 
         if ($data['grouping']) {
             return $this->view('inventory-groupings.show', $data);
