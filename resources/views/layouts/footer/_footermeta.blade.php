@@ -33,7 +33,7 @@
     </div>
 </div>
 
-<a id="back-to-top" href="#" class="btn btn-grn btn-md back-to-top" role="button"  style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: none;"><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+<a id="back-to-top" href="#" class="btn btn-grn btn-md back-to-top" role="button"  style="position: fixed; bottom: 16px; right: 16px; z-index: 9999; display: none;"><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 
 
 @push('footer-scripts')
