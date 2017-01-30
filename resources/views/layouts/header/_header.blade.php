@@ -2,7 +2,7 @@
     <div class="navbar">
         <a class="navbar-item pull-right hidden-md-up m-a-0 m-l" data-target=
         "#navbar-4" data-toggle="collapse"><i class=
-                                              "material-icons"></i></a><a href="/home"
+                                              "material-icons"></i></a><a href="{{ user() ? '/users/'.user()->username : '/home' }}"
                                                                            class="navbar-brand kabooodle-brand">
             <span class="svg-logo">
                 @include('partials._logo_svg_lg')
