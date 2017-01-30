@@ -52,6 +52,10 @@ elixir(function (mix) {
     mix.browserify('app/components/flashsales/flashsale-items-page.js');
     mix.browserify('app/components/flashsales/flashsales-edit.js');
 
+    mix.browserify('app/components/profile/profile.js');
+
+    mix.browserify('app/components/follow/follow.js');
+
 
 
     // Vendor File

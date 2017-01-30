@@ -8,6 +8,7 @@ namespace Kabooodle\Models\Traits;
 
 use Auth;
 use Kabooodle\Models\Follows;
+use Kabooodle\Models\User;
 
 /**
  * Class FollowableTrait
@@ -16,19 +17,14 @@ use Kabooodle\Models\Follows;
 trait FollowableTrait
 {
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function followers()
     {
-        return $this->morphMany(Follows::class, 'followable')->where('deleted_at', null);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function following()
-    {
-        return $this->morphMany(Follows::class, 'user', 'followable_type')->where('deleted_at', null);
+        return $this->belongsToMany(User::class, 'followables', 'followable_id', 'user_id')
+            ->whereFollowableType(User::class)
+            ->where('followables.deleted_at', null)
+            ->orderBy('username');
     }
 
     /**
@@ -36,11 +32,7 @@ trait FollowableTrait
      */
     public function getIsFollowedAttribute()
     {
-        $follow = $this->followers->filter(function ($follow) {
-            return $follow->user_id = user()->id;
-        })->first();
-
-        return $follow ? : false;
+        return $this->followers->find(user()->id);
     }
 
     /**
@@ -48,10 +40,11 @@ trait FollowableTrait
      */
     public function getIsFollowingAttribute()
     {
-        $follow = $this->following->filter(function ($follow) {
-            return $follow->user_id = user()->id;
-        })->first();
+        return $this->hasMany(Follows::class, 'followable_id')
+            ->whereFollowableType(static::class)
+            ->whereUserId(user()->id)
+            ->whereDeletedAt(NULL)
+            ->first();
 
-        return $follow ? : false;
     }
 }

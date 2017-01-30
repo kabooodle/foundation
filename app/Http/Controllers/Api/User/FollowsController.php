@@ -7,7 +7,12 @@
 namespace Kabooodle\Http\Controllers\Api\User;
 
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\Followable\FollowNewEntityCommand;
+use Kabooodle\Bus\Commands\Followable\UnfollowEntityCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
 
 /**
  * Class LikesApiController
@@ -24,11 +29,19 @@ class FollowsController extends AbstractApiController
     public function store(Request $request, $id)
     {
         $user = $this->getUser();
-        if (! $user->is_liked) {
 
+        try {
+            $followable = User::where('id', $id)->first();
+            if(!$followable) {
+                throw new ModelNotFoundException;
+            }
+
+            $this->dispatchNow(new FollowNewEntityCommand($user, $followable));
+
+            return $this->noContent();
+        } catch (Exception $e) {
+            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond();
         }
-
-        return $this->response()->noContent();
     }
 
     /**
@@ -40,10 +53,19 @@ class FollowsController extends AbstractApiController
     public function destroy(Request $request, $id)
     {
         $user = $this->getUser();
-        if ($user->is_liked) {
 
+        try {
+            $followable = User::where('id', $id)->first();
+            if (!$followable) {
+                throw new ModelNotFoundException;
+            }
+
+            $this->dispatchNow(new UnfollowEntityCommand($user, $followable));
+
+            return $this->noContent();
+        } catch (Exception $e) {
+            dd($e->getMessage());
+            return $this->setStatusCode(500)->respond();
         }
-
-        return $this->response()->noContent();
     }
 }

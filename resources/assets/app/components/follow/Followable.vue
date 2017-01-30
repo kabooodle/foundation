@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button
+        <button v-if="!entityIsMe"
                 :disabled="processing || disable"
                 type="button"
                 @click="is_following ? unfollowMe($event) : followMe($event)"
@@ -8,7 +8,7 @@
                 :class="btnclass"
         >
             <span v-html="is_following ? unfollow_text : follow_text"></span>
-            <spinner v-if="processing" :size="'' + 8"></spinner>
+            <spinner v-if="processing" :size="'' + 10"></spinner>
         </button>
     </span>
 </template>
@@ -17,9 +17,6 @@
     import currentUser from '../current-user';
     export default{
         props: {
-            show_on_hover: {
-                default: 0
-            },
             able_name : {
                 type : String,
                 default: function(){
@@ -35,7 +32,8 @@
                 type: String
             },
             already_following: {
-                type: String
+                type: Number,
+                default: 0
             },
             btn_active_class : {
                 type: String,
@@ -99,30 +97,21 @@
                     theClass = theClass + ' disabled ';
                 }
 
-                if (this.show_btn_on_hover) {
-                    if (! this.following && ! this.processing) {
-                        theClass = theClass + ' show-on-overlay-hover ';
-                    }
-                }
-
                 return theClass;
             },
-            is_following(){
+            is_following: function () {
                 if (this.doWeHaveCurrentUser()) {
-                    return (this.already_following === true || this.already_following === 'true' || this.following === 'true' || this.following === true);
+                    return this.already_following || this.following;
                 }
             },
-            show_btn_on_hover(){
-                return this.show_on_hover === 1 || this.show_on_hover === '1';
-            }
-        },
-        methods: {
             entityIsMe: function(){
                 if(this.doWeHaveCurrentUser()) {
-                    return parseInt(this.current_user.id) == parseInt(this.able_id);
+                    return this.able_type.toLowerCase().includes('user') && parseInt(this.current_user.id) == parseInt(this.able_id);
                 }
                 return false;
             },
+        },
+        methods: {
             doWeHaveCurrentUser: function () {
                 return this.current_user;
             },

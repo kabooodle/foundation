@@ -23,9 +23,10 @@ Route::get('c/{hash}', [
 //Route::group(['domain' => getEnvDomain(true)], function(){
 
     Route::group(['middleware' => 'auth'], function () {
-        Route::get('/', function () {
-            return View::make('welcome');
-        });
+        Route::get('/', [
+            'as' => 'user.profile',
+            'uses' => \Kabooodle\Http\Controllers\Web\Users\UsersController::class.'@getUser'
+        ]);
     });
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'auth' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'claims' . DIRECTORY_SEPARATOR . 'routes.php';
@@ -44,6 +45,7 @@ Route::get('c/{hash}', [
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'home' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'messenger' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'users' . DIRECTORY_SEPARATOR . 'routes.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'follow' . DIRECTORY_SEPARATOR . 'routes.php';
 
     Route::get('/referrals', [
         'as' => 'referrals.index',
@@ -53,5 +55,10 @@ Route::get('c/{hash}', [
     Route::get('/invite/{userName}', [
         'as' => 'invite.index',
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@invite'
+    ]);
+
+    Route::get('/users/{userName}', [
+        'as' => 'user.profile',
+        'uses' => \Kabooodle\Http\Controllers\Web\Users\UsersController::class.'@userProfile'
     ]);
 //});

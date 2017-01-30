@@ -46,7 +46,7 @@
                 <div class="m-t-2 m-b-0">
                     <v-card
                             extra_class="list-group-item no-border b-a-0 "
-                            already_following="{{ $item->user->is_following  ? 'true' : 'false'}}"
+                            :already_following="{{ $item->user->is_following ? 1 : 0 }}"
                             follow_endpoint="{{ apiRoute('user.followers.store', [$item->owner->id]) }}"
                             able_type="{{ get_class($item->owner) }}"
                             able_id="{{ $item->user->id }}"

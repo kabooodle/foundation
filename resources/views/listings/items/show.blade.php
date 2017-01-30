@@ -40,7 +40,7 @@
                     unfollow_text="Watching"
                     follow_text="Watch"
                     btn_size_class="btn-sm"
-                    already_following="{{ $listingItem->is_watched ? 'true' : 'false' }}"
+                    :already_following="{{ $listingItem->is_watched ? 1 : 0 }}"
                     endpoint="{{ apiRoute('listings.listingitems.watchers.store', [$listingItem->listing_id, $listingItem->id]) }}"
             >
             </followable>
