@@ -6,8 +6,8 @@
 
 namespace Kabooodle\Models;
 
+use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
-use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
@@ -355,6 +355,18 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
             if ($shipment) {
                 return $shipment->transaction;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function claimVerificationExpired()
+    {
+        if (! $this->isVerified()) {
+            return !($this->created_at >= Carbon::now()->sub(onHoldInterval()));
         }
 
         return false;

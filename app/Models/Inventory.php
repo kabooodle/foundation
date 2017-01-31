@@ -408,6 +408,23 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
+     * @param int   $qty
+     * @param array $onHoldIds
+     *
+     * @return bool
+     */
+    public function canSatisfyRequestedQuantityOfExcludingOnHolds($qty = 1, array $onHoldIds = [])
+    {
+        if ($onHoldIds && !is_array($onHoldIds)) {
+            $onHoldIds = [$onHoldIds];
+        }
+
+        $onHold = $this->onHold()->whereNotIn('id', $onHoldIds)->count();
+
+        return ($this->initial_qty - $onHold) >= $qty;
+    }
+
+    /**
      * @param int $qty
      *
      * @return bool
@@ -434,11 +451,19 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
+     * @return mixed
+     */
+    public function onHold()
+    {
+        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()));
+    }
+
+    /**
      * @return int
      */
     public function getOnHoldQuantity()
     {
-        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
+        return $this->onHold()->count();
     }
 
     /**

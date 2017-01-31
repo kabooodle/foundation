@@ -32,7 +32,11 @@ trait FollowableTrait
      */
     public function getIsFollowedAttribute()
     {
-        return $this->followers->find(user()->id);
+        if (user()) {
+            return $this->followers->find(user()->id);
+        }
+
+        return false;
     }
 
     /**
@@ -40,11 +44,14 @@ trait FollowableTrait
      */
     public function getIsFollowingAttribute()
     {
-        return $this->hasMany(Follows::class, 'followable_id')
-            ->whereFollowableType(static::class)
-            ->whereUserId(user()->id)
-            ->whereDeletedAt(NULL)
-            ->first();
+        if (user()) {
+            return $this->hasMany(Follows::class, 'followable_id')
+                ->whereFollowableType(static::class)
+                ->whereUserId(user()->id)
+                ->whereDeletedAt(NULL)
+                ->first();
+        }
 
+        return false;
     }
 }
