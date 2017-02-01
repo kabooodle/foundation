@@ -146,7 +146,6 @@
                                         <span
                                         @click="removeItemFromFlashsale(item, flashsale, flashsale.id, $event)"
                                         class="img-thumb" v-for="item in selected.items"
-                                        :key="item.id"
                                         style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;">
                                         <img
                                                 v-bind:src="item.cover_photo.location"
@@ -206,15 +205,16 @@
                                             <span
                                             @click="removeFromAlbum(item, facebook_album, selected.fb_group, $event)"
                                             class="img-thumb"
-
-                                            v-for="item in facebook_album.items" style="cursor:pointer; width: 24px; height: 24px; margin: 0 3px 3px 0;"
-                                            :key="item.id"
+                                            :style="selected.fb_album.id == facebook_album.id ? 'cursor:pointer;' : null"
+                                            v-for="item in facebook_album.items" style=" width: 24px; height: 24px; margin: 0 3px 3px 0;"
+                                            :key="facebook_album.id+'_'+item.id"
                                             >
                                             <img
                                                     v-bind:src="item.cover_photo.location"
                                                     class="img-responsive"
+                                                    :style="selected.fb_album.id !== facebook_album.id ? 'opacity: .4' : null"
                                                     style="width: 24px; height: 24px;">
-                                            <i class="fa fa-times fa-2x"></i>
+                                            <i v-if="selected.fb_album.id == facebook_album.id" class="fa fa-times fa-2x"></i>
                                             </span>
                                         </div>
                                     </div>
