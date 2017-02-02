@@ -147,6 +147,9 @@ new Vue({
 
         // Remove an inventory item from a fb album
         removeFromAlbum(fitem, facebook, event){
+            if (this.selected.fb_album.id !== facebook.id){
+                return false;
+            }
             let index = facebook.items.indexOf(fitem);
             if (index > -1){
                 facebook.items.splice(index, 1);
