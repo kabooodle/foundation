@@ -341,3 +341,323 @@ body {
   display: table-row;
 }
 
+
+.navbar-collapse.show {
+  display: block !important;
+}
+
+.navbar-collapse:before,
+.navbar-collapse:after,
+.navbar-nav:before,
+.navbar-nav:after {
+  content: " ";
+  display: table;
+}
+
+
+@media (max-width: 991px) {
+  .section {
+    padding: 15px 1rem;
+  }
+}
+
+
+@media (max-width: 1199px) {
+  .section {
+    height: 46rem;
+  }
+  .hero {
+    .hero-inner {
+      max-width: 36em;
+      padding-top: 18px;
+    }
+    .hero-header {
+      padding-top: 22px;
+    }
+    .section-title {
+      font-size: 70px;
+      font-size: 70px;
+      line-height: 100px;
+      margin-bottom: 50px;
+    }
+    .section-sub-title {
+      font-size: 26px;
+      line-height: 50px;
+      max-width: 16em;
+    }
+  }
+
+  .section-solutions {
+    height: 136rem;
+    .card-as-list {
+      text-align: center;
+      margin-bottom: 35px;
+      .card-block {
+        padding: 1.25rem .25rem;
+      }
+      .card-icon {
+        margin: 0 auto;
+        float: none;
+      }
+    }
+  }
+
+  .section-pricing .col-price {
+    .subscription-name {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .the-price {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+  }
+
+
+  .section-services {
+    .card-block {
+      padding: 0 1rem;
+    }
+    .card-title {
+      margin: 30px 0;
+    }
+  }
+
+  .section-about .row-stats {
+    .stat-title {
+      font-size: 150px;
+      line-height: 120px;
+    }
+    .stat-subtitle {
+      font-size: 22px;
+    }
+  }
+
+  .section-ready {
+    height: 25rem;
+  }
+}
+
+
+
+@media (max-width: 767px) {
+  .navbar-nav {
+    float: none;
+    display: block;
+    text-align: center;
+    .nav-item {
+      float: none;
+      display: block;
+      &+ .nav-item {
+        margin-left: 0;
+      }
+      a {
+        padding: 10px 0;
+        display: block;
+      }
+    }
+  }
+
+  .section {
+    .section-title {
+      font-size: 50px;
+      line-height: 100px;
+    }
+    .section-sub-title {
+      font-size: 20px;
+    }
+  }
+
+  .hero {
+    .hero-inner {
+      max-width: 36em;
+      padding-top: 8px;
+    }
+    .section-title {
+      font-size: 66px;
+      line-height: 90px;
+      margin-bottom: 50px;
+    }
+    .section-sub-title {
+      font-size: 22px;
+      line-height: 40px;
+      max-width: 16em;
+    }
+  }
+
+  .section-solutions {
+    height: 216rem;
+    .card-as-list {
+      text-align: center;
+      margin-bottom: 35px;
+      .card-block {
+        padding: 0 0 1.25rem 0;
+        width: 100%;
+      }
+    }
+  }
+
+  .section-pricing {
+    height: 42rem;
+    .col-price-basic {
+      margin-top: 75px;
+    }
+    .col-price-merchant {
+      margin-top: 35px;
+    }
+    .col-price {
+      width: 220px;
+      .subscription-name {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .features li {
+        font-size: 16px;
+        line-height: 26px;
+      }
+    }
+  }
+
+
+  .section-services {
+    height: 88rem;
+    .card {
+      margin-bottom: 2rem;
+    }
+    .card-block {
+      padding: 0 1rem;
+    }
+    .card-title {
+      margin: 30px 0;
+    }
+  }
+
+
+  .section-about {
+    height: 40rem;
+    .row-stats .stat-title {
+      font-size: 120px;
+      line-height: 90px;
+    }
+    .row-stats .stat-subtitle {
+      font-size: 19px;
+    }
+  }
+
+
+  .section-ready {
+    height: 22rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .section {
+    .section-title {
+      font-size: 50px;
+      line-height: 100px;
+    }
+    .section-sub-title {
+      font-size: 20px;
+    }
+  }
+
+  .hero {
+    .hero-inner {
+      max-width: 36em;
+      padding-top: 8px;
+    },
+    .section-title {
+      font-size: 66px;
+      line-height: 90px;
+      margin-bottom: 50px;
+    }
+    .section-sub-title {
+      font-size: 22px;
+      line-height: 40px;
+      max-width: 16em;
+    }
+  }
+
+
+  .section-solutions {
+    height: 216rem;
+    .card-as-list {
+      text-align: center;
+      margin-bottom: 35px;
+      .card-block {
+        padding: 0 0 1.25rem 0;
+        width: 100%;
+      }
+    }
+  }
+
+  .section-pricing {
+    height: 42rem;
+    .col-price-basic {
+      margin-top: 75px;
+    }
+    .col-price-merchant {
+      margin-top: 35px;
+    }
+    .col-price {
+      width: 220px;
+      .subscription-name {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .features li {
+        font-size: 16px;
+        line-height: 26px;
+      }
+    }
+  }
+
+
+  .section-services {
+    height: 88rem;
+    .card {
+      margin-bottom: 2rem;
+    }
+    .card-block {
+      padding: 0 1rem;
+    }
+    .card-title {
+      margin: 30px 0;
+    }
+  }
+
+  .section-about {
+    height: 40rem;
+    .row-stats .stat-title {
+      font-size: 120px;
+      line-height: 90px;
+    }
+    .row-stats .stat-subtitle {
+      font-size: 19px;
+    }
+  }
+
+  .section-ready {
+    height: 22rem;
+  }
+}
+
+
+@media (min-width: 768px) {
+  .navbar-collapse.collapse {
+    display: block !important;
+    height: auto !important;
+    padding-bottom: 0;
+    width: auto;
+    border-top: 0;
+    box-shadow: none;
+    overflow: visible !important;
+  }
+  .navbar-collapse {
+    border-top: 0;
+    box-shadow: none;
+  }
+  .navbar-toggler {
+    display: none;
+  }
+}
