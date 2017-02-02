@@ -30,6 +30,7 @@ return array(
     'CSS_Color' => $vendorDir . '/dompdf/dompdf/include/css_color.cls.php',
     'CSSmin' => $vendorDir . '/mrclay/minify/min/lib/CSSmin.php',
     'Cached_PDF_Decorator' => $vendorDir . '/dompdf/dompdf/include/cached_pdf_decorator.cls.php',
+    'CallCommandToFixUserAvatar' => $baseDir . '/resources/database/migrations/2017_02_02_044021_call_command_to_fix_user_avatar.php',
     'Canvas' => $vendorDir . '/dompdf/dompdf/include/canvas.cls.php',
     'Canvas_Factory' => $vendorDir . '/dompdf/dompdf/include/canvas_factory.cls.php',
     'Cellmap' => $vendorDir . '/dompdf/dompdf/include/cellmap.cls.php',
