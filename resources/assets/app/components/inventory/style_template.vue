@@ -264,13 +264,13 @@
                 if (event)  event.preventDefault();
                 $('[data-id='+sizeid+']').stop(true,true).slideDown();
                 this.addToOpenedDrawers(styleid, sizeid);
-                this.$emit('drawer:opened', styleid, sizeid);
+                $Bus.$emit('drawer:opened', styleid, sizeid);
             },
             closeSizeDrawer(styleid, sizeid, event){
                 event.preventDefault();
                 $('[data-id='+sizeid+']').stop(true,true).slideUp();
                 this.removeFromOpenedDrawers(styleid, sizeid);
-                this.$emit('drawer:closed', styleid, sizeid);
+                $Bus.$emit('drawer:closed', styleid, sizeid);
             },
             // Remove size from selected list
             removeSizes(style,size,items,event){

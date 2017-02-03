@@ -34,6 +34,10 @@ new Vue({
             this.actions.getting_postables = false;
         });
 
+        $Bus.$emit('drawer:closed', ()=>{
+            alert('hi');
+        });
+
         $Bus.$on('post-menu:closed', ()=>{
             // this.facebook_album_selected = false;
             // $('[name=facebookalbums]:checked').prop('checked', false);

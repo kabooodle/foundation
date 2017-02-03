@@ -1,3 +1,4 @@
+
 @extends('layouts.full', ['contentId' => 'manage_inventory'])
 
 @section('body-menu')
