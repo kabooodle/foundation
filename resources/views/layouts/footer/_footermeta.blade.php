@@ -69,7 +69,7 @@ width:54px;
     });
     $(function(){
         $(window).scroll(function () {
-            if ($(this).scrollTop() > 100) {
+            if ($(this).scrollTop() > 800) {
                 $('#back-to-top').fadeIn();
                 $('#hs-beacon').addClass('beacon-move');
             } else {
