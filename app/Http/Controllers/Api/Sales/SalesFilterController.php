@@ -37,7 +37,7 @@ class SalesFilterController extends AbstractApiController
             SELECT u.id as value, u.name as text
             FROM users u
             INNER JOIN claims as c ON c.claimed_by = u.id 
-            INNER JOIN inventory as i ON i.id = c.inventory_id
+            INNER JOIN inventory as i ON i.id = c.claimable_id
             WHERE c.accepted = 1
             AND i.user_id = :userid
             AND u.name LIKE :string

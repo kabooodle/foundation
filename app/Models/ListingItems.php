@@ -93,7 +93,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'fb_response_object_id' => null,
         'fb_response' => '',
         'owner_id' => 0,
-        'listed_id' => 0,
+        'listable_id' => 0,
         'type' => self::TYPE_FACEBOOK,
         'status' => self::STATUS_SCHEDULED,
         'status_updated_at' => '',
@@ -114,7 +114,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'fb_album_node_id',
         'fb_response',
         'owner_id',
-        'listed_id',
+        'listable_id',
         'type',
         'status',
         'status_updated_at',
@@ -193,7 +193,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     public function listedItem(): BelongsTo
     {
-        return $this->belongsTo($this->getListedItemClass(), 'listed_id');
+        return $this->belongsTo($this->getListedItemClass(), 'listable_id');
     }
 
     /**

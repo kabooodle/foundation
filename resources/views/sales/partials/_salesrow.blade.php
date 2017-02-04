@@ -3,11 +3,11 @@
 <td>
     <div class="avatar-thumbnail-container">
         <div class="avatar-thumbnail _32">
-            @if($sale->listedItem->firstImage())
-                 <img src="{{ $sale->listedItem->cover_photo }}">
+            @if($sale->claimable->firstImage())
+                 <img src="{{ $sale->claimable->cover_photo }}">
             @endif
         </div>
-        <span>{{ $sale->listedItem->name_with_variant }}</span>
+        <span>{{ $sale->claimable->name_with_variant }}</span>
     </div>
 </td>
 <td>${{ $sale->accepted_price ? : $sale->price }}</td>

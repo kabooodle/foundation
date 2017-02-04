@@ -549,8 +549,9 @@ option {
   text-align: right;
   line-height: 2.3rem; }
 
-.has-danger .form-control-label {
-  border-color: #f77a99; }
+.has-danger .form-control-label,
+.has-danger .control-label {
+  color: #f77a99; }
 
 .has-danger .form-control {
   border-color: #f77a99;
@@ -2681,29 +2682,23 @@ body {
     top: 42%; }
 
 .item-overlay {
+  z-index: 999;
   position: absolute;
   right: 0;
   left: 0;
-  display: none; }
-  .item-overlay.active,
-  .item-overlay .item:focus,
-  .item:hover .item-overlay {
-    display: block; }
+  display: block; }
   .item-overlay.w-full {
     text-align: center;
     top: 0;
     bottom: 0; }
 
 .item-overlay-bottom {
+  z-index: 999;
   position: absolute;
   right: 0;
   left: 0;
   bottom: 0;
-  display: none; }
-  .item-overlay-bottom.active,
-  .item-overlay-bottom .item:focus,
-  .item:hover .item-overlay-bottom {
-    display: block; }
+  display: block; }
   .item-overlay-bottom.w-full {
     text-align: center;
     top: 0;
@@ -8790,6 +8785,39 @@ Copyright (c) 2015 Daniel Eden
         opacity: 0.75; }
   .image-carousel-container .carousel-outer {
     position: relative; }
+
+.FlexEmbed {
+  display: block;
+  overflow: hidden;
+  position: relative; }
+
+.FlexEmbed:before {
+  content: "";
+  display: block;
+  width: 100%; }
+
+.FlexEmbed--4by1:before {
+  padding-bottom: 25%; }
+
+.FlexEmbed--3by1:before {
+  padding-bottom: 33.33333%; }
+
+.FlexEmbed--2by1:before {
+  padding-bottom: 50%; }
+
+.FlexEmbed--16by9:before {
+  padding-bottom: 56.25%; }
+
+.FlexEmbed--4by3:before {
+  padding-bottom: 75%; }
+
+.coverimage {
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0 auto;
+  max-height: 220px;
+  max-width: 850px; }
 
 #claimed_items_container {
   margin: 10px 0; }

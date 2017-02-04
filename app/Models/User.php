@@ -730,9 +730,8 @@ class User extends BaseEloquentModel implements
      */
     public function acceptedClaimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class)
-            ->where('inventory.user_id', $this->id)
-            ->where('accepted', 1)
+        return $this->claimsOnMyInventory()
+            ->whereAccepted(true)
             ->whereNotNull('accepted_on')
             ->orderBy('accepted_on', 'desc');
     }
@@ -742,7 +741,7 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class, 'id', 'claimable_id')
+        return $this->hasManyThrough(Claims::class,  Inventory::class, 'user_id', 'claimable_id', 'id')
             ->where('claims.claimable_type', Inventory::class)
             ->where('inventory.user_id', $this->id)
             ->with(['shipments', 'shipments.transaction']);
@@ -755,6 +754,45 @@ class User extends BaseEloquentModel implements
     {
         return $this->claimsOnMyInventory()
             ->whereNull('accepted');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function acceptedClaimsOnMyInventoryGroupings()
+    {
+        return $this->claimsOnMyInventoryGroupings()
+            ->whereAccepted(true)
+            ->whereNotNull('accepted_on')
+            ->orderBy('accepted_on', 'desc');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsOnMyInventoryGroupings()
+    {
+        return $this->hasManyThrough(Claims::class,  InventoryGrouping::class, 'user_id', 'claimable_id', 'id')
+            ->where('claims.claimable_type', InventoryGrouping::class)
+            ->where('inventory_groupings.user_id', $this->id)
+            ->with(['shipments', 'shipments.transaction']);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function pendingClaimsOnMyInventoryGroupings()
+    {
+        return $this->claimsOnMyInventoryGroupings()
+            ->whereNull('accepted');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function claimsOnMyClaimables()
+    {
+        return $this->claimsOnMyInventory->merge($this->claimsOnMyInventoryGroupings);
     }
 
     /**

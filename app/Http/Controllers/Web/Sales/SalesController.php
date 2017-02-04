@@ -44,7 +44,7 @@ class SalesController extends Controller
         // Categories filter
         if ($filters['categories']) {
             // Yes, the id's from the categories are just inventory ids. I did this to simplify things.
-            $sales = $sales->whereIn('inventory_id', $filters['categories']);
+            $sales = $sales->whereIn('claimable_id', $filters['categories']);
         }
 
         // Price filter

@@ -69,9 +69,9 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     ];
 
     /**
-     * @var string
+     * @const string
      */
-    protected $listingItemClass = ListingItemSingle::class;
+    const LISTING_ITEM_CLASS = ListingItemSingle::class;
 
     /**
      * @return array
@@ -225,6 +225,14 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     public function getOwner(): User
     {
         return $this->owner;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle() : string
+    {
+        return $this->getNameAndSize();
     }
 
     /**
@@ -482,6 +490,26 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     public function getOnHoldQuantity(): int
     {
         return $this->claims()->onHold()->count() + $this->unlockedGroupingsClaims()->onHold()->count();
+    }
+
+    /**
+     * @param int $amount
+     * @return mixed
+     */
+    public function decrementInitialQty(int $amount = 1)
+    {
+        $this->initial_qty -= $amount;
+        return $this->save();
+    }
+
+    /**
+     * @param int $amount
+     * @return mixed
+     */
+    public function incrementInitialQty(int $amount = 1)
+    {
+        $this->initial_qty += $amount;
+        return $this->save();
     }
 
     /**

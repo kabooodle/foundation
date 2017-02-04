@@ -16,7 +16,7 @@ $factory->define(Kabooodle\Models\ListingItemGrouping::class, function (Faker\Ge
             return factory(Kabooodle\Models\FlashSales::class)->create()->id;
         },
         'subclass_name' => Kabooodle\Models\ListingItemGrouping::class,
-        'listed_id' => function () {
+        'listable_id' => function () {
             return factory(Kabooodle\Models\InventoryGrouping::class)->create()->id;
         },
         'queue_id' => random_int(1, 10),

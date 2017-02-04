@@ -35,6 +35,11 @@ interface Listable
     /**
      * @return string
      */
+    public function getTitle(): string;
+
+    /**
+     * @return string
+     */
     public function getPrice(): string;
 
     /**
@@ -64,4 +69,16 @@ interface Listable
      * @return float
      */
     public function getWholesalePriceUsdAttribute($value): float;
+
+    /**
+     * @param int $amount
+     * @return mixed
+     */
+    public function decrementInitialQty(int $amount = 1);
+
+    /**
+     * @param int $amount
+     * @return mixed
+     */
+    public function incrementInitialQty(int $amount = 1);
 }

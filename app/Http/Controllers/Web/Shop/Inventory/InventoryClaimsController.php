@@ -14,8 +14,8 @@ use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
-use Kabooodle\Bus\Commands\Claim\AcceptClaimForInventoryItemCommand;
-use Kabooodle\Bus\Commands\Claim\RejectClaimForInventoryItemCommand;
+use Kabooodle\Bus\Commands\Claim\AcceptClaimForClaimableItemCommand;
+use Kabooodle\Bus\Commands\Claim\RejectClaimForClaimableItemCommand;
 
 /**
  * Class InventoryClaimsController
@@ -30,7 +30,7 @@ class InventoryClaimsController extends Controller
      */
     public function index(Request $request, $username)
     {
-        $data = user()->pendingClaimsOnMyInventory;
+        $data = user()->claimsOnMyClaimables();
         $data = $this->paginateData($request, $data);
 
         return $this->view('inventory.claims.index')->with(compact('data'));
@@ -45,14 +45,14 @@ class InventoryClaimsController extends Controller
      */
     public function update(Request $request, $username, $claimsUUID)
     {
-        $data = user()->claimsOnMyInventory;
+        $data = user()->claimsOnMyClaimables();
         $claim = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();
 
         if ($claim) {
             $timestamp = Binput::get('accepted_on', false) ? Carbon::createFromTimestamp(strtotime(Binput::get('accepted_on'))) : null;
-            $result = $this->dispatchNow(new AcceptClaimForInventoryItemCommand(
+            $result = $this->dispatchNow(new AcceptClaimForClaimableItemCommand(
                 user(),
                 $claimsUUID,
                 Binput::get('accepted_price', null),
@@ -81,7 +81,7 @@ class InventoryClaimsController extends Controller
         })->first();
 
         if ($item) {
-            $result = $this->dispatchNow(new RejectClaimForInventoryItemCommand(user(), $claimsUUID,
+            $result = $this->dispatchNow(new RejectClaimForClaimableItemCommand(user(), $claimsUUID,
                 Binput::get('rejected_reason', null)));
 
             return Response::json('ok', 200);

@@ -16,7 +16,7 @@ class UpdateInventoryIdToListedIdOnListingItemsTable extends Migration
             $table->dropForeign('listing_items_inventory_id_foreign');
         });
 
-        DB::statement('ALTER TABLE `listing_items` CHANGE COLUMN `inventory_id` `listed_id` BIGINT UNSIGNED NOT NULL');
+        DB::statement('ALTER TABLE `listing_items` CHANGE COLUMN `inventory_id` `listable_id` BIGINT UNSIGNED NOT NULL');
     }
 
     /**
@@ -26,7 +26,7 @@ class UpdateInventoryIdToListedIdOnListingItemsTable extends Migration
      */
     public function down()
     {
-        DB::statement('ALTER TABLE `listing_items` CHANGE COLUMN `listed_id` `inventory_id` BIGINT UNSIGNED NOT NULL');
+        DB::statement('ALTER TABLE `listing_items` CHANGE COLUMN `listable_id` `inventory_id` BIGINT UNSIGNED NOT NULL');
 
         Schema::table('listing_items', function(Blueprint $table) {
             $table->foreign('inventory_id')

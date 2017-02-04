@@ -149,12 +149,15 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
 
                 // Skip inventory items that do not belong to the user.
                 // Skip items already in the flash sale by the user.
-                if (!$this->inventoryItemBelongsToUser($selectedItem['id'], $actor) || $this->itemAlreadyInFlashsale($listing, $selectedItem['id'])
+                // Skip items that have an incorrect listing item class.
+                if (!$this->listableItemBelongsToUser($selectedItem['id'], $selectedItem['listable_item_class'], $actor)
+                    || $this->itemAlreadyInFlashsale($listing, $selectedItem['listing_item_class'], $selectedItem['id'])
+                    || !class_exists($selectedItem['listing_item_class'])
                 ) {
                     continue;
                 }
 
-                $listingItem = new ListingItems;
+                $listingItem = new $selectedItem['listing_item_class'];
                 $listingItem->listing_id = $listing->id;
                 $listingItem->owner_id = $actor->id;
                 $listingItem->inventory_id = $selectedItem['id'];
@@ -176,16 +179,17 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
 
     /**
      * @param Listings $listing
-     * @param int      $inventoryId
+     * @param string $listableType
+     * @param int $listableId
      *
      * @return mixed
      */
-    protected function itemAlreadyInFlashsale(Listings $listing, int $inventoryId)
+    protected function itemAlreadyInFlashsale(Listings $listing, string $listableType, int $listableId)
     {
         $listingItems = $listing->listingItems;
 
-        return $listingItems->filter(function ($listingItem) use ($inventoryId) {
-            return $listingItem->inventory_id == $inventoryId;
+        return $listingItems->filter(function ($listingItem) use ($listableType, $listableId) {
+            return $listingItem->listable_id == $listableId && $listingItem->subclass_name == $listableType;
         })->first();
     }
 

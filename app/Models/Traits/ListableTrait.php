@@ -19,7 +19,7 @@ trait ListableTrait
      */
     public function getListingItemClass(): string
     {
-        return $this->listingItemClass;
+        return static::LISTING_ITEM_CLASS;
     }
 
     /**
@@ -27,7 +27,7 @@ trait ListableTrait
      */
     public function listings()
     {
-        return $this->hasMany($this->getListingItemClass(), 'listed_id');
+        return $this->hasMany($this->getListingItemClass(), 'listable_id');
     }
 
     /**

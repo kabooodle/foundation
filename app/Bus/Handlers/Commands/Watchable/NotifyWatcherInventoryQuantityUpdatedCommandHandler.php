@@ -67,7 +67,7 @@ class NotifyWatcherInventoryQuantityUpdatedCommandHandler
      */
     public function toDatabase(User $user, ListingItems $listingItem)
     {
-        $title = $listingItem->listedItem->getNameAndSize() .' - listing quantity now available';
+        $title = $listingItem->listedItem->getTitle() .' - listing quantity now available';
 
         $notification = new NotificationNotices;
         $notification->reference_url = $this->getListingRoute($listingItem);

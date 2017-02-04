@@ -20,17 +20,7 @@ trait ViewableTrait
      */
     public function views()
     {
-        $cacheKey = get_called_class().'::'.$this->id;
-        $cache = $this->getCache();
-
-        if ($cache->has($cacheKey)) {
-            return $cache->get($cacheKey);
-        }
-
-        $results = $this->morphMany(View::class, 'viewable')->get();
-        $cache->put($cacheKey, $results, 10);
-
-        return $results;
+        return $this->morphMany(View::class, 'viewable');
     }
 
     /**

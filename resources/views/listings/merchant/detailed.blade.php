@@ -50,7 +50,7 @@
                         </div></td>
                     <td>{{ $item->sales->count() }}</td>
                     <td>{{ $item->pendingSales->count() }}</td>
-                    <td>{{ $item->pageViews->count() }}</td>
+                    <td>{{ $item->views->count() }}</td>
                     <td>{{ $item->watchers->count() }}</td>
                     <td>${{ $item->sales->sum('price') }}</td>
                     <td>{!! $item->present()->getStatus()  !!}</td>

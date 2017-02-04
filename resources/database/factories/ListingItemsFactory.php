@@ -19,7 +19,7 @@ $factory->define(Kabooodle\Models\ListingItems::class, function (Faker\Generator
             Kabooodle\Models\ListingItemSingle::class,
             Kabooodle\Models\ListingItemGrouping::class,
         ]),
-        'listed_id' => function (array $listingItem) {
+        'listable_id' => function (array $listingItem) {
             return factory($listingItem['subclass_name'])->create()->id;
         },
         'queue_id' => random_int(1, 10),
@@ -39,7 +39,7 @@ $factory->define(Kabooodle\Models\ListingItems::class, function (Faker\Generator
 $factory->defineAs(Kabooodle\Models\ListingItems::class, 'single', function (Faker\Generator $faker) {
     return [
         'subclass_name' => Kabooodle\Models\ListingItemSingle::class,
-        'listed_id' => function () {
+        'listable_id' => function () {
             return factory(Kabooodle\Models\Inventory::class)->create()->id;
         },
     ];
@@ -49,7 +49,7 @@ $factory->defineAs(Kabooodle\Models\ListingItems::class, 'single', function (Fak
 $factory->defineAs(Kabooodle\Models\ListingItems::class, 'grouping', function (Faker\Generator $faker) {
     return [
         'subclass_name' => Kabooodle\Models\ListingItemGrouping::class,
-        'listed_id' => function () {
+        'listable_id' => function () {
             return factory(Kabooodle\Models\InventoryGrouping::class)->create()->id;
         },
     ];

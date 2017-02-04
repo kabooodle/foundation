@@ -39,7 +39,8 @@ class ClaimListedItemCommandHandler
         $claim = DB::transaction(function () use ($command) {
             // Claim the item (put it into an escrow type account)
             $claim = Claims::create([
-                'inventory_id' => $command->getListedItem()->id,
+                'claimable_type' => get_class($command->getListedItem()),
+                'claimable_id' => $command->getListedItem()->id,
                 'claimed_by' => $command->getClaimedBy()->id,
                 'inventory_item_object_data' => $command->getListedItem(),
                 'verified' => !$command->isGuest(),
@@ -50,7 +51,7 @@ class ClaimListedItemCommandHandler
 
             // Decrement the inventory item's quantity
             if ($claim->isVerified()) {
-                $command->getListedItem()->decrement('initial_qty');
+                $command->getListedItem()->decrementInitialQty(1);
             }
 
             return $claim;

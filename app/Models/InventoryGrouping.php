@@ -9,6 +9,7 @@ namespace Kabooodle\Models;
 use DB;
 use Carbon\Carbon;
 use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
+use Kabooodle\Bus\Events\InventoryGroupings\InventoryGroupingQuantityUpdatedEvent;
 use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Contracts\Listable;
 use Kabooodle\Models\Contracts\Viewable;
@@ -70,9 +71,9 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     ];
 
     /**
-     * @var string
+     * @const string
      */
-    protected $listingItemClass = ListingItemGrouping::class;
+    const LISTING_ITEM_CLASS = ListingItemGrouping::class;
 
     /**
      * @return array
@@ -224,6 +225,14 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     /**
      * @return string
      */
+    public function getTitle(): string
+    {
+        return $this->getName();
+    }
+
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->attributes['name'];
@@ -282,7 +291,7 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
      */
     public function pendingClaims()
     {
-        return $this->hasMany(Claims::class, 'listed_id')->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
+        return $this->hasMany(Claims::class, 'listable_id')->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
     }
 
     /**
@@ -350,7 +359,7 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         $watches = DB::table('users')
             ->join('watchables', 'watchables.user_id', '=', 'users.id')
             ->join('listing_items', 'listing_items.id', '=', 'watchables.watchable_id')
-            ->join('inventory_groupings', 'listing_items.listed_id', '=', 'inventory_groupings.id')
+            ->join('inventory_groupings', 'listing_items.listable_id', '=', 'inventory_groupings.id')
             ->where('watchables.watchable_type', ListingItemGrouping::class)
             ->where('watchables.deleted_at', null)
             ->select('users.*')
@@ -365,15 +374,6 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     public function getNameWithVariantAttribute() : string
     {
         return $this->getName(). ' - '.$this->description;
-    }
-
-    /**
-     * @param $value
-     * @return float
-     */
-    public function getWholesalePriceUsdAttribute($value): float
-    {
-        return $value ? $value : $this->style->wholesale_price_usd;
     }
 
     /**
@@ -415,6 +415,32 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     public function getOnHoldQuantity(): int
     {
         return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
+    }
+
+    /**
+     * @param int $amount
+     * @return mixed
+     */
+    public function decrementInitialQty(int $amount = 1)
+    {
+        foreach ($this->inventoryItems as $item) {
+            $item->decrementInitialQty($amount);
+        }
+        $this->initial_qty -= $amount;
+        return $this->save();
+    }
+
+    /**
+     * @param int $amount
+     * @return mixed
+     */
+    public function incrementInitialQty(int $amount = 1)
+    {
+        foreach ($this->inventoryItems as $item) {
+            $item->incrementInitialQty($amount);
+        }
+        $this->initial_qty += $amount;
+        return $this->save();
     }
 
     /**

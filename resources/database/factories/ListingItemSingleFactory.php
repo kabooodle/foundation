@@ -16,7 +16,7 @@ $factory->define(Kabooodle\Models\ListingItemSingle::class, function (Faker\Gene
             return factory(Kabooodle\Models\FlashSales::class)->create()->id;
         },
         'subclass_name' => Kabooodle\Models\ListingItemSingle::class,
-        'listed_id' => function () {
+        'listable_id' => function () {
             return factory(Kabooodle\Models\Inventory::class)->create()->id;
         },
         'queue_id' => random_int(1, 10),

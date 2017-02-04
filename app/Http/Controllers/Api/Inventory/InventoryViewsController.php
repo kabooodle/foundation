@@ -44,7 +44,7 @@ class InventoryViewsController extends AbstractApiController
 
             return $this->noContent();
         } catch (Exception $e) {
-            return $this->setStatusCode(500)->respond();
+            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond();
         }
     }
 }

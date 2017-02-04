@@ -247,7 +247,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
         return DB::table('inventory_type_styles')
             ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
             ->join('inventory_sizes', 'inventory_sizes.id', '=', 'inventory.inventory_sizes_id')
-            ->join('listing_items', 'listing_items.listed_id', '=', 'inventory.id')
+            ->join('listing_items', 'listing_items.listable_id', '=', 'inventory.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listings.uuid', $listingUuid)
             ->groupBy('inventory.id')
