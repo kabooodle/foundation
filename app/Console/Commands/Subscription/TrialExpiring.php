@@ -7,59 +7,59 @@
 namespace Kabooodle\Console\Commands\Subscription;
 
 use DB;
-use Kabooodle\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use Kabooodle\Services\User\UserService;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Events\Subscriptions\TrialAccountExpiring;
 
 /**
  * Class TrialExpiring
- * @package Kabooodle\Console\Commands\Subscription
  */
 class TrialExpiring extends AbstractConsoleNotification
 {
     use DispatchesJobs;
-
-    const LOOKAHEAD_DAYS = 7;
 
     /**
      * @var string
      */
     protected $signature = 'expiring:trials';
 
+    /**
+     * @var UserService
+     */
+    static $service;
+
     public function handle()
     {
+        /** @var UserService $service */
+        $service = $this->getUserService();
+
         // Get accounts expiring within the next [lookahead_days]
-        $trialAccounts = $this->getTrialAccounts();
+        $trialAccounts = $service->repository->getTrialAccountsNotNotified($service::LOOKAHEAD_DAYS);
 
         if ($trialAccounts->count() === 0) {
-            $this->line('No trial accounts expiring within the next ' . self::LOOKAHEAD_DAYS . ' days.');
+            $this->warn('No notifiable trial accounts expiring within the next ' . $service::LOOKAHEAD_DAYS . ' days.');
 
             return;
         }
 
+        $this->info('Processing ' . $trialAccounts->count() . ' trial accounts.');
+
         foreach ($trialAccounts as $trialAccount) {
-            event(new TrialAccountExpiring($trialAccount, self::LOOKAHEAD_DAYS));
+            event(new TrialAccountExpiring($trialAccount));
 
             $this->logNotificationHandled($trialAccount);
         }
     }
 
     /**
-     * @param int $lookahead
-     *
-     * @return Collection
+     * @return \Illuminate\Foundation\Application|UserService
      */
-    public function getTrialAccounts(int $lookahead = self::LOOKAHEAD_DAYS)
+    public function getUserService()
     {
-        return User::leftJoin('notification_logs', 'notification_logs.user_id', '=', 'users.id')
-            ->where('notification_logs.notificationable_type', '=', get_class($this))
-            ->whereRaw('users.trial_ends_at >= DATE(NOW())')
-            ->whereRaw('users.trial_ends_at <= DATE_ADD(DATE(NOW()), INTERVAL ' . $lookahead . ' DAY)')
-            ->whereRaw('users.id IS NOT NULL')
-            ->select(['users.id', DB::raw('count(notification_logs.id) as count')])
-            ->havingRaw(DB::raw('count = 0'))
-            ->havingRaw(DB::Raw('users.id IS NOT NULL'))
-            ->get();
+        if (!self::$service) {
+            self::$service = app(UserService::class);
+        }
+
+        return self::$service;
     }
 }

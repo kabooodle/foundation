@@ -5,4 +5,4 @@ cron:
    schedule: "* * * * *"
  - name: "checktrials"
    url: "/workers/checktrials/7AF95578E9A597AA6B89E726E74C4"
-   schedule: "* * * * *"
+   schedule: "0 * * * *"

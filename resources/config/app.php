@@ -163,6 +163,7 @@ return [
         Kabooodle\Foundation\Providers\ComposerServiceProvider::class,
         Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
         Kabooodle\Foundation\Providers\HTMLServiceProvider::class,
+        Kabooodle\Foundation\Providers\RepositoryServiceProvider::class,
 
         Aws\Laravel\AwsServiceProvider::class,
         AlgoliaSearch\Laravel\AlgoliaServiceProvider::class,
