@@ -36,7 +36,7 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Kabooodle\Http\Middleware\StoreMessageBag::class,
-            \Kabooodle\Http\Middleware\ReferralProgramMiddleware::class,
+//            \Kabooodle\Http\Middleware\ReferralProgramMiddleware::class, // We only need this for the referral page
             \Kabooodle\Http\Middleware\VerifyCsrfToken::class,
         ],
 
