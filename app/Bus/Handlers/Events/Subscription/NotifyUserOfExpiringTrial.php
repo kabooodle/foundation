@@ -4,9 +4,9 @@ namespace Kabooodle\Bus\Handlers\Events\Subscription;
 
 use Bugsnag;
 use Exception;
-use Kabooodle\Models\NotificationNotices;
 use Kabooodle\Models\User;
 use Kabooodle\Services\User\UserService;
+use Kabooodle\Models\NotificationNotices;
 use Kabooodle\Libraries\Emails\PiperEmail;
 use Kabooodle\Bus\Events\Subscriptions\TrialAccountExpiring;
 
@@ -32,7 +32,7 @@ class NotifyUserOfExpiringTrial
     {
         $user = $event->getAccountHolder();
         try {
-            $this->toEmail($user, $user->primaryEmail->address);
+            $this->toEmail($user, $user->primaryEmail->address, $event->getDaysInterval());
             $this->toDatabase($user);
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
@@ -43,13 +43,14 @@ class NotifyUserOfExpiringTrial
      * @param User $user
      * @param string $emailAddress
      */
-    public function toEmail(User $user, string $emailAddress)
+    public function toEmail(User $user, string $emailAddress, int $expiresInterval)
     {
         $subject = $this->subject;
         $email = new PiperEmail;
         $email->setView('subscription.emails.trialexpiring')
             ->setParameters([
-                'user' => $user
+                'user' => $user,
+                'interval' => $expiresInterval
             ])
             ->setCallable(function ($m) use ($emailAddress, $subject) {
                 $m->to($emailAddress)
