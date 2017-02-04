@@ -1586,7 +1586,11 @@ if (! function_exists('user')) {
             return $auth;
         }
 
-        if ($apiAuth = app('Dingo\Api\Auth\Auth')->check()) {
+        if (!$apiAuth) {
+            $apiAuth = app('Dingo\Api\Auth\Auth');
+        }
+
+        if ($apiAuth->check()) {
             return $apiAuth->user();
         }
 

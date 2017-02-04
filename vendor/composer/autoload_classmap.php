@@ -66,6 +66,7 @@ return array(
     'CreateListingsAndMetaTbls' => $baseDir . '/resources/database/migrations/2016_11_26_185939_create_listings_and_meta_tbls.php',
     'CreateMessagesTable' => $baseDir . '/resources/database/migrations/2014_10_28_175710_create_messages_table.php',
     'CreateNewFlashsalesAdminsTblWithNewReqs' => $baseDir . '/resources/database/migrations/2017_01_18_232448_create_new_flashsales_admins_tbl_with_new_reqs.php',
+    'CreateNotificationLogsTbl' => $baseDir . '/resources/database/migrations/2017_02_04_024011_create_notification_logs_tbl.php',
     'CreateNotificationablesTable' => $baseDir . '/resources/database/migrations/2016_11_01_223435_create_notificationables_table.php',
     'CreateNotificationeventTbl' => $baseDir . '/resources/database/migrations/2016_12_26_035308_create_notificationevent_tbl.php',
     'CreatePageviews' => $baseDir . '/resources/database/migrations/2016_11_18_231944_create_pageviews.php',

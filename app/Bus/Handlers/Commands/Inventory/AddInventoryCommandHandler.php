@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Bus\Handlers\Commands\Inventory;
@@ -152,7 +152,6 @@ class AddInventoryCommandHandler
 
         // When CREATING a new inventory item, we only allow 1 photo to be added.
         // This means, each photo is also the cover photo.  :)
-        $item->cover_photo_file_key = $file->getOriginal('location');
         $item->cover_photo_file_id = $file->id;
 
         $item->save();

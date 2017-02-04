@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Console;
@@ -9,6 +9,7 @@ namespace Kabooodle\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Kabooodle\Console\Commands\FacebookEnqueuerCommand;
+use Kabooodle\Console\Commands\Subscription\TrialExpiring;
 
 /**
  * Class Kernel
@@ -20,7 +21,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        FacebookEnqueuerCommand::class
+        FacebookEnqueuerCommand::class,
+        TrialExpiring::class,
     ];
 
     /**

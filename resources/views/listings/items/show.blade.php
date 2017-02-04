@@ -55,7 +55,7 @@
             <div class="box-header clearfix">
                 <h4 class="">
                     <span class="pull-left">
-                        @include('listings._listingtype', ['_type' => $listingItem->type]) {{ $listingItem->sale_name }} - {{ $listingItem->getNameOfResource() }}
+                        @include('listings._listingtype', ['_type' => $listingItem->type]) {{ $listingItem->sale_name }} - {{ $listingItem->getNameOfShoppable() }}
                         @if($listingItem->type == 'flashsale')
                             <a href="{{ route('flashsales.show', [$listingItem->flashsale->uuid] ) }}"class="m-t-xs block link btn-link text-primary">Back to flash sale</a>
                         @else

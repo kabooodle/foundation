@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Models;
@@ -714,7 +714,7 @@ class User extends BaseEloquentModel implements
     /**
      * @return string
      */
-    public function getNameOfResource(): string
+    public function getNameOfShoppable(): string
     {
         return 'Merchant';
     }
