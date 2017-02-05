@@ -77,10 +77,11 @@ class Listings extends AbstractListingModel
         'fb_group_node_id' => null,
         'flashsale_id' => null,
         'uuid' => '',
-        'type' => self::TYPE_FACEBOOK,
-        'status' => self::STATUS_SCHEDULED,
+        'type' => self::TYPE_CUSTOM,
+        'status' => self::STATUS_COMPLETED,
         'status_updated_at' => null,
         'status_history' => '',
+        'name' => null,
     ];
 
     /**
@@ -97,7 +98,8 @@ class Listings extends AbstractListingModel
         'type',
         'status',
         'status_updated_at',
-        'status_history'
+        'status_history',
+        'name'
     ];
 
     /**

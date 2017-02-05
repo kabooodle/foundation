@@ -1480,6 +1480,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateListingItemsAddListingMessage' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_11_022416_update_listing_items_add_listing_message.php',
         'UpdateListingTableAddDisableText' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_02_233734_update_listing_table_add_disable_text.php',
         'UpdateListingTblAddDateCols' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_04_035822_update_listing_tbl_add_date_cols.php',
+        'UpdateListingsAddNameOrUrlCol' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_05_215401_update_listings_add_name_or_url_col.php',
         'UpdateListingsDropNameCol' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_27_215750_update_listings_drop_name_col.php',
         'UpdateListingsStatus' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_07_181657_update_listings_status.php',
         'UpdateListingsTblAddClaimableDateCol' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_13_034716_update_listings_tbl_add_claimable_date_col.php',

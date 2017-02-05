@@ -45,7 +45,7 @@
     ])
 
     <inventory-share
-            shoppable_save_endpoint="{{ apiRoute('inventory.shoppablelink.store') }}"
+            shoppable_save_endpoint="{{ apiRoute('listings.shoppablelink.store') }}"
             shoppable_endpoint="{{ route('externalclaim.shoppable.show', ['::0::', $item->getUUID()]) }}"
             shoppable_id="{{ $item->id }}"
             shoppable_uuid="{{ $item->getUUID() }}"

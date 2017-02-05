@@ -141,8 +141,15 @@
                 this.$http.post(this.shoppable_save_endpoint, data).then((response)=>{
                     this.is_dirty = false;
                     this.previously_saved_name = data.name;
+                    notify({
+                        type: 'success',
+                        text: response.body.data.msg
+                    });
                 }, (response)=>{
                     this.is_dirty = true;
+                    notify({
+                        text: response.body.data.msg
+                    });
                 }).finally(()=>{
                    this.actions.saving = false;
                 });

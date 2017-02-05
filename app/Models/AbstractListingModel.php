@@ -16,6 +16,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
 {
     const TYPE_FACEBOOK = 'facebook';
     const TYPE_FLASHSALE = 'flashsale';
+    const TYPE_CUSTOM = 'custom';
 
     const STATUS_SCHEDULED = 'scheduled';
     const STATUS_QUEUED_LIST = 'queued';
@@ -45,6 +46,15 @@ abstract class AbstractListingModel extends BaseEloquentModel
     public function scopeFlashsale($scope)
     {
         return $scope->where('type', self::TYPE_FLASHSALE);
+    }
+
+    /**
+     * @param $scope
+     * @return mixed
+     */
+    public function scopeCustom($scope)
+    {
+        return $scope->where('type', self::TYPE_CUSTOM);
     }
 
     /**

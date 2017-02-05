@@ -24,6 +24,13 @@ abstract class AbstractScheduleListingsCommandHandler
      */
     public $now;
 
+
+    public function __construct()
+    {
+        // Set a timestamp of now we can reuse for consistency.
+        $this->now = Carbon::now();
+    }
+
     /**
      * @param null $dateTime
      * @param int  $lookahead
@@ -71,5 +78,21 @@ abstract class AbstractScheduleListingsCommandHandler
         $listing->status_updated_at = $this->now;
 
         return $listing;
+    }
+
+
+    /**
+     * @param Listings $listing
+     * @param int      $inventoryId
+     *
+     * @return mixed
+     */
+    protected function itemAlreadyInSale(Listings $listing, int $inventoryId)
+    {
+        $listingItems = $listing->listingItems;
+
+        return $listingItems->filter(function ($listingItem) use ($inventoryId) {
+            return $listingItem->inventory_id == $inventoryId;
+        })->first();
     }
 }

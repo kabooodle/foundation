@@ -842,6 +842,7 @@ return array(
     'UpdateListingItemsAddListingMessage' => $baseDir . '/resources/database/migrations/2017_01_11_022416_update_listing_items_add_listing_message.php',
     'UpdateListingTableAddDisableText' => $baseDir . '/resources/database/migrations/2016_12_02_233734_update_listing_table_add_disable_text.php',
     'UpdateListingTblAddDateCols' => $baseDir . '/resources/database/migrations/2017_01_04_035822_update_listing_tbl_add_date_cols.php',
+    'UpdateListingsAddNameOrUrlCol' => $baseDir . '/resources/database/migrations/2017_02_05_215401_update_listings_add_name_or_url_col.php',
     'UpdateListingsDropNameCol' => $baseDir . '/resources/database/migrations/2016_11_27_215750_update_listings_drop_name_col.php',
     'UpdateListingsStatus' => $baseDir . '/resources/database/migrations/2016_12_07_181657_update_listings_status.php',
     'UpdateListingsTblAddClaimableDateCol' => $baseDir . '/resources/database/migrations/2016_12_13_034716_update_listings_tbl_add_claimable_date_col.php',

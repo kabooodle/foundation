@@ -10,6 +10,11 @@ $api->get('listings/{listing}', [
     'uses' => \Kabooodle\Http\Controllers\Api\Listings\ListingsApiController::class.'@show'
 ]);
 
+$api->post('listings/shoppablelink', [
+    'as' => 'listings.shoppablelink.store',
+    'uses' => \Kabooodle\Http\Controllers\Api\Listings\ShoppablelinkApiController::class.'@store'
+]);
+
 $api->group(['middleware' => 'jwt.auth'], function ($api) {
     $api->post('listings/{listing}/listingitems/{listingitem}/claims', [
         'as' => 'listings.listingitems.claims.store',
