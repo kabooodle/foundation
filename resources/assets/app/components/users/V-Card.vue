@@ -2,12 +2,12 @@
     <div class="box b b-a m-b-0 no-shadow white">
         <div class="list-item p-a-sm p-sm" :class="extra_class" >
             <div class="list-left" v-if="use_avatar">
-                <span class="avatar_container inline avatar-thumbnail" :class="'_'+avatar_size">
+                <a :href="'/users/'+ user.username" class="avatar_container inline avatar-thumbnail" :class="'_'+avatar_size">
                     <img alt="..." :src="user.avatar ? user.avatar.location : '/assets/images/logo/roboto-avatar.png'">
-                </span>
+                </a>
             </div>
             <div class="list-body clearfix">
-                <small class="block _500 text-ellipsis m-b-sm">{{ user.username }}</small>
+                <a :href="'/users/'+ user.username" class="text-u-l-on-hover _500"><small class="block _500 text-ellipsis m-b-sm">{{ user.username }}</small></a>
                 <div class="btn-group">
                     <followable
                             :already_following="already_following"
@@ -58,7 +58,8 @@
                 type: String
             },
             already_following: {
-                type: String
+                type: Number,
+                default: 0
             },
             user: {
                 required: true,

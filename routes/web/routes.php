@@ -15,10 +15,6 @@ Route::get('privacy', function(){
    return view('content.privacy');
 });
 
-Route::get('c/{hash}', [
-    'as' => 'externalclaim.show',
-    'uses' => \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show'
-]);
 
 //Route::group(['domain' => getEnvDomain(true)], function(){
 

@@ -173,10 +173,9 @@
 .text-l-t{
   text-decoration: line-through;
 }
-.text-u-l{
-  text-decoration: underline;
-}
-.text-u-l-primary {
+.text-u-l,
+.text-u-l-primary,
+.text-u-l-on-hover:hover {
   text-decoration: underline;
 }
 

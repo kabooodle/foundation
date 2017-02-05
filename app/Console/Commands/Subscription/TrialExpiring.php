@@ -57,7 +57,7 @@ class TrialExpiring extends AbstractConsoleNotification
     public function getUserService()
     {
         if (!self::$service) {
-            self::$service = app(UserService::class);
+            self::$service = app()->make(UserService::class);
         }
 
         return self::$service;

@@ -43,6 +43,12 @@ select.form-control:not([size]):not([multiple]) {
   background-color: transparent;
   color: inherit;
 }
+.inline-addon {
+  position: absolute;
+  &.addon-right {
+    right: 5px;
+  }
+}
 
 .form-group-stack{
   .form-control{
@@ -120,4 +126,8 @@ option{
 
 .multiselect__option--highlight {
   background: $primary;
+}
+
+.form-control[readonly].readonly-lt {
+  background-color: #fcfcfc;
 }

@@ -8,25 +8,27 @@ namespace Kabooodle\Models;
 
 use DB;
 use Carbon\Carbon;
-use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
+use Kabooodle\Models\Traits\ShoppableTrait;
 use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\CommentableTrait;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
+use Kabooodle\Models\Contracts\ShoppableInterface;
 use Kabooodle\Models\Contracts\CommentableInterface;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
 
 /**
  * Class Inventory
  * @package Kabooodle\Models
  */
-class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable
+class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, ShoppableInterface
 {
     use ClaimableTrait,
         CommentableTrait,
@@ -34,6 +36,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         LikeableTrait,
         ObfuscatesIdTrait,
         RevisionableTrait,
+        ShoppableTrait,
         SoftDeletes,
         TaggableTrait;
 
@@ -483,17 +486,28 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @param array $filters
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public static function filter(array $filters)
+    public function pageViews()
     {
-        $base = [
-            'style_id'      => [],
-            'size_id'       => [],
-            'has_claims'    => false,
-            'has_sales'     => false
-        ];
+        return $this->hasMany(PageViews::class, 'inventory_id');
+    }
 
-        $filters = $base + $filters;
+    /**
+     * @return string
+     */
+    public function getNameOfShoppable(): string
+    {
+        return 'Inventory';
+    }
+
+    /**
+     * Yes, this returns itself. Kinda goofy.
+     *
+     * @return BelongsTo
+     */
+    public function inventoryItem(): BelongsTo
+    {
+        return $this->belongsTo(Inventory::class, 'id');
     }
 }

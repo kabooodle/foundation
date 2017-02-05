@@ -7,6 +7,27 @@ function moneyfy(n) {
     }
     return n;
 };
+
+
+function clippy(el){
+
+    if ($(el).is(':disabled')) {
+        return;
+    }
+
+    $(el).tooltip({
+        trigger: 'click',
+        placement: 'bottom'
+    });
+
+    var clipboard = new Clipboard(el);
+
+    clipboard.on('success', function(e) {
+        $(e.trigger).attr('data-original-title', 'Copied!').tooltip('show');
+        setTimeout(function() {  $(e.trigger).tooltip('hide'); }, 500);
+        e.clearSelection();
+    });
+}
 //
 // function validateEmail(email){
 //     let re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

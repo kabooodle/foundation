@@ -1,12 +1,14 @@
-@extends('layouts.full')
+@extends('layouts.full', ['contentId' => 'inventory_item_show'])
 
 
 @section('body-menu')
 
     <div class="clearfix">
         <div class="pull-left">
-            <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ rand(0,50) }} <span class="text-muted">Sales</span></span>
-            <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ rand(0,50) }} <span class="text-muted">Views</span></span>
+            @if(user() && $item->owner->id == user()->id)
+            <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ $item->sales->count() }} <span class="text-muted">Sales</span></span>
+            @endif
+            <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ $item->pageViews->count() }} <span class="text-muted">Views</span></span>
         </div>
         <div class="btn-toolbar pull-right">
             @if(! $item->canSatisfyRequestedQuantityOf(1))
@@ -15,7 +17,7 @@
                 </div>
             @else
                 <a data-toggle="modal" data-target="#modal_claim_wrapper" data-backdrop="static" data-keyboard="false" href="{{ route('shop.inventory.edit', [$item->user->username, $item->getUUID()]) }}" class="btn btn-sm claim  _800 ">Claim it now!</a>
-                <a href="" class="btn-sm btn white">Share</a>
+                <a href="javascript:;" data-toggle="modal" data-target="#share--modal" class="btn-sm btn white">Share</a>
             @endif
             @if ($item->user_id == user()->id)
                 <span class="b-l m-l m-r"></span>
@@ -42,4 +44,29 @@
        'comment_post_route' => apiRoute('inventory.comments.store', [$item->id])
     ])
 
+    <inventory-share
+            shoppable_save_endpoint="{{ apiRoute('inventory.shoppablelink.store') }}"
+            shoppable_endpoint="{{ route('externalclaim.shoppable.show', ['::0::', $item->getUUID()]) }}"
+            shoppable_id="{{ $item->id }}"
+            shoppable_uuid="{{ $item->getUUID() }}"
+    ></inventory-share>
+
 @endsection
+
+
+@push('footer-scripts')
+    <script src="{{ staticAsset('/assets/js/inventory-show.js') }}"></script>
+    <script>
+        $(function(){
+            clippy('[data-clipboard-target]');
+        });
+    </script>
+@endpush
+
+
+@push('utilities')
+<pageviewstracker
+        route="{{ apiRoute('inventory.pageviews.store') }}"
+        resource_hash="{{ $item->makeHashedResourceString() }}"
+></pageviewstracker>
+@endpush

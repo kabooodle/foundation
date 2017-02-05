@@ -6,8 +6,8 @@
 
 namespace Kabooodle\Console\Commands\Subscription;
 
-use Illuminate\Console\Command;
 use Kabooodle\Models\User;
+use Illuminate\Console\Command;
 
 /**
  * Class AbstractConsoleNotification

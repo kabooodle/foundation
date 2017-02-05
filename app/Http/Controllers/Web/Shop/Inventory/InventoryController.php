@@ -183,14 +183,16 @@ class InventoryController extends Controller
     }
 
     /**
-     * @param $idAndName
+     * @param Request $request
+     * @param         $username
+     * @param         $idAndName
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return $this|\Illuminate\Http\RedirectResponse|Redirector|string
      */
     public function show(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $item = Inventory::find($decryptedId);
+        $item = Inventory::with(['sales', 'pageViews'])->findOrFail($decryptedId);
 
         if ($item) {
             if ($request->ajax()) {

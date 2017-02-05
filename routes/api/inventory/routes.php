@@ -1,5 +1,10 @@
 <?php
 
+$api->post('inventory/shoppablelink', [
+    'as' => 'inventory.shoppablelink.store',
+    'uses' => \Kabooodle\Http\Controllers\Api\Inventory\ShoppablelinkApiController::class.'@store'
+]);
+
 $api->put('inventory/{id}', [
     'as' => 'inventory.update',
     'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@update'

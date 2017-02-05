@@ -18,7 +18,7 @@
                             <slot name="modal_body"></slot>
                         </div>
                         <div class="modal-footer box-footer" v-if="display_footer">
-                            <button v-if="!this.$slots['modal_footer']" type="button" class="btn-text btn-link" data-dismiss="modal">Close</button>
+                            <button v-if="!this.$slots['modal_footer']" type="button" class="btn white" data-dismiss="modal">Close</button>
                             <slot name="modal_footer"></slot>
                         </div>
                     </div>

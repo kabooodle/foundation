@@ -15,6 +15,7 @@ elixir(function (mix) {
     // VUE Components
     mix.browserify('app/components/inventory/inventory-management.js');
     mix.browserify('app/components/inventory/manage/inventory-management-b.js');
+    mix.browserify('app/components/inventory/inventory-show.js');
     mix.browserify('app/components/inventory/inventory-create.js');
     mix.browserify('app/components/inventory/inventory-edit.js');
 

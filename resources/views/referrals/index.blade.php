@@ -21,7 +21,7 @@
                 <div class="col-md-6 col-md-offset-3">
 
                     <div class="input-group">
-                        <input type="text" readonly class="form-control" id="link-text" placeholder="Search for..." value="http://kabooodle.dev/invite/{{ user()->username }}">
+                        <input type="text" readonly class="form-control readonly-lt" id="link-text" placeholder="Search for..." value="http://kabooodle.dev/invite/{{ user()->username }}">
                         <span class="input-group-btn">
                             <button data-animation="false" class="btn success" data-clipboard-target="#link-text" type="button">
                                 <small class="small _500">COPY</small>
@@ -77,6 +77,9 @@
     <script>
         $(function(){
 
+
+            clippy('[data-clipboard-target]');
+
             $('#btn-social-facebook').click(function(e){
                 e.preventDefault();
                 let href = $(this).data('href');
@@ -89,31 +92,6 @@
                 });
             });
 
-        });
-
-        $('button').tooltip({
-            trigger: 'click',
-            placement: 'bottom'
-        });
-
-        function setTooltip(btn, message) {
-            $(btn)
-                    .attr('data-original-title', message)
-                    .tooltip('show');
-        }
-
-        function hideTooltip(btn) {
-            setTimeout(function() {
-                $(btn).tooltip('hide');
-            }, 1000);
-        }
-
-        var clipboard = new Clipboard('button');
-
-        clipboard.on('success', function(e) {
-            setTooltip(e.trigger, 'Copied!');
-            hideTooltip(e.trigger);
-            e.clearSelection();
         });
     </script>
     @endpush

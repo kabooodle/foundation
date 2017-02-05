@@ -1,7 +1,7 @@
 <template>
     <span>
-        <button v-if="!entityIsMe"
-                :disabled="processing || disable"
+        <button
+                :disabled="processing || disable || entityIsMe"
                 type="button"
                 @click="is_following ? unfollowMe($event) : followMe($event)"
                 class="btn-follow btn "
@@ -93,7 +93,7 @@
                 if (this.following) {
                     theClass = this.btn_active_class + ' ' + this.btn_size_class;
                 }
-                if (this.processing || this.disable) {
+                if (this.processing || this.disable || this.entityIsMe) {
                     theClass = theClass + ' disabled ';
                 }
 
