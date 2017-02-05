@@ -20,10 +20,10 @@ class CreateListingsAndMetaTbls extends Migration
             $table->binary('uuid');
             $table->string('name');
             $table->timestamp('scheduled_for')->nullable();
-            $table->enum('type', \Kabooodle\Models\Listings::getConstantsStartsWith('TYPE'))
+            $table->enum('type', \Kabooodle\Models\Listings::TYPES)
                 ->index()
                 ->default(\Kabooodle\Models\Listings::TYPE_FACEBOOK);
-            $table->enum('status', \Kabooodle\Models\Listings::getConstantsStartsWith('STATUS'))
+            $table->enum('status', \Kabooodle\Models\Listings::STATUSES)
                 ->index()
                 ->default(\Kabooodle\Models\Listings::STATUS_SCHEDULED);
             $table->text('status_history');
@@ -47,10 +47,10 @@ class CreateListingsAndMetaTbls extends Migration
             $table->bigInteger('inventory_id')->unsigned();
             $table->binary('uuid');
             $table->tinyInteger('ignore')->default(false);
-            $table->enum('type', \Kabooodle\Models\Listings::getConstantsStartsWith('TYPE'))
+            $table->enum('type', \Kabooodle\Models\Listings::TYPES)
                 ->index()
                 ->default(\Kabooodle\Models\Listings::TYPE_FACEBOOK);
-            $table->enum('status', \Kabooodle\Models\Listings::getConstantsStartsWith('STATUS'))
+            $table->enum('status', \Kabooodle\Models\Listings::STATUSES)
                 ->index()
                 ->default(\Kabooodle\Models\Listings::STATUS_SCHEDULED);
             $table->text('status_history');

@@ -20,7 +20,7 @@ class CreateInventoryGroupingsInventoryTable extends Migration
 
         Schema::table('inventory_groupings_inventory', function(Blueprint $table){
             $table->foreign('inventory_grouping_id')
-                ->references('id')->on('inventory_grouping')
+                ->references('id')->on('inventory_groupings')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 

@@ -51,7 +51,7 @@ class CreateInventoryGroupingsTable extends Migration
                 ->onUpdated('cascade');
         });
 
-        DB::update("ALTER TABLE inventory AUTO_INCREMENT = 8099315;");
+        DB::update("ALTER TABLE inventory_groupings AUTO_INCREMENT = 8099315;");
     }
 
     /**
