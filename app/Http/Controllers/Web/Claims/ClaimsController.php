@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Bus\Commands\Claim\VerifyClaimCommand;
 use Kabooodle\Foundation\Exceptions\Claim\ClaimRejectedException;
+use Kabooodle\Foundation\Exceptions\Claim\ClaimVerificationExpiredException;
 use Kabooodle\Foundation\Exceptions\Claim\RequestedQuantityCannotBeSatisfiedException;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Messages;
@@ -31,6 +32,8 @@ class ClaimsController extends Controller
         } catch (RequestedQuantityCannotBeSatisfiedException $e) {
             return $this->redirect()->route('claims.verification-failure');
         } catch (ClaimRejectedException $e) {
+            return $this->redirect()->route('claims.verification-failure');
+        } catch (ClaimVerificationExpiredException $e) {
             return $this->redirect()->route('claims.verification-failure');
         } catch (Exception $e) {
             return $this->redirect()->route('claims.verification-failure');

@@ -18,13 +18,18 @@ final class VerifyClaimCommand
     public $token;
 
     /**
-     * VerifyClaimCommand constructor.
-     *
-     * @param $token
+     * @var bool
      */
-    public function __construct($token)
+    public $ignoreExpiredHolds;
+
+    /**
+     * @param      $token
+     * @param bool $ignoreExpiredHolds
+     */
+    public function __construct($token, bool $ignoreExpiredHolds = false)
     {
         $this->token = $token;
+        $this->ignoreExpiredHolds = $ignoreExpiredHolds;
     }
 
     /**
@@ -33,5 +38,13 @@ final class VerifyClaimCommand
     public function getToken(): string
     {
         return $this->token;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldIgnoreExpireHolds(): bool
+    {
+        return $this->ignoreExpiredHolds;
     }
 }
