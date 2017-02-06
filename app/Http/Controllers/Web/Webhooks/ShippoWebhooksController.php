@@ -44,8 +44,8 @@ class ShippoWebhooksController extends Controller
         $status = $trackingStatus['status'];
         $mappedStatus = ShippingTransactions::mapShippoStatiiToLocalStatii($status);
 
-        // UTC date
-        $statusDate = $trackingStatus['status_date'];
+        // UTC date 2017-02-06T05:46:06.000Z
+        $statusDate = Carbon::createFromFormat('Y-m-d\TH:i:s.000\Z', $trackingStatus['status_date']);
 
         // string
         $statusDetails = $trackingStatus['status_details'];
@@ -62,7 +62,7 @@ class ShippoWebhooksController extends Controller
         /** @var ShippingTransactions|null $transaction */
         $transaction = $this->findShippingTransaction($transactionId, $trackingNumber);
 
-        // Log the history
+        // We log all webhooks even if there is no matching transaction.
         $history = ShippingTransactionHistory::create([
             'shipping_transaction_id' => $transaction? $transaction->id : null,
             'payload' => $payload,
@@ -73,8 +73,10 @@ class ShippoWebhooksController extends Controller
             'tracking_history' => $trackingHistory
         ]);
 
-        // We log all webhooks even if there is no matching transaction.
+
+        // We have an existing transaction that matches the update
         if ($transaction) {
+            $transaction->shippingHistory()->save($history);
             $transaction->tracking_history = $payload['tracking_history'];
             $transaction->shipping_status_updated_on = $statusDate;
             $transaction->shipping_status = $mappedStatus;

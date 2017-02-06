@@ -6,11 +6,15 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Models\Traits\EloquentDatesTrait;
+
 /**
  * Class ShippingTransactionHistory
  */
 class ShippingTransactionHistory extends BaseEloquentModel
 {
+    use EloquentDatesTrait;
+
     const STATII = [
         'UNKNOWN',
         'FAILURE',

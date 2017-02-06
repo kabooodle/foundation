@@ -225,6 +225,56 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
     }
 
     /**
+     * @return mixed
+     */
+    public function getLatestHistory()
+    {
+        return $this->shippingHistory->count() > 0 ? $this->shippingHistory->last()->status : $this->shipping_status;
+    }
+
+    /**
+     * @return bool|ShippingTransactionHistory
+     */
+    public function isWithCarrierHistory()
+    {
+        if ($this->shippingHistory->count() > 0 ) {
+            return $this->shippingHistory->filter(function(ShippingTransactionHistory $history){
+                return $history->status === 'PROCESSING' || $history->status === 'UNKNOWN';
+            })->first();
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool|ShippingTransactionHistory
+     */
+    public function isInTransitHistory()
+    {
+        if ($this->shippingHistory->count() > 0 ) {
+            return $this->shippingHistory->filter(function(ShippingTransactionHistory $history){
+                return $history->status === 'IN TRANSIT';
+            })->first();
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool|ShippingTransactionHistory
+     */
+    public function isDeliveredHistory()
+    {
+        if ($this->shippingHistory->count() > 0 ) {
+            return $this->shippingHistory->filter(function(ShippingTransactionHistory $history){
+                return $history->status === 'DELIVERED';
+            })->first();
+        }
+
+        return false;
+    }
+
+    /**
      * @param $status
      *
      * @return string
@@ -234,7 +284,7 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
         $mapped = [
             'UNKNOWN' => 'PROCESSING',
             'DELIVERED'  => 'DELIVERED',
-            'TRANSIT'  => 'TRANSIT',
+            'TRANSIT'  => 'IN TRANSIT',
             'FAILURE'  => 'FAILURE',
             'RETURNED'  => 'RETURNED',
         ];

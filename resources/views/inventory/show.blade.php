@@ -56,11 +56,6 @@
 
 @push('footer-scripts')
     <script src="{{ staticAsset('/assets/js/inventory-show.js') }}"></script>
-    <script>
-        $(function(){
-            clippy('[data-clipboard-target]');
-        });
-    </script>
 @endpush
 
 

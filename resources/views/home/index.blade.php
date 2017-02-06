@@ -86,7 +86,7 @@
                         <li class="nav-item"><a href="#about">About us</a></li>
                         <li class="nav-item"><a href="#ready">Sign up</a></li>
                         <li class="nav-item">
-                            @if(user())
+                            @if(user($ignoreApiAuth = true))
                                 <a href="/profile">Account</a>
                             @else
                                 <a href="/auth/login">Sign in</a>

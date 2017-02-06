@@ -508,6 +508,8 @@ $(function () {
         style: 'btn-default'
     });
 
+    clippy('[data-clipboard-target]');
+
     $('.dropdown.dropdown-onhover').hover(function () {
         $(this).addClass('open active').find('.dropdown-menu').stop(true, true).show();
     }, function () {

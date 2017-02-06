@@ -48,38 +48,7 @@
                     @if($transaction = $claim->shipmentTransaction())
                         <div class="box  p-a">
                             <div class="row">
-                                <ul class="timeline" id="timeline">
-
-                                    @include('shipping.order.partials._shipping_status_item', [
-                                        '_itemStatus' => null,
-                                        '_itemTimestamp' => null,
-                                        '_itemName'=>'Shipment Created'
-                                    ])
-
-                                    @include('shipping.order.partials._shipping_status_item', [
-                                        '_itemStatus' => null,
-                                        '_itemTimestamp' => null,
-                                        '_itemName'=>'Label Created'
-                                    ])
-
-                                    @include('shipping.order.partials._shipping_status_item', [
-                                        '_itemStatus' => null,
-                                        '_itemTimestamp' => null,
-                                        '_itemName'=>'With Carrier'
-                                    ])
-
-                                    @include('shipping.order.partials._shipping_status_item', [
-                                        '_itemStatus' => null,
-                                        '_itemTimestamp' => null,
-                                        '_itemName'=>'In Transit'
-                                    ])
-
-                                    @include('shipping.order.partials._shipping_status_item', [
-                                        '_itemStatus' => null,
-                                        '_itemTimestamp' => null,
-                                        '_itemName'=>'Delivered'
-                                    ])
-                                </ul>
+                                @include('shipping.partials._timeline', ['transaction' => $transaction ])
                             </div>
                         </div>
 
@@ -99,7 +68,9 @@
                                 <td><img src="{{ $transaction->rate_data['carrierLogos']['small'] }}" alt="{{ $transaction->rate_data['provider'] }}"></td>
                                 <td>{{ $transaction->rate_data['serviceLevelName'] }}</td>
                                 <td>{{ $transaction->rate_data['shippoRateObject']['days'] }} days</td>
-                                <td><a class="text-primary" href="{{ $transaction->tracking_url_provider }}" target="_blank" >{{ $transaction->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>
+                                <td><a class="text-primary" href="{{ $transaction->tracking_url_provider }}" target="_blank" id="link-text">{{ $transaction->tracking_number }}</a>
+                                    <a href="javascript:;" data-animation="false" data-clipboard-target="#link-text"><i class="fa fa-clipboard" aria-hidden="true"></i></a>
+                                </td>
                                 <td>{{ $transaction->shipment->getSenderOrigin() }}</td>
                                 <td>{!! $transaction->present()->getStatus()  !!}</td>
                             </tr>

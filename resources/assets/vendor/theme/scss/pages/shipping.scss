@@ -37,11 +37,12 @@ $textcolor : #8f8f8f;
     transition: all 200ms ease-in;
     min-width: 160px;
     &.complete .status {
-      border-top: 2px solid #66DC71;
+      border-top: 10px solid #66DC71;
     }
     &.complete .status:before {
       background-color: #66DC71;
-      border: none;
+      border-radius: 13px;
+      border-color: #66DC71;
       transition: all 200ms ease-in;
     }
     &.complete .status h4 {

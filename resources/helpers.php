@@ -1501,7 +1501,7 @@ if (! function_exists('getEnvDomain')) {
         // Although confusing at first, its essentially required because of how L5 handles
         // environments (stupidly). So either close your eyes and jump ahead 4 lines or
         // behold: the sexy hack.
-        if (in_array($httpHost, ['app.kabooodle.ngrok.io', 'api.kabooodle.ngrok.io'])) {
+        if (in_array($httpHost, ['kabooodle.ngrok.io'])) {
             return 'kabooodle.ngrok.io';
         }
 
