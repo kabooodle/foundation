@@ -35,7 +35,7 @@ class ProfileSettingsController extends Controller
      */
     public function index()
     {
-        $user = user();
+        $user = webUser();
         $timezone = Timezone::timezoneList();
 
         return $this->view('profile.index')->with(compact('user', 'timezone'));
@@ -62,7 +62,7 @@ class ProfileSettingsController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'avatar' =>'required',
-            'username' => 'required|alpha_dash|min:5|max:30|unique:users,username,' . user()->id,
+            'username' => 'required|alpha_dash|min:5|max:30|unique:users,username,' . webUser()->id,
             'password' => 'required_with:newPassword,newPassword_confirmation',
             'newPassword' => 'required_with:newPassword_confirmation,password|min:6|confirmed',
             'newPassword_confirmation' => 'required_with:newPassword',
@@ -72,42 +72,42 @@ class ProfileSettingsController extends Controller
         try {
             $this->validate($request, $rules);
 
-            user()->first_name = $input['first_name'];
-            user()->last_name = $input['last_name'];
-            user()->username = $input['username'];
+            webUser()->first_name = $input['first_name'];
+            webUser()->last_name = $input['last_name'];
+            webUser()->username = $input['username'];
             // TODO: profile updates email
-//            user()->email = $input['email'];
-            user()->timezone = $input['timezone'];
+//            webUser()->email = $input['email'];
+            webUser()->timezone = $input['timezone'];
             $avatar = $request->has('avatar') ? $request->get('avatar') : null;
 
             if ($input['newPassword']) {
-                if (!Hash::check($input['password'], user()->password)) {
+                if (!Hash::check($input['password'], webUser()->password)) {
                     Messages::error('Password is incorrect.');
 
                     return $this->redirect(route('profile.index'));
                 }
                 $password = Hash::make($input['newPassword']);
-                user()->password = $password;
+                webUser()->password = $password;
             }
 
             if ($avatar) {
                 $avatar = json_decode($avatar, true);
-                if (user()->avatar && user()->avatar->key <> $avatar['key']) {
-                    user()->avatar()->delete();
+                if (webUser()->avatar && webUser()->avatar->key <> $avatar['key']) {
+                    webUser()->avatar()->delete();
 
                     $file = new Files;
-                    $file->fileable_id = user()->id;
+                    $file->fileable_id = webUser()->id;
                     $file->fileable_type = User::class;
                     $file->bucket_name = $avatar['bucket_name'];
                     $file->location = $avatar['location'];
                     $file->key = $avatar['key'];
                     $file->save();
 
-                    user()->avatar()->save($file);
+                    webUser()->avatar()->save($file);
                 }
             }
 
-            user()->save();
+            webUser()->save();
 
             event(new UserSettingsUpdated(user()));
 
@@ -128,10 +128,10 @@ class ProfileSettingsController extends Controller
     public function getShippingProfile()
     {
         $data = [
-            'fromAddresses' => user()->shipFromAddresses,
-            'primaryFrom' => user()->primaryShipFromAddress,
-            'toAddresses' => user()->shipToAddresses,
-            'primaryTo' => user()->primaryShipToAddress,
+            'fromAddresses' => webUser()->shipFromAddresses,
+            'primaryFrom' => webUser()->primaryShipFromAddress,
+            'toAddresses' => webUser()->shipToAddresses,
+            'primaryTo' => webUser()->primaryShipToAddress,
         ];
 
         return $this->view('profile.shippingprofile', $data);
@@ -151,8 +151,8 @@ class ProfileSettingsController extends Controller
     public function getEmails()
     {
         $data = [
-            'primaryEmail' => user()->primaryEmail,
-            'emails' => user()->emails
+            'primaryEmail' => webUser()->primaryEmail,
+            'emails' => webUser()->emails
         ];
 
         return $this->view('profile.emails', $data);
@@ -194,13 +194,13 @@ class ProfileSettingsController extends Controller
     {
         $notifications = $this->dispatchNow(new GetActiveNotifications);
         $notifications = $notifications->filter(function($notification){
-            if ($notification->required_subscription_type == 'merchant' && ! user()->hasAtLeastMerchantSubscription()) {
+            if ($notification->required_subscription_type == 'merchant' && ! webUser()->hasAtLeastMerchantSubscription()) {
                 return false;
             }
             return $notification;
         })->groupBy('group');
 
-        $userNotifications = user()->notificationsettings;
+        $userNotifications = webUser()->notificationsettings;
 
         return $this->view('profile.notifications')->with(compact('notifications', 'userNotifications'));
     }
@@ -216,7 +216,7 @@ class ProfileSettingsController extends Controller
             $this->validate($request, $this->getNotificationRules());
 
             $this->dispatchNow(new UpdateUserNotificationSettingCommand(
-                user(),
+                webUser(),
                 Binput::get('id'),
                 Binput::get('type'),
                 Binput::get('action')

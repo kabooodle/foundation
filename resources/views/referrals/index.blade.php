@@ -21,7 +21,7 @@
                 <div class="col-md-6 col-md-offset-3">
 
                     <div class="input-group">
-                        <input type="text" readonly class="form-control readonly-lt" id="link-text" placeholder="Search for..." value="http://kabooodle.dev/invite/{{ user()->username }}">
+                        <input type="text" readonly class="form-control readonly-lt" id="link-text" placeholder="Search for..." value="http://kabooodle.dev/invite/{{ webUser()->username }}">
                         <span class="input-group-btn">
                             <button data-animation="false" class="btn success" data-clipboard-target="#link-text" type="button">
                                 <small class="small _500">COPY</small>
@@ -41,10 +41,10 @@
     </div>
 
 
-    @if(user()->referrals->count() > 0)
+    @if(webUser()->referrals->count() > 0)
     <div class="padding white p-b-0">
         <div class="row">
-            @foreach(user()->referrals as $referral)
+            @foreach(webUser()->referrals as $referral)
                 <div class="col-md-4">
                     <ul class="list p-b-0 b-a {{ $referral->subscribed('main') ? 'b-success' : null }}">
                         <li class="list-item">

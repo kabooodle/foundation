@@ -52,7 +52,7 @@ class InventoryClaimsFacebookController extends Controller
        $facebookItem = FacebookItems::find($facebookItemId);
 
        try {
-           $this->dispatchNow(new ClaimInventoryItemCommand(user(), $facebookItem, $facebookItem->inventory));
+           $this->dispatchNow(new ClaimInventoryItemCommand(webUser(), $facebookItem, $facebookItem->inventory));
 
            Messages::success('Item claimed successfully!');
            return Response::json([], 200);

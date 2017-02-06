@@ -92,7 +92,7 @@ class FacebookController extends Controller
         /** @var \Facebook\GraphNodes\GraphUser $facebook_user */
         $facebookUser = $response->getGraphUser();
 
-        $user = user();
+        $user = webUser();
         $user->facebook_user_id = $facebookUser->getId();
         $user->facebook_access_token = (string) $token;
         $user->facebook_access_token_expires = $token->getExpiresAt();
@@ -111,10 +111,10 @@ class FacebookController extends Controller
     public function revoke()
     {
         /** @var FacebookResponse $revoked */
-        $revoked = $this->fb->delete('/me/permissions', [],  user()->facebook_access_token);
+        $revoked = $this->fb->delete('/me/permissions', [],  webUser()->facebook_access_token);
 
         if ($revoked) {
-            $user = user();
+            $user = webUser();
             $user->facebook_access_token = null;
             $user->facebook_access_token_expires = null;
             $user->save();

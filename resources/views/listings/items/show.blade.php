@@ -3,7 +3,7 @@
 @section('body-menu')
     <div class="clearfix">
         <div class="pull-left">
-            @if(user() && $listingItem->owner->id == user()->id)
+            @if(webUser() && $listingItem->owner->id == webUser()->id)
             <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ $listingItem->sales->count() }} <span class="text-muted">Sales</span></span>
             @endif
             <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ $listingItem->pageViews->count() }} <span class="text-muted">Views</span></span>

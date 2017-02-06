@@ -26,7 +26,7 @@ class ProfileCreditsController extends Controller
      */
     public function index(Request $request)
     {
-        $user = user();
+        $user = webUser();
 
         return $this->view('profile.credits.index')->with(compact('user'));
     }
@@ -42,7 +42,7 @@ class ProfileCreditsController extends Controller
             $this->validate($request, $this->rules(), $this->rulesMessages());
 
             $creditTypeId = Binput::get('p', false);
-            $user = user();
+            $user = webUser();
 
             if (! $user->hasCardOnFile()) {
                 Messages::error('In order to purchase credits, you must have a credit card on file.');

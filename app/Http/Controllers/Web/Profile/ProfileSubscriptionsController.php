@@ -38,8 +38,8 @@ class ProfileSubscriptionsController extends Controller
      */
     public function index(Request $request)
     {
-        $user = user();
-        $subscription = user()->currentSubscription();
+        $user = webUser();
+        $subscription = webUser()->currentSubscription();
 
         return $this->view('profile.subscription.index')->with(compact('user', 'subscription'));
     }
@@ -55,14 +55,14 @@ class ProfileSubscriptionsController extends Controller
         list($plan, $planGroup) = Plans::getPlan($planId);
 
         // Check if the plan is an early adopter one and the user is allowed to use this plan
-        if ($planId === Plans::PLAN_EARLY_ADOPTER && ! user()->isEarlyAdapter()) {
+        if ($planId === Plans::PLAN_EARLY_ADOPTER && ! webUser()->isEarlyAdapter()) {
             Messages::error('Invalid Plan Selected.');
 
             return redirect()->route('profile.subscription.index');
         }
 
-        $card = user()->getCard();
-        $subscription = user()->currentSubscription();
+        $card = webUser()->getCard();
+        $subscription = webUser()->currentSubscription();
 
         return $this->view('profile.subscription.show')->with(compact('card', 'subscription', 'planId', 'planGroup', 'plan'));
     }
@@ -75,7 +75,7 @@ class ProfileSubscriptionsController extends Controller
     public function edit(Request $request)
     {
         /** @var Subscription $currentSubscription */
-        $currentSubscription = user()->currentSubscription();
+        $currentSubscription = webUser()->currentSubscription();
         if (!$currentSubscription || $currentSubscription->cancelled()) {
             return redirect()->route('profile.subscription.index');
         }
@@ -91,12 +91,12 @@ class ProfileSubscriptionsController extends Controller
     public function store(Request $request, $planId)
     {
         try {
-            $user = user();
+            $user = webUser();
             $planId = Binput::clean($planId);
             list($plan, $planGroup) = Plans::getPlan($planId);
 
             // Check if the plan is an early adopter one and the user is allowed to use this plan
-            if ($planId === Plans::PLAN_EARLY_ADOPTER && ! user()->isEarlyAdapter()) {
+            if ($planId === Plans::PLAN_EARLY_ADOPTER && ! webUser()->isEarlyAdapter()) {
                 Messages::error('Invalid Plan Selected.');
 
                 return redirect()->route('profile.subscription.index');
@@ -107,7 +107,7 @@ class ProfileSubscriptionsController extends Controller
                 $this->validate($request, $this->getCardRules());
 
                 $this->dispatchNow(new StoreCreditCardForUserCommand(
-                    user(),
+                    webUser(),
                     Binput::get('card_number'),
                     Binput::get('exp_month'),
                     Binput::get('exp_year'),
@@ -157,13 +157,13 @@ class ProfileSubscriptionsController extends Controller
     {
         try {
             /** @var Subscription $currentSubscription */
-            $currentSubscription = user()->currentSubscription();
+            $currentSubscription = webUser()->currentSubscription();
             if (!$currentSubscription || $currentSubscription->cancelled()) {
                throw new Exception;
             }
             $currentSubscription->cancel();
 
-            event(new UserCancelledSubscriptionEvent(user(), $currentSubscription->name));
+            event(new UserCancelledSubscriptionEvent(webUser(), $currentSubscription->name));
 
             Messages::add('success', 'Subscription has been cancelled and will not be renewed.');
 

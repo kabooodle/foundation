@@ -34,8 +34,8 @@
 
 
     <div class="pull-right">
-        <a href="{{ route('shop.inventory.index', [user()->username]) }}" class="btn btn-sm white">Manage</a>
-        <a href="{{ route('shop.inventory.create', [user()->username]) }}" class="btn btn-sm white">Add Items</a>
+        <a href="{{ route('shop.inventory.index', [webUser()->username]) }}" class="btn btn-sm white">Manage</a>
+        <a href="{{ route('shop.inventory.create', [webUser()->username]) }}" class="btn btn-sm white">Add Items</a>
     </div>
 
 @endsection
@@ -67,7 +67,7 @@
             var ownedtable = $('table.table-as-list').DataTable({
                 "processing": true,
                 "serverSide": true,
-                "ajax": "{{ route('shop.inventory.query', [user()->username]) }}",
+                "ajax": "{{ route('shop.inventory.query', [webUser()->username]) }}",
                 columns: [
                     { data: 'id', name: 'id' },
                     {data: 'name', name: 'name'},

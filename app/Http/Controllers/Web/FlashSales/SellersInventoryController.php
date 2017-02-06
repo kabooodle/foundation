@@ -104,7 +104,7 @@ class SellersInventoryController extends Controller
         $inventory = $flashSale->inventoryItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
 
         try {
-            $this->dispatchNow(new ClaimInventoryItemCommand(user(), $flashSale, $inventory));
+            $this->dispatchNow(new ClaimInventoryItemCommand(webUser(), $flashSale, $inventory));
 
             Messages::success('Item claimed successfully!');
             return Response::json([], 200);

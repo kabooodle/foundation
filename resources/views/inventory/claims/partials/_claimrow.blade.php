@@ -3,7 +3,7 @@
 
     </td>
     <td style="vertical-align: middle !important">
-        <a href="{{ route('shop.inventory.show', [user()->username, $claim->inventoryItem->obfuscateToURIStringFromModel()]) }}"
+        <a href="{{ route('shop.inventory.show', [webUser()->username, $claim->inventoryItem->obfuscateToURIStringFromModel()]) }}"
            class="_500 h6"><span class="@if($claim->wasRejected()) w-24 @else w-40 @endif avatar">
                                             <img src="{{ $claim->inventoryItem->cover_photo }}">
                                           </span></a>

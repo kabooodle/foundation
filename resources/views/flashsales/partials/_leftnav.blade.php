@@ -3,7 +3,7 @@
    View Flash Sales
 </a>
 
-@if (user()->hasAtLeastMerchantSubscription())
+@if (webUser()->hasAtLeastMerchantSubscription())
 <a href="{{ route('flashsales.create') }}" class="nav-link {{ Request::is('flashsales/create') ? 'active' : null }}">
     Create Flash Sale
 </a>
@@ -14,7 +14,7 @@
 </a>
 <hr>
 
-@foreach(user()->flashsales as $flashSale)
+@foreach(webUser()->flashsales as $flashSale)
     <a href="{{ route('flashsales.show', [$flashSale->getUUID()]) }}" class="nav-link {{ Request::is("flashsales/{$flashSale->getUUID()}") ? 'active' : null }}">
         {!! $flashSale->name !!}
     </a>

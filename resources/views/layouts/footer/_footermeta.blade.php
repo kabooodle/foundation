@@ -31,29 +31,9 @@
     </div>
 </div>
 
-<style>
-    #hs-beacon.beacon-move iframe{
-        right: 64px !important;
-        -webkit-transition: all .5s ease;
-        -moz-transition: all .5s ease;
-        -o-transition: all .5s ease;
-        -ms-transition: all .5s ease;
-        transition: all .5s ease;
-    }
-    #hs-beacon iframe{
-        right: 15px !important;
-        -webkit-transition: all .5s ease;
-        -moz-transition: all .5s ease;
-        -o-transition: all .5s ease;
-        -ms-transition: all .5s ease;
-        transition: all .5s ease;
-    }
-</style>
+
 
 <a id="back-to-top" href="#" class="btn btn-grn btn-md back-to-top white" role="button"  style="
-box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
-position: fixed; height:54px; bottom: 25px; line-height: 34px; right: 15px; color:white; z-index: 9999; display: none; border-radius:100%;
-width:54px;
 "><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
 
 

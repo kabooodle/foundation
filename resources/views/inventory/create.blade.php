@@ -9,7 +9,7 @@
 @section('body-content')
     @include('widgets._fileuploadscripts')
 
-        {{ Form::open(['route' => ['shop.inventory.store', user()->username], 'v-on:submit' => 'validateForm']) }}
+        {{ Form::open(['route' => ['shop.inventory.store', webUser()->username], 'v-on:submit' => 'validateForm']) }}
 
         <div class="box" id="addItemsPrimaryContainer">
             <div class="box-header">

@@ -9,7 +9,7 @@
         </div>
         <div class="box-divider m-a-0"></div>
         <div class="box-body">
-            @include('profile.partials._emails', ['_user' => user(), '_emails' => $emails, '_primary_email' => $primaryEmail])
+            @include('profile.partials._emails', ['_user' => webUser(), '_emails' => $emails, '_primary_email' => $primaryEmail])
         </div>
     </div>
 

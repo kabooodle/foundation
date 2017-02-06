@@ -1,5 +1,6 @@
 <?php
 use Carbon\Carbon;
+use Dingo\Api\Facade\API;
 
 if (!function_exists('defaultAvatar')) {
     /**
@@ -1574,6 +1575,18 @@ if (! function_exists('userOrGuest')) {
     }
 }
 
+
+if (! function_exists('webUser')) {
+    /**
+     * @return \Kabooodle\Models\User|null
+     */
+    function webUser()
+    {
+        return Auth::check() ? Auth::user() : null;
+    }
+}
+
+
 if (! function_exists('user')) {
     /**
      * @param bool $ignoreApiAuth
@@ -1589,12 +1602,12 @@ if (! function_exists('user')) {
         if (! $ignoreApiAuth) {
             $apiAuth = app()->make(Dingo\Api\Auth\Auth::class);
 
-            if ($user = $apiAuth->user()) {
-                return $user;
+            if ($apiAuth->check() === true) {
+                return $apiAuth->user();
             }
         }
 
-        return $auth;
+        return false;
     }
 }
 

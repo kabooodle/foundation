@@ -31,7 +31,7 @@ class GroupsController extends Controller
      */
     public function index(Request $request)
     {
-        $data = user()->allMyGroups();
+        $data = webUser()->allMyGroups();
 
         $page = $request->get('page', 1);
         $perPage = config('pagination.per-page');
@@ -55,7 +55,7 @@ class GroupsController extends Controller
      */
     public function create()
     {
-        if (! user()->hasAtLeastMerchantSubscription()) {
+        if (! webUser()->hasAtLeastMerchantSubscription()) {
             return redirect()->route('groups.index');
         }
 
@@ -71,7 +71,7 @@ class GroupsController extends Controller
     public function store(Request $request)
     {
         try {
-            if (! user()->hasAtLeastMerchantSubscription()) {
+            if (! webUser()->hasAtLeastMerchantSubscription()) {
                 return redirect()->route('groups.index');
             }
 
@@ -115,11 +115,11 @@ class GroupsController extends Controller
      */
     public function edit($idAndName)
     {
-        if (! user()->hasAtLeastMerchantSubscription()) {
+        if (! webUser()->hasAtLeastMerchantSubscription()) {
             return redirect()->route('groups.index');
         }
         $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $item = user()->allMyGroups()->find($decryptedId);
+        $item = webUser()->allMyGroups()->find($decryptedId);
 
         if ($item) {
             return $this->view('groups.edit')->with(compact('item'));

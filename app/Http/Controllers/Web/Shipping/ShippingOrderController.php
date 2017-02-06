@@ -45,7 +45,7 @@ class ShippingOrderController extends Controller
         $filters['enddate'] = $request->get('enddate', false);
         $filters['purchasers'] = array_filter($request->get('purchasers', []));
 
-        $shipments = user()->shippingTransactions();
+        $shipments = webUser()->shippingTransactions();
 
         if (count($filters['statii']) > 0) {
             $shipments = $shipments->whereIn('shipping_status', $filters['statii']);
@@ -93,7 +93,7 @@ class ShippingOrderController extends Controller
             $recipient = Binput::get('to');
 
             $command = new GetShippingRatesCommand(
-                user(),
+                webUser(),
                 array_filter(Binput::get('claim_id')),
                 MailingAddress::fromArray($recipient),
                 MailingAddress::fromArray($sender),

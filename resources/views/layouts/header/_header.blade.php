@@ -2,7 +2,7 @@
     <div class="navbar">
         <a class="navbar-item pull-right hidden-md-up m-a-0 m-l" data-target=
         "#navbar-4" data-toggle="collapse"><i class=
-                                              "material-icons"></i></a><a href="{{ user() ? '/users/'.user()->username : '/home' }}"
+                                              "material-icons"></i></a><a href="{{ webUser() ? '/users/'.webUser()->username : '/home' }}"
                                                                            class="navbar-brand kabooodle-brand">
             <span class="svg-logo">
                 @include('partials._logo_svg_lg')
@@ -13,10 +13,10 @@
         </a>
 
         <ul class="nav navbar-nav pull-right nav-active-border">
-            @if(user())
-                @if(user()->hasAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
+            @if(webUser())
+                @if(webUser()->hasAtLeastMerchantSubscription() || (webUser()->getAvailableBalance() > 0))
                     <li class="nav-item ">
-                        <a class="nav-link text-sm hidden-md-down" href="{{ route('profile.credits.index') }}">${{ user()->getAvailableBalance() }} Credits</a>
+                        <a class="nav-link text-sm hidden-md-down" href="{{ route('profile.credits.index') }}">${{ webUser()->getAvailableBalance() }} Credits</a>
                     </li>
                 @endif
                 <li class="nav-item ">
@@ -44,12 +44,12 @@
                 <li class="nav-item dropdown ">
                     <a class="nav-link dropdown-toggle clear" data-toggle=
                     "dropdown" href=""><span class="avatar_container _32 inline avatar-thumbnail"><img alt="..."
-                                                                                                       src="{{ user()->avatar->location }}"> <i class=
+                                                                                                       src="{{ webUser()->avatar->location }}"> <i class=
                                                                                                                                       "busy b-white right"></i></span></a>
                     <div class="dropdown-menu pull-right">
                         <a class="dropdown-item" href="{{ route('profile.index') }}"><span>Account Settings</span></a>
-                        @if(user()->hasAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
-                            <a class="dropdown-item hidden-lg-up" href="{{ route('profile.credits.index') }}"><span>${{ user()->getAvailableBalance() }} Credits</span></a>
+                        @if(webUser()->hasAtLeastMerchantSubscription() || (webUser()->getAvailableBalance() > 0))
+                            <a class="dropdown-item hidden-lg-up" href="{{ route('profile.credits.index') }}"><span>${{ webUser()->getAvailableBalance() }} Credits</span></a>
                         @endif
                         <a class="dropdown-item {{ Request::is('referrals') ? 'active' : null }}" href="{{ route('referrals.index') }}"><span>Referrals</span></a>
                         <a class=
@@ -68,20 +68,20 @@
 
         <div class="collapse navbar-toggleable-sm" data-pjax="" id="navbar-4">
             <ul class="nav navbar-nav pull-left nav-active-border b-warning">
-                @if(user() && user()->hasAtLeastMerchantSubscription())
+                @if(webUser() && webUser()->hasAtLeastMerchantSubscription())
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle "
                            href="#" data-toggle="dropdown"><span
                                     class="nav-text">Merchant Services</span></a>
                         <div class="dropdown-menu">
-                            <a href="{{  route('shop.inventory.create', [user()->username]) }}"
+                            <a href="{{  route('shop.inventory.create', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add Inventory</a>
-                            <a href="{{  route('shop.inventory.index', [user()->username]) }}"
+                            <a href="{{  route('shop.inventory.index', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Inventory</a>
                             <div class="divider"></div>
-                            <a href="{{ route('shop.claims.index', [user()->username]) }}"
+                            <a href="{{ route('shop.claims.index', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Pending Claims
-                                <span class="">({{ user()->pendingClaimsOnMyInventory()->count() }})</span>
+                                <span class="">({{ webUser()->pendingClaimsOnMyInventory()->count() }})</span>
                             </a>
 
                             <a  href="{{  route('merchant.sales.index') }}"
@@ -90,7 +90,7 @@
                             <div class="divider"></div>
                             <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Manage Listings</span></a>
 
-                            @if(user()->isSubscribedToMerchantPlus())
+                            @if(webUser()->isSubscribedToMerchantPlus())
                                 <div class="divider"></div>
                                 <a href="{{  route('merchant.shipping.create') }}"
                                    class="dropdown-item {{ Request::is('merchant/shipping/create*') ? 'active' : null }}"><span>Build Shipment</span></a>
@@ -100,14 +100,14 @@
                         </div>
                     </li>
                 @endif
-                {{--@if(user() && (user()->claimsAsBuyer->count() > 0 || ! user()->hasAtLeastMerchantSubscription()))--}}
-                    @if(user())
+                {{--@if(webUser() && (webUser()->claimsAsBuyer->count() > 0 || ! webUser()->hasAtLeastMerchantSubscription()))--}}
+                    @if(webUser())
                     <li class ="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> <span class="nav-text">Purchases</span></a>
                         <div class="dropdown-menu">
                             <a href="{{ route('profile.purchases.index') }}"
                                class="dropdown-item {{ Request::is('purchases*') ? 'active' : null }}">Purchases &amp; Claims</a>
-                            <a href="{{ route('watching.items.index', [user()->username]) }}"
+                            <a href="{{ route('watching.items.index', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('watching*') ? 'active' : null }}">Watching</a>
                         </div>
                     </li>
@@ -118,7 +118,7 @@
                        data-toggle="dropdown"
                        href="{{ route('flashsales.index') }}"><span class="nav-text">Flash Sales</span></a>
                     <div class="dropdown-menu">
-                        @if(user())
+                        @if(webUser())
                             <a href="{{ route('flashsales.create') }}"
                                class="dropdown-item {{ Request::is('flashsales/create') ? 'active' : null }}">Create</a>
                         @endif

@@ -30,8 +30,8 @@ class ProfileCreditCardController extends Controller
      */
     public function index(Request $request)
     {
-        $user = user();
-        $card = user()->getCard();
+        $user = webUser();
+        $card = webUser()->getCard();
 
         return $this->view('profile.creditcard.index')->with(compact('user', 'card'));
     }
@@ -47,7 +47,7 @@ class ProfileCreditCardController extends Controller
             $this->validate($request, $this->getCardRules());
 
             $this->dispatchNow(new StoreCreditCardForUserCommand(
-                user(),
+                webUser(),
                 Binput::get('card_number'),
                 Binput::get('exp_month'),
                 Binput::get('exp_year'),

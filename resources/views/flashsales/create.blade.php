@@ -7,7 +7,7 @@
            Browse flash sales
     </a>
 
-    @if (user()->hasAtLeastMerchantSubscription())
+    @if (webUser()->hasAtLeastMerchantSubscription())
         <a href="{{ route('flashsales.create') }}" class="nav-link {{ Request::is('flashsales/create') ? 'active' : null }}">
             Create flash sale
         </a>
@@ -16,10 +16,10 @@
         </a>
     @endif
     @if(user())
-        @if(user()->flashsales->count() > 0)
+        @if(webUser()->flashsales->count() > 0)
         <hr>
         <small class="text-muted text-sm nav-link">Manage my flash sales</small>
-        @foreach(user()->flashsales as $flashSale)
+        @foreach(webUser()->flashsales as $flashSale)
             <a href="{{ route('flashsales.edit', [$flashSale->getUUID()]) }}" class="nav-link {{ Request::is("flashsales/{$flashSale->getUUID()}") ? 'active' : null }}">
                 {!! $flashSale->name !!}
             </a>
@@ -30,7 +30,7 @@
 
 @section('body-inner-content')
             <build-flashsale
-                    user_hash="{{ user()->public_hash }}"
+                    user_hash="{{ webUser()->public_hash }}"
                     s3_key_url="{{ apiRoute('api.files.sign') }}"
                     search_endpoint="{{ apiRoute('users.search') }}"
                     save_endpoint="{{ apiRoute('flashsales.store') }}"

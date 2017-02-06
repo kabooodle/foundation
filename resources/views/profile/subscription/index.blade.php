@@ -10,13 +10,13 @@
         <div class="box-divider"></div>
         <div class="box-body clearfix">
             <p class="">Using {{ env('APP_NAME') }} to browse items and submit claims is free.  If you wish to have access to merchant inventory tools, including a b c, we offer various subscription plans.</p>
-            @if(user()->currentSubscription())
-                <p class="m-b-0">Your next scheduled billing date is: {{ user()->upcomingInvoice()->date()->format('F jS Y') }}, for {{ user()->upcomingInvoice()->total() }}.</p>
+            @if(webUser()->currentSubscription())
+                <p class="m-b-0">Your next scheduled billing date is: {{ webUser()->upcomingInvoice()->date()->format('F jS Y') }}, for {{ webUser()->upcomingInvoice()->total() }}.</p>
             @endif
         </div>
     </div>
 
-    @if(user()->onGenericTrial())
+    @if(webUser()->onGenericTrial())
         <div class="box info">
             <div class="box-body">
                 <div class="text-center center-block">
@@ -37,13 +37,13 @@
         </div>
     @endif
 
-    @if(user()->isEarlyAdapter())
+    @if(webUser()->isEarlyAdapter())
         @include('profile.subscription.partials._earlyadapter', [
         '_plan' => \Kabooodle\Models\Plans::getEarlyAdapterPlan(),
         '_disable' => false
         ])
     @else
-        @if(! user()->hasUserAlreadyHadGenericTrial())
+        @if(! webUser()->hasUserAlreadyHadGenericTrial())
         <div class="box warning">
             <div class="box-body">
                 <div class="text-center center-block">

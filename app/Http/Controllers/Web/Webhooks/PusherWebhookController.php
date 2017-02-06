@@ -47,7 +47,7 @@ class PusherWebhookController extends Controller
             if (Str::startsWith($channelName, 'private')) {
 
                 // Private has a users id appended to it
-                if (! Str::contains($channelName, user()->id)) {
+                if (! Str::contains($channelName, webUser()->id)) {
                     throw new AuthorizationException;
                 }
                 $endpoint = 'private';
@@ -60,7 +60,7 @@ class PusherWebhookController extends Controller
                 $data = json_decode($this->getPusher()->socket_auth($channelName, $socketId), true);
             } else {
                 // This returns a json string, which, we need as an array :)
-                $data = json_decode($this->getPusher()->presence_auth($channelName, $socketId, user()->id, ['username' => user()->username, 'full_name' => user()->full_name]), true);
+                $data = json_decode($this->getPusher()->presence_auth($channelName, $socketId, webUser()->id, ['username' => webUser()->username, 'full_name' => webUser()->full_name]), true);
             }
 
             return new JsonResponse($data);

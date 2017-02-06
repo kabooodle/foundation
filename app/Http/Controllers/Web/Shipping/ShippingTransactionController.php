@@ -38,12 +38,12 @@ class ShippingTransactionController extends Controller
         $rateUUID = Binput::get('rate');
 
         try {
-            $shippingTransaction = $this->dispatchNow(new CreateNewShippingTransactionCommand(user(), $rateUUID, $shipmentUUID));
+            $shippingTransaction = $this->dispatchNow(new CreateNewShippingTransactionCommand(webUser(), $rateUUID, $shipmentUUID));
             $redirectRoute = route('merchant.shipping.transactions.show', [$shipmentUUID, $shippingTransaction->uuid]);
 
             return Response::json(['txn_id' => $shippingTransaction->transaction_id, 'redirect' => $redirectRoute], 200);
         } catch (InsufficientBalanceException $e) {
-            return Response::json(['error' => 'Insufficient credits : $'.user()->getAvailableBalance()], 500);
+            return Response::json(['error' => 'Insufficient credits : $'.webUser()->getAvailableBalance()], 500);
         } catch (ShippoException $e) {
             return Response::json(['error' => $e->getMessage()], 500);
         } catch (StaleDataException $e) {
@@ -61,7 +61,7 @@ class ShippingTransactionController extends Controller
      */
     public function show(Request $request, $shipmentUUID, $transactionUUID)
     {
-        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(user(), $shipmentUUID, $transactionUUID));
+        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(webUser(), $shipmentUUID, $transactionUUID));
 
         return $this->view('shipping.order.transaction')->with(compact('transaction'));
     }
@@ -75,7 +75,7 @@ class ShippingTransactionController extends Controller
      */
     public function label(Request $request, $shipmentUUID, $transactionUUID)
     {
-        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(user(), $shipmentUUID, $transactionUUID));
+        $transaction = $this->dispatchNow(new GetShippingTransactionCommand(webUser(), $shipmentUUID, $transactionUUID));
 
         event(new ShippingLabelPrinted($transaction));
 

@@ -24,7 +24,7 @@ class ProfileSubscriptionInvoicesController extends Controller
      */
     public function index(Request $request)
     {
-        $user = user();
+        $user = webUser();
         $invoices = $user->invoices();
 
         return $this->view('profile.subscription.invoices')->with(compact('user', 'invoices'));
@@ -37,7 +37,7 @@ class ProfileSubscriptionInvoicesController extends Controller
      */
     public function show($invoiceId)
     {
-        return user()->findInvoiceOrFail($invoiceId)->view([]);
+        return webUser()->findInvoiceOrFail($invoiceId)->view([]);
     }
 
     /**
@@ -47,6 +47,6 @@ class ProfileSubscriptionInvoicesController extends Controller
      */
     public function download($invoiceId)
     {
-        return user()->downloadInvoice($invoiceId, ['product' => 'kabooodle.com']);
+        return webUser()->downloadInvoice($invoiceId, ['product' => 'kabooodle.com']);
     }
 }

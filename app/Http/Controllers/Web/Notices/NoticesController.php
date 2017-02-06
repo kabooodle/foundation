@@ -24,7 +24,7 @@ class NoticesController extends Controller
      */
     public function index(Request $request)
     {
-        $notices = NotificationNotices::where('user_id', user()->id)
+        $notices = NotificationNotices::where('user_id', webUser()->id)
             ->orderBy('created_at', 'desc')
             ->paginate(config('pagination.per-page'));
 

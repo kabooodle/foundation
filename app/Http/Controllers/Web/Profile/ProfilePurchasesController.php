@@ -27,7 +27,7 @@ class ProfilePurchasesController extends Controller
      */
     public function index(Request $request)
     {
-        $claims = $this->paginateData($request, user()->claimsAsBuyer->sortByDesc('created_at'));
+        $claims = $this->paginateData($request, webUser()->claimsAsBuyer->sortByDesc('created_at'));
 
         return view('profile.purchases')->with(compact('claims'));
     }
@@ -41,7 +41,7 @@ class ProfilePurchasesController extends Controller
     public function show(Request $request, $itemID)
     {
         $decryptedId = $this->obfuscateFromURIString($itemID);
-        $claim = Claims::where('claimed_by', '=', user()->id)
+        $claim = Claims::where('claimed_by', '=', webUser()->id)
             ->findOrFail($decryptedId);
 
         $claim->shoppable->load(['listing' => function($q){

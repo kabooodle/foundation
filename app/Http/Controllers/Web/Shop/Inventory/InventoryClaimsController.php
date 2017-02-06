@@ -30,7 +30,7 @@ class InventoryClaimsController extends Controller
      */
     public function index(Request $request, $username)
     {
-        $data = user()->pendingClaimsOnMyInventory;
+        $data = webUser()->pendingClaimsOnMyInventory;
         $data = $this->paginateData($request, $data);
 
         return $this->view('inventory.claims.index')->with(compact('data'));
@@ -45,7 +45,7 @@ class InventoryClaimsController extends Controller
      */
     public function update(Request $request, $username, $claimsUUID)
     {
-        $data = user()->claimsOnMyInventory;
+        $data = webUser()->claimsOnMyInventory;
         $claim = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();
@@ -53,7 +53,7 @@ class InventoryClaimsController extends Controller
         if ($claim) {
             $timestamp = Binput::get('accepted_on', false) ? Carbon::createFromTimestamp(strtotime(Binput::get('accepted_on'))) : null;
             $result = $this->dispatchNow(new AcceptClaimForInventoryItemCommand(
-                user(),
+                webUser(),
                 $claimsUUID,
                 Binput::get('accepted_price', null),
                 $timestamp,
@@ -75,13 +75,13 @@ class InventoryClaimsController extends Controller
      */
     public function destroy(Request $request, $username, $claimsUUID)
     {
-        $data = user()->claimsOnMyInventory;
+        $data = webUser()->claimsOnMyInventory;
         $item = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();
 
         if ($item) {
-            $result = $this->dispatchNow(new RejectClaimForInventoryItemCommand(user(), $claimsUUID,
+            $result = $this->dispatchNow(new RejectClaimForInventoryItemCommand(webUser(), $claimsUUID,
                 Binput::get('rejected_reason', null)));
 
             return Response::json('ok', 200);

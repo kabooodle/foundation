@@ -62,8 +62,8 @@
                 }
             });
         });
-        @if(user($ignoreApiAuth = true))
-        moment.tz('{{ user()->timezone}}').format();
+        @if(webUser())
+        moment.tz('{{ webUser()->timezone}}').format();
         @endif
     </script>
     @endpush

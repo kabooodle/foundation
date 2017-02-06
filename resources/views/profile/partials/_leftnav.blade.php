@@ -13,7 +13,7 @@
 <li><a href="{{ route('profile.shippingprofile.edit') }}" class="nav-link {{ Request::is('profile/shippingprofile') ? 'active' : null }}">
     Shipping Profile
 </a></li>
-@if(user()->hasAtLeastMerchantSubscription() || (user()->getAvailableBalance() > 0))
+@if(webUser()->hasAtLeastMerchantSubscription() || (webUser()->getAvailableBalance() > 0))
 <li><a href="{{ route('profile.credits.index') }}" class="nav-link {{ Request::is('profile/credits') ? 'active' : null }}">
     Credits
 </a></li>
@@ -21,7 +21,7 @@
 <li><a href="{{ route('profile.subscription.index') }}" class="nav-link {{ Request::is('profile/subscription') ? 'active' : null }}">
     Subscription
 </a></li>
-@if(user()->hasAtLeastMerchantSubscription())
+@if(webUser()->hasAtLeastMerchantSubscription())
 <li><a href="{{ route('profile.subscription.invoices.index') }}" class="nav-link {{ Request::is('profile/subscription/invoices') ? 'active' : null }}">
     Receipts
 </a></li>

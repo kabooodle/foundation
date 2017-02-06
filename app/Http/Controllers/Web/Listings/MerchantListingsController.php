@@ -21,7 +21,7 @@ class MerchantListingsController extends Controller
      */
     public function index(Request $request)
     {
-        $listings = Listings::getQueriedListings(user()->id);
+        $listings = Listings::getQueriedListings(webUser()->id);
 
         return $this->view('listings.merchant.index')->with(compact('listings'));
     }
@@ -34,12 +34,12 @@ class MerchantListingsController extends Controller
      */
     public function edit(Request $request, $uuid)
     {
-        $listing = user()->listings->where('uuid', $uuid)->first();
+        $listing = webUser()->listings->where('uuid', $uuid)->first();
         if (!$listing) {
             return redirect()->to(route('merchant.listings.index'));
         }
 
-        $listings = $listing->listingsGroupedByItemTypeGrouping(user()->id);
+        $listings = $listing->listingsGroupedByItemTypeGrouping(webUser()->id);
 
         return $this->view('listings.merchant.edit')->with(compact('listing', 'listings'));
     }
@@ -52,7 +52,7 @@ class MerchantListingsController extends Controller
      */
     public function update(Request $request, $uuid)
     {
-        $listing = user()->listings->where('uuid', $uuid)->first();
+        $listing = webUser()->listings->where('uuid', $uuid)->first();
         if (!$listing) {
             return redirect()->to(route('merchant.listings.index'));
         }
@@ -65,11 +65,11 @@ class MerchantListingsController extends Controller
      */
     public function show(Request $request, $uuid)
     {
-        $listing = user()->listings->where('uuid', $uuid)->first();
+        $listing = webUser()->listings->where('uuid', $uuid)->first();
         if (!$listing) {
             return redirect()->to(route('merchant.listings.index'));
         }
-        $listings = $listing->listingsGroupedByItemTypeGrouping(user()->id);
+        $listings = $listing->listingsGroupedByItemTypeGrouping(webUser()->id);
 
         return $this->view('listings.merchant.show')->with(compact('listing', 'listings'));
     }
@@ -92,7 +92,7 @@ class MerchantListingsController extends Controller
             }
         }])
             ->where('uuid', $listingUuid)
-            ->where('owner_id', user()->id)
+            ->where('owner_id', webUser()->id)
             ->where('type', $type)
             ->first();
 

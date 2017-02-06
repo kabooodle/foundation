@@ -14,7 +14,7 @@
     </div>
     @unless(isset($_hideButtons) or false)
         <div class="text-center p-a-md">
-            @if(user()->currentSubscription() && !user()->currentSubscription()->cancelled() && user()->subscribedToPlan([$_plan['id']], $_plan['subscription']))
+            @if(webUser()->currentSubscription() && !webUser()->currentSubscription()->cancelled() && webUser()->subscribedToPlan([$_plan['id']], $_plan['subscription']))
                 <a
                         href="{{ route('profile.subscription.cancel', [$_plan['id']]) }}"
                         style=" margin: 0 2px 0 0"

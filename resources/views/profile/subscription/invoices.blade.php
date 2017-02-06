@@ -9,7 +9,7 @@
         </div>
         <div class="box-divider"></div>
         <div class="box-body">
-            @if(user()->stripe_id)
+            @if(webUser()->stripe_id)
                 <table class="table table-condensed table-as-list white">
                     <thead>
                         <tr>
@@ -20,7 +20,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach (user()->invoices() as $invoice)
+                    @foreach (webUser()->invoices() as $invoice)
                         <tr>
                             <td>{{ $invoice->date()->toFormattedDateString() }}</td>
                             <td>{{ $invoice->total() }}</td>

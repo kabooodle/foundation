@@ -46,7 +46,7 @@ class InventoryController extends Controller
      */
     public function index(Request $request, $username)
     {
-        if (user()->username <> $username) {
+        if (webUser()->username <> $username) {
             return redirect('/');
         }
 
@@ -61,11 +61,11 @@ class InventoryController extends Controller
      */
     public function detailed(Request $request, $username)
     {
-        if (user()->username <> $username) {
+        if (webUser()->username <> $username) {
             return redirect('/');
         }
 
-        $data = user()->inventory()->NoEagerLoads()->with(['style', 'styleSize']);
+        $data = webUser()->inventory()->NoEagerLoads()->with(['style', 'styleSize']);
 
         if ($request->has('style_id') && $request->get('style_id')) {
             $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
@@ -161,7 +161,7 @@ class InventoryController extends Controller
             $this->validate($request, Inventory::getRules(), ['sizings.*.images.required' => 'You must add at least 1 image for each size.']);
 
             $command = new AddInventoryCommand(
-                user(),
+                webUser(),
                 Binput::get('type_id'),
                 Binput::get('style_id'),
                 Binput::get('price_usd'),
@@ -214,7 +214,7 @@ class InventoryController extends Controller
     public function edit(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $item = user()->inventory->find($decryptedId);
+        $item = webUser()->inventory->find($decryptedId);
 
         if ($item) {
             $styles = InventoryType::LuLaRoe()->first()->styles;
@@ -271,7 +271,7 @@ class InventoryController extends Controller
         // We remove the eager loaded relationships on inventory because most of it is unnecessary.
         $item = $user->inventory()->noEagerLoads()->with('style', 'size', 'styleSize', 'files')->find($decryptedId);
         try {
-            $this->dispatchNow(new ClaimInventoryItemCommand(user(), $user, $item));
+            $this->dispatchNow(new ClaimInventoryItemCommand(webUser(), $user, $item));
 
             Messages::success('Item claimed successfully!');
 
@@ -289,8 +289,8 @@ class InventoryController extends Controller
     public function postables(Request $request)
     {
         // Returns array
-        $facebookGroups = user()->getFacebookGroups();
-        $flashSales = user()->currentFlashsalesAsSellerAndAdmins();
+        $facebookGroups = webUser()->getFacebookGroups();
+        $flashSales = webUser()->currentFlashsalesAsSellerAndAdmins();
 
         return Response::json(['data' => ['flashsales' => $flashSales, 'facebookgroups' => $facebookGroups]], 200);
     }

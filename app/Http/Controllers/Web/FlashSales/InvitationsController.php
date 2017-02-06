@@ -70,7 +70,7 @@ class InvitationsController extends Controller
 
         if ($invitation) {
             return $this->view('flashsales.invitations.show')->with(compact('item', 'invitation'));
-            if (user() && user()->id == $invitation->user_id) {
+            if (webUser() && webUser()->id == $invitation->user_id) {
                 // if user is logged in, present them an accept button.
                 return $this->view('flashsales.invitations.show')->with(compact('item', 'invitation'));
             } else {
@@ -110,7 +110,7 @@ class InvitationsController extends Controller
         // We need to be aware that an invitation may originally not be associated to a user
         // and therefore in the interim, if a user created an account, compare their account email against
         // the invitation email in addition to comparing the id's (if available)
-        if ($invitation && user() && (user()->email == $invitation->email || user()->id == $invitation->user_id)) {
+        if ($invitation && webUser() && (webUser()->email == $invitation->email || webUser()->id == $invitation->user_id)) {
             $invitation->accepted = true;
             $invitation->accepted_at = \Carbon\Carbon::now();
             $invitation->save();
@@ -141,7 +141,7 @@ class InvitationsController extends Controller
         // We need to be aware that an invitation may originally not be associated to a user
         // and therefore in the interim, if a user created an account, compare their account email against
         // the invitation email in addition to comparing the id's (if available)
-        if ($invitation && user() && (user()->email == $invitation->email || user()->id == $invitation->user_id)) {
+        if ($invitation && webUser() && (webUser()->email == $invitation->email || webUser()->id == $invitation->user_id)) {
             $invitation->accepted = false;
             $invitation->save();
             $invitation->delete();

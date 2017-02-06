@@ -4,11 +4,11 @@
 
     <div id="shipping-profile-div">
         <shipping-profile
-                :is-merchant-plus="{{ json_encode(user()->isSubscribedToMerchantPlus()) }}"
-                :initial-uses-kabooodle-as-shipper="{{ json_encode((bool) user()->usesKabooodleAsShipper()) }}"
-                shipping-profile-update-endpoint="{{ apiRoute('user.shipping-profile.update', user()->id) }}"
-                addresses-endpoint="{{ apiRoute('user.addresses.index', user()->id) }}"
-                update-primary-endpoint="{{ apiRoute('user.addresses.update-primary', user()->id) }}"
+                :is-merchant-plus="{{ json_encode(webUser()->isSubscribedToMerchantPlus()) }}"
+                :initial-uses-kabooodle-as-shipper="{{ json_encode((bool) webUser()->usesKabooodleAsShipper()) }}"
+                shipping-profile-update-endpoint="{{ apiRoute('user.shipping-profile.update', webUser()->id) }}"
+                addresses-endpoint="{{ apiRoute('user.addresses.index', webUser()->id) }}"
+                update-primary-endpoint="{{ apiRoute('user.addresses.update-primary', webUser()->id) }}"
                 ship-from-type="{{ \Kabooodle\Models\Address::TYPE_FROM }}"
                 :initial-from-addresses="{{ $fromAddresses->toJson() }}"
                 :initial-primary-from-id="{{ $primaryFrom->id or 0 }}"

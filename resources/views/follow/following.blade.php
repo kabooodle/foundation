@@ -30,7 +30,7 @@
                     @endforeach
                 </div>
                     @else
-                        @if(user()->id == $viewedUser->id)
+                        @if(webUser()->id == $viewedUser->id)
                             <p>You aren't following anyone!</p>
                         @else
                             <p>{{ $viewedUser->username }} is not following anyone.</p>

@@ -13,7 +13,7 @@
                 already_following="{{ $flashsale->is_watched ? 'true' : 'false' }}"
                 endpoint="{{ apiRoute('flashsales.watchers.store', [$flashsale->id]) }}"
         ></followable>
-        @if(user() && $flashsale->canSellerListToFlashsaleAnytime(user()->id))
+        @if(webUser() && $flashsale->canSellerListToFlashsaleAnytime(webUser()->id))
             <span class="b-l m-l m-r"></span>
             <a href="{{ route('flashsales.edit', [$flashsale->getUUID()]) }}"
                class="btn white btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a>

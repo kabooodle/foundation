@@ -30,7 +30,7 @@
                     @endforeach
                 </div>
                     @else
-                        @if(user()->id == $viewedUser->id)
+                        @if(webUser()->id == $viewedUser->id)
                             <p>You have no followers! :(</p>
                         @else
                             <p>{{ $viewedUser->username }} does not have any followers</p>

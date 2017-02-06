@@ -32,7 +32,7 @@
             <br>
             Flag flash sales so that you can be reminded about when they are open.
         </template>
-        @if(user() && user()->hasAtLeastMerchantSubscription())
+        @if(webUser() && webUser()->hasAtLeastMerchantSubscription())
         <template slot="extra"><button type="button" class="btn btn-lg btn-grn m-b-2"><a href="{{ route('flashsales.create') }}">Cool, I'd like to create a flash sale</a></button></template>
         @endif
     </onboard-card>

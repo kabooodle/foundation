@@ -101,7 +101,7 @@
 @endpush
 
 @section('body-content')
-    <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [user()->username]) }}"
+    <form id="post_sales_form" action="{{ apiRoute('inventory.associate.store', [webUser()->username]) }}"
           methods="POST">
         <div class="navbar-side" id="navbarSide">
             <div class="navbar-side-inner p-a" data-scrollable="scrollable">
@@ -274,14 +274,14 @@
             <br>
             Wish to edit an item? You would do that here too :)
         </template>
-        <template slot="extra"><button class="btn btn-lg btn-grn m-b-2"><a href="{{ route('shop.inventory.create', [user()->username]) }}" >Got it! Take me to add inventory</a></button></template>
+        <template slot="extra"><button class="btn btn-lg btn-grn m-b-2"><a href="{{ route('shop.inventory.create', [webUser()->username]) }}" >Got it! Take me to add inventory</a></button></template>
     </onboard-card>
 
 @endsection
 
 @push('footer-scripts')
 <script>
-    const inventory_route = '{{ apiRoute('inventory.index', [user()->username]) }}';
+    const inventory_route = '{{ apiRoute('inventory.index', [webUser()->username]) }}';
 </script>
 <script src="{{ staticAsset("/assets/js/inventory-management.js") }}"></script>
 @endpush

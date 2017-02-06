@@ -20,7 +20,7 @@
                     <a href="{{ route('flashsales.edit', [$item->getUUID()]) }}" class="dropdown-item">
                         Edit Sale
                     </a>
-                    <a href="{{ route('flashsales.shop.edit', [$item->getUUID(), user()->username]) }}" class="dropdown-item">
+                    <a href="{{ route('flashsales.shop.edit', [$item->getUUID(), webUser()->username]) }}" class="dropdown-item">
                         Manage Your Sale Items
                     </a>
                 </div>

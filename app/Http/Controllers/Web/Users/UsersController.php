@@ -19,7 +19,9 @@ use Kabooodle\Http\Controllers\Web\Controller;
 class UsersController extends Controller
 {
     /**
-     * @param $username
+     * @param Request $request
+     *
+     * @return $this
      */
     public function userProfile(Request $request)
     {
@@ -29,7 +31,6 @@ class UsersController extends Controller
 
     public function getUser(Request $request)
     {
-        return redirect()->intended($request->get('/home', '/users/'.user()->username));
+        return redirect()->intended($request->get('/home', '/users/'.webUser()->username));
     }
-
 }

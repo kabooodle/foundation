@@ -41,7 +41,7 @@ class MessengerController extends Controller
      */
     public function show(Request $request, $threadId)
     {
-        $thread = Threads::ForUser(user()->id)
+        $thread = Threads::ForUser(webUser()->id)
             ->where('messenger_threads.id', $threadId)
             ->first();
 

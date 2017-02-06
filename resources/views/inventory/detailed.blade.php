@@ -37,7 +37,7 @@
             </div>
         </div>
         <button class="btn white btn-sm " id="navbarSideButton">Filter Items</button>
-        {{--<a href="{{ route('shop.inventory.create', [user()->username]) }}" class="btn btn-sm white">Add Items</a>--}}
+        {{--<a href="{{ route('shop.inventory.create', [webUser()->username]) }}" class="btn btn-sm white">Add Items</a>--}}
     </div>
 
 @endsection
@@ -135,7 +135,7 @@
                             <h5 class="modal-title">Select sales to assign item</h5>
                         </div>
                         <div class="modal-body">
-                            @foreach(user()->flashsalesAsSellerAndAdmins as $flashSale)
+                            @foreach(webUser()->flashsalesAsSellerAndAdmins as $flashSale)
                                 <div class="form-group">
                                     <label class="md-check">
                                         <input type="checkbox" class="flashsale_id_el has-value" name="flashsales[]" value="{{ $flashSale->id }}">
@@ -168,11 +168,11 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label>Select Facebook Group</label>
-                                {{ Form::select('fb_group', user()->present()->getFacebookGroupsForList(), [] , ['class' => 'form-control']) }}
+                                {{ Form::select('fb_group', webUser()->present()->getFacebookGroupsForList(), [] , ['class' => 'form-control']) }}
                             </div>
                             <div class="form-group">
                                 <label>Select Album(s)</label>
-                                {{ Form::select('fb_albums[]', user()->present()->getFacebookAlbumsByFroupForList(327095390958693), [] , ['class' => 'form-control', 'multiple']) }}
+                                {{ Form::select('fb_albums[]', webUser()->present()->getFacebookAlbumsByFroupForList(327095390958693), [] , ['class' => 'form-control', 'multiple']) }}
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -511,7 +511,7 @@
                             flashsale_id: flashsale_id
                         },
                         dataType: "json",
-                        url: "{{ apiRoute('inventory.associate.store', [user()->username]) }}",
+                        url: "{{ apiRoute('inventory.associate.store', [webUser()->username]) }}",
                         method: "POST",
                         success: function (response) {
                             $el.html('Success!');

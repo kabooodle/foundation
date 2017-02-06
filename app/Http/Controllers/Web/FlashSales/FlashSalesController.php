@@ -81,7 +81,7 @@ class FlashSalesController extends Controller
         $flashsale = $request->getFlashsale();
 
         if ($flashsale) {
-            if (!$flashsale->canSellerListToFlashsaleAnytime(user()->id)) {
+            if (!$flashsale->canSellerListToFlashsaleAnytime(webUser()->id)) {
                 return redirect()->route('flashsales.show', [$idAndName]);
             }
 
@@ -103,7 +103,7 @@ class FlashSalesController extends Controller
             $this->validate($request, FlashSales::getRules());
             $item = $request->getFlashsale();
 
-            if (!$item->owner->id == user()->id) {
+            if (!$item->owner->id == webUser()->id) {
                 return redirect()->route('flashsales.show', [$idAndName]);
             }
 
@@ -114,7 +114,7 @@ class FlashSalesController extends Controller
 
             $item = $this->dispatchNow(new UpdateFlashsaleCommand(
                 $item,
-                user(),
+                webUser(),
                 Binput::get('name'),
                 Binput::get('description'),
                 $startsEnds,

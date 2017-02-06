@@ -53,7 +53,7 @@
                     <br>
                     Need to adjust or remove a listing? Yup, you'll do that on this page too.
                 </h2>
-                <button class="btn btn-lg btn-grn m-b-2"><a href="{{ route('shop.inventory.index', [user()->username]) }}">Ok, I'll go list some items!</a></button>
+                <button class="btn btn-lg btn-grn m-b-2"><a href="{{ route('shop.inventory.index', [webUser()->username]) }}">Ok, I'll go list some items!</a></button>
             </div>
         </div>
     @endif

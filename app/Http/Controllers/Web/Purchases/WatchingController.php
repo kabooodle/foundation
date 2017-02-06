@@ -21,7 +21,7 @@ class WatchingController extends Controller
      */
     public function index()
     {
-        $watching = user()->watching;
+        $watching = webUser()->watching;
 
         return view('purchases.watching')->with(compact('watching'));
     }

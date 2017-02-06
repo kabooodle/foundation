@@ -3,10 +3,10 @@
     <emails
         :initial-emails="{{ $_emails->toJson()  }}"
         :initial-primary-id="{{ $_primary_email->id }}"
-        emails-endpoint="{{ apiRoute('user.emails.index', user()->id) }}"
-        new-email-endpoint="{{ apiRoute('user.emails.store', user()->id) }}"
-        update-primary-endpoint="{{ apiRoute('user.emails.update-primary', user()->id) }}"
-        resend-verification-endpoint="{{ apiRoute('user.emails.resend-verification', user()->id) }}"
+        emails-endpoint="{{ apiRoute('user.emails.index', webUser()->id) }}"
+        new-email-endpoint="{{ apiRoute('user.emails.store', webUser()->id) }}"
+        update-primary-endpoint="{{ apiRoute('user.emails.update-primary', webUser()->id) }}"
+        resend-verification-endpoint="{{ apiRoute('user.emails.resend-verification', webUser()->id) }}"
     ></emails>
 
 </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
     <html lang="en">
     @include('layouts.header._htmlheader')
-    <body class=" @yield('body-class', null)  {{ user() && user()->onGenericTrial() ? ' on-trial ' : null }} @hasSection('body-menu') @if(trim($__env->yieldContent('body-menu')) <> '') with-body-menu @else no-body-menu @endif @else  no-body-menu  @endif ">
+    <body class=" @yield('body-class', null)  {{ webUser() && webUser()->onGenericTrial() ? ' on-trial ' : null }} @hasSection('body-menu') @if(trim($__env->yieldContent('body-menu')) <> '') with-body-menu @else no-body-menu @endif @else  no-body-menu  @endif ">
     <div id="fb-root"></div>
     <script>
         window.fbAsyncInit = function() {
@@ -31,9 +31,9 @@
                 @include('layouts.header._header')
 
                 <div id="{{ $contentId or 'kabooodle_app_inner' }}" class="kabooodle_app_inner">
-                    @if(user() && user()->onGenericTrial())
+                    @if(webUser() && webUser()->onGenericTrial())
                         <div class="notificationbar b-b">
-                            <p><span class="label">Notice</span> Trial ends {{ user()->genericTrialEndsInDays() }}. <a href="{{ route('profile.subscription.index') }}"> <strong>Subscribe now. <i class="fa fa-angle-right" aria-hidden="true"></i></strong></a></p>
+                            <p><span class="label">Notice</span> Trial ends {{ webUser()->genericTrialEndsInDays() }}. <a href="{{ route('profile.subscription.index') }}"> <strong>Subscribe now. <i class="fa fa-angle-right" aria-hidden="true"></i></strong></a></p>
                         </div>
                     @endif
 
