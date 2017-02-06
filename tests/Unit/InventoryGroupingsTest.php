@@ -88,8 +88,8 @@ class InventoryGroupingsTest extends BaseTestCase
         $grouping->decrementInitialQty(1);
 
         $this->assertEquals(0, $grouping->initial_qty);
-        $this->assertEquals(0, $inventory1->initial_qty);
-        $this->assertEquals(1, $inventory2->initial_qty);
+        $this->assertEquals(0, $grouping->inventoryItems->find($inventory1->id)->initial_qty);
+        $this->assertEquals(1, $grouping->inventoryItems->find($inventory2->id)->initial_qty);
     }
 
     /**
@@ -117,7 +117,7 @@ class InventoryGroupingsTest extends BaseTestCase
         $grouping->incrementInitialQty(1);
 
         $this->assertEquals(2, $grouping->initial_qty);
-        $this->assertEquals(2, $inventory1->initial_qty);
-        $this->assertEquals(3, $inventory2->initial_qty);
+        $this->assertEquals(2, $grouping->inventoryItems->find($inventory1->id)->initial_qty);
+        $this->assertEquals(3, $grouping->inventoryItems->find($inventory2->id)->initial_qty);
     }
 }
