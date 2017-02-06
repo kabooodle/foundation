@@ -616,13 +616,6 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
                 0 => __DIR__ . '/..' . '/doctrine/inflector/lib',
             ),
         ),
-        'C' => 
-        array (
-            'Cmgmyr\\Messenger\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/cmgmyr/messenger/src',
-            ),
-        ),
         'B' => 
         array (
             'Barryvdh' => 
@@ -1150,12 +1143,6 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'ClassPreloader\\Parser\\FileVisitor' => __DIR__ . '/..' . '/classpreloader/classpreloader/src/Parser/FileVisitor.php',
         'ClassPreloader\\Parser\\NodeTraverser' => __DIR__ . '/..' . '/classpreloader/classpreloader/src/Parser/NodeTraverser.php',
         'ClassPreloader\\Parser\\StrictTypesVisitor' => __DIR__ . '/..' . '/classpreloader/classpreloader/src/Parser/StrictTypesVisitor.php',
-        'Cmgmyr\\Messenger\\MessengerServiceProvider' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/MessengerServiceProvider.php',
-        'Cmgmyr\\Messenger\\Models\\Message' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Models/Message.php',
-        'Cmgmyr\\Messenger\\Models\\Models' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Models/Models.php',
-        'Cmgmyr\\Messenger\\Models\\Participant' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Models/Participant.php',
-        'Cmgmyr\\Messenger\\Models\\Thread' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Models/Thread.php',
-        'Cmgmyr\\Messenger\\Traits\\Messagable' => __DIR__ . '/..' . '/cmgmyr/messenger/src/Cmgmyr/Messenger/Traits/Messagable.php',
         'Collective\\Html\\Componentable' => __DIR__ . '/..' . '/laravelcollective/html/src/Componentable.php',
         'Collective\\Html\\Eloquent\\FormAccessible' => __DIR__ . '/..' . '/laravelcollective/html/src/Eloquent/FormAccessible.php',
         'Collective\\Html\\FormBuilder' => __DIR__ . '/..' . '/laravelcollective/html/src/FormBuilder.php',
@@ -3260,6 +3247,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Kabooodle\\Tests\\InteractsWithStripeTrait' => __DIR__ . '/../..' . '/tests/InteractsWithStripeTrait.php',
         'Kabooodle\\Tests\\Stubs\\CommentableStub' => __DIR__ . '/../..' . '/tests/Stubs/CommentableStub.php',
         'Kabooodle\\Tests\\Stubs\\DebitStub' => __DIR__ . '/../..' . '/tests/Stubs/DebitStub.php',
+        'Kabooodle\\Tests\\Stubs\\ShippoTrackingData' => __DIR__ . '/../..' . '/tests/Stubs/ShippoTrackingData.php',
         'Kabooodle\\Tests\\Unit\\Bus\\Commands\\Comments\\CreateCommentCommandTest' => __DIR__ . '/../..' . '/tests/Unit/Bus/Commands/Comments/CreateCommentCommandTest.php',
         'Kabooodle\\Tests\\Unit\\Bus\\Commands\\Comments\\DeleteCommentCommandTest' => __DIR__ . '/../..' . '/tests/Unit/Bus/Commands/Comments/DeleteCommentCommandTest.php',
         'Kabooodle\\Tests\\Unit\\Bus\\Commands\\Credits\\DebitUserCreditsCommandTest' => __DIR__ . '/../..' . '/tests/Unit/Bus/Commands/Credits/DebitUserCreditsCommandTest.php',

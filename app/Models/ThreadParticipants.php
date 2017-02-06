@@ -6,22 +6,58 @@
 
 namespace Kabooodle\Models;
 
-use Cmgmyr\Messenger\Models\Participant;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\EloquentDatesTrait;
 
 /**
  * Class ThreadParticipants
  */
-class ThreadParticipants extends Participant
+class ThreadParticipants extends BaseEloquentModel
 {
-    use EloquentDatesTrait;
+    use EloquentDatesTrait, SoftDeletes;
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'messenger_participants';
+
+    /**
+     * The attributes that can be set with Mass Assignment.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'thread_id',
+        'user_id',
+        'last_read'
+    ];
 
     /**
      * @var array
      */
     protected $dates = [
-        'created_at',
-        'updated_at',
         'last_read'
     ];
+
+    /**
+     * Thread relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function thread()
+    {
+        return $this->belongsTo(Threads::class, 'thread_id', 'id');
+    }
+
+    /**
+     * User relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

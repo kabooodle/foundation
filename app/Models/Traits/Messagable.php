@@ -1,12 +1,18 @@
 <?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ */
 
-namespace Cmgmyr\Messenger\Traits;
+namespace Kabooodle\Models\Traits;
 
-use Cmgmyr\Messenger\Models\Message;
-use Cmgmyr\Messenger\Models\Models;
-use Cmgmyr\Messenger\Models\Participant;
-use Cmgmyr\Messenger\Models\Thread;
+use Kabooodle\Models\Threads;
+use Kabooodle\Models\ThreadMessages;
+use Kabooodle\Models\ThreadParticipants;
 
+/**
+ * Class Messagable
+ */
 trait Messagable
 {
     /**
@@ -16,7 +22,7 @@ trait Messagable
      */
     public function messages()
     {
-        return $this->hasMany(Models::classname(Message::class));
+        return $this->hasMany(ThreadMessages::class);
     }
 
     /**
@@ -26,7 +32,7 @@ trait Messagable
      */
     public function participants()
     {
-        return $this->hasMany(Models::classname(Participant::class));
+        return $this->hasMany(ThreadParticipants::class);
     }
 
     /**
@@ -37,8 +43,8 @@ trait Messagable
     public function threads()
     {
         return $this->belongsToMany(
-            Models::classname(Thread::class),
-            Models::table('participants'),
+            Threads::class,
+            ThreadParticipants::class,
             'user_id',
             'thread_id'
         );
@@ -63,8 +69,8 @@ trait Messagable
     {
         return $this->threads()
             ->where(function ($q) {
-                $q->whereNull(Models::table('participants') . '.last_read');
-                $q->orWhere(Models::table('threads') . '.updated_at', '>', $this->getConnection()->raw(Models::table('participants') . '.last_read'));
+                $q->whereNull(ThreadParticipants::getTableName() . '.last_read');
+                $q->orWhere(Threads::getTableName() . '.updated_at', '>', $this->getConnection()->raw($this->getConnection()->getTablePrefix() . Models::table('participants') . '.last_read'));
             })->get();
     }
 }

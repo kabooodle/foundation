@@ -178,7 +178,6 @@ return [
         ZackKitzmiller\Laravel5\TinyServiceProvider::class,
         Collective\IronQueue\IronQueueServiceProvider::class,
         Kabooodle\Foundation\Providers\PusherServiceProvider::class,
-        Cmgmyr\Messenger\MessengerServiceProvider::class,
         Nexmo\Laravel\NexmoServiceProvider::class
     ],
 

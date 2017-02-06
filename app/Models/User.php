@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Auth\Authenticatable;
-use Cmgmyr\Messenger\Traits\Messagable;
+use Kabooodle\Models\Traits\Messagable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Kabooodle\Bus\NotificationableTrait;
 use Kabooodle\Presenters\PresentableTrait;

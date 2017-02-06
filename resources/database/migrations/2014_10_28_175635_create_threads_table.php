@@ -1,6 +1,5 @@
 <?php
 
-use Cmgmyr\Messenger\Models\Models;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,14 +13,14 @@ class CreateThreadsTable extends Migration
      */
     public function up()
     {
-        Schema::create(Models::table('threads'), function (Blueprint $table) {
+        Schema::create('messenger_threads', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('subject')->nullable();
             $table->timestamps();
         });
 
 
-        DB::update("ALTER TABLE ".Models::table('threads')." AUTO_INCREMENT = 9919901;");
+        DB::update("ALTER TABLE messenger_threads AUTO_INCREMENT = 9919901;");
     }
 
     /**
@@ -31,6 +30,6 @@ class CreateThreadsTable extends Migration
      */
     public function down()
     {
-        Schema::drop(Models::table('threads'));
+        Schema::drop('messenger_threads');
     }
 }

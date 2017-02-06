@@ -1,6 +1,5 @@
 <?php
 
-use Cmgmyr\Messenger\Models\Models;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +13,7 @@ class CreateMessagesTable extends Migration
      */
     public function up()
     {
-        Schema::create(Models::table('messages'), function (Blueprint $table) {
+        Schema::create('messenger_messages', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('thread_id')->unsigned();
             $table->bigInteger('user_id')->unsigned();
@@ -28,12 +27,12 @@ class CreateMessagesTable extends Migration
                 ->onUpdate('cascade');
 
             $table->foreign('thread_id')
-                ->references('id')->on(Models::table('threads'))
+                ->references('id')->on('messenger_threads')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
 
-        DB::update("ALTER TABLE ".Models::table('messages')." AUTO_INCREMENT = 9919900;");
+        DB::update("ALTER TABLE messenger_messages AUTO_INCREMENT = 9919900;");
     }
 
     /**
@@ -43,6 +42,6 @@ class CreateMessagesTable extends Migration
      */
     public function down()
     {
-        Schema::drop(Models::table('messages'));
+        Schema::drop('messenger_messages');
     }
 }

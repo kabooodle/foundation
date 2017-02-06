@@ -34,8 +34,7 @@ class MessengerApiController extends AbstractApiController
     public function index()
     {
         $threads = Threads::with(['messages', 'participants.user', 'participantsExcludingCreator.user'])
-            ->forUser(user()->id)
-            ->latest('updated_at')
+            ->forUser($this->getUser()->id)
             ->paginate(100);
 
         return $this->setData($threads)->respond();
@@ -92,7 +91,7 @@ class MessengerApiController extends AbstractApiController
         $messages = ThreadMessages::where('thread_id', $threadId)->with([
             'user',
             'participants' => function($query){
-                $query->whereIn('user_id', [user()->id]);
+                $query->whereIn('user_id', [$this->getUser()->id]);
             }])
             ->orderBy('created_at', 'asc')
             ->get();
@@ -113,7 +112,7 @@ class MessengerApiController extends AbstractApiController
                 'msg' => 'required|filled'
             ]);
 
-            $thread = Threads::ForUser(user()->id)
+            $thread = Threads::ForUser($this->getUser()->id)
                 ->where('messenger_threads.id', $threadId)
                 ->first();
 
@@ -121,7 +120,7 @@ class MessengerApiController extends AbstractApiController
                 throw new ModelNotFoundException;
             }
 
-            $this->dispatch(new CreateNewMessageForThreadCommand($thread, user(), Binput::get('msg', '')));
+            $this->dispatch(new CreateNewMessageForThreadCommand($thread, $this->getUser(), Binput::get('msg', '')));
 
             return $this->noContent();
         } catch (Exception $e) {
@@ -144,7 +143,7 @@ class MessengerApiController extends AbstractApiController
     {
         try {
             $thread = ThreadParticipants::where('thread_id', $threadId)
-                ->where('user_id', $this->user()->id)
+                ->where('user_id', $this->getUser()->id)
                 ->first();
 
             if (! $thread) {

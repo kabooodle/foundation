@@ -26,7 +26,6 @@
     "barryvdh/laravel-cors": "0.8.1",
     "barryvdh/laravel-ide-helper": "2.2.1",
     "bugsnag/bugsnag-laravel": "2.4.0",
-    "cmgmyr/messenger": "~2.0",
     "dingo/api": "1.0.*@dev",
     "emojione/emojione": "2.2.6",
     "fideloper/proxy": "^3.1",

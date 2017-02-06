@@ -10,7 +10,6 @@ use Bugsnag;
 use Exception;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Threads;
-use Cmgmyr\Messenger\Models\Thread;
 use Kabooodle\Models\ThreadMessages;
 use Kabooodle\Models\ThreadParticipants;
 use Kabooodle\Libraries\Emails\PiperEmail;
@@ -55,10 +54,10 @@ class NotifyNewMessageForThreadCreated
     /**
      * @param User           $sender
      * @param User           $recipient
-     * @param Thread         $thread
+     * @param Threads        $thread
      * @param ThreadMessages $message
      */
-    public function toEmail(User $sender, User $recipient, Thread $thread, ThreadMessages $message)
+    public function toEmail(User $sender, User $recipient, Threads $thread, ThreadMessages $message)
     {
         $email = new PiperEmail;
         $email->setView('messenger.emails.newmessage')

@@ -10,8 +10,8 @@ use DB;
 use Carbon\Carbon;
 use Kabooodle\Models\ThreadMessages;
 use Kabooodle\Models\ThreadParticipants;
-use Kabooodle\Bus\Commands\Messenger\CreateNewMessageForThreadCommand;
 use Kabooodle\Bus\Events\Messenger\MessageWasAddedToThreadEvent;
+use Kabooodle\Bus\Commands\Messenger\CreateNewMessageForThreadCommand;
 
 /**
  * Class CreateNewMessageForThreadCommandHandler
@@ -33,13 +33,14 @@ class CreateNewMessageForThreadCommandHandler
 
             $timestamp = Carbon::now();
 
+            $thread->updated_at = $timestamp;
+            $thread->save();
+
             $message = ThreadMessages::create([
                 'thread_id' => $thread->id,
                 'user_id'   => $author->id,
                 'body'      => $message,
             ]);
-
-            $message->load('user');
 
             $participant = ThreadParticipants::firstOrCreate([
                 'thread_id' => $thread->id,

@@ -37,7 +37,7 @@
         },
         computed : {
             author_is_self(){
-                return parseInt(this.message.user.id) == parseInt(currentUser().id);
+                return parseInt(this.message.user_id) == parseInt(currentUser().id);
             },
         },
         components:{
