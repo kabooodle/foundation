@@ -43,13 +43,22 @@ class NotifyUsersShippingStatusUpdatedHandler
             /** @var Claims $claim */
             $claim = $shippingTransaction->shipment->claim();
 
-            $this->subject = 'Shipping tracking status changed to ' . $shippingTransaction->getLatestHistory() . ', for your purchase: ' . $claim->inventoryItem->name_with_variant;
+            $shipmentStatus = $shippingTransaction->getLatestHistory();
 
+            $this->subject = 'Shipping tracking status changed to ' . $shipmentStatus . ', for your purchase: ' . $claim->inventoryItem->name_with_variant;
+
+            // Notifications for recipient
             if ($recipient->primaryEmail && $recipient->primaryEmail->isVerified()) {
                 $this->toEmail($recipient->primaryEmail->address, $claim, $shippingTransaction, $shippingHistory);
             }
 
             $this->toDatabase($recipient, $claim, $shippingTransaction, $shippingHistory);
+
+//            if ($shipmentStatus == 'DELIVERED'){
+//                // Notify owner that a package was delivered;
+//                $subject = $recipient->username.' purchase: '.$claim->inventoryItem->name_with_variant.' was DELIVERED!';
+//                $this->toOwnerDatabase($shippingTransaction->user, $claim, $shippingTransaction, $subject);
+//            }
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
         }
@@ -90,6 +99,28 @@ class NotifyUsersShippingStatusUpdatedHandler
         $notification->reference_url = route('profile.purchases.show', [$claim->getUUID()]);
         $notification->payload = '';
         $notification->title = $this->subject;
+        $notification->description = '';
+        $notification->save();
+    }
+
+    /**
+     * Disabled for now.
+     * 
+     * @param User                 $owner
+     * @param Claims               $claim
+     * @param ShippingTransactions $shipment
+     * @param string               $subject
+     */
+    public function toOwnerDatabase(User $owner, Claims $claim, ShippingTransactions $shipment, string $subject)
+    {
+        $notification = new NotificationNotices;
+        $notification->user_id = $owner->id;
+        $notification->notification_id = null;
+        $notification->reference_id = $claim->id;
+        $notification->reference_type = get_class($claim);
+        $notification->reference_url = route('merchant.shipping.transactions.show', [$shipment->shipping_shipments_uuid, $shipment->uuid]);
+        $notification->payload = '';
+        $notification->title = $subject;
         $notification->description = '';
         $notification->save();
     }
