@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Presenters\Models\Shipping\ShippingTransactionPresenter;
 use Kabooodle\Presenters\PresentableTrait;
 use Sofa\Revisionable\Revisionable;
@@ -21,7 +22,7 @@ use Kabooodle\Models\Contracts\CreditTransactableInterface;
  */
 class ShippingTransactions extends BaseEloquentModel implements CreditTransactableInterface, Revisionable
 {
-    use CreditTransactableTrait, PresentableTrait, RevisionableTrait, UuidableTrait;
+    use CreditTransactableTrait, ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, UuidableTrait;
 
     const RATE_ADDON = 0.03;
 

@@ -15,38 +15,38 @@ use Kabooodle\Models\ShippingTransactionHistory;
 final class ShippingTransactionStatusUpdatedEvent
 {
     /**
-     * @var ShippingTransactions
+     * @var int
      */
-    public $shippingTransaction;
+    public $shippingTransactionId;
 
     /**
-     * @var ShippingTransactionHistory
+     * @var int
      */
-    public $status;
+    public $shippingTransactionHistoryId;
 
     /**
-     * @param ShippingTransactions       $shippingTransaction
-     * @param ShippingTransactionHistory $status
+     * @param int $shippingTransactionId
+     * @param int $shippingTransactionHistoryId
      */
-    public function __construct(ShippingTransactions $shippingTransaction, ShippingTransactionHistory $status)
+    public function __construct(int $shippingTransactionId, int $shippingTransactionHistoryId)
     {
-        $this->shippingTransaction = $shippingTransaction;
-        $this->status = $status;
+        $this->shippingTransactionId = $shippingTransactionId;
+        $this->shippingTransactionHistoryId = $shippingTransactionHistoryId;
     }
 
     /**
-     * @return ShippingTransactions
+     * @return int
      */
-    public function getShippingTransaction(): ShippingTransactions
+    public function getShippingTransactionId(): int
     {
-        return $this->shippingTransaction;
+        return $this->shippingTransactionId;
     }
 
     /**
-     * @return ShippingTransactionHistory
+     * @return int
      */
-    public function getStatus(): ShippingTransactionHistory
+    public function getShippingTransactionHistoryId(): int
     {
-        return $this->status;
+        return $this->shippingTransactionHistoryId;
     }
 }

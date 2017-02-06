@@ -1,5 +1,7 @@
 <?php
 
+use Kabooodle\Bus\Events\Shipping\ShippingTransactionStatusUpdatedEvent;
+
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'workers' . DIRECTORY_SEPARATOR . 'routes.php';
 
 Route::get('privacy', function(){
@@ -16,3 +18,5 @@ Route::group(['domain' => 'api.'.getEnvDomain(true)], function($route){
 Route::group(['middleware' => ['web']], function(){
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'routes.php';
 });
+
+

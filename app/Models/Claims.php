@@ -223,7 +223,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     public function shoppable()
     {
-        return $this->morphTo('shoppable');
+        return $this->morphTo('shoppable')->withTrashed();
     }
 
     /**

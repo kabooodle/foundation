@@ -83,7 +83,7 @@ class ShippoWebhooksController extends Controller
             $transaction->save();
 
             // Tell all those pesky listeners that a new event, related to a transaction was updated!
-            event(new ShippingTransactionStatusUpdatedEvent($transaction, $history));
+            event(new ShippingTransactionStatusUpdatedEvent($transaction->id, $history->id));
         }
 
         return new Response('Ok', 200);

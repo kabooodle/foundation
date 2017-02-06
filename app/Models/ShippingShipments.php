@@ -206,6 +206,14 @@ class ShippingShipments extends BaseEloquentModel implements Revisionable
     /**
      * @return mixed
      */
+    public function claim()
+    {
+        return $this->claims()->first();
+    }
+
+    /**
+     * @return mixed
+     */
     public function claimer()
     {
         return $this->claims()->first()->claimer();
