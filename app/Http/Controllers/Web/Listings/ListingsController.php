@@ -8,7 +8,9 @@ namespace Kabooodle\Http\Controllers\Web\Listings;
 
 use Illuminate\Http\Request;
 use Kabooodle\Models\Listings;
+use Kabooodle\Models\ListingItems;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 
 /**
@@ -16,7 +18,7 @@ use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
  */
 class ListingsController extends Controller
 {
-    use PaginatesTrait;
+    use ObfuscatesIdTrait, PaginatesTrait;
 
     /**
      * @param Request $request
@@ -27,6 +29,24 @@ class ListingsController extends Controller
     public function shorthand(Request $request, $listingUuid)
     {
         return redirect()->route('listings.show', [$listingUuid]);
+    }
+
+    /**
+     * @param Request $request
+     * @param string  $listingName
+     * @param string  $listingItemUuid
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function customLink(Request $request, $listingName, $listingItemUuid)
+    {
+        $inventoryId = $this->obfuscateFromURIString($listingItemUuid);
+        $listingItem = ListingItems::where('inventory_id', '=', $inventoryId)->with('listing', 'inventoryItem')
+            ->whereHas('listing', function($q) use ($listingName) {
+                $q->where('name', '=', $listingName);
+            })->firstOrFail();
+
+        return $this->view('listings.items.show')->with(compact('listingItem'));
     }
 
     /**

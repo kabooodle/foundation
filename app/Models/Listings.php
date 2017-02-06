@@ -217,6 +217,7 @@ class Listings extends AbstractListingModel
                 l.uuid AS uuid,
                 s.name AS style_name,
                 fs.name AS flashsale_name,
+                l.name as custom_name,
                 fb.facebook_node_name AS fb_name,
                 li.fb_album_node_id as fb_album_id,
                 li.fb_group_node_id as fb_group_id,
@@ -266,6 +267,7 @@ class Listings extends AbstractListingModel
                 li.fb_album_node_id as fb_album_id,
                 li.fb_group_node_id as fb_group_id,
                 li.flashsale_id as flashsale_id,
+                l.name as custom_name,
                 l.type as type,
                 l.uuid as uuid,
                 COUNT(DISTINCT(li.id)) AS items_count,
@@ -333,6 +335,10 @@ class Listings extends AbstractListingModel
      */
     public function getSaleNameAttribute()
     {
+        if ($this->isCustomSale()) {
+            return $this->name;
+        }
+
         if ($this->isFacebook()) {
             return $this->facebookNode->facebook_node_name;
         }

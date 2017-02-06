@@ -84,8 +84,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'fb_response' => '',
         'owner_id' => 0,
         'inventory_id' => 0,
-        'type' => self::TYPE_FACEBOOK,
-        'status' => self::STATUS_SCHEDULED,
+        'type' => self::TYPE_CUSTOM,
+        'status' => self::STATUS_COMPLETED,
         'status_updated_at' => '',
         'status_history' => '',
         'make_available_at' => null,
@@ -241,6 +241,10 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     public function getNameOfShoppable(): string
     {
+        if ($this->isCustomSale()) {
+            return 'Custom listing';
+        }
+
         if ($this->isFacebook()) {
             return $this->facebookAlbum->facebook_node_name;
         }

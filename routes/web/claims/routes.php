@@ -7,7 +7,7 @@ Route::get('c/{hash}', [
 
 Route::get('c/s/{sellableType}/{hash}', [
     'as' => 'externalclaim.shoppable.show',
-    'uses' => \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show'
+    'uses' => \Kabooodle\Http\Controllers\Web\Listings\ListingsController::class.'@customLink'
 ]);
 
 Route::get('claims/verify/{token}', [

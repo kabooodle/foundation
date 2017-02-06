@@ -115,6 +115,14 @@ abstract class AbstractListingModel extends BaseEloquentModel
     }
 
     /**
+     * @return bool
+     */
+    public function isCustomSale()
+    {
+        return $this->typeIs(self::TYPE_CUSTOM);
+    }
+
+    /**
      * @param $type
      * @return bool
      */
