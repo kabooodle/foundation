@@ -127,9 +127,12 @@ class Listings extends AbstractListingModel
         return $this->claims()->where('accepted', 1)->count();
     }
 
+    /**
+     * @return mixed
+     */
     public function getPendingSalesCountAttribute()
     {
-        return $this->claims()->where('accepted', null)->count();
+        return $this->pendingClaims()->count();
     }
 
     public function getGrossAttribute()
@@ -155,6 +158,14 @@ class Listings extends AbstractListingModel
     }
 
     /**
+     * @return mixed
+     */
+    public function pendingClaims()
+    {
+        return $this->claims()->where('accepted', null);
+    }
+
+    /**
      * @return \Illuminate\DatabASe\Eloquent\Relations\HASMany
      */
     public function listingItems()
@@ -177,7 +188,6 @@ class Listings extends AbstractListingModel
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
-
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -237,6 +247,8 @@ class Listings extends AbstractListingModel
                 LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
 				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.inventory_id = li.inventory_id AND c.claimed_by = l.owner_id
                 WHERE l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
+                AND l.deleted_at IS NULL 
+                AND li.deleted_at IS NULL
                 GROUP BY l.id
                 ORDER BY l.scheduled_for DESC
                 ";
@@ -285,6 +297,8 @@ class Listings extends AbstractListingModel
 				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.inventory_id = li.inventory_id AND c.claimed_by = l.owner_id
                 WHERE l.uuid = ? AND l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
                 AND l.type = ?
+                AND l.deleted_at IS NULL 
+                AND li.deleted_at IS NULL
                 GROUP BY ::groupby::
                 ORDER BY l.scheduled_for DESC
                 ";

@@ -256,7 +256,6 @@
 
         // on tablecreate, init
         $( document ).on( "tablesawcreate", function( e, tablesaw, colstart ){
-            console.log('asdfasdf');
             if( tablesaw.mode === 'stack' ){
                 var table = new Stack( tablesaw.table );
                 table.init( colstart );

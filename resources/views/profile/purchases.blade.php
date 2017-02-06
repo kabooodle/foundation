@@ -44,9 +44,7 @@
                     <td>
                         <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
-                                @if($claim->inventoryItem->firstImage())
-                                    <img src="{{ $claim->inventoryItem->cover_photo }}">
-                                @endif
+                                <img src="{{ $claim->inventoryItem->cover_photo->location }}">
                             </div>
                             <span>{{ $claim->inventoryItem->name_with_variant }}</span>
                         </div>

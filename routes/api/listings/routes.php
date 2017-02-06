@@ -16,6 +16,10 @@ $api->post('listings/shoppablelink', [
 ]);
 
 $api->group(['middleware' => 'jwt.auth'], function ($api) {
+    $api->delete('listings/{listing}', [
+        'as' => 'listings.destroy',
+        'uses' => \Kabooodle\Http\Controllers\Api\Listings\ListingsApiController::class.'@destroy'
+    ]);
     $api->post('listings/{listing}/listingitems/{listingitem}/claims', [
         'as' => 'listings.listingitems.claims.store',
         'uses' => \Kabooodle\Http\Controllers\Api\Listings\ListingItemsClaimsController::class . '@store'

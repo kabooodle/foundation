@@ -1,8 +1,7 @@
 <div class="box">
     <div class="box-header clearfix">
         <p class="pull-left m-b-0 m-t-0">
-            <a class="text-primary" href="{{ route('merchant.listings.index') }}">{{ $listing->present()->listingParentName() }}</a>
-            @include('listings._listingtype', ['_type' => $listing->type, '_size' => 20])
+            <a class="text-primary" href="{{ route('merchant.listings.index') }}">@include('listings._listingtype', ['_type' => $listing->type, '_size' => 20]) {{ $listing->present()->listingParentName() }}</a>
         </p>
     </div>
     <div class="box-divider"></div>

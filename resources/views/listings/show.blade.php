@@ -21,7 +21,7 @@
                 <v-card
                         avatar_size="32"
                         extra_class="no-border b-0 b-b-0"
-                        already_following="{{ $listing->owner->is_following ? 'true' : 'false'}}"
+                        :already_following="{{ $listing->owner->is_following ? 1 : 0 }}"
                         follow_endpoint="{{ apiRoute('user.followers.store', [$listing->owner->id]) }}"
                         able_type="{{ get_class($listing->owner) }}"
                         able_id="{{ $listing->owner->id }}"

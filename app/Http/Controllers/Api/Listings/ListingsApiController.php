@@ -9,6 +9,7 @@ namespace Kabooodle\Http\Controllers\Api\Listings;
 use Binput;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Models\Listings;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
@@ -85,6 +86,27 @@ class ListingsApiController extends AbstractApiController
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, $id)
+    {
+        try {
+            $job = new DeleteListingCommand($this->getUser(), $id);
+            $this->dispatchNow($job);
+
+            return $this->setData([
+                'msg' => trans('alerts.listings.success_listing_deleted')
+            ])->respond();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->setData([
+                'msg' => trans('alerts.error_generic_retry')
+            ])->respond();
         }
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.full')
+@extends('layouts.full', ['contentId' => 'merchant_listings_index'])
 
 @if($listings)
 @section('body-menu')
@@ -61,7 +61,7 @@
 
 
 @push('footer-scripts')
-
+<script src="{{ staticAsset('/assets/js/listing-index-merchant.js') }}"></script>
 <script>
     var channel = KABOOODLE_APP.pusher.subscribe('private.'+KABOOODLE_APP.env+'.listings.'+KABOOODLE_APP.currentUser.id);
     channel.bind('listing:updated', function(data) {

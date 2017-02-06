@@ -2,11 +2,7 @@
     <td>
         <div class="avatar-thumbnail-container">
             <div class="avatar-thumbnail _32">
-                @if($watch->watchable->inventoryItem->firstImage())
-                    <img src="{{ $watch->watchable->inventoryItem->cover_photo }}">
-                @else
-
-                @endif
+                <img src="{{ $watch->watchable->inventoryItem->cover_photo->location }}">
             </div>
         </div>
     </td>

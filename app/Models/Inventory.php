@@ -222,7 +222,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function getName() : string
     {
-        return $this->getNameAndSize();
+        return $this->style->name;
     }
 
     /**

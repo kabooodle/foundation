@@ -16,7 +16,7 @@
                             btn_size_class="pull-right label dark-white text-color btn-xs"
                             able_type="Kabooodle\Models\ListingItems"
                             :able_id="'' + item.id"
-                            :already_following="item.is_watched ? 'true' : 'false'"
+                            :already_following="item.is_watched ? true : false"
                             :endpoint="watch_endpoint"
                     ></followable>
                 </div>

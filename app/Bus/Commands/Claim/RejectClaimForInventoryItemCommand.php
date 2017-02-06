@@ -11,34 +11,49 @@ use Kabooodle\Models\User;
 /**
  * Class RejectClaimForInventoryItemCommand.
  */
-class RejectClaimForInventoryItemCommand
+final class RejectClaimForInventoryItemCommand
 {
+    /**
+     * @var User
+     */
+    public $user;
+
+    /**
+     * @var string
+     */
+    public $claimUuid;
+
+    /**
+     * @var null
+     */
+    public $notes;
+
     /**
      * RejectClaimForInventoryItemCommand constructor.
      *
      * @param User $user
-     * @param      $claimId
+     * @param string $claimUuid
      * @param null $notes
      */
-    public function __construct(User $user, $claimId, $notes = null)
+    public function __construct(User $user, $claimUuid, $notes = null)
     {
         $this->user = $user;
-        $this->claimId = $claimId;
+        $this->claimUuid = $claimUuid;
         $this->notes = $notes;
     }
 
     /**
      * @return mixed
      */
-    public function getClaimId()
+    public function getClaimUuid(): string
     {
-        return $this->claimId;
+        return $this->claimUuid;
     }
 
     /**
      * @return User
      */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }

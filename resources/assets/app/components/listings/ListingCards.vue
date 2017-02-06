@@ -24,7 +24,6 @@
 </template>
 <script>
     import ListingCard from './ListingCard.vue';
-    import Followable from '../follow/Followable.vue';
     import Spinner from '../Spinner.vue';
     import InfiniteLoading from 'vue-infinite-loading';
     export default{

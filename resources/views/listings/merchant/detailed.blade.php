@@ -42,9 +42,7 @@
                     <td><input type="checkbox"></td>
                     <td> <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
-                                @if($item->inventoryItem->firstImage())
-                                    <img src="{{ $item->inventoryItem->cover_photo }}">
-                                @endif
+                                <img src="{{ $item->inventoryItem->cover_photo->location }}">
                             </div>
                             <span>{{ $item->inventoryItem->name_with_variant }}</span>
                         </div></td>

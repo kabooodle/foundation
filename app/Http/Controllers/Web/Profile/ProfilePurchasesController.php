@@ -42,7 +42,14 @@ class ProfilePurchasesController extends Controller
     {
         $decryptedId = $this->obfuscateFromURIString($itemID);
         $claim = Claims::where('claimed_by', '=', user()->id)
+            ->with(['shoppable' => function($q){
+                $q->withTrashed();
+            }])
             ->findOrFail($decryptedId);
+
+        $claim->shoppable->load(['listing' => function($q){
+            $q->withTrashed();
+        }]);
 
         return view('profile.purchases.show')->with(compact('claim'));
     }

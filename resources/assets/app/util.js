@@ -404,7 +404,6 @@ function browserSupportsAnimation(){
     property = property.toLowerCase();
 
     if (elm.style[property] != undefined) {
-        console.log('true');
         return true;
     }
 
@@ -413,12 +412,9 @@ function browserSupportsAnimation(){
 
     for (var i = 0; i < domPrefixes.length; i++) {
         if (elm.style[domPrefixes[i] + propertyNameCapital] != undefined) {
-            console.log('true');
             return true;
         }
     }
-
-    console.log('false');
 
     return false;
 }

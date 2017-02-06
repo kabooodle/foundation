@@ -10,7 +10,8 @@ return [
 
 
     'listings' => [
-        'success_customlisting_save' => 'Save successful, you can now use and share the link you created!'
+        'success_customlisting_save' => 'Save successful, you can now use and share the link you created!',
+        'success_listing_deleted' => 'Listing successfully delete.  All items, and pending claims will also be removed.'
     ],
 ];
 

@@ -27,17 +27,17 @@
                     <span class="hidden-sm-up">Options</span>
                 </a>
                 <div class="dropdown-menu dropdown-over dropdown-menu-sm pull-xs-none dropdown-menu-right">
-                    <a href="{{ route('listings.show', [$listing->uuid]) }}" class="dropdown-item">Public Link</a>
+                    <a href="{{ route('listings.show', [$listing->uuid]) }}" class="dropdown-item">Shareable Link</a>
                     <div class="divider"></div>
-                    @if(Kabooodle\Models\Listings::isStillEditable($listing->status))
+                    @if(Kabooodle\Models\Listings::isStillEditable($listing->status) && $listing->type !== Kabooodle\Models\Listings::TYPE_CUSTOM )
                         <a href="{{ route('merchant.listings.edit', [$listing->uuid]) }}" class="dropdown-item">Edit</a>
                     @endif
                     @if($listing->type ==  Kabooodle\Models\Listings::TYPE_FLASHSALE )
                     <a href="{{ route('merchant.listings.group.show', [ $listing->uuid, $listing->type, $listing->flashsale_id ]) }}" class="dropdown-item">Manage</a>
-                    @else
+                    @elseif($listing->type == Kabooodle\Models\Listings::TYPE_FACEBOOK)
                         <a href="{{ route('merchant.listings.show', [$listing->uuid]) }}" class="dropdown-item">Manage</a>
                     @endif
-                    <a href="{{ route('merchant.listings.show', [$listing->uuid]) }}" class="text-danger bg-danger-hover text-white-hover dropdown-item">Delete</a>
+                    <button type="button" @click="deleteListingConfirm('{{ apiRoute('listings.destroy', [$listing->id]) }}', {{ $listing->id }}, $event)" class="text-danger bg-danger-hover text-white-hover dropdown-item">Delete</button>
                 </div>
             </div>
         </div>
