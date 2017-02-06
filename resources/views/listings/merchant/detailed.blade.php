@@ -32,7 +32,9 @@
                     <th scope="col">Views</th>
                     <th scope="col">Watchers</th>
                     <th scope="col">Gross</th>
+                    @if($listing->type <> Kabooodle\Models\Listings::TYPE_CUSTOM)
                     <th scope="col">Status</th>
+                    @endif
                     <th></th>
                 </tr>
                 </thead>
@@ -51,7 +53,9 @@
                     <td>{{ $item->pageViews->count() }}</td>
                     <td>{{ $item->watchers->count() }}</td>
                     <td>${{ $item->sales->sum('price') }}</td>
+                    @if($listing->type <> Kabooodle\Models\Listings::TYPE_CUSTOM)
                     <td>{!! $item->present()->getStatus()  !!}</td>
+                    @endif
                     <td><a class="btn btn-xs white" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">View item listing</td>
                 </tr>
                 @endforeach

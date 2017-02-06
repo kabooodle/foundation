@@ -18,7 +18,7 @@ Route::group(['middleware' => ['auth', 'subscribed:merchant|merchant_plus'], 'pr
         'as' => 'merchant.listings.show',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\MerchantListingsController::class.'@show'
     ]);
-    Route::get('listings/{listing}/{group}/{groupid}', [
+    Route::get('listings/{listing}/{group}/{groupid?}', [
         'as' => 'merchant.listings.group.show',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\MerchantListingsController::class.'@detailed'
     ]);

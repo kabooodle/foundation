@@ -76,25 +76,26 @@ class MerchantListingsController extends Controller
 
     /**
      * @param Request $request
-     * @param         $uuid
+     * @param         $listingUuid
      * @param         $type
      * @param         $id
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function detailed(Request $request, $uuid, $type, $id)
+    public function detailed(Request $request, $listingUuid, $type, $id = null)
     {
         $listing = Listings::with(['listingItems' => function ($query) use ($type, $id) {
             if ($type == Listings::TYPE_FACEBOOK) {
                 $query->where('fb_album_node_id', '=', $id);
             } elseif ($type == Listings::TYPE_FLASHSALE) {
-                $query->where('flashsale_id', '=',  $id);
+                $query->where('flashsale_id', '=', $id);
             }
         }])
-            ->where('uuid', $uuid)
+            ->where('uuid', $listingUuid)
             ->where('owner_id', user()->id)
             ->where('type', $type)
             ->first();
+
         if (!$listing) {
             return redirect()->to(route('merchant.listings.index'));
         }
