@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
@@ -14,8 +14,8 @@ use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
-use Kabooodle\Bus\Commands\Claim\AcceptClaimForInventoryItemCommand;
-use Kabooodle\Bus\Commands\Claim\RejectClaimForInventoryItemCommand;
+use Kabooodle\Bus\Commands\Claim\AcceptClaimForClaimableItemCommand;
+use Kabooodle\Bus\Commands\Claim\RejectClaimForClaimableItemCommand;
 
 /**
  * Class InventoryClaimsController
@@ -30,7 +30,7 @@ class InventoryClaimsController extends Controller
      */
     public function index(Request $request, $username)
     {
-        $data = webUser()->pendingClaimsOnMyInventory;
+        $data = webUser()->claimsOnMyClaimables();
         $data = $this->paginateData($request, $data);
 
         return $this->view('inventory.claims.index')->with(compact('data'));
@@ -45,14 +45,14 @@ class InventoryClaimsController extends Controller
      */
     public function update(Request $request, $username, $claimsUUID)
     {
-        $data = webUser()->claimsOnMyInventory;
+        $data = webUser()->claimsOnMyClaimables();
         $claim = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();
 
         if ($claim) {
             $timestamp = Binput::get('accepted_on', false) ? Carbon::createFromTimestamp(strtotime(Binput::get('accepted_on'))) : null;
-            $result = $this->dispatchNow(new AcceptClaimForInventoryItemCommand(
+            $result = $this->dispatchNow(new AcceptClaimForClaimableItemCommand(
                 webUser(),
                 $claimsUUID,
                 Binput::get('accepted_price', null),
@@ -81,7 +81,7 @@ class InventoryClaimsController extends Controller
         })->first();
 
         if ($item) {
-            $result = $this->dispatchNow(new RejectClaimForInventoryItemCommand(webUser(), $claimsUUID,
+            $result = $this->dispatchNow(new RejectClaimForClaimableItemCommand(webUser(), $claimsUUID,
                 Binput::get('rejected_reason', null)));
 
             return Response::json('ok', 200);

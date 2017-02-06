@@ -2,17 +2,17 @@
     <td>
         <div class="avatar-thumbnail-container">
             <div class="avatar-thumbnail _32">
-                <img src="{{ $watch->watchable->inventoryItem->cover_photo->location }}">
+                <img src="{{ $watch->watchable->listedItem->cover_photo->location }}">
             </div>
         </div>
     </td>
-    <td class="">{{ $watch->watchable->inventoryItem->name }}</td>
-    <td>${{ $watch->watchable->inventoryItem->price_usd }}</td>
-    <td>{{ $watch->watchable->inventoryItem->getOwner()->name }}</td>
+    <td class="">{{ $watch->watchable->listedItem->name }}</td>
+    <td>${{ $watch->watchable->listedItem->price_usd }}</td>
+    <td>{{ $watch->watchable->listedItem->getOwner()->name }}</td>
     <td>{{ $watch->watchable->created_at->format('F jS Y g:i A') }}</td>
     <td>{{ $watch->watchable->updated_at->format('F jS Y g:i A') }}</td>
     <td>
-        @if($watch->watchable->inventoryItem->canSatisfyRequestedQuantityOf(1))
+        @if($watch->watchable->listedItem->canSatisfyRequestedQuantityOf(1))
             In stock
         @else
             Out of stock

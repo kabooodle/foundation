@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Models;
@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
@@ -47,6 +46,7 @@ class User extends BaseEloquentModel implements
 {
     use Authenticatable,
         Authorizable,
+        Billable,
         CanResetPassword,
         DispatchesJobs,
         FollowableTrait,
@@ -58,16 +58,11 @@ class User extends BaseEloquentModel implements
         RevisionableTrait,
         SyncableGraphNodeTrait;
 
-    use Billable {
-        invoices as stripeInvoices;
-    }
-
     /**
      * @var array
      */
     protected $appends = [
-        //'is_following',
-        //'is_followed',
+        'is_following',
         'full_name',
         'full_name_with_username',
         'name',
@@ -78,7 +73,6 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $with = [
-        'avatar'
 //        'creditBalance'
     ];
 
@@ -142,6 +136,7 @@ class User extends BaseEloquentModel implements
         'last_name',
         'username',
         'password',
+        'avatar',
         'invited_by_user_id',
         'trial_ends_at',
         'activated',
@@ -348,27 +343,19 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * @return mixed
-     */
-    public function usersFollowing()
-    {
-        return $this->morphedByMany(User::class, 'followable')->where('followables.deleted_at', null)->orderBy('username');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function flashsalesFollowing()
-    {
-        return $this->morphedByMany(FlashSales::class, 'followable')->where('followables.deleted_at', null);
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function inventory()
     {
         return $this->hasMany(Inventory::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function inventoryGroupings()
+    {
+        return $this->hasMany(InventoryGrouping::class, 'user_id');
     }
 
     /**
@@ -541,7 +528,7 @@ class User extends BaseEloquentModel implements
         $asAdmin = $this->currentFlashsalesAsAdmin;
         if ($asAdmin){
             foreach ($asAdmin as $adminFlashsale) {
-                $adminFlashsale->my_post_time = null;
+                $ownerFlashsale->my_post_time = null;
                 $flashsales->push($adminFlashsale);
             }
         }
@@ -714,7 +701,7 @@ class User extends BaseEloquentModel implements
     /**
      * @return string
      */
-    public function getNameOfShoppable(): string
+    public function getNameOfResource(): string
     {
         return 'Merchant';
     }
@@ -737,9 +724,8 @@ class User extends BaseEloquentModel implements
      */
     public function acceptedClaimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class)
-            ->where('inventory.user_id', $this->id)
-            ->where('accepted', 1)
+        return $this->claimsOnMyInventory()
+            ->whereAccepted(true)
             ->whereNotNull('accepted_on')
             ->orderBy('accepted_on', 'desc');
     }
@@ -749,7 +735,8 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class)
+        return $this->hasManyThrough(Claims::class,  Inventory::class, 'user_id', 'claimable_id', 'id')
+            ->where('claims.claimable_type', Inventory::class)
             ->where('inventory.user_id', $this->id)
             ->with(['shipments', 'shipments.transaction']);
     }
@@ -761,6 +748,45 @@ class User extends BaseEloquentModel implements
     {
         return $this->claimsOnMyInventory()
             ->whereNull('accepted');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function acceptedClaimsOnMyInventoryGroupings()
+    {
+        return $this->claimsOnMyInventoryGroupings()
+            ->whereAccepted(true)
+            ->whereNotNull('accepted_on')
+            ->orderBy('accepted_on', 'desc');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsOnMyInventoryGroupings()
+    {
+        return $this->hasManyThrough(Claims::class,  InventoryGrouping::class, 'user_id', 'claimable_id', 'id')
+            ->where('claims.claimable_type', InventoryGrouping::class)
+            ->where('inventory_groupings.user_id', $this->id)
+            ->with(['shipments', 'shipments.transaction']);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function pendingClaimsOnMyInventoryGroupings()
+    {
+        return $this->claimsOnMyInventoryGroupings()
+            ->whereNull('accepted');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function claimsOnMyClaimables()
+    {
+        return $this->claimsOnMyInventory->merge($this->claimsOnMyInventoryGroupings);
     }
 
     /**
@@ -778,15 +804,15 @@ class User extends BaseEloquentModel implements
      */
     public function claimsAsSellerNoShipping()
     {
-        $inventoryItems = $this->claimsOnMyInventory;
-        if ($inventoryItems->count() > 0) {
-            return $inventoryItems->filter(function (Claims $claim) {
+        $claims = $this->claimsOnMyInventory;
+        if ($claims->count() > 0) {
+            return $claims->filter(function (Claims $claim) {
                 // Ignore claims still pending and ones that have already shipped
                 return ($claim->wasAccepted() && ! $claim->shipmentTransaction() ? true : false);
             })->values();
         }
 
-        return $inventoryItems;
+        return $claims;
     }
 
     /**
@@ -1109,22 +1135,26 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * {@inheritdoc}
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function invoices($includePending = false, $parameters = [])
+    public function viewed()
     {
-        // Decided to not do it this way
-//        $stripeInvoices = $this->stripeInvoices($includePending, $parameters)->each(function($invoice){
-//            $invoice->invoice_type = 'stripe';
-//        });
-//        $creditsInvoices = $this->creditTransactions->where('type', CreditTransactionsLog::TYPE_DEBIT)->each(function($invoice){
-//           $invoice->invoice_type = 'kabooodle';
-//        });
-//
-//        if ($stripeInvoices) {
-//            return $stripeInvoices->merge($creditsInvoices);
-//        }
+        return $this->hasMany(View::class, 'viewer_id');
+    }
 
-        return $this->stripeInvoices($includePending, $parameters);
+    /**
+     * @return mixed
+     */
+    public function usersFollowing()
+    {
+        return $this->morphedByMany(User::class, 'followable')->where('followables.deleted_at', null)->orderBy('username');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function flashsalesFollowing()
+    {
+        return $this->morphedByMany(FlashSales::class, 'followable')->where('followables.deleted_at', null);
     }
 }

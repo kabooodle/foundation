@@ -1,42 +1,6 @@
 <?php
 
 
-$factory->define(Kabooodle\Models\User::class, function (Faker\Generator $faker) {
-    return [
-        'id' => $faker->randomNumber(),
-        'first_name' => $faker->firstName,
-        'last_name' => $faker->lastName,
-        'password' => bcrypt(str_random(10)),
-        'remember_token' => str_random(10),
-    ];
-});
-
-$factory->define(Kabooodle\Models\Email::class, function (Faker\Generator $faker) {
-    return [
-        'id' => $faker->randomNumber(),
-        'user_id' => function () {
-            return factory(\Kabooodle\Models\User::class)->create()->id;
-        },
-        'address' => $faker->safeEmail,
-        'verified' => 0,
-        'token' => str_random(10),
-    ];
-});
-
-
-$factory->define(Kabooodle\Models\Comments::class, function (Faker\Generator $faker) {
-    return [
-        'id' => $faker->randomNumber(),
-        'uuid' => \Ramsey\Uuid\Uuid::uuid4(),
-        'user_id' => 1,
-        'commentable_id' => 1,
-        'commentable_type' => '',
-        'text' => 'test',
-        'text_raw' => 'test'
-    ];
-});
-
-
 $factory->defineAs(\Kabooodle\Models\CreditTransactions::class, 'CreditTransactionsDebit', function (Faker\Generator $faker) {
     return [
         'user_id' => factory(Kabooodle\Models\User::class)->make()->id,

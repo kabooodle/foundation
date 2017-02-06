@@ -2,7 +2,7 @@
     <div class="pull-left">
         <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ rand(0,100) }}<span class="_400 text-muted"> Views</span></span>
         <span class="inline btn-group-vertical _500 m-l-sm" style="margin-top: 5px;">{{ $item->adminsAndSellers()->count() }} <span class="_400 text-muted"> Sellers</span></span>
-        <span class="inline btn-group-vertical _500 m-l-sm" style="margin-top: 5px;">{{ $item->inventoryItems->count() }} <span class="_400 text-muted"> Items</span></span>
+        <span class="inline btn-group-vertical _500 m-l-sm" style="margin-top: 5px;">{{ $item->listedItems->count() }} <span class="_400 text-muted"> Items</span></span>
     </div>
     <div class="pull-right">
         <a data-turbolinks="false" href="#about" class="btn-link btn-sm">Items</a>

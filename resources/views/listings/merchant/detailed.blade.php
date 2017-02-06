@@ -44,13 +44,13 @@
                     <td><input type="checkbox"></td>
                     <td> <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
-                                <img src="{{ $item->inventoryItem->cover_photo->location }}">
+                                <img src="{{ $item->listedItem->cover_photo->location }}">
                             </div>
-                            <span>{{ $item->inventoryItem->name_with_variant }}</span>
+                            <span>{{ $item->listedItem->name_with_variant }}</span>
                         </div></td>
                     <td>{{ $item->sales->count() }}</td>
                     <td>{{ $item->pendingSales->count() }}</td>
-                    <td>{{ $item->pageViews->count() }}</td>
+                    <td>{{ $item->views->count() }}</td>
                     <td>{{ $item->watchers->count() }}</td>
                     <td>${{ $item->sales->sum('price') }}</td>
                     @if($listing->type <> Kabooodle\Models\Listings::TYPE_CUSTOM)

@@ -8,6 +8,7 @@ namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use DB;
 use Carbon\Carbon;
+use Kabooodle\Models\Inventory;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
@@ -110,7 +111,7 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
     {
         $facebookAlbums = $command->getFacebookAlbums();
         $actor = $command->getActor();
-        $listedItems = [];
+        $listableItems = [];
 
         if (count($facebookAlbums) > 0) {
             // Iterate over the facebook albums and figure out what items were assigned to each album
@@ -123,19 +124,22 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
                 }
 
                 // Loop over each of the items
-                foreach ($facebookAlbum['items'] as $inventoryItem) {
+                foreach ($facebookAlbum['items'] as $listableItem) {
 
-                    // Skip inventory items that do not belong to the user.
-                    if (! $this->inventoryItemBelongsToUser($inventoryItem['id'], $actor)) {
+                    // Skip items that do not belong to the user.
+                    // Skip items that have an incorrect listing item class.
+                    if (! $this->listableItemBelongsToUser($listableItem['id'], $listableItem['listable_item_class'], $actor)
+                        || !class_exists($listableItem['listing_item_class'])
+                    ) {
                         continue;
                     }
 
-                    $listingItem = new ListingItems;
+                    $listingItem = new $listableItem['listing_item_class'];
                     $listingItem->listing_id = $listing->id;
                     $listingItem->owner_id = $actor->id;
                     $listingItem->fb_group_node_id = $command->getFacebookGroupId();
                     $listingItem->fb_album_node_id = $facebookAlbum['id'];
-                    $listingItem->inventory_id = $inventoryItem['id'];
+                    $listingItem->listable_id = $listableItem['id'];
                     $listingItem->item_message = $command->getFacebookListingOptions()->getItemMessage();
 
                     // Copy the type and status from the parent listing.
@@ -148,17 +152,17 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
                     // There really is no way to know if its a duplicate at this time.
                     // Flag duplicates as ignored listings.
                     // We do not actually "skip" them because we want to provide full transparency to the user.
-//                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $inventoryItem['id'])) {
-//                        $listingItem->ignore = true;
-//                        $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
-//                    }
+                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $listableItem['id'])) {
+                        $listingItem->ignore = true;
+                        $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
+                    }
 
-                    $listedItems[] = $listingItem;
+                    $listableItems[] = $listingItem;
                 }
             }
         }
 
-        return $listedItems;
+        return $listableItems;
     }
 
     /**
@@ -183,12 +187,12 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
      *
      * @param Carbon $dateTime
      * @param User   $actor
-     * @param array $facebookInventoryItems
+     * @param array $facebookListedItems
      *
      * @return bool
      * @throws ListingConflictsWithExistingListingException
      */
-    public function assertListingDoesNotConflictWithExistingListing(Carbon $dateTime, User $actor, array $facebookInventoryItems)
+    public function assertListingDoesNotConflictWithExistingListing(Carbon $dateTime, User $actor, array $facebookListedItems)
     {
         // Get the date time, and find 60 minutes from this time as the max and the min is the scheduled time.
         $minDateTime = $dateTime->format('Y-m-d H:i:s.u');
@@ -198,7 +202,7 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
             $actor->id,
             $minDateTime,
             $maxDateTime,
-            count($facebookInventoryItems)
+            count($facebookListedItems)
         );
 
         if ($hourlyQuoteExceeded) {

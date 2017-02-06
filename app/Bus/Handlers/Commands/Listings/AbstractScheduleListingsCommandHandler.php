@@ -7,6 +7,8 @@
 namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use Carbon\Carbon;
+use Kabooodle\Models\Inventory;
+use Kabooodle\Models\InventoryGrouping;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 
@@ -53,14 +55,20 @@ abstract class AbstractScheduleListingsCommandHandler
     /**
      * TODO: is it faster to run a normal sql query vs filtering through the eager loaded collection?
      *
-     * @param int  $inventoryId
+     * @param int $listableId
+     * @param string $listableType
      * @param User $actor
      *
-     * @return mixed
+     * @return bool
      */
-    public function inventoryItemBelongsToUser(int $inventoryId, User $actor)
+    public function listableItemBelongsToUser(int $listableId, string $listableType, User $actor)
     {
-        return $actor->inventory->find($inventoryId);
+        if ($listableType == Inventory::class) {
+            return $actor->inventory()->whereId($listableId)->first();
+        } else if ($listableType == InventoryGrouping::class) {
+            return $actor->inventoryGroupings()->whereID($listableId)->find();
+        }
+        return false;
     }
 
     /**

@@ -1,6 +1,5 @@
 <?php
 
-use Kabooodle\Models\PageViews;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -13,7 +12,7 @@ class CreatePageviews extends Migration
      */
     public function up()
     {
-        Schema::create(PageViews::getTableName(), function(Blueprint $table){
+        Schema::create('pageviews', function(Blueprint $table){
             $table->bigIncrements('id');
             $table->string('shoppable_type');
             $table->integer('shoppable_id')->unsigned();
@@ -35,6 +34,6 @@ class CreatePageviews extends Migration
      */
     public function down()
     {
-        Schema::drop(PageViews::getTableName());
+        Schema::drop('pageviews');
     }
 }

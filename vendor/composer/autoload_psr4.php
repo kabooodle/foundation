@@ -53,6 +53,7 @@ return array(
     'Laravel\\Cashier\\' => array($vendorDir . '/laravel/cashier/src'),
     'Kabooodle\\Tests\\' => array($baseDir . '/tests'),
     'Kabooodle\\' => array($baseDir . '/app'),
+    'JonnyPickett\\EloquentSTI\\' => array($vendorDir . '/jonnypickett/eloquent-sti/src'),
     'JmesPath\\' => array($vendorDir . '/mtdowling/jmespath.php/src'),
     'IronMQ\\' => array($vendorDir . '/iron-io/iron_mq/src'),
     'IronCore\\' => array($vendorDir . '/iron-io/iron_core/src'),

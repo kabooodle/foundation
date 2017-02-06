@@ -8,7 +8,7 @@ namespace Kabooodle\Bus\Commands\Comments;
 
 use Kabooodle\Models\User;
 use Kabooodle\Models\Comments;
-use Kabooodle\Models\Contracts\CommentableInterface;
+use Kabooodle\Models\Contracts\Commentable;
 
 /**
  * Class DeleteCommentCommand.
@@ -21,7 +21,7 @@ final class DeleteCommentCommand
     public $actor;
 
     /**
-     * @var CommentableInterface
+     * @var Commentable
      */
     public $commentable;
 
@@ -33,11 +33,11 @@ final class DeleteCommentCommand
     /**
      * DeleteCommentCommand constructor.
      *
-     * @param User                 $actor
-     * @param CommentableInterface $commentable
-     * @param Comments             $comment
+     * @param User $actor
+     * @param Commentable $commentable
+     * @param Comments $comment
      */
-    public function __construct(User $actor, CommentableInterface $commentable, Comments $comment)
+    public function __construct(User $actor, Commentable $commentable, Comments $comment)
     {
         $this->actor = $actor;
         $this->commentable = $commentable;
@@ -53,7 +53,7 @@ final class DeleteCommentCommand
     }
 
     /**
-     * @return CommentableInterface
+     * @return Commentable
      */
     public function getCommentable()
     {

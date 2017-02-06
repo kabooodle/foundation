@@ -69,6 +69,13 @@ class Address extends BaseEloquentModel implements Revisionable
     ];
 
     /**
+     * @var array
+     */
+    protected $casts = [
+        'primary' => 'boolean',
+    ];
+
+    /**
      * @return array
      */
     public static function getRules()
@@ -96,7 +103,7 @@ class Address extends BaseEloquentModel implements Revisionable
      */
     public function isPrimary()
     {
-        return (bool) $this->primary;
+        return $this->primary;
     }
 
     /**

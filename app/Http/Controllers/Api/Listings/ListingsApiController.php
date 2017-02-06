@@ -41,7 +41,7 @@ class ListingsApiController extends AbstractApiController
     public function show(Request $request, $listingUuid)
     {
         try {
-            $listing = Listings::with(['items', 'items.inventoryItem'])
+            $listing = Listings::with('items')
                 ->where('uuid', $listingUuid)
                 ->orderBy('scheduled_for')
                 ->first();
@@ -58,13 +58,13 @@ class ListingsApiController extends AbstractApiController
 
             if ($style_query ) {
                 $items = $items->filter(function($item) use ($style_query){
-                    return in_array($item->inventoryItem->inventory_type_styles_id, $style_query);
+                    return in_array($item->listedItem->inventory_type_styles_id, $style_query);
                 });
             }
 
             if ($size_query ) {
                 $items = $items->filter(function($item) use ($size_query){
-                    return in_array($item->inventoryItem->inventory_sizes_id, $size_query);
+                    return in_array($item->listedItem->inventory_sizes_id, $size_query);
                 });
             }
 

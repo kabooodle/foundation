@@ -172,8 +172,8 @@
                 });
 
                 // find the item index/
-                _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, (inventoryItem, index)=>{
-                    if(inventoryItem.id == item.id) {
+                _.each(scope.inventory_items[styleIndex].sizes[sizeIndex].items, (listedItem, index)=>{
+                    if(listedItem.id == item.id) {
                         itemIndex = index;
                     }
                 });

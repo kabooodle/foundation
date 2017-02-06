@@ -14,7 +14,7 @@ use Kabooodle\Models\ListingItems;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
-use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
+use Kabooodle\Bus\Commands\Claim\ClaimListedItemCommand;
 use Kabooodle\Foundation\Exceptions\Claim\RequestedQuantityCannotBeSatisfiedException;
 use Kabooodle\Models\User;
 
@@ -40,8 +40,8 @@ class ListingItemsClaimsController extends AbstractApiController
                 throw new ModelNotFoundException;
             }
 
-            $this->dispatchNow(new ClaimInventoryItemCommand($this->getUser(), $listingItem,
-                $listingItem->inventoryItem));
+            $this->dispatchNow(new ClaimListedItemCommand($this->getUser(), $listingItem,
+                $listingItem->listedItem));
 
             return $this->respond();
         } catch (RequestedQuantityCannotBeSatisfiedException $e) {
@@ -71,7 +71,7 @@ class ListingItemsClaimsController extends AbstractApiController
             // Does the email already exists in our system?
             $email = Email::whereAddress(trim($request->get('email')))->first();
             if ($email) {
-                $this->dispatchNow(new ClaimInventoryItemCommand($email->user, $listingItem, $listingItem->inventoryItem, true, $email));
+                $this->dispatchNow(new ClaimListedItemCommand($email->user, $listingItem, $listingItem->listedItem, true, $email));
             } else {
                 $guest = $this->dispatch(new AddGuestCommand(
                     $request->get('first_name'),
@@ -86,7 +86,7 @@ class ListingItemsClaimsController extends AbstractApiController
                     $request->get('phone')
                 ));
 
-                $this->dispatchNow(new ClaimInventoryItemCommand($guest, $listingItem, $listingItem->inventoryItem, true, $guest->primaryEmail));
+                $this->dispatchNow(new ClaimListedItemCommand($guest, $listingItem, $listingItem->listedItem, true, $guest->primaryEmail));
             }
 
             return $this->respond();

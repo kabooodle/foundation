@@ -46,7 +46,7 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
     {
         $mail = new PiperEmail;
         $mail->setView('inventory.claims.emails.rejected_toclaimer')
-            ->setParameters(['item' => $claim->inventoryItem, 'claim' => $claim])
+            ->setParameters(['item' => $claim->listedItem, 'claim' => $claim])
             ->setCallable(function ($mail) use ($claimedBy) {
                 $mail->to($claimedBy->email)->subject('Item claim rejected.');
             })
@@ -59,7 +59,7 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
      */
     public function toDatabase(Claims $claim, User $claimedBy)
     {
-        $title = 'Your claim on '.$claim->inventoryItem->getNameAndSize().' was rejected by '. $claim->rejector->username;
+        $title = 'Your claim on '.$claim->claimable->getTitle().' was rejected by '. $claim->rejector->full_name;
 
         $notification = new NotificationNotices;
         $notification->user_id = $claimedBy->id;

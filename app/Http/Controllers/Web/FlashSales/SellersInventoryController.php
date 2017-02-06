@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Http\Controllers\Web\FlashSales;
@@ -16,7 +16,7 @@ use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\FlashsaleItems;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Web\Controller;
-use Kabooodle\Bus\Commands\Claim\ClaimInventoryItemCommand;
+use Kabooodle\Bus\Commands\Claim\ClaimListedItemCommand;
 use Kabooodle\Http\Controllers\Traits\CommentableControllerTrait;
 
 /**
@@ -47,13 +47,13 @@ class SellersInventoryController extends Controller
 //        $item = FlashSales::find($decryptedId);
 
 //        try {
-//            $data = $this->dispatchNow(new GetSellerInventoryCommand($item, user()));
+//            $data = $this->dispatchNow(new GetSellerInventoryCommand($item, webUser()));
 //            return $this->view('flashsales.shop.index')->with(compact('data', 'item'));
 //        } catch (GetSellerInventoryException $e) {
 //            dd($e);
 //        }
 
-//        $inventory = $item->inventoryItems;
+//        $listedItem = $item->listedItems;
 //
 //        return $this->view('flashsales.shop.index', [$saleIdAndName])->with(compact('item', 'inventory'));
     }
@@ -70,7 +70,7 @@ class SellersInventoryController extends Controller
         $shoppable = FlashsaleItems::where('flashsale_id', $decryptedId)
             ->where('inventory_id', $this->obfuscateFromURIString($itemIdAndName))
             ->first();
-        $inventory = $shoppable->inventoryItem;
+        $listedItem = $shoppable->listedItem;
         $item = $shoppable->flashsale;
         if ($item) {
             return $this->view('flashsales.shop.show')->with(compact('shoppable', 'inventory', 'item'));
@@ -101,10 +101,10 @@ class SellersInventoryController extends Controller
         $decryptedId = $this->obfuscateFromURIString(Binput::clean($saleIdAndName));
         $flashSale = FlashSales::find($decryptedId);
 
-        $inventory = $flashSale->inventoryItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
+        $listedItem = $flashSale->listedItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
 
         try {
-            $this->dispatchNow(new ClaimInventoryItemCommand(webUser(), $flashSale, $inventory));
+            $this->dispatchNow(new ClaimListedItemCommand(webUser(), $flashSale, $listedItem));
 
             Messages::success('Item claimed successfully!');
             return Response::json([], 200);
@@ -124,9 +124,9 @@ class SellersInventoryController extends Controller
     {
         $decryptedId = $this->obfuscateFromURIString(Binput::clean($saleIdAndName));
         $flashSale = FlashSales::find($decryptedId);
-        $inventory = $flashSale->inventoryItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
+        $listedItem = $flashSale->listedItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
 
-        $data = self::handleStoreComment($inventory, $request->getCommentText());
+        $data = self::handleStoreComment($listedItem, $request->getCommentText());
 
         return Response::json($data, 200);
     }
@@ -144,12 +144,12 @@ class SellersInventoryController extends Controller
         try {
             $decryptedId = $this->obfuscateFromURIString(Binput::clean($saleIdAndName));
             $flashSale = FlashSales::find($decryptedId);
-            $inventory = $flashSale->inventoryItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
+            $listedItem = $flashSale->listedItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
 
-            $comments = $inventory->comments;
+            $comments = $listedItem->comments;
             $comment = $comments->find($commentId)->firstOrFail();
 
-            $data = self::handleDeleteComment($inventory, $comment);
+            $data = self::handleDeleteComment($listedItem, $comment);
 
             return Response::json($data, 200);
         } catch (Exception $e) {

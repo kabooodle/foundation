@@ -40,7 +40,7 @@
         <div class="col-md-4">
             <div class="box-header no-shadow">
                 <h2><span class="_800">{!! $item->name !!}</span></h2>
-                <p class="block m-t-0"><span class="text-muted">Size:</span> {!! $item->styleSize->name !!}</p>
+                {{--<p class="block m-t-0"><span class="text-muted">Size:</span> {!! $item->styleSize->name !!}</p>--}}
                 <p class="m-b-0 m-t-1 h4 text-warning _500">${{ isset($_price) ? $_price : $item->getPrice() }}</p>
 
                 <div class="m-t-2 m-b-0">

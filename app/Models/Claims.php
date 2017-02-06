@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models;
 
+use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Sofa\Revisionable\Revisionable;
@@ -41,7 +42,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'shipments',
         'shipments.transaction',
         'claimer',
-//        'inventoryItem',
+//        'listedItem',
     ];
 
     /**
@@ -70,7 +71,8 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      * @var array
      */
     protected $attributes = [
-        'inventory_id' => 0,
+        'claimable_type' => null,
+        'claimable_id' => 0,
         'claimed_by' => 0,
         'inventory_item_object_data' => '',
         'shoppable_id' => 0,
@@ -89,7 +91,8 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      * @var array
      */
     protected $casts = [
-        'inventory_id' => 'int',
+        'claimable_type' => 'string',
+        'claimable_id' => 'int',
         'claimed_by' => 'int',
         'verified' => 'bool',
         'claim_accepted' => 'bool',
@@ -109,9 +112,9 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      * @var array
      */
     protected $fillable = [
-        'inventory_id',
+        'claimable_type',
+        'claimable_id',
         'claimed_by',
-        'inventory_id',
         'inventory_item_object_data',
         'price',
         'verified',
@@ -141,9 +144,9 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         });
     }
 
-    public function setInventoryItemObjectDataAttribute($value)
+    public function setListedItemObjectDataAttribute($value)
     {
-        $this->attributes['inventory_item_object_data'] = $value->toJson();
+        $this->attributes['listed_item_object_data'] = $value->toJson();
     }
 
     /**
@@ -151,7 +154,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      *
      * @return array
      */
-    public function getInventoryItemObjectDataAttribute($value)
+    public function getListedItemObjectDataAttribute($value)
     {
         return (array) json_decode($value, true);
     }
@@ -164,6 +167,11 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function getPriceAttribute($value)
     {
         return ! is_null($this->accepted_price) ? $this->accepted_price : $value;
+    }
+
+    public function scopeOnHold($query)
+    {
+        return $query->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()));
     }
 
     /**
@@ -227,11 +235,19 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function inventoryItem()
+    public function claimable()
     {
-        return $this->belongsTo(Inventory::class, 'inventory_id');
+        return $this->morphTo();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function listedItem()
+    {
+        return $this->claimable();
     }
 
     /**
@@ -296,7 +312,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function getClaimerItemDatePriceAttribute()
     {
         $claimer = $this->claimer;
-        $item = $this->inventoryItem;
+        $item = $this->listedItem;
         $date = $this->updatedAtHuman();
         $price = $this->price;
 

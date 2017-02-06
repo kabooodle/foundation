@@ -241,11 +241,11 @@ class Listings extends AbstractListingModel
                 IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
                 FROM listings AS l
                 INNER JOIN listing_items AS li ON li.listing_id = l.id AND l.owner_id = li.owner_id AND l.type = li.type
-                INNER JOIN inventory AS i ON i.id = li.inventory_id
+                INNER JOIN inventory AS i ON i.id = li.listable_id
                 LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
                 LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_group_node_id
                 LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
-				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.inventory_id = li.inventory_id AND c.claimed_by = l.owner_id
+				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.claimable_id = li.listable_id AND c.claimed_by = l.owner_id
                 WHERE l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
                 AND l.deleted_at IS NULL 
                 AND li.deleted_at IS NULL
@@ -290,11 +290,11 @@ class Listings extends AbstractListingModel
                 IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
                 FROM listings AS l
                 INNER JOIN listing_items AS li ON li.listing_id = l.id
-                INNER JOIN inventory AS i ON i.id = li.inventory_id
+                INNER JOIN inventory AS i ON i.id = li.listable_id
                 INNER JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
                 LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_album_node_id
                 LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
-				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.inventory_id = li.inventory_id AND c.claimed_by = l.owner_id
+				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.claimable_id = li.listable_id AND c.claimed_by = l.owner_id
                 WHERE l.uuid = ? AND l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
                 AND l.type = ?
                 AND l.deleted_at IS NULL 

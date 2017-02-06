@@ -2,14 +2,14 @@
 
 namespace Kabooodle\Tests\Stubs;
 
-use Kabooodle\Models\Contracts\CommentableInterface;
+use Kabooodle\Models\Contracts\Commentable;
 use Kabooodle\Models\User;
 
 /**
  * Class CommentableStub
  * @package Kabooodle\Tests\Stubs
  */
-class CommentableStub implements CommentableInterface
+class CommentableStub implements Commentable
 {
     public $id = 1;
 

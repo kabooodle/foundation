@@ -17,6 +17,10 @@ abstract class AbstractListingModel extends BaseEloquentModel
     const TYPE_FACEBOOK = 'facebook';
     const TYPE_FLASHSALE = 'flashsale';
     const TYPE_CUSTOM = 'custom';
+    const TYPES = [
+        self::TYPE_FACEBOOK,
+        self::TYPE_FLASHSALE,
+    ];
 
     const STATUS_SCHEDULED = 'scheduled';
     const STATUS_QUEUED_LIST = 'queued';
@@ -29,6 +33,19 @@ abstract class AbstractListingModel extends BaseEloquentModel
     const STATUS_IGNORED_DUPLICATE = 'ignored_duplicate';
     const STATUS_FAILED = 'failed';
     const STATUS_THROTTLED = 'throttled';
+    const STATUSES = [
+        self::STATUS_SCHEDULED,
+        self::STATUS_QUEUED_LIST,
+        self::STATUS_PROCESSING,
+        self::STATUS_PARTIAL,
+        self::STATUS_SUCCESS,
+        self::STATUS_COMPLETED,
+        self::STATUS_DELETED,
+        self::STATUS_QUEUED_DELETE,
+        self::STATUS_IGNORED_DUPLICATE,
+        self::STATUS_FAILED,
+        self::STATUS_THROTTLED,
+    ];
 
     /**
      * @param $scope
@@ -256,7 +273,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
         return DB::table('inventory_type_styles')
             ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
             ->join('inventory_sizes', 'inventory_sizes.id', '=', 'inventory.inventory_sizes_id')
-            ->join('listing_items', 'listing_items.inventory_id', '=', 'inventory.id')
+            ->join('listing_items', 'listing_items.listable_id', '=', 'inventory.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listings.uuid', $listingUuid)
             ->whereNull('listing_items.deleted_at')
@@ -284,7 +301,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
         return DB::table('inventory_type_styles')
             ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
             ->join('inventory_sizes', 'inventory_sizes.id', '=', 'inventory.inventory_sizes_id')
-            ->join('listing_items', 'listing_items.inventory_id', '=', 'inventory.id')
+            ->join('listing_items', 'listing_items.listable_id', '=', 'inventory.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listing_items.flashsale_id', $flashsaleId)
             ->whereNull('listing_items.deleted_at')

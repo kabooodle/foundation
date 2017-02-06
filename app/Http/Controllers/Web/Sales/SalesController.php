@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Http\Controllers\Web\Sales;
@@ -39,12 +39,12 @@ class SalesController extends Controller
             'purchasers' => $request->has('purchasers') ? array_filter(Binput::get('purchasers')) : false
         ];
 
-        $sales = webUser()->acceptedClaimsOnMyInventory()->noEagerLoads()->with(['inventoryItem']);
+        $sales = webUser()->acceptedClaimsOnMyInventory()->noEagerLoads()->with(['listedItem']);
 
         // Categories filter
         if ($filters['categories']) {
             // Yes, the id's from the categories are just inventory ids. I did this to simplify things.
-            $sales = $sales->whereIn('inventory_id', $filters['categories']);
+            $sales = $sales->whereIn('claimable_id', $filters['categories']);
         }
 
         // Price filter
@@ -55,7 +55,7 @@ class SalesController extends Controller
 
         // Styles, Size, Price filters
         if (count($filters['style'])>0 || count($filters['size'])>0) {
-            $sales = $sales->whereHas('inventoryItem', function ($q) use ($filters) {
+            $sales = $sales->whereHas('listedItem', function ($q) use ($filters) {
                 // Styles
                 if (count($filters['style'])>0) {
                     $q->whereIn('inventory_type_styles_id', $filters['style']);

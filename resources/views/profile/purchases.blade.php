@@ -44,14 +44,14 @@
                     <td>
                         <div class="avatar-thumbnail-container">
                             <div class="avatar-thumbnail _32">
-                                <img src="{{ $claim->inventoryItem->cover_photo->location }}">
+                                <img src="{{ $claim->listedItem->cover_photo->location }}">
                             </div>
-                            <span>{{ $claim->inventoryItem->name_with_variant }}</span>
+                            <span>{{ $claim->listedItem->name_with_variant }}</span>
                         </div>
                     </td>
                     <td>{!! $claim->present()->getClaimStatus()  !!}</td>
                     <td>${{ $claim->price }}</td>
-                    <td>{{ $claim->inventoryItem->owner->name }}</td>
+                    <td>{{ $claim->listedItem->owner->name }}</td>
                     <td>{{ $claim->createdAtHumanNoTime() }} <i data-placement="top" class="fa fa-clock-o" data-toggle="tooltip" title="{{ $claim->created_at->format('g:i A') }}"></i></td>
                     {{--<td>--}}
                         {{--<span class="pending-status">@if($claim->wasRejected()) {{ $claim->rejected_on->diffForHumans() }} @elseif($claim->wasAccepted()) {{ $claim->accepted_on->diffForHumans() }} @else Pending  @endif</span>--}}

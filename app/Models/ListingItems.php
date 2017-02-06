@@ -1,12 +1,15 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Models;
 
 use Carbon\Carbon;
+use JonnyPickett\EloquentSTI\SingleTableInheritance;
+use Kabooodle\Models\Contracts\Viewable;
+use Kabooodle\Models\Traits\ViewableTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Models\Traits\WatchableTrait;
@@ -21,9 +24,16 @@ use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
 /**
  * Class ListingItems
  */
-class ListingItems extends AbstractListingModel implements ShoppableInterface, WatchableInterface
+class ListingItems extends AbstractListingModel implements ShoppableInterface, WatchableInterface, Viewable
 {
-    use ObfuscatesIdTrait, PresentableTrait, ShoppableTrait, SoftDeletes, UuidableTrait, WatchableTrait;
+    use ObfuscatesIdTrait,
+        PresentableTrait,
+        ShoppableTrait,
+        SoftDeletes,
+        UuidableTrait,
+        WatchableTrait,
+        SingleTableInheritance,
+        ViewableTrait;
 
     /**
      * @var array
@@ -83,9 +93,9 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'fb_response_object_id' => null,
         'fb_response' => '',
         'owner_id' => 0,
-        'inventory_id' => 0,
-        'type' => self::TYPE_CUSTOM,
-        'status' => self::STATUS_COMPLETED,
+        'listable_id' => 0,
+        'type' => self::TYPE_FACEBOOK,
+        'status' => self::STATUS_SCHEDULED,
         'status_updated_at' => '',
         'status_history' => '',
         'make_available_at' => null,
@@ -104,15 +114,21 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'fb_album_node_id',
         'fb_response',
         'owner_id',
-        'inventory_id',
+        'listable_id',
         'type',
         'status',
         'status_updated_at',
         'status_history',
         'make_available_at',
         'ignore',
+        'subclass_name',
         'item_message'
     ];
+
+    public function getListedItemClass(): string
+    {
+        return static::LISTED_ITEM_CLASS;
+    }
 
     /**
      * @param $value
@@ -137,7 +153,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     public function getNameAttribute()
     {
-        return $this->inventoryItem->name;
+        return $this->listedItem->name;
     }
 
     /**
@@ -175,9 +191,9 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function inventoryItem(): BelongsTo
+    public function listedItem(): BelongsTo
     {
-        return $this->belongsTo(Inventory::class, 'inventory_id');
+        return $this->belongsTo($this->getListedItemClass(), 'listable_id');
     }
 
     /**
@@ -194,14 +210,6 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function pageViews()
-    {
-        return $this->morphMany(PageViews::class, 'shoppable');
     }
 
     /**
@@ -239,10 +247,10 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     /**
      * @return string
      */
-    public function getNameOfShoppable(): string
+    public function getNameOfResource(): string
     {
         if ($this->isCustomSale()) {
-            return 'Custom listing';
+            return 'Custom sale';
         }
 
         if ($this->isFacebook()) {
@@ -250,6 +258,14 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         }
 
         return $this->flashsale->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameOfShoppable(): string
+    {
+        return $this->getNameOfResource();
     }
 
     /**
@@ -274,11 +290,6 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
     public function claimableBasedOnSchedule()
     {
         $now = Carbon::now();
-
-        if ($this->isFlashsale()) {
-            return $this->flashsale->claimableBasedOnSchedule();
-        }
-
         $claimableAt = $this->listing->claimable_at;
         $scheduledFor = $this->listing->scheduled_for;
 
@@ -317,15 +328,31 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
             $route = str_replace(['https://', 'http://'], '', str_replace(['api.', 'app.', 'api', 'app'], 'www.', route('externalclaim.show', [$id])));
             $itemMessage = str_ireplace($placeholders['url'], ' '.$route.' ', $itemMessage);
 
-            $itemMessage = str_ireplace($placeholders['price'], $this->inventoryItem->getPrice(), $itemMessage);
+            $itemMessage = str_ireplace($placeholders['price'], $this->listedItem->getPrice(), $itemMessage);
 
-            $itemMessage = str_ireplace($placeholders['style'], $this->inventoryItem->style->name, $itemMessage);
+            $itemMessage = str_ireplace($placeholders['style'], $this->listedItem->style->name, $itemMessage);
 
-            $itemMessage = str_ireplace($placeholders['size'], $this->inventoryItem->size->name, $itemMessage);
+            $itemMessage = str_ireplace($placeholders['size'], $this->listedItem->size->name, $itemMessage);
 
             return $itemMessage;
         }
 
         return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasViewableChild(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getViewableChild()
+    {
+        return $this->listedItem;
     }
 }

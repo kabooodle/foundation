@@ -79,7 +79,7 @@
         },
         data(){
             return{
-                current_user: currentUser() ? currentUser() : {}
+                current_user: currentUser() || {}
             }
         },
         computed: {

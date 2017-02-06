@@ -11,7 +11,7 @@ use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
 use Kabooodle\Bus\Events\Comments\CommentWasDeletedEvent;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Comments;
-use Kabooodle\Models\Contracts\CommentableInterface;
+use Kabooodle\Models\Contracts\Commentable;
 use Kabooodle\Bus\Commands\Comments\DeleteCommentCommand;
 
 /**
@@ -41,13 +41,13 @@ class DeleteCommentCommandHandler
     }
 
     /**
-     * @param User                 $actor
-     * @param CommentableInterface $commentable
-     * @param Comments             $comment
+     * @param User $actor
+     * @param Commentable $commentable
+     * @param Comments $comment
      *
      * @return bool
      */
-    public function userCanDeleteComment(User $actor, CommentableInterface $commentable, Comments $comment)
+    public function userCanDeleteComment(User $actor, Commentable $commentable, Comments $comment)
     {
         // Is actor author of comment?
         if ($actor->id === $comment->author->id) {

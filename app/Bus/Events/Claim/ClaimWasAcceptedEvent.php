@@ -29,7 +29,7 @@ final class ClaimWasAcceptedEvent
     public $claim;
 
     /**
-     * ClaimWasRejectedEvent constructor.
+     * ClaimWasAcceptedEvent constructor.
      *
      * @param User   $actor
      * @param Claims $claim

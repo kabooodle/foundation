@@ -1,34 +1,37 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Models;
 
 use DB;
 use Carbon\Carbon;
+use Kabooodle\Bus\Events\Listables\ListableQuantityUpdatedEvent;
+use Kabooodle\Models\Contracts\Claimable;
+use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Contracts\Viewable;
+use Kabooodle\Models\Traits\ListableTrait;
+use Kabooodle\Models\Traits\ViewableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
-use Kabooodle\Models\Traits\ShoppableTrait;
 use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\CommentableTrait;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
+use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Models\Contracts\LikeableInterface;
-use Kabooodle\Models\Contracts\ShoppableInterface;
-use Kabooodle\Models\Contracts\CommentableInterface;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
+use Kabooodle\Models\Contracts\Commentable;
 
 /**
  * Class Inventory
  * @package Kabooodle\Models
  */
-class Inventory extends BaseEloquentModel implements CommentableInterface, LikeableInterface, Revisionable, ShoppableInterface
+class Inventory extends BaseEloquentModel implements Commentable, LikeableInterface, Revisionable, Listable, Claimable, Viewable
 {
     use ClaimableTrait,
         CommentableTrait,
@@ -36,9 +39,10 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         LikeableTrait,
         ObfuscatesIdTrait,
         RevisionableTrait,
-        ShoppableTrait,
         SoftDeletes,
-        TaggableTrait;
+        TaggableTrait,
+        ListableTrait,
+        ViewableTrait;
 
     /**
      * @var array
@@ -47,7 +51,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'name_with_variant',
         'name_uuid',
         'available_quantity',
-        'cover_photo'
+        'cover_photo',
     ];
 
     /**
@@ -56,7 +60,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     protected $with = [
         'style',
         'styleSize',
-        'coverimage',
 //        'tagged',
 //        'flashsales',
 //        'claims', // <- deathtrap of recursion
@@ -64,6 +67,11 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
 //        'comments',
 //        'sales'
     ];
+
+    /**
+     * @const string
+     */
+    const LISTING_ITEM_CLASS = ListingItemSingle::class;
 
     /**
      * @return array
@@ -87,6 +95,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_sizes_id' => 0,
         'name' => '',
         'description' => '',
+        'cover_photo_file_key' => null,
         'cover_photo_file_id' => null,
         'barcode' => null,
         'initial_qty' => null,
@@ -123,6 +132,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
         'inventory_sizes_id',
         'price_usd',
         'wholesale_price_usd',
+        'cover_photo_file_key',
         'cover_photo_file_id',
         'name',
         'description',
@@ -193,7 +203,7 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
             }
 
             if ($model->isDirty('initial_qty')) {
-                event(new InventoryQuantityUpdatedEvent($model));
+                event(new ListableQuantityUpdatedEvent($model));
                 return true;
             }
         });
@@ -215,6 +225,14 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     public function getOwner(): User
     {
         return $this->owner;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle() : string
+    {
+        return $this->getNameAndSize();
     }
 
     /**
@@ -282,35 +300,35 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function flashsales()
+    public function groupings()
     {
-        return $this->listings()->where('type', Listings::TYPE_FLASHSALE);
+        return $this->belongsToMany(InventoryGrouping::class, 'inventory_groupings_inventory');
     }
 
     /**
-     * @return array|static[]
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function facebooksales()
+    public function lockedGroupings()
     {
-        return $this->listings()->where('type', Listings::TYPE_FACEBOOK);
+        return $this->groupings()->whereLocked(true);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function listings()
+    public function unlockedGroupings()
     {
-        return $this->hasMany(ListingItems::class, 'inventory_id');
+        return $this->groupings()->whereLocked(false);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function claims()
     {
-        return $this->hasMany(Claims::class, 'inventory_id');
+        return $this->morphMany(Claims::class, 'claimable');
     }
 
     /**
@@ -318,7 +336,37 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
      */
     public function pendingClaims()
     {
-        return $this->hasMany(Claims::class, 'inventory_id')->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
+        return $this->claims()->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function groupingsClaims()
+    {
+        return $this->hasMany(Claims::class, 'claimable_id')
+            ->whereClaimableType(InventoryGrouping::class)
+            ->whereIn('claimable_id', $this->groupings()->lists('inventory_groupings.id'));
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function lockedGroupingsClaims()
+    {
+        return $this->hasMany(Claims::class, 'claimable_id')
+            ->whereClaimableType(InventoryGrouping::class)
+            ->whereIn('claimable_id', $this->lockedGroupings()->lists('inventory_groupings.id'));
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function unlockedGroupingsClaims()
+    {
+        return $this->hasMany(Claims::class, 'claimable_id')
+            ->whereClaimableType(InventoryGrouping::class)
+            ->whereIn('claimable_id', $this->unlockedGroupings()->lists('inventory_groupings.id'));
     }
 
     /**
@@ -405,48 +453,6 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     /**
      * @return string
      */
-    public function getPrice()
-    {
-        return number_format($this->price_usd, 2);
-    }
-
-    /**
-     * @param int $qty
-     *
-     * @return bool
-     */
-    public function canSatisfyRequestedQuantityOf($qty = 1)
-    {
-        return $this->getAvailableQuantity() >= $qty;
-    }
-
-    /**
-     * @return int
-     */
-    public function getAvailableQuantity()
-    {
-        return $this->initial_qty - $this->getOnHoldQuantity();
-    }
-
-    /**
-     * @return int
-     */
-    public function getAvailableQuantityAttribute()
-    {
-        return $this->getAvailableQuantity();
-    }
-
-    /**
-     * @return int
-     */
-    public function getOnHoldQuantity()
-    {
-        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
-    }
-
-    /**
-     * @return string
-     */
     public function getNameAttribute() : string
     {
         return $this->getName();
@@ -461,53 +467,86 @@ class Inventory extends BaseEloquentModel implements CommentableInterface, Likea
     }
 
     /**
-     * @return string
-     */
-    public function getNameUuidAttribute() : string
-    {
-        return $this->getUUID();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCategoriesAttribute()
-    {
-        return $this->tags;
-    }
-
-    /**
      * @param $value
      * @return float
      */
-    public function getWholesalePriceUsdAttribute($value)
+    public function getWholesalePriceUsdAttribute($value): float
     {
         return $value ? $value : $this->style->wholesale_price_usd;
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return int
      */
-    public function pageViews()
+    public function getAvailableQuantity(): int
     {
-        return $this->hasMany(PageViews::class, 'inventory_id');
+        return $this->initial_qty - ($this->lockedGroupings()->count() + $this->getOnHoldQuantity());
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getNameOfShoppable(): string
+    public function getAvailableQuantityAttribute()
     {
-        return 'Inventory';
+        return $this->getAvailableQuantity();
     }
 
     /**
-     * Yes, this returns itself. Kinda goofy.
-     *
-     * @return BelongsTo
+     * @return int
      */
-    public function inventoryItem(): BelongsTo
+    public function getOnHoldQuantity(): int
     {
-        return $this->belongsTo(Inventory::class, 'id');
+        return $this->claims()->onHold()->count() + $this->unlockedGroupingsClaims()->onHold()->count();
+    }
+
+    /**
+     * @param int $amount
+     * @return mixed
+     */
+    public function decrementInitialQty(int $amount = 1)
+    {
+        $this->initial_qty -= $amount;
+        return $this->save();
+    }
+
+    /**
+     * @param int $amount
+     * @return mixed
+     */
+    public function incrementInitialQty(int $amount = 1)
+    {
+        $this->initial_qty += $amount;
+        return $this->save();
+    }
+
+    /**
+     * @param array $filters
+     */
+    public static function filter(array $filters)
+    {
+        $base = [
+            'style_id'      => [],
+            'size_id'       => [],
+            'has_claims'    => false,
+            'has_sales'     => false
+        ];
+
+        $filters = $base + $filters;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasViewableChild(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return null
+     */
+    public function getViewableChild()
+    {
+        return null;
     }
 }

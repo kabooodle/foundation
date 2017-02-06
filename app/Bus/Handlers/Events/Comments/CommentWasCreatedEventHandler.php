@@ -13,7 +13,7 @@ use Kabooodle\Libraries\Emails\KitEmail;
 use Illuminate\Queue\InteractsWithQueue;
 use Kabooodle\Models\NotificationNotices;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Kabooodle\Models\Contracts\CommentableInterface;
+use Kabooodle\Models\Contracts\Commentable;
 use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
 
 /**
@@ -32,7 +32,7 @@ class CommentWasCreatedEventHandler implements ShouldQueue
         /** @var Comments $comment */
         $comment = $event->getComment();
 
-        /** @var CommentableInterface $commentable */
+        /** @var Commentable $commentable */
         $commentable = $event->getCommentable();
 
         /** @var User $commentableOwner */
@@ -54,7 +54,7 @@ class CommentWasCreatedEventHandler implements ShouldQueue
      *
      * @return mixed
      */
-    public function notifyOwner($commentableOwner, Comments $comment, CommentableInterface $commentable)
+    public function notifyOwner($commentableOwner, Comments $comment, Commentable $commentable)
     {
         $mailer = new KitEmail;
 
@@ -70,9 +70,9 @@ class CommentWasCreatedEventHandler implements ShouldQueue
     /**
      * @param $commentableOwner
      * @param Comments $comment
-     * @param CommentableInterface $commentable
+     * @param Commentable $commentable
      */
-    public function toDatabase($commentableOwner, Comments $comment, CommentableInterface $commentable)
+    public function toDatabase($commentableOwner, Comments $comment, Commentable $commentable)
     {
         $title = $comment->author->username.' commented on '.$commentable->getName();
 

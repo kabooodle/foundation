@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Http\Controllers\Api\Inventory;
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Kabooodle\Libraries\QueueHelper;
 use Kabooodle\Models\Traits\ShoppableTrait;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
-use Kabooodle\Bus\Commands\Inventory\TrackInventoryViewCommand;
+use Kabooodle\Bus\Commands\Views\TrackViewableViewCommand;
 
 /**
  * Class InventoryViewsController
@@ -36,7 +36,7 @@ class InventoryViewsController extends AbstractApiController
             $ip = $request->getClientIp();
             $user = $this->getUser();
 
-            $job = new TrackInventoryViewCommand($user, $resource, $ip);
+            $job = new TrackViewableViewCommand($user, $resource, $ip);
             $job->onConnection(QueueHelper::pickViewTracker())
                 ->delay(60);
 
@@ -44,8 +44,7 @@ class InventoryViewsController extends AbstractApiController
 
             return $this->noContent();
         } catch (Exception $e) {
-            Bugsnag::notifyException($e);
-            return $this->setStatusCode(500)->respond();
+            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond();
         }
     }
 }

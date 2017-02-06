@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Bus\Jobs;
@@ -177,15 +177,13 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     }
 
     /**
-     * TODO: Fix this for the love of baby jesus.
-     *
      * @param ListingItems $listingItem
      *
      * @return Files
      */
     public function getListingImage(ListingItems $listingItem)
     {
-        return 'https://'.env('AWS_BUCKET').'.s3.amazonaws.com/'.$listingItem->inventoryItem->cover_photo_file_key;
+        return $listingItem->listedItem->cover_photo ? : $listingItem->listedItem->firstImage();
     }
 
     /**

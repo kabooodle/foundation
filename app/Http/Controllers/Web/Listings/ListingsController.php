@@ -57,8 +57,7 @@ class ListingsController extends Controller
      */
     public function show(Request $request, $listingUuid)
     {
-        $listing = Listings::with(['items', 'items.inventoryItem'])
-            ->where('uuid', $listingUuid)
+        $listing = Listings::where('uuid', $listingUuid)
             ->first();
 
         if (! $listing) {

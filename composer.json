@@ -49,7 +49,8 @@
     "tymon/jwt-auth": "1.0.*@dev",
     "wildbit/laravel-postmark-provider": "3.0.0",
     "zackkitzmiller/tiny": "1.2.2",
-    "vinkla/pusher": "^2.4"
+    "vinkla/pusher": "^2.4",
+    "jonnypickett/eloquent-sti": "^1.0"
   },
   "require-dev": {
     "alt-three/testbench": "^1.8",
