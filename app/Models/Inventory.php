@@ -8,7 +8,7 @@ namespace Kabooodle\Models;
 
 use DB;
 use Carbon\Carbon;
-use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
+use Kabooodle\Bus\Events\Listables\ListableQuantityUpdatedEvent;
 use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Contracts\Listable;
 use Kabooodle\Models\Contracts\Viewable;
@@ -203,7 +203,7 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
             }
 
             if ($model->isDirty('initial_qty')) {
-                event(new InventoryQuantityUpdatedEvent($model));
+                event(new ListableQuantityUpdatedEvent($model));
                 return true;
             }
         });

@@ -8,8 +8,7 @@ namespace Kabooodle\Models;
 
 use DB;
 use Carbon\Carbon;
-use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
-use Kabooodle\Bus\Events\InventoryGroupings\InventoryGroupingQuantityUpdatedEvent;
+use Kabooodle\Bus\Events\Listables\ListableQuantityUpdatedEvent;
 use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Contracts\Listable;
 use Kabooodle\Models\Contracts\Viewable;
@@ -60,8 +59,6 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
      * @var array
      */
     protected $with = [
-//        'style',
-//        'styleSize',
 //        'tagged',
 //        'flashsales',
 //        'claims', // <- deathtrap of recursion
@@ -149,38 +146,28 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
      */
     public static function getRules()
     {
-        return [
-            'type_id' => 'required|in:188432',
-            'style_id' => 'required|exists:inventory_type_styles,id',
+        $rules = [
+            'name' => 'required|unique:inventory_groupings,name,NULL,id,deleted_at,NULL,user_id,',
             'price_usd' => 'required|min:0|digits_between:0,100000000|numeric',
-            'wholesale_price_usd' => 'min:0|digits_between:0,100000000|numeric',
-            'sizings' => 'required|array',
-            'sizings.*.size_id' => 'required|exists:inventory_sizes,id',
-            'sizings.*.images' => 'required|array',
-            'sizings.*.images.*.data' => 'required',
         ];
+
+        $rules['name'] .= user()->id;
+
+        return $rules;
     }
 
     /**
+     * @param int $groupingId
+     *
      * @return array
      */
-    public static function getUpdateRules()
+    public static function getUpdateRules(int $groupingId)
     {
         $rules = self::getRules();
-        $data = [
-            'size_id' => 'required|exists:inventory_sizes,id',
-            'images' => 'required|array',
-            'uuid' => 'required'
-        ];
-        array_map(function($val, &$key) use (&$data) {
-            if (in_array($key, ['style_id', 'price_usd'])) {
-                $data[$key] = $val;
-            }
 
-            return $data;
-        }, $rules, array_keys($rules));
+        $rules['name'] = str_replace('NULL,id', $groupingId.',id', $rules['name']);
 
-        return $data;
+        return $rules;
     }
 
     public static function boot()
@@ -197,7 +184,7 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
             }
 
             if ($model->isDirty('initial_qty')) {
-                event(new InventoryGroupingQuantityUpdatedEvent($model));
+                event(new ListableQuantityUpdatedEvent($model));
                 return true;
             }
         });
@@ -414,7 +401,7 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
      */
     public function getOnHoldQuantity(): int
     {
-        return $this->claims()->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()))->count();
+        return $this->claims()->onHold()->count();
     }
 
     /**
@@ -449,10 +436,10 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     public static function filter(array $filters)
     {
         $base = [
-            'style_id'      => [],
-            'size_id'       => [],
-            'has_claims'    => false,
-            'has_sales'     => false
+//            'style_id'      => [],
+//            'size_id'       => [],
+//            'has_claims'    => false,
+//            'has_sales'     => false
         ];
 
         $filters = $base + $filters;

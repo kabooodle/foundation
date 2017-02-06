@@ -14,9 +14,9 @@ use Kabooodle\Models\User;
 use Kabooodle\Models\ListingItems;
 
 /**
- * Class NotifyWatcherInventoryQuantityUpdatedCommand
+ * Class NotifyWatcherListableQuantityUpdatedCommand
  */
-final class NotifyWatcherInventoryQuantityUpdatedCommand implements ShouldQueue
+final class NotifyWatcherListableQuantityUpdatedCommand implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
     /**

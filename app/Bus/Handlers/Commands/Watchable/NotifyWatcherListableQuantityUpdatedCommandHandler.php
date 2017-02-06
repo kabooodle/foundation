@@ -6,32 +6,31 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Watchable;
 
-use Kabooodle\Models\Inventory;
 use Kabooodle\Models\NotificationNotices;
 use Kabooodle\Models\User;
 use Kabooodle\Models\ListingItems;
 use Kabooodle\Libraries\Emails\PiperEmail;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Kabooodle\Bus\Commands\Watchable\NotifyWatcherInventoryQuantityUpdatedCommand;
+use Kabooodle\Bus\Commands\Watchable\NotifyWatcherListableQuantityUpdatedCommand;
 
 /**
- * Class NotifyWatcherInventoryQuantityUpdatedCommandHandler
+ * Class NotifyWatcherListableQuantityUpdatedCommandHandler
  */
-class NotifyWatcherInventoryQuantityUpdatedCommandHandler
+class NotifyWatcherListableQuantityUpdatedCommandHandler
 {
     use DispatchesJobs;
 
     /**
-     * @param NotifyWatcherInventoryQuantityUpdatedCommand $command
+     * @param NotifyWatcherListableQuantityUpdatedCommand $command
      *
      * @return bool
      */
-    public function handle(NotifyWatcherInventoryQuantityUpdatedCommand $command)
+    public function handle(NotifyWatcherListableQuantityUpdatedCommand $command)
     {
         $watcher = $command->getWatcher();
         $listingItem = $command->getListingItem();
 
-        if ($watcher->checkIsNotifyable('inventory_updated', 'email')) {
+        if ($watcher->checkIsNotifyable('listable_updated', 'email')) {
             $this->toMail($watcher, $listingItem);
         }
 //        $this->toSMS($listingItem);

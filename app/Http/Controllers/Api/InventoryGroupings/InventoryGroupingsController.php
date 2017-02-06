@@ -117,7 +117,7 @@ class InventoryGroupingsController extends AbstractApiController
         try {
             $grouping = $this->checkIds($username, $groupingId);
 
-            $this->validate($request, InventoryGrouping::getRules(), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
+            $this->validate($request, InventoryGrouping::getUpdateRules($groupingId), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
 
             $updated = $this->dispatchNow(new UpdateInventoryGroupingCommand(
                 $this->getUser(),
@@ -174,90 +174,6 @@ class InventoryGroupingsController extends AbstractApiController
             return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond($e);
         }
     }
-
-//    /**
-//     * @param Request $request
-//     *
-//     * @return \Illuminate\Http\Response
-//     */
-//    public function associate(Request $request)
-//    {
-//        $listingType = Binput::get('listingtype');
-//        $flashsaleId = Binput::get('flashsale', null);
-//        $selectedItems = (array) Binput::get('items', []);
-//
-//        // Facebook data
-//        $facebookAlbums = (array) Binput::get('fb_albums', []);
-//        $facebookGroup = Binput::get('fb_group', null);
-//        $facebookGroupId = $facebookGroup ? $facebookGroup['id'] : null;
-//
-//        // Facebook sales options, are, optional :)
-//        $options = (array) Binput::get('options', []);
-//
-//        // Date to list it and remove it
-//        $listAt = array_get($options, 'list_at', null);
-//        $removeAt = array_get($options,'remove_at', null);
-//        // Date range you can claim.
-//        $claimableAt = array_get($options, 'available_at', null);
-//        $claimableUntil = array_get($options, 'available_until', null);
-//        $itemMessage = array_get($options, 'item_message', false);
-//
-//        try {
-//            // You must have either a flashsaleid or facebookalbum
-//            if (($listingType == 'flashsale' && ! $flashsaleId ) || ($listingType == 'facebook' && count($facebookAlbums) == 0)) {
-//                throw new MissingMandatoryParametersException('You must select a sale');
-//            }
-//
-//            if (count($selectedItems) == 0) {
-//                throw new MissingMandatoryParametersException;
-//            }
-//
-//            if ($claimableAt && strtotime($claimableAt) < strtotime($listAt)) {
-//                throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
-//            }
-//
-//            $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $itemMessage);
-//
-//            if ($listingType == 'flashsale' && $flashsaleId) {
-//                $command = new ScheduleFlashsaleListingcommand($this->getUser(), $flashsaleId, $selectedItems);
-//            } else {
-//                $command = new ScheduleFacebookListingCommand(
-//                    $this->getUser(),
-//                    $facebookAlbums,
-//                    $facebookGroupId,
-//                    $selectedItems,
-//                    $listingOptions
-//                );
-//            }
-//
-//            $this->dispatchNow($command);
-//
-//            return $this->setData(['msg' =>'Items scheduled successfully to sale.'])->respond();
-//        } catch (FacebookAuthenticationException $e) {
-//            $msg = 'Your facebook credentials are invalid. Please re-authorize '.env('APP_NAME').' for your facebook account, via our settings page.';
-//            return $this->setData(['msg' => $msg])->setStatusCode(500)->respond();
-//        }catch (MissingMandatoryParametersException $e) {
-//            return $this->setStatusCode(500)->setData(['msg' => $e->getMessage() ? : 'You must select as least 1 item for listing.'])->respond();
-//        } catch (ListingConflictsWithExistingListingException $e) {
-//            return $this->setStatusCode(500)->setData(['msg' => 'The date and time block you selected conflicts with an existing listing. Please select a new block of time.'])->respond();
-//        } catch (Exception $e){
-//            return $this->setStatusCode(500)->setData(['msg' => $e->getMessage()])->respond();
-//        }
-//    }
-//
-//    /**
-//     * @param Request $request
-//     * @param         $username
-//     * @param         $flashSaleItemId
-//     *
-//     * @return \Illuminate\Http\JsonResponse
-//     */
-//    public function destroyAssociation(Request $request, $username, $flashSaleItemId)
-//    {
-//        $this->dispatchNow(new DeleteInventoryFromSaleCommand($this->getUser(), $flashSaleItemId));
-//
-//        return $this->noContent();
-//    }
 
     /**
      * @param $username

@@ -4,51 +4,51 @@
  * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Handlers\Events\Inventory;
+namespace Kabooodle\Bus\Handlers\Events\Listables;
 
 use Illuminate\Bus\Queueable;
+use Kabooodle\Models\Contracts\Listable;
 use Kabooodle\Models\Watches;
-use Kabooodle\Models\Inventory;
 use Kabooodle\Models\ListingItems;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Kabooodle\Bus\Events\Inventory\InventoryQuantityUpdatedEvent;
-use Kabooodle\Bus\Commands\Watchable\NotifyWatcherInventoryQuantityUpdatedCommand;
+use Kabooodle\Bus\Events\Listables\ListableQuantityUpdatedEvent;
+use Kabooodle\Bus\Commands\Watchable\NotifyWatcherListableQuantityUpdatedCommand;
 
 /**
  * This handler is queued.
  *
- * Class InventoryQuantityUpdatedHandler
+ * Class ListableQuantityUpdatedHandler
  */
-class InventoryQuantityUpdatedHandler implements ShouldQueue
+class ListableQuantityUpdatedHandler implements ShouldQueue
 {
     use DispatchesJobs, Queueable, SerializesModels;
 
     /**
-     * @param InventoryQuantityUpdatedEvent $event
+     * @param ListableQuantityUpdatedEvent $event
      *
      * @return bool
      */
-    public function handle(InventoryQuantityUpdatedEvent $event)
+    public function handle(ListableQuantityUpdatedEvent $event)
     {
-        $inventoryItem = $event->getInventoryItem();
+        $listableItem = $event->getListableItem();
 
-        if ($this->checkIfQuantityChangedFromZero($inventoryItem)) {
-            $this->handleItemWhoseQuantityChangedFromZero($inventoryItem);
+        if ($this->checkIfQuantityChangedFromZero($listableItem)) {
+            $this->handleItemWhoseQuantityChangedFromZero($listableItem);
         }
 
         return true;
     }
 
     /**
-     * @param Inventory $inventoryItem
+     * @param Listable $listableItem
      *
      * @return bool
      */
-    public function handleItemWhoseQuantityChangedFromZero(Inventory $inventoryItem)
+    public function handleItemWhoseQuantityChangedFromZero(Listable $listableItem)
     {
-        $listings = $this->getListingsForItem($inventoryItem);
+        $listings = $this->getListingsForItem($listableItem);
         if ($listings) {
             // Will hold a collection of listings still claimable with watchers.
             $listings = $this->reduceListingsToStillClaimableWithWatchers($listings);
@@ -56,7 +56,7 @@ class InventoryQuantityUpdatedHandler implements ShouldQueue
             foreach($listings as $listing) {
                 /** @var Watches $watcher */
                 foreach ($listing->watchers as $watcher) {
-                    $job = new NotifyWatcherInventoryQuantityUpdatedCommand($watcher->watcher, $listing);
+                    $job = new NotifyWatcherListableQuantityUpdatedCommand($watcher->watcher, $listing);
                     $this->dispatch($job);
                 }
             }
@@ -66,11 +66,11 @@ class InventoryQuantityUpdatedHandler implements ShouldQueue
     }
 
     /**
-     * @param Inventory $model
+     * @param Listable $model
      *
      * @return bool
      */
-    public function checkIfQuantityChangedFromZero(Inventory $model)
+    public function checkIfQuantityChangedFromZero(Listable $model)
     {
         $originalQuantity = $model->getOriginal('initial_qty');
 
@@ -78,13 +78,13 @@ class InventoryQuantityUpdatedHandler implements ShouldQueue
     }
 
     /**
-     * @param Inventory $inventoryItem
+     * @param Listable $listableItem
      *
      * @return bool|ListingItems
      */
-    public function getListingsForItem(Inventory $inventoryItem)
+    public function getListingsForItem(Listable $listableItem)
     {
-        $listings = $inventoryItem->listings;
+        $listings = $listableItem->listings;
 
         return $listings->count() > 0 ? $listings : false;
     }
