@@ -1576,22 +1576,22 @@ if (! function_exists('userOrGuest')) {
 
 if (! function_exists('user')) {
     /**
-     * @return \Kabooodle\Models\User|null
+     * @param bool $ignoreApiAuth
+     *
+     * @return \Illuminate\Auth\GenericUser|\Illuminate\Database\Eloquent\Model|\Kabooodle\Models\User|null
      */
-    function user()
+    function user($ignoreApiAuth = false)
     {
-        static $apiAuth;
-
         if ($auth = Auth::user()) {
             return $auth;
         }
 
-        if (!$apiAuth) {
-            $apiAuth = app('Dingo\Api\Auth\Auth');
-        }
+        if (! $ignoreApiAuth) {
+            $apiAuth = app()->make(Dingo\Api\Auth\Auth::class);
 
-        if ($apiAuth->check(true)) {
-            return $apiAuth->user();
+            if ($user = $apiAuth->user()) {
+                return $user;
+            }
         }
 
         return $auth;
