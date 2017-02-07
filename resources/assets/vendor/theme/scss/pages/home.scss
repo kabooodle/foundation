@@ -1,5 +1,6 @@
 $prpl-primary : #9446ed;
 $blue-text-primary: #565f7e;
+$pink-primary : #f5b9f6;
 
 html,body {
   background-color: #fff;
@@ -9,850 +10,889 @@ body {
 }
 
 
-.collapsing{
-  -webkit-transition: none;
-  transition: none;
-}
-.collapseable.show {
-  position: fixed;
-  width: 100%;
-  left: 0;
-  top: 0;
-  height: 100%;
-  margin: 0 auto;
-  text-align: center;
-  padding: 75px 0 0 0;
-  background: rgba(0,0,0,.85);
-  z-index: 9999;
-  .navbar-toggler {
-    color: #fff;
-    position: absolute;
-    top: 25px;
-    right: 25px;
-    font-size:25px;
-  }
-}
+.home-content {
 
-.navbar-toggler {
-  display: inline-block !important;
-}
-
-// Boilerplate
-.section {
-  height: 52rem;
-  padding: 50px 0;
-  postion: relative;
-  &.section-w-bg {
-    position: relative;
-    overflow: hidden;
-    .section-bg {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      top: 0;
-      left: 0;
-    }
+  .collapsing{
+    -webkit-transition: none;
+    transition: none;
   }
-  .section-title {
-    position: relative;
-    font-family: 'Kreon', serif;
-    font-size: 70px;
-    line-height: 120px;
-  }
-  .section-sub-title {
-    position: relative;
-    font-size: 24px;
-    margin-bottom:50px;
-    line-height: 46px;
-  }
-}
-
-
-.card-centered {
-  text-align: center;
-  .card-img-top {
+  .collapseable.show {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 0;
+    height: 100%;
     margin: 0 auto;
-  }
-}
-.card-as-list {
-  clear: both;
-  margin-bottom: 65px;
-  .card-icon {
-    width:100px;
-    float: left;
-    img {
-      height:100px;
-      width:100px;
-    }
-  }
-  .card-block {
-    width: 400px;
-    float: left;
-    padding-top: 0;
-  }
-  .card-title {
-    margin-top: 0;
-  }
-  .card-text {
-    font-size: 1.1rem;
-    line-height: 1.9rem;
-  }
-}
-
-.card-lg {
-  .card-title {
-    margin: 50px 0;
-  }
-}
-
-
-// HERO Section
-.hero {
-  padding: 0;
-  .section-bg {
-    background: transparent url(/assets/images/home/section_hero_bg.jpg) top center no-repeat;
-    background-size: cover;
-  }
-  .hero-header {
-    padding-top: 42px;
-  }
-  .navbar-nav {
-    display: block;
-    float: none;
     text-align: center;
-    .nav-item {
-      float: none;
-      display: block;
-      font-size: 40px;
-      color: #dedede;
-      margin: 0 0 20px 0;
-      a {
-        padding: 10px 0;
-        line-height:1;
-      }
-      &:hover {
-        color: #fff;
-      }
-    }
-  }
-  .hero-inner {
-    position: relative;
-    max-width: 44em;
-    padding-top: 40px;
-  }
-  .section-title {
-    margin-bottom: 15px;
-    font-size: 100px;
-    color: white;
-    font-weight: 700;
-  }
-  .section-sub-title {
-    font-size: 30px;
-    color: white;
-    line-height: 50px;
-    max-width: 16em;
-    .sub-title-more {
-      background: url(/assets/images/home/lines.png) center bottom no-repeat;
-      height: 20px;
-      white-space: nowrap;
-      padding-bottom: 20px;
-      font-weight: 700;
-    }
-  }
-  .cta.btn {
-    background-color: $prpl-primary;
-    color: #fff;
-    font-weight: 600;
-  }
-}
-
-@media (max-width: 992px) {
-  .hero {
-    .hero-inner {
-      max-width: 36em;
-    }
-    .section-title {
-      font-size: 70px;
-      line-height: 100px;
-      margin-bottom: 50px;
-    }
-    .section-sub-title {
-      font-size: 26px;
-      line-height: 50px;
-      max-width: 16em;
-    }
-  }
-}
-
-
-
-
-// Solutions Section
-.section-solutions {
-  height: 104rem;
-  .wrapper-border {
-    border: 2px solid #eeeff2;
-  }
-  .section-title,
-  .card-title {
-    color: $blue-text-primary;
-  }
-  .section-sub-title {
-    color: #bcbfd1;
-  }
-  .card-title {
-    font-weight:600;
-  }
-  .card-text {
-    color: #687296;
-  }
-}
-
-
-
-
-// Pricing Section
-.section-pricing {
-  height: 58rem;
-  .section-bg {
-    background: transparent url(/assets/images/home/section_pricing_bg.jpg) top center no-repeat;
-    background-size: cover;
-  }
-  .section-title {
-    color: #fff;
-    position: relative;
-  }
-  .section-sub-title {
-    position: relative;
-    color: #c7eedf;
-  }
-  .col-bg {
-    background: transparent url(/assets/images/home/pricing_col_bg.png) repeat;
-  }
-  .row-eq-height {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-  }
-  .row-pricing {
-    margin-top: 50px;
-  }
-  .col-price {
-    padding: 15px 0 0 0;
-    margin: 0 12px;
-    .subscription-name {
-      text-transform: uppercase;
+    padding: 50px 0 0 0;
+    background: url(/assets/images/home/overlaybg.png) repeat;
+    z-index: 10000;
+    .navbar-toggler {
       color: #fff;
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 50px;
-    }
-    .the-price {
-      color: #fff;
-      font-family: Kreon, serif;
-      font-weight: 700;
-      font-size: 90px;
-      margin-bottom: 50px;
-    }
-    .features {
-      margin: 0;
-      padding: 0;
-      li {
-        font-size: 19px;
-        list-style-type: none;
-        text-align: center;
-        color: #fff;
-        margin: 0 0 10px 0;
-      }
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size:25px;
     }
   }
-  .col-price-basic {
-    margin-top: 100px;
-    height: 558px;
+
+  .navbar-toggler {
+    display: inline-block !important;
+    position: fixed;
+    top: 20px;
+    right: 19px;
+    color: #9446ed;
+    font-size: 25px;
+    z-index: 8999;
   }
-  .col-price-merchant {
-    margin-top: 50px;
-    height: 608px;
-  }
-  .col-price-merchant-plus {
-    margin-top: 0px;
-    height: 658px;
-  }
-  .try-wrapper {
-    text-align:center;
-    margin: 20px auto 0;
-  }
-}
 
-
-
-
-// Services Section
-.section-services {
-  .section-title,
-  .card-title {
-    color: $blue-text-primary;
-  }
-  .section-sub-title {
-    color: #bcbfd1;
-  }
-  .card-title {
-    font-weight:600;
-  }
-  .card-text {
-    color: #687296;
-    font-size: 1.1rem;
-    line-height: 1.9rem;
-  }
-}
-
-
-
-
-// About Section
-.section-about {
-  .section-bg {
-    background: transparent url(/assets/images/home/section_about_bg.jpg) top center no-repeat;
-    background-size: cover;
-  }
-  .section-title {
-    color: #fff;
-  }
-  .section-sub-title {
-    color: #dda8d7;
-    margin: 0 auto;
-    width: 70rem;
-  }
-  .row-stats {
-    margin-top: 145px;
-    .stat-title {
-      color: #fff;
-      font-family: Kreon, serif;
-      font-size: 200px;
-      margin-bottom: 0px;
-      line-height: 180px;
-    }
-    .stat-subtitle {
-      color: #dda8d7;
-      font-size: 34px;
-    }
-  }
-}
-
-
-
-
-// Ready Section
-.section-ready {
-  height: 30rem;
-  .section-bg {
-    background: transparent url(/assets/images/home/section_ready_bg.jpg) top center no-repeat;
-    background-size: cover;
-  }
-  .section-title {
-    color: #fff;
-  }
-  .section-sub-title {
-    color: #cdc8eb;
-  }
-  .cta-group {
-    position: relative;
-    .btn {
-      width: 240px;
-      color: #fff;
-      font-weight: 700;
-      &:last-of-type {
-        margin-left: 25px;
-      }
-    }
-    .btn.cta-ready {
-      background: #30c283;
-      margin: 0 auto;
-    }
-    .btn.cta-questions {
-      background: $prpl-primary;
-    }
-  }
-}
-
-
-
-
-
-// Footer Section
-.section-footer {
-  display: table-row;
-}
-
-
-.navbar-nav:before,
-.navbar-nav:after {
-  content: " ";
-  display: table;
-}
-
-
-@media (max-width: 991px) {
-  .section {
-    padding: 15px 1rem;
-  }
-}
-
-
-@media (max-width: 1199px) {
+  // Boilerplate
   .section {
     height: 52rem;
-  }
-  .hero {
-    .hero-inner {
-      max-width: 36em;
-      padding-top: 18px;
-    }
-    .hero-header {
-      padding-top: 22px;
+    padding: 50px 0;
+    postion: relative;
+    &.section-w-bg {
+      position: relative;
+      overflow: hidden;
+      .section-bg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        top: 0;
+        left: 0;
+      }
     }
     .section-title {
+      position: relative;
+      font-family: 'Kreon', serif;
       font-size: 70px;
-      font-size: 70px;
-      line-height: 100px;
-      margin-bottom: 50px;
-    }
-    .section-sub-title {
-      font-size: 26px;
-      line-height: 50px;
-      max-width: 16em;
-    }
-  }
-
-  .section-solutions {
-    height: 136rem;
-    .card-as-list {
-      text-align: center;
-      margin-bottom: 35px;
-      .card-block {
-        padding: 1.25rem .25rem;
-      }
-      .card-icon {
-        margin: 0 auto;
-        float: none;
-      }
-    }
-  }
-
-  .section-pricing .col-price {
-    .subscription-name {
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
-    .the-price {
-      font-size: 60px;
-      margin-bottom: 20px;
-    }
-  }
-
-
-  .section-services {
-    .card-block {
-      padding: 0 1rem;
-    }
-    .card-title {
-      margin: 30px 0;
-    }
-  }
-
-  .section-about .row-stats {
-    .stat-title {
-      font-size: 150px;
       line-height: 120px;
     }
-    .stat-subtitle {
-      font-size: 22px;
-    }
-  }
-
-  .section-ready {
-    height: 25rem;
-  }
-}
-
-
-
-@media (max-width: 767px) {
-  .section {
-    .section-title {
-      font-size: 50px;
-      line-height: 100px;
-    }
     .section-sub-title {
-      font-size: 20px;
+      position: relative;
+      font-size: 24px;
+      margin-bottom:50px;
+      line-height: 46px;
     }
   }
 
-  .hero {
-    max-height: 45rem;
-    .hero-inner {
-      max-width: 36em;
-      padding-top: 8px;
-    }
-    .section-title {
-      font-size: 66px;
-      line-height: 90px;
-      margin-bottom: 50px;
-    }
-    .section-sub-title {
-      font-size: 22px;
-      line-height: 40px;
-      max-width: 16em;
-    }
-  }
 
-  .section-solutions {
-    height: 212rem;
+  .row:last-child {
     .card-as-list {
+      margin-bottom: 0;
+    }
+  }
+  .card-centered {
+    text-align: center;
+    .card-img-top {
+      margin: 0 auto;
+    }
+  }
+  .card-as-list {
+    clear: both;
+    margin-bottom: 65px;
+    .card-icon {
+      width:100px;
+      float: left;
+      img {
+        height:100px;
+        width:100px;
+      }
+    }
+    .card-block {
+      width: 400px;
+      float: left;
+      padding-top: 0;
+    }
+    .card-title {
+      margin-top: 0;
+    }
+    .card-text {
+      font-size: 1.1rem;
+      line-height: 1.9rem;
+    }
+  }
+
+  .card-lg {
+    .card-title {
+      margin: 50px 0;
+    }
+  }
+
+
+  // HERO Section
+  .hero {
+    padding: 0;
+    .section-bg {
+      background: transparent url(/assets/images/home/section_hero_bg.jpg) top center no-repeat;
+      background-size: cover;
+    }
+    .hero-header {
+      padding-top: 42px;
+    }
+    .navbar-nav {
+      display: block;
+      float: none;
       text-align: center;
-      margin-bottom: 35px;
-      .card-block {
-        padding: 0 0 1.25rem 0;
-        width: 100%;
+      .nav-item {
+        float: none;
+        display: block;
+        font-size: 40px;
+        color: #fff;
+        margin: 0 0 20px 0;
+        a {
+          padding: 10px 0;
+          line-height:1;
+        }
+      }
+    }
+    .hero-inner {
+      position: relative;
+      max-width: 44em;
+      padding-top: 40px;
+    }
+    .section-title {
+      margin-bottom: 15px;
+      font-size: 100px;
+      color: white;
+      font-weight: 700;
+    }
+    .section-sub-title {
+      font-size: 30px;
+      color: white;
+      line-height: 50px;
+      max-width: 16em;
+      .sub-title-more {
+        background: url(/assets/images/home/lines.png) center bottom no-repeat;
+        height: 20px;
+        white-space: nowrap;
+        padding-bottom: 20px;
+        font-weight: 700;
+      }
+    }
+    .cta.btn {
+      background-color: $prpl-primary;
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 992px) {
+    .hero {
+      .hero-inner {
+        max-width: 36em;
+      }
+      .section-title {
+        font-size: 70px;
+        line-height: 100px;
+        margin-bottom: 50px;
+      }
+      .section-sub-title {
+        font-size: 26px;
+        line-height: 50px;
+        max-width: 16em;
       }
     }
   }
 
+
+
+
+  // Solutions Section
+  .section-solutions {
+    height: 104rem;
+    .wrapper-border {
+      border: 2px solid #eeeff2;
+    }
+    .section-title,
+    .card-title {
+      color: $blue-text-primary;
+    }
+    .section-sub-title {
+      color: #bcbfd1;
+    }
+    .card-title {
+      font-weight:600;
+    }
+    .card-text {
+      color: #687296;
+    }
+  }
+
+
+
+
+  // Pricing Section
   .section-pricing {
-    height: 106rem;
+    height: 58rem;
+    .section-bg {
+      background: transparent url(/assets/images/home/section_pricing_bg.jpg) top center no-repeat;
+      background-size: cover;
+    }
+    .section-title {
+      color: #fff;
+      position: relative;
+    }
+    .section-sub-title {
+      position: relative;
+      color: #c7eedf;
+    }
+    .col-bg {
+      background: transparent url(/assets/images/home/pricing_col_bg.png) repeat;
+    }
     .row-eq-height {
-      display: block;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+    }
+    .row-pricing {
+      margin-top: 50px;
     }
     .col-price {
-      padding-bottom: 25px;
-      margin: 0 auto 25px;
+      padding: 15px 0 0 0;
+      margin: 0 12px;
+      .subscription-name {
+        text-transform: uppercase;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 50px;
+      }
+      .the-price {
+        color: #fff;
+        font-family: Kreon, serif;
+        font-weight: 700;
+        font-size: 90px;
+        margin-bottom: 50px;
+      }
+      .features {
+        margin: 0;
+        padding: 0;
+        li {
+          font-size: 19px;
+          list-style-type: none;
+          text-align: center;
+          color: #fff;
+          margin: 0 0 10px 0;
+        }
+      }
+    }
+    .col-price-basic {
+      margin-top: 100px;
+      height: 558px;
+    }
+    .col-price-merchant {
+      margin-top: 50px;
+      height: 608px;
+    }
+    .col-price-merchant-plus {
+      margin-top: 0px;
+      height: 658px;
+    }
+    .try-wrapper {
+      text-align:center;
+      margin: 20px auto 0;
+    }
+  }
+
+
+
+
+  // Services Section
+  .section-services {
+    .section-title,
+    .card-title {
+      color: $blue-text-primary;
+    }
+    .section-sub-title {
+      color: #bcbfd1;
+    }
+    .card-title {
+      font-weight:600;
+    }
+    .card-text {
+      color: #687296;
+      font-size: 1.1rem;
+      line-height: 1.9rem;
+    }
+  }
+
+
+
+
+  // About Section
+  .section-about {
+    .section-bg {
+      background: transparent url(/assets/images/home/section_about_bg.jpg) top center no-repeat;
+      background-size: cover;
+    }
+    .section-title {
+      color: #fff;
+    }
+    .section-sub-title {
+      color: $pink-primary;
+      margin: 0 auto;
       width: 90%;
-      float: none;
-      height: auto !important;
+    }
+    .row-stats {
+      margin-top: 145px;
+      .stat-title {
+        color: #fff;
+        font-family: Kreon, serif;
+        font-size: 200px;
+        margin-bottom: 0px;
+        line-height: 180px;
+      }
+      .stat-subtitle {
+        color: $pink-primary;
+        font-size: 34px;
+      }
+    }
+  }
+
+
+
+
+  // Ready Section
+  .section-ready {
+    height: 30rem;
+    .section-bg {
+      background: transparent url(/assets/images/home/section_ready_bg.jpg) top center no-repeat;
+      background-size: cover;
+    }
+    .section-title {
+      color: #fff;
+    }
+    .section-sub-title {
+      color: #cdc8eb;
+    }
+    .cta-group {
+      position: relative;
+      .btn {
+        width: 240px;
+        color: #fff;
+        font-weight: 700;
+        &:last-of-type {
+          margin-left: 25px;
+        }
+      }
+      .btn.cta-ready {
+        background: #30c283;
+        margin: 0 auto;
+      }
+      .btn.cta-questions {
+        background: $prpl-primary;
+      }
+    }
+  }
+
+
+
+
+
+  // Footer Section
+  .section-footer {
+    display: table-row;
+  }
+
+
+  .navbar-nav:before,
+  .navbar-nav:after {
+    content: " ";
+    display: table;
+  }
+
+
+  @media (max-width: 991px) {
+    .section {
+      padding: 15px 1rem;
+    }
+  }
+
+
+  @media (max-width: 1199px) {
+    .section {
+      height: 52rem;
+    }
+    .hero {
+      .hero-inner {
+        max-width: 36em;
+        padding-top: 18px;
+      }
+      .hero-header {
+        padding-top: 22px;
+      }
+      .section-title {
+        font-size: 70px;
+        font-size: 70px;
+        line-height: 100px;
+        margin-bottom: 50px;
+      }
+      .section-sub-title {
+        font-size: 26px;
+        line-height: 50px;
+        max-width: 16em;
+      }
+    }
+
+    .section-solutions {
+      height: 136rem;
+      .card-as-list {
+        text-align: center;
+        margin-bottom: 35px;
+        .card-block {
+          padding: 1.25rem .25rem;
+        }
+        .card-icon {
+          margin: 0 auto;
+          float: none;
+        }
+      }
+    }
+
+    .section-pricing .col-price {
       .subscription-name {
         font-size: 14px;
         margin-bottom: 20px;
       }
-      .features li {
-        font-size: 18px;
-        line-height: 26px;
+      .the-price {
+        font-size: 60px;
+        margin-bottom: 20px;
       }
     }
-  }
 
 
-  .section-services {
-    height: 88rem;
-    .card {
-      margin-bottom: 2rem;
+    .section-services {
+      .card-block {
+        padding: 0 1rem;
+      }
+      .card-title {
+        margin: 30px 0;
+      }
     }
-    .card-block {
-      padding: 0 1rem;
-    }
-    .card-title {
-      margin: 30px 0;
-    }
-  }
 
+    .section-about .row-stats {
+      .stat-title {
+        font-size: 150px;
+        line-height: 120px;
+      }
+      .stat-subtitle {
+        font-size: 22px;
+      }
+    }
 
-  .section-about {
-    height: 36rem;
-    .section-sub-title {
-      width: 90%;
-    }
-    .row-stats {
-      margin-top: 80px;
-    }
-    .row-stats .stat-title {
-      font-size: 120px;
-      line-height: 90px;
-    }
-    .row-stats .stat-subtitle {
-      font-size: 19px;
+    .section-ready {
+      height: 25rem;
     }
   }
 
 
-  .section-ready {
-    height: 22rem;
-  }
-}
 
-@media (max-width: 575px) {
-  .section {
-    .section-title {
-      font-size: 50px;
-      line-height: 100px;
+  @media (max-width: 767px) {
+    .section {
+      .section-title {
+        font-size: 50px;
+        line-height: 100px;
+      }
+      .section-sub-title {
+        font-size: 20px;
+      }
     }
-    .section-sub-title {
-      font-size: 20px;
+
+    .hero {
+      max-height: 45rem;
+      .hero-inner {
+        max-width: 36em;
+        padding-top: 8px;
+      }
+      .section-title {
+        font-size: 66px;
+        line-height: 90px;
+        margin-bottom: 50px;
+      }
+      .section-sub-title {
+        font-size: 22px;
+        line-height: 40px;
+        max-width: 16em;
+      }
+    }
+
+    .section-solutions {
+      height: 212rem;
+      .card-as-list {
+        text-align: center;
+        margin-bottom: 35px;
+        .card-block {
+          padding: 0 0 1.25rem 0;
+          width: 100%;
+        }
+      }
+    }
+
+    .section-pricing {
+      height: 106rem;
+      .row-eq-height {
+        display: block;
+      }
+      .col-price {
+        padding-bottom: 25px;
+        margin: 0 auto 25px;
+        width: 90%;
+        float: none;
+        height: auto !important;
+        .subscription-name {
+          font-size: 14px;
+          margin-bottom: 20px;
+        }
+        .features li {
+          font-size: 18px;
+          line-height: 26px;
+        }
+      }
+    }
+
+
+    .section-services {
+      height: 88rem;
+      .card {
+        margin-bottom: 2rem;
+      }
+      .card-block {
+        padding: 0 1rem;
+      }
+      .card-title {
+        margin: 30px 0;
+      }
+    }
+
+
+    .section-about {
+      height: 36rem;
+      .section-sub-title {
+        width: 90%;
+      }
+      .row-stats {
+        margin-top: 80px;
+      }
+      .row-stats .stat-title {
+        font-size: 120px;
+        line-height: 90px;
+      }
+      .row-stats .stat-subtitle {
+        font-size: 19px;
+      }
+    }
+
+
+    .section-ready {
+      height: 22rem;
     }
   }
 
-  .hero {
-    .hero-inner {
-      max-width: 8em;
-      padding-top: 8px;
-    },
+  @media (max-width: 575px) {
+    .section {
+      .section-title {
+        font-size: 50px;
+        line-height: 100px;
+      }
+      .section-sub-title {
+        font-size: 20px;
+      }
+    }
+
+    .hero {
+      .hero-inner {
+        max-width: 8em;
+        padding-top: 8px;
+      },
     .section-title {
       font-size: 54px;
       line-height: 70px;
       margin-bottom: 50px;
     }
-    .section-sub-title {
-      font-size: 22px;
-      line-height: 40px;
-      max-width: 11em;
+      .section-sub-title {
+        font-size: 22px;
+        line-height: 40px;
+        max-width: 11em;
+      }
     }
-  }
 
 
-  .section-solutions {
-    height: 216rem;
-    .card-as-list {
-      text-align: center;
-      margin-bottom: 35px;
+    .section-solutions {
+      height: 216rem;
+      .card-as-list {
+        text-align: center;
+        margin-bottom: 35px;
+        .card-block {
+          padding: 0 0 1.25rem 0;
+          width: 100%;
+        }
+      }
+    }
+
+    .section-pricing {
+      height: 112rem;
+      .col-price {
+        .subscription-name {
+          font-size: 14px;
+          margin-bottom: 20px;
+        }
+        .features li {
+          font-size: 16px;
+          line-height: 26px;
+        }
+      }
+    }
+
+
+    .section-services {
+      height: 92rem;
+      .card {
+        margin-bottom: 2rem;
+      }
       .card-block {
-        padding: 0 0 1.25rem 0;
-        width: 100%;
+        padding: 0 1rem;
+      }
+      .card-title {
+        margin: 30px 0;
       }
     }
-  }
 
-  .section-pricing {
-    height: 112rem;
-    .col-price {
-      .subscription-name {
-        font-size: 14px;
-        margin-bottom: 20px;
+    .section-about {
+      height: 40rem;
+      .row-stats .stat-title {
+        font-size: 80px;
+        line-height: 90px;
       }
-      .features li {
-        font-size: 16px;
-        line-height: 26px;
+      .row-stats .stat-subtitle {
+        font-size: 19px;
       }
     }
-  }
 
-
-  .section-services {
-    height: 92rem;
-    .card {
-      margin-bottom: 2rem;
-    }
-    .card-block {
-      padding: 0 1rem;
-    }
-    .card-title {
-      margin: 30px 0;
+    .section-ready {
+      height: 22rem;
     }
   }
 
-  .section-about {
-    height: 40rem;
-    .row-stats .stat-title {
-      font-size: 80px;
-      line-height: 90px;
+
+
+  @media (max-width: 543px) {
+    .section {
+      .section-title {
+        font-size: 50px;
+        line-height: 100px;
+      }
+      .section-sub-title {
+        font-size: 20px;
+      }
     }
-    .row-stats .stat-subtitle {
-      font-size: 19px;
+
+    .section-solutions {
+      height: 228rem;
+      .card-as-list {
+        text-align: center;
+        margin-bottom: 35px;
+        .card-block {
+          padding: 0 0 1.25rem 0;
+          width: 100%;
+        }
+      }
     }
-  }
 
-  .section-ready {
-    height: 22rem;
-  }
-}
-
-
-
-@media (max-width: 543px) {
-  .section {
-    .section-title {
-      font-size: 50px;
-      line-height: 100px;
+    .section-pricing {
+      height: 112rem;
+      .col-price {
+        .subscription-name {
+          font-size: 14px;
+          margin-bottom: 20px;
+        }
+        .features li {
+          font-size: 16px;
+          line-height: 26px;
+        }
+      }
     }
-    .section-sub-title {
-      font-size: 20px;
-    }
-  }
 
-  .section-solutions {
-    height: 228rem;
-    .card-as-list {
-      text-align: center;
-      margin-bottom: 35px;
+    .section-services {
+      height: 92rem;
+      .card {
+        margin-bottom: 2rem;
+      }
       .card-block {
-        padding: 0 0 1.25rem 0;
+        padding: 0 1rem;
+      }
+      .card-title {
+        margin: 30px 0;
+      }
+    }
+
+    .section-about {
+      height: 60rem;
+      .row-stats {
+        margin-top: 60px;
+      }
+      .row-stats .stat-title {
+        font-size: 80px;
+        line-height: 90px;
+        margin-top: 30px;
+      }
+      .row-stats .stat-subtitle {
+        font-size: 19px;
+      }
+    }
+
+    .section-ready {
+      height: 22rem;
+    }
+  }
+
+
+  @media (max-width: 480px) {
+    .section {
+      .section-title {
+        font-size: 50px;
+        line-height: 70px;
+      }
+      .section-sub-title {
+        font-size: 18px;
+        line-height: 28px;
+      }
+    }
+
+
+    .hero {
+      max-height: 40rem;
+      .hero-inner {
+        max-width:100%;
         width: 100%;
+        text-align: center;
+      }
+      .section-bg {
+        background: url(/assets/images/home/section_hero_bg-dk.jpg) top center no-repeat;
+        background-size: cover;
+      }
+      .section-title {
+        font-size: 65px;
+        line-height: 80px;
+      }
+      .section-sub-title {
+        font-size: 20px;
+        line-height: 34px;
+        width: 100%;
+        max-width: 100%;
       }
     }
-  }
 
-  .section-pricing {
-    height: 112rem;
-    .col-price {
-      .subscription-name {
-        font-size: 14px;
-        margin-bottom: 20px;
-      }
-      .features li {
-        font-size: 16px;
-        line-height: 26px;
+    .section-solutions {
+      height: 230rem;
+      .card-as-list {
+        text-align: center;
+        margin-bottom: 35px;
+        .card-block {
+          padding: 0 0 1.25rem 0;
+          width: 100%;
+        }
       }
     }
-  }
 
-  .section-services {
-    height: 92rem;
-    .card {
-      margin-bottom: 2rem;
+    .section-pricing {
+      height: 106rem;
+      .row-eq-height {
+        display: block;
+      }
+      .col-price {
+        margin: 0 auto 25px;
+        width: 90%;
+        float: none;
+        height: auto !important;
+        padding-bottom: 25px;
+        .subscription-name {
+          font-size: 14px;
+          margin-bottom: 20px;
+        }
+        .features li {
+          font-size: 16px;
+          line-height: 26px;
+        }
+      }
     }
-    .card-block {
-      padding: 0 1rem;
-    }
-    .card-title {
-      margin: 30px 0;
-    }
-  }
 
-  .section-about {
-    height: 60rem;
-    .row-stats {
-      margin-top: 60px;
-    }
-    .row-stats .stat-title {
-      font-size: 80px;
-      line-height: 90px;
-      margin-top: 30px;
-    }
-    .row-stats .stat-subtitle {
-      font-size: 19px;
-    }
-  }
-
-  .section-ready {
-    height: 22rem;
-  }
-}
-
-
-@media (max-width: 480px) {
-  .section {
-    .section-title {
-      font-size: 50px;
-      line-height: 70px;
-    }
-    .section-sub-title {
-      font-size: 18px;
-      line-height: 28px;
-    }
-  }
-
-  .hero {
-    max-height: 40rem;
-  }
-
-  .section-solutions {
-    height: 230rem;
-    .card-as-list {
-      text-align: center;
-      margin-bottom: 35px;
+    .section-services {
+      height: 90rem;
+      .card {
+        margin-bottom: 2rem;
+      }
       .card-block {
-        padding: 0 0 1.25rem 0;
-        width: 100%;
+        padding: 0 1rem;
+      }
+      .card-title {
+        margin: 30px 0;
+      }
+    }
+
+    .section-about {
+      height: 56rem;
+      .row-stats {
+        margin-top: 60px;
+      }
+      .row-stats .stat-title {
+        font-size: 80px;
+        line-height: 90px;
+        margin-top: 30px;
+      }
+      .row-stats .stat-subtitle {
+        font-size: 19px;
+      }
+    }
+
+    .section-ready {
+      height: 24rem;
+      .cta-group .btn,
+      .cta-group .btn:last-of-type{
+        margin: 0;
+      }
+      .cta-group .btn {
+        margin-bottom: 10px !important;
       }
     }
   }
 
-  .section-pricing {
-    height: 106rem;
-    .row-eq-height {
-      display: block;
-    }
-    .col-price {
-      margin: 0 auto 25px;
-      width: 90%;
-      float: none;
-      height: auto !important;
-      padding-bottom: 25px;
-      .subscription-name {
-        font-size: 14px;
-        margin-bottom: 20px;
+
+  @media (max-width: 400px) {
+
+    .hero {
+      max-height: 40rem;
+      .section-title {
+        font-size: 56px;
+        line-height: 76px;
       }
-      .features li {
+      .section-sub-title {
         font-size: 16px;
-        line-height: 26px;
+        line-height: 36px;
       }
     }
-  }
 
-  .section-services {
-    height: 90rem;
-    .card {
-      margin-bottom: 2rem;
+    .section-solutions {
+      height: 243rem;
     }
-    .card-block {
-      padding: 0 1rem;
+    .section-pricing {
+      height: 94rem;
     }
-    .card-title {
-      margin: 30px 0;
+    .section-services {
+      height: 95rem;
     }
-  }
-
-  .section-about {
-    height: 56rem;
-    .row-stats {
-      margin-top: 60px;
+    .section-pricing {
+      height: 106rem;
     }
-    .row-stats .stat-title {
-      font-size: 80px;
-      line-height: 90px;
-      margin-top: 30px;
+    .section-about {
+      height: 58rem;
     }
-    .row-stats .stat-subtitle {
-      font-size: 19px;
+    .section-ready {
+      height: 28rem;
     }
   }
 
-  .section-ready {
-    height: 24rem;
-    .cta-group .btn,
-    .cta-group .btn:last-of-type{
-      margin: 0;
-    }
-    .cta-group .btn {
-      margin-bottom: 10px !important;
-    }
-  }
+
 }
-
-
-@media (max-width: 400px) {
-  .hero {
-    .hero-inner {
-      max-width: 6em;
-    }
-  }
-
-  .section-solutions {
-    height: 246rem;
-  }
-  .section-pricing {
-    height: 94rem;
-  }
-  .section-services {
-    height: 95rem;
-  }
-  .section-pricing {
-    height: 106rem;
-  }
-  .section-about {
-    height: 58rem;
-  }
-  .section-ready {
-    height: 28rem;
-  }
-}
-
