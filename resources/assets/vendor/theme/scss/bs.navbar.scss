@@ -1,7 +1,7 @@
 .navbar{
 	border: none;
 	margin: 0;
-	padding: 0 1rem;
+	padding: 0;
 	flex-shrink: 0;
 	min-height: $navbar-height;
 	.up{
@@ -56,13 +56,17 @@
 		top: 10px;
 	}
 }
+
+.home-content .kabooodle-brand {
+	float:none !important;
+}
+
 .kabooodle-brand,
 .kabooodle-brand.navbar-brand {
 		//background: url('/assets/images/logo/logo-white-md.png') center center no-repeat;
 		width: 132px;
 		height: 32px;
 		display: block;
-	float:none !important;
 		//text-indent: -9999px;
 	.svg-logo {
 		width: 132px;

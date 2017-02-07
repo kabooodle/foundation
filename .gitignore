@@ -7,5 +7,5 @@ Homestead.json
 !.env.example
 .phpstorm.meta.php
 _ide_helper.php
-/public/assets/css
-/public/assets/js
+/public/assets/css/*
+/public/assets/js/*
