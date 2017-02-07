@@ -41,7 +41,7 @@ class ListingsApiController extends AbstractApiController
     public function show(Request $request, $listingUuid)
     {
         try {
-            $listing = Listings::with('items')
+            $listing = Listings::with(['items', 'items.listedItem'])
                 ->where('uuid', $listingUuid)
                 ->orderBy('scheduled_for')
                 ->first();

@@ -155,7 +155,7 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
         }
 
         return [
-            'url' => $image,
+            'url' => $image->getOriginal('location'),
             'message' => $photoMessage ? : null
         ];
     }
