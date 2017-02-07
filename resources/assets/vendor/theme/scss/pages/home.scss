@@ -174,6 +174,7 @@ body {
 
 // Pricing Section
 .section-pricing {
+  height: 58rem;
   .section-bg {
     background: transparent url(/assets/images/home/section_pricing_bg.jpg) top center no-repeat;
     background-size: cover;
@@ -229,15 +230,19 @@ body {
   }
   .col-price-basic {
     margin-top: 100px;
-    height: 458px;
+    height: 558px;
   }
   .col-price-merchant {
     margin-top: 50px;
-    height: 508px;
+    height: 608px;
   }
   .col-price-merchant-plus {
     margin-top: 0px;
-    height: 558px;
+    height: 658px;
+  }
+  .try-wrapper {
+    text-align:center;
+    margin: 20px auto 0;
   }
 }
 
@@ -364,7 +369,7 @@ body {
 
 @media (max-width: 1199px) {
   .section {
-    height: 46rem;
+    height: 52rem;
   }
   .hero {
     .hero-inner {
@@ -498,21 +503,22 @@ body {
   }
 
   .section-pricing {
-    height: 42rem;
-    .col-price-basic {
-      margin-top: 75px;
-    }
-    .col-price-merchant {
-      margin-top: 35px;
+    height: 106rem;
+    .row-eq-height {
+      display: block;
     }
     .col-price {
-      width: 220px;
+      padding-bottom: 25px;
+      margin: 0 auto 25px;
+      width: 90%;
+      float: none;
+      height: auto !important;
       .subscription-name {
         font-size: 14px;
         margin-bottom: 20px;
       }
       .features li {
-        font-size: 16px;
+        font-size: 18px;
         line-height: 26px;
       }
     }
@@ -598,15 +604,8 @@ body {
   }
 
   .section-pricing {
-    height: 42rem;
-    .col-price-basic {
-      margin-top: 75px;
-    }
-    .col-price-merchant {
-      margin-top: 35px;
-    }
+    height: 112rem;
     .col-price {
-      width: 220px;
       .subscription-name {
         font-size: 14px;
         margin-bottom: 20px;
@@ -620,7 +619,7 @@ body {
 
 
   .section-services {
-    height: 88rem;
+    height: 92rem;
     .card {
       margin-bottom: 2rem;
     }
@@ -692,15 +691,8 @@ body {
   }
 
   .section-pricing {
-    height: 42rem;
-    .col-price-basic {
-      margin-top: 75px;
-    }
-    .col-price-merchant {
-      margin-top: 35px;
-    }
+    height: 112rem;
     .col-price {
-      width: 220px;
       .subscription-name {
         font-size: 14px;
         margin-bottom: 20px;
@@ -746,14 +738,15 @@ body {
 }
 
 
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .section {
     .section-title {
       font-size: 50px;
-      line-height: 100px;
+      line-height: 70px;
     }
     .section-sub-title {
-      font-size: 20px;
+      font-size: 18px;
+      line-height: 28px;
     }
   }
 
@@ -776,7 +769,7 @@ body {
 
 
   .section-solutions {
-    height: 250rem;
+    height: 230rem;
     .card-as-list {
       text-align: center;
       margin-bottom: 35px;
@@ -788,15 +781,16 @@ body {
   }
 
   .section-pricing {
-    height: 42rem;
-    .col-price-basic {
-      margin-top: 75px;
-    }
-    .col-price-merchant {
-      margin-top: 35px;
+    height: 106rem;
+    .row-eq-height {
+      display: block;
     }
     .col-price {
-      width: 220px;
+      margin: 0 auto 25px;
+      width: 90%;
+      float: none;
+      height: auto !important;
+      padding-bottom: 25px;
       .subscription-name {
         font-size: 14px;
         margin-bottom: 20px;
@@ -809,7 +803,7 @@ body {
   }
 
   .section-services {
-    height: 98rem;
+    height: 90rem;
     .card {
       margin-bottom: 2rem;
     }
@@ -822,7 +816,7 @@ body {
   }
 
   .section-about {
-    height: 70rem;
+    height: 56rem;
     .row-stats {
       margin-top: 60px;
     }
@@ -837,7 +831,36 @@ body {
   }
 
   .section-ready {
-    height: 22rem;
+    height: 24rem;
+    .cta-group .btn,
+    .cta-group .btn:last-of-type{
+      margin: 0;
+    }
+    .cta-group .btn {
+      margin-bottom: 10px !important;
+    }
+  }
+}
+
+
+@media (max-width: 400px) {
+  .section-solutions {
+    height: 246rem;
+  }
+  .section-pricing {
+    height: 94rem;
+  }
+  .section-services {
+    height: 95rem;
+  }
+  .section-pricing {
+    height: 106rem;
+  }
+  .section-about {
+    height: 58rem;
+  }
+  .section-ready {
+    height: 28rem;
   }
 }
 

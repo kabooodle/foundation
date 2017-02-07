@@ -118,64 +118,60 @@ body {
   .section-solutions .card-text {
     color: #687296; }
 
-.section-pricing .section-bg {
-  background: transparent url(/assets/images/home/section_pricing_bg.jpg) top center no-repeat;
-  background-size: cover; }
-
-.section-pricing .section-title {
-  color: #fff;
-  position: relative; }
-
-.section-pricing .section-sub-title {
-  position: relative;
-  color: #c7eedf; }
-
-.section-pricing .col-bg {
-  background: transparent url(/assets/images/home/pricing_col_bg.png) repeat; }
-
-.section-pricing .row-eq-height {
-  display: -webkit-flex;
-  display: flex; }
-
-.section-pricing .row-pricing {
-  margin-top: 50px; }
-
-.section-pricing .col-price {
-  padding: 15px 0 0 0;
-  margin: 0 12px; }
-  .section-pricing .col-price .subscription-name {
-    text-transform: uppercase;
+.section-pricing {
+  height: 58rem; }
+  .section-pricing .section-bg {
+    background: transparent url(/assets/images/home/section_pricing_bg.jpg) top center no-repeat;
+    background-size: cover; }
+  .section-pricing .section-title {
     color: #fff;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 50px; }
-  .section-pricing .col-price .the-price {
-    color: #fff;
-    font-family: Kreon, serif;
-    font-weight: 700;
-    font-size: 90px;
-    margin-bottom: 50px; }
-  .section-pricing .col-price .features {
-    margin: 0;
-    padding: 0; }
-    .section-pricing .col-price .features li {
-      font-size: 19px;
-      list-style-type: none;
-      text-align: center;
+    position: relative; }
+  .section-pricing .section-sub-title {
+    position: relative;
+    color: #c7eedf; }
+  .section-pricing .col-bg {
+    background: transparent url(/assets/images/home/pricing_col_bg.png) repeat; }
+  .section-pricing .row-eq-height {
+    display: -webkit-flex;
+    display: flex; }
+  .section-pricing .row-pricing {
+    margin-top: 50px; }
+  .section-pricing .col-price {
+    padding: 15px 0 0 0;
+    margin: 0 12px; }
+    .section-pricing .col-price .subscription-name {
+      text-transform: uppercase;
       color: #fff;
-      margin: 0 0 10px 0; }
-
-.section-pricing .col-price-basic {
-  margin-top: 100px;
-  height: 458px; }
-
-.section-pricing .col-price-merchant {
-  margin-top: 50px;
-  height: 508px; }
-
-.section-pricing .col-price-merchant-plus {
-  margin-top: 0px;
-  height: 558px; }
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 50px; }
+    .section-pricing .col-price .the-price {
+      color: #fff;
+      font-family: Kreon, serif;
+      font-weight: 700;
+      font-size: 90px;
+      margin-bottom: 50px; }
+    .section-pricing .col-price .features {
+      margin: 0;
+      padding: 0; }
+      .section-pricing .col-price .features li {
+        font-size: 19px;
+        list-style-type: none;
+        text-align: center;
+        color: #fff;
+        margin: 0 0 10px 0; }
+  .section-pricing .col-price-basic {
+    margin-top: 100px;
+    height: 558px; }
+  .section-pricing .col-price-merchant {
+    margin-top: 50px;
+    height: 608px; }
+  .section-pricing .col-price-merchant-plus {
+    margin-top: 0px;
+    height: 658px; }
+  .section-pricing .try-wrapper {
+    text-align: center;
+    margin: 20px auto 0; }
 
 .section-services .section-title,
 .section-services .card-title {
@@ -258,7 +254,7 @@ body {
 
 @media (max-width: 1199px) {
   .section {
-    height: 46rem; }
+    height: 52rem; }
   .hero .hero-inner {
     max-width: 36em;
     padding-top: 18px; }
@@ -339,18 +335,20 @@ body {
         padding: 0 0 1.25rem 0;
         width: 100%; }
   .section-pricing {
-    height: 42rem; }
-    .section-pricing .col-price-basic {
-      margin-top: 75px; }
-    .section-pricing .col-price-merchant {
-      margin-top: 35px; }
+    height: 106rem; }
+    .section-pricing .row-eq-height {
+      display: block; }
     .section-pricing .col-price {
-      width: 220px; }
+      padding-bottom: 25px;
+      margin: 0 auto 25px;
+      width: 90%;
+      float: none;
+      height: auto !important; }
       .section-pricing .col-price .subscription-name {
         font-size: 14px;
         margin-bottom: 20px; }
       .section-pricing .col-price .features li {
-        font-size: 16px;
+        font-size: 18px;
         line-height: 26px; }
   .section-services {
     height: 88rem; }
@@ -401,21 +399,15 @@ body {
         padding: 0 0 1.25rem 0;
         width: 100%; }
   .section-pricing {
-    height: 42rem; }
-    .section-pricing .col-price-basic {
-      margin-top: 75px; }
-    .section-pricing .col-price-merchant {
-      margin-top: 35px; }
-    .section-pricing .col-price {
-      width: 220px; }
-      .section-pricing .col-price .subscription-name {
-        font-size: 14px;
-        margin-bottom: 20px; }
-      .section-pricing .col-price .features li {
-        font-size: 16px;
-        line-height: 26px; }
+    height: 112rem; }
+    .section-pricing .col-price .subscription-name {
+      font-size: 14px;
+      margin-bottom: 20px; }
+    .section-pricing .col-price .features li {
+      font-size: 16px;
+      line-height: 26px; }
   .section-services {
-    height: 88rem; }
+    height: 92rem; }
     .section-services .card {
       margin-bottom: 2rem; }
     .section-services .card-block {
@@ -459,19 +451,13 @@ body {
         padding: 0 0 1.25rem 0;
         width: 100%; }
   .section-pricing {
-    height: 42rem; }
-    .section-pricing .col-price-basic {
-      margin-top: 75px; }
-    .section-pricing .col-price-merchant {
-      margin-top: 35px; }
-    .section-pricing .col-price {
-      width: 220px; }
-      .section-pricing .col-price .subscription-name {
-        font-size: 14px;
-        margin-bottom: 20px; }
-      .section-pricing .col-price .features li {
-        font-size: 16px;
-        line-height: 26px; }
+    height: 112rem; }
+    .section-pricing .col-price .subscription-name {
+      font-size: 14px;
+      margin-bottom: 20px; }
+    .section-pricing .col-price .features li {
+      font-size: 16px;
+      line-height: 26px; }
   .section-services {
     height: 92rem; }
     .section-services .card {
@@ -493,12 +479,13 @@ body {
   .section-ready {
     height: 22rem; } }
 
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .section .section-title {
     font-size: 50px;
-    line-height: 100px; }
+    line-height: 70px; }
   .section .section-sub-title {
-    font-size: 20px; }
+    font-size: 18px;
+    line-height: 28px; }
   .hero .hero-inner {
     max-width: 36em;
     padding-top: 8px; }
@@ -512,7 +499,7 @@ body {
     line-height: 40px;
     max-width: 16em; }
   .section-solutions {
-    height: 250rem; }
+    height: 230rem; }
     .section-solutions .card-as-list {
       text-align: center;
       margin-bottom: 35px; }
@@ -520,13 +507,15 @@ body {
         padding: 0 0 1.25rem 0;
         width: 100%; }
   .section-pricing {
-    height: 42rem; }
-    .section-pricing .col-price-basic {
-      margin-top: 75px; }
-    .section-pricing .col-price-merchant {
-      margin-top: 35px; }
+    height: 106rem; }
+    .section-pricing .row-eq-height {
+      display: block; }
     .section-pricing .col-price {
-      width: 220px; }
+      margin: 0 auto 25px;
+      width: 90%;
+      float: none;
+      height: auto !important;
+      padding-bottom: 25px; }
       .section-pricing .col-price .subscription-name {
         font-size: 14px;
         margin-bottom: 20px; }
@@ -534,7 +523,7 @@ body {
         font-size: 16px;
         line-height: 26px; }
   .section-services {
-    height: 98rem; }
+    height: 90rem; }
     .section-services .card {
       margin-bottom: 2rem; }
     .section-services .card-block {
@@ -542,7 +531,7 @@ body {
     .section-services .card-title {
       margin: 30px 0; }
   .section-about {
-    height: 70rem; }
+    height: 56rem; }
     .section-about .row-stats {
       margin-top: 60px; }
     .section-about .row-stats .stat-title {
@@ -552,7 +541,26 @@ body {
     .section-about .row-stats .stat-subtitle {
       font-size: 19px; }
   .section-ready {
-    height: 22rem; } }
+    height: 24rem; }
+    .section-ready .cta-group .btn,
+    .section-ready .cta-group .btn:last-of-type {
+      margin: 0; }
+    .section-ready .cta-group .btn {
+      margin-bottom: 10px !important; } }
+
+@media (max-width: 400px) {
+  .section-solutions {
+    height: 246rem; }
+  .section-pricing {
+    height: 94rem; }
+  .section-services {
+    height: 95rem; }
+  .section-pricing {
+    height: 106rem; }
+  .section-about {
+    height: 58rem; }
+  .section-ready {
+    height: 28rem; } }
 
 @media (min-width: 768px) {
   .navbar-collapse.collapse {

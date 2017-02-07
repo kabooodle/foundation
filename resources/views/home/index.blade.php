@@ -100,9 +100,9 @@
             <div class="hero-inner">
                 <h1 class="hero-title section-title">Streamline your direct sales business.</h1>
                 <h2 class="section-sub-title">Connect with clients, manage inventory, track and ship sales. <span class="sub-title-more">Everything &amp; More!</span></h2>
-                <button class="btn cta prpl-primary btn-lg">
+                <a href="#pricing" class="btn cta prpl-primary btn-lg">
                     Get started for free
-                </button>
+                </a>
             </div>
         </div>
     </section>
@@ -182,6 +182,9 @@
                         <li>Watch and Follow Sales</li>
                         <li>Always Free. Forever. Free</li>
                     </ul>
+                    <div class="try-wrapper text-center center-block">
+                        <button class="_700 btn warning btn-lg">Get it!</button>
+                    </div>
                 </div>
                 <div class="col-md-4 col-bg col-price col-price-merchant">
                     <h2 class="subscription-name text-center">Merchant</h2>
@@ -195,6 +198,9 @@
                         <li>Custom Social Features</li>
                         <li>Inventory Groupings</li>
                     </ul>
+                    <div class="try-wrapper text-center center-block">
+                        <button class="_700 btn warning btn-lg">Try it!</button>
+                    </div>
                 </div>
                 <div class="col-md-4 col-bg col-price  col-price-merchant-plus">
                     <h2 class="subscription-name text-center">Merchant Plus</h2>
@@ -209,6 +215,9 @@
                         <li>Print Shipping Labels</li>
                         <li>$.03 cents per label</li>
                     </ul>
+                    <div class="text-center try-wrapper center-block">
+                        <button class="_700 btn warning btn-lg">Try it!</button>
+                    </div>
                 </div>
             </div>
         </div>
