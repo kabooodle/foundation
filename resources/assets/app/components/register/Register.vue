@@ -7,8 +7,9 @@
             <div class="col-xs-12">
                 <div class="md-form-group">
                     <select class="md-input" name="account_type" data-toggle="selectpicker" data-style="btn white" data-width="100%">
-                        <option data-subtext="Always free" value="basic" selected="selected">Basic</option>
-                        <option data-subtext="30 day free trial" value="merchant">Merchant</option>
+                        <option data-subtext="Always free" value="basic" :selected="selected_account == 'basic'">Basic</option>
+                        <option data-subtext="30 day free trial" value="merchant" :selected="selected_account == 'merchant'">Merchant</option>
+                        <option data-subtext="30 day free trial" value="merchant" :selected="selected_account == 'merchant_plus'">Merchant Plus</option>
                     </select>
                     <label>Account Type:</label>
                 </div>
@@ -51,7 +52,7 @@
             <label>Referred By User <small class="">(username or email)</small></label>
         </div>
 
-        <p class="">By clicking on "Create Account" below, you are agreeing to the <a href="" class="text-info">Terms of Service</a> and the <a href="" class="text-info">Privacy Policy</a>.</p>
+        <p class="">By clicking on "Create Account" below, you are agreeing to the <a href="" class="text-primary">Terms of Service</a> and the <a href="" class="text-primary">Privacy Policy</a>.</p>
 
         <button type="submit" class="btn primary btn-block p-x-md">Create Account</button>
     </form>
@@ -74,6 +75,8 @@
         },
         data() {
             return {
+                query_params: {},
+                selected_account: 'basic',
                 accountType: 'basic',
                 firstName: null,
                 lastName: null,
@@ -82,6 +85,29 @@
                 password: null,
                 referredBy: null,
             }
+        },
+        created(){
+            this.checkQueryString(location.search);
+        },
+        methods: {
+            checkQueryString(query){
+                    if (!query) {
+                        return { };
+                    }
+
+                    if(/[?&]a=/.test(location.search)) {
+                        let params = (/^[?#]/.test(query) ? query.slice(1) : query)
+                            .split('&')
+                            .reduce((params, param) => {
+                                let [ key, value ] = param.split('=');
+                                params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+                                return params;
+                            }, { });
+
+                        this.query_params = params;
+                        this.selected_account = params.a;
+                    }
+            },
         },
         computed: {
             registerData: function () {
