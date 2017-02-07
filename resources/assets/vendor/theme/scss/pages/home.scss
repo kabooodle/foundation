@@ -89,7 +89,7 @@ body {
 
   .row:last-child {
     .card-as-list {
-      margin-bottom: 0;
+      //margin-bottom: 0;
     }
   }
   .card-centered {
@@ -374,9 +374,11 @@ body {
 
   // Ready Section
   .section-ready {
-    height: 30rem;
+    height: 24rem;
+    //background-color: #fff;
+    //color: #f77a99;
     .section-bg {
-      background: transparent url(/assets/images/home/section_ready_bg.jpg) top center no-repeat;
+      background: transparent url(/assets/images/home/section_ready_bg.jpg) center no-repeat;
       background-size: cover;
     }
     .section-title {

@@ -8,12 +8,12 @@
                     'sales_analytics' => [
                             'title' => 'Sales analytics',
                             'body' => 'Understand which sales have better outcomes.  The who, what, where, when, why, and how.',
-                            'icon'=>'friends_w_benefits.png'
+                            'icon'=>'salesanalytics.png'
                     ],
                 'inventory' => [
                         'title' => 'Inventory',
                         'body' => 'Unlimited items, &amp; quantities. Includes tools to ensure you never oversell an item again.',
-                    'icon'=>'friends_w_benefits.png'
+                    'icon'=>'inventory.png'
                 ],
                 'wanted' => [
                         'title' => 'Hey, I wanted that!',
@@ -32,7 +32,7 @@
                 ],
                     'claiming' => [
                             'title' => 'Claiming',
-                            'icon' => 'claiming.png',
+                            'icon' => 'claiming_a.png',
                             'body' => 'Accept and cancel claims quickly.  Guests can claim too. Everyone can claim!'
                     ],
                     'sell' => [
@@ -282,7 +282,7 @@
             <div class="row">
                 <div class="col-md-4 b-r b-r-2x">
                     <div class="card no-border card-centered card-lg">
-                        <img src="/assets/images/home/icons/cloud_secure.png" class="card-img-top">
+                        <img src="{{staticAsset('/assets/images/home/icons/cloud_secure.png')}}" class="card-img-top">
                         <div class="card-block">
                             <h4 class="card-title">Secure Infrastructure</h4>
                             <p class="card-text">We’ve employed secure connections where information is encrypted to ensure maximum uptime and safety of your records.</p>
@@ -291,16 +291,16 @@
                 </div>
                 <div class="col-md-4  b-r b-r-2x">
                     <div class="card no-border card-centered card-lg">
-                        <img src="/assets/images/home/icons/support.png" class="card-img-top">
+                        <img src="{{staticAsset('/assets/images/home/icons/support.png')}}" class="card-img-top">
                         <div class="card-block">
                             <h4 class="card-title">Friendly Support</h4>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <p class="card-text">Our knowledgeable support team is eager to assist you with any questions you may have.  If you get bored, we love to chat!</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card no-border card-centered card-lg">
-                        <img src="/assets/images/home/icons/device_friendly.png" class="card-img-top">
+                        <img src="{{staticAsset('/assets/images/home/icons/device_friendly.png')}}" class="card-img-top">
                         <div class="card-block">
                             <h4 class="card-title">Device Friendly</h4>
                             <p class="card-text">Whether using a PC, Mac, or mobile device, your data is always accessible and in sync.  Our native iPhone app is also handy.</p>
