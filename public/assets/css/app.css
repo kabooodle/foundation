@@ -10783,6 +10783,12 @@ body.on-trial.header-condensed ~ .kabooodle_app_inner {
   width: 100%;
   height: 100%; }
 
+.home-content .app {
+  display: block; }
+
+.home-content .app-footer {
+  display: block; }
+
 .app-footer {
   display: table-row; }
 

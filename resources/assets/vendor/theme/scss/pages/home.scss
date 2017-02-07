@@ -486,7 +486,7 @@ body {
   }
 
   .section-solutions {
-    height: 216rem;
+    height: 212rem;
     .card-as-list {
       text-align: center;
       margin-bottom: 35px;
@@ -534,7 +534,13 @@ body {
 
 
   .section-about {
-    height: 40rem;
+    height: 36rem;
+    .section-sub-title {
+      width: 90%;
+    }
+    .row-stats {
+      margin-top: 80px;
+    }
     .row-stats .stat-title {
       font-size: 120px;
       line-height: 90px;
@@ -629,8 +635,201 @@ body {
   .section-about {
     height: 40rem;
     .row-stats .stat-title {
-      font-size: 120px;
+      font-size: 80px;
       line-height: 90px;
+    }
+    .row-stats .stat-subtitle {
+      font-size: 19px;
+    }
+  }
+
+  .section-ready {
+    height: 22rem;
+  }
+}
+
+
+
+@media (max-width: 543px) {
+  .section {
+    .section-title {
+      font-size: 50px;
+      line-height: 100px;
+    }
+    .section-sub-title {
+      font-size: 20px;
+    }
+  }
+
+  .hero {
+    .hero-inner {
+      max-width: 36em;
+      padding-top: 8px;
+    },
+  .section-title {
+    font-size: 66px;
+    line-height: 90px;
+    margin-bottom: 50px;
+  }
+    .section-sub-title {
+      font-size: 22px;
+      line-height: 40px;
+      max-width: 16em;
+    }
+  }
+
+
+  .section-solutions {
+    height: 228rem;
+    .card-as-list {
+      text-align: center;
+      margin-bottom: 35px;
+      .card-block {
+        padding: 0 0 1.25rem 0;
+        width: 100%;
+      }
+    }
+  }
+
+  .section-pricing {
+    height: 42rem;
+    .col-price-basic {
+      margin-top: 75px;
+    }
+    .col-price-merchant {
+      margin-top: 35px;
+    }
+    .col-price {
+      width: 220px;
+      .subscription-name {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .features li {
+        font-size: 16px;
+        line-height: 26px;
+      }
+    }
+  }
+
+  .section-services {
+    height: 92rem;
+    .card {
+      margin-bottom: 2rem;
+    }
+    .card-block {
+      padding: 0 1rem;
+    }
+    .card-title {
+      margin: 30px 0;
+    }
+  }
+
+  .section-about {
+    height: 60rem;
+    .row-stats {
+      margin-top: 60px;
+    }
+    .row-stats .stat-title {
+      font-size: 80px;
+      line-height: 90px;
+      margin-top: 30px;
+    }
+    .row-stats .stat-subtitle {
+      font-size: 19px;
+    }
+  }
+
+  .section-ready {
+    height: 22rem;
+  }
+}
+
+
+@media (max-width: 400px) {
+  .section {
+    .section-title {
+      font-size: 50px;
+      line-height: 100px;
+    }
+    .section-sub-title {
+      font-size: 20px;
+    }
+  }
+
+  .hero {
+    .hero-inner {
+      max-width: 36em;
+      padding-top: 8px;
+    },
+  .section-title {
+    font-size: 66px;
+    line-height: 90px;
+    margin-bottom: 50px;
+  }
+    .section-sub-title {
+      font-size: 22px;
+      line-height: 40px;
+      max-width: 16em;
+    }
+  }
+
+
+  .section-solutions {
+    height: 250rem;
+    .card-as-list {
+      text-align: center;
+      margin-bottom: 35px;
+      .card-block {
+        padding: 0 0 1.25rem 0;
+        width: 100%;
+      }
+    }
+  }
+
+  .section-pricing {
+    height: 42rem;
+    .col-price-basic {
+      margin-top: 75px;
+    }
+    .col-price-merchant {
+      margin-top: 35px;
+    }
+    .col-price {
+      width: 220px;
+      .subscription-name {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .features li {
+        font-size: 16px;
+        line-height: 26px;
+      }
+    }
+  }
+
+  .section-services {
+    height: 98rem;
+    .card {
+      margin-bottom: 2rem;
+    }
+    .card-block {
+      padding: 0 1rem;
+    }
+    .card-title {
+      margin: 30px 0;
+    }
+  }
+
+  .section-about {
+    height: 70rem;
+    .row-stats {
+      margin-top: 60px;
+    }
+    .row-stats .stat-title {
+      font-size: 80px;
+      line-height: 90px;
+      margin-top: 30px;
     }
     .row-stats .stat-subtitle {
       font-size: 19px;

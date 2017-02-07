@@ -259,19 +259,19 @@
         <h1 id="about" class="section-title text-center">About us</h1>
         <h2 class="section-sub-title text-center">We are a dedicated team, ready and available to help you. We have over 25 years enterprise software and business experience, and over 40 years of combined happiness experience.</h2>
         <div class="row row-stats">
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <h1 class="stat-title text-center">5</h1>
                 <h2 class="stat-subtitle text-center">Team members</h2>
             </div>
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <h1 class="stat-title text-center">11</h1>
                 <h2 class="stat-subtitle text-center">Children</h2>
             </div>
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <h1 class="stat-title text-center">4</h1>
                 <h2 class="stat-subtitle text-center">Languages</h2>
             </div>
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <h1 class="stat-title text-center">33</h1>
                 <h2 class="stat-subtitle text-center">Apple products</h2>
             </div>
