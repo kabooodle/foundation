@@ -166,7 +166,7 @@ class Listings extends AbstractListingModel
     }
 
     /**
-     * @return \Illuminate\DatabASe\Eloquent\Relations\HASMany
+     * @return \Illuminate\Database\Eloquent\Relations\HASMany
      */
     public function listingItems()
     {
@@ -174,7 +174,7 @@ class Listings extends AbstractListingModel
     }
 
     /**
-     * @return \Illuminate\DatabASe\Eloquent\Relations\HASMany
+     * @return \Illuminate\Database\Eloquent\Relations\HASMany
      */
     public function items()
     {
@@ -182,7 +182,7 @@ class Listings extends AbstractListingModel
     }
 
     /**
-     * @return \Illuminate\DatabASe\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function owner()
     {
@@ -391,5 +391,14 @@ class Listings extends AbstractListingModel
         }
 
         return $this->scheduled_for;
+    }
+
+    public function loadItemsListedItem()
+    {
+        foreach ($this->items as $item) {
+            if ($item->relations['listedItem'] == null) {
+                $item->load('listedItem');
+            }
+        }
     }
 }

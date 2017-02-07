@@ -72,7 +72,6 @@ class CreateInventoryGroupingCommandHandler
                 $grouping->tag($command->getCategories());
             }
 
-            $grouping->cover_photo_file_key = $file->getOriginal('location');
             $grouping->cover_photo_file_id = $file->id;
 
             $grouping->save();

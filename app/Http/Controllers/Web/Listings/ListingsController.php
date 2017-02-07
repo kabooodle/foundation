@@ -57,13 +57,15 @@ class ListingsController extends Controller
      */
     public function show(Request $request, $listingUuid)
     {
-        $listing = Listings::with(['items', 'items.listedItem'])
+        $listing = Listings::with(['items.listedItem'])
             ->where('uuid', $listingUuid)
             ->first();
 
         if (! $listing) {
             return $this->redirect()->to('/');
         }
+
+        $listing->loadItemsListedItem();
 
         $rawCategories = collect(Listings::getStyleGroupings($listingUuid));
 

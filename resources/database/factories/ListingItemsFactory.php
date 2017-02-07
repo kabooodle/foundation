@@ -15,20 +15,24 @@ $factory->define(Kabooodle\Models\ListingItems::class, function (Faker\Generator
         'flashsale_id' => function () {
             return factory(Kabooodle\Models\FlashSales::class)->create()->id;
         },
-        'subclass_name' => array_rand([
-            Kabooodle\Models\ListingItemSingle::class,
-            Kabooodle\Models\ListingItemGrouping::class,
-        ]),
+        'subclass_name' => function () {
+            return \Kabooodle\Models\ListingItems::SUB_TYPES[array_rand(\Kabooodle\Models\ListingItems::SUB_TYPES)];
+        },
         'listable_id' => function (array $listingItem) {
-            return factory($listingItem['subclass_name'])->create()->id;
+            if ($listingItem['subclass_name'] == \Kabooodle\Models\ListingItemSingle::class) {
+                return factory(\Kabooodle\Models\Inventory::class)->create()->id;
+            } else if ($listingItem['subclass_name'] == \Kabooodle\Models\ListingItemGrouping::class) {
+                return factory(\Kabooodle\Models\InventoryGrouping::class)->create()->id;
+            }
+            return null;
         },
         'queue_id' => random_int(1, 10),
         'uuid' => \Ramsey\Uuid\Uuid::uuid4(),
         'item_message' => $faker->words(random_int(1, 5), true),
         'fb_response' => str_random(25),
         'ignore' => false,
-        'type' => array_rand(Kabooodle\Models\ListingItems::TYPES),
-        'status' => array_rand(Kabooodle\Models\ListingItems::STATUSES),
+        'type' => Kabooodle\Models\ListingItems::TYPES[array_rand(Kabooodle\Models\ListingItems::TYPES)],
+        'status' => Kabooodle\Models\ListingItems::STATUSES[array_rand(Kabooodle\Models\ListingItems::STATUSES)],
         'status_history' => '',
         'status_updated_at' => $faker->dateTime,
         'make_available_at' => $faker->dateTime,

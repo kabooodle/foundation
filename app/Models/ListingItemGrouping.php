@@ -11,5 +11,5 @@ namespace Kabooodle\Models;
  */
 class ListingItemGrouping extends ListingItems
 {
-    const LISTED_ITEM_CLASS = InventoryGrouping::class;
+    const LISTABLE_CLASS_NAME = InventoryGrouping::class;
 }

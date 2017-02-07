@@ -35,6 +35,11 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         SingleTableInheritance,
         ViewableTrait;
 
+    const SUB_TYPES = [
+        ListingItemSingle::class,
+        ListingItemGrouping::class,
+    ];
+
     /**
      * @var array
      */
@@ -100,6 +105,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status_history' => '',
         'make_available_at' => null,
         'ignore' => false,
+        'subclass_name' => ListingItemSingle::class,
         'item_message' => null,
     ];
 
@@ -125,9 +131,17 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'item_message'
     ];
 
-    public function getListedItemClass(): string
+    /**
+     * @return string
+     */
+    public function getListableClassName(): string
     {
-        return static::LISTED_ITEM_CLASS;
+        if ($this->attributes['subclass_name'] == ListingItemSingle::class) {
+            return Inventory::class;
+        } else if ($this->attributes['subclass_name'] == ListingItemGrouping::class) {
+            return InventoryGrouping::class;
+        }
+        return '';
     }
 
     /**
@@ -193,7 +207,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     public function listedItem(): BelongsTo
     {
-        return $this->belongsTo($this->getListedItemClass(), 'listable_id');
+        return $this->belongsTo($this->getListableClassName(), 'listable_id');
     }
 
     /**

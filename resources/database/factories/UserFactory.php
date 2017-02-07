@@ -10,7 +10,6 @@ $factory->define(Kabooodle\Models\User::class, function (Faker\Generator $faker)
         'city' => $faker->city,
         'username' => $faker->userName,
         'password' => bcrypt(str_random(10)),
-        'avatar' => $faker->imageUrl(),
         'activated' => false,
         'guest' => false,
         'timezone' => $faker->timezone,
