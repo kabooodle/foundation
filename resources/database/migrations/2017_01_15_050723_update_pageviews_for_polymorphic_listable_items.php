@@ -21,7 +21,7 @@ class UpdatePageviewsForPolymorphicListableItems extends Migration
         });
 
         DB::statement('ALTER TABLE `pageviews` CHANGE COLUMN `inventory_id` `listable_id` BIGINT UNSIGNED NOT NULL');
-        DB::statement('UPDATE `pageviews` SET `listable_type` = "'.\Kabooodle\Models\Inventory::class.'"');
+        DB::statement('UPDATE `pageviews` SET `listable_type` = "Kabooodle\\Models\\Inventory"');
     }
 
     /**

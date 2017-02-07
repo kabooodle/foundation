@@ -21,7 +21,7 @@ class UpdateClaimsTableForClaimablePolymorphicRelation extends Migration
         });
 
         DB::statement('ALTER TABLE `claims` CHANGE COLUMN `inventory_id` `claimable_id` BIGINT UNSIGNED NOT NULL');
-        DB::statement('UPDATE `claims` SET `claimable_type` = "'.\Kabooodle\Models\Inventory::class.'"');
+        DB::statement('UPDATE `claims` SET `claimable_type` = "Kabooodle\\Models\\Inventory"');
     }
 
     /**
