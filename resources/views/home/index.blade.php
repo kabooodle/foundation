@@ -53,17 +53,17 @@
                     'relax' => [
                             'title' => 'Relax',
                             'icon' => 'relax.png',
-                            'body' => 'You wont be spending hours trying to perform basic tasks.  We keep it simple'
+                            'body' => 'You wont be spending hours trying to perform basic tasks.  We keep things simple.'
                     ],
                     'engagements' => [
                             'title' => 'Engagements',
                             'icon' => 'engagements.png',
-                            'body' => 'Communicate directly with your customers everywhere'
+                            'body' => 'Communicate directly with your customers everywhere, anytime.'
                     ],
                 'friends' => [
                         'title' => 'Friends with benefits',
                     'icon' => 'friends_w_benefits.png',
-                    'body' => 'Refer a friend to Kabooodle and everyone earns a free month! Includes random giveaways'
+                    'body' => 'Refer a friend to Kabooodle and earn a free month! This enrolls you in random giveaways as well.'
                 ]
             ];
 
@@ -176,56 +176,97 @@
 
 
     <section class="section section-pricing section-w-bg">
-        <div class="section-bg"></div>
-        <h1 id="pricing" class="section-title text-center">Simple pricing</h1>
+        <div id="pricing"  class="section-bg"></div>
+        <sup class="achievement achievement-yr animated " style="position:absolute; top: 14px; left: 50%; display:none; font-size: 90%; ">
+            <span class="text-center primary text-white p-a-sm r-3x" style="margin-left: -120px;">Achievement unlocked! <strong class="_800">20%</strong> off!</span>
+        </sup>
+        <h1 class="section-title text-center">Simple pricing</h1>
         <h2 class="section-sub-title text-center">You can upgrade, downgrade, cancel, and dance at anytime.</h2>
+            <div class="row">
+                <div class="col-xs-4"></div>
+                <div class="col-xs-4 text-center">
+                    <div class="checkbox checkbox-slider--b-flat checkbox-slider-lg" style="width:100px; margin: 0 auto;">
+                        <label>
+                            <input
+                                    data-type="pricing-toggler"
+                                    type="checkbox"
+                                    value="1"
+                            ><span></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-4"></div>
+            </div>
+
         <div class="container">
             <div class="row row-pricing row-eq-height">
                 <div class="col-md-4 col-bg col-price col-price-basic ">
                     <h2 class="subscription-name text-center">Basic</h2>
-                    <h4 class="the-price text-center">FREE</h4>
-                    <ul class="features">
-                        <li>Make Purchases</li>
-                        <li>Track Purchase Anywhere</li>
+                    <h4 class="the-price text-center">
+                        <span class="price-mo">FREE</span>
+                        <span class="price-yr" style="display: none">FREE</span>
+                    </h4>
+                    <div class="features">
+                        <ul class="">
+                        <li>Make Purchases/Claims</li>
+                        <li>Track Purchase/Claim Anywhere</li>
                         <li>Shipment Tracking Notifications</li>
-                        <li>Watch and Follow Sales</li>
-                        <li>Always Free. Forever. Free</li>
-                    </ul>
-                    <div class="try-wrapper text-center center-block">
-                        <button class="_700 btn warning btn-lg">Get it!</button>
+                        <li>Follow Sales, Items, Users</li>
+                        <li>Always Free. Forever. Free!</li>
+                        </ul>
+                        <div class="try-wrapper text-center center-block">
+                            <button class="_700 btn warning btn-lg">Absolutely, Yes.</button>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4 col-bg col-price col-price-merchant">
                     <h2 class="subscription-name text-center">Merchant</h2>
-                    <h4 class="the-price text-center">$10</h4>
-                    <ul class="features">
-                        <li>Unlimited Inventory Items</li>
-                        <li>Unlimited Flash Sales</li>
-                        <li>Unlimited Facebook Sales</li>
-                        <li>Sales and Item Analytics</li>
-                        <li>Overselling Prevention</li>
-                        <li>Custom Social Features</li>
-                        <li>Inventory Groupings</li>
-                    </ul>
-                    <div class="try-wrapper text-center center-block">
-                        <button class="_700 btn warning btn-lg">Try it!</button>
+                    <h4 class="the-price text-center">
+                        <span class="price-mo">$10
+                            <span class="block text-md">per month</span>
+                        </span>
+                        <span class="price-yr" style="display: none">$96
+                           <span class="block text-md">per year</span>
+                        </span>
+                    </h4>
+                    <div class="features">
+                        <ul class="">
+                            <li>Unlimited Inventory Items</li>
+                            <li>Unlimited Sales</li>
+                            <li>Sales and Item Analytics</li>
+                            <li>Overselling Prevention</li>
+                            <li>Custom Social Features</li>
+                            <li>Inventory Groupings</li>
+                        </ul>
+                        <div class="try-wrapper text-center center-block">
+                            <button class="_700 btn warning btn-lg">Try Merchant</button>
+                        </div>
                     </div>
+
                 </div>
                 <div class="col-md-4 col-bg col-price  col-price-merchant-plus">
                     <h2 class="subscription-name text-center">Merchant Plus</h2>
-                    <h4 class="the-price text-center">$15</h4>
-                    <ul class="features">
-                        <li><strong>All Merchant Features</strong></li>
-                        <li><strong>+</strong></li>
-                        <li>Ship Directly Through USPS</li>
-                        <li>Ship in Bulk or Single</li>
-                        <li>Track Shipments Anywhere</li>
-                        <li>Shipment Tracking Notifications</li>
-                        <li>Print Shipping Labels</li>
-                        <li>$.03 cents per label</li>
-                    </ul>
-                    <div class="text-center try-wrapper center-block">
-                        <button class="_700 btn warning btn-lg">Try it!</button>
+                    <h4 class="the-price text-center">
+                        <span class="price-mo">$15
+                                                    <span class="block text-md">per month</span>
+                        </span>
+                        <span class="price-yr " style="display: none">$144
+                        <span class="block text-md">per year</span>
+                        </span>
+                    </h4>
+                    <div class="features">
+                        <ul class="">
+                            <li><strong>All Merchant Features</strong></li>
+                            <li><strong>+</strong></li>
+                            <li>Ship Directly Through USPS</li>
+                            <li>Ship in Bulk or Single</li>
+                            <li>Track Shipments Anywhere</li>
+                            <li>Print Shipping Labels</li>
+                            <li>$.03 cents per label</li>
+                        </ul>
+                        <div class="text-center try-wrapper center-block">
+                            <button class="_700 btn warning btn-lg">Try Merchant Plus</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -236,7 +277,7 @@
 
     <section class="section section-services">
         <h1 id="services" class="section-title text-center">Services</h1>
-        <h2 class="section-sub-title text-center">Yup, not only do we provide helpful solutions, but robust services :)</h2>
+        <h2 class="section-sub-title text-center">Yup, services built to support our robust solutions :)</h2>
         <div class="container">
             <div class="row">
                 <div class="col-md-4 b-r b-r-2x">
@@ -262,7 +303,7 @@
                         <img src="/assets/images/home/icons/device_friendly.png" class="card-img-top">
                         <div class="card-block">
                             <h4 class="card-title">Device Friendly</h4>
-                            <p class="card-text">Whether using a PC, Mac, or mobile device, your data is always accessible and in sync.  Our iPhone app is also handy.</p>
+                            <p class="card-text">Whether using a PC, Mac, or mobile device, your data is always accessible and in sync.  Our native iPhone app is also handy.</p>
                         </div>
                     </div>
                 </div>
@@ -275,7 +316,7 @@
     <section class="section section-w-bg section-about">
         <div class="section-bg"></div>
         <h1 id="about" class="section-title text-center">About us</h1>
-        <h2 class="section-sub-title text-center">We are a dedicated team, ready and available to help you. We have over 25 years enterprise software and business experience, and over 40 years of combined happiness experience.</h2>
+        <h2 class="section-sub-title text-center">We are a dedicated team, ready and available to help you continue to see success! We have over 26 years enterprise software and business experience, helping to ensure successful and happy people.</h2>
         <div class="row row-stats">
             <div class="col-sm-3">
                 <h1 class="stat-title text-center">5</h1>
@@ -290,7 +331,7 @@
                 <h2 class="stat-subtitle text-center">Languages</h2>
             </div>
             <div class="col-sm-3">
-                <h1 class="stat-title text-center">33</h1>
+                <h1 class="stat-title text-center">46</h1>
                 <h2 class="stat-subtitle text-center">Apple products</h2>
             </div>
         </div>
@@ -327,7 +368,19 @@
             collapseable_el.is(':visible') ? collapseable_el.removeClass('show').hide() : collapseable_el.addClass('show').show();
         });
 
-        //---------
+        let pricing_el = $('[data-type="pricing-toggler"]');
+        pricing_el.change(function(e){
+            if (pricing_el.is(':checked')) {
+                $('.price-mo').hide();
+                $('.price-yr').show();
+                $('.achievement-yr').show().removeClass('bounceOutUp').addClass('bounceInDown');
+            } else {
+                $('.price-mo').show();
+                $('.price-yr').hide();
+                $('.achievement-yr').removeClass('bounceInDown').addClass('bounceOutUp');
+            }
+        });
+
         $('a[href*=#]:not([href=#])').click(function() {
             if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
                     || location.hostname == this.hostname) {
