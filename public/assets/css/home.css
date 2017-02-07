@@ -4,6 +4,30 @@ html, body {
 body {
   font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif; }
 
+.collapsing {
+  transition: none; }
+
+.collapseable.show {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  top: 0;
+  height: 100%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 75px 0 0 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999; }
+  .collapseable.show .navbar-toggler {
+    color: #fff;
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    font-size: 25px; }
+
+.navbar-toggler {
+  display: inline-block !important; }
+
 .section {
   height: 52rem;
   padding: 50px 0;
@@ -63,10 +87,21 @@ body {
     background-size: cover; }
   .hero .hero-header {
     padding-top: 42px; }
-  .hero .navbar-nav .nav-item {
-    color: #dedede; }
-    .hero .navbar-nav .nav-item:hover {
-      color: #fff; }
+  .hero .navbar-nav {
+    display: block;
+    float: none;
+    text-align: center; }
+    .hero .navbar-nav .nav-item {
+      float: none;
+      display: block;
+      font-size: 40px;
+      color: #dedede;
+      margin: 0 0 20px 0; }
+      .hero .navbar-nav .nav-item a {
+        padding: 10px 0;
+        line-height: 1; }
+      .hero .navbar-nav .nav-item:hover {
+        color: #fff; }
   .hero .hero-inner {
     position: relative;
     max-width: 44em;
@@ -238,11 +273,6 @@ body {
 .section-footer {
   display: table-row; }
 
-.navbar-collapse.show {
-  display: block !important; }
-
-.navbar-collapse:before,
-.navbar-collapse:after,
 .navbar-nav:before,
 .navbar-nav:after {
   content: " ";
@@ -298,34 +328,24 @@ body {
     height: 25rem; } }
 
 @media (max-width: 767px) {
-  .navbar-nav {
-    float: none;
-    display: block;
-    text-align: center; }
-    .navbar-nav .nav-item {
-      float: none;
-      display: block; }
-      .navbar-nav .nav-item + .nav-item {
-        margin-left: 0; }
-      .navbar-nav .nav-item a {
-        padding: 10px 0;
-        display: block; }
   .section .section-title {
     font-size: 50px;
     line-height: 100px; }
   .section .section-sub-title {
     font-size: 20px; }
-  .hero .hero-inner {
-    max-width: 36em;
-    padding-top: 8px; }
-  .hero .section-title {
-    font-size: 66px;
-    line-height: 90px;
-    margin-bottom: 50px; }
-  .hero .section-sub-title {
-    font-size: 22px;
-    line-height: 40px;
-    max-width: 16em; }
+  .hero {
+    max-height: 45rem; }
+    .hero .hero-inner {
+      max-width: 36em;
+      padding-top: 8px; }
+    .hero .section-title {
+      font-size: 66px;
+      line-height: 90px;
+      margin-bottom: 50px; }
+    .hero .section-sub-title {
+      font-size: 22px;
+      line-height: 40px;
+      max-width: 16em; }
   .section-solutions {
     height: 212rem; }
     .section-solutions .card-as-list {
@@ -379,17 +399,17 @@ body {
   .section .section-sub-title {
     font-size: 20px; }
   .hero .hero-inner {
-    max-width: 36em;
+    max-width: 8em;
     padding-top: 8px; }
   .hero,
   .hero .section-title {
-    font-size: 66px;
-    line-height: 90px;
+    font-size: 54px;
+    line-height: 70px;
     margin-bottom: 50px; }
   .hero .section-sub-title {
     font-size: 22px;
     line-height: 40px;
-    max-width: 16em; }
+    max-width: 11em; }
   .section-solutions {
     height: 216rem; }
     .section-solutions .card-as-list {
@@ -430,18 +450,6 @@ body {
     line-height: 100px; }
   .section .section-sub-title {
     font-size: 20px; }
-  .hero .hero-inner {
-    max-width: 36em;
-    padding-top: 8px; }
-  .hero,
-  .hero .section-title {
-    font-size: 66px;
-    line-height: 90px;
-    margin-bottom: 50px; }
-  .hero .section-sub-title {
-    font-size: 22px;
-    line-height: 40px;
-    max-width: 16em; }
   .section-solutions {
     height: 228rem; }
     .section-solutions .card-as-list {
@@ -486,18 +494,8 @@ body {
   .section .section-sub-title {
     font-size: 18px;
     line-height: 28px; }
-  .hero .hero-inner {
-    max-width: 36em;
-    padding-top: 8px; }
-  .hero,
-  .hero .section-title {
-    font-size: 66px;
-    line-height: 90px;
-    margin-bottom: 50px; }
-  .hero .section-sub-title {
-    font-size: 22px;
-    line-height: 40px;
-    max-width: 16em; }
+  .hero {
+    max-height: 40rem; }
   .section-solutions {
     height: 230rem; }
     .section-solutions .card-as-list {
@@ -549,6 +547,8 @@ body {
       margin-bottom: 10px !important; } }
 
 @media (max-width: 400px) {
+  .hero .hero-inner {
+    max-width: 6em; }
   .section-solutions {
     height: 246rem; }
   .section-pricing {
@@ -561,20 +561,5 @@ body {
     height: 58rem; }
   .section-ready {
     height: 28rem; } }
-
-@media (min-width: 768px) {
-  .navbar-collapse.collapse {
-    display: block !important;
-    height: auto !important;
-    padding-bottom: 0;
-    width: auto;
-    border-top: 0;
-    box-shadow: none;
-    overflow: visible !important; }
-  .navbar-collapse {
-    border-top: 0;
-    box-shadow: none; }
-  .navbar-toggler {
-    display: none; } }
 
 /*# sourceMappingURL=home.css.map */

@@ -75,24 +75,33 @@
         <div class="section-bg"></div>
         <header class="hero-header" role="navigation">
             <div class="container">
-                <nav class="navbar">
+                <nav class="navbar navbar-toggleable-md">
+                    <button class="navbar-toggler pull-right navbar-toggler-right" type="button" data-toggle="collapseable" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars" aria-hidden="true"></i>
+                    </button>
                     <a class="navbar-brand kabooodle-brand" href="#">
                         @include('partials._logo_svg_lg')
                     </a>
-                    <ul class="pull-right nav navbar-nav">
-                        <li class="nav-item"><a href="#solutions">Solutions</a></li>
-                        <li class="nav-item"><a href="#pricing">Pricing</a></li>
-                        <li class="nav-item"><a href="#services">Services</a></li>
-                        <li class="nav-item"><a href="#about">About us</a></li>
-                        <li class="nav-item"><a href="#ready">Sign up</a></li>
-                        <li class="nav-item">
-                            @if(user($ignoreApiAuth = true))
-                                <a href="/profile">Account</a>
-                            @else
-                                <a href="/auth/login">Sign in</a>
-                            @endif
-                        </li>
-                    </ul>
+                    <div class="collapseable navbar-collapse hidden" id="navbarNavDropdown" style="display: none;">
+                        <button class="navbar-toggler " type="button" data-toggle="collapseable" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
+                        <ul class="navbar-nav nav">
+                            <li class="nav-item"><a href="#solutions">Solutions</a></li>
+                            <li class="nav-item"><a href="#pricing">Pricing</a></li>
+                            <li class="nav-item"><a href="#services">Services</a></li>
+                            <li class="nav-item"><a href="#about">About us</a></li>
+                            <li class="nav-item"><a href="#ready">Sign up</a></li>
+                            <li class="nav-item">
+                                @if(user($ignoreApiAuth = true))
+                                    <a href="/profile">Account</a>
+                                @else
+                                    <a href="/auth/login">Sign in</a>
+                                @endif
+                            </li>
+                        </ul>
+                    </div>
+
                 </nav>
             </div>
         </header>
@@ -309,6 +318,15 @@
 
 <script>
     $(function() {
+
+        let collapseable_toggler = $('[data-toggle="collapseable"]');
+        let collapseable_el = $('.collapseable');
+
+        collapseable_toggler.click(function(){
+            console.log('hi');
+            collapseable_el.is(':visible') ? collapseable_el.removeClass('show').hide() : collapseable_el.addClass('show').show();
+        });
+
         //---------
         $('a[href*=#]:not([href=#])').click(function() {
             if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
@@ -319,7 +337,9 @@
                 if (target.length) {
                     $('html,body').animate({
                         scrollTop: target.offset().top
-                    }, 1000);
+                    }, 1000, function(){
+                        collapseable_el.removeClass('show').hide();
+                    });
                     return false;
                 }
             }

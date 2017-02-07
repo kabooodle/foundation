@@ -1039,7 +1039,8 @@ a.list-group-item {
 .kabooodle-brand.navbar-brand {
   width: 132px;
   height: 32px;
-  display: block; }
+  display: block;
+  float: none !important; }
   .kabooodle-brand .svg-logo,
   .kabooodle-brand.navbar-brand .svg-logo {
     width: 132px;
