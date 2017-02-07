@@ -75,24 +75,33 @@
         <div class="section-bg"></div>
         <header class="hero-header" role="navigation">
             <div class="container">
-                <nav class="navbar">
+                <nav class="navbar navbar-toggleable-md">
+                    <button class="navbar-toggler pull-right navbar-toggler-right" type="button" data-toggle="collapseable" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars" aria-hidden="true"></i>
+                    </button>
                     <a class="navbar-brand kabooodle-brand" href="#">
                         @include('partials._logo_svg_lg')
                     </a>
-                    <ul class="pull-right nav navbar-nav">
-                        <li class="nav-item"><a href="#solutions">Solutions</a></li>
-                        <li class="nav-item"><a href="#pricing">Pricing</a></li>
-                        <li class="nav-item"><a href="#services">Services</a></li>
-                        <li class="nav-item"><a href="#about">About us</a></li>
-                        <li class="nav-item"><a href="#ready">Sign up</a></li>
-                        <li class="nav-item">
-                            @if(user($ignoreApiAuth = true))
-                                <a href="/profile">Account</a>
-                            @else
-                                <a href="/auth/login">Sign in</a>
-                            @endif
-                        </li>
-                    </ul>
+                    <div class="collapseable navbar-collapse hidden" id="navbarNavDropdown" style="display: none;">
+                        <button class="navbar-toggler " type="button" data-toggle="collapseable" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
+                        <ul class="navbar-nav nav">
+                            <li class="nav-item"><a href="#solutions">Solutions</a></li>
+                            <li class="nav-item"><a href="#pricing">Pricing</a></li>
+                            <li class="nav-item"><a href="#services">Services</a></li>
+                            <li class="nav-item"><a href="#about">About us</a></li>
+                            <li class="nav-item"><a href="#ready">Sign up</a></li>
+                            <li class="nav-item">
+                                @if(user($ignoreApiAuth = true))
+                                    <a href="/profile">Account</a>
+                                @else
+                                    <a href="/auth/login">Sign in</a>
+                                @endif
+                            </li>
+                        </ul>
+                    </div>
+
                 </nav>
             </div>
         </header>
@@ -100,9 +109,9 @@
             <div class="hero-inner">
                 <h1 class="hero-title section-title">Streamline your direct sales business.</h1>
                 <h2 class="section-sub-title">Connect with clients, manage inventory, track and ship sales. <span class="sub-title-more">Everything &amp; More!</span></h2>
-                <button class="btn cta prpl-primary btn-lg">
+                <a href="#pricing" class="btn cta prpl-primary btn-lg">
                     Get started for free
-                </button>
+                </a>
             </div>
         </div>
     </section>
@@ -182,6 +191,9 @@
                         <li>Watch and Follow Sales</li>
                         <li>Always Free. Forever. Free</li>
                     </ul>
+                    <div class="try-wrapper text-center center-block">
+                        <button class="_700 btn warning btn-lg">Get it!</button>
+                    </div>
                 </div>
                 <div class="col-md-4 col-bg col-price col-price-merchant">
                     <h2 class="subscription-name text-center">Merchant</h2>
@@ -195,6 +207,9 @@
                         <li>Custom Social Features</li>
                         <li>Inventory Groupings</li>
                     </ul>
+                    <div class="try-wrapper text-center center-block">
+                        <button class="_700 btn warning btn-lg">Try it!</button>
+                    </div>
                 </div>
                 <div class="col-md-4 col-bg col-price  col-price-merchant-plus">
                     <h2 class="subscription-name text-center">Merchant Plus</h2>
@@ -209,6 +224,9 @@
                         <li>Print Shipping Labels</li>
                         <li>$.03 cents per label</li>
                     </ul>
+                    <div class="text-center try-wrapper center-block">
+                        <button class="_700 btn warning btn-lg">Try it!</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -259,19 +277,19 @@
         <h1 id="about" class="section-title text-center">About us</h1>
         <h2 class="section-sub-title text-center">We are a dedicated team, ready and available to help you. We have over 25 years enterprise software and business experience, and over 40 years of combined happiness experience.</h2>
         <div class="row row-stats">
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <h1 class="stat-title text-center">5</h1>
                 <h2 class="stat-subtitle text-center">Team members</h2>
             </div>
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <h1 class="stat-title text-center">11</h1>
                 <h2 class="stat-subtitle text-center">Children</h2>
             </div>
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <h1 class="stat-title text-center">4</h1>
                 <h2 class="stat-subtitle text-center">Languages</h2>
             </div>
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <h1 class="stat-title text-center">33</h1>
                 <h2 class="stat-subtitle text-center">Apple products</h2>
             </div>
@@ -300,6 +318,15 @@
 
 <script>
     $(function() {
+
+        let collapseable_toggler = $('[data-toggle="collapseable"]');
+        let collapseable_el = $('.collapseable');
+
+        collapseable_toggler.click(function(){
+            console.log('hi');
+            collapseable_el.is(':visible') ? collapseable_el.removeClass('show').hide() : collapseable_el.addClass('show').show();
+        });
+
         //---------
         $('a[href*=#]:not([href=#])').click(function() {
             if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
@@ -310,7 +337,9 @@
                 if (target.length) {
                     $('html,body').animate({
                         scrollTop: target.offset().top
-                    }, 1000);
+                    }, 1000, function(){
+                        collapseable_el.removeClass('show').hide();
+                    });
                     return false;
                 }
             }

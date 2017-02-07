@@ -16,7 +16,7 @@ class AddSubclassNameToListingItemsTable extends Migration
             $table->string('subclass_name')->after('flashsale_id');
         });
 
-        DB::statement('UPDATE `listing_items` SET `subclass_name` = ".\Kabooodle\Models\ListingItemSingle::class."');
+        DB::statement('UPDATE `listing_items` SET `subclass_name` = "Kabooodle\\Models\\ListingItemSingle"');
     }
 
     /**

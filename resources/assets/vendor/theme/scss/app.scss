@@ -31,6 +31,15 @@
   height: 100%;
 }
 
+.home-content {
+  .app {
+    display: block;
+  }
+  .app-footer {
+    display: block;
+  }
+}
+
 .app-footer {
   display: table-row;
 }
