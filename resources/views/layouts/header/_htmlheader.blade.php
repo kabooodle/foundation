@@ -43,17 +43,17 @@
     <script src="{{ staticAsset('/assets/js/vendor.js') }}"></script>
     <script type="text/javascript">
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
+        @if(webUser())
         Vue.http.headers.common['Authorization'] = "Bearer " + $('meta[name=user_hash]').attr("content");
+        @endif
         $(function () {
-            document.addEventListener("turbolinks:request-start", function (event) {
-                var xhr = event.data.xhr;
-                xhr.setRequestHeader("Authorization", "Bearer " + $('meta[name=user_hash]').attr("content") + "");
-            });
+            @if(webUser())
             $.ajaxPrefilter(function (options, originalOptions, xhr) {
                 if (options.url.toLowerCase().indexOf("amazonaws") <= 0) {
                     xhr.setRequestHeader("Authorization", "Bearer " + $('meta[name=user_hash]').attr("content") + "");
                 }
             });
+            @endif
             $.ajaxSetup({
                 async: true,
                 headers: {

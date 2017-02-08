@@ -44,6 +44,11 @@
 @media only screen and (max-device-width: 768px) {
   #back-to-top {
     height: 44px;
-    width: 44px
+    width: 44px;
+    padding: .4rem 1rem;
+    line-height:1.7;
+    .fa {
+      margin-left:-2px;
+    }
   }
 }

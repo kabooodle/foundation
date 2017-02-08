@@ -2,6 +2,11 @@
 
 @section('content')
 
+    <sup class="achievement achievement-yr animated " style="position:fixed; top: 18px; left: 50%; display:none; font-size: 90%; z-index: 9999 ">
+        <span class="text-center primary text-white p-a-sm r-3x" style="margin-left: -120px;">Achievement unlocked! <strong class="_800">20%</strong> off!</span>
+    </sup>
+
+
     <?php
 
             $cards = [
@@ -91,7 +96,7 @@
                             <li class="nav-item"><a href="#pricing">Pricing</a></li>
                             <li class="nav-item"><a href="#services">Services</a></li>
                             <li class="nav-item"><a href="#about">About us</a></li>
-                            <li class="nav-item"><a href="#ready">Sign up</a></li>
+                            <li class="nav-item"><a href="/auth/register">Sign up</a></li>
                             <li class="nav-item">
                                 @if(user($ignoreApiAuth = true))
                                     <a href="/profile">Account</a>
@@ -173,13 +178,8 @@
         </div>
     </section>
 
-
-
     <section class="section section-pricing section-w-bg">
         <div id="pricing"  class="section-bg"></div>
-        <sup class="achievement achievement-yr animated " style="position:absolute; top: 14px; left: 50%; display:none; font-size: 90%; ">
-            <span class="text-center primary text-white p-a-sm r-3x" style="margin-left: -120px;">Achievement unlocked! <strong class="_800">20%</strong> off!</span>
-        </sup>
         <h1 class="section-title text-center">Simple pricing</h1>
         <h2 class="section-sub-title text-center">You can upgrade, downgrade, cancel, and dance at anytime.</h2>
             <div class="row">
@@ -344,7 +344,7 @@
         <h1 id="ready" class="section-title text-center">Ready to get started?</h1>
         <h2 class="section-sub-title text-center">Register and start selling and buying in minutes. No card required.</h2>
         <div class="cta-group text-center">
-            <a href="auth/register?a=merchant" class="btn btn-lg cta-ready">Try it for free</a>
+            <a href="/auth/register?a=merchant" class="btn btn-lg cta-ready">Try it for free</a>
             <button class="btn btn-lg cta-questions">Have questions?</button>
         </div>
     </section>

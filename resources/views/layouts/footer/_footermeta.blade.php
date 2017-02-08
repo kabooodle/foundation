@@ -2,7 +2,7 @@
     <div class="p-md">
         <div class="p-a">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-xs-8">
                     <div class="clearfix">
                         <a class="navbar-brand kabooodle-brand">
                             <span class="svg-logo">
@@ -19,7 +19,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-xs-4">
                     <div class="clearfix">
                         <div class="pull-right">
                             <a class="btn btn-icon btn-social btn-sm white" href="https://www.facebook.com/kabooodle"><i class="fa fa-facebook"></i> <i class="fa fa-facebook indigo"></i></a> <a class="btn btn-icon btn-social btn-sm white" href=""><i class="fa fa-twitter"></i> <i class="fa fa-twitter blue"></i></a> <a class="btn btn-icon btn-social btn-sm white" href=""><i class="fa fa-google-plus"></i> <i class="fa fa-google-plus red"></i></a>

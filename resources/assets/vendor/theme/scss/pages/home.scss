@@ -33,7 +33,7 @@ body {
     height: 100%;
     margin: 0 auto;
     text-align: center;
-    padding: 50px 0 0 0;
+    padding: 20px 0 0 0;
     background: url(/assets/images/home/overlaybg.png) repeat;
     z-index: 10000;
     .navbar-toggler {
@@ -89,7 +89,7 @@ body {
 
   .row:last-child {
     .card-as-list {
-      //margin-bottom: 0;
+      margin-bottom: 0;
     }
   }
   .card-centered {
@@ -138,7 +138,7 @@ body {
       background-size: cover;
     }
     .hero-header {
-      padding-top: 25px;
+      padding-top: 10px;
     }
     .navbar-nav {
       display: block;
@@ -147,11 +147,11 @@ body {
       .nav-item {
         float: none;
         display: block;
-        font-size: 40px;
+        font-size: 30px;
         color: #fff;
-        margin: 0 0 20px 0;
+        margin: 0 0 5px 0;
         a {
-          padding: 10px 0;
+          padding: 5px 0;
           line-height:1;
         }
       }
@@ -884,9 +884,26 @@ body {
     }
   }
 
+  @media (max-width: 414px) {
+    .section-solutions {
+      min-height: 230rem;
+    }
+    .section-pricing {
+      min-height:108rem;
+    }
+    .section-services {
+      min-height: 96rem;
+    }
+    .section-about {
+      min-height: 58rem;
+    }
+    .section-ready {
+      min-height: 26rem;
+    }
+  }
+
 
   @media (max-width: 400px) {
-
     .hero {
       max-height: 40rem;
       .section-title {
@@ -931,6 +948,33 @@ body {
     }
   }
 
+  @media (max-width: 320px) {
+    .hero {
+      max-height: 36rem;
+      .navbar-nav {
+        .nav-item {
+          margin-bottom: 10px;
+        }
+      }
+      .section-title {
+        font-size: 46px;
+        line-height: 66px;
+        margin-bottom: 26px;
+      }
+    }
+    .section-solutions {
+      min-height: 277rem;
+    }
+    .section-pricing {
+      min-height: 112rem;
+    }
+    .section-services {
+      min-height: 104rem;
+    }
+    .section-about {
+      min-height: 60rem;
+    }
+  }
 
 
 
