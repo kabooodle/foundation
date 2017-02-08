@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Models;
@@ -94,7 +94,6 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         'locked' => true,
         'barcode' => null,
         'initial_qty' => null,
-        'cover_photo_file_key' => null,
         'cover_photo_file_id' => null,
         'date_received' => '',
         'price_usd' => 0.0,
@@ -127,7 +126,6 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         'locked',
         'barcode',
         'initial_qty',
-        'cover_photo_file_key',
         'cover_photo_file_id',
         'date_received',
         'tags',
@@ -310,8 +308,15 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
      */
     public function getCoverPhotoAttribute()
     {
-//        return $this->files()->find($this->cover_photo_file_id)->location;
-        return useCDN() ? staticAsset($this->cover_photo_file_key, false) : 'https://'.env('AWS_BUCKET').'.s3.amazonaws.com/'.$this->cover_photo_file_key;
+        return $this->coverimage;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function coverimage()
+    {
+        return $this->belongsTo(Files::class, 'cover_photo_file_id');
     }
 
     /**

@@ -9,7 +9,9 @@
 
         <div class="md-form-group">
             <input v-model="password" type="password" name="password" class="md-input">
-            <label>Password <a :href="passwordResetRoute" class="text-accent text-primary _500 m-l-lg font-italic">Forgot password?</a></label>
+            <label class="clearfix" style="width: 100%;">
+                <span class="pull-left">Password</span>
+                <a :href="passwordResetRoute" class="text-primary _500 pull-right font-italic">Forgot password?</a></label>
         </div>
 
         <button type="submit" class="btn primary btn-block p-x-md">Login</button>

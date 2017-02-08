@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Bus\Handlers\Commands\InventoryGroupings;
@@ -72,7 +72,6 @@ class CreateInventoryGroupingCommandHandler
                 $grouping->tag($command->getCategories());
             }
 
-            $grouping->cover_photo_file_key = $file->getOriginal('location');
             $grouping->cover_photo_file_id = $file->id;
 
             $grouping->save();

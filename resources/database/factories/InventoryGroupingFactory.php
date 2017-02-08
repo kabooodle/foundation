@@ -19,9 +19,6 @@ $factory->define(Kabooodle\Models\InventoryGrouping::class, function (Faker\Gene
                 'fileable_type' => \Kabooodle\Models\InventoryGrouping::class,
             ])->id;
         },
-        'cover_photo_file_key' => function (array $inventory) {
-            return Kabooodle\Models\Files::find($inventory['cover_photo_file_id'])->key;
-        },
         'date_received' => $faker->dateTime,
         'created_by' => function (array $inventory) {
             return $inventory['user_id'];

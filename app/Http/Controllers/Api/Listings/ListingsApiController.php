@@ -41,7 +41,7 @@ class ListingsApiController extends AbstractApiController
     public function show(Request $request, $listingUuid)
     {
         try {
-            $listing = Listings::with(['items', 'items.listedItem'])
+            $listing = Listings::with(['items.listedItem'])
                 ->where('uuid', $listingUuid)
                 ->orderBy('scheduled_for')
                 ->first();
@@ -49,6 +49,8 @@ class ListingsApiController extends AbstractApiController
             if (! $listing) {
                 throw new ModelNotFoundException;
             }
+
+            $listing->loadItemsListedItem();
 
             $items = $listing->items;
 

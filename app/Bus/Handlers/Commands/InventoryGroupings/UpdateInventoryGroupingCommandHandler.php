@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Bus\Handlers\Commands\InventoryGroupings;
@@ -58,7 +58,6 @@ class UpdateInventoryGroupingCommandHandler
             $currentFile = Files::whereKey($command->getImages()['key'])->first();
 
             if ($currentFile) {
-                $grouping->cover_photo_file_key = $currentFile->getOriginal('location');
                 $grouping->cover_photo_file_id = $currentFile->id;
             } else {
                 $newFile = Files::create([
@@ -71,7 +70,6 @@ class UpdateInventoryGroupingCommandHandler
 
                 $grouping->files()->save($newFile);
 
-                $grouping->cover_photo_file_key = $newFile->getOriginal('location');
                 $grouping->cover_photo_file_id = $newFile->id;
             }
 

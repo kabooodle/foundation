@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Kabooodle.
- * Copyright (c) 2016. Jacob Toolson <jake@kabooodle.com>
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
 namespace Kabooodle\Models;
@@ -95,7 +95,6 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
         'inventory_sizes_id' => 0,
         'name' => '',
         'description' => '',
-        'cover_photo_file_key' => null,
         'cover_photo_file_id' => null,
         'barcode' => null,
         'initial_qty' => null,
@@ -132,7 +131,6 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
         'inventory_sizes_id',
         'price_usd',
         'wholesale_price_usd',
-        'cover_photo_file_key',
         'cover_photo_file_id',
         'name',
         'description',
