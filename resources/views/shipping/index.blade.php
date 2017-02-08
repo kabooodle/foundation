@@ -79,7 +79,7 @@
         </div>
         <div class="box-divider"></div>
         <div class="box-body">
-            <table class="table table-condensed table-as-list white">
+            <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
                 <thead>
                     <tr>
                         <th><input type="checkbox" id="checkAll"></th>
@@ -101,7 +101,8 @@
                             <td>{{ $shipment->shipment->claims->count() }}</td>
                             <td>${{ $shipment->rate_amount }}</td>
                             <td><time datetime="{{ $shipment->createdAtHuman() }}">{{ $shipment->createdAtHumanNoTime() }} <i data-toggle="tooltip" title="{{ $shipment->createdAtHuman() }}" data-placement="top" class="fa fa-clock-o" aria-hidden="true"></i></time></td>
-                            <td><a class="text-primary" href="{{ $shipment->tracking_url_provider }}" target="_blank" >{{ $shipment->tracking_number }}</a> <i class="fa fa-external-link" aria-hidden="true"></i></td>
+                            <td><a class="text-primary" href="{{ $shipment->tracking_url_provider }}"  id="link-text-{{ $shipment->id }}" target="_blank" >{{ $shipment->tracking_number }}</a>
+                                <a href="javascript:;" data-animation="false" data-clipboard-target="#link-text-{{ $shipment->id }}"><i class="fa fa-clipboard" aria-hidden="true"></i></a></td>
                             <td>{!! $shipment->present()->getStatus()  !!}</td>
                             <td>
                                 <div class="pull-right">

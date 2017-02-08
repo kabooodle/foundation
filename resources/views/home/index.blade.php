@@ -239,7 +239,7 @@
                             <li>Inventory Groupings</li>
                         </ul>
                         <div class="try-wrapper text-center center-block">
-                            <a href="/auth/register?a=merchant" class="_700 btn warning btn-lg">Try Merchant</a>
+                            <a href="/auth/register?a=merchant" class="_700 btn warning btn-lg">30 day free trial</a>
                         </div>
                     </div>
 
@@ -265,7 +265,7 @@
                             <li>$.03 cents per label</li>
                         </ul>
                         <div class="text-center try-wrapper center-block">
-                            <a href="/auth/register?a=merchant_plus"  class="_700 btn warning btn-lg">Try Merchant Plus</a>
+                            <a href="/auth/register?a=merchant_plus"  class="_700 btn warning btn-lg">30 day free trial</a>
                         </div>
                     </div>
                 </div>
@@ -344,7 +344,7 @@
         <h1 id="ready" class="section-title text-center">Ready to get started?</h1>
         <h2 class="section-sub-title text-center">Register and start selling and buying in minutes. No card required.</h2>
         <div class="cta-group text-center">
-            <a href="/auth/register?a=merchant" class="btn btn-lg cta-ready">Try it for free</a>
+            <a href="/auth/register?a=merchant" class="btn btn-lg cta-ready">30 day free trial</a>
             <button class="btn btn-lg cta-questions">Have questions?</button>
         </div>
     </section>

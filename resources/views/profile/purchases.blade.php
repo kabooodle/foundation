@@ -51,7 +51,7 @@
                     </td>
                     <td>{!! $claim->present()->getClaimStatus()  !!}</td>
                     <td>${{ $claim->price }}</td>
-                    <td>{{ $claim->listedItem->owner->name }}</td>
+                    <td>{{ $claim->listedItem->owner->username }}</td>
                     <td>{{ $claim->createdAtHumanNoTime() }} <i data-placement="top" class="fa fa-clock-o" data-toggle="tooltip" title="{{ $claim->created_at->format('g:i A') }}"></i></td>
                     {{--<td>--}}
                         {{--<span class="pending-status">@if($claim->wasRejected()) {{ $claim->rejected_on->diffForHumans() }} @elseif($claim->wasAccepted()) {{ $claim->accepted_on->diffForHumans() }} @else Pending  @endif</span>--}}

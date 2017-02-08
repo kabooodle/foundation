@@ -50,6 +50,7 @@
 	margin-top: 9px;
 }
 .app-header {
+	padding: 0 15px;
 	-webkit-transition: all 0.2s ease-in-out;
 	-moz-transition: all 0.2s ease-in-out;
 	.avatar_container {
@@ -67,7 +68,6 @@
 		width: 132px;
 		height: 32px;
 		display: block;
-	float:none !important;
 		//text-indent: -9999px;
 	.svg-logo {
 		width: 132px;
@@ -197,12 +197,33 @@
 
 }
 
-@media all and (max-width: 660px) {
-	.header-condensed {
-		.app-header {
-
-			.navbar {
-
+.collapsing {
+	-webkit-transition: none;
+	transition: none;
+}
+.app-header {
+	.navbar-toggleable-sm.collapse {
+		&.show {
+			float: left;
+			width: 100%;
+			.navbar-nav {
+				width: 100%;
+				float: none;
+				margin: 0;
+				display: block;
+				li.nav-item {
+					float: none;
+					display: block;
+					margin-left:0 !important;
+					.nav-link {
+						line-height: 1.5;
+						padding: 10px 0;
+					}
+				}
+				.dropdown-menu {
+					position: relative;
+					float: none;
+				}
 			}
 		}
 	}
