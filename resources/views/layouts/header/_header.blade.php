@@ -1,8 +1,8 @@
 <div class="app-header navbar-md prpl-1000 box-shadow">
-    <div class="navbar">
-        <a class="navbar-item pull-right hidden-md-up m-a-0 m-l" data-target=
-        "#navbar-4" data-toggle="collapse"><i class=
-                                              "material-icons"></i></a><a href="{{ webUser() ? '/users/'.webUser()->username : '/home' }}"
+    <div class="navbar clearfix">
+        <a class="navbar-item pull-right hidden-md-up m-a-0 m-l" data-target="#navbar-4" data-toggle="collapse"><i class=
+                                              "material-icons"></i></a>
+        <a href="{{ webUser() ? '/users/'.webUser()->username : '/home' }}"
                                                                            class="navbar-brand kabooodle-brand">
             <span class="svg-logo">
                 @include('partials._logo_svg_lg')
