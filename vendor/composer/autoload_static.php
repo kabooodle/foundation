@@ -672,6 +672,8 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'Canvas' => __DIR__ . '/..' . '/dompdf/dompdf/include/canvas.cls.php',
         'Canvas_Factory' => __DIR__ . '/..' . '/dompdf/dompdf/include/canvas_factory.cls.php',
         'Cellmap' => __DIR__ . '/..' . '/dompdf/dompdf/include/cellmap.cls.php',
+        'ChangeClaimableToListableAndShoppableToListingItemIdOnClaimsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_09_174826_change_claimable_to_listable_and_shoppable_to_listing_item_id_on_claims_table.php',
+        'ChangeInventoryItemObjectDataToListableOnClaimsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_09_180153_change_inventory_item_object_data_toListable_on_claims_table.php',
         'ChangePageviewsToViews' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_22_054305_change_pageviews_to_views.php',
         'CreateCategoriesTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_28_082531_create_categories_tbl.php',
         'CreateClaimsTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_02_202655_create_claims_tbl.php',

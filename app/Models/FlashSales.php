@@ -30,7 +30,6 @@ use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
 class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInterface
 {
     use AuthorableTrait,
-        ClaimableTrait,
         EloquentDatesTrait,
         FollowableTrait,
         ObfuscatesIdTrait,

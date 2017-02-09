@@ -8,7 +8,7 @@
             @if(webUser() && $item->owner->id == webUser()->id)
             <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ $item->sales->count() }} <span class="text-muted">Total Sales</span></span>
             @endif
-            <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ $item->pageViews->count() }} <span class="text-muted">Total Views</span></span>
+            <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ $item->views->count() }} <span class="text-muted">Total Views</span></span>
         </div>
         <div class="btn-toolbar pull-right">
             @if(! $item->canSatisfyRequestedQuantityOf(1))
@@ -61,7 +61,7 @@
 
 @push('utilities')
 <pageviewstracker
-        route="{{ apiRoute('inventory.pageviews.store') }}"
+        route="{{ apiRoute('views.store') }}"
         resource_hash="{{ $item->makeHashedResourceString() }}"
 ></pageviewstracker>
 @endpush

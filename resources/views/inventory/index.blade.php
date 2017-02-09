@@ -3,48 +3,53 @@
 
 @section('body-menu')
     <div class="center-block text-center" v-if="inventory_items.length > 0 && ! actions.refreshing_data">
-        <button
-                class="btn white btn-sm "
-                data-toggle="tooltip"
-                title="Refresh Inventory"
-                data-placement="left"
-                v-on:click="getInventory"
-                :disabled="actions.refreshing_data">
-            <i class="fa fa-refresh"></i>
-        </button>
-        <div class="btn-group dropdown ">
-            <button
-                    :disabled="selected.items.length == 0 || actions.refreshing_data"
-                    v-bind:class="{'disabled' : selected.items.length == 0 || actions.refreshing_data }"
-                    class=" btn white btn-sm dropdown-toggle"
-                    data-toggle="dropdown">
-                <span class="dropdown-label">Bulk</span><span class="caret"></span>
-            </button>
-            <div class="dropdown-menu text-left text-sm">
-                <a class="dropdown-item text-danger" href="">Delete</a>
-            </div>
-        </div>
-        <button
-                v-bind:class="{'disabled' : actions.refreshing_data || inventory_items.length == 0}"
-                :disabled="actions.refreshing_data || inventory_items.length == 0"
-                class="btn white btn-sm"
-        @click="selectAllInventory">
-        Select All
-        </button>
-        <button
-            v-cloak
-                class="btn white btn-sm"
-                :disabled="selected.items.length == 0 || actions.refreshing_data"
-                v-bind:class="{'disabled' : selected.items.length == 0 || actions.refreshing_data }"
-        @click="resetInventory">
-        Unselect All (@{{selected.items.length}})
-        </button>
+        {{--<button--}}
+                {{--class="btn white btn-sm "--}}
+                {{--data-toggle="tooltip"--}}
+                {{--title="Refresh Inventory"--}}
+                {{--data-placement="left"--}}
+                {{--v-on:click="getInventory"--}}
+                {{--:disabled="actions.refreshing_data">--}}
+            {{--<i class="fa fa-refresh"></i>--}}
+        {{--</button>--}}
+        {{--<div class="btn-group dropdown ">--}}
+            {{--<button--}}
+                    {{--:disabled="selected.items.length == 0 || actions.refreshing_data"--}}
+                    {{--v-bind:class="{'disabled' : selected.items.length == 0 || actions.refreshing_data }"--}}
+                    {{--class=" btn white btn-sm dropdown-toggle"--}}
+                    {{--data-toggle="dropdown">--}}
+                {{--<span class="dropdown-label">Bulk</span><span class="caret"></span>--}}
+            {{--</button>--}}
+            {{--<div class="dropdown-menu text-left text-sm">--}}
+                {{--<a class="dropdown-item text-danger" href="">Delete</a>--}}
+            {{--</div>--}}
+        {{--</div>--}}
+        {{--<button--}}
+                {{--v-bind:class="{'disabled' : actions.refreshing_data || inventory_items.length == 0}"--}}
+                {{--:disabled="actions.refreshing_data || inventory_items.length == 0"--}}
+                {{--class="btn white btn-sm"--}}
+        {{--@click="selectAllInventory">--}}
+        {{--Select All--}}
+        {{--</button>--}}
+        {{--<button--}}
+            {{--v-cloak--}}
+                {{--class="btn white btn-sm"--}}
+                {{--:disabled="selected.items.length == 0 || actions.refreshing_data"--}}
+                {{--v-bind:class="{'disabled' : selected.items.length == 0 || actions.refreshing_data }"--}}
+        {{--@click="resetInventory">--}}
+        {{--Unselect All (@{{selected.items.length}})--}}
+        {{--</button>--}}
+
+        <a href="{{ route('shop.outfits.create', webUser()->username) }}">
+            <button class="btn primary btn-sm">Create Outfits</button>
+        </a>
+
         <button
                 v-on:click="openPostMenu"
                 :disabled="actions.refreshing_data || inventory_items.length == 0"
                 v-bind:class="{'disabled' : actions.refreshing_data || inventory_items.length == 0}"
                 class="btn primary btn-sm "
-                id="navbarSideButton">List inventory to sales
+                id="navbarSideButton">Create Listings
         </button>
     </div>
 @endsection

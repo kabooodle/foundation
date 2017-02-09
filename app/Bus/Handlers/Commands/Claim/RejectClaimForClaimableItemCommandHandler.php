@@ -34,7 +34,7 @@ class RejectClaimForClaimableItemCommandHandler
             $claim->save();
 
             if ($claim->isVerified()) {
-                $claim->claimable->incrementInitialQty(1);
+                $claim->listable->incrementInitialQty(1);
             }
 
             event(new ClaimWasRejectedEvent($command->getUser(), $claim));

@@ -101,10 +101,10 @@ class SellersInventoryController extends Controller
         $decryptedId = $this->obfuscateFromURIString(Binput::clean($saleIdAndName));
         $flashSale = FlashSales::find($decryptedId);
 
-        $listedItem = $flashSale->listedItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
+        $listingItem = $flashSale->listingItems->find($this->obfuscateFromURIString(Binput::clean($itemIdAndName)));
 
         try {
-            $this->dispatchNow(new ClaimListedItemCommand(webUser(), $flashSale, $listedItem));
+            $this->dispatchNow(new ClaimListedItemCommand(webUser(), $listingItem, $listingItem->listedItem));
 
             Messages::success('Item claimed successfully!');
             return Response::json([], 200);

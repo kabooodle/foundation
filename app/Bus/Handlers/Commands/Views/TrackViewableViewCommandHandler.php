@@ -7,9 +7,9 @@
 namespace Kabooodle\Bus\Handlers\Commands\Views;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Kabooodle\Models\Contracts\Viewable;
 use Kabooodle\Models\User;
 use Kabooodle\Models\View;
-use Kabooodle\Models\Contracts\ShoppableInterface;
 use Kabooodle\Bus\Commands\Views\TrackViewableViewCommand;
 
 /**
@@ -26,7 +26,7 @@ class TrackViewableViewCommandHandler implements ShouldQueue
     {
         /** @var User $actor */
         $actor = $command->getActor();
-        /** @var ShoppableInterface $resource */
+        /** @var Viewable $resource */
         $resource = $command->getResource();
         /** @var string $ip */
         $ip = $command->getIpAddress();

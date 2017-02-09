@@ -55,7 +55,7 @@ class InventoryGroupingsController extends AbstractApiController
         $user = User::whereUsername($username)->firstOrFail();
         $data = [
             'user' => $user,
-            'groupings' => $user->inventoryGroupings->find($groupingId),
+            'grouping' => $user->inventoryGroupings->find($groupingId),
         ];
 
         return $this->setData($data)->respond();

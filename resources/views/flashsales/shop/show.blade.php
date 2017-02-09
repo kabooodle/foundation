@@ -18,7 +18,7 @@
 
 @push('utilities')
 <pageviewstracker
-        route="{{ apiRoute('inventory.pageviews.store') }}"
+        route="{{ apiRoute('views.store') }}"
         resource_hash="{{ $shoppable->makeHashedResourceString() }}"
 ></pageviewstracker>
 @endpush

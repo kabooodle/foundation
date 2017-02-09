@@ -18,9 +18,9 @@ $api->version('v1', function ($api) {
         'as' => 'auth.login.store',
         'uses' => \Kabooodle\Http\Controllers\Api\Auth\AuthApiController::class.'@login'
     ]);
-    $api->post('pageviews', [
-        'as' => 'inventory.pageviews.store',
-        'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryViewsController::class.'@store'
+    $api->post('views', [
+        'as' => 'views.store',
+        'uses' => \Kabooodle\Http\Controllers\Api\Views\ViewsController::class.'@store'
     ]);
 
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'queues' . DIRECTORY_SEPARATOR . 'routes.php';

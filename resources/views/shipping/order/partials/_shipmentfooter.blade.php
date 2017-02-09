@@ -9,9 +9,9 @@
                 <div class="box-body">
                     <div class="avatar-thumbnail-container">
                         <div class="avatar-thumbnail _32">
-                            <img src="{{$claim->claimable->cover_photo->location}}">
+                            <img src="{{$claim->listable->cover_photo->location}}">
                         </div>
-                    <span>{{ $claim->claimer->username }} - {{ $claim->claimable->name }} - {{ $claim->claimable->size->name }} - ${{ $claim->claimable->price_usd }}</span>
+                    <span>{{ $claim->claimer->username }} - {{ $claim->listable->getTitle() }} - ${{ $claim->listable->price_usd }}</span>
                     </div>
                 </div>
             @endforeach
