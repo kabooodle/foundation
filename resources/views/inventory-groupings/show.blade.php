@@ -31,7 +31,7 @@
 
 @section('body-content')
 
-    {{--@include('inventory-groupings.partials._show', ['item' => $grouping])--}}
+    @include('inventory-groupings.partials._show', ['item' => $grouping])
 
     {{--@include('inventory.partials._claimmodal', [--}}
        {{--'post' => route('shop.inventory.claim', [$grouping->user->username, $grouping->getUUID()]),--}}

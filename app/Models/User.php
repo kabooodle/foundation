@@ -735,8 +735,8 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class, 'user_id', 'claimable_id', 'id')
-            ->where('claims.claimable_type', Inventory::class)
+        return $this->hasManyThrough(Claims::class,  Inventory::class, 'user_id', 'listable_id', 'id')
+            ->where('claims.listable_type', Inventory::class)
             ->where('inventory.user_id', $this->id)
             ->with(['shipments', 'shipments.transaction']);
     }
@@ -766,8 +766,8 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventoryGroupings()
     {
-        return $this->hasManyThrough(Claims::class,  InventoryGrouping::class, 'user_id', 'claimable_id', 'id')
-            ->where('claims.claimable_type', InventoryGrouping::class)
+        return $this->hasManyThrough(Claims::class,  InventoryGrouping::class, 'user_id', 'listable_id', 'id')
+            ->where('claims.listable_type', InventoryGrouping::class)
             ->where('inventory_groupings.user_id', $this->id)
             ->with(['shipments', 'shipments.transaction']);
     }
