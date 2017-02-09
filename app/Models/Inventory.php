@@ -325,7 +325,7 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
      */
     public function claims()
     {
-        return $this->morphMany(Claims::class, 'claimable');
+        return $this->morphMany(Claims::class, 'listable');
     }
 
     /**
