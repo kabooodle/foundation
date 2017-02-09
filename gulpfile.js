@@ -19,6 +19,8 @@ elixir(function (mix) {
     mix.browserify('app/components/inventory/inventory-create.js');
     mix.browserify('app/components/inventory/inventory-edit.js');
 
+    mix.browserify('app/components/listables/listable-index.js');
+
     mix.browserify('app/components/profile/settings.js');
     mix.browserify('app/components/profile/emails.js');
     mix.browserify('app/components/profile/profile-notifications.js');
