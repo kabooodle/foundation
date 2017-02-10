@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Web\Webhooks;
 
+use Kabooodle\Bus\Events\User\SubscriptionCancelled;
 use Kabooodle\Models\User;
 use Symfony\Component\HttpFoundation\Response;
 use Laravel\Cashier\Http\Controllers\WebhookController;
@@ -36,6 +37,28 @@ class StripeWebhooksController extends WebhookController
                // We have an account that just got off trial, fire the event.
                event(new UserSubscriptionCameOffTrial($user, $payload));
            }
+        }
+
+        return new Response('Webhook Handled', 200);
+    }
+
+    /**
+     * Handle a cancelled customer from a Stripe subscription.
+     *
+     * @param  array  $payload
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function handleCustomerSubscriptionDeleted(array $payload)
+    {
+        $user = $this->getUserByStripeId($payload['data']['object']['customer']);
+
+        if ($user) {
+            $user->subscriptions->filter(function ($subscription) use ($payload) {
+                return $subscription->stripe_id === $payload['data']['object']['id'];
+            })->each(function ($subscription) {
+                $subscription->markAsCancelled();
+                event(new SubscriptionCancelled($subscription));
+            });
         }
 
         return new Response('Webhook Handled', 200);
