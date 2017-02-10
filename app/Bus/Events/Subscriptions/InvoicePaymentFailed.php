@@ -4,15 +4,15 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Events\User;
+namespace Kabooodle\Bus\Events\Subscriptions;
 
 use Kabooodle\Models\User;
-use Laravel\Cashier\Subscription;
+use Laravel\Cashier\Invoice;
 
 /**
- * Class SubscriptionCancelled
+ * Class InvoicePaymentFailed
  */
-final class SubscriptionCancelled
+final class InvoicePaymentFailed
 {
     /**
      * @var User
@@ -20,9 +20,9 @@ final class SubscriptionCancelled
     public $user;
 
     /**
-     * @var Subscription
+     * @var Invoice
      */
-    public $subscription;
+    public $invoice;
 
     /**
      * @var array
@@ -30,14 +30,14 @@ final class SubscriptionCancelled
     public $stripePayload;
 
     /**
-     * @param User         $user
-     * @param Subscription $subscription
-     * @param array        $stripePayload
+     * @param User    $user
+     * @param Invoice $invoice
+     * @param array   $stripePayload
      */
-    public function __construct(User $user, Subscription $subscription, array $stripePayload)
+    public function __construct(User $user, Invoice $invoice, array $stripePayload)
     {
         $this->user = $user;
-        $this->subscription = $subscription;
+        $this->invoice = $invoice;
         $this->stripePayload = $stripePayload;
     }
 
@@ -50,11 +50,11 @@ final class SubscriptionCancelled
     }
 
     /**
-     * @return Subscription
+     * @return Invoice
      */
-    public function getSubscription(): Subscription
+    public function getInvoice(): Invoice
     {
-        return $this->subscription;
+        return $this->invoice;
     }
 
     /**

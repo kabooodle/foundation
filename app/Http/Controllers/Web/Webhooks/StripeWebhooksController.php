@@ -6,11 +6,12 @@
 
 namespace Kabooodle\Http\Controllers\Web\Webhooks;
 
-use Kabooodle\Bus\Events\User\SubscriptionCancelled;
 use Kabooodle\Models\User;
 use Symfony\Component\HttpFoundation\Response;
+use Kabooodle\Bus\Events\User\SubscriptionCancelled;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Kabooodle\Bus\Events\User\UserSubscriptionCameOffTrial;
+use Kabooodle\Bus\Events\Subscriptions\InvoicePaymentFailed;
 
 /**
  * Class StripeWebhooksController
@@ -55,10 +56,26 @@ class StripeWebhooksController extends WebhookController
         if ($user) {
             $user->subscriptions->filter(function ($subscription) use ($payload) {
                 return $subscription->stripe_id === $payload['data']['object']['id'];
-            })->each(function ($subscription) {
+            })->each(function ($subscription) use ($payload, $user) {
                 $subscription->markAsCancelled();
-                event(new SubscriptionCancelled($subscription));
+                event(new SubscriptionCancelled($user, $subscription, $payload));
             });
+        }
+
+        return new Response('Webhook Handled', 200);
+    }
+
+    /**
+     * @param array $payload
+     *
+     * @return Response
+     */
+    protected function handleInvoicePaymentFailed(array $payload)
+    {
+        $user = $this->getUserByStripeId($payload['data']['object']['customer']);
+
+        if ($user && $invoice = $user->findInvoice($payload['data']['object']['id'])) {
+            event(new InvoicePaymentFailed($user, $invoice, $payload));
         }
 
         return new Response('Webhook Handled', 200);
