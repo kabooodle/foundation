@@ -81,4 +81,24 @@ interface Listable
      * @return mixed
      */
     public function incrementInitialQty(int $amount = 1);
+
+    /**
+     * @return mixed
+     */
+    public function claims();
+
+    /**
+     * @return mixed
+     */
+    public function pendingClaims();
+
+    /**
+     * @return mixed
+     */
+    public function acceptedClaims();
+
+    /**
+     * @return mixed
+     */
+    public function rejectedClaims();
 }

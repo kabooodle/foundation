@@ -1,6 +1,7 @@
 <?php
 use Carbon\Carbon;
 use Dingo\Api\Facade\API;
+use Illuminate\Contracts\Encryption\EncryptException;
 
 if (!function_exists('defaultAvatar')) {
     /**
@@ -1618,5 +1619,26 @@ if (! function_exists('onHoldInterval')) {
     function onHoldInterval()
     {
         return new DateInterval('PT5M');
+    }
+}
+
+if (! function_exists('decryptHashedResource')) {
+    /**
+     * @param $hash
+     *
+     * @return array
+     * @throws EncryptException
+     */
+    function decryptHashedResource($hash)
+    {
+        $decrypted = \Crypt::decrypt($hash);
+        $class = strtok($decrypted, '::');
+        $id = substr($decrypted, strpos($decrypted, "::") + 2);
+
+        if (! class_exists($class)) {
+            throw new EncryptException('Hashed resource given does not exist');
+        }
+
+        return [$class, $id];
     }
 }

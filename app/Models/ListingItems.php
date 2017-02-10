@@ -8,29 +8,29 @@ namespace Kabooodle\Models;
 
 use Carbon\Carbon;
 use JonnyPickett\EloquentSTI\SingleTableInheritance;
+use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Contracts\Viewable;
+use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\ViewableTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Models\Traits\WatchableTrait;
-use Kabooodle\Models\Traits\ShoppableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Models\Contracts\WatchableInterface;
-use Kabooodle\Models\Contracts\ShoppableInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
 
 /**
  * Class ListingItems
  */
-class ListingItems extends AbstractListingModel implements ShoppableInterface, WatchableInterface, Viewable
+class ListingItems extends AbstractListingModel implements WatchableInterface, Viewable, Claimable
 {
     use ObfuscatesIdTrait,
         PresentableTrait,
-        ShoppableTrait,
         SoftDeletes,
         UuidableTrait,
+        ClaimableTrait,
         WatchableTrait,
         SingleTableInheritance,
         ViewableTrait;

@@ -44,7 +44,7 @@ class ProfilePurchasesController extends Controller
         $claim = Claims::where('claimed_by', '=', webUser()->id)
             ->findOrFail($decryptedId);
 
-        $claim->shoppable->load(['listing' => function($q){
+        $claim->listingItem->load(['listing' => function($q){
             $q->withTrashed();
         }]);
 

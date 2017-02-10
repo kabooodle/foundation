@@ -10,7 +10,6 @@ use Binput;
 use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Libraries\QueueHelper;
-use Kabooodle\Models\Traits\ShoppableTrait;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Views\TrackViewableViewCommand;
 
@@ -19,8 +18,6 @@ use Kabooodle\Bus\Commands\Views\TrackViewableViewCommand;
  */
 class InventoryGroupingsViewsController extends AbstractApiController
 {
-    use ShoppableTrait;
-
     /**
      * @param Request $request
      *
@@ -30,7 +27,7 @@ class InventoryGroupingsViewsController extends AbstractApiController
     {
         try {
             $resourceHash = Binput::get('resource');
-            list($resource, $resourceId) = $this->decryptHashedResource($resourceHash);
+            list($resource, $resourceId) = decryptHashedResource($resourceHash);
             $resource = $resource::findOrFail($resourceId);
 
             $ip = $request->getClientIp();

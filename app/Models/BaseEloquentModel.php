@@ -7,6 +7,8 @@
 namespace Kabooodle\Models;
 
 use Eloquent;
+use Kabooodle\Models\Contracts\Hashable;
+use Kabooodle\Models\Traits\HashableTrait;
 use ReflectionClass;
 use Illuminate\Support\Str;
 use Kabooodle\Models\Traits\EloquentDatesTrait;
@@ -15,9 +17,10 @@ use Kabooodle\Models\Traits\EloquentDatesTrait;
  * Class BaseEloquentModel
  * @package Kabooodle\Models
  */
-class BaseEloquentModel extends Eloquent
+class BaseEloquentModel extends Eloquent implements Hashable
 {
     use EloquentDatesTrait;
+    use HashableTrait;
 
     /**
      * @var bool

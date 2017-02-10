@@ -192,7 +192,7 @@ class InventoryController extends Controller
     public function show(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $item = Inventory::with(['sales', 'pageViews'])->findOrFail($decryptedId);
+        $item = Inventory::with(['sales', 'views'])->findOrFail($decryptedId);
 
         if ($item) {
             if ($request->ajax()) {

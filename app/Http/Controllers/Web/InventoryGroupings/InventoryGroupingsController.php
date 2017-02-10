@@ -4,7 +4,7 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Http\Controllers\Web\Shop\InventoryGroupings;
+namespace Kabooodle\Http\Controllers\Web\InventoryGroupings;
 
 use Dingo\Api\Routing\Helpers;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
@@ -34,7 +34,7 @@ use Kabooodle\Models\User;
 
 /**
  * Class InventoryGroupingsController
- * @package Kabooodle\Http\Controllers\Web\Shop\Inventory
+ * @package Kabooodle\Http\Controllers\Web\InventoryGroupings
  */
 class InventoryGroupingsController extends Controller
 {
@@ -48,11 +48,22 @@ class InventoryGroupingsController extends Controller
      */
     public function index(Request $request, $username)
     {
-        if (user()->username <> $username) {
+        return $this->view('inventory-groupings.index');
+    }
+
+    /**
+     * @param Request $request
+     * @param $username
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse|Redirector
+     */
+    public function create(Request $request, $username)
+    {
+        if (webUser()->username <> $username) {
             return redirect('/');
         }
 
-        return $this->view('inventory-groupings.index');
+        return $this->view('inventory-groupings.form');
     }
 
     /**
@@ -66,15 +77,43 @@ class InventoryGroupingsController extends Controller
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
 
+        $grouping = InventoryGrouping::with(['sales', 'views'])->findOrFail($decryptedId);
+
+        if ($grouping) {
+            $data = [
+                'grouping' => $grouping,
+            ];
+
+            return $this->view('inventory-groupings.show', $data);
+        }
+
+        return $this->redirect(route('shop.outfits.index', [$username]));
+    }
+
+    /**
+     * @param Request $request
+     * @param $username
+     * @param $idAndName
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse|Redirector
+     */
+    public function edit(Request $request, $username, $idAndName)
+    {
+        if (webUser()->username <> $username) {
+            return redirect('/');
+        }
+
+        $decryptedId = $this->obfuscateFromURIString($idAndName);
+
         $apiData = $this->api->get($username.'/inventory-groupings/'.$decryptedId);
         $data = [
             'grouping' => array_get($apiData['data'], 'grouping')
         ];
 
         if ($data['grouping']) {
-            return $this->view('inventory-groupings.show', $data);
+            return $this->view('inventory-groupings.form', $data);
         }
 
-        return $this->redirect(route('shop.inventory-groupings.index', [$username]));
+        return $this->redirect(route('shop.outfits.index', [$username]));
     }
 }

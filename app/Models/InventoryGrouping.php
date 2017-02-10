@@ -31,10 +31,9 @@ use Kabooodle\Models\Contracts\Commentable;
  * Class InventoryGrouping
  * @package Kabooodle\Models
  */
-class InventoryGrouping extends BaseEloquentModel implements Commentable, LikeableInterface, Revisionable, Listable, Claimable, Viewable
+class InventoryGrouping extends BaseEloquentModel implements Commentable, LikeableInterface, Revisionable, Listable, Viewable
 {
-    use ClaimableTrait,
-        CommentableTrait,
+    use CommentableTrait,
         FollowableTrait,
         LikeableTrait,
         ObfuscatesIdTrait,
@@ -268,7 +267,7 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
      */
     public function claims()
     {
-        return $this->morphMany(Claims::class, 'claimable');
+        return $this->morphMany(Claims::class, 'listable');
     }
 
     /**

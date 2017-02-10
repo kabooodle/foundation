@@ -79,4 +79,28 @@ trait ListableTrait
     {
         return $this->getAvailableQuantity() >= $qty;
     }
+
+    /**
+     * @return mixed
+     */
+    public function pendingClaims()
+    {
+        return $this->claims()->whereNull('accepted');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function acceptedClaims()
+    {
+        return $this->claims()->where('accepted', true)->whereNotNull('accepted_on');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function rejectedClaims()
+    {
+        return $this->claims()->where('accepted', false)->whereNotNull('rejected_on');
+    }
 }
