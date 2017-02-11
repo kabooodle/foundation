@@ -90,7 +90,7 @@
                                                 <span class="text-muted pull-right">${{ item.price_usd }}</span>
                                             </span>
                                         </button>
-                                        <div class="clearfix" style="margin-top: 5px;">
+                                        <div v-if="display_footer_buttons" class="clearfix" style="margin-top: 5px;">
                                             <button
                                                     type="button"
                                                     class="btn btn-xs _400 pull-left white"
@@ -122,6 +122,10 @@
                 required: true,
                 type: String
             },
+            display_footer_buttons: {
+                type: Boolean,
+                default: true
+            }
         },
         data(){
             return{
