@@ -25,7 +25,7 @@
                                 :data-subgroup-id="subgroup.id"
                                 key="subgroup.id"
                                 @click.prevent="clickSubgrouping(subgroup)"
-                                :class="selected.listables.length &&  _.chain(selected.listables).where({subgroup: subgroup.id}).value().length == subgroup.listables.length ? 'active' : null"
+                                :class="selected.listables.length &&  _.chain(selected.listables).where({subgroup: subgroup}).value().length == subgroup.listables.length ? 'active' : null"
                         >
                             <input type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;">
                             <span class="text-md">{{ subgroup.name }}</span>
@@ -58,7 +58,7 @@
                         <div class="col-sm-2">
                             <a
                                     href="javascript:;"
-                                    @click.prevent="clickSubgroupingDrawer(group, subgroup.id)"
+                                    @click.prevent="clickSubgroupingDrawer(group, subgroup)"
                                     class=" _500 drawer-toggle"
                             >
                                 {{ subgroup.name }} <span class="text-muted text-sm"><i class="fa fa-angle-up"></i></span>
@@ -73,7 +73,7 @@
                                             :key="item.id"
                                             class="col-sm-2 p-r-0 btn-group-prpl" style="width:110px !important;">
                                         <button
-                                                @click.prevent="clickListable(subgroup, item.id)"
+                                                @click.prevent="clickListable(subgroup, item)"
                                                 style="border-radius: .25rem;"
                                                 type="button"
                                                 class="btn white btn-xs"
@@ -111,6 +111,15 @@
     </div>
 </template>
 <script>
+    const initial_state = function(){
+        return {
+            selected: {
+                listables: [],
+                inventory_groupings: [],
+            },
+            opened: []
+        };
+    };
     import Spinny from '../Spinner.vue';
     export default{
         props: {
@@ -128,13 +137,7 @@
             }
         },
         data(){
-            return{
-                selected: {
-                    listables: [],
-                    inventory_groupings: [],
-                },
-                opened: []
-            }
+            return initial_state();
         },
         computed: {
             group_has_subgroupings(){
@@ -142,68 +145,83 @@
             },
         },
         created(){
-
+            // curious about how we can handle slots as a javascript variable
 //            console.log(this.$slots);
+
+            $Bus.$on('listings:listables:select:all', ()=>{
+                _.each(this.group.subgroupings, (subgrouping)=>{
+                    _.each(subgrouping.listables, (listable)=>{
+                        this.addListable(subgrouping, listable);
+                    });
+                });
+            });
+
+            $Bus.$on('listings:selected:listables:reset', ()=>{
+                Object.assign(this.$data, initial_state());
+                // For some reason, the below loop does not work.
+                // Only a few are deselected, others fail. It's bizarre.
+                // So for now, reset state.
+
+//                if (this.selected.listables.length > 0) {
+//                    _.each (this.selected.listables, (listable)=>{
+//                        if (listable && listable.hasOwnProperty('subgroup')){
+//                            this.removeListable({id: listable.subgroup}, listable);
+//                        }
+//                    });
+//                }
+            });
 
             // GET selected listables event listener
             $Bus.$on(this.group.id+'::listings:selected:listables:get', ()=>{
                 $Bus.$emit(this.group.id+'::listings:selected:listables', this.group.id, subgroup_id, this.selected.listables);
             });
-
-            // API for allowing the deselection of a listing
-            // FIXME: We need a better name because this is a global event and we cant have all listeners triggered
-            $Bus.$on('listings:listing:remove', (listingid)=>{
-                if (groupid === this.group.id) {
-                    // TODO: finish this.
-                    // Call unselectListing method.
-                }
-            });
         },
         methods: {
-            addSubgroupingDrawer(id){
+            resetState(){
+                Object.assign(this.$data, initial_state());
+            },
+            addSubgroupingDrawer(subgroup){
                 // BUGFIX:
                 // Sometimes, we trigger events to open a drawer.  Said events are unaware of the drawers state,
                 // so we need to prevent duplicate entries.
-                const index = this.opened.indexOf(id);
+                const index = this.opened.indexOf(subgroup.id);
                 if (index == -1) {
-                    this.opened.push(id);
+                    this.opened.push(subgroup.id);
                 }
             },
 
-            removeSubgroupingDrawer(id){
-                const index = this.opened.indexOf(id);
+            removeSubgroupingDrawer(subgroup){
+                const index = this.opened.indexOf(subgroup.id);
                 if (index > -1) {
                     this.opened.splice(index, 1);
                 }
             },
 
-            addListable(subgroup_id, id){
-                const value = {id: id, subgroup: subgroup_id};
+            addListable(subgroup, listable){
+                const value = {id: listable.id, subgroup: subgroup};
                 const index = _.findIndex(this.selected.listables, value);
                 if (index == -1) {
                     this.selected.listables.push(value);
-
-                    $Bus.$emit(this.group.id+'::listings:selected:listable:added', this.group.id, subgroup_id, subgroup_id, id);
+                    $Bus.$emit('listings:selected:listable:added', this.group, subgroup, listable);
                 }
             },
 
-            removeListable(subgroup_id, id){
-                const index = _.findIndex(this.selected.listables, {id: id});
+            removeListable(subgroup, listable){
+                const index = _.findIndex(this.selected.listables, {id: listable.id});
                 if (index > -1) {
                     this.selected.listables.splice(index, 1);
-
-                    $Bus.$emit(this.group.id+'::listings:selected:listable:removed', this.group.id, subgroup_id, subgroup_id, id);
+                    $Bus.$emit('listings:selected:listable:removed', this.group, subgroup, listable);
                 }
             },
 
-            clickSubgroupingDrawer(group, subgroupid){
-                const index = this.opened.indexOf(subgroupid);
+            clickSubgroupingDrawer(group, subgroup){
+                const index = this.opened.indexOf(subgroup.id);
                 if (index > -1){
                     // Drawer is opened, close it;
-                    this.removeSubgroupingDrawer(subgroupid);
+                    this.removeSubgroupingDrawer(subgroup);
                 } else {
                     // Drawer is closed, open it
-                    this.addSubgroupingDrawer(subgroupid);
+                    this.addSubgroupingDrawer(subgroup);
                 }
             },
 
@@ -219,19 +237,19 @@
                 } else {
                     // open everything
                     _.each(group.subgroupings, (subgroup)=>{
-                        this.addSubgroupingDrawer(subgroup.id);
+                        this.addSubgroupingDrawer(subgroup);
                     });
                 }
             },
 
-            clickListable(subgroup, listableid){
-                const index = _.findIndex(this.selected.listables, {id: listableid})
+            clickListable(subgroup, listable){
+                const index = _.findIndex(this.selected.listables, {id: listable.id})
                 if (index > -1) {
                     // Found, so we need to unselect the listable
-                    this.removeListable(subgroup.id, listableid);
+                    this.removeListable(subgroup, listable);
                 } else {
                     // Not found, select the listable
-                    this.addListable(subgroup.id, listableid);
+                    this.addListable(subgroup, listable);
                 }
             },
 
@@ -244,26 +262,26 @@
              * @param forceSelect
              */
             clickSubgrouping(subgroup, force){
-                const index = _.findIndex(this.selected.listables, {subgroup: subgroup.id});
+                const index = _.findIndex(this.selected.listables, {subgroup: subgroup});
                 if (index > -1) {
                     // Remove all listables for this subgrouping
                     _.each(subgroup.listables, (item)=>{
-                        this.removeListable(subgroup.id, item.id);
+                        this.removeListable(subgroup, item);
                     });
 
                     // close the drawer for the subgroup
                     if (this.group_has_subgroupings) {
-                        this.removeSubgroupingDrawer(subgroup.id);
+                        this.removeSubgroupingDrawer(subgroup);
                     }
                 } else {
                     // add all listables for this subgrouping
                     _.each(subgroup.listables, (item)=>{
-                        this.addListable(subgroup.id, item.id);
+                        this.addListable(subgroup, item);
                     });
 
                     // Open the drawer for the subgroup
                     if (this.group_has_subgroupings) {
-                        this.addSubgroupingDrawer(subgroup.id);
+                        this.addSubgroupingDrawer(subgroup);
                     }
                 }
             },
@@ -276,9 +294,9 @@
                 _.each(this.group.subgroupings, (subgroup)=>{
                     _.each(subgroup.listables, (listable)=>{
                         if (adding) {
-                            this.addListable(subgroup.id, listable.id);
+                            this.addListable(subgroup, listable);
                         } else {
-                            this.removeListable(subgroup.id, listable.id);
+                            this.removeListable(subgroup, listable);
                         }
                     });
                 });

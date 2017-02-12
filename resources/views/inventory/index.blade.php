@@ -2,7 +2,20 @@
 @extends('layouts.full', ['contentId' => 'manage_inventory'])
 
 @section('body-menu')
-
+    <div class="">
+        <button
+                type="button"
+                @click.prevent="selectAllListables"
+                class="btn white btn-sm">Select all
+        </button>
+        <button
+                :class="selected.listables.length === 0 ? 'disabled' : null"
+                :disabled="selected.listables.length === 0 ? true : false"
+                type="button"
+                @click.prevent="resetSelectedListables"
+                class="btn white btn-sm">Unselect all
+        </button>
+    </div>
 @endsection
 
 
