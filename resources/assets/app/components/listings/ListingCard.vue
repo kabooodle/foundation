@@ -2,8 +2,8 @@
     <div
             class="col-md-3"
             :data-id="item.id"
-            :data-size-id="inventory_item.inventory_sizes_id"
-            :data-style-id="inventory_item.inventory_type_styles_id"
+            :data-size-id="listed_item.inventory_sizes_id"
+            :data-style-id="listed_item.inventory_type_styles_id"
     >
         <div class="box p-a-xs p-b-0">
             <span class="item avatar_container block-center center _128h avatar-thumbnail">
@@ -16,29 +16,29 @@
                             btn_size_class="pull-right label dark-white text-color btn-xs"
                             able_type="Kabooodle\Models\ListingItems"
                             :able_id="'' + item.id"
-                            :already_following="item.is_watched ? true : false"
+                            :already_following="item.is_watched ? '1' : '0'"
                             :endpoint="watch_endpoint"
                     ></followable>
                 </div>
                 <a :href="show_endpoint">
-                    <img :src="inventory_item.cover_photo.location" class="img-responsive">
+                    <img :src="listed_item.cover_photo.location" class="img-responsive">
                 </a>
             </span>
             <div class="p-a-sm p-b-0">
                 <div class="clearfix">
                     <h6 class="m-b-0">
                         <a class="" :href="show_endpoint">
-                            {{ inventory_item.name }}
+                            {{ listed_item.name }}
                         </a>
                     </h6>
                     <div class="m-b-0 text-sm clearfix">
                         <div class="pull-left">
                             <div class="block">
-                                <span class="text-muted">Size:</span><span class="">{{ inventory_item.style_size.name }}</span>
+                                <span class="text-muted">Size:</span><span class="">{{ listed_item.style_size.name }}</span>
                             </div>
                         </div>
                         <div class="pull-right" style="text-align: right">
-                            <span class="text-muted ">Qty:</span> <span class="">{{ inventory_item.available_quantity }}</span>
+                            <span class="text-muted ">Qty:</span> <span class="">{{ listed_item.available_quantity }}</span>
                         </div>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                 required: true,
                 type: Object,
             },
-            inventory_item: {
+            listed_item: {
                 required: true,
                 type: Object,
             },

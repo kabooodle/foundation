@@ -183,7 +183,7 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
      */
     public function claims()
     {
-        return $this->morphMany(Claims::class, 'shoppable');
+        return $this->morphMany(Claims::class, 'listable');
     }
 
     /**

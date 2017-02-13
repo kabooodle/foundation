@@ -341,9 +341,9 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
      */
     public function groupingsClaims()
     {
-        return $this->hasMany(Claims::class, 'claimable_id')
-            ->whereClaimableType(InventoryGrouping::class)
-            ->whereIn('claimable_id', $this->groupings()->lists('inventory_groupings.id'));
+        return $this->hasMany(Claims::class, 'listable_id')
+            ->whereListableType(InventoryGrouping::class)
+            ->whereIn('listable_id', $this->groupings()->lists('inventory_groupings.id'));
     }
 
     /**
@@ -351,9 +351,9 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
      */
     public function lockedGroupingsClaims()
     {
-        return $this->hasMany(Claims::class, 'claimable_id')
-            ->whereClaimableType(InventoryGrouping::class)
-            ->whereIn('claimable_id', $this->lockedGroupings()->lists('inventory_groupings.id'));
+        return $this->hasMany(Claims::class, 'listable_id')
+            ->whereListableType(InventoryGrouping::class)
+            ->whereIn('listable_id', $this->lockedGroupings()->lists('inventory_groupings.id'));
     }
 
     /**
@@ -361,9 +361,9 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
      */
     public function unlockedGroupingsClaims()
     {
-        return $this->hasMany(Claims::class, 'claimable_id')
-            ->whereClaimableType(InventoryGrouping::class)
-            ->whereIn('claimable_id', $this->unlockedGroupings()->lists('inventory_groupings.id'));
+        return $this->hasMany(Claims::class, 'listable_id')
+            ->whereListableType(InventoryGrouping::class)
+            ->whereIn('listable_id', $this->unlockedGroupings()->lists('inventory_groupings.id'));
     }
 
     /**

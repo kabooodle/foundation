@@ -11,9 +11,11 @@
                 group_type="inventory"
                 :display_footer_buttons="true"
         ></listable-grouping>
+        <popout-overlay></popout-overlay>
     </div>
 </template>
 <script>
+    import PopoutOverlay from '../Popover.vue';
     import Spinny from '../Spinner.vue';
     import ListableGrouping from './ListableGrouping.vue';
     export default{
@@ -25,7 +27,7 @@
             display_footer_buttons: {
                 type: Boolean,
                 default: false
-            }
+            },
         },
         data(){
             return{
@@ -51,7 +53,8 @@
         },
         components:{
             'spinny' : Spinny,
-            'listable-grouping' : ListableGrouping
+            'listable-grouping' : ListableGrouping,
+            'popout-overlay' : PopoutOverlay,
         }
     }
 </script>

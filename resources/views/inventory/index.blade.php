@@ -68,10 +68,12 @@
 
 @section('body-content')
 
+
     <listable-groupings
             listablegroupings_endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"
             :display_footer_buttons="true"
     ></listable-groupings>
+
 
     <onboard-card class="onboard-manageinventory" v-if="listables.length == 0 && ! actions.refreshing_data">
         <template slot="title">No inventory to manage or list</template>
@@ -82,6 +84,7 @@
         </template>
         <template slot="extra"><button class="btn btn-lg btn-grn m-b-2"><a href="{{ route('shop.inventory.create', [webUser()->username]) }}" >Got it! Take me to add inventory</a></button></template>
     </onboard-card>
+
 
 @endsection
 

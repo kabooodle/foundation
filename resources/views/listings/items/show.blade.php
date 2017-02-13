@@ -11,7 +11,7 @@
         <div class="btn-toolbar pull-right">
 
             @if(! $listingItem->listedItem->canSatisfyRequestedQuantityOf(1))
-                <div class="inline" data-toggle="tooltip" data-placement="bottom" title="Watch the item to be notified of availability">
+                <div class="inline" data-toggle="tooltip" data-animation="false" data-placement="bottom" title="Watch the item to be notified of availability">
                     <a class="btn btn-sm claim  _800 disabled" disabled href="#">
                         @if($listingItem->listedItem->getOnHoldQuantity())
                             On hold!

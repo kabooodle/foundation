@@ -385,7 +385,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function claims()
     {
-        return $this->morphMany(Claims::class, 'shoppable');
+        return $this->morphMany(Claims::class, 'listable');
     }
 
     /**

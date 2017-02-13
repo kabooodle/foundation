@@ -5,7 +5,7 @@
                     v-for="item in items"
                     :key="item.id"
                     :item="item"
-                    :inventory_item="item.inventory_item"
+                    :listed_item="item.listed_item"
                     :watch_endpoint="watch_endpoint.replace(/::1::/, item.listing_id).replace(/::2::/, item.id)"
                     :show_endpoint="show_endpoint.replace(/::1::/, item.id_to_string)"
             ></listing-card>

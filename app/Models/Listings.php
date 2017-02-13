@@ -153,7 +153,7 @@ class Listings extends AbstractListingModel
      */
     public function claims()
     {
-        return $this->hasManyThrough(Claims::class, ListingItems::class, 'listing_id', 'shoppable_id')
+        return $this->hasManyThrough(Claims::class, ListingItems::class, 'listing_id', 'listing_item_id')
             ->where('shoppable_type', ListingItems::class);
     }
 
@@ -245,7 +245,7 @@ class Listings extends AbstractListingModel
                 LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
                 LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_group_node_id
                 LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
-				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.claimable_id = li.listable_id AND c.claimed_by = l.owner_id
+				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id
                 WHERE l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
                 AND l.deleted_at IS NULL 
                 AND li.deleted_at IS NULL
@@ -294,7 +294,7 @@ class Listings extends AbstractListingModel
                 INNER JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
                 LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_album_node_id
                 LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
-				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.claimable_id = li.listable_id AND c.claimed_by = l.owner_id
+				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id
                 WHERE l.uuid = ? AND l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
                 AND l.type = ?
                 AND l.deleted_at IS NULL 

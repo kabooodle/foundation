@@ -97,6 +97,7 @@
                                                     class="btn btn-xs _400 pull-left white"
                                             >Edit</button>
                                             <a
+                                                    :href="this.window.location.href+'/'+item.name_uuid"
                                                     target="_blank"
                                                     class="btn btn-xs _400 pull-right white"
                                             >Claim</a>
@@ -135,7 +136,7 @@
             display_footer_buttons: {
                 type: Boolean,
                 default: false,
-            }
+            },
         },
         data(){
             return initial_state();
