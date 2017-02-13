@@ -14,6 +14,14 @@ Route::group(['middleware' => ['auth', 'subscribed:merchant|merchant_plus'], 'pr
         'as' => 'merchant.listings.update',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\MerchantListingsController::class.'@update'
     ]);
+    Route::get('listings/create', [
+        'as' => 'merchant.listings.create',
+        'uses' => \Kabooodle\Http\Controllers\Web\Listings\MerchantListingsController::class.'@create'
+    ]);
+    Route::post('listings', [
+       'as' => 'merchant.listings.store',
+        'uses' => \Kabooodle\Http\Controllers\Web\Listings\MerchantListingsController::class.'@store'
+    ]);
     Route::get('listings/{listing}', [
         'as' => 'merchant.listings.show',
         'uses' => \Kabooodle\Http\Controllers\Web\Listings\MerchantListingsController::class.'@show'

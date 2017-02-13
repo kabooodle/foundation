@@ -26,6 +26,16 @@ class MerchantListingsController extends Controller
         return $this->view('listings.merchant.index')->with(compact('listings'));
     }
 
+    public function create()
+    {
+
+    }
+
+    public function store()
+    {
+
+    }
+
     /**
      * @param Request $request
      * @param         $uuid

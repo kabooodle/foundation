@@ -86,16 +86,16 @@
                                class="dropdown-item {{ Request::is('shop/*/outfits') ? 'active' : null }}">Outfits</a>
 
                             <div class="divider"></div>
+                            <a href="{{ route('merchant.listings.create') }}" class="dropdown-item {{ Request::is('merchant/listings/create') ? 'active' : null }}"><span>Create sales listing</span></a>
+                            <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Manage Listings</span></a>
+
+                            <div class="divider"></div>
                             <a href="{{ route('shop.claims.index', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Pending Claims
                                 <span class="">({{ webUser()->pendingClaimsOnMyInventory()->count() }})</span>
                             </a>
-
                             <a  href="{{  route('merchant.sales.index') }}"
                                 class="dropdown-item {{ Request::is('merchant/sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
-
-                            <div class="divider"></div>
-                            <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Manage Listings</span></a>
 
                             @if(webUser()->isSubscribedToMerchantPlus())
                                 <div class="divider"></div>
