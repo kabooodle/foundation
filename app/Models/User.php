@@ -786,7 +786,7 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyClaimables()
     {
-        return $this->claimsOnMyInventory->merge($this->claimsOnMyInventoryGroupings);
+        return $this->pendingClaimsOnMyInventory->merge($this->pendingClaimsOnMyInventoryGroupings);
     }
 
     /**

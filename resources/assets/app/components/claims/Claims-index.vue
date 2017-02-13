@@ -16,7 +16,7 @@
                     <div class="avatar-thumbnail _32">
                         <img :src="getFile(claim)">
                     </div>
-                    <span>{{ claim.inventory_item_object_data.name_with_variant }}</span>
+                    <span>{{ claim.listable_item_object_data.name_with_variant }}</span>
                 </div>
             </td>
             <td >${{ claim.price }}</td>
@@ -113,7 +113,7 @@
                 this.selected_claims.splice(index, 1);
             },
             getFile : function(claim) {
-                return claim.inventory_item_object_data.cover_photo.location;
+                return claim.listable_item_object_data.cover_photo.location;
             },
             handleClaim : function(choice, claim, event){
                 event.preventDefault();

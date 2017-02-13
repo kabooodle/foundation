@@ -193,7 +193,7 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
 
         self::saving(function(self $model){
             if(! $model->wholesale_price_usd || is_null($model->wholesale_price_usd)) {
-                $model->wholesale_price_usd = $this->style->wholesale_price_usd;
+                $model->wholesale_price_usd = $model->style->wholesale_price_usd;
             }
             if(!$model->uuid) {
                 $model->uuid = str_random(16);

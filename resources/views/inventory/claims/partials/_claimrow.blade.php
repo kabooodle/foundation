@@ -8,7 +8,7 @@
                                             <img src="{{ $claim->listable->cover_photo }}">
                                           </span></a>
     </td>
-    <td style="vertical-align: middle !important">${{ $claim->inventory_item_object_data['price_usd'] }}</td>
+    <td style="vertical-align: middle !important">${{ $claim->listable_item_object_data['price_usd'] }}</td>
     <td style="vertical-align: middle !important">{!!  $claim->claimedBy->name  !!}</td>
     <td style="vertical-align: middle !important">{{ $claim->created_at->diffForHumans() }}</td>
     <td style="vertical-align: middle !important" class="action-column">

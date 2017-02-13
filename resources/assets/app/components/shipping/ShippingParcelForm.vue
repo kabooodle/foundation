@@ -556,8 +556,8 @@
                             value: parseInt(this.id),
                             claimer_id: this.claimer.id,
                             date: this.updated_at_human,
-                            image: this.inventory_item_object_data.cover_photo.location,
-                            name: this.claimer.username+', '+this.inventory_item_object_data.name+' - '+this.inventory_item_object_data.style_size.name+', $'+this.price
+                            image: this.listable_item_object_data.cover_photo.location,
+                            name: this.claimer.username+', '+this.listable_item_object_data.name+' - '+this.listable_item_object_data.style_size.name+', $'+this.price
                         });
                     });
                 }
