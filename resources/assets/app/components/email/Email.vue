@@ -5,6 +5,7 @@
             <span v-show="isVerified" data-toggle="tooltip" title="Verified">
                 <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
             </span>
+            <span v-show="isPrimaryEmail" class="label label-primary">Primary</span>
             <span v-show="!isVerified">
                 <div class="pull-right">
                     <button @click="resendVerification" class="btn white btn-sm">
@@ -14,9 +15,6 @@
             </span>
         </div>
         <div class="col-sm-3">
-            <div v-show="isPrimaryEmail">
-                <div class="text-primary text-center">Primary</div>
-            </div>
             <div v-show="!isPrimaryEmail">
                 <button v-if="isVerified" @click="makePrimary" class="btn white btn-sm">Make Primary</button>
                 <button v-else @click="notifyNeedsToVerify" disabled class="btn disabled white btn-sm">Make Primary</button>

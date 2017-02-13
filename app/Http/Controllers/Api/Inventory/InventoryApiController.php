@@ -49,11 +49,11 @@ class InventoryApiController extends AbstractApiController
                     if(! $groupings[$styleId]['name']) {
                         $groupings[$styleId]['name'] = $item->style->name;
                     }
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['id'] = $item->styleSize->id;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['name'] = $item->styleSize->name;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['items'][] = [
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['id'] = $item->styleSize->id;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['name'] = $item->styleSize->name;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['listables'][] = [
                         'id' => $item->id,
                         'name_uuid' => $item->name_uuid,
                         'uuid' => $item->uuid,
@@ -72,7 +72,7 @@ class InventoryApiController extends AbstractApiController
                 }
 
                 // Sort based on the order key.
-                usort($groupings[$styleId]['sizes'], function ($item1, $item2) {
+                usort($groupings[$styleId]['subgroupings'], function ($item1, $item2) {
                     return $item1['order'] <=> $item2['order'];
                 });
             }

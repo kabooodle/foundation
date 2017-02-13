@@ -63,3 +63,9 @@
   border-radius: 50%;
   display: inline-block;
 }
+
+.label.label-primary,
+.label-primary {
+  background-color: $primary;
+  color: #fff;
+}
