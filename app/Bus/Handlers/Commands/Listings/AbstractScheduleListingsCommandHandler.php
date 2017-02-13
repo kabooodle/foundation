@@ -7,10 +7,10 @@
 namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use Carbon\Carbon;
-use Kabooodle\Models\Inventory;
-use Kabooodle\Models\InventoryGrouping;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
+use Kabooodle\Models\Inventory;
+use Kabooodle\Models\InventoryGrouping;
 
 /**
  * Class AbstractScheduleListingsCommandHandler
@@ -64,9 +64,9 @@ abstract class AbstractScheduleListingsCommandHandler
     public function listableItemBelongsToUser(int $listableId, string $listableType, User $actor)
     {
         if ($listableType == Inventory::class) {
-            return $actor->inventory()->whereId($listableId)->first();
+            return $actor->inventory->where('id', $listableId)->first();
         } else if ($listableType == InventoryGrouping::class) {
-            return $actor->inventoryGroupings()->whereID($listableId)->find();
+            return $actor->inventoryGroupings->where('id', $listableId)->first();
         }
         return false;
     }

@@ -85,7 +85,7 @@ class CreateOrUpdateCustomListingCommandHandler extends AbstractScheduleListings
 
                 // Skip inventory items that do not belong to the user.
                 // Skip items already in the flash sale by the user.
-                if (!$this->inventoryItemBelongsToUser($selectedItem, $actor) || $this->itemAlreadyInSale($listing, $selectedItem)
+                if (!$this->listableItemBelongsToUser($selectedItem, null, $actor) || $this->itemAlreadyInSale($listing, $selectedItem)
                 ) {
                     continue;
                 }
