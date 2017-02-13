@@ -9,6 +9,7 @@
                 key="group.id"
                 :group="group"
                 group_type="inventory"
+                :display_footer_buttons="true"
         ></listable-grouping>
     </div>
 </template>
@@ -21,6 +22,10 @@
                 required: true,
                 type: String
             },
+            display_footer_buttons: {
+                type: Boolean,
+                default: false
+            }
         },
         data(){
             return{
@@ -40,6 +45,7 @@
                     this.listable_groupings = response.body.data;
                 }).finally(()=>{
                     this.actions.fetching_listables = false;
+                    $Bus.$emit('listables:fetched', this.listable_groupings);
                 });
             }
         },

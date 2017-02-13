@@ -92,6 +92,7 @@
                                         </button>
                                         <div v-if="display_footer_buttons" class="clearfix" style="margin-top: 5px;">
                                             <button
+                                                    @click.prevent="editItemButtonClicked(item, $event)"
                                                     type="button"
                                                     class="btn btn-xs _400 pull-left white"
                                             >Edit</button>
@@ -133,7 +134,7 @@
             },
             display_footer_buttons: {
                 type: Boolean,
-                default: true
+                default: false,
             }
         },
         data(){
@@ -177,6 +178,28 @@
             });
         },
         methods: {
+            editItemButtonClicked(item, event){
+                $Bus.$emit('popout-overlay:request-open');
+
+                this.$http.get(window.location.href+'/'+item.name_uuid+'/edit', {
+                    async: false,
+                    before(request) {
+                        // Before each ajax request, abort the previous request
+                        // and add this request to an array of requests for reference.
+                        $Bus.$emit('popout-overlay:change-prompt', false);
+                        if (this.previousRequest) {
+                            this.previousRequest.abort();
+                        }
+                        this.previousRequest = request;
+                    }
+                }).then((response)=>{
+                    setTimeout(()=>{
+                        $Bus.$emit('popout-overlay:change-content', response.body);
+                    },0);
+                }, (response)=>{
+                    $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
+                });
+            },
             resetState(){
                 Object.assign(this.$data, initial_state());
             },

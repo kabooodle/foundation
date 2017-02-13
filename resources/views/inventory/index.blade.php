@@ -2,8 +2,10 @@
 @extends('layouts.full', ['contentId' => 'manage_inventory'])
 
 @section('body-menu')
-    <div class="">
+    <div class="text-center center-block">
         <button
+                :disabled="actions.refreshing_data ? true : false"
+                :class="! actions.refreshing_data ? null : 'disabled'"
                 type="button"
                 @click.prevent="selectAllListables"
                 class="btn white btn-sm">Select all
@@ -13,7 +15,7 @@
                 :disabled="selected.listables.length === 0 ? true : false"
                 type="button"
                 @click.prevent="resetSelectedListables"
-                class="btn white btn-sm">Unselect all
+                class="btn white btn-sm">Unselect all (@{{selected.listables.length}})
         </button>
     </div>
 @endsection
@@ -21,11 +23,6 @@
 
 @push('header-styles')
 <style>
-    /*@media only screen and (max-width: 959px) {*/
-    /*.navbar-side {*/
-    /*width: 100% !important;*/
-    /*}*/
-    /*}*/
     .img-thumb {
         position: relative;
     }
@@ -73,20 +70,21 @@
 
     <listable-groupings
             listablegroupings_endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"
+            :display_footer_buttons="true"
     ></listable-groupings>
 
-    {{--<onboard-card class="onboard-manageinventory" v-if="inventory_items.length == 0 && ! actions.refreshing_data">--}}
-        {{--<template slot="title">No inventory to manage or list</template>--}}
-        {{--<template slot="subtext">--}}
-            {{--Once you've added inventory, you can list it to Facebook &amp; flash sales anytime!--}}
-            {{--<br>--}}
-            {{--Wish to edit an item? You would do that here too :)--}}
-        {{--</template>--}}
-        {{--<template slot="extra"><button class="btn btn-lg btn-grn m-b-2"><a href="{{ route('shop.inventory.create', [webUser()->username]) }}" >Got it! Take me to add inventory</a></button></template>--}}
-    {{--</onboard-card>--}}
+    <onboard-card class="onboard-manageinventory" v-if="listables.length == 0 && ! actions.refreshing_data">
+        <template slot="title">No inventory to manage or list</template>
+        <template slot="subtext">
+            Once you've added inventory, you can list it to Facebook &amp; flash sales anytime!
+            <br>
+            Wish to edit an item? You would do that here too :)
+        </template>
+        <template slot="extra"><button class="btn btn-lg btn-grn m-b-2"><a href="{{ route('shop.inventory.create', [webUser()->username]) }}" >Got it! Take me to add inventory</a></button></template>
+    </onboard-card>
 
 @endsection
 
 @push('footer-scripts')
-<script src="{{ staticAsset("/assets/js/listable-index.js") }}"></script>
+<script src="{{ staticAsset("/assets/js/inventory-management.js") }}"></script>
 @endpush
