@@ -3,14 +3,33 @@
         <div class="text-center center-block" v-if="actions.fetching_listables">
             <spinny :size="'20'"></spinny>
         </div>
-        <listable-grouping
-                v-else
-                v-for="group in listable_groupings"
-                key="group.id"
-                :group="group"
-                group_type="inventory"
-                :display_footer_buttons="true"
-        ></listable-grouping>
+        <div v-if="! actions.fetching_listables" >
+            <div v-if="show_select_buttons" class="text-center m-b-1 center-block">
+                <button
+                        style="width: 140px"
+                        :disabled="actions.fetching_listables ? true : false"
+                        :class="actions.fetching_listables ? 'disabled' :  null"
+                        @click.prevent="selectAllListables" class="btn white btn-md">
+                    Select all
+                    <span class="text-sm text-muted block">({{this.listables.length}})</span>
+                </button>
+                <button
+                        style="width: 140px"
+                        :disabled="actions.fetching_listables ? true : false"
+                        :class="actions.fetching_listables ? 'disabled' :  null"
+                        @click.prevent="resetSelectedListables" class="btn white btn-md">
+                    Unselect all
+                    <span class="text-sm text-muted block">({{this.listables.length}})</span>
+                </button>
+            </div>
+            <listable-grouping
+                    v-for="group in listable_groupings"
+                    key="group.id"
+                    :group="group"
+                    group_type="inventory"
+                    :display_footer_buttons="true"
+            ></listable-grouping>
+        </div>
         <popout-overlay></popout-overlay>
     </div>
 </template>
@@ -20,6 +39,9 @@
     import ListableGrouping from './ListableGrouping.vue';
     export default{
         props: {
+            show_select_buttons: {
+                default: false,
+            },
             listablegroupings_endpoint: {
                 required: true,
                 type: String
@@ -31,20 +53,54 @@
         },
         data(){
             return{
+                listables: [],
+                listable_groupings: [],
                 actions: {
                     fetching_listables: false,
                 },
-                listable_groupings: []
+                selected: {
+                    listables: [],
+                }
             }
         },
         mounted(){
             this.getListables();
+
+            $Bus.$on('listings:selected:listables:reset', ()=>{
+                this.selected.listables = [];
+            });
+
+            $Bus.$on('listings:selected:listable:added', (group, subgroup, listable)=>{
+                const index = _.findIndex(this.selected.listables, {id: listable.id});
+                if (index == -1) {
+                    this.selected.listables.push(listable);
+                }
+            });
+            $Bus.$on('listings:selected:listable:removed', (groupid, subgroup, listable)=>{
+                const index = _.findIndex(this.selected.listables, {id: listable.id});
+                if (index > -1) {
+                    this.selected.listables.splice(index, 1);
+                }
+            });
         },
         methods: {
+            resetSelectedListables(){
+                $Bus.$emit('listings:selected:listables:reset');
+            },
+            selectAllListables(){
+                $Bus.$emit('listings:listables:select:all');
+            },
             getListables(){
                 this.actions.fetching_listables = true;
                 this.$http.get(this.listablegroupings_endpoint).then((response)=>{
                     this.listable_groupings = response.body.data;
+                    _.each(this.listable_groupings, (groupings)=>{
+                        _.each(groupings.subgroupings, (group)=>{
+                            _.each(group.listables, (listable)=>{
+                                this.listables.push(listable);
+                            })
+                        })
+                    });
                 }).finally(()=>{
                     this.actions.fetching_listables = false;
                     $Bus.$emit('listables:fetched', this.listable_groupings);

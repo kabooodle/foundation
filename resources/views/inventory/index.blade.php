@@ -22,7 +22,7 @@
                 class="btn primary btn-sm">Create outfit
         </a>
         <a
-                href="{{ route('shop.outfits.create', [webUser()->username]) }}"
+                href="{{ route('merchant.listings.create') }}"
                 class="btn primary btn-sm">Create sales listing
         </a>
     </div>

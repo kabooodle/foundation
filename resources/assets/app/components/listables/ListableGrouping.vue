@@ -3,12 +3,12 @@
         <div class="box-header">
             <div class="row">
                 <div class="col-sm-2">
-                    <h6 class="m-a-0 m-t-sm">
+                    <h6 class="m-a-0 m-t-xs m-b-sm">
                         <a
                                 href="javascript:;"
                                 @click.prevent="clickDrawersAll"
                         >{{ group.name }}
-                            <span class="text-xs text-muted inline _400">({{ group.total }})
+                            <span class="text-xs p-b-xs text-muted inline _400">({{ group.total }})
                             <i v-if="group_has_subgroupings"
                                :class="opened.length ? 'fa-angle-up' : 'fa-angle-down'"
                                class="_300 text-sm fa"></i>

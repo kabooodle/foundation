@@ -35,6 +35,7 @@ elixir(function (mix) {
     mix.browserify('app/components/listings/listing-index-merchant.js');
     mix.browserify('app/components/listings/listing-items-page.js');
     mix.browserify('app/components/listings/listing-index.js');
+    mix.browserify('app/components/listings/listing-create.js');
 
     mix.browserify('app/components/notices/notice-handler.js');
 

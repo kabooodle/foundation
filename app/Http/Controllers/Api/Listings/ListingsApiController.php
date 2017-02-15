@@ -7,11 +7,13 @@
 namespace Kabooodle\Http\Controllers\Api\Listings;
 
 use Binput;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
-use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Models\Listings;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Validation\ValidationException;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
+use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 
 /**
@@ -19,7 +21,7 @@ use Kabooodle\Http\Controllers\Api\AbstractApiController;
  */
 class ListingsApiController extends AbstractApiController
 {
-    use PaginatesTrait;
+    use DispatchesJobs, PaginatesTrait;
 
     /**
      * @param Request $request
@@ -88,6 +90,20 @@ class ListingsApiController extends AbstractApiController
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function store(Request $request)
+    {
+        try {
+
+        } catch (ValidationException $e) {
+
+        } catch (Exception $e) {
+
         }
     }
 

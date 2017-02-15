@@ -8,6 +8,8 @@ namespace Kabooodle\Http\Controllers\Web\Listings;
 
 use Illuminate\Http\Request;
 use Kabooodle\Models\Listings;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Validation\ValidationException;
 use Kabooodle\Http\Controllers\Web\Controller;
 
 /**
@@ -15,6 +17,7 @@ use Kabooodle\Http\Controllers\Web\Controller;
  */
 class MerchantListingsController extends Controller
 {
+    use DispatchesJobs;
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\View\View
@@ -26,14 +29,14 @@ class MerchantListingsController extends Controller
         return $this->view('listings.merchant.index')->with(compact('listings'));
     }
 
-    public function create()
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function create(Request $request)
     {
-
-    }
-
-    public function store()
-    {
-
+        return $this->view('listings.merchant.create');
     }
 
     /**

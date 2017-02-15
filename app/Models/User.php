@@ -1075,7 +1075,8 @@ class User extends BaseEloquentModel implements
     public function genericTrialEndsInDays()
     {
         if ($this->onGenericTrial()) {
-            return $this->trial_ends_at->diffForHumans();
+            $now = Carbon::now(webUser()->timzeone);
+            return $this->trial_ends_at->diff($now)->days < 1 ? 'today' : 'in '.$this->trial_ends_at->diffInDays($now).' days';
         }
 
         return null;
