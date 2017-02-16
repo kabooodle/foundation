@@ -279,13 +279,6 @@
                     return false;
                 }
 
-                // possible names we can search against and ignore
-                let ignored_names = [
-                    'ignore',
-                    'do not post',
-                    'empty',
-                ];
-
                 // Convert to a plain javascript object, not a VUE object with reactivity :o
                 let haystack = JSON.parse(JSON.stringify(this.selected.sale.sale.albums));
                 let needles = JSON.parse(JSON.stringify(this.selected.listables));
@@ -306,12 +299,16 @@
                         return album;
                     }).filter(function(album){
                         // filter out albums that match our ignored_names haystack
-                        return ignored_names.indexOf(album.name) == -1 ? album : false;
+                        return ['ignore', 'do not post', 'empty'].indexOf(album.name) == -1 ? album : false;
                     }).value();
 
                 let inventoryMatcher = new InventoryToAlbumMatcher(haystack, needles);
+
+                // Perform the search
+                // Anti-climatic right?
                 inventoryMatcher.performSearch();
 
+                // Pass the search results and being matching albums and inventory.
                 return this.assignMatchingsToAlbums(inventoryMatcher.matchResults(), inventoryMatcher.misses());
             },
 
@@ -321,11 +318,13 @@
                     return false;
                 }
 
-                _.each(matching_albums, (matching_results)=>{
+                for (let i =0; i<matching_albums.length; i++){
+                    let matching_results = matching_albums[i];
                     let listables = [];
-                    _.each(matching_results.results, (result)=>{
-                        listables.push(result.listable);
-                    });
+
+                    for (let k =0; k<matching_results.results.length; k++){
+                        listables.push(matching_results.results[k].listable);
+                    }
 
                     let sale_data = JSON.parse(JSON.stringify(this.selected.sale));
                     sale_data.album = matching_results.results[0].album;
@@ -333,7 +332,7 @@
                     sale_data.listables = listables;
 
                     this.selected.sales.push(sale_data);
-                });
+                }
 
                 // TODO: Make sure that each listable we are pushing back to the
                 // listables array, isn't already there.
