@@ -48,6 +48,7 @@
         @endif
         $(function () {
             @if(webUser())
+            moment.tz('{{ webUser()->timezone}}').format();
             $.ajaxPrefilter(function (options, originalOptions, xhr) {
                 if (options.url.toLowerCase().indexOf("amazonaws") <= 0) {
                     xhr.setRequestHeader("Authorization", "Bearer " + $('meta[name=user_hash]').attr("content") + "");
@@ -62,12 +63,8 @@
                 }
             });
         });
-        @if(webUser())
-        moment.tz('{{ webUser()->timezone}}').format();
-        @endif
     </script>
     @endpush
-
 
     @stack('header-styles')
 

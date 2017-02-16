@@ -6,30 +6,34 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card-group">
-                            <div class="card no-border">
+                            <div class="card no-border text-center">
+                                <img class="card-img-top hidden-sm-down center-block" height="64" src="/assets/images/home/icons/inventory.png" >
                                 <div class="card-block">
                                     <h5
                                             :class="selected.step !== 1 ?  'text-muted' : null"
-                                            class="m-b-0 text-center card-title">
+                                            class="m-b-0 card-title">
                                         Select Inventory
                                         <span class="block text-xs text-muted m-t-sm">{{ selected.listables.length }} selected</span>
                                     </h5>
                                 </div>
                             </div>
                             <div class="card no-border">
+                                <img class="card-img-top hidden-sm-down center-block" height="64" src="/assets/images/home/icons/sell_and_display.png" >
                                 <div class="card-block">
                                     <h5
                                             :class="selected.step !== 2 ?  'text-muted' : null"
                                             class="m-b-0 text-center card-title">Select Sale
-                                        <span class="block text-xs text-muted m-t-sm">{{ selected.sales.length }} sales stored</span>
+                                        <span class="block text-xs text-muted m-t-sm">{{ selected.sales.length }} sales prepared</span>
                                     </h5>
                                 </div>
                             </div>
                             <div class="card no-border">
+                                <img class="card-img-top hidden-sm-down center-block" height="64" src="/assets/images/home/icons/preview.png" >
                                 <div class="card-block">
                                     <h5
                                             :class="selected.step !== 3 ?  'text-muted' : null"
                                             class="m-b-0 text-center card-title">Preview
+                                        <span class="block text-xs text-muted m-t-sm">Make changes, add options</span>
                                     </h5>
                                 </div>
                             </div>
@@ -40,6 +44,13 @@
         </div>
 
         <div class="box white">
+
+            <steps
+                    :current_step="selected.step"
+                    :selected_listables_count="selected.listables.length"
+                    :selected_sales_count="selected.sales.length"
+            ></steps>
+
             <div class="box-body">
                 <template v-if="selected.step == 1">
                     <listable-groups
@@ -90,6 +101,20 @@
                                             <option v-for="fbgroup in postables.facebookgroups" :value="fbgroup.id">{{ fbgroup.name }}</option>
                                         </select>
                                     </div>
+                                    <div class="form-group m-t-1 m-b-1" v-if="selected.sale.sale_id">
+                                        <hr>
+                                        <div class="checkbox checkbox-slider--b-flat">
+                                            <label>
+                                                <input
+                                                        :checked="selected.sale.magical_matcher"
+                                                        @change="matchInventory"
+                                                        data-type="magic-toggler"
+                                                        type="checkbox" />
+                                                <span class="text-sm">Automatically match inventory?</span>
+                                            </label>
+                                        </div>
+                                        <hr>
+                                    </div>
                                     <div class="form-group m-t-1" v-if="selected.sale.sale_id">
                                         <label class="control-label">Select album to add inventory</label>
                                         <div class="m-b-sm" v-for="album in postables.facebookgroups[_.findIndex(postables.facebookgroups, {id: selected.sale.sale_id})].albums" >
@@ -111,8 +136,8 @@
                                             <template v-if="_.findIndex(selected.sales, {album_id: album.id}) > -1">
                                                 <div class="m-t-0">
                                                     <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables.length }} items associated</span>
-                                                    <div style="display: none">
-                                                        <span class="avatar_container inline _26 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
+                                                    <div class="m-l-2">
+                                                        <span class="avatar_container m-r-sm inline _26 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
                                                             <img :src="listable.cover_photo.location">
                                                         </span>
                                                     </div>
@@ -130,39 +155,29 @@
                     I am step 3
                 </template>
             </div>
-            <div class="box-footer dker clearfix">
-                <template v-if="selected.step == 1">
-                    <button
-                            @click.prevent="gotoStepTwo"
-                            class="btn white btn-sm pull-right">Continue <i class="fa fa-chevron-circle-right" aria-hidden="true"></i></i></button>
-                </template>
-
-                <template  v-if="selected.step == 2">
-                    <button
-                            @click.prevent="gotoStepOne"
-                            class="btn white btn-sm pull-left"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> Back to inventory</button>
-                    <button
-                            :class="selected.sales.length == 0 ? 'disabled' : null"
-                            :disabled="selected.sales.length == 0"
-                            @click.prevent="gotoStepThree"
-                            class="btn white btn-sm pull-right">Preview listing <i class="fa fa-chevron-circle-right" aria-hidden="true"></i></button>
-                </template>
-
-                <template  v-if="selected.step == 3">
-                    <button
-                            @click.prevent="gotoStepTwo"
-                            class="btn white btn-sm pull-left"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> Back to sales</button>
-                    <button
-                            @click.prevent="gotoStepTwo"
-                            class="btn primary btn-sm pull-right">Save listing</button>
-                </template>
-            </div>
+            <steps
+                    :current_step="selected.step"
+                    :selected_listables_count="selected.listables.length"
+                    :selected_sales_count="selected.sales.length"
+            ></steps>
         </div>
     </div>
 </template>
 <script>
+    const search_match_result = function(){
+        return {
+            album_id: null,
+            album: null,
+            listable_id: null,
+            listable: {},
+            match: null,
+            match_score: null,
+            needle: null,
+        }
+    };
     const selected_sale_data = function(){
         return {
+            magical_matcher: false,
             sale_type: null,
             sale_id: null,
             sale: null,
@@ -171,6 +186,8 @@
             listables: [],
         }
     };
+    import Fuse from 'fuse.js';
+    import Steps from './Steps.vue';
     import Spinny from '../../Spinner.vue';
     import ListablesGroups from '../../listables/ListableGroupings.vue';
     export default{
@@ -212,6 +229,11 @@
                     // AND have not yet been assigned to an active sale configuration
                     listables: [],
                 },
+
+                matching_listables: {
+                    misses: [],
+                    matches: [],
+                },
             }
         },
         created() {
@@ -240,18 +262,203 @@
             });
         },
         methods: {
+            matchInventory(e){
+                let target = e.target;
+                if (target.checked) {
+                    // Run the tool magic tool.
+                    let matched = this.buildInventoryAlbumMatchings();
+                    if (matched === false) {
+                        target.checked = false;
+                    }
+                    this.selected.sale.magical_matcher = true;
+                } else {
+                    // Tool was already run, they want to undo the results
+                    this.selected.sale.magical_matcher = false;
+                }
+            },
+
+            buildInventoryAlbumMatchings(){
+                // TODO: Are there pre-requisites we need to check before we run this?
+
+                if (this.selected.listables.length == 0) {
+                    notify({
+                        text: 'You must first select inventory.'
+                    });
+
+                    return false;
+                }
+
+                // Array holding results of the search.
+                let results = [];
+                const MIN_SCORE = 90;
+
+                // possible names we can search against and ignore
+                let ignored_names = [
+                    'ignore',
+                    'do not post',
+                    'empty',
+                ];
+
+                // Convert to a plain javascript object, not a VUE object with reactivity :o
+                let haystack = JSON.parse(JSON.stringify(this.selected.sale.sale.albums));
+
+                haystack = _.chain(haystack)
+                    .map(function(album){
+
+                        album.name = album.name.toLowerCase() // lowercase string
+                                .replace(/\s+/g,' ').trim() // replace extra spaces with single space
+                                .replace(/ \$[0-9]+$/, '') // Remove all $dollars with empty
+                                .replace(/all sizes/g, '') // FIXME: interesting results.
+                            + ' '; // Add white space to the end of the string... possible bugfix
+
+                        // Add style key/value as a 2nd weighted search option
+                        album.style = album.name.trim();
+
+                        return album;
+                    }).filter(function(album){
+                        // filter out albums that match our ignored_names haystack
+                        return ignored_names.indexOf(album.name) == -1 ? album : false;
+                    }).value();
+
+                var options = {
+                    include: ["score"],
+                    shouldSort: true,
+                    threshold: 0.3,
+                    location: 0,
+                    distance: 0,
+                    maxPatternLength: 100,
+                    minMatchCharLength: 3,
+                    keys: [{
+                        name: "name",
+                        weight: .6,
+                    }, {
+                        name: "style",
+                        weight: .4
+                    }]
+                };
+
+                // Fuse variable containing the fuse object, with the haystack queued and the options we set.
+                var fuse = new Fuse(haystack, options);
+
+                // Iterate over each of the selected inventory items, and search for albums that match
+                // the inventory item's "style" "size" (e.g. Adeline XXL, Adeline 5)
+                _.each(this.selected.listables, (listable)=>{
+
+                    // Convert VUE object to plain object so we dont have stupid nested listeners
+                    let temp_listable = JSON.parse(JSON.stringify(listable));
+
+                    // Build the needle we are looking for in the haystack, or rather,
+                    // string we are searching for in the array of possibilities.
+                    let style_name = listable.style_name.toLowerCase();
+                    let size_name = listable.size_name.toLowerCase();
+                    let needle = style_name+' '+size_name;
+
+                    // Search through the haystack, comparing our needle, and return array of all possible matches
+                    let found_results = fuse.search(needle);
+
+                    // Glass is half empty; Start with having no match;
+                    let match = false;
+
+                    // Our ideal match will always be the first key in the array of possible matches
+                    // as the keys are sorted by the highest score.  We dont care about anything but this key.
+                    let ideal_match = found_results[0];
+
+                    // If we have an ideal match, we further qualify the match based on the score.
+                    // If its >= our MIN_SCORE, we will consider this match as our matching album.
+                    if (ideal_match && (1 - ideal_match.score) * 100 >= MIN_SCORE) {
+                        match = ideal_match;
+                    }
+                    // No ideal match, so lets search now using a different needle, just to be sure.
+                    else {
+                        found_results = fuse.search(style_name);
+                        let style_based_ideal_match = found_results[0];
+
+                        if (style_based_ideal_match && ((1 - style_based_ideal_match.score) * 100 >= MIN_SCORE)) {
+                            match = style_based_ideal_match;
+                        }
+                    }
+
+                    // Result object
+                    let result = search_match_result();
+                    result.album_id = match ? match.item.id : null;
+                    result.album = match ? match.item : null;
+                    result.listable_id = temp_listable.id;
+                    result.listable = temp_listable;
+                    result.match = match ? match : null;
+                    result.match_score = match ? ((1 - match.score) * 100) : null;
+                    result.needle = needle;
+
+                    if (match) {
+                        const index = _.findIndex(results, {key: result.album_id});
+                        if (index == -1) {
+                            results.push({key: result.album_id, results: [result]});
+                        } else {
+                            results[index].results.push(result);
+                        }
+
+                        this.matching_listables.matches.push(temp_listable);
+                    } else {
+                        this.matching_listables.misses.push(temp_listable);
+                    }
+                });
+
+
+                let assigned = this.assignMatchingsToAlbums(results);
+
+                if (assigned === false) {
+                    return false;
+                }
+
+                return true;
+            },
+
+            assignMatchingsToAlbums(matching_albums){
+                if (this.matching_listables.misses.length == this.selected.listables.length) {
+                    // shit, not a single match!?
+                    return false;
+                }
+
+                _.each(matching_albums, (matching_results)=>{
+                    let listables = [];
+                    _.each(matching_results.results, (result)=>{
+                        listables.push(result.listable);
+                    });
+
+                    let sale_data = JSON.parse(JSON.stringify(this.selected.sale));
+                    sale_data.album = matching_results.results[0].album;
+                    sale_data.album_id = matching_results.results[0].album.id;
+                    sale_data.listables = listables;
+
+                    this.selected.sales.push(sale_data);
+                });
+
+                // TODO: Make sure that each listable we are pushing back to the
+                // listables array, isn't already there.
+                this.selected.listables = this.matching_listables.misses;
+
+                return true;
+            },
+
             selectAlbum(album, e){
                 const index = _.findIndex(this.selected.sales, {album_id: album.id});
 
                 // So the album is already in our sales and we're unchecking it.
                 if (index > -1) {
-                    console.log(index);
                     this.selected.sales.splice(index, 1);
                     return;
                 }
 
+                // TODO: Upon unchecking a checkbox, when magical matcher has been enabled,
+                // the inventory associated to this album should be returned to the available
+                // listables array.
+//                if (this.selected.magical_matcher) {
+//                    this.selected.listables.push(album.listables);
+//                }
+
                 if(!this.selected.listables.length) {
-                    e.preventDefault();
+                    if (e) {
+                        e.preventDefault();
+                    }
                     return;
                 }
 
@@ -310,7 +517,9 @@
                 this.pushActiveSaleToSelectedSales();
             },
             gotoStepTwo(){
-                if (! this.selected.listables || this.selected.listables.length == 0) {
+                // If we are currently on step 1, and trying to goto step 2, we need to make sure we've selected
+                // some listables in order to goto step 2. without listables, no bueno.
+                if (this.selected.step == 1 && (! this.selected.listables || this.selected.listables.length == 0)) {
                     return false;
                 }
                 this.completed.steps.push(1);
@@ -318,6 +527,9 @@
                 this.getPostables();
             },
             gotoStepThree(){
+                if (this.selected.sales.length == 0) {
+                    return;
+                }
                 this.completed.steps.push(2);
                 this.selected.step = 3
 
@@ -341,6 +553,7 @@
             },
         },
         components:{
+            'steps' : Steps,
             'spinny' : Spinny,
             'listable-groups' : ListablesGroups
         }
