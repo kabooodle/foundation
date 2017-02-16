@@ -164,17 +164,6 @@
     </div>
 </template>
 <script>
-    const search_match_result = function(){
-        return {
-            album_id: null,
-            album: null,
-            listable_id: null,
-            listable: {},
-            match: null,
-            match_score: null,
-            needle: null,
-        }
-    };
     const selected_sale_data = function(){
         return {
             magical_matcher: false,
@@ -190,6 +179,7 @@
     import Steps from './Steps.vue';
     import Spinny from '../../Spinner.vue';
     import ListablesGroups from '../../listables/ListableGroupings.vue';
+    import InventoryToAlbumMatcher from './InventoryToAlbumMatcher';
     export default{
         props: {
             show_select_buttons: {
@@ -278,8 +268,6 @@
             },
 
             buildInventoryAlbumMatchings(){
-                // TODO: Are there pre-requisites we need to check before we run this?
-
                 if (this.selected.listables.length == 0) {
                     notify({
                         text: 'You must first select inventory.'
@@ -287,10 +275,6 @@
 
                     return false;
                 }
-
-                // Array holding results of the search.
-                let results = [];
-                const MIN_SCORE = 90;
 
                 // possible names we can search against and ignore
                 let ignored_names = [
@@ -301,6 +285,7 @@
 
                 // Convert to a plain javascript object, not a VUE object with reactivity :o
                 let haystack = JSON.parse(JSON.stringify(this.selected.sale.sale.albums));
+                let needles = JSON.parse(JSON.stringify(this.selected.listables));
 
                 haystack = _.chain(haystack)
                     .map(function(album){
@@ -320,90 +305,10 @@
                         return ignored_names.indexOf(album.name) == -1 ? album : false;
                     }).value();
 
-                var options = {
-                    include: ["score"],
-                    shouldSort: true,
-                    threshold: 0.3,
-                    location: 0,
-                    distance: 0,
-                    maxPatternLength: 100,
-                    minMatchCharLength: 3,
-                    keys: [{
-                        name: "name",
-                        weight: .6,
-                    }, {
-                        name: "style",
-                        weight: .4
-                    }]
-                };
+                let inventoryMatcher = new InventoryToAlbumMatcher(haystack, needles);
+                inventoryMatcher.performSearch();
 
-                // Fuse variable containing the fuse object, with the haystack queued and the options we set.
-                var fuse = new Fuse(haystack, options);
-
-                // Iterate over each of the selected inventory items, and search for albums that match
-                // the inventory item's "style" "size" (e.g. Adeline XXL, Adeline 5)
-                _.each(this.selected.listables, (listable)=>{
-
-                    // Convert VUE object to plain object so we dont have stupid nested listeners
-                    let temp_listable = JSON.parse(JSON.stringify(listable));
-
-                    // Build the needle we are looking for in the haystack, or rather,
-                    // string we are searching for in the array of possibilities.
-                    let style_name = listable.style_name.toLowerCase();
-                    let size_name = listable.size_name.toLowerCase();
-                    let needle = style_name+' '+size_name;
-
-                    // Search through the haystack, comparing our needle, and return array of all possible matches
-                    let found_results = fuse.search(needle);
-
-                    // Glass is half empty; Start with having no match;
-                    let match = false;
-
-                    // Our ideal match will always be the first key in the array of possible matches
-                    // as the keys are sorted by the highest score.  We dont care about anything but this key.
-                    let ideal_match = found_results[0];
-
-                    // If we have an ideal match, we further qualify the match based on the score.
-                    // If its >= our MIN_SCORE, we will consider this match as our matching album.
-                    if (ideal_match && (1 - ideal_match.score) * 100 >= MIN_SCORE) {
-                        match = ideal_match;
-                    }
-                    // No ideal match, so lets search now using a different needle, just to be sure.
-                    else {
-                        found_results = fuse.search(style_name);
-                        let style_based_ideal_match = found_results[0];
-
-                        if (style_based_ideal_match && ((1 - style_based_ideal_match.score) * 100 >= MIN_SCORE)) {
-                            match = style_based_ideal_match;
-                        }
-                    }
-
-                    // Result object
-                    let result = search_match_result();
-                    result.album_id = match ? match.item.id : null;
-                    result.album = match ? match.item : null;
-                    result.listable_id = temp_listable.id;
-                    result.listable = temp_listable;
-                    result.match = match ? match : null;
-                    result.match_score = match ? ((1 - match.score) * 100) : null;
-                    result.needle = needle;
-
-                    if (match) {
-                        const index = _.findIndex(results, {key: result.album_id});
-                        if (index == -1) {
-                            results.push({key: result.album_id, results: [result]});
-                        } else {
-                            results[index].results.push(result);
-                        }
-
-                        this.matching_listables.matches.push(temp_listable);
-                    } else {
-                        this.matching_listables.misses.push(temp_listable);
-                    }
-                });
-
-
-                let assigned = this.assignMatchingsToAlbums(results);
+                let assigned = this.assignMatchingsToAlbums(inventoryMatcher.matchResults(), inventoryMatcher.misses());
 
                 if (assigned === false) {
                     return false;
@@ -412,7 +317,7 @@
                 return true;
             },
 
-            assignMatchingsToAlbums(matching_albums){
+            assignMatchingsToAlbums(matching_albums, misses){
                 if (this.matching_listables.misses.length == this.selected.listables.length) {
                     // shit, not a single match!?
                     return false;
@@ -434,7 +339,7 @@
 
                 // TODO: Make sure that each listable we are pushing back to the
                 // listables array, isn't already there.
-                this.selected.listables = this.matching_listables.misses;
+                this.selected.listables = misses;
 
                 return true;
             },
