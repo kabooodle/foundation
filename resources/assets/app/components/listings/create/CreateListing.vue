@@ -101,19 +101,22 @@
                                             <option v-for="fbgroup in postables.facebookgroups" :value="fbgroup.id">{{ fbgroup.name }}</option>
                                         </select>
                                     </div>
-                                    <div class="form-group m-t-1 m-b-1" v-if="selected.sale.sale_id">
-                                        <hr>
-                                        <div class="checkbox checkbox-slider--b-flat">
-                                            <label>
-                                                <input
-                                                        :checked="selected.sale.magical_matcher"
-                                                        @change="matchInventory"
-                                                        data-type="magic-toggler"
-                                                        type="checkbox" />
-                                                <span class="text-sm">Automatically match inventory?</span>
-                                            </label>
+                                    <div class="box white m-t-1 m-b-1" v-if="selected.sale.sale_id">
+                                        <div class="box-body">
+                                            <div class="checkbox m-b-0 checkbox-slider--b-flat">
+                                                <label>
+                                                    <input
+                                                            :checked="selected.sale.magical_matcher"
+                                                            @change="matchInventory"
+                                                            data-type="magic-toggler"
+                                                            type="checkbox" />
+                                                    <span class="text-sm">Automatically match inventory to albums</span>
+                                                </label>
+                                            </div>
+                                            <div class="text-sm" v-if="selected.sale.magical_matcher">
+                                                <p class="m-b-0 info text-center r p-sm m-t-sm">{{ display_matches_text }}</p>
+                                            </div>
                                         </div>
-                                        <hr>
                                     </div>
                                     <div class="form-group m-t-1" v-if="selected.sale.sale_id">
                                         <label class="control-label">Select album to add inventory</label>
@@ -136,8 +139,8 @@
                                             <template v-if="_.findIndex(selected.sales, {album_id: album.id}) > -1">
                                                 <div class="m-t-0">
                                                     <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables.length }} items associated</span>
-                                                    <div class="m-l-2">
-                                                        <span class="avatar_container m-r-sm inline _26 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
+                                                    <div class="m-l-2" style="display: none">
+                                                        <span class="avatar_container m-r-sm inline _32 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
                                                             <img :src="listable.cover_photo.location">
                                                         </span>
                                                     </div>
@@ -200,6 +203,7 @@
                 actions: {
                     refreshing_data : true,
                     refreshing_postables: false,
+                    resetting_sales: false,
                 },
                 completed: {
                     steps: []
@@ -244,11 +248,17 @@
                     this.selected.listables.push(listable);
                 }
             });
+
             $Bus.$on('listings:selected:listable:removed', (groupid, subgroup, listable)=>{
                 const index = _.findIndex(this.selected.listables, {id: listable.id});
                 if (index > -1) {
                     this.selected.listables.splice(index, 1);
                 }
+            });
+
+            $Bus.$on('listings:create:sale:selected', ()=>{
+                this.matching_listables.matches = [];
+                this.matching_listables.misses = [];
             });
         },
         methods: {
@@ -264,7 +274,32 @@
                 } else {
                     // Tool was already run, they want to undo the results
                     this.selected.sale.magical_matcher = false;
+                    this.resetAllSalesForGroup();
                 }
+            },
+
+            resetAllSalesForGroup(){
+                this.actions.resetting_sales = true;
+
+                // loop through the saved sales, and extract the listables.
+                let selected_sales_for_group = _.filter(this.selected.sales, {sale_id: this.selected.sale.sale_id});
+
+                for (let i = 0; i < selected_sales_for_group.length; i++) {
+                    let sale = selected_sales_for_group[i];
+                    for (let k = 0; k < sale.listables.length; k++) {
+                        let listable = sale.listables[k];
+
+                        // Give me the listable back, but only if I dont already have it!
+                        const index = _.findIndex(this.selected.listables, {id: listable.id});
+                        if (index == -1) {
+                            this.selected.listables.push(listable);
+                        }
+                    }
+                }
+
+                // RIP, saved sales.
+                // (plays taps)
+                _.remove(this.selected.sales, {sale_id: this.selected.sale.sale_id});
             },
 
             buildInventoryAlbumMatchings(){
@@ -307,6 +342,9 @@
 
                 let inventoryMatcher = new InventoryToAlbumMatcher(haystack, needles);
                 inventoryMatcher.performSearch();
+
+                this.matching_listables.matches = inventoryMatcher.matches();
+                this.matching_listables.misses = inventoryMatcher.misses();
 
                 let assigned = this.assignMatchingsToAlbums(inventoryMatcher.matchResults(), inventoryMatcher.misses());
 
@@ -390,14 +428,13 @@
                     if (index > -1) {
                         this.selected.sale = this.selected.sales[index];
                     } else {
+                        this.selected.sale.magical_matcher = false;
                         this.selected.sale.sale_id = groupId;
                         this.selected.sale.sale = this.postables.facebookgroups[_.findIndex(this.postables.facebookgroups, {id: groupId})];
                     }
                 }
 
-//                if (_.findIndex(this.selected.sales, {sale_id: this.selected.sale.sale_id}) == -1){
-//                    this.pushActiveSaleToSelectedSales();
-//                }
+                $Bus.$emit('listings:create:sale:selected');
             },
             getPostables(){
                 this.actions.refreshing_postables = true;
@@ -416,10 +453,6 @@
             },
             gotoStepOne(){
                 this.selected.step = 1;
-
-                // In the event we are going from step two, back to step one,
-                // save the active sale configuration, by pushing it to the selected.sales array.
-                this.pushActiveSaleToSelectedSales();
             },
             gotoStepTwo(){
                 // If we are currently on step 1, and trying to goto step 2, we need to make sure we've selected
@@ -437,24 +470,22 @@
                 }
                 this.completed.steps.push(2);
                 this.selected.step = 3
-
-                // Save the active sale.
-                this.pushActiveSaleToSelectedSales();
             },
+        },
+        computed: {
+            display_matches_text(){
+                let matches = this.matching_listables.matches;
+                let misses = this.matching_listables.misses;
 
-            pushActiveSaleToSelectedSales(){
-                // If we have an active sale, and the active sale isn't empty, continue;
-//                if (this.selected.sale && ! _.isEmpty(this.selected.sale)) {
-//                    // Does the active sale have an id? This id is the id of a facebook group or flash sale.
-//                    // If so, save the sale by pushing it to the array.
-//                    const index = _.findIndex(this.selected.sales, {sale_id: this.selected.sale_id});
-//                    if (this.selected.sale.sale_id && index == -1) {
-////                        this.selected.sales.push(this.selected.sale);
-//                    }
-//                }
-//
-//                // Reset selected sale to empty.
-                this.selected.sale = {};
+                if (misses.length == 0) {
+                    return 'All items matched successfully!';
+                }
+
+                if (matches.length == 0) {
+                    return 'Unfortunately no items could be matched.';
+                }
+
+                return misses.length +' of '+ (misses.length + matches.length) +' were not matched.';
             },
         },
         components:{
