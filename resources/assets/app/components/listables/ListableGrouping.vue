@@ -25,7 +25,7 @@
                                 :data-subgroup-id="subgroup.id"
                                 key="subgroup.id"
                                 @click.prevent="clickSubgrouping(subgroup)"
-                                :class="selected.listables.length &&  _.chain(selected.listables).where({subgroup: subgroup}).value().length == subgroup.listables.length ? 'active' : null"
+                                :class="selected.listables.length &&  _.chain(selected.listables).filter({subgroup: subgroup}).value().length == subgroup.listables.length ? 'active' : null"
                         >
                             <input type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;">
                             <span class="text-md">{{ subgroup.name }}</span>

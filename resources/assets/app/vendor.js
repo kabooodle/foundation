@@ -3,7 +3,7 @@ global.Vue = require('vue/dist/vue.common.js');
 global.VueResource = require('vue-resource');
 global.Tether = require('tether');
 require('bootstrap');
-global._ = require('underscore');
+global._ = require('lodash');
 global.moment = require('moment');
 require('moment-timezone');
 global.slider = require('bootstrap-slider');

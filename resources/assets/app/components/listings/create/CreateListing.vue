@@ -98,7 +98,10 @@
                                         <label class="control-label">Select group</label>
                                         <select @change="selectFacebookGroup" class="form-control">
                                             <option value="-1"></option>
-                                            <option v-for="fbgroup in postables.facebookgroups" :value="fbgroup.id">{{ fbgroup.name }}</option>
+                                            <option
+                                                    :selected="selected.sale.sale_id == fbgroup.id"
+                                                    v-for="fbgroup in postables.facebookgroups"
+                                                    :value="fbgroup.id">{{ fbgroup.name }}</option>
                                         </select>
                                     </div>
                                     <div class="form-group m-t-1 m-b-1" v-if="selected.sale.sale_id">
@@ -107,7 +110,7 @@
                                             <label>
                                                 <input
                                                         :checked="selected.sale.magical_matcher"
-                                                        @change="matchInventory"
+                                                        @click="matchInventory($event)"
                                                         data-type="magic-toggler"
                                                         type="checkbox" />
                                                 <span class="text-sm">Automatically match inventory?</span>
@@ -175,7 +178,6 @@
             listables: [],
         }
     };
-    import Fuse from 'fuse.js';
     import Steps from './Steps.vue';
     import Spinny from '../../Spinner.vue';
     import ListablesGroups from '../../listables/ListableGroupings.vue';
@@ -259,6 +261,7 @@
                     let matched = this.buildInventoryAlbumMatchings();
                     if (matched === false) {
                         target.checked = false;
+                        e.preventDefault();
                     }
                     this.selected.sale.magical_matcher = true;
                 } else {
@@ -287,6 +290,7 @@
                 let haystack = JSON.parse(JSON.stringify(this.selected.sale.sale.albums));
                 let needles = JSON.parse(JSON.stringify(this.selected.listables));
 
+                // Clean the haystack
                 haystack = _.chain(haystack)
                     .map(function(album){
 
@@ -308,13 +312,7 @@
                 let inventoryMatcher = new InventoryToAlbumMatcher(haystack, needles);
                 inventoryMatcher.performSearch();
 
-                let assigned = this.assignMatchingsToAlbums(inventoryMatcher.matchResults(), inventoryMatcher.misses());
-
-                if (assigned === false) {
-                    return false;
-                }
-
-                return true;
+                return this.assignMatchingsToAlbums(inventoryMatcher.matchResults(), inventoryMatcher.misses());
             },
 
             assignMatchingsToAlbums(matching_albums, misses){
@@ -376,7 +374,6 @@
                 this.selected.sales.push(selected_sale);
 
                 this.selected.listables = [];
-                this.selected.sale.sale = {};
             },
             selectFacebookGroup(e){
                 let target = e.target;
@@ -393,11 +390,8 @@
                         this.selected.sale.sale_id = groupId;
                         this.selected.sale.sale = this.postables.facebookgroups[_.findIndex(this.postables.facebookgroups, {id: groupId})];
                     }
+                    this.selected.sale.magical_matcher = false;
                 }
-
-//                if (_.findIndex(this.selected.sales, {sale_id: this.selected.sale.sale_id}) == -1){
-//                    this.pushActiveSaleToSelectedSales();
-//                }
             },
             getPostables(){
                 this.actions.refreshing_postables = true;
@@ -416,10 +410,6 @@
             },
             gotoStepOne(){
                 this.selected.step = 1;
-
-                // In the event we are going from step two, back to step one,
-                // save the active sale configuration, by pushing it to the selected.sales array.
-                this.pushActiveSaleToSelectedSales();
             },
             gotoStepTwo(){
                 // If we are currently on step 1, and trying to goto step 2, we need to make sure we've selected
@@ -437,24 +427,6 @@
                 }
                 this.completed.steps.push(2);
                 this.selected.step = 3
-
-                // Save the active sale.
-                this.pushActiveSaleToSelectedSales();
-            },
-
-            pushActiveSaleToSelectedSales(){
-                // If we have an active sale, and the active sale isn't empty, continue;
-//                if (this.selected.sale && ! _.isEmpty(this.selected.sale)) {
-//                    // Does the active sale have an id? This id is the id of a facebook group or flash sale.
-//                    // If so, save the sale by pushing it to the array.
-//                    const index = _.findIndex(this.selected.sales, {sale_id: this.selected.sale_id});
-//                    if (this.selected.sale.sale_id && index == -1) {
-////                        this.selected.sales.push(this.selected.sale);
-//                    }
-//                }
-//
-//                // Reset selected sale to empty.
-                this.selected.sale = {};
             },
         },
         components:{
