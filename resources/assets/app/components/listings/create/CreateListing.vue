@@ -163,9 +163,30 @@
                 </template>
 
                 <template v-if="selected.step == 3">
-                    I am step 3
+                    <div v-if="prepared_sales_have_FB_sale">
+                        <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
+                            <thead>
+                                <tr>
+                                    <th>Facebook group</th>
+                                    <th>Total albums listed to</th>
+                                    <th>Total items listed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="sale in prepared_sales_for_preview">
+                                    <td>{{ sale.name }} </td>
+                                    <td>{{ sale.albums.length }}</td>
+                                    <td>{{ sale.listables.length }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                        <p class="m-t-1">Optional settings for the Facebook sales</p>
+                        <listing-settings></listing-settings>
+                    </div>
                 </template>
             </div>
+
             <steps
                     :current_step="selected.step"
                     :selected_listables_count="selected.listables.length"
@@ -201,6 +222,7 @@
         }
     };
 
+    import ListingSettings from '../../inventory/Listing-Settings.vue';
     import Fuse from 'fuse.js';
     import Steps from './Steps.vue';
     import Spinny from '../../Spinner.vue';
@@ -217,6 +239,8 @@
         },
         data(){
             return {
+                prepared_sales_for_preview: [],
+
                 // All available listables for selection.
                 listables: [],
 
@@ -285,6 +309,37 @@
             });
         },
         methods: {
+            prepareSalesForPreview(){
+                let fbsales = _.filter(this.selected.sales, {sale_type: 'facebook'});
+                let flashsales = _.filter(this.selected.sales, {sale_type: 'flashsale'});
+
+                let fbsales_by_group = [];
+                let grouped = _.groupBy(fbsales, 'sale_id');
+
+                _.each(grouped, (sales)=>{
+                    let tempsale = {};
+                    tempsale.listables = [];
+                    tempsale.albums = [];
+
+                    for (let i=0; i<sales.length; i++){
+                        let sale = sales[i];
+
+                        if (i == 0) {
+                            tempsale.id = sale.sale.id;
+                            tempsale.name = sale.sale.name;
+                        }
+
+                        for (let k = 0; k < sale.listables.length; k ++) {
+                            let listable = sale.listables[k];
+                            tempsale.listables.push(listable);
+                        }
+                        tempsale.albums.push(sale.album);
+                    }
+                    fbsales_by_group.push(tempsale);
+                });
+
+                this.prepared_sales_for_preview = fbsales_by_group;
+            },
             removeItemFromAlbum(listable, album, e){
                 const index = _.findIndex(this.selected.sales, {album_id: album.id});
                 if (index > -1) {
@@ -533,9 +588,18 @@
                 }
                 this.completed.steps.push(2);
                 this.selected.step = 3
+                this.prepareSalesForPreview();
             },
+            saveListing(){
+                alert('HELLO');
+            }
         },
         computed: {
+            prepared_sales_have_FB_sale(){
+                const index = _.findIndex(this.selected.sales, {sale_type: 'facebook'});
+
+                return index > -1;
+            },
             display_matches_text(){
                 let matches = this.matching_listables.matches;
                 let misses = this.matching_listables.misses;
@@ -554,7 +618,8 @@
         components:{
             'steps' : Steps,
             'spinny' : Spinny,
-            'listable-groups' : ListablesGroups
+            'listable-groups' : ListablesGroups,
+            'listing-settings': ListingSettings
         }
     }
 </script>

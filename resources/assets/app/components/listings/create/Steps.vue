@@ -24,7 +24,7 @@
                     @click.prevent="$parent.gotoStepTwo"
                     class="btn white btn-sm pull-left"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> Back to sales</button>
             <button
-                    @click.prevent="$parent.gotoStepTwo"
+                    @click.prevent="$parent.saveListing"
                     class="btn primary btn-sm pull-right">Save listing</button>
         </template>
     </div>
