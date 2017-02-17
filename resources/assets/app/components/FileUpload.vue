@@ -76,7 +76,7 @@
     <div>
         <div :id="imageEl" :class="outer_class">
             <div style="margin-right: 3px" class="upload-template">
-                <button
+                <span
                         type="button"
                         :class="'btn white '+btnClassSize+' fileinput-button'" style="display: inline-block;">
                     {{ button_title }}
@@ -97,7 +97,7 @@
                                 :accept="acceptRegEx"
                         />
                     </template>
-                </button>
+                </span>
                 <button type="button" :class="'btn danger '+btnClassSize+' js-cancel_button'" style="display: none;">
                     Cancel
                     <div class="js-fileupload-progress fileupload-progress m-b-0 p-b-0" style="display: none;  margin-left: -9px; margin-right: -9px;">
@@ -176,7 +176,7 @@
         },
         methods : {
             buildImageEl : function(){
-                return Math.random().toString(36).slice(2);
+                return Math.random().toString(36).replace(/[^a-z]+/g, '').slice(2);
             },
             attachPluginToEl : function(el){
                 var that = this;
