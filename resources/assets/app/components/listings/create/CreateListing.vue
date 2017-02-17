@@ -56,7 +56,7 @@
                     <listable-groups
                             :show_select_buttons="show_select_buttons"
                             :listablegroupings_endpoint="endpoint"
-                            :display_footer_button="0"
+                            :display_footer_buttons="false"
                     ></listable-groups>
                 </template>
 
@@ -98,7 +98,10 @@
                                         <label class="control-label">Select group</label>
                                         <select @change="selectFacebookGroup" class="form-control">
                                             <option value="-1"></option>
-                                            <option v-for="fbgroup in postables.facebookgroups" :value="fbgroup.id">{{ fbgroup.name }}</option>
+                                            <option
+                                                    v-for="fbgroup in postables.facebookgroups"
+                                                    :selected="selected.sale.sale_id == fbgroup.id"
+                                                    :value="fbgroup.id">{{ fbgroup.name }}</option>
                                         </select>
                                     </div>
                                     <div class="box white m-t-1 m-b-1" v-if="selected.sale.sale_id">
@@ -107,7 +110,7 @@
                                                 <label>
                                                     <input
                                                             :checked="selected.sale.magical_matcher"
-                                                            @change="matchInventory"
+                                                            @click="matchInventory($event)"
                                                             data-type="magic-toggler"
                                                             type="checkbox" />
                                                     <span class="text-sm">Automatically match inventory to albums</span>
@@ -119,7 +122,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group m-t-1" v-if="selected.sale.sale_id">
-                                        <label class="control-label">Select album to add inventory</label>
+                                        <label v-if="selected.listables.length" class="control-label">Select an album below to add all {{ selected.listables.length}} items into</label>
                                         <div class="m-b-sm" v-for="album in postables.facebookgroups[_.findIndex(postables.facebookgroups, {id: selected.sale.sale_id})].albums" >
                                             <label class="form-check-label block md-check">
                                                 <input
@@ -138,10 +141,15 @@
                                             </label>
                                             <template v-if="_.findIndex(selected.sales, {album_id: album.id}) > -1">
                                                 <div class="m-t-0">
-                                                    <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables.length }} items associated</span>
-                                                    <div class="m-l-2" style="display: none">
-                                                        <span class="avatar_container m-r-sm inline _32 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
+                                                    <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables.length }} items associated. <a href="javascript:;" @click.prevent="toggleAlbumItems(album.id, $event)" class="text-primary">View</a></span>
+                                                    <div
+                                                            :id="'album_items_'+album.id"
+                                                            class="m-l-2 m-t-1" style="display: none;">
+                                                        <span
+                                                                @click="removeItemFromAlbum(listable, album, $event)"
+                                                                class="avatar_container m-r-sm inline _32 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
                                                             <img :src="listable.cover_photo.location">
+                                                            <i class="fa fa-times fa-2x text-danger"></i>
                                                         </span>
                                                     </div>
                                                  </div>
@@ -166,6 +174,20 @@
         </div>
     </div>
 </template>
+<style>
+    .avatar_container:hover {
+        cursor: pointer;
+    }
+    .avatar_container:hover img {
+        opacity: .6;
+    }
+    .avatar_container:hover .fa{
+        display: inline-block;
+    }
+    .avatar_container .fa{
+        display: none;
+    }
+</style>
 <script>
     const selected_sale_data = function(){
         return {
@@ -178,6 +200,7 @@
             listables: [],
         }
     };
+
     import Fuse from 'fuse.js';
     import Steps from './Steps.vue';
     import Spinny from '../../Spinner.vue';
@@ -262,19 +285,57 @@
             });
         },
         methods: {
+            removeItemFromAlbum(listable, album, e){
+                const index = _.findIndex(this.selected.sales, {album_id: album.id});
+                if (index > -1) {
+                    this.selected.sales[index].listables = _.filter(this.selected.sales[index].listables, (local_listable)=>{
+                        return local_listable.id !== listable.id;
+                    });
+
+                    // If the number of listables in a sale reaches 0, remove the sale.
+                    if (this.selected.sales[index].listables.length == 0) {
+                        this.selected.sales.splice(index, 1);
+                    }
+                }
+            },
+
+            /**
+             *
+             * @param {integer} albumid
+             * @param e
+             */
+            toggleAlbumItems(albumid, e){
+                let $el = $('#album_items_'+albumid);
+                let $target = $(e.target);
+                if ($el.is(':visible')){
+                    $el.hide();
+                    $target.html('View');
+                } else {
+                    $el.show();
+                    $target.html('Hide');
+                }
+            },
             matchInventory(e){
                 let target = e.target;
+                this.selected.sale.magical_matcher = true;
+                this.matching_listables.matches = [];
+                this.matching_listables.misses = [];
                 if (target.checked) {
-                    // Run the tool magic tool.
+                    // Run the tool magic tool!
+                    // Run the tool magic tool!
+                    // Run the tool magic tool!
                     let matched = this.buildInventoryAlbumMatchings();
+
+                    // Uh oh, something happened during the magic tool.
+                    // Uncheck it !ABORT!
                     if (matched === false) {
                         target.checked = false;
+                        e.preventDefault();
+                        this.selected.sale.magical_matcher = false;
                     }
-                    this.selected.sale.magical_matcher = true;
                 } else {
-                    // Tool was already run, they want to undo the results
-                    this.selected.sale.magical_matcher = false;
                     this.resetAllSalesForGroup();
+                    this.selected.sale.magical_matcher = false;
                 }
             },
 
@@ -361,11 +422,13 @@
                     return false;
                 }
 
-                _.each(matching_albums, (matching_results)=>{
+                for (let i =0; i < matching_albums.length; i++){
+                    let matching_results = matching_albums[i];
                     let listables = [];
-                    _.each(matching_results.results, (result)=>{
-                        listables.push(result.listable);
-                    });
+
+                    for (let k = 0; k < matching_results.results.length; k++){
+                        listables.push(matching_results.results[k].listable);
+                    }
 
                     let sale_data = JSON.parse(JSON.stringify(this.selected.sale));
                     sale_data.album = matching_results.results[0].album;
@@ -373,11 +436,18 @@
                     sale_data.listables = listables;
 
                     this.selected.sales.push(sale_data);
-                });
+                }
 
-                // TODO: Make sure that each listable we are pushing back to the
-                // listables array, isn't already there.
-                this.selected.listables = misses;
+                // Push our misses, to the selected listables array.
+                this.selected.listables = [];
+
+                for (let i = 0; i < misses.length; i++) {
+                    let listable = misses[i];
+                    const index = _.findIndex(this.selected.listables, {id: listable.id});
+                    if (index == -1) {
+                        this.selected.listables.push(listable);
+                    }
+                }
 
                 return true;
             },
@@ -390,13 +460,6 @@
                     this.selected.sales.splice(index, 1);
                     return;
                 }
-
-                // TODO: Upon unchecking a checkbox, when magical matcher has been enabled,
-                // the inventory associated to this album should be returned to the available
-                // listables array.
-//                if (this.selected.magical_matcher) {
-//                    this.selected.listables.push(album.listables);
-//                }
 
                 if(!this.selected.listables.length) {
                     if (e) {
@@ -414,7 +477,6 @@
                 this.selected.sales.push(selected_sale);
 
                 this.selected.listables = [];
-                this.selected.sale.sale = {};
             },
             selectFacebookGroup(e){
                 let target = e.target;
@@ -427,6 +489,7 @@
                     const index = _.findIndex(this.selected.sales, {sale_id: groupId});
                     if (index > -1) {
                         this.selected.sale = this.selected.sales[index];
+                        this.selected.sale.magical_matcher = this.selected.sales[index].magical_matcher;
                     } else {
                         this.selected.sale.magical_matcher = false;
                         this.selected.sale.sale_id = groupId;
@@ -466,7 +529,7 @@
             },
             gotoStepThree(){
                 if (this.selected.sales.length == 0) {
-                    return;
+                    return false;
                 }
                 this.completed.steps.push(2);
                 this.selected.step = 3

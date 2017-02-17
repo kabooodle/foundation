@@ -27,7 +27,7 @@
                     key="group.id"
                     :group="group"
                     group_type="inventory"
-                    :display_footer_buttons="true"
+                    :display_footer_buttons="display_footer_buttons"
             ></listable-grouping>
         </div>
         <popout-overlay></popout-overlay>
