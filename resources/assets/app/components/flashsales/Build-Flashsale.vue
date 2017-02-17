@@ -465,10 +465,14 @@
                 // I need to loop over each one and only return the ones that
                 // have a matching resource found in sellers_groups_containers
                 // HACKY until we can vuex the state.
-                const actualIds = _.pluck(_.pluck(this.sellers_groups_containers, 'selected_group'), 'id');
-                this.seller_groups = _.uniq(_.filter(this.seller_groups, (group)=>{
-                    return _.contains(actualIds, group.id);
-                }), 'id');
+
+                if (this.seller_groups_containers.length) {
+                    const actualIds = _.pluck(_.pluck(this.sellers_groups_containers, 'selected_group'), 'id');
+                    this.seller_groups = _.uniq(_.filter(this.seller_groups, (group)=>{
+                        return _.contains(actualIds, group.id);
+                    }), 'id');
+
+                }
 
                 let method = 'post';
                 if (this.isEditing) {

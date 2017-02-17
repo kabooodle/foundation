@@ -7,10 +7,10 @@
                     <div class="col-md-12">
                         <div class="card-group">
                             <div class="card no-border text-center">
-                                <img class="card-img-top hidden-sm-down center-block" height="64" src="/assets/images/home/icons/inventory.png" >
+                                <img :style="selected.step !== 1 ?  'opacity: .4' : null" class="card-img-top hidden-sm-down center-block" height="64" src="/assets/images/home/icons/inventory.png" >
                                 <div class="card-block">
                                     <h5
-                                            :class="selected.step !== 1 ?  'text-muted' : null"
+                                            :class="selected.step !== 1 ?  'text-muted' : '_600'"
                                             class="m-b-0 card-title">
                                         Select Inventory
                                         <span class="block text-xs text-muted m-t-sm">{{ selected.listables.length }} selected</span>
@@ -18,20 +18,20 @@
                                 </div>
                             </div>
                             <div class="card no-border">
-                                <img class="card-img-top hidden-sm-down center-block" height="64" src="/assets/images/home/icons/sell_and_display.png" >
+                                <img :style="selected.step !== 2 ?  'opacity: .4' : null" class="card-img-top hidden-sm-down center-block" height="64" src="/assets/images/home/icons/sell_and_display.png" >
                                 <div class="card-block">
                                     <h5
-                                            :class="selected.step !== 2 ?  'text-muted' : null"
+                                            :class="selected.step !== 2 ?  'text-muted' : '_600'"
                                             class="m-b-0 text-center card-title">Select Sale
                                         <span class="block text-xs text-muted m-t-sm">{{ selected.sales.length }} sales prepared</span>
                                     </h5>
                                 </div>
                             </div>
                             <div class="card no-border">
-                                <img class="card-img-top hidden-sm-down center-block" height="64" src="/assets/images/home/icons/preview.png" >
+                                <img :style="selected.step !== 3 ?  'opacity: .4' : null" class="card-img-top hidden-sm-down center-block" height="64" src="/assets/images/home/icons/preview.png" >
                                 <div class="card-block">
                                     <h5
-                                            :class="selected.step !== 3 ?  'text-muted' : null"
+                                            :class="selected.step !== 3 ?  'text-muted' : '_600'"
                                             class="m-b-0 text-center card-title">Preview
                                         <span class="block text-xs text-muted m-t-sm">Make changes, add options</span>
                                     </h5>
@@ -90,8 +90,37 @@
 
                             <template v-if="selected.sale">
                                 <div class="form-group m-t-1" v-if="selected.sale.sale_type == 'flashsale'">
-                                    <label class="control-label">Select sale</label>
-                                    <select class="form-control"></select>
+                                    <label class="control-label">Select sale(s)</label>
+                                    <div class="m-b-sm" v-for="sale in postables.flashsales" >
+                                        <label class="form-check-label block md-check">
+                                            <input
+                                                    :data-sale-id="sale.id"
+                                                    :checked="_.findIndex(selected.sales, {sale_id: sale.id}) > -1"
+                                                    key="sale.id"
+                                                    :value="selected.sale.sale_id"
+                                                    :name="sale.id"
+                                                    @click="selectFlashsale(sale, $event)"
+                                                    class="form-check-input"
+                                                    type="checkbox">
+                                            <i class="indigo"></i>
+                                            <span
+                                                    :class="_.findIndex(selected.sales, {sale_id: sale.id}) > -1 ? 'text-primary' : 'text-muted'"
+                                            >{{ sale.name }}</span>
+                                        </label>
+                                        <template v-if="_.findIndex(selected.sales, {sale_id: sale.id}) > -1">
+                                            <div class="m-t-0">
+                                                <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables.length }} items associated. <a href="javascript:;" class="text-primary">View</a></span>
+                                                <div
+                                                        class="m-l-2 m-t-1" style="display: none;">
+                                                        <span
+                                                                class="avatar_container m-r-sm inline _32 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables">
+                                                            <img :src="listable.cover_photo.location">
+                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
                                 </div>
                                 <template v-if="selected.sale.sale_type == 'facebook'">
                                     <div class="form-group m-t-1">
@@ -163,25 +192,30 @@
                 </template>
 
                 <template v-if="selected.step == 3">
-                    <div v-if="prepared_sales_have_FB_sale">
-                        <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
-                            <thead>
-                                <tr>
-                                    <th>Facebook group</th>
-                                    <th>Total albums listed to</th>
-                                    <th>Total items listed</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="sale in prepared_sales_for_preview">
-                                    <td>{{ sale.name }} </td>
-                                    <td>{{ sale.albums.length }}</td>
-                                    <td>{{ sale.listables.length }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        </div>
-                        <p class="m-t-1">Optional settings for the Facebook sales</p>
+                    <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
+                        <thead>
+                        <tr>
+                            <th>Sale group/name</th>
+                            <th>Sales prepared</th>
+                            <th>Items listed</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="sale in prepared_sales_for_preview.flashsales" v-if="prepared_sales_for_preview.flashsales.length">
+                            <td>{{ sale.name }} </td>
+                            <td>1</td>
+                            <td>{{ sale.listables.length }}</td>
+                        </tr>
+                        <tr v-for="sale in prepared_sales_for_preview.facebook" v-if="prepared_sales_for_preview.facebook.length">
+                            <td>{{ sale.name }} </td>
+                            <td>{{ sale.albums.length }}</td>
+                            <td>{{ sale.listables.length }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="m-t-3" v-if="prepared_sales_for_preview.facebook.length">
+                        <label class="control-label">Optional settings you can apply to the Facebook listings you've prepared above.</label>
                         <listing-settings></listing-settings>
                     </div>
                 </template>
@@ -239,7 +273,10 @@
         },
         data(){
             return {
-                prepared_sales_for_preview: [],
+                prepared_sales_for_preview: {
+                    facebook: [],
+                    flashsales: []
+                },
 
                 // All available listables for selection.
                 listables: [],
@@ -310,35 +347,55 @@
         },
         methods: {
             prepareSalesForPreview(){
+
+                this.prepared_sales_for_preview.flashsales = [];
+                this.prepared_sales_for_preview.facebook = [];
+
+                // Give me only the FB sales
                 let fbsales = _.filter(this.selected.sales, {sale_type: 'facebook'});
+
+                // Give me only the flashsales
                 let flashsales = _.filter(this.selected.sales, {sale_type: 'flashsale'});
 
-                let fbsales_by_group = [];
-                let grouped = _.groupBy(fbsales, 'sale_id');
-
-                _.each(grouped, (sales)=>{
-                    let tempsale = {};
-                    tempsale.listables = [];
-                    tempsale.albums = [];
-
-                    for (let i=0; i<sales.length; i++){
-                        let sale = sales[i];
-
-                        if (i == 0) {
-                            tempsale.id = sale.sale.id;
-                            tempsale.name = sale.sale.name;
-                        }
-
-                        for (let k = 0; k < sale.listables.length; k ++) {
-                            let listable = sale.listables[k];
-                            tempsale.listables.push(listable);
-                        }
-                        tempsale.albums.push(sale.album);
+                if (flashsales.length) {
+                    for (let i = 0; i < flashsales.length; i++) {
+                        this.prepared_sales_for_preview.flashsales.push(flashsales[i]);
                     }
-                    fbsales_by_group.push(tempsale);
-                });
+                }
 
-                this.prepared_sales_for_preview = fbsales_by_group;
+                if (fbsales.length) {
+
+                    // Group the fbsales by sale_id (or group)
+                    let fbsales_by_group = _.groupBy(fbsales, 'sale_id');
+
+                    // iterate over the facebook sales, grouped by "group" and build a new object
+                    // that has the albums listed to for the group, as well as total listables used for the group
+                    _.each(fbsales_by_group, (sales)=>{
+
+                        let tempsale = {
+                            listables: [],
+                            albums: [],
+                            id: sales[0].sale.id, // peek into the array and get this from the first object as all objects have the same sale id/name
+                            name: sales[0].sale.name
+                        };
+
+                        for (let i=0; i<sales.length; i++){
+                            let sale = sales[i];
+
+                            // Push the album to the parent albums array
+                            tempsale.albums.push(sale.album);
+
+                            // Iterate over the listables in the sale and push them to our parent listables array.
+                            for (let k = 0; k < sale.listables.length; k ++) {
+                                let listable = sale.listables[k];
+                                tempsale.listables.push(listable);
+                            }
+                        }
+
+                        // Push our object to the state
+                        this.prepared_sales_for_preview.facebook.push(tempsale);
+                    });
+                }
             },
             removeItemFromAlbum(listable, album, e){
                 const index = _.findIndex(this.selected.sales, {album_id: album.id});
@@ -506,7 +563,36 @@
 
                 return true;
             },
+            selectFlashsale(sale, e){
+                const index = _.findIndex(this.selected.sales, {sale_id: sale.id});
 
+                // So the album is already in our sales and we're unchecking it.
+                if (index > -1) {
+                    this.selected.sales.splice(index, 1);
+                    return;
+                }
+
+                if(!this.selected.listables.length) {
+                    if (e) {
+                        e.preventDefault();
+                    }
+                    return;
+                }
+
+                let selected_sale = JSON.parse(JSON.stringify(this.selected.sale));
+                let selected_listables = JSON.parse(JSON.stringify(this.selected.listables));
+                selected_sale.album = {};
+                selected_sale.album_id = null;
+                selected_sale.sale_id = sale.id;
+                selected_sale.sale = sale;
+                selected_sale.sale_name = sale.name;
+                selected_sale.name = sale.name;
+                selected_sale.listables = selected_listables;
+
+                this.selected.sales.push(selected_sale);
+
+                this.selected.listables = [];
+            },
             selectAlbum(album, e){
                 const index = _.findIndex(this.selected.sales, {album_id: album.id});
 
@@ -533,6 +619,7 @@
 
                 this.selected.listables = [];
             },
+
             selectFacebookGroup(e){
                 let target = e.target;
                 // determine the selected album id
@@ -595,11 +682,6 @@
             }
         },
         computed: {
-            prepared_sales_have_FB_sale(){
-                const index = _.findIndex(this.selected.sales, {sale_type: 'facebook'});
-
-                return index > -1;
-            },
             display_matches_text(){
                 let matches = this.matching_listables.matches;
                 let misses = this.matching_listables.misses;
@@ -609,7 +691,7 @@
                 }
 
                 if (matches.length == 0) {
-                    return 'Unfortunately no items could be matched.';
+                    return 'Unfortunately, no items could be matched.';
                 }
 
                 return misses.length +' of '+ (misses.length + matches.length) +' were not matched.';

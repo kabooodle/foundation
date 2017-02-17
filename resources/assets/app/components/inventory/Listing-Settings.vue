@@ -49,7 +49,7 @@
                     </div>
                 </div>
 
-                <button class="btn white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="clearOptions" type="button">Clear settings</button>
+                <!--<button class="btn white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="clearOptions" type="button">Clear settings</button>-->
     </span>
 </template>
 <script>

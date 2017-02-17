@@ -13,12 +13,13 @@
     <link href="https://fonts.googleapis.com/css?family=Kreon:400,700" rel="stylesheet">
     @endpush
 
+    <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js"  data-apikey="c587cbc4daf53552ae8bd305b63fb68c"></script>
     <script type="text/javascript">
-        const KABOOODLE_APP = window.KABOOODLE_APP || {};
+        var KABOOODLE_APP = window.KABOOODLE_APP || {};
         KABOOODLE_APP.env = '{{ env('APP_ENV') }}';
         KABOOODLE_APP.currentUser = {!! $_current_user !!};
         KABOOODLE_APP.makeStaticAsset = function (url) {
-            let staticAsset = '{{ staticAsset('[URL]') }}';
+            var staticAsset = '{{ staticAsset('[URL]') }}';
             return staticAsset.replace('[URL]', url);
         };
     </script>
