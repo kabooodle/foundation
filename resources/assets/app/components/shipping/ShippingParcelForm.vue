@@ -623,7 +623,7 @@
 
                 // Check claimer id
                 if(elSelectedClaimerId) {
-                    let selectedClaim = _.findWhere(this.claims, {id: parseInt(elSelectedVal)});
+                    let selectedClaim = _.find(this.claims, {id: parseInt(elSelectedVal)});
                     //Check if the claimer id is the same as the one already selected
                     if(this.selectedClaimer != elSelectedClaimerId){
                         // Reset the claims and claimer

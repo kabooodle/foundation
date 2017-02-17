@@ -249,7 +249,7 @@
             },
             // Iterates over styles and returns single item
             getStyleById: function(id) {
-                return _.findWhere(this.styles, {id: id});
+                return _.find(this.styles, {id: id});
             },
             changeStyle: function(e){
                 var $el = $(e.target),
