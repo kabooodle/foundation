@@ -107,7 +107,7 @@
         },
         data() {
             return {
-                saving:false,
+                saving: false,
                 addresses: this.initialAddresses,
                 primaryId: this.initialPrimaryId,
                 addingAddress: false,

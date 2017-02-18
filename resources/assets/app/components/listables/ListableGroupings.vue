@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="text-center center-block" v-if="actions.fetching_listables">
+        <div v-if="actions.fetching_listables" class="text-center center-block">
             <spinny :size="'20'"></spinny>
         </div>
         <div v-if="! actions.fetching_listables" >
@@ -23,11 +23,11 @@
                 </button>
             </div>
             <listable-grouping
-                    v-for="group in listable_groupings"
-                    key="group.id"
-                    :group="group"
-                    group_type="inventory"
-                    :display_footer_buttons="display_footer_buttons"
+                v-for="group in listable_groupings"
+                key="group.id"
+                :group="group"
+                group_type="inventory"
+                :display_footer_buttons="display_footer_buttons"
             ></listable-grouping>
         </div>
         <popout-overlay></popout-overlay>

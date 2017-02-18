@@ -194,7 +194,7 @@ if (!function_exists('staticAsset')) {
 
         $useCloundfront = $url && env('AWS_USE_CLOUDFRONT', false);
 
-        $postPart = ltrim($path, '/') . ($cacheBust ? '?v='.getAppVersion() : null);
+        $postPart = ltrim($path, '/') . ($cacheBust ? '?v='.(app()->isLocal() ? str_random() : getAppVersion()) : null);
 
         return  $useCloundfront ? '//' . $url . '/' . $postPart : '/' . $postPart;
     }

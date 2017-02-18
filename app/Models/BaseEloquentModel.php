@@ -45,14 +45,14 @@ class BaseEloquentModel extends Eloquent implements Hashable
         parent::boot();
 
         self::creating(function ($model) {
-            if ($model->created_by && user()) {
-                $model->created_by = user()->id;
+            if ($model->created_by && webUser()) {
+                $model->created_by = webUser()->id;
             }
         });
 
         self::updating(function ($model) {
-            if ($model->updated_by && user()) {
-                $model->updated_by = user()->id;
+            if ($model->updated_by && webUser()) {
+                $model->updated_by = webUser()->id;
             }
         });
     }
