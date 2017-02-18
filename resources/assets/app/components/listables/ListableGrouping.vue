@@ -137,6 +137,10 @@
                 type: Boolean,
                 default: false,
             },
+            ukey: {
+                type: String,
+                default: null
+            }
         },
         data(){
             return initial_state();
@@ -226,7 +230,12 @@
                 const index = _.findIndex(this.selected.listables, value);
                 if (index == -1) {
                     this.selected.listables.push(value);
-                    $Bus.$emit('listings:selected:listable:added', this.group, subgroup, listable);
+
+                    let key = 'listable:selected';
+                    if (this.ukey) {
+                        key = key+':'+this.ukey;
+                    }
+                    $Bus.$emit(key, this.group, subgroup, listable);
                 }
             },
 
@@ -234,7 +243,11 @@
                 const index = _.findIndex(this.selected.listables, {id: listable.id});
                 if (index > -1) {
                     this.selected.listables.splice(index, 1);
-                    $Bus.$emit('listings:selected:listable:removed', this.group, subgroup, listable);
+                    let key = 'listable:removed';
+                    if (this.ukey) {
+                        key = key+':'+this.ukey;
+                    }
+                    $Bus.$emit(key, this.group, subgroup, listable);
                 }
             },
 

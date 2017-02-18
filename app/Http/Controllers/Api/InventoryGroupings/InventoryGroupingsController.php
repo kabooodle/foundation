@@ -9,7 +9,7 @@ namespace Kabooodle\Http\Controllers\Api\InventoryGroupings;
 use Binput;
 use Exception;
 use Illuminate\Http\Request;
-use Kabooodle\Bus\Commands\InventoryGroupings\CreateInventoryGroupingCommand;
+use Kabooodle\Bus\Commands\InventoryGroupings\CreateInventoryGroupingsCommand;
 use Kabooodle\Bus\Commands\InventoryGroupings\DestroyInventoryGroupingCommand;
 use Kabooodle\Bus\Commands\InventoryGroupings\UpdateInventoryGroupingCommand;
 use Kabooodle\Foundation\Exceptions\Claim\RequestedQuantityCannotBeSatisfiedException;
@@ -35,9 +35,11 @@ class InventoryGroupingsController extends AbstractApiController
     public function index(Request $request, $username)
     {
         $user = User::whereUsername($username)->firstOrFail();
+        $groupings = InventoryGrouping::with('inventoryItems')->whereUserId($user->id)->get();
+
         $data = [
             'user' => $user,
-            'groupings' => $user->inventoryGroupings,
+            'groupings' => $groupings,
         ];
 
         return $this->setData($data)->respond();
@@ -53,9 +55,11 @@ class InventoryGroupingsController extends AbstractApiController
     public function show(Request $request, $username, $groupingId)
     {
         $user = User::whereUsername($username)->firstOrFail();
+        $grouping = InventoryGrouping::with('inventoryItems')->whereId($groupingId)->whereUserId($user->id)->firstOrFail();
+
         $data = [
             'user' => $user,
-            'grouping' => $user->inventoryGroupings->find($groupingId),
+            'grouping' => $grouping,
         ];
 
         return $this->setData($data)->respond();
@@ -72,22 +76,15 @@ class InventoryGroupingsController extends AbstractApiController
         try {
             $this->checkIds($username);
 
-            $this->validate($request, InventoryGrouping::getRules(), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
+            $groupingsData = Binput::get('groupings', []);
 
-            $grouping = $this->dispatchNow(new CreateInventoryGroupingCommand(
-                $this->getUser(),
-                Binput::get('name'),
-                (bool)Binput::get('locked'),
-                (float)Binput::get('price_usd'),
-                (int)Binput::get('initial_qty'),
-                Binput::get('images'),
-                Binput::get('cover_photo'),
-                Binput::get('inventory_ids'),
-                Binput::get('description'),
-                implode(',', Binput::get('categories', []))
-            ));
+//            foreach ($groupingsData as $groupingData) {
+//                $this->validate($request, InventoryGrouping::getRules(), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
+//            }
 
-            return $this->setData(['msg' => 'Grouping {$grouping->name} created', 'grouping' => $grouping->toJson()])->respond();
+            $groupings = $this->dispatchNow(new CreateInventoryGroupingsCommand($this->getUser(), $groupingsData));
+
+            return $this->setData(['msg' => 'Outfit' . (count($groupings) > 1 ? 's were' : ' was') . ' created successfully', 'groupings' => json_encode($groupings)])->respond();
         } catch (ForbiddenUserAccessException $e) {
             return $this->setStatusCode(403)->setData(['msg' => $e])->respond();
         } catch (ForbiddenModelAccessException $e) {

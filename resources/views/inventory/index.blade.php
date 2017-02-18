@@ -3,27 +3,17 @@
 
 @section('body-menu')
     <div class="text-center center-block">
-        {{--<button--}}
-                {{--:disabled="actions.refreshing_data ? true : false"--}}
-                {{--:class="! actions.refreshing_data ? null : 'disabled'"--}}
-                {{--type="button"--}}
-                {{--@click.prevent="selectAllListables"--}}
-                {{--class="btn white btn-sm">Select all--}}
-        {{--</button>--}}
-        {{--<button--}}
-                {{--:class="selected.listables.length === 0 ? 'disabled' : null"--}}
-                {{--:disabled="selected.listables.length === 0 ? true : false"--}}
-                {{--type="button"--}}
-                {{--@click.prevent="resetSelectedListables"--}}
-                {{--class="btn white btn-sm">Unselect all (@{{selected.listables.length}})--}}
-        {{--</button>--}}
+        <a
+                href="{{ route('shop.inventory.create', [webUser()->username]) }}"
+                class="btn primary btn-sm">Add Inventory
+        </a>
         <a
                 href="{{ route('shop.outfits.create', [webUser()->username]) }}"
-                class="btn primary btn-sm">Create outfit
+                class="btn primary btn-sm">Create Outfits
         </a>
         <a
                 href="{{ route('merchant.listings.create') }}"
-                class="btn primary btn-sm">Create sales listing
+                class="btn primary btn-sm">Create Sales Listings
         </a>
     </div>
 @endsection

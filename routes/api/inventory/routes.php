@@ -4,7 +4,7 @@ $api->put('inventory/{id}', [
     'as' => 'inventory.update',
     'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@update'
 ]);
-$api->get('inventory/{username}', [
+$api->get('users/{username}/inventory', [
     'as' => 'inventory.index',
     'uses' =>  \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@index',
 ]);
