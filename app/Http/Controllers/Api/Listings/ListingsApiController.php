@@ -10,8 +10,10 @@ use Binput;
 use Bugsnag;
 use Exception;
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\Listings\CheckFacebookListingsQuotaForPeriod;
 use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
+use Kabooodle\Foundation\Exceptions\Listings\ListingExceedsHourlyLimitException;
 use Kabooodle\Models\Listings;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Models\Listing\FacebookListingOptions;
@@ -33,6 +35,7 @@ class ListingsApiController extends AbstractApiController
 
     /**
      * @param Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -56,7 +59,7 @@ class ListingsApiController extends AbstractApiController
                 ->orderBy('scheduled_for')
                 ->first();
 
-            if (! $listing) {
+            if (!$listing) {
                 throw new ModelNotFoundException;
             }
 
@@ -68,27 +71,27 @@ class ListingsApiController extends AbstractApiController
             $size_query = Binput::get('sizes', false);
             $sellers_query = Binput::get('sellers', false);
 
-            if ($style_query ) {
-                $items = $items->filter(function($item) use ($style_query){
+            if ($style_query) {
+                $items = $items->filter(function ($item) use ($style_query) {
                     return in_array($item->listedItem->inventory_type_styles_id, $style_query);
                 });
             }
 
-            if ($size_query ) {
-                $items = $items->filter(function($item) use ($size_query){
+            if ($size_query) {
+                $items = $items->filter(function ($item) use ($size_query) {
                     return in_array($item->listedItem->inventory_sizes_id, $size_query);
                 });
             }
 
             if ($sellers_query) {
-                $items = $items->filter(function($item) use ($sellers_query){
+                $items = $items->filter(function ($item) use ($sellers_query) {
                     return in_array($item->owner_id, $sellers_query);
                 });
             }
 
-            $items = $items->sortBy(function($item){
+            $items = $items->sortBy(function ($item) {
                 return $item->make_available_at;
-            })->sortBy(function($item){
+            })->sortBy(function ($item) {
                 return $item->id;
             })->values();
 
@@ -97,6 +100,7 @@ class ListingsApiController extends AbstractApiController
             return $this->setData($items)->respond();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
+
             return $this->setStatusCode(500)->respond();
         }
     }
@@ -111,16 +115,16 @@ class ListingsApiController extends AbstractApiController
     {
         $facebooksales = Binput::get('facebooksales', []);
         $flashsales = Binput::get('flashsales', []);
-        $facebookOptions = (array) Binput::get('options', []);
+        $facebookOptions = (array)Binput::get('options', []);
         $facebooksales_meta = Binput::get('facebooksales_meta', null);
 
         // Date to list it and remove it
-        $listAt = array_get($options, 'list_at', null);
-        $removeAt = array_get($options, 'remove_at', null);
+        $listAt = array_get($facebookOptions, 'list_at', null);
+        $removeAt = array_get($facebookOptions, 'remove_at', null);
         // Date range you can claim.
-        $claimableAt = array_get($options, 'available_at', null);
-        $claimableUntil = array_get($options, 'available_until', null);
-        $itemMessage = array_get($options, 'item_message', false);
+        $claimableAt = array_get($facebookOptions, 'available_at', null);
+        $claimableUntil = array_get($facebookOptions, 'available_until', null);
+        $itemMessage = array_get($facebookOptions, 'item_message', false);
 
         try {
             //
@@ -130,6 +134,12 @@ class ListingsApiController extends AbstractApiController
 
             if ($facebookOptions && $facebooksales) {
                 $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $itemMessage);
+
+                $job = new CheckFacebookListingsQuotaForPeriod($this->getUser(), $listingOptions->getStartsAt()->toDateTimeString(),
+                    $listingOptions->getEndsAt()->toDateTimeString(), (int) $facebooksales_meta['total_listables']);
+                $this->dispatchNow($job);
+
+
 //                $job = new ScheduleFacebookListingCommand($this->getUser(), );
 //                $this->dispatchNow($job);
             }
@@ -144,6 +154,8 @@ class ListingsApiController extends AbstractApiController
             $msg = 'Your facebook credentials are invalid. Please re-authorize ' . env('APP_NAME') . ' for your facebook account, via our settings page.';
 
             return $this->setData(['msg' => $msg])->setStatusCode(500)->respond();
+        } catch (ListingExceedsHourlyLimitException $e) {
+            return $this->setStatusCode(500)->setData(['msg' => $e->getMessage() ?: 'You have too many ('.$e->getTotalForHour().') facebook listings scheduled for the time period.'])->respond();
         } catch (MissingMandatoryParametersException $e) {
             return $this->setStatusCode(500)->setData(['msg' => $e->getMessage() ?: 'You must select as least 1 item for listing.'])->respond();
         } catch (ListingConflictsWithExistingListingException $e) {

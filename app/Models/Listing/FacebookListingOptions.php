@@ -40,9 +40,11 @@ final class FacebookListingOptions
      */
     public function setStartsAt($startsAt)
     {
-        if ($startsAt) {
-            $this->startsAt = Carbon::createFromTimestamp(strtotime($startsAt));
+        if (! $startsAt) {
+            $startsAt = Carbon::now()->addHour()->toDateTimeString();
         }
+
+        $this->startsAt = Carbon::createFromTimestamp(strtotime($startsAt));
     }
 
     /**
@@ -50,9 +52,11 @@ final class FacebookListingOptions
      */
     public function setEndsAt($endsAt)
     {
-        if ($endsAt) {
-            $this->endsAt = Carbon::createFromTimestamp(strtotime($endsAt));
+        if (! $endsAt) {
+            $endsAt = Carbon::now()->addHour()->toDateTimeString();
         }
+
+        $this->endsAt = Carbon::createFromTimestamp(strtotime($endsAt));
     }
 
     /**

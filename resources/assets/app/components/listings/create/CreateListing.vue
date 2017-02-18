@@ -337,14 +337,14 @@
                 this.selected.listables = [];
             });
 
-            $Bus.$on('listings:selected:listable:added', (group, subgroup, listable)=>{
+            $Bus.$on('listable:selected', (group, subgroup, listable)=>{
                 const index = _.findIndex(this.selected.listables, {id: listable.id});
                 if (index == -1) {
                     this.selected.listables.push(listable);
                 }
             });
 
-            $Bus.$on('listings:selected:listable:removed', (groupid, subgroup, listable)=>{
+            $Bus.$on('listable:removed', (groupid, subgroup, listable)=>{
                 const index = _.findIndex(this.selected.listables, {id: listable.id});
                 if (index > -1) {
                     this.selected.listables.splice(index, 1);

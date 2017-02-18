@@ -13,4 +13,28 @@ use Exception;
  */
 class ListingExceedsHourlyLimitException extends Exception
 {
+    /**
+     * @var
+     */
+    public $totalForHour;
+
+    /**
+     * @param $total
+     *
+     * @return $this
+     */
+    public function setTotalForHour($total)
+    {
+        $this->totalForHour = $total;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTotalForHour()
+    {
+        return $this->totalForHour;
+    }
 }
