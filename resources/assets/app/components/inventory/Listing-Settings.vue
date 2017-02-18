@@ -80,6 +80,10 @@
                     this.processing_listing = false;
                 }
             });
+
+            $Bus.$on('listings:saving', ()=>{
+                $Bus.$emit('listings:options:get', this.options);
+            });
         },
         computed: {
             message_preview(){

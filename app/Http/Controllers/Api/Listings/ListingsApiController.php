@@ -7,14 +7,22 @@
 namespace Kabooodle\Http\Controllers\Api\Listings;
 
 use Binput;
+use Bugsnag;
+use Exception;
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
+use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
 use Kabooodle\Models\Listings;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Validation\ValidationException;
+use Kabooodle\Models\Listing\FacebookListingOptions;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
-use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Facebook\Exceptions\FacebookAuthenticationException;
+use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
+use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
+use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
 
 /**
  * Class ListingsApiController
@@ -95,15 +103,55 @@ class ListingsApiController extends AbstractApiController
 
     /**
      * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     * @throws ListingClaimableDateIsBeforeListingDateException
      */
     public function store(Request $request)
     {
+        $facebooksales = Binput::get('facebooksales', []);
+        $flashsales = Binput::get('flashsales', []);
+        $facebookOptions = (array) Binput::get('options', []);
+        $facebooksales_meta = Binput::get('facebooksales_meta', null);
+
+        // Date to list it and remove it
+        $listAt = array_get($options, 'list_at', null);
+        $removeAt = array_get($options, 'remove_at', null);
+        // Date range you can claim.
+        $claimableAt = array_get($options, 'available_at', null);
+        $claimableUntil = array_get($options, 'available_until', null);
+        $itemMessage = array_get($options, 'item_message', false);
+
         try {
+            //
+            if ($claimableAt && strtotime($claimableAt) < strtotime($listAt)) {
+                throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
+            }
 
-        } catch (ValidationException $e) {
+            if ($facebookOptions && $facebooksales) {
+                $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $itemMessage);
+//                $job = new ScheduleFacebookListingCommand($this->getUser(), );
+//                $this->dispatchNow($job);
+            }
 
+            if ($flashsales) {
+//                $job = new ScheduleFlashsaleListingCommand($this->getUser(), );
+//                $this->dispatchNow($job);
+            }
+
+            return $this->setData(['msg' => 'Items scheduled successfully to sale.'])->respond();
+        } catch (FacebookAuthenticationException $e) {
+            $msg = 'Your facebook credentials are invalid. Please re-authorize ' . env('APP_NAME') . ' for your facebook account, via our settings page.';
+
+            return $this->setData(['msg' => $msg])->setStatusCode(500)->respond();
+        } catch (MissingMandatoryParametersException $e) {
+            return $this->setStatusCode(500)->setData(['msg' => $e->getMessage() ?: 'You must select as least 1 item for listing.'])->respond();
+        } catch (ListingConflictsWithExistingListingException $e) {
+            return $this->setStatusCode(500)->setData(['msg' => 'The date and time block you selected conflicts with an existing listing. Please select a new block of time.'])->respond();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
 
+            return $this->setStatusCode(500)->setData(['msg' => $e->getMessage()])->respond();
         }
     }
 

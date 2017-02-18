@@ -20,6 +20,10 @@ $api->group(['middleware' => 'jwt.auth'], function ($api) {
         'as' => 'listings.destroy',
         'uses' => \Kabooodle\Http\Controllers\Api\Listings\ListingsApiController::class.'@destroy'
     ]);
+    $api->post('listings', [
+        'as' => 'listings.store',
+        'uses' => \Kabooodle\Http\Controllers\Api\Listings\ListingsApiController::class.'@store'
+    ]);
     $api->post('listings/{listing}/listingitems/{listingitem}/claims', [
         'as' => 'listings.listingitems.claims.store',
         'uses' => \Kabooodle\Http\Controllers\Api\Listings\ListingItemsClaimsController::class . '@store'

@@ -8,6 +8,7 @@
 @section('body-content')
 
             <create-listing
+                    save_endpoint="{{ apiRoute('listings.store') }}"
                     :show_select_buttons="true"
                     endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"
             ></create-listing>

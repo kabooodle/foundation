@@ -115,4 +115,14 @@ class MerchantListingsController extends Controller
 
         return $this->view('listings.merchant.detailed')->with(compact('listing'));
     }
+
+    /**
+     * @param Request $request
+     *
+     * @return mixed
+     */
+    public function store(Request $request)
+    {
+
+    }
 }

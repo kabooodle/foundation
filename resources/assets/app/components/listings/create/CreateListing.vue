@@ -68,7 +68,7 @@
                             <div class="card-group btn-group-prpl">
                                 <div class="card no-border">
                                     <button
-                                            :class="postables.facebookgroups.length == 0 ? 'disabled' : null"
+                                            :class="postables.facebookgroups.length == 0 ? 'disabled' : (selected.sale.sale_type == 'facebook' ? 'active' : null)"
                                             :disabled="postables.facebookgroups.length == 0 "
                                             @click="selectSale('facebook')"
                                             class="btn text-center white btn-lg btn-block">
@@ -78,11 +78,11 @@
                                 </div>
                                 <div class="card no-border">
                                     <button
-                                            :class="postables.flashsales.length == 0 ? 'disabled' : null"
+                                            :class="postables.flashsales.length == 0 ? 'disabled' : (selected.sale.sale_type == 'flashsale' ? 'active' : null)"
                                             :disabled="postables.flashsales.length == 0 "
                                             @click="selectSale('flashsale')"
                                             class="btn text-center white btn-lg btn-block">
-                                        Flash sale
+                                        Flash Sale
                                         <span class="text-sm text-muted block">{{postables.flashsales.length}} sales</span>
                                     </button>
                                 </div>
@@ -267,6 +267,10 @@
             show_select_buttons: {
                 default: true,
             },
+            save_endpoint: {
+                required: true,
+                type: String,
+            },
             endpoint: {
                 type: String
             },
@@ -288,6 +292,7 @@
                     refreshing_data : true,
                     refreshing_postables: false,
                     resetting_sales: false,
+                    saving: false,
                 },
                 completed: {
                     steps: []
@@ -312,10 +317,16 @@
                     misses: [],
                     matches: [],
                 },
+
+                facebook_listing_options: {}
             }
         },
         created() {
             this.gotoStepOne();
+
+            $Bus.$on('listings:options:get', (options)=>{
+                this.facebook_listing_options = options;
+            });
 
             $Bus.$on('listables:fetched', (listables)=>{
                 this.listables = listables;
@@ -348,6 +359,7 @@
         methods: {
             prepareSalesForPreview(){
 
+                this.facebook_listing_options = {};
                 this.prepared_sales_for_preview.flashsales = [];
                 this.prepared_sales_for_preview.facebook = [];
 
@@ -376,7 +388,8 @@
                             listables: [],
                             albums: [],
                             id: sales[0].sale.id, // peek into the array and get this from the first object as all objects have the same sale id/name
-                            name: sales[0].sale.name
+                            name: sales[0].sale.name,
+                            sales: sales,
                         };
 
                         for (let i=0; i<sales.length; i++){
@@ -678,7 +691,41 @@
                 this.prepareSalesForPreview();
             },
             saveListing(){
-                alert('HELLO');
+                let flashsales = this.prepared_sales_for_preview.flashsales;
+                let facebooksales = this.prepared_sales_for_preview.facebook;
+                let facebooksales_total_listables = [];
+
+                $Bus.$emit('listings:saving');
+
+                if (flashsales.length == 0 && facebooksales == 0) {
+                    return;
+                }
+
+                if (facebooksales.length) {
+                    for (let i = 0; i < facebooksales.length; i++){
+                        for (let j = 0; j < facebooksales[i].listables.length; j++) {
+                            facebooksales_total_listables.push(facebooksales[i].listables[j]);
+                        }
+                    }
+                }
+
+                let data = {
+                    flashsales: flashsales,
+                    facebooksales: facebooksales,
+                    facebooksales_meta: {
+                        total_listables: facebooksales_total_listables.length
+                    },
+                    options: this.facebook_listing_options
+                };
+
+                this.actions.saving = true;
+                this.$http.post(this.save_endpoint, data).then((response)=>{
+                    console.log(response);
+                }, (error)=>{
+                    notify({
+                        text: error.body.data.msg
+                    })
+                });
             }
         },
         computed: {
