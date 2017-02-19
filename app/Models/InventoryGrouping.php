@@ -47,6 +47,7 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
      * @var array
      */
     protected $appends = [
+        'obfuscate_id',
         'name_with_variant',
         'name_uuid',
         'available_quantity',

@@ -31,7 +31,12 @@ class UpdateInventoryGroupingCommandHandler
     public function handle(UpdateInventoryGroupingCommand $command)
     {
         $user = $command->getUser();
-        $inventoryIds = $command->getInventoryIds();
+        $inventoryIds = [];
+        $inventoryData = $command->getInventory();
+
+        foreach($inventoryData as $data) {
+            $inventoryIds[] = $data['id'];
+        }
 
         $inventoryItems = Inventory::whereIn('id', $inventoryIds)->get()->filter(function ($item) use ($user) {
             return $item->user_id == $user->id;
@@ -55,20 +60,20 @@ class UpdateInventoryGroupingCommandHandler
             $grouping->price_usd = $command->getPrice();
             $grouping->initial_qty = $command->getInitialQty();
 
-            $currentFile = Files::whereKey($command->getImages()['key'])->first();
+            $imageData = $command->getImage();
+
+            $currentFile = Files::whereKey($imageData['key'])->first();
 
             if ($currentFile) {
                 $grouping->cover_photo_file_id = $currentFile->id;
             } else {
                 $newFile = Files::create([
-                    'location' => $command->getImages()['location'],
-                    'key' => $command->getImages()['key'],
-                    'bucket_name' => $command->getImages()['bucket'],
+                    'location' => $imageData['location'],
+                    'key' => $imageData['key'],
+                    'bucket_name' => $imageData['bucket'],
                     'fileable_type' => get_class($grouping),
                     'fileable_id' => $grouping->id
                 ]);
-
-                $grouping->files()->save($newFile);
 
                 $grouping->cover_photo_file_id = $newFile->id;
             }

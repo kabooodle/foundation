@@ -73,4 +73,12 @@ trait ObfuscatesIdTrait
     {
         return $this->obfuscateToURIStringFromModel();
     }
+
+    /**
+     * @return string
+     */
+    public function getObfuscateIdAttribute(): string
+    {
+        return $this->obfuscateToURIStringFromModel();
+    }
 }

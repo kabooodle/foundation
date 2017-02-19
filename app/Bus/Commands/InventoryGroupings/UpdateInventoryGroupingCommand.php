@@ -48,17 +48,12 @@ final class UpdateInventoryGroupingCommand
     /**
      * @var array
      */
-    protected $images;
+    protected $image;
 
     /**
      * @var array
      */
-    protected $coverPhoto;
-
-    /**
-     * @var array
-     */
-    protected $inventoryIds;
+    protected $inventory;
 
     /**
      * @var null|string
@@ -79,9 +74,8 @@ final class UpdateInventoryGroupingCommand
      * @param bool $locked
      * @param float $price
      * @param int $initialQty
-     * @param array $images
-     * @param array $coverPhoto
-     * @param array $inventoryIds
+     * @param array $image
+     * @param array $inventory
      * @param null $description
      * @param string $categories
      */
@@ -92,9 +86,8 @@ final class UpdateInventoryGroupingCommand
         bool $locked,
         float $price,
         int $initialQty,
-        array $images,
-        array $coverPhoto,
-        array $inventoryIds,
+        array $image,
+        array $inventory,
         $description = null,
         string $categories)
     {
@@ -104,9 +97,8 @@ final class UpdateInventoryGroupingCommand
         $this->locked = $locked;
         $this->price = $price;
         $this->initialQty = $initialQty;
-        $this->images = $images;
-        $this->coverPhoto = $coverPhoto;
-        $this->inventoryIds = $inventoryIds;
+        $this->image = $image;
+        $this->inventory = $inventory;
         $this->description = $description;
         $this->categories = $categories;
     }
@@ -162,25 +154,17 @@ final class UpdateInventoryGroupingCommand
     /**
      * @return array
      */
-    public function getImages(): array
+    public function getImage(): array
     {
-        return $this->images;
+        return $this->image;
     }
 
     /**
      * @return array
      */
-    public function getCoverPhoto(): array
+    public function getInventory(): array
     {
-        return $this->coverPhoto;
-    }
-
-    /**
-     * @return array
-     */
-    public function getInventoryIds(): array
-    {
-        return $this->inventoryIds;
+        return $this->inventory;
     }
 
     /**

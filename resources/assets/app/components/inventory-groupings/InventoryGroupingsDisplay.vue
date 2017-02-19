@@ -8,6 +8,7 @@
                 :key=grouping.id
                 :grouping=grouping
                 v-on:delete-grouping="deleteGrouping(grouping, index)"
+                :inventory-groupings-index-route="inventoryGroupingsIndexRoute"
             ></inventory-grouping>
         </div>
     </div>
@@ -19,6 +20,10 @@
     export default {
         props: {
             inventoryGroupingsEndpoint: {
+                type: String,
+                required: true,
+            },
+            inventoryGroupingsIndexRoute: {
                 type: String,
                 required: true,
             },
@@ -47,26 +52,19 @@
             },
             deleteGrouping: function (grouping, index) {
                 var self = this;
-                confirmModal(function () {
-                    $.noty.closeAll();
-                    this.$http.delete(this.inventoryGroupingsEndpoint+'/'+grouping.id)
-                        .then(function (response) {
-                            self.groupings.splice(index, 1);
-                            notify({
-                                'text': 'Your outfit has been deleted!',
-                                'type': 'success'
-                            });
-                        }, function (response) {
-                            notify({
-                                'text': 'There was a problem deleting your outfit. Please try again.',
-                                'type': 'error'
-                            });
-                        }).finally(()=>{
-                            self.retrievingInventoryGroupings = false;
+                this.$http.delete(this.inventoryGroupingsEndpoint+'/'+grouping.id)
+                    .then(function (response) {
+                        self.groupings.splice(index, 1);
+                        notify({
+                            'text': 'Your outfit has been deleted!',
+                            'type': 'success'
+                        });
+                    }, function (response) {
+                        notify({
+                            'text': 'There was a problem deleting your outfit. Please try again.',
+                            'type': 'error'
+                        });
                     });
-                }, function () {
-                    $.noty.close();
-                }, {text: 'Are you sure you want to delete this outfit?'});
             },
         },
         components: {

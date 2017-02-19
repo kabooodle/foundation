@@ -35,7 +35,7 @@ class InventoryGroupingsController extends AbstractApiController
     public function index(Request $request, $username)
     {
         $user = User::whereUsername($username)->firstOrFail();
-        $groupings = InventoryGrouping::with('inventoryItems')->whereUserId($user->id)->get();
+        $groupings = InventoryGrouping::with('inventoryItems')->whereUserId($user->id)->orderBy('name')->get();
 
         $data = [
             'user' => $user,
@@ -114,23 +114,24 @@ class InventoryGroupingsController extends AbstractApiController
         try {
             $grouping = $this->checkIds($username, $groupingId);
 
-            $this->validate($request, InventoryGrouping::getUpdateRules($groupingId), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
+            $groupingData = Binput::get('grouping', []);
+
+//            $this->validate($request, InventoryGrouping::getUpdateRules($groupingId), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
 
             $updated = $this->dispatchNow(new UpdateInventoryGroupingCommand(
                 $this->getUser(),
                 $grouping,
-                Binput::get('name'),
-                (bool)Binput::get('locked'),
-                (float)Binput::get('price_usd'),
-                (int)Binput::get('initial_qty'),
-                Binput::get('images'),
-                Binput::get('cover_photo'),
-                Binput::get('inventory_ids'),
-                Binput::get('description'),
-                implode(',', Binput::get('categories', []))
+                array_get($groupingData, 'name'),
+                (bool)array_get($groupingData, 'locked'),
+                (float)array_get($groupingData, 'price_usd'),
+                (int)array_get($groupingData, 'initial_qty'),
+                array_get($groupingData, 'image', []),
+                array_get($groupingData, 'inventory', []),
+                array_get($groupingData, 'description'),
+                implode(',', array_get($groupingData, 'categories', []))
             ));
 
-            return $this->setData(['msg' => "Item {$updated->name} created", 'grouping' => $updated->toJson()])->respond();
+            return $this->setData(['msg' => 'Outfit {$updated->name} updated', 'grouping' => $updated->toJson()])->respond();
         } catch (ForbiddenUserAccessException $e) {
             return $this->setStatusCode(403)->setData(['msg' => $e])->respond();
         } catch (ForbiddenModelAccessException $e) {
@@ -162,7 +163,7 @@ class InventoryGroupingsController extends AbstractApiController
 
             $this->dispatchNow(new DestroyInventoryGroupingCommand($this->user(), $grouping));
 
-            return $this->respond();
+            return $this->setData(['msg' => 'Outfit deleted'])->respond();
         } catch (ForbiddenUserAccessException $e) {
             return $this->setStatusCode(403)->setData(['msg' => $e])->respond();
         } catch (ForbiddenModelAccessException $e) {

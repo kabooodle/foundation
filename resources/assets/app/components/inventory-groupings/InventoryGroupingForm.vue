@@ -68,7 +68,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12">
+                <div v-if="!edit" class="col-xs-12">
                     <button :class="grouping.duplicating ? 'disabled' : null" :disabled="grouping.duplicating" @click.prevent="duplicateGrouping" class="btn primary btn-sm pull-right">
                         Duplicate <spinny v-if="grouping.duplicating"></spinny>
                     </button>
@@ -98,6 +98,10 @@
             s3_key_url: {
                 type: String,
                 required: true
+            },
+            edit: {
+                type: Number,
+                required: true,
             },
         },
         data() {

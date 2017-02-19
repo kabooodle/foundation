@@ -21,6 +21,7 @@
     <div id="inventory-groupings">
         <inventory-groupings-display
             inventory-groupings-endpoint="{{ apiRoute('inventory-groupings.index', [webUser()->username]) }}"
+            inventory-groupings-index-route="{{ route('shop.outfits.index', [webUser()->username]) }}"
         ></inventory-groupings-display>
     </div>
 @endsection

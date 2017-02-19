@@ -21,4 +21,12 @@ trait HashableTrait
     {
         return Crypt::encrypt(get_called_class() . '::' . $this->id);
     }
+
+    /**
+     * @return string
+     */
+    public function getHashIdAttribute(): string
+    {
+        return $this->makeHashedResourceString();
+    }
 }

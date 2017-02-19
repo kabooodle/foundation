@@ -105,12 +105,13 @@ class InventoryGroupingsController extends Controller
 
         $decryptedId = $this->obfuscateFromURIString($idAndName);
 
-        $apiData = $this->api->get($username.'/inventory-groupings/'.$decryptedId);
-        $data = [
-            'grouping' => array_get($apiData['data'], 'grouping')
-        ];
+        $grouping = InventoryGrouping::with('inventoryItems')->findOrFail($decryptedId);
 
-        if ($data['grouping']) {
+        if ($grouping) {
+            $data = [
+                'grouping' => $grouping->toJson(),
+            ];
+
             return $this->view('inventory-groupings.form', $data);
         }
 

@@ -2,11 +2,14 @@
     <div>
         <div class="box white">
             <div class="box-body">
+                <button v-if="edit" :class="viewing ? 'disabled' : null" :disabled="viewing" @click.prevent="viewGrouping" class="btn primary btn-sm ">
+                    View Outfit <spinny v-if="viewing"></spinny>
+                </button>
                 <div class="pull-right">
-                    <button :class="adding ? 'disabled' : null" :disabled="adding" @click.prevent="addGrouping" class="btn primary btn-sm ">
+                    <button v-if="!edit" :class="adding ? 'disabled' : null" :disabled="adding" @click.prevent="addGrouping" class="btn primary btn-sm ">
                         Add Outfit <spinny v-if="adding"></spinny>
                     </button>
-                    <button :class="saving ? 'disabled' : null" :disabled="saving" @click.prevent="saveGroupings" class="btn primary btn-sm ">
+                    <button :class="saving ? 'disabled' : null" :disabled="saving" @click.prevent="save" class="btn primary btn-sm ">
                         {{ saveOutfitsText }} <spinny v-if="saving"></spinny>
                     </button>
                 </div>
@@ -15,40 +18,55 @@
         </div>
         <div id="inventory-groupings">
             <inventory-grouping v-for="(grouping, index) in groupings"
+                :edit=edit
                 :key="grouping.id"
                 :grouping=grouping
                 :inventory=inventory
                 :restricted-inventory-ids=restrictedInventoryIds
                 :s3_key_url="s3_key_url"
                 v-on:duplicate-grouping="duplicateGrouping(grouping)"
-                v-on:delete-grouping="groupings.splice(index, 1)"
+                v-on:delete-grouping="deleteGrouping(grouping, index)"
             ></inventory-grouping>
         </div>
     </div>
 </template>
 <script>
-    import InventoryGrouping from './InventoryGrouping.vue'
+    import InventoryGroupingForm from './InventoryGroupingForm.vue'
     import Spinny from '../Spinner.vue';
 
     export default {
         props: {
-            saveInventoryGroupingsEndpoint: {
+            inventoryGroupingsEndpoint: {
                 type: String,
                 required: true,
             },
-            getInventoryEndpoint: {
+            inventoryEndpoint: {
                 type: String,
                 required: true,
             },
             s3_key_url: {
                 type: String,
-                required: true
+                required: true,
+            },
+            edit: {
+                type: Number,
+                required: true,
+            },
+            editGrouping: {
+                type: Object,
+                required: false,
+            },
+            inventoryGroupingsIndexRoute: {
+                type: String,
+                required: true,
             },
         },
         data() {
             return {
                 adding: false,
                 saving: false,
+                viewing: false,
+                viewRoute: this.inventoryGroupingsIndexRoute + '/' + this.editGrouping.obfuscate_id,
                 ids: [],
                 groupings: [],
                 inventory: [],
@@ -56,13 +74,26 @@
             }
         },
         created: function () {
-            this.addGrouping();
             this.getInventory();
+            if (this.edit) {
+                this.setEditGrouping();
+            } else {
+                this.addGrouping();
+            }
         },
         computed: {
+            saveInventoryGroupingsEndpoint: function () {
+                return this.inventoryGroupingsEndpoint + (this.edit ? '/' + this.editGrouping.id : '');
+            },
             saveGroupingsData: function () {
-                return {
-                    'groupings': this.groupings,
+                if (this.edit) {
+                    return {
+                        'grouping': this.groupings[0],
+                    }
+                } else {
+                    return {
+                        'groupings': this.groupings,
+                    }
                 }
             },
             saveOutfitsText: function () {
@@ -73,7 +104,7 @@
             getInventory: function () {
                 var self = this;
                 self.retrievingInventory = true;
-                this.$http.get(this.getInventoryEndpoint)
+                this.$http.get(this.inventoryEndpoint)
                     .then(function (response) {
                         self.inventory = response.data.data;
                     }, function (response) {
@@ -125,6 +156,22 @@
                 });
                 grouping.duplicating = false;
             },
+            setEditGrouping: function () {
+                this.groupings.push({
+                    'id': this.editGrouping.id.toString(),
+                    'name': this.editGrouping.name,
+                    'description': this.editGrouping.description,
+                    'locked': this.editGrouping.locked,
+                    'price_usd': this.editGrouping.price_usd,
+                    'initial_qty': this.editGrouping.initial_qty,
+                    'inventory': this.editGrouping.inventory_items,
+                    'image': this.editGrouping.coverimage,
+                    'duplicating': false,
+                });
+            },
+            save: function () {
+                if (this.edit ? this.updateGrouping() : this.saveGroupings());
+            },
             saveGroupings: function () {
                 var self = this;
                 self.saving = true;
@@ -142,10 +189,52 @@
                     }).finally(()=>{
                         self.saving = false;
                 });
-            }
+            },
+            updateGrouping: function () {
+                var self = this;
+                self.saving = true;
+                this.$http.put(this.saveInventoryGroupingsEndpoint, this.saveGroupingsData)
+                    .then(function (response) {
+                        notify({
+                            'text': 'Your outfit was updated!',
+                            'type': 'success'
+                        });
+                    }, function (response) {
+                        notify({
+                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'type': 'error'
+                        });
+                    }).finally(()=>{
+                        self.saving = false;
+                });
+            },
+            viewGrouping: function () {
+                this.viewing = true;
+                window.location.href = this.viewRoute;
+            },
+            deleteGrouping: function (grouping, index) {
+                if (this.edit) {
+                    var self = this;
+                    this.$http.delete(this.inventoryGroupingsEndpoint+'/'+grouping.id)
+                        .then(function (response) {
+                            notify({
+                                'text': 'Your outfit has been deleted!',
+                                'type': 'success'
+                            });
+                            window.location.href = this.inventoryGroupingsIndexRoute;
+                        }, function (response) {
+                            notify({
+                                'text': 'There was a problem deleting your outfit. Please try again.',
+                                'type': 'error'
+                            });
+                        });
+                } else {
+                    this.groupings.splice(index, 1);
+                }
+            },
         },
         components: {
-            'inventory-grouping': InventoryGrouping,
+            'inventory-grouping': InventoryGroupingForm,
             'spinny': Spinny,
         },
     }
