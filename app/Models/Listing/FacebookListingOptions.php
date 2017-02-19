@@ -28,8 +28,8 @@ final class FacebookListingOptions
      */
     public function __construct(string $startsAt = null, string $endsAt = null, string $claimingStartsAt = null, string $claimingEndsAt = null, string $itemMessage = null)
     {
-        $this->setStartsAt($startsAt);
-        $this->setEndsAt($endsAt);
+        $this->setStartsAt($startsAt ?: Carbon::now()->addHour()->toDateTimeString());
+        $this->setEndsAt($endsAt ?: Carbon::now()->addHour()->toDateTimeString());
         $this->setClaimingStartsAt($claimingStartsAt);
         $this->setClaimingEndsAt($claimingEndsAt);
         $this->setItemMessage($itemMessage);
@@ -40,10 +40,6 @@ final class FacebookListingOptions
      */
     public function setStartsAt($startsAt)
     {
-        if (! $startsAt) {
-            $startsAt = Carbon::now()->addHour()->toDateTimeString();
-        }
-
         $this->startsAt = Carbon::createFromTimestamp(strtotime($startsAt));
     }
 
@@ -52,10 +48,6 @@ final class FacebookListingOptions
      */
     public function setEndsAt($endsAt)
     {
-        if (! $endsAt) {
-            $endsAt = Carbon::now()->addHour()->toDateTimeString();
-        }
-
         $this->endsAt = Carbon::createFromTimestamp(strtotime($endsAt));
     }
 

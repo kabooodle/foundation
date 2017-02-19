@@ -69,7 +69,7 @@ class ListingsController extends Controller
 
         $rawCategories = collect(Listings::getStyleGroupings($listingUuid));
 
-        $categories = $rawCategories->groupBy('style_name')->transform(function($item, $k){
+        $categories = $rawCategories->sortBy('style_name')->groupBy('style_name')->transform(function($item, $k){
             return $item->groupBy('size_name');
         });
 

@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\FlashSales;
-use Kabooodle\Models\ListingItems;
 use Kabooodle\Bus\Events\Listings\ListingScheduledEvent;
 use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
 use Kabooodle\Foundation\Exceptions\Listings\ListingUserIsNotSellerInFlashsaleException;
@@ -47,50 +46,61 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
         /** @var Carbon $scheduledFor */
         $scheduledFor = $this->normalizeScheduledDateTime();
 
-        /** @var FlashSales flashsale */
-        $this->flashsale = FlashSales::with('sellerGroups', 'sellerGroups.users', 'admins', 'owner')
-            ->findOrFail($command->getFlashSaleId());
-
         return DB::transaction(function () use ($actor, $scheduledFor, $command) {
 
-            /** @var Listings $listing */
-            $listing = $this->buildListing($command, $scheduledFor);
+            $events = [];
 
-            $this->timeslot = $this->getSellerTimeslot($actor);
-            // Use the same timeslot value for both.
-            $this->timeslot = $this->timeslot;
-            $listing->scheduled_for = $this->timeslot;
+            /**
+             * flashsale['listables'] array containing listables
+             * flashsale['sale'] array containing Flashsale
+             * flashsale['sale_id'] int of Flashsale id
+             */
+            foreach ($command->getFlashSales() as $flashSale) {
 
-            $flashsaleInventoryItems = $this->buildListingItems($listing, $command);
+                /** @var FlashSales flashsale */
+                $this->flashsale = FlashSales::with('sellerGroups', 'sellerGroups.users', 'admins', 'owner')
+                    ->findOrFail($flashSale['sale_id']);
 
-            $listing->listingItems()->saveMany($flashsaleInventoryItems);
+                /** @var Listings $listing */
+                $listing = $this->buildListing($actor, $flashSale['sale_id'], $scheduledFor);
 
-            $listing->save();
+                $this->timeslot = $this->getSellerTimeslot($actor);
 
-            event(new ListingScheduledEvent($actor->id, $listing->id));
+                // Use the same timeslot value for both.
+                $this->timeslot = $this->timeslot;
+                $listing->scheduled_for = $this->timeslot;
 
-            return $listing;
+                $flashsaleInventoryItems = $this->buildListingItems($actor, $listing, $flashSale['listables']);
+
+                $listing->listingItems()->saveMany($flashsaleInventoryItems);
+
+                $listing->save();
+
+                $events[] = new ListingScheduledEvent($actor->id, $listing->id);
+            }
         });
     }
 
     /**
-     * @param ScheduleListingCommand $command
-     * @param Carbon                 $scheduledFor
+     * @param User        $user
+     * @param int|null    $existingId
+     * @param Carbon|null $scheduledFor
+     * @param null        $options
      *
-     * @return Listings
+     * @return \Illuminate\Database\Eloquent\Model|Listings|null|static
      */
-    public function buildListing($command, Carbon $scheduledFor = null)
+    public function buildListing(User $user, int $existingId = null, Carbon $scheduledFor = null, $options = null)
     {
         // If this is a flash sale listing, we want to merge items into the flashsale instead of
         // creating new listings for the same flash sale/user.  So check first if the listing for the flashsale exists.
-        $listing = Listings::where('flashsale_id', '=', $command->getFlashSaleId())
-            ->where('owner_id', '=', $command->getActor()->id)->first();
+        $listing = Listings::where('flashsale_id', '=', $existingId)
+            ->where('owner_id', '=', $user->id)->first();
 
         if (!$listing) {
-            $listing = parent::buildListing($command, $scheduledFor);
+            $listing = parent::buildListing($user, $existingId, $scheduledFor);
         }
 
-        $listing->flashsale_id = $command->getFlashSaleId();
+        $listing->flashsale_id = $existingId;
         $listing->type = Listings::TYPE_FLASHSALE;
 
         $listing->save();
@@ -104,47 +114,44 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
      * a flash sale.  We need to make sure we identify the user's group and grab this (optional) date so that
      * we can assign it to the listing items->make_available_at
      *
-     *
-     * @param Listings               $listing
-     * @param ScheduleFlashsaleListingCommand $command
+     * @param User      $actor
+     * @param Listings  $listing
+     * @param array     $listables
      *
      * @throws ListingUserIsNotSellerInFlashsaleException
      * @return array
      */
-    public function buildListingItems(Listings $listing, ScheduleFlashsaleListingCommand $command)
+    public function buildListingItems(User $actor, Listings $listing, array $listables)
     {
-        $selectedItems = $command->getSelectedItems();
-        $actor = $command->getActor();
         $listedItems = [];
 
-        if (count($selectedItems) > 0) {
-            foreach ($selectedItems as $selectedItem) {
-
-                // Skip inventory items that do not belong to the user.
-                // Skip items already in the flash sale by the user.
-                // Skip items that have an incorrect listing item class.
-                if (!$this->listableItemBelongsToUser($selectedItem['id'], $selectedItem['listable_item_class'], $actor)
-                    || $this->itemAlreadyInFlashsale($listing, $selectedItem['listing_item_class'], $selectedItem['id'])
-                    || !class_exists($selectedItem['listing_item_class'])
-                ) {
-                    continue;
-                }
-
-                $listingItem = new $selectedItem['listing_item_class'];
-                $listingItem->listing_id = $listing->id;
-                $listingItem->owner_id = $actor->id;
-                $listingItem->inventory_id = $selectedItem['id'];
-                $listingItem->flashsale_id = $command->getFlashSaleId();
-
-                // Copy the type and status from the parent listing.
-                // Status may actually change and be different, below otherwise they start the same.
-                $listingItem->type = $listing->type;
-                $listingItem->status = $listing->status;
-                $listingItem->status_updated_at = $this->now;
-                $listingItem->make_available_at = $this->timeslot;
-
-                $listedItems[] = $listingItem;
+        // Loop over each of the items
+        foreach ($listables as $listableItem) {
+            // Skip inventory items that do not belong to the user.
+            // Skip items already in the flash sale by the user.
+            // Skip items that have an incorrect listing item class.
+            if (!$this->listableItemBelongsToUser($listableItem['id'], $listableItem['listable_item_class'], $actor)
+                || $this->itemAlreadyInFlashsale($listing, $listableItem['listing_item_class'],
+                    $listableItem['id'])
+                || !class_exists($listableItem['listing_item_class'])
+            ) {
+                continue;
             }
+
+            $listingItem = new $listableItem['listing_item_class'];
+            $listingItem->listing_id = $listing->id;
+            $listingItem->owner_id = $actor->id;
+            $listingItem->listable_id = $listableItem['id'];
+            $listingItem->flashsale_id = $listing->flashsale_id;
+
+            // Copy the type and status from the parent listing.
+            // Status may actually change and be different, below otherwise they start the same.
+            $listingItem->type = $listing->type;
+            $listingItem->status = $listing->status;
+            $listingItem->status_updated_at = $this->now;
+            $listingItem->make_available_at = $this->timeslot;
+
+            $listedItems[] = $listingItem;
         }
 
         return $listedItems;
@@ -152,8 +159,8 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
 
     /**
      * @param Listings $listing
-     * @param string $listableType
-     * @param int $listableId
+     * @param string   $listableType
+     * @param int      $listableId
      *
      * @return mixed
      */
@@ -177,7 +184,7 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
         // If the user is an admin of the flashsale, then the timeslot is now regardless of
         // whether they are posting early or late.
         if ($this->isActorAdmin($this->flashsale, $user)) {
-           $timeslot = $this->now;
+            $timeslot = $this->now;
         } else {
             // IF they are not an admin, does the user belong to a seller group
             if (!$group = $this->getFlashsaleSellerGroupForUser($this->flashsale, $user)) {
@@ -190,13 +197,13 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
 
                 // If the assigned timeslot is null, then they too can have timestamps of now, just like admins,
                 // regardless of whether or not they are posting before the sale start.
-                if (! $timeslot || is_null($timeslot)) {
-                    $timeslot =  $this->now;
+                if (!$timeslot || is_null($timeslot)) {
+                    $timeslot = $this->now;
                 } else {
                     // If they were assigned a time slot but they are posting after their time slot
                     // We wont honor their time slot and instead use a timestamp of now.
                     if ($timeslot && $this->isUserListingLaterThanTimeSlot($timeslot)) {
-                        $timeslot =  $this->now;
+                        $timeslot = $this->now;
                     }
                 }
             }

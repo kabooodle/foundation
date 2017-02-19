@@ -72,15 +72,17 @@ abstract class AbstractScheduleListingsCommandHandler
     }
 
     /**
-     * @param $command
-     * @param Carbon|null            $scheduledFor
+     * @param User        $user
+     * @param int|null    $existingId
+     * @param Carbon|null $scheduledFor
+     * @param null        $options
      *
      * @return Listings
      */
-    public function buildListing($command, Carbon $scheduledFor = null)
+    public function buildListing(User $user, int $existingId = null,  Carbon $scheduledFor = null, $options = null)
     {
         $listing = new Listings;
-        $listing->owner_id = $command->getActor()->id;
+        $listing->owner_id = $user->id;
         $listing->scheduled_for = $scheduledFor;
         $listing->status = Listings::STATUS_SCHEDULED;
         $listing->status_updated_at = $this->now;

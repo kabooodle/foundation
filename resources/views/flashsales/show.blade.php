@@ -10,7 +10,7 @@
                 btn_size_class="btn white btn-sm"
                 able_type="Kabooodle\Models\Flashsales"
                 :able_id="'' + {{ $flashsale->id }}"
-                already_following="{{ $flashsale->is_watched ? 'true' : 'false' }}"
+                :already_following="{{ $flashsale->is_watched ? 1 : 0 }}"
                 endpoint="{{ apiRoute('flashsales.watchers.store', [$flashsale->id]) }}"
         ></followable>
         @if(webUser() && $flashsale->canSellerListToFlashsaleAnytime(webUser()->id))

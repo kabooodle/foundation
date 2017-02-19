@@ -9,7 +9,7 @@
                     :watch_endpoint="watch_endpoint.replace(/::1::/, item.listing_id).replace(/::2::/, item.id)"
                     :show_endpoint="show_endpoint.replace(/::1::/, item.id_to_string)"
             ></listing-card>
-            <infinite-loading :distance="100" :on-infinite="fetchInfinite" ref="listingFinite">
+            <infinite-loading :distance="50" :on-infinite="fetchInfinite" ref="listingFinite">
                 <span slot="no-more">
                     No more results.
                 </span>

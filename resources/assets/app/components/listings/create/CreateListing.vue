@@ -208,8 +208,8 @@
                         </tr>
                         <tr v-for="sale in prepared_sales_for_preview.facebook" v-if="prepared_sales_for_preview.facebook.length">
                             <td>{{ sale.name }} </td>
-                            <td>{{ sale.albums.length }}</td>
-                            <td>{{ sale.listables.length }}</td>
+                            <td>{{ sale.albums }}</td>
+                            <td>{{ sale.listables }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -256,6 +256,53 @@
         }
     };
 
+    const initial_data = function(){
+        return {
+            prepared_sales_for_preview: {
+                facebook: [],
+                flashsales: []
+            },
+
+            // All available listables for selection.
+            listables: [],
+
+            // All available sales
+            postables: [],
+
+            actions: {
+                refreshing_data : true,
+                refreshing_postables: false,
+                resetting_sales: false,
+                saving: false,
+            },
+            completed: {
+                steps: []
+            },
+            selected: {
+
+                // Current active step we are on.
+                step: null,
+
+                // Contains the active sale configuration being built.
+                sale: {},
+
+                // Contains all the sale configurations we've created.
+                sales: [],
+
+                // Contains all the listables we've selected in step 1
+                // AND have not yet been assigned to an active sale configuration
+                listables: [],
+            },
+
+            matching_listables: {
+                misses: [],
+                matches: [],
+            },
+
+            facebook_listing_options: {}
+        }
+    };
+
     import ListingSettings from '../../inventory/Listing-Settings.vue';
     import Fuse from 'fuse.js';
     import Steps from './Steps.vue';
@@ -276,50 +323,7 @@
             },
         },
         data(){
-            return {
-                prepared_sales_for_preview: {
-                    facebook: [],
-                    flashsales: []
-                },
-
-                // All available listables for selection.
-                listables: [],
-
-                // All available sales
-                postables: [],
-
-                actions: {
-                    refreshing_data : true,
-                    refreshing_postables: false,
-                    resetting_sales: false,
-                    saving: false,
-                },
-                completed: {
-                    steps: []
-                },
-                selected: {
-
-                    // Current active step we are on.
-                    step: null,
-
-                    // Contains the active sale configuration being built.
-                    sale: {},
-
-                    // Contains all the sale configurations we've created.
-                    sales: [],
-
-                    // Contains all the listables we've selected in step 1
-                    // AND have not yet been assigned to an active sale configuration
-                    listables: [],
-                },
-
-                matching_listables: {
-                    misses: [],
-                    matches: [],
-                },
-
-                facebook_listing_options: {}
-            }
+            return initial_data();
         },
         created() {
             this.gotoStepOne();
@@ -385,8 +389,8 @@
                     _.each(fbsales_by_group, (sales)=>{
 
                         let tempsale = {
-                            listables: [],
-                            albums: [],
+                            listables: 0,
+                            albums: 0,
                             id: sales[0].sale.id, // peek into the array and get this from the first object as all objects have the same sale id/name
                             name: sales[0].sale.name,
                             sales: sales,
@@ -396,13 +400,9 @@
                             let sale = sales[i];
 
                             // Push the album to the parent albums array
-                            tempsale.albums.push(sale.album);
+                            tempsale.albums++;
 
-                            // Iterate over the listables in the sale and push them to our parent listables array.
-                            for (let k = 0; k < sale.listables.length; k ++) {
-                                let listable = sale.listables[k];
-                                tempsale.listables.push(listable);
-                            }
+                            tempsale.listables += sale.listables.length;
                         }
 
                         // Push our object to the state
@@ -693,19 +693,18 @@
             saveListing(){
                 let flashsales = this.prepared_sales_for_preview.flashsales;
                 let facebooksales = this.prepared_sales_for_preview.facebook;
-                let facebooksales_total_listables = [];
-
-                $Bus.$emit('listings:saving');
+                let facebooksales_total_listables = 0;
 
                 if (flashsales.length == 0 && facebooksales == 0) {
                     return;
                 }
 
+                $Bus.$emit('listings:saving');
+                this.actions.saving = true;
+
                 if (facebooksales.length) {
                     for (let i = 0; i < facebooksales.length; i++){
-                        for (let j = 0; j < facebooksales[i].listables.length; j++) {
-                            facebooksales_total_listables.push(facebooksales[i].listables[j]);
-                        }
+                        facebooksales_total_listables += facebooksales[i].listables;
                     }
                 }
 
@@ -713,18 +712,30 @@
                     flashsales: flashsales,
                     facebooksales: facebooksales,
                     facebooksales_meta: {
-                        total_listables: facebooksales_total_listables.length
+                        total_listables: facebooksales_total_listables
                     },
                     options: this.facebook_listing_options
                 };
 
-                this.actions.saving = true;
+//                data = btoa(JSON.stringify(data));
+
                 this.$http.post(this.save_endpoint, data).then((response)=>{
-                    console.log(response);
+                    if (response.body.data.msg) {
+                        notify({
+                            type: 'success',
+                            text: response.body.data.msg
+                        })
+                    }
+
+                    Object.assign(this.$data, initial_data());
+                    this.gotoStepOne();
                 }, (error)=>{
                     notify({
                         text: error.body.data.msg
                     })
+                }).finally(()=>{
+                    this.actions.saving = false;
+                    $Bus.$emit('listings:saved');
                 });
             }
         },

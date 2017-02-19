@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Kabooodle\Bus\Commands\Listings\CheckFacebookListingsQuotaForPeriod;
 use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
+use Kabooodle\Bus\Commands\Listings\ScheduleNewListingsCommand;
 use Kabooodle\Foundation\Exceptions\Listings\ListingExceedsHourlyLimitException;
 use Kabooodle\Models\Listings;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -132,6 +133,9 @@ class ListingsApiController extends AbstractApiController
                 throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
             }
 
+            $facebookListings = null;
+            $flashsaleListings = null;
+
             if ($facebookOptions && $facebooksales) {
                 $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $itemMessage);
 
@@ -139,17 +143,16 @@ class ListingsApiController extends AbstractApiController
                     $listingOptions->getEndsAt()->toDateTimeString(), (int) $facebooksales_meta['total_listables']);
                 $this->dispatchNow($job);
 
-
-//                $job = new ScheduleFacebookListingCommand($this->getUser(), );
-//                $this->dispatchNow($job);
+                $facebookListings = new ScheduleFacebookListingCommand($this->getUser(), $listingOptions, $facebooksales);
             }
 
             if ($flashsales) {
-//                $job = new ScheduleFlashsaleListingCommand($this->getUser(), );
-//                $this->dispatchNow($job);
+                $flashsaleListings = new ScheduleFlashsaleListingCommand($this->getUser(), $flashsales);
             }
 
-            return $this->setData(['msg' => 'Items scheduled successfully to sale.'])->respond();
+            $this->dispatchNow(new ScheduleNewListingsCommand($this->getUser(), $facebookListings, $flashsaleListings));
+
+            return $this->setData(['msg' => 'Listings successfully created!'])->respond();
         } catch (FacebookAuthenticationException $e) {
             $msg = 'Your facebook credentials are invalid. Please re-authorize ' . env('APP_NAME') . ' for your facebook account, via our settings page.';
 

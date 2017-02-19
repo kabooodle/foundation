@@ -21,15 +21,22 @@
 
         <template  v-if="current_step == 3">
             <button
+                    :disabled="disabled"
+                    :class="disabled? 'disabled' : null"
                     @click.prevent="$parent.gotoStepTwo"
                     class="btn white btn-sm pull-left"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> Back to sales</button>
             <button
+                    :disabled="disabled"
+                    :class="disabled? 'disabled' : null"
                     @click.prevent="$parent.saveListing"
-                    class="btn primary btn-sm btn-save-listing pull-right">Save listing</button>
+                    class="btn primary btn-sm btn-save-listing pull-right">Save listing
+                <spinny v-if="disabled"></spinny>
+            </button>
         </template>
     </div>
 </template>
 <script>
+    import Spinny from '../../Spinner.vue';
     export default{
         props : {
             current_step : {
@@ -44,6 +51,23 @@
                 type: Number,
                 required: true
             }
+        },
+        data(){
+            return{
+                disabled: false,
+            }
+        },
+        created(){
+            $Bus.$on('listings:saving', ()=>{
+                this.disabled = true;
+            });
+
+            $Bus.$on('listings:saved', ()=>{
+                this.disabled = false;
+            });
+        },
+        components: {
+            'spinny' : Spinny
         }
     }
 </script>

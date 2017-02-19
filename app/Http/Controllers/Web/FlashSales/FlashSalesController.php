@@ -46,7 +46,7 @@ class FlashSalesController extends Controller
 
         $rawCategories = collect(Listings::getStyleGroupingsForFlashsale($flashsale->id));
 
-        $categories = $rawCategories->groupBy('style_name')->transform(function($item, $k){
+        $categories = $rawCategories->sortBy('style_name')->groupBy('style_name')->transform(function($item, $k){
             return $item->groupBy('size_name');
         });
 

@@ -8,7 +8,7 @@ namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use DB;
 use Carbon\Carbon;
-use Kabooodle\Models\Inventory;
+use Facebook\Facebook;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
@@ -49,40 +49,42 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
         $this->assertFacebookCredentialsAreValid();
 
         return DB::transaction(function () use ($actor, $scheduledFor, $command) {
-            /** @var Listings $listing */
-            $listing = $this->buildListing($command, $scheduledFor);
 
-            // Build an array of InventoryItems containing facebook listings associated
-            // to the parent listing just created.
-            $facebookInventoryItems = $this->buildListingItems($listing, $command);
+            $events = [];
 
-            // Because facebook throttles API requests to 200/calls an hour, we need to make sure
-            // The requested time schedule doesn't already have "200 calls" scheduled.
-            // If it does, an exception will be thrown.
-            $this->assertListingDoesNotConflictWithExistingListing($scheduledFor, $actor, $facebookInventoryItems);
+            foreach($command->getFacebookSales() as $facebookGroup) {
+                /** @var Listings $listing */
+                $listing = $this->buildListing($actor, $facebookGroup['id'], $scheduledFor, $command->getFacebookListingOptions());
 
-            $listing->listingItems()->saveMany($facebookInventoryItems);
+                // Build an array of InventoryItems containing facebook listings associated
+                // to the parent listing just created.
+                $facebookInventoryItems = $this->buildListingItems($actor, $listing, $facebookGroup['sales'], $command->getFacebookListingOptions());
 
-            event(new ListingScheduledEvent($actor->id, $listing->id));
+                // Because facebook throttles API requests to 200/calls an hour, we need to make sure
+                // The requested time schedule doesn't already have "200 calls" scheduled.
+                // If it does, an exception will be thrown.
+                $this->assertListingDoesNotConflictWithExistingListing($scheduledFor, $actor, $facebookInventoryItems);
 
-            return $listing;
+                $listing->listingItems()->saveMany($facebookInventoryItems);
+
+                $events[] = new ListingScheduledEvent($actor->id, $listing->id);
+            }
         });
     }
 
     /**
-     * @param ScheduleListingCommand $command
-     * @param Carbon                 $scheduledFor
+     * @param User        $user
+     * @param int|null    $existingId
+     * @param Carbon|null $scheduledFor
+     * @param null        $options
      *
      * @return Listings
      */
-    public function buildListing($command, Carbon $scheduledFor = null)
+    public function buildListing(User $user, int $existingId = null, Carbon $scheduledFor = null, $options = null)
     {
-        $listing = parent::buildListing($command, $scheduledFor);
-        $listing->fb_group_node_id = $command->getFacebookGroupId();
+        $listing = parent::buildListing($user, $existingId, $scheduledFor);
+        $listing->fb_group_node_id = $existingId;
         $listing->type = Listings::TYPE_FACEBOOK;
-
-        /** @var FacebookListingOptions $options */
-        $options = $command->getFacebookListingOptions();
 
         if ($options->getEndsAt()) {
             $listing->scheduled_until = $options->getEndsAt();
@@ -102,29 +104,29 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
     }
 
     /**
-     * @param Listings                       $listing
-     * @param ScheduleFacebookListingCommand $command
+     * @param User                   $actor
+     * @param Listings               $listing
+     * @param array                  $sales
+     * @param FacebookListingOptions $options
      *
      * @return array
      */
-    public function buildListingItems(Listings $listing, ScheduleFacebookListingCommand $command)
+    public function buildListingItems(User $actor, Listings $listing, array $sales, FacebookListingOptions $options)
     {
-        $facebookAlbums = $command->getFacebookAlbums();
-        $actor = $command->getActor();
         $listableItems = [];
 
-        if (count($facebookAlbums) > 0) {
+        if (count($sales) > 0) {
             // Iterate over the facebook albums and figure out what items were assigned to each album
-            foreach ($facebookAlbums as $facebookAlbum) {
+            foreach ($sales as $sale) {
 
                 // If this album doesn't have an items, then ignore it.
                 // This is a sanity check.
-                if (!isset($facebookAlbum['items']) || count($facebookAlbum['items']) == 0) {
+                if (!isset($sale['listables']) || count($sale['listables']) == 0) {
                     continue;
                 }
 
                 // Loop over each of the items
-                foreach ($facebookAlbum['items'] as $listableItem) {
+                foreach ($sale['listables'] as $listableItem) {
 
                     // Skip items that do not belong to the user.
                     // Skip items that have an incorrect listing item class.
@@ -137,10 +139,10 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
                     $listingItem = new $listableItem['listing_item_class'];
                     $listingItem->listing_id = $listing->id;
                     $listingItem->owner_id = $actor->id;
-                    $listingItem->fb_group_node_id = $command->getFacebookGroupId();
-                    $listingItem->fb_album_node_id = $facebookAlbum['id'];
+                    $listingItem->fb_group_node_id = $sale['sale']['id'];
+                    $listingItem->fb_album_node_id = $sale['album']['id'];
                     $listingItem->listable_id = $listableItem['id'];
-                    $listingItem->item_message = $command->getFacebookListingOptions()->getItemMessage();
+                    $listingItem->item_message = $options->getItemMessage();
 
                     // Copy the type and status from the parent listing.
                     // Status may actually change and be different, below otherwise they start the same.
@@ -152,7 +154,7 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
                     // There really is no way to know if its a duplicate at this time.
                     // Flag duplicates as ignored listings.
                     // We do not actually "skip" them because we want to provide full transparency to the user.
-                    if ($this->itemAlreadyInFacebookAlbum($actor, $facebookAlbum['id'], $listableItem['id'])) {
+                    if ($this->itemAlreadyInFacebookAlbum($actor, $sale['album']['id'], $listableItem['id'])) {
                         $listingItem->ignore = true;
                         $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
                     }

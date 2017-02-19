@@ -25,16 +25,24 @@ final class ScheduleFacebookListingCommand
     public $facebookListingOptions;
 
     /**
+     * @var array
+     */
+    public $facebookSales;
+
+    /**
      * @param User                   $actor
      * @param FacebookListingOptions $facebookListingOptions
+     * @param array                  $facebookSales
      */
     public function __construct(
         User $actor,
-        FacebookListingOptions $facebookListingOptions
+        FacebookListingOptions $facebookListingOptions,
+        array $facebookSales
     )
     {
         $this->actor = $actor;
         $this->facebookListingOptions = $facebookListingOptions;
+        $this->facebookSales = $facebookSales;
     }
 
     /**
@@ -51,5 +59,13 @@ final class ScheduleFacebookListingCommand
     public function getFacebookListingOptions(): FacebookListingOptions
     {
         return $this->facebookListingOptions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFacebookSales(): array
+    {
+        return $this->facebookSales;
     }
 }
