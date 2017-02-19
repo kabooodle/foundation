@@ -41,7 +41,7 @@
                             <inventory-group
                                 v-for="group in inventory"
                                 :key="group.id"
-                                :uKey=grouping.id
+                                :ukey=grouping.id
                                 :group=group
                                 group_type="inventory"
                                 :display_footer_buttons="false"
@@ -58,7 +58,7 @@
                             <div class="col-xs-12">
                                 <span class="add-images-btn">
                                     <file-upload
-                                        :uKey=grouping.id
+                                        :ukey=grouping.id
                                         :s3_key_url="s3_key_url"
                                         multiple="false"
                                         :button_title="grouping.image ? 'Replace Image' : 'Add Image'"
