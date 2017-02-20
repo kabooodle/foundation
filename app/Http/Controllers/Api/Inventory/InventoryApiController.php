@@ -65,6 +65,7 @@ class InventoryApiController extends AbstractApiController
                         'initial_qty' => $item->initial_qty,
                         'available_qty' => $item->available_quantity,
                         'price_usd' => $item->price_usd,
+                        'wholesale_price_usd' => $item->wholesale_price_usd,
                         'files' => $item->files,
                         'cover_photo' => $item->cover_photo,
                         'listable_item_class' => get_class($item),
