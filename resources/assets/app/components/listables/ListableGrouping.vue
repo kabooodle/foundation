@@ -143,7 +143,9 @@
             },
             previouslySelectedIds: {
                 type: Array,
-                default: [],
+                default: function () {
+                    return [];
+                },
             },
             useAvailableQty: {
                 type: Boolean,

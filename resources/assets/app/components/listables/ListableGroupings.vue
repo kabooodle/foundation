@@ -93,7 +93,7 @@
             getListables(){
                 this.actions.fetching_listables = true;
                 this.$http.get(this.listablegroupings_endpoint).then((response)=>{
-                    this.listable_groupings = response.body.data;
+                    this.listable_groupings = response.body.data.groupings;
                     _.each(this.listable_groupings, (groupings)=>{
                         _.each(groupings.subgroupings, (group)=>{
                             _.each(group.listables, (listable)=>{
