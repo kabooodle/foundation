@@ -11,6 +11,7 @@ use Bugsnag;
 use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Bus\Commands\Listings\CheckFacebookListingsQuotaForPeriod;
+use Kabooodle\Bus\Commands\Listings\PrepareDeleteListingFromFacebookCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleNewListingsCommand;
@@ -183,6 +184,28 @@ class ListingsApiController extends AbstractApiController
 
             return $this->setData([
                 'msg' => trans('alerts.listings.success_listing_deleted')
+            ])->respond();
+        } catch (Exception $e) {
+            return $this->setStatusCode(500)->setData([
+                'msg' => trans('alerts.error_generic_retry')
+            ])->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyFromFacebook(Request $request, $id)
+    {
+        try {
+            $job = new PrepareDeleteListingFromFacebookCommand($this->getUser(), $id);
+            $listing = $this->dispatchNow($job);
+
+            return $this->setData([
+                'msg' => trans('alerts.listings.success_listing_deleted'),
+                'html' => view('listings.partials._indexrow')->with(compact('listing'))->render()
             ])->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)->setData([

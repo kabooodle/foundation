@@ -53,8 +53,9 @@ class DeleteListingItemFromFacebookCommandHandler
         }
 
         // Listing item status is deleted or queued for deletion
-        if ($listingItem->status == ListingItems::STATUS_DELETED || $listingItem->status == ListingItems::STATUS_QUEUED_DELETE) {
+        if ($listingItem->status == ListingItems::STATUS_DELETED) {
             Log::error('Deleting listing item from facebook: Listing item already (queued) deleted - '.$logString);
+            $listingItem->delete();
             $command->delete();
 
             return;
@@ -62,11 +63,12 @@ class DeleteListingItemFromFacebookCommandHandler
 
         // Listing item does not have facebook id
         if (! $listingItem->fb_response_object_id || $listingItem->fb_response_object_id == null) {
-            Log::error('Deleting listing item from facebook: Listing item already (queued) deleted - '.$logString);
+            Log::error('Deleting listing item from facebook: There is no facebook item - '.$logString);
             $listingItem->status = ListingItems::STATUS_DELETED;
-            $listingItem->status_updated = Carbon::now();
+            $listingItem->status_updated_at = Carbon::now();
             $listingItem->status_history = 'Listing item already (queued) deleted.';
             $listingItem->save();
+            $listingItem->delete();
 
             $command->delete();
 
@@ -82,7 +84,7 @@ class DeleteListingItemFromFacebookCommandHandler
         if (! $this->facebookService->testAccessToken($owner->getFacebookUserToken())) {
             Log::error('Deleting listing item from facebook: User facebook token expired or invalid - '.$logString);
             $listingItem->status = ListingItems::STATUS_FAILED_DELETE;
-            $listingItem->status_updated = Carbon::now();
+            $listingItem->status_updated_at = Carbon::now();
             $listingItem->status_history = 'Facebook access token expired or invalid.';
             $listingItem->save();
 
@@ -95,14 +97,16 @@ class DeleteListingItemFromFacebookCommandHandler
         try {
             $this->facebookService->deletePhoto($listingItem->fb_response_object_id, [], $owner->getFacebookUserToken());
 
-            $listingItem->status = ListingItems::STATUS_DELETED;
-            $listingItem->status_updated = Carbon::now();
-            $listingItem->status_history = null;
-            $listingItem->save();
-
-            $command->delete();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
         }
+
+        $listingItem->status = ListingItems::STATUS_DELETED;
+        $listingItem->status_updated_at = Carbon::now();
+        $listingItem->status_history = null;
+        $listingItem->save();
+        $listingItem->delete();
+
+        $command->delete();
     }
 }

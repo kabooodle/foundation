@@ -154,7 +154,7 @@ class Listings extends AbstractListingModel
     public function claims()
     {
         return $this->hasManyThrough(Claims::class, ListingItems::class, 'listing_id', 'listing_item_id')
-            ->where('shoppable_type', ListingItems::class);
+            ->where('listable_type', ListingItems::class);
     }
 
     /**
@@ -247,6 +247,8 @@ class Listings extends AbstractListingModel
                 LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
 				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id
                 WHERE l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
+                AND l.deleted_at IS NULL 
+                AND li.deleted_at IS NULL
                 GROUP BY l.id
                 ORDER BY l.scheduled_for DESC
                 ";
@@ -294,17 +296,21 @@ class Listings extends AbstractListingModel
                 LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
 				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id
                 WHERE l.uuid = ? AND l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
+                AND l.deleted_at IS NULL 
+                AND li.deleted_at IS NULL
                 AND l.type = ?
                 GROUP BY ::groupby::
-                ORDER BY l.scheduled_for DESC
+                ORDER BY ::orderby:: ASC
                 ";
 
         if ($this->isFacebook()) {
             $type = Listings::TYPE_FACEBOOK;
             $sql = str_replace('::groupby::', " li.fb_album_node_id ", $sql);
+            $sql = str_replace('::orderby::', " fb.facebook_node_name ", $sql);
         } else {
             $type = Listings::TYPE_FLASHSALE;
-            $sql = str_replace('::groupby::', "f.id ", $sql);
+            $sql = str_replace('::groupby::', " f.id ", $sql);
+            $sql = str_replace('::orderby::', " fs.name ", $sql);
         }
 
 

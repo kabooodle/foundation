@@ -116,7 +116,7 @@ if (! function_exists('listingStatusHtml')) {
                 $text = 'Ignored Duplicate';
                 break;
             case 'deleted':
-                $class = 'brown-800';
+                $class = 'brown-400';
                 $text = 'Deleted';
                 break;
             case 'completed':
