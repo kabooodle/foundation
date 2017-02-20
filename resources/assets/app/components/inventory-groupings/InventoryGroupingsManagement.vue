@@ -1,7 +1,13 @@
 <template>
     <div>
         <div class="box white">
-            <div class="box-body">
+            <div class="box-header">
+                <h2>Create Outfits
+                    <a class="text-success onboard-show-btn" @click.prevent="showTourModal">
+                        <i class="fa fa-question-circle" aria-hidden="true"></i>
+                    </a>
+                </h2>
+                <small>Once an outfit is created, you can add it to any sale, anytime!</small>
                 <div class="text-center center-block">
                     <button v-if="edit" :class="viewing ? 'disabled' : null" :disabled="viewing" @click.prevent="viewGrouping" class="btn primary btn-sm ">
                         View Outfit <spinny v-if="viewing"></spinny>
@@ -14,19 +20,23 @@
                     </button>
                 </div>
             </div>
-        </div>
-        <div id="inventory-groupings">
-            <inventory-grouping v-for="(grouping, index) in groupings"
-                :edit=edit
-                :key="grouping.id"
-                :grouping=grouping
-                :inventory=inventoryGrouped
-                :restricted-inventory-ids=restrictedInventoryIds
-                :s3_key_url="s3_key_url"
-                v-on:duplicate-grouping="duplicateGrouping(grouping)"
-                v-on:delete-grouping="deleteGrouping(grouping, index)"
-                :duplicatable=multiple
-            ></inventory-grouping>
+            <div class="box-divider m-a-0"></div>
+            <div class="box-body">
+                <div id="inventory-groupings">
+                    <inventory-grouping v-for="(grouping, index) in groupings"
+                        :edit=edit
+                        :key="grouping.id"
+                        :grouping=grouping
+                        :inventory=inventoryGrouped
+                        :restricted-inventory-ids=restrictedInventoryIds
+                        :s3_key_url="s3_key_url"
+                        v-on:duplicate-grouping="duplicateGrouping(grouping)"
+                        v-on:delete-grouping="deleteGrouping(grouping, index)"
+                        :duplicatable=multiple
+                        :retrieving-inventory=retrievingInventory
+                    ></inventory-grouping>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -70,6 +80,7 @@
                 viewRoute: this.inventoryGroupingsIndexRoute + '/' + this.editGrouping.obfuscate_id,
                 ids: [],
                 groupings: [],
+                retrievingInventory: false,
                 inventory: [],
                 inventoryGrouped: [],
                 restrictedInventoryIds: [],
@@ -137,7 +148,7 @@
                     'name': null,
                     'description': null,
                     'locked': true,
-                    'price_usd': null,
+                    'price_usd': 0.00,
                     'initial_qty': null,
                     'inventory': [],
                     'image': null,

@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="box white">
-            <div class="box-body">
+        <div class="duplicatable ? 'box white' : null">
+            <div :class="duplicatable ? 'box-body' : null">
                 <div class="col-xs-12">
                     <span class="pull-right" @click="destroy">
                         <spinny v-if="deleting"></spinny>
@@ -10,50 +10,76 @@
                     <div style="clear: both"></div>
                 </div>
                 <div class="col-sm-8">
-                    <div class="md-form-group">
-                        <input v-model="grouping.name" type="text" name="name" class="md-input">
-                        <label>Name</label>
-                    </div>
-                    <div class="md-form-group">
-                        <input v-model="grouping.description" type="text" name="description" class="md-input">
-                        <label>Description</label>
-                    </div>
-                    <div class="md-form-group">
-                        <input v-model="grouping.price_usd" type="number" step="0.01" min="0.00" name="price_usd" class="md-input">
-                        <label>Price</label>
-                    </div>
-                    <div class="md-form-group">
-                        <input
-                            v-model="grouping.initial_qty"
-                            type="number"
-                            min="0"
-                            name="initial_qty"
-                            class="md-input">
-                        <label>Quantity</label>
-                    </div>
-                    <div class="md-form-group">
-                        <label style="font-size: 0.85em; opacity: 0.5">Inventory</label>
-                        <span @click="grouping.locked = !grouping.locked">
-                            <i :class="grouping.locked ? 'fa-lock' : 'fa-unlock'" class="fa text-primary pointer"></i>
-                        </span>
-                        <div class="box">
-                            <div :id=attachedInventoryId class="box-body">
-                                {{ grouping.inventory.length }}
-                            </div>
+                    <div class="form-group row">
+                        <label class="form-control-label col-sm-3">Name</label>
+                        <div class="col-sm-6">
+                            <input type="text" v-model="grouping.name" class="form-control">
                         </div>
-                        <a @click="showingInventory = !showingInventory">{{ toggleInventoryText }}</a>
-                        <small class="text-muted">Qty amounts shown below reflect amounts able to be associated to new outfits.</small>
-                        <div v-show="showingInventory">
-                            <inventory-group
-                                v-for="group in inventory"
-                                :key="group.id"
-                                :ukey=grouping.id
-                                :group=group
-                                group_type="inventory"
-                                :display_footer_buttons="false"
-                                :previously-selected-ids=selectedInventoryIds
-                                :use-available-qty=true
-                            ></inventory-group>
+                    </div>
+                    <div class="form-group row">
+                        <label class="form-control-label col-sm-3">Description</label>
+                        <div class="col-sm-6">
+                            <textarea v-model="grouping.description" class="form-control" style="resize: none"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-3">
+                            <label class="form-control-label">Price</label>
+                            <input type="checkbox" v-model="autoAddPriceUsd">
+                            <label>Auto Add</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0.00"
+                                v-model="grouping.price_usd"
+                                :readonly="autoAddPriceUsd"
+                                class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="form-control-label col-sm-3">Wholesale Price</label>
+                        <div class="col-sm-6">
+                            <div class="form-control" style="border: none">{{ allInventoryWholesalePriceUsd }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-3">
+                            <label class="form-control-label" :class="exceedsAvailableQty ? 'text-danger' : null">Quantity</label>
+                            <input type="checkbox" v-model="forceMaxQuantity">
+                            <label>Max</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input
+                                type="number"
+                                min="0"
+                                v-model="grouping.initial_qty"
+                                :readonly="forceMaxQuantity"
+                                class="form-control">
+                            <span v-if="exceedsAvailableQty" class="text-danger">The quantity of this outfit can not exceed {{ maxInitialQty }}</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-3">
+                            <label class="form-control-label">Inventory</label>
+                            <span @click="grouping.locked = !grouping.locked">
+                            <i :class="grouping.locked ? 'fa-lock' : 'fa-unlock'" class="fa text-primary pointer"></i>
+                            <div>
+                                <span class="text-xs text-muted m-l-2">{{ grouping.inventory.length }} items associated.</span>
+                            </div>
+                        </span>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="box">
+                                <div :id=attachedInventoryId class="box-body">
+                                    <span v-for="(inventory, index) in grouping.inventory"
+                                          class="avatar_container m-r-sm inline _48 avatar-thumbnail" >
+                                        <img :src="inventory.cover_photo.location">
+                                        <i @click="grouping.inventory.splice(index, 1)" class="fa fa-times fa-2x text-danger pointer"></i>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,6 +102,27 @@
                                 </span>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div style="margin: 15px">
+                        <span class="text-primary">Available Inventory</span>
+                        <small class="text-muted">Qty amounts shown below reflect amounts able to be associated to new outfits.</small>
+                    </div>
+                    <div v-show="retrievingInventory" class="text-center center-block">
+                        <spinny :size="'20'"></spinny>
+                    </div>
+                    <div v-show="!retrievingInventory">
+                        <inventory-group
+                            v-for="group in inventory"
+                            :key="group.id"
+                            :ukey=grouping.id
+                            :group=group
+                            group_type="inventory"
+                            :display_footer_buttons="false"
+                            :previously-selected-ids=selectedInventoryIds
+                            :use-available-qty=true
+                        ></inventory-group>
                     </div>
                 </div>
                 <div v-if="!edit && duplicatable" class="col-xs-12">
@@ -124,11 +171,18 @@
                 type: Boolean,
                 require: true,
             },
+            retrievingInventory: {
+                type: Boolean,
+                require: true,
+            }
         },
         data() {
             return {
                 showingInventory: false,
                 deleting: false,
+                autoAddPriceUsd: true,
+                forceMaxQuantity: true,
+                exceedsAvailableQty: false,
             }
         },
         computed: {
@@ -143,7 +197,7 @@
                 }
             },
             toggleInventoryText: function () {
-                return (this.showingInventory ? 'Hide' : 'Show') + ' Inventory'
+                return (this.showingInventory ? 'Hide' : 'Show') + ' Available Inventory'
             },
             selectedInventoryIds: function () {
                 return this.grouping.inventory.map(function (item) {
@@ -156,14 +210,44 @@
                 }
                 return null;
             },
+            allInventoryPriceUsd: function () {
+                var price_usd = 0.00;
+                this.grouping.inventory.forEach(function (item) {
+                    price_usd += item.price_usd;
+                });
+                return price_usd;
+            },
+            allInventoryWholesalePriceUsd: function () {
+                var wholesale_price_usd = 0.00;
+                this.grouping.inventory.forEach(function (item) {
+                    wholesale_price_usd += item.wholesale_price_usd;
+                });
+                return wholesale_price_usd;
+            },
         },
         watch: {
             grouping: {
                 handler: function (val) {
                     this.limitInitialQtyByMaxInitialQty();
+                    if (this.autoAddPriceUsd) {
+                        this.grouping.price_usd = this.allInventoryPriceUsd;
+                    }
+                    if (this.forceMaxQuantity) {
+                        this.grouping.initial_qty = this.maxInitialQty;
+                    }
                 },
                 deep: true
             },
+            autoAddPriceUsd: function (val) {
+                if (val === true) {
+                    this.grouping.price_usd = this.allInventoryPriceUsd;
+                }
+            },
+            forceMaxQuantity: function (val) {
+                if (val === true) {
+                    this.grouping.initial_qty = this.maxInitialQty;
+                }
+            }
         },
         methods: {
             duplicateGrouping: function () {
@@ -183,7 +267,10 @@
             },
             limitInitialQtyByMaxInitialQty: function () {
                 if (this.maxInitialQty && this.grouping.initial_qty > this.maxInitialQty) {
+                    this.exceedsAvailableQty = true;
                     console.log('HOLD ON THERE!');
+                } else {
+                    this.exceedsAvailableQty = false;
                 }
             },
         },
