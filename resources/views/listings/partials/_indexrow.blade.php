@@ -22,7 +22,7 @@
     <td>
         <div class="pull-md-right">
             <div class="dropdown">
-                <a class="text-muted btn btn-xs white dropdown-toggle no-caret" href="#" data-toggle="dropdown">
+                <a class="btn btn-xs white dropdown-toggle no-caret" href="#" data-toggle="dropdown">
                     <i class="hidden-sm-down fa fa-ellipsis-h" aria-hidden="true"></i>
                     <span class="hidden-sm-up">Options</span>
                 </a>

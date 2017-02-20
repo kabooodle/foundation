@@ -109,7 +109,7 @@ if (! function_exists('listingStatusHtml')) {
                 break;
             case 'queued_delete':
                 $class = 'warning';
-                $text = 'Queued Delete';
+                $text = 'Queued to delete';
                 break;
             case 'ignored_duplicate':
                 $class = 'warn';

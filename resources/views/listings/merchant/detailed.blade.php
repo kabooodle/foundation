@@ -33,7 +33,12 @@
                     <th scope="col">Watchers</th>
                     <th scope="col">Gross</th>
                     @if($listing->type <> Kabooodle\Models\Listings::TYPE_CUSTOM)
-                    <th scope="col">Status</th>
+                    <th scope="col">
+                        @if($listing->type == Kabooodle\Models\Listings::TYPE_FACEBOOK)
+                        Facebook
+                            @endif
+                            Status
+                    </th>
                     @endif
                     <th></th>
                 </tr>
