@@ -131,7 +131,7 @@ class InventoryGroupingsController extends AbstractApiController
                 implode(',', array_get($groupingData, 'categories', []))
             ));
 
-            return $this->setData(['msg' => 'Outfit {$updated->name} updated', 'grouping' => $updated->toJson()])->respond();
+            return $this->setData(['msg' => 'Outfit '.$updated->name.' updated', 'grouping' => $updated->toJson()])->respond();
         } catch (ForbiddenUserAccessException $e) {
             return $this->setStatusCode(403)->setData(['msg' => $e])->respond();
         } catch (ForbiddenModelAccessException $e) {
