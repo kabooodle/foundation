@@ -113,4 +113,16 @@ class AbstractFacebookSdkService extends LaravelFacebookSdk
 
         return $request->getGraphNode();
     }
+
+    /**
+     * @param string $accessToken
+     *
+     * @return \Facebook\Authentication\AccessToken
+     */
+    public function getLongLivedAccessToken(string $accessToken)
+    {
+        $client = $this->getOAuth2Client();
+
+        return $client->getLongLivedAccessToken($accessToken);
+    }
 }

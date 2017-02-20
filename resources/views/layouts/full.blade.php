@@ -6,11 +6,11 @@
     <script>
         window.fbAsyncInit = function() {
             FB.init({
-                appId: '1716604341984103',
+                appId: '{{ env('FACEBOOK_APP_ID') }}',
                 cookie: true,
                 xfbml: true,
                 version: 'v2.8',
-                scope: 'email,user_managed_groups,publish_actions,publish_pages'
+                scope: '{{ implode(config('laravel-facebook-sdk.default_scope')) }}'
             });
             $(document).trigger('fbload');
         };

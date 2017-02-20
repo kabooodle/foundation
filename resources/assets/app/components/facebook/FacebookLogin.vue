@@ -44,6 +44,9 @@
         },
         data(){
             return {
+                actions: {
+                    login_state_checked: false
+                },
                 refresh_icon: this.refresh_icon_original,
                 refreshing: false,
                 authorized: false,
@@ -72,6 +75,11 @@
                 this.checkLoginState();
             });
         },
+        created(){
+            if (! this.actions.login_state_checked) {
+                this.checkLoginState();
+            }
+        },
         computed : {
             authorizedAndLoggedIn(){
                 return this.connected && this.authorized;
@@ -82,6 +90,7 @@
                 FB.getLoginStatus((response)=>{
                     this.statusChangeCallback(response);
                 });
+                this.actions.login_state_checked = true;
             },
             statusChangeCallback(response){
                 if (response.status === 'connected') {
@@ -100,7 +109,7 @@
             },
             handleUnsuccessfulConnection(){
                 this.fbAuth = {},
-                        this.authorized = false;
+                    this.authorized = false;
                 this.connected = false;
             },
             storeUserStatus(callback){
@@ -150,7 +159,7 @@
                 return FB.login((response)=>{
                     this.statusChangeCallback(response);
                     this.FBRefresh();
-                }, {scope: 'email,user_managed_groups,publish_actions,publish_pages'});
+                }, {scope: 'email,user_managed_groups,publish_actions'});
             },
         },
         components: {

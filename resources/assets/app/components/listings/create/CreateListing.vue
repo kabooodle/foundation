@@ -87,6 +87,12 @@
                                     </button>
                                 </div>
                             </div>
+                            <div class="clearfix">
+                                <facebook-login
+                                        class="pull-left"
+                                        :refresh_endpoint="facebook_refresh_endpoint"
+                                ></facebook-login>
+                            </div>
 
                             <template v-if="selected.sale">
                                 <div class="form-group m-t-1" v-if="selected.sale.sale_type == 'flashsale'">
@@ -267,7 +273,10 @@
             listables: [],
 
             // All available sales
-            postables: [],
+            postables: {
+                facebookgroups : [],
+                flashsales : []
+            },
 
             actions: {
                 refreshing_data : true,
@@ -303,6 +312,7 @@
         }
     };
 
+    import FacebookLogin from '../../facebook/FacebookLogin.vue';
     import ListingSettings from '../../inventory/Listing-Settings.vue';
     import Fuse from 'fuse.js';
     import Steps from './Steps.vue';
@@ -321,12 +331,29 @@
             endpoint: {
                 type: String
             },
+            facebook_refresh_endpoint: {
+                type: String,
+                required: true
+            }
         },
         data(){
             return initial_data();
         },
         created() {
             this.gotoStepOne();
+
+            $Bus.$on('facebook:refreshing', (status)=>{
+                this.postables = {
+                    facebookgroups : [],
+                    flashsales : []
+                };
+
+                this.selected.sale = selected_sale_data();
+            });
+
+            $Bus.$on('facebook:refreshed', (fbAuth, postables)=>{
+                this.postables = postables;
+            });
 
             $Bus.$on('listings:options:get', (options)=>{
                 this.facebook_listing_options = options;
@@ -756,6 +783,7 @@
             },
         },
         components:{
+            'facebook-login' : FacebookLogin,
             'steps' : Steps,
             'spinny' : Spinny,
             'listable-groups' : ListablesGroups,
