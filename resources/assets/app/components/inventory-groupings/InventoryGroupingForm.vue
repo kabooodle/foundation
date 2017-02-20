@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="duplicatable ? 'box white' : null">
+        <div :class="duplicatable ? 'box white' : null">
             <div :class="duplicatable ? 'box-body' : null">
-                <div class="col-xs-12">
+                <div v-if="duplicatable || edit" class="col-xs-12">
                     <span class="pull-right" @click="destroy">
                         <spinny v-if="deleting"></spinny>
                         <i v-else class="fa fa-times text-danger pointer" aria-hidden="true"></i>
@@ -11,7 +11,7 @@
                 </div>
                 <div class="col-sm-8">
                     <div class="form-group row">
-                        <label class="form-control-label col-sm-3">Name</label>
+                        <label class="form-control-label col-sm-3">Name *</label>
                         <div class="col-sm-6">
                             <input type="text" v-model="grouping.name" class="form-control">
                         </div>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-3">
-                            <label class="form-control-label">Price</label>
+                            <label class="form-control-label">Price *</label>
                             <input type="checkbox" v-model="autoAddPriceUsd">
                             <label>Auto Add</label>
                         </div>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-3">
-                            <label class="form-control-label" :class="exceedsAvailableQty ? 'text-danger' : null">Quantity</label>
+                            <label class="form-control-label" :class="exceedsAvailableQty ? 'text-danger' : null">Quantity *</label>
                             <input type="checkbox" v-model="forceMaxQuantity">
                             <label>Max</label>
                         </div>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-3">
-                            <label class="form-control-label">Inventory</label>
+                            <label class="form-control-label">Inventory *</label>
                             <span @click="grouping.locked = !grouping.locked">
                             <i :class="grouping.locked ? 'fa-lock' : 'fa-unlock'" class="fa text-primary pointer"></i>
                             <div>
@@ -72,7 +72,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="box">
-                                <div :id=attachedInventoryId class="box-body">
+                                <div :id=attachedInventoryId class="box-body" style="min-height: 105px;">
                                     <div v-for="(inventory, index) in grouping.inventory"
                                         class="inline m-r-sm">
                                         <span class="avatar_container _48 avatar-thumbnail">
@@ -131,7 +131,13 @@
                             :display_footer_buttons="false"
                             :previously-selected-ids=selectedInventoryIds
                             :use-available-qty=true
+                            :disable-unavailable=true
                         ></inventory-group>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <label class="form-control-label"><small>* Denotes fields are required.</small></label>
                     </div>
                 </div>
                 <div v-if="!edit && duplicatable" class="col-xs-12">

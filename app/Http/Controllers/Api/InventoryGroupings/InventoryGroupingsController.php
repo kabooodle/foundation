@@ -76,15 +76,23 @@ class InventoryGroupingsController extends AbstractApiController
         try {
             $this->checkIds($username);
 
-            $groupingsData = Binput::get('groupings', []);
+            $groupingData = Binput::get('grouping', []);
 
-//            foreach ($groupingsData as $groupingData) {
-//                $this->validate($request, InventoryGrouping::getRules(), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
-//            }
+//            $this->validate($request, InventoryGrouping::getRules(), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
 
-            $groupings = $this->dispatchNow(new CreateInventoryGroupingsCommand($this->getUser(), $groupingsData));
+            $grouping = $this->dispatchNow(new CreateInventoryGroupingsCommand(
+                $this->getUser(),
+                array_get($groupingData, 'name'),
+                (bool)array_get($groupingData, 'locked'),
+                (float)array_get($groupingData, 'price_usd'),
+                (int)array_get($groupingData, 'initial_qty'),
+                array_get($groupingData, 'image', []),
+                array_get($groupingData, 'inventory', []),
+                array_get($groupingData, 'description'),
+                implode(',', array_get($groupingData, 'categories', []))
+            ));
 
-            return $this->setData(['msg' => 'Outfit' . (count($groupings) > 1 ? 's were' : ' was') . ' created successfully', 'groupings' => json_encode($groupings)])->respond();
+            return $this->setData(['msg' => 'Outfit was created successfully', 'grouping' => $grouping->toJson()])->respond();
         } catch (ForbiddenUserAccessException $e) {
             return $this->setStatusCode(403)->setData(['msg' => $e])->respond();
         } catch (ForbiddenModelAccessException $e) {

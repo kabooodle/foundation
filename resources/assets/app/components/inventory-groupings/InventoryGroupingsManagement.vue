@@ -15,7 +15,7 @@
                     <button v-if="!edit && multiple" :class="adding ? 'disabled' : null" :disabled="adding" @click.prevent="addGrouping" class="btn primary btn-sm ">
                         Add Outfit <spinny v-if="adding"></spinny>
                     </button>
-                    <button :class="saving ? 'disabled' : null" :disabled="saving" @click.prevent="save" class="btn primary btn-sm ">
+                    <button :class="disableSaving ? 'disabled' : null" :disabled="disableSaving" @click.prevent="save" class="btn primary btn-sm ">
                         {{ saveOutfitsText }} <spinny v-if="saving"></spinny>
                     </button>
                 </div>
@@ -99,7 +99,7 @@
                 return this.inventoryGroupingsEndpoint + (this.edit ? '/' + this.editGrouping.id : '');
             },
             saveGroupingsData: function () {
-                if (this.edit) {
+                if (!this.multiple || this.edit) {
                     return {
                         'grouping': this.groupings[0],
                     }
@@ -111,6 +111,17 @@
             },
             saveOutfitsText: function () {
                 return 'Save Outfit' + (this.groupings.length > 1 ? 's' : '');
+            },
+            disableSaving: function () {
+                return this.saving || this.preventSaving;
+            },
+            preventSaving: function () {
+                var prevent = false;
+                this.groupings.forEach(function (grouping) {
+                    if (grouping.name == '' || grouping.exceedsAvailableQty || grouping.initial_qty == 0 || grouping.inventory.length == 0 || !grouping.image)
+                        prevent = true;
+                });
+                return prevent;
             },
         },
         methods: {

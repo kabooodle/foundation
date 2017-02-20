@@ -9,7 +9,6 @@ namespace Kabooodle\Models;
 use DB;
 use Carbon\Carbon;
 use Kabooodle\Bus\Events\Listables\ListableQuantityUpdatedEvent;
-use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Contracts\Listable;
 use Kabooodle\Models\Contracts\Viewable;
 use Kabooodle\Models\Traits\ListableTrait;
@@ -17,7 +16,6 @@ use Kabooodle\Models\Traits\ViewableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
-use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\CommentableTrait;
@@ -477,7 +475,7 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
      */
     public function getAvailableQuantity(): int
     {
-        return $this->initial_qty - ($this->lockedGroupings()->count() + $this->getOnHoldQuantity());
+        return $this->initial_qty - ($this->lockedGroupings->sum('initial_qty') + $this->getOnHoldQuantity());
     }
 
     /**

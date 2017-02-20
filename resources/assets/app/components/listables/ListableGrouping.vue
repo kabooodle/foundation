@@ -26,6 +26,7 @@
                                 key="subgroup.id"
                                 @click.prevent="clickSubgrouping(subgroup)"
                                 :class="selected.listables.length &&  _.chain(selected.listables).filter({subgroup: subgroup}).value().length == subgroup.listables.length ? 'active' : null"
+                                :disabled="subgroupingBtnDisabled(subgroup)"
                         >
                             <input type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;">
                             <span class="text-md">{{ subgroup.name }}</span>
@@ -36,6 +37,7 @@
                                 class="btn white btn-xs"
                                 style="margin-left: 6px;"
                                 @click="clickSubgroupingAll"
+                                :disabled="allSubgroupingBtnDisabled(group)"
                         >
                             <input type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;">
                             <span class="text-md">ALL</span>
@@ -73,12 +75,13 @@
                                             :key="item.id"
                                             class="col-sm-2 p-r-0 btn-group-prpl" style="width:110px !important;">
                                         <button
-                                                @click.prevent="clickListable(subgroup, item)"
-                                                style="border-radius: .25rem;"
-                                                type="button"
-                                                class="btn white btn-xs"
-                                                :aria-pressed="_.findIndex(selected.listables, {id: item.id}) > -1"
-                                                :class="_.findIndex(selected.listables, {id: item.id}) > -1 ? 'active' : null"
+                                            @click.prevent="clickListable(subgroup, item)"
+                                            style="border-radius: .25rem;"
+                                            type="button"
+                                            class="btn white btn-xs"
+                                            :aria-pressed="_.findIndex(selected.listables, {id: item.id}) > -1"
+                                            :class="_.findIndex(selected.listables, {id: item.id}) > -1 ? 'active' : null"
+                                            :disabled="disableUnavailable && item.available_qty <= 0"
                                         >
                                             <span class="item block avatar-thumbnail _80">
                                                 <img :src="item.cover_photo.location" >
@@ -148,6 +151,10 @@
                 },
             },
             useAvailableQty: {
+                type: Boolean,
+                default: false
+            },
+            disableUnavailable: {
                 type: Boolean,
                 default: false
             },
@@ -248,16 +255,18 @@
             },
 
             addListable(subgroup, listable){
-                const value = {id: listable.id, subgroup: subgroup};
-                const index = _.findIndex(this.selected.listables, value);
-                if (index == -1) {
-                    this.selected.listables.push(value);
+                if (!this.disableUnavailable || listable.available_qty > 0) {
+                    const value = {id: listable.id, subgroup: subgroup};
+                    const index = _.findIndex(this.selected.listables, value);
+                    if (index == -1) {
+                        this.selected.listables.push(value);
 
-                    let key = 'listable:selected';
-                    if (this.ukey) {
-                        key = key+':'+this.ukey;
+                        let key = 'listable:selected';
+                        if (this.ukey) {
+                            key = key+':'+this.ukey;
+                        }
+                        $Bus.$emit(key, this.group, subgroup, listable);
                     }
-                    $Bus.$emit(key, this.group, subgroup, listable);
                 }
             },
 
@@ -359,7 +368,33 @@
                         }
                     });
                 });
-            }
+            },
+            allSubgroupingBtnDisabled: function (group) {
+                if (this.disableUnavailable) {
+                    var disable = true;
+                    group.subgroupings.forEach(function (subgrouping) {
+                        subgrouping.listables.forEach(function (listable) {
+                            if (listable.available_qty > 0)
+                                disable = false;
+                        });
+                    });
+                    return disable;
+                } else {
+                    return false;
+                }
+            },
+            subgroupingBtnDisabled: function (subgroup) {
+                if (this.disableUnavailable) {
+                    var disable = true;
+                    subgroup.listables.forEach(function (listable) {
+                        if (listable.available_qty > 0)
+                            disable = false;
+                    });
+                    return disable;
+                } else {
+                    return false;
+                }
+            },
         },
         components:{
             'spinny' : Spinny,

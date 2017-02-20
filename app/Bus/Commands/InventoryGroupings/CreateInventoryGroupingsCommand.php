@@ -20,20 +20,77 @@ final class CreateInventoryGroupingsCommand
     protected $user;
 
     /**
-     * @var array
+     * @var string
      */
-    protected $groupings;
+    protected $name;
 
     /**
-     * CreateInventoryGroupingCommand constructor.
-     *
-     * @param User $user
-     * @param array $groupings
+     * @var bool
      */
-    public function __construct(User $user, array $groupings)
+    protected $locked;
+
+    /**
+     * @var float
+     */
+    protected $price;
+
+    /**
+     * @var int
+     */
+    protected $initialQty;
+
+    /**
+     * @var array
+     */
+    protected $image;
+
+    /**
+     * @var array
+     */
+    protected $inventory;
+
+    /**
+     * @var null|string
+     */
+    protected $description;
+
+    /**
+     * @var string
+     */
+    protected $categories;
+
+    /**
+     * CreateInventoryGroupingsCommand constructor.
+     * @param User $user
+     * @param string $name
+     * @param bool $locked
+     * @param float $price
+     * @param int $initialQty
+     * @param array $image
+     * @param array $inventory
+     * @param null $description
+     * @param string $categories
+     */
+    public function __construct(
+        User $user,
+        string $name,
+        bool $locked,
+        float $price,
+        int $initialQty,
+        array $image,
+        array $inventory,
+        $description = null,
+        string $categories)
     {
         $this->user = $user;
-        $this->groupings = $groupings;
+        $this->name = $name;
+        $this->locked = $locked;
+        $this->price = $price;
+        $this->initialQty = $initialQty;
+        $this->image = $image;
+        $this->inventory = $inventory;
+        $this->description = $description;
+        $this->categories = $categories;
     }
 
     /**
@@ -45,10 +102,66 @@ final class CreateInventoryGroupingsCommand
     }
 
     /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isLocked(): bool
+    {
+        return $this->locked;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrice(): float
+    {
+        return $this->price;
+    }
+
+    /**
+     * @return int
+     */
+    public function getInitialQty(): int
+    {
+        return $this->initialQty;
+    }
+
+    /**
      * @return array
      */
-    public function getGroupings(): array
+    public function getImage(): array
     {
-        return $this->groupings;
+        return $this->image;
+    }
+
+    /**
+     * @return array
+     */
+    public function getInventory(): array
+    {
+        return $this->inventory;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategories(): string
+    {
+        return $this->categories;
     }
 }
