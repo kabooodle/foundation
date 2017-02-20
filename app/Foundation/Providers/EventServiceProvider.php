@@ -84,6 +84,10 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Listings\ListingItemWasQueued::class => [
             \Kabooodle\Bus\Handlers\Events\Listings\NotifyListingItemWasQueued::class,
         ],
+        // LISTING ITEMS
+        \Kabooodle\Bus\Events\Listings\ListingItemWasDeleted::class => [
+            \Kabooodle\Bus\Handlers\Events\Listings\HandleListingItemWasDeleted::class
+        ],
 
         // PROFILE EVENTS
         \Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent::class => [

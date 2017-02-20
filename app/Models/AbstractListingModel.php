@@ -32,6 +32,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
     const STATUS_QUEUED_DELETE = 'queued_delete';
     const STATUS_IGNORED_DUPLICATE = 'ignored_duplicate';
     const STATUS_FAILED = 'failed';
+    const STATUS_FAILED_DELETE = 'delete_failed';
     const STATUS_THROTTLED = 'throttled';
     const STATUSES = [
         self::STATUS_SCHEDULED,
@@ -45,6 +46,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
         self::STATUS_IGNORED_DUPLICATE,
         self::STATUS_FAILED,
         self::STATUS_THROTTLED,
+        self::STATUS_FAILED_DELETE
     ];
 
     /**

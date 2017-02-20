@@ -36,4 +36,12 @@ $api->group(['middleware' => 'jwt.auth'], function ($api) {
         'as' => 'listings.listingitems.watchers.destroy',
         'uses' => \Kabooodle\Http\Controllers\Api\Listings\WatchesController::class . '@destroy'
     ]);
+    $api->delete('listings/{listing}/listingsitems/{listingitem}', [
+        'as' => 'listings.listingitems.destroy',
+        'uses' => \Kabooodle\Http\Controllers\Api\Listings\ListingItemsApiController::class . '@destroy'
+    ]);
+    $api->delete('listings/{listing}/listingsitems/{listingitem}/facebook', [
+        'as' => 'listings.listingitems.facebook.destroy',
+        'uses' => \Kabooodle\Http\Controllers\Api\Listings\ListingItemsApiController::class . '@destroyFromFacebook'
+    ]);
 });

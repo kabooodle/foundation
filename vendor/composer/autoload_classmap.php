@@ -857,6 +857,7 @@ return array(
     'UpdateListingsAddNameOrUrlCol' => $baseDir . '/resources/database/migrations/2017_02_05_215401_update_listings_add_name_or_url_col.php',
     'UpdateListingsDropNameCol' => $baseDir . '/resources/database/migrations/2016_11_27_215750_update_listings_drop_name_col.php',
     'UpdateListingsStatus' => $baseDir . '/resources/database/migrations/2016_12_07_181657_update_listings_status.php',
+    'UpdateListingsStatusAddDeletionFailed' => $baseDir . '/resources/database/migrations/2017_02_20_040956_update_listings_status_add_deletion_failed.php',
     'UpdateListingsTblAddClaimableDateCol' => $baseDir . '/resources/database/migrations/2016_12_13_034716_update_listings_tbl_add_claimable_date_col.php',
     'UpdateListingsTblAddFacebookResponseTbl' => $baseDir . '/resources/database/migrations/2017_01_09_224554_update_listings_tbl_add_facebook_response_tbl.php',
     'UpdateListingsTblAddQueue' => $baseDir . '/resources/database/migrations/2016_12_14_202419_update_listings_tbl_add_queue.php',

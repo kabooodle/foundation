@@ -1493,6 +1493,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateListingsAddNameOrUrlCol' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_05_215401_update_listings_add_name_or_url_col.php',
         'UpdateListingsDropNameCol' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_27_215750_update_listings_drop_name_col.php',
         'UpdateListingsStatus' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_07_181657_update_listings_status.php',
+        'UpdateListingsStatusAddDeletionFailed' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_20_040956_update_listings_status_add_deletion_failed.php',
         'UpdateListingsTblAddClaimableDateCol' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_13_034716_update_listings_tbl_add_claimable_date_col.php',
         'UpdateListingsTblAddFacebookResponseTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_09_224554_update_listings_tbl_add_facebook_response_tbl.php',
         'UpdateListingsTblAddQueue' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_14_202419_update_listings_tbl_add_queue.php',

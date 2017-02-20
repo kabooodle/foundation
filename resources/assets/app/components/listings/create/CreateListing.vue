@@ -113,7 +113,7 @@
                                                 <div
                                                         class="m-l-2 m-t-1" style="display: none;">
                                                         <span
-                                                                class="avatar_container m-r-sm inline _32 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables">
+                                                                class="avatar_container m-r-sm inline _48 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables">
                                                             <img :src="listable.cover_photo.location">
                                                             <i class="fa fa-times fa-2x text-danger"></i>
                                                         </span>
@@ -176,7 +176,7 @@
                                                             class="m-l-2 m-t-1" style="display: none;">
                                                         <span
                                                                 @click="removeItemFromAlbum(listable, album, $event)"
-                                                                class="avatar_container m-r-sm inline _32 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
+                                                                class="avatar_container m-r-sm inline _48 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
                                                             <img :src="listable.cover_photo.location">
                                                             <i class="fa fa-times fa-2x text-danger"></i>
                                                         </span>

@@ -58,13 +58,6 @@ class FacebookController extends Controller
             }
 
             return redirect()->route('profile.index');
-            // User denied the request
-//            dd(
-//                $helper->getError(),
-//                $helper->getErrorCode(),
-//                $helper->getErrorReason(),
-//                $helper->getErrorDescription()
-//            );
         }
 
         if (! $token->isLongLived()) {
@@ -80,29 +73,29 @@ class FacebookController extends Controller
             }
         }
 
-        $fb->setDefaultAccessToken($token);
-
         try {
+            $fb->setDefaultAccessToken($token);
+
             $response = $fb->get('/me?fields=id,name,email');
+
+            /** @var \Facebook\GraphNodes\GraphUser $facebook_user */
+            $facebookUser = $response->getGraphUser();
+
+            $user = webUser();
+            $user->facebook_user_id = $facebookUser->getId();
+            $user->facebook_access_token = (string) $token;
+            $user->facebook_access_token_expires = $token->getExpiresAt();
+            $user->save();
+
+            event(new UserFacebookCredentialsConnectedEvent($user));
+
+            Messages::success('Connection to Facebook successful!');
+
+            return redirect()->route('profile.social.edit');
         } catch (FacebookSDKException $e) {
             Messages::error('An error occurred getting your data, please try again.');
             return redirect()->route('profile.social.edit');
         }
-
-        /** @var \Facebook\GraphNodes\GraphUser $facebook_user */
-        $facebookUser = $response->getGraphUser();
-
-        $user = webUser();
-        $user->facebook_user_id = $facebookUser->getId();
-        $user->facebook_access_token = (string) $token;
-        $user->facebook_access_token_expires = $token->getExpiresAt();
-        $user->save();
-
-        event(new UserFacebookCredentialsConnectedEvent($user));
-
-        Messages::success('Connection to Facebook successful!');
-
-        return redirect()->route('profile.social.edit');
     }
 
     /**
@@ -110,19 +103,23 @@ class FacebookController extends Controller
      */
     public function revoke()
     {
-        /** @var FacebookResponse $revoked */
-        $revoked = $this->fb->delete('/me/permissions', [],  webUser()->facebook_access_token);
+        try {
+            /** @var FacebookResponse $revoked */
+            $this->fb->delete('/me/permissions', [],  webUser()->facebook_access_token);
+            event(new UserFacebookCredentialsRevokedEvent(webUser()));
 
-        if ($revoked) {
-            $user = webUser();
-            $user->facebook_access_token = null;
-            $user->facebook_access_token_expires = null;
-            $user->save();
+        } catch (Exception $e) {}
 
-            event(new UserFacebookCredentialsRevokedEvent($user));
+        // The reason our default is to indicate "success on revoke" is because, we really dont care.
+        // That is to say, if revocation fails, we will still delete the local facebook token data anyway,
+        // so that we dont use it again and the user is therefore forced to login again to FB.
 
-            Messages::success('Connection to Facebook revoked.');
-        }
+        Messages::success('Connection to Facebook revoked.');
+
+        $user = webUser();
+        $user->facebook_access_token = null;
+        $user->facebook_access_token_expires = null;
+        $user->save();
 
         return redirect()->route('profile.social.edit');
     }

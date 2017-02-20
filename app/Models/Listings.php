@@ -247,8 +247,6 @@ class Listings extends AbstractListingModel
                 LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
 				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id
                 WHERE l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
-                AND l.deleted_at IS NULL 
-                AND li.deleted_at IS NULL
                 GROUP BY l.id
                 ORDER BY l.scheduled_for DESC
                 ";
@@ -297,8 +295,6 @@ class Listings extends AbstractListingModel
 				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id
                 WHERE l.uuid = ? AND l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
                 AND l.type = ?
-                AND l.deleted_at IS NULL 
-                AND li.deleted_at IS NULL
                 GROUP BY ::groupby::
                 ORDER BY l.scheduled_for DESC
                 ";
