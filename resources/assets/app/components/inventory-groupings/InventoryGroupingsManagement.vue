@@ -2,18 +2,17 @@
     <div>
         <div class="box white">
             <div class="box-body">
-                <button v-if="edit" :class="viewing ? 'disabled' : null" :disabled="viewing" @click.prevent="viewGrouping" class="btn primary btn-sm ">
-                    View Outfit <spinny v-if="viewing"></spinny>
-                </button>
-                <div class="pull-right">
-                    <button v-if="!edit" :class="adding ? 'disabled' : null" :disabled="adding" @click.prevent="addGrouping" class="btn primary btn-sm ">
+                <div class="text-center center-block">
+                    <button v-if="edit" :class="viewing ? 'disabled' : null" :disabled="viewing" @click.prevent="viewGrouping" class="btn primary btn-sm ">
+                        View Outfit <spinny v-if="viewing"></spinny>
+                    </button>
+                    <button v-if="!edit && multiple" :class="adding ? 'disabled' : null" :disabled="adding" @click.prevent="addGrouping" class="btn primary btn-sm ">
                         Add Outfit <spinny v-if="adding"></spinny>
                     </button>
                     <button :class="saving ? 'disabled' : null" :disabled="saving" @click.prevent="save" class="btn primary btn-sm ">
                         {{ saveOutfitsText }} <spinny v-if="saving"></spinny>
                     </button>
                 </div>
-                <div style="clear: both"></div>
             </div>
         </div>
         <div id="inventory-groupings">
@@ -21,11 +20,12 @@
                 :edit=edit
                 :key="grouping.id"
                 :grouping=grouping
-                :inventory=inventory
+                :inventory=inventoryGrouped
                 :restricted-inventory-ids=restrictedInventoryIds
                 :s3_key_url="s3_key_url"
                 v-on:duplicate-grouping="duplicateGrouping(grouping)"
                 v-on:delete-grouping="deleteGrouping(grouping, index)"
+                :duplicatable=multiple
             ></inventory-grouping>
         </div>
     </div>
@@ -63,6 +63,7 @@
         },
         data() {
             return {
+                multiple: false,
                 adding: false,
                 saving: false,
                 viewing: false,
@@ -70,6 +71,7 @@
                 ids: [],
                 groupings: [],
                 inventory: [],
+                inventoryGrouped: [],
                 restrictedInventoryIds: [],
             }
         },
@@ -106,7 +108,8 @@
                 self.retrievingInventory = true;
                 this.$http.get(this.inventoryEndpoint)
                     .then(function (response) {
-                        self.inventory = response.data.data;
+                        self.inventory = response.data.data.inventory;
+                        self.inventoryGrouped = response.data.data.groupings;
                     }, function (response) {
 
                     }).finally(()=>{
@@ -181,6 +184,13 @@
                             'text': 'Your outfit' + (this.groupings.length > 1 ? 's were' : ' was') +' saved!',
                             'type': 'success'
                         });
+                        confirmModal(function () {
+                            $.noty.closeAll();
+                            self.reset();
+                        }, function () {
+                            $.noty.close();
+                            window.location.href = self.inventoryGroupingsIndexRoute;
+                        }, {text: 'Would you like to create another outfit?'});
                     }, function (response) {
                         notify({
                             'text': 'We\'re sorry. Something went wrong. Please try again.',
@@ -207,6 +217,13 @@
                     }).finally(()=>{
                         self.saving = false;
                 });
+            },
+            reset: function () {
+                this.inventory = [];
+                this.inventoryGrouped = [];
+                this.getInventory();
+                this.groupings = [];
+                this.addGrouping();
             },
             viewGrouping: function () {
                 this.viewing = true;

@@ -85,7 +85,7 @@
                                             </span>
                                             <span class="p-a-o text-sm clearfix block">
                                                 <span class="pull-left">Qty:
-                                                    <span class="text-muted">{{ item.initial_qty }}</span>
+                                                    <span class="text-muted">{{ useAvailableQty ? item.available_qty : item.initial_qty }}</span>
                                                 </span>
                                                 <span class="text-muted pull-right">${{ item.price_usd }}</span>
                                             </span>
@@ -140,7 +140,15 @@
             ukey: {
                 type: String,
                 default: null
-            }
+            },
+            previouslySelectedIds: {
+                type: Array,
+                default: [],
+            },
+            useAvailableQty: {
+                type: Boolean,
+                default: false
+            },
         },
         data(){
             return initial_state();
@@ -153,6 +161,18 @@
         created(){
             // curious about how we can handle slots as a javascript variable
 //            console.log(this.$slots);
+            var self = this;
+            if (self.previouslySelectedIds.length && self.group_has_subgroupings) {
+                self.group.subgroupings.forEach(function (subgroup) {
+                    subgroup.listables.forEach(function (listable) {
+                        if (self.previouslySelectedIds.indexOf(listable.id) > -1) {
+                            self.addListable(subgroup, listable);
+                            self.clickSubgroupingDrawer(self.group, subgroup);
+                        }
+                    });
+                });
+
+            }
 
             $Bus.$on('listings:listables:select:all', ()=>{
                 _.each(this.group.subgroupings, (subgrouping)=>{

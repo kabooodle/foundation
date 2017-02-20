@@ -52,7 +52,7 @@ class UpdateInventoryGroupingCommandHandler
             }
         }
 
-        return DB::transaction(function () use ($command) {
+        return DB::transaction(function () use ($command, $inventoryIds) {
             $grouping = $command->getGrouping();
             $grouping->name = $command->getName();
             $grouping->description = $command->getDescription();
@@ -83,6 +83,8 @@ class UpdateInventoryGroupingCommandHandler
             }
 
             $grouping->save();
+
+            $grouping->inventoryItems()->sync($inventoryIds);
 
             event(new InventoryGroupingWasUpdatedEvent($grouping));
 
