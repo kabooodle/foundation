@@ -73,11 +73,20 @@
                         <div class="col-sm-6">
                             <div class="box">
                                 <div :id=attachedInventoryId class="box-body">
-                                    <span v-for="(inventory, index) in grouping.inventory"
-                                          class="avatar_container m-r-sm inline _48 avatar-thumbnail" >
-                                        <img :src="inventory.cover_photo.location">
-                                        <i @click="grouping.inventory.splice(index, 1)" class="fa fa-times fa-2x text-danger pointer"></i>
-                                    </span>
+                                    <div v-for="(inventory, index) in grouping.inventory"
+                                        class="inline m-r-sm">
+                                        <span class="avatar_container _48 avatar-thumbnail">
+                                            <img :src="inventory.cover_photo.location" >
+                                        </span>
+                                        <span class="p-a-o text-sm clearfix block">
+                                            <span class="pull-left">Qty:
+                                                <span class="text-muted">{{ inventory.available_qty }}</span>
+                                            </span>
+                                            <span class="pull-right">
+                                                <i @click="grouping.inventory.splice(index, 1)" class="fa fa-times text-danger pointer"></i>
+                                            </span>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
