@@ -55,7 +55,6 @@ class DeleteListingItemFromFacebookCommandHandler
         // Listing item status is deleted or queued for deletion
         if ($listingItem->status == ListingItems::STATUS_DELETED) {
             Log::error('Deleting listing item from facebook: Listing item already (queued) deleted - '.$logString);
-            $listingItem->delete();
             $command->delete();
 
             return;
@@ -68,7 +67,6 @@ class DeleteListingItemFromFacebookCommandHandler
             $listingItem->status_updated_at = Carbon::now();
             $listingItem->status_history = 'Listing item already (queued) deleted.';
             $listingItem->save();
-            $listingItem->delete();
 
             $command->delete();
 
@@ -105,7 +103,6 @@ class DeleteListingItemFromFacebookCommandHandler
         $listingItem->status_updated_at = Carbon::now();
         $listingItem->status_history = null;
         $listingItem->save();
-        $listingItem->delete();
 
         $command->delete();
     }
