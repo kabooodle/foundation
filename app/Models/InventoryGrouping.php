@@ -53,6 +53,7 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         'available_quantity',
         'cover_photo',
         'wholesale_price_usd',
+        'hash_id',
     ];
 
     /**

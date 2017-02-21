@@ -12,7 +12,7 @@ new Vue({
     data: {
         columns: [
             {
-                name: 'item_name',
+                name: 'name_alt',
                 title: 'Item',
             },
             'qty_on_hand',

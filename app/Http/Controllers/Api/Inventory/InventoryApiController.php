@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
+use Kabooodle\Models\InventoryGrouping;
 use Kabooodle\Models\Listing\FacebookListingOptions;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Facebook\Exceptions\FacebookAuthenticationException;
@@ -63,19 +64,16 @@ class InventoryApiController extends AbstractApiController
                         'id' => $item->id,
                         'name_uuid' => $item->name_uuid,
                         'uuid' => $item->uuid,
-                        'size_id' => $item->styleSize->id,
-                        'size_name' => $item->styleSize->name,
-                        'style_id' => $styleId,
-                        'style_name' => $item->style->name,
-                        'images' => $item->files->toArray(),
+                        'name' => $item->name_with_variant,
+                        'name_alt' => $item->name,
                         'initial_qty' => $item->initial_qty,
                         'available_qty' => $item->available_quantity,
                         'price_usd' => $item->price_usd,
                         'wholesale_price_usd' => $item->wholesale_price_usd,
-                        'files' => $item->files,
                         'cover_photo' => $item->cover_photo,
                         'listable_item_class' => get_class($item),
                         'listing_item_class' => $item->getListingItemClass(),
+                        'hash_id' => $item->hash_id,
                     ];
                 }
 
@@ -83,6 +81,38 @@ class InventoryApiController extends AbstractApiController
                 usort($groupings[$styleId]['subgroupings'], function ($item1, $item2) {
                     return $item1['order'] <=> $item2['order'];
                 });
+            }
+        }
+
+        $outfits = InventoryGrouping::whereUserId($this->getUser()->id)->orderBy('name')->get();
+
+        if ($outfits->count() > 0) {
+            $id = $outfits->count() + 1;
+            $groupings[$id] = [
+                'name' => 'Outfits',
+                'total' => $outfits->count(),
+                'id' => $id,
+            ];
+            foreach ($outfits as $item) {
+                $groupings[$id]['subgroupings'][$item->id]['id'] =$item->id;
+                $groupings[$id]['subgroupings'][$item->id]['order'] = 0;
+                $groupings[$id]['subgroupings'][$item->id]['name'] = $item->name;
+                $groupings[$id]['subgroupings'][$item->id]['total_qty'] = $item->available_quantity;
+                $groupings[$id]['subgroupings'][$item->id]['listables'][] = [
+                    'id' => $item->id,
+                    'name_uuid' => $item->name_uuid,
+                    'name' => $item->name,
+                    'name_alt' => 'outfits',
+                    'uuid' => $item->uuid,
+                    'initial_qty' => $item->initial_qty,
+                    'available_qty' => $item->available_quantity,
+                    'price_usd' => $item->price_usd,
+                    'wholesale_price_usd' => $item->wholesale_price_usd,
+                    'cover_photo' => $item->cover_photo,
+                    'listable_item_class' => get_class($item),
+                    'listing_item_class' => $item->getListingItemClass(),
+                    'hash_id' => $item->hash_id,
+                ];
             }
         }
 
@@ -110,29 +140,28 @@ class InventoryApiController extends AbstractApiController
 //        }]);
 
         $select = DB::select("
-            SELECT 
-            i.id,
-            CONCAT(s.name, ' - ', is.name) as item_name,
-            s.name as style_name,
-            is.name as size_name,
-            f.location as cover_photo_location,
-            CONCAT('$', IFNULL(SUM(c.accepted_price), 0)) AS accepted_price_sum,
-            CONCAT('$', IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0)) AS gross,
-            IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
-            IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
-            IFNULL(COUNT(DISTINCT(v.id)), 0) AS pageviews_count,
-            i.initial_qty as qty_on_hand
-            FROM inventory as i
-            LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
-            LEFT JOIN inventory_sizes as `is` ON is.id=i.inventory_sizes_id
-            LEFT JOIN claims as c ON c.listable_id = i.id AND c.listable_type =\"Kabooodle\\\Models\\\Inventory\"
-            LEFT JOIN claims as uc ON c.listable_id = i.id and c.listable_type = \"Kabooodle\\\Models\\\InventoryGrouping\"
-            LEFT JOIN views as v on v.viewable_id = i.id AND v.viewable_type = \"Kabooodle\\\Models\\\Inventory\"
-            INNER JOIN files as f ON f.id = i.cover_photo_file_id
-            WHERE i.user_id = ?
-            AND i.deleted_at is null
-            GROUP BY i.id
-            ORDER BY s.name, is.sort_order", [$this->getUser()->id]);
+SELECT
+i.id,
+i.name,
+i.name_alt,
+f.location as cover_photo_location,
+CONCAT('$', IFNULL(SUM(c.accepted_price), 0)) AS accepted_price_sum,
+CONCAT('$', IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0)) AS gross,
+IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
+IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
+IFNULL(SUM(v.count), 0) AS pageviews_count,
+i.initial_qty as qty_on_hand
+FROM v_listables as i
+LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
+LEFT JOIN inventory_sizes as `is` ON is.id=i.inventory_sizes_id
+LEFT JOIN claims as c ON c.listable_id = i.id AND c.listable_type = i.class
+LEFT JOIN v_pageviews as v on v.viewable_id = i.id AND v.viewable_type = i.class
+INNER JOIN files as f ON f.id = i.cover_photo_file_id
+WHERE i.user_id = ?
+AND i.deleted_at is null
+GROUP BY i.id
+ORDER BY name_alt
+", [$this->getUser()->id]);
 
 
 //

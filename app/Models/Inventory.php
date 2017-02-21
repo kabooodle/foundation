@@ -49,6 +49,7 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
         'name_uuid',
         'available_quantity',
         'cover_photo',
+        'hash_id',
     ];
 
     /**

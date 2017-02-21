@@ -34,7 +34,12 @@
                     <div class="m-b-0 text-sm clearfix">
                         <div class="pull-left">
                             <div class="block">
-                                <span class="text-muted">Size:</span><span class="">{{ listed_item.style_size.name }}</span>
+                                <template v-if="listed_item.style_size">
+                                    <span class="text-muted">Size:</span><span class="">{{ listed_item.style_size.name }}</span>
+                                </template>
+                                <template v-else>
+                                    <span class="text-muted">Outfit</span>
+                                </template>
                             </div>
                         </div>
                         <div class="pull-right" style="text-align: right">

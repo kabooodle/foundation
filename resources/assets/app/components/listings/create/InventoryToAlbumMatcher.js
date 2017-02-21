@@ -45,7 +45,7 @@ class InventoryToAlbumMatcher {
                 name: "name",
                 weight: .6,
             }, {
-                name: "style",
+                name: "name_alt",
                 weight: .4
             }]
         };
@@ -140,11 +140,11 @@ class InventoryToAlbumMatcher {
 
         // Build the needle we are looking for in the haystack, or rather,
         // string we are searching for in the array of possibilities.
-        let style_name = needle.style_name.toLowerCase();
-        let size_name = needle.size_name.toLowerCase();
+        let name = needle.name.toLowerCase();
+        let name_alt = needle.name_alt.toLowerCase();
 
-        // first search param is by style size;
-        let search_param = style_name+' '+size_name;
+        // first search param is by name;
+        let search_param = name;
 
         // Search through the haystack, comparing our needle, and return array of all possible matches
         let found_results = fuse.search(search_param);
@@ -162,7 +162,7 @@ class InventoryToAlbumMatcher {
             match = ideal_match;
         } else {
             // No ideal match, so lets search now using a different needle, just to be sure.
-            found_results = fuse.search(style_name);
+            found_results = fuse.search(name_alt);
             let style_based_ideal_match = found_results[0];
 
             if (style_based_ideal_match && this.satisfiesMinScore(style_based_ideal_match.score)){

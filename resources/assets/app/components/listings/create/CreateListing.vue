@@ -118,10 +118,11 @@
                                                 <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables.length }} items associated. <a href="javascript:;" class="text-primary">View</a></span>
                                                 <div
                                                         class="m-l-2 m-t-1" style="display: none;">
+                                                    <div class="inline m-r-sm" v-for="listable in selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables">
                                                         <span
-                                                                class="avatar_container m-r-sm inline _48 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables">
-                                                            <img :src="listable.cover_photo.location">
-                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                class="avatar_container _48 avatar-thumbnail">
+                                                              <img :src="listable.cover_photo.location">
+                                                            <span class="pull-right"  @click="removeItemFromFlashsale(listable, sale.id, $event)" style="margin: -6px 2px 0 0"><i class="fa fa-times text-danger pointer"></i></span>
                                                         </span>
                                                 </div>
                                             </div>
@@ -180,12 +181,14 @@
                                                     <div
                                                             :id="'album_items_'+album.id"
                                                             class="m-l-2 m-t-1" style="display: none;">
+
+                                                        <div class="inline m-r-sm" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
                                                         <span
-                                                                @click="removeItemFromAlbum(listable, album, $event)"
-                                                                class="avatar_container m-r-sm inline _48 avatar-thumbnail" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
-                                                            <img :src="listable.cover_photo.location">
-                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                class="avatar_container _48 avatar-thumbnail">
+                                                              <img :src="listable.cover_photo.location">
+                                                            <span class="pull-right"  @click="removeItemFromAlbum(listable, album, $event)" style="margin: -6px 2px 0 0"><i class="fa fa-times text-danger pointer"></i></span>
                                                         </span>
+                                                        </div>
                                                     </div>
                                                  </div>
                                             </template>
@@ -237,16 +240,18 @@
 </template>
 <style>
     .avatar_container:hover {
-        cursor: pointer;
+
     }
     .avatar_container:hover img {
         opacity: .6;
     }
     .avatar_container:hover .fa{
-        display: inline-block;
+        /*display: inline-block;*/
+        cursor: pointer;
     }
-    .avatar_container .fa{
-        display: none;
+    .avatar_container .fa {
+        margin: 0;
+        padding: 0;
     }
 </style>
 <script>
@@ -439,6 +444,19 @@
             },
             removeItemFromAlbum(listable, album, e){
                 const index = _.findIndex(this.selected.sales, {album_id: album.id});
+                if (index > -1) {
+                    this.selected.sales[index].listables = _.filter(this.selected.sales[index].listables, (local_listable)=>{
+                        return local_listable.id !== listable.id;
+                    });
+
+                    // If the number of listables in a sale reaches 0, remove the sale.
+                    if (this.selected.sales[index].listables.length == 0) {
+                        this.selected.sales.splice(index, 1);
+                    }
+                }
+            },
+            removeItemFromFlashsale(listable, sale_id, e){
+                const index = _.findIndex(this.selected.sales, {sale_id: sale_id});
                 if (index > -1) {
                     this.selected.sales[index].listables = _.filter(this.selected.sales[index].listables, (local_listable)=>{
                         return local_listable.id !== listable.id;
