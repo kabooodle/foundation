@@ -146,7 +146,10 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     {
         $rules = [
             'name' => 'required|unique:inventory_groupings,name,NULL,id,deleted_at,NULL,user_id,',
-            'price_usd' => 'required|min:0|digits_between:0,100000000|numeric',
+            'price_usd' => 'required|min:0|numeric',
+            'initial_qty' => 'required|min:1|numeric',
+            'inventory' => 'required|array',
+            'image' => 'required|array',
         ];
 
         $rules['name'] .= user()->id;
@@ -166,6 +169,27 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         $rules['name'] = str_replace('NULL,id', $groupingId.',id', $rules['name']);
 
         return $rules;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getMessages()
+    {
+        return [
+            'name.required' => 'Your outfit must have a name.',
+            'name.unique' => 'Your outfits must all have a unique name. You already have an outfit by the same name.',
+            'price_usd.required' => 'Your outfit must have a price.',
+            'price_usd.min' => 'Your outfit price must be a positive number.',
+            'price_usd.numeric' => 'Your outfit price must be a positive number.',
+            'initial_qty.required' => 'Your outfit must have a quantity.',
+            'initial_qty.min' => 'Your outfit quantity must be at least one.',
+            'initial_qty.numeric' => 'Your outfit quantity must be a number.',
+            'inventory.required' => 'Your outfit must have inventory attached.',
+            'inventory.array' => 'Your outfit must have inventory attached.',
+            'image.required' => 'Your outfit must have an image attached.',
+            'image.array' => 'Your outfit must have an image attached.',
+        ];
     }
 
     public static function boot()

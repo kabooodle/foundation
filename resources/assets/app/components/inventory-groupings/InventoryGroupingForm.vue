@@ -11,9 +11,12 @@
                 </div>
                 <div class="col-sm-8">
                     <div class="form-group row">
-                        <label class="form-control-label col-sm-3">Name *</label>
+                        <label
+                            class="form-control-label col-sm-3"
+                            :class="showErrors && grouping.validationErrors.name.status ? 'text-danger' : null">Name *</label>
                         <div class="col-sm-6">
                             <input type="text" v-model="grouping.name" class="form-control">
+                            <span v-show="showErrors && grouping.validationErrors.name.status" class="text-danger">{{ grouping.validationErrors.name.message }}</span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -24,7 +27,9 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-3">
-                            <label class="form-control-label">Price *</label>
+                            <label
+                                class="form-control-label"
+                                :class="showErrors && grouping.validationErrors.price_usd.status ? 'text-danger' : null">Price *</label>
                             <input type="checkbox" v-model="autoAddPriceUsd">
                             <label>Auto Add</label>
                         </div>
@@ -36,6 +41,7 @@
                                 v-model="grouping.price_usd"
                                 :readonly="autoAddPriceUsd"
                                 class="form-control">
+                            <span v-show="showErrors && grouping.validationErrors.price_usd.status" class="text-danger">{{ grouping.validationErrors.price_usd.message }}</span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -46,7 +52,11 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-3">
-                            <label class="form-control-label" :class="exceedsAvailableQty ? 'text-danger' : null">Quantity *</label>
+                            <label
+                                class="form-control-label"
+                                :class="(showErrors || exceedsAvailableQty) && grouping.validationErrors.initial_qty.status ? 'text-danger' : null"
+                            >Quantity *
+                            </label>
                             <input type="checkbox" v-model="forceMaxQuantity">
                             <label>Max</label>
                         </div>
@@ -57,12 +67,14 @@
                                 v-model="grouping.initial_qty"
                                 :readonly="forceMaxQuantity"
                                 class="form-control">
-                            <span v-if="exceedsAvailableQty" class="text-danger">The quantity of this outfit can not exceed {{ maxInitialQty }}</span>
+                            <span v-show="(showErrors || exceedsAvailableQty) && grouping.validationErrors.initial_qty.status" class="text-danger">{{ grouping.validationErrors.initial_qty.message }}</span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-3">
-                            <label class="form-control-label">Inventory *</label>
+                            <label
+                                class="form-control-label"
+                                :class="showErrors && grouping.validationErrors.inventory.status ? 'text-danger' : null">Inventory *</label>
                             <span @click="grouping.locked = !grouping.locked">
                             <i :class="grouping.locked ? 'fa-lock' : 'fa-unlock'" class="fa text-primary pointer"></i>
                             <div>
@@ -89,6 +101,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <span v-show="showErrors && grouping.validationErrors.inventory.status" class="text-danger">{{ grouping.validationErrors.inventory.message }}</span>
                         </div>
                     </div>
                 </div>
@@ -99,6 +112,7 @@
                                 <div class="inventory-grouping-image">
                                     <image :src=imageSrc style="width: 100%; height: 100%;"></image>
                                 </div>
+                                <span v-show="showErrors && grouping.validationErrors.image.status" class="text-danger">{{ grouping.validationErrors.image.message }}</span>
                             </div>
                             <div class="col-xs-12">
                                 <span class="add-images-btn">
@@ -189,7 +203,15 @@
             retrievingInventory: {
                 type: Boolean,
                 require: true,
-            }
+            },
+            showErrors: {
+                type: Boolean,
+                require: true,
+            },
+            validating: {
+                type: Boolean,
+                default: false,
+            },
         },
         data() {
             return {
@@ -239,6 +261,25 @@
                 });
                 return wholesale_price_usd;
             },
+            quantityError: function () {
+                var message = '';
+                if (this.exceedsAvailableQty) {
+                    message = 'Your outfit quantity can not exceed ' + this.maxInitialQty;
+                } else if (this.grouping.validationErrors.initial_qty.status) {
+                    message = this.grouping.validationErrors.initial_qty.message;
+                }
+                return {
+                    'status': this.exceedsAvailableQty || this.grouping.validationErrors.initial_qty.status,
+                    'message': message,
+                };
+            },
+            inputIsValid: function () {
+                return !this.grouping.validationErrors.name.status &&
+                       !this.grouping.validationErrors.price_usd.status &&
+                       !this.grouping.validationErrors.initial_qty.status &&
+                       !this.grouping.validationErrors.inventory.status &&
+                       !this.grouping.validationErrors.image.status;
+            },
         },
         watch: {
             grouping: {
@@ -250,6 +291,7 @@
                     if (this.forceMaxQuantity) {
                         this.grouping.initial_qty = this.maxInitialQty;
                     }
+                    this.validateInput();
                 },
                 deep: true
             },
@@ -262,7 +304,12 @@
                 if (val === true) {
                     this.grouping.initial_qty = this.maxInitialQty;
                 }
-            }
+            },
+            validating: function (val) {
+                if (val) {
+                    this.validateInput();
+                }
+            },
         },
         methods: {
             duplicateGrouping: function () {
@@ -283,10 +330,61 @@
             limitInitialQtyByMaxInitialQty: function () {
                 if (this.maxInitialQty && this.grouping.initial_qty > this.maxInitialQty) {
                     this.exceedsAvailableQty = true;
-                    console.log('HOLD ON THERE!');
                 } else {
                     this.exceedsAvailableQty = false;
                 }
+            },
+            validateInput: function () {
+                if (!this.grouping.name || this.grouping.name == '') {
+                    this.grouping.validationErrors.name.status = true;
+                    this.grouping.validationErrors.name.message = 'Your outfit must have a name.';
+                } else {
+                    this.grouping.validationErrors.name.status = false;
+                    this.grouping.validationErrors.name.message = '';
+                }
+
+                if (this.grouping.price_usd === '') {
+                    this.grouping.validationErrors.price_usd.status = true;
+                    this.grouping.validationErrors.price_usd.message = 'Your outfit must have a price.';
+                } else if (this.grouping.price_usd < 0) {
+                    this.grouping.validationErrors.price_usd.status = true;
+                    this.grouping.validationErrors.price_usd.message = 'Your outfit must have a positive price.';
+                } else {
+                    this.grouping.validationErrors.price_usd.status = false;
+                    this.grouping.validationErrors.price_usd.message = '';
+                }
+
+                if (this.grouping.initial_qty == '') {
+                    this.grouping.validationErrors.initial_qty.status = true;
+                    this.grouping.validationErrors.initial_qty.message = 'Your outfit must have a quantity.';
+                } else if (this.grouping.initial_qty < 1) {
+                    this.grouping.validationErrors.initial_qty.status = true;
+                    this.grouping.validationErrors.initial_qty.message = 'Your outfit must have a quantity of at least one.';
+                } else if (this.exceedsAvailableQty) {
+                    this.grouping.validationErrors.initial_qty.status = true;
+                    this.grouping.validationErrors.initial_qty.message = 'Your outfit quantity can not exceed ' + this.maxInitialQty;
+                } else {
+                    this.grouping.validationErrors.initial_qty.status = false;
+                    this.grouping.validationErrors.initial_qty.message = '';
+                }
+
+                if (this.grouping.inventory.length == 0) {
+                    this.grouping.validationErrors.inventory.status = true;
+                    this.grouping.validationErrors.inventory.message = 'Your outfit must have inventory attached.';
+                } else {
+                    this.grouping.validationErrors.inventory.status = false;
+                    this.grouping.validationErrors.inventory.message = '';
+                }
+
+                if (!this.grouping.image) {
+                    this.grouping.validationErrors.image.status = true;
+                    this.grouping.validationErrors.image.message = 'Your outfit must have an image attached.';
+                } else {
+                    this.grouping.validationErrors.image.status = false;
+                    this.grouping.validationErrors.image.message = '';
+                }
+
+                this.$emit('validated', {'status': this.inputIsValid});
             },
         },
         created: function () {

@@ -32,8 +32,11 @@
                         :s3_key_url="s3_key_url"
                         v-on:duplicate-grouping="duplicateGrouping(grouping)"
                         v-on:delete-grouping="deleteGrouping(grouping, index)"
+                        v-on:validated="updateValidationStatus"
                         :duplicatable=multiple
                         :retrieving-inventory=retrievingInventory
+                        :show-errors=showErrors
+                        :validating=validating
                     ></inventory-grouping>
                 </div>
             </div>
@@ -84,6 +87,9 @@
                 inventory: [],
                 inventoryGrouped: [],
                 restrictedInventoryIds: [],
+                showErrors: false,
+                validating: false,
+                allGroupingInputIsValid: false,
             }
         },
         created: function () {
@@ -100,9 +106,7 @@
             },
             saveGroupingsData: function () {
                 if (!this.multiple || this.edit) {
-                    return {
-                        'grouping': this.groupings[0],
-                    }
+                    return this.groupings[0];
                 } else {
                     return {
                         'groupings': this.groupings,
@@ -113,7 +117,8 @@
                 return 'Save Outfit' + (this.groupings.length > 1 ? 's' : '');
             },
             disableSaving: function () {
-                return this.saving || this.preventSaving;
+                return false;
+                //return this.saving || this.preventSaving;
             },
             preventSaving: function () {
                 var prevent = false;
@@ -164,6 +169,28 @@
                     'inventory': [],
                     'image': null,
                     'duplicating': false,
+                    'validationErrors': {
+                        'name': {
+                            'status': false,
+                            'message': '',
+                        },
+                        'price_usd': {
+                            'status': false,
+                            'message': '',
+                        },
+                        'initial_qty': {
+                            'status': false,
+                            'message': '',
+                        },
+                        'inventory': {
+                            'status': false,
+                            'message': '',
+                        },
+                        'image': {
+                            'status': false,
+                            'message': '',
+                        },
+                    },
                 });
                 this.adding = false;
             },
@@ -178,6 +205,28 @@
                     'inventory': grouping.inventory,
                     'image': grouping.image,
                     'duplicating': false,
+                    'validationErrors': {
+                        'name': {
+                            'status': grouping.validationErrors.name.status,
+                            'message': grouping.validationErrors.name.message,
+                        },
+                        'price_usd': {
+                            'status': grouping.validationErrors.price_usd.status,
+                            'message': grouping.validationErrors.price_usd.message,
+                        },
+                        'initial_qty': {
+                            'status': grouping.validationErrors.initial_qty.status,
+                            'message': grouping.validationErrors.initial_qty.message,
+                        },
+                        'inventory': {
+                            'status': grouping.validationErrors.inventory.status,
+                            'message': grouping.validationErrors.inventory.message,
+                        },
+                        'image': {
+                            'status': grouping.validationErrors.image.status,
+                            'message': grouping.validationErrors.image.message,
+                        },
+                    },
                 });
                 grouping.duplicating = false;
             },
@@ -192,16 +241,53 @@
                     'inventory': this.editGrouping.inventory_items,
                     'image': this.editGrouping.coverimage,
                     'duplicating': false,
+                    'validationErrors': {
+                        'name': {
+                            'status': false,
+                            'message': '',
+                        },
+                        'price_usd': {
+                            'status': false,
+                            'message': '',
+                        },
+                        'initial_qty': {
+                            'status': false,
+                            'message': '',
+                        },
+                        'inventory': {
+                            'status': false,
+                            'message': '',
+                        },
+                        'image': {
+                            'status': false,
+                            'message': '',
+                        },
+                    },
                 });
             },
             save: function () {
-                if (this.edit ? this.updateGrouping() : this.saveGroupings());
+                this.validateGroupingsInput();
+                if (this.allGroupingInputIsValid) {
+                    this.showErrors = false;
+                    this.validating = false;
+                    if (this.edit ? this.updateGrouping() : this.saveGroupings());
+                } else {
+                    this.showErrors = true;
+                    notify({
+                        'text': 'There appears to be an issue with your input. Please correct the issue(s) an try again.',
+                        'type': 'error'
+                    });
+                }
+            },
+            validateGroupingsInput: function () {
+                this.validating = true;
             },
             saveGroupings: function () {
                 var self = this;
                 self.saving = true;
                 this.$http.post(this.saveInventoryGroupingsEndpoint, this.saveGroupingsData)
                     .then(function (response) {
+                        console.log(response);
                         notify({
                             'text': 'Your outfit' + (this.groupings.length > 1 ? 's were' : ' was') +' saved!',
                             'type': 'success'
@@ -214,6 +300,7 @@
                             window.location.href = self.inventoryGroupingsIndexRoute;
                         }, {text: 'Would you like to create another outfit?'});
                     }, function (response) {
+                        console.log(response);
                         notify({
                             'text': 'We\'re sorry. Something went wrong. Please try again.',
                             'type': 'error'
@@ -246,6 +333,7 @@
                 this.getInventory();
                 this.groupings = [];
                 this.addGrouping();
+                this.allGroupingInputIsValid = false;
             },
             viewGrouping: function () {
                 this.viewing = true;
@@ -270,6 +358,9 @@
                 } else {
                     this.groupings.splice(index, 1);
                 }
+            },
+            updateValidationStatus: function (e) {
+                this.allGroupingInputIsValid = e.status;
             },
         },
         components: {

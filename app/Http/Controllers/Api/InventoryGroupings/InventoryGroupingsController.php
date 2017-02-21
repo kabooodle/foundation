@@ -76,9 +76,9 @@ class InventoryGroupingsController extends AbstractApiController
         try {
             $this->checkIds($username);
 
-            $groupingData = Binput::get('grouping', []);
+            $this->validate($request, InventoryGrouping::getRules(), InventoryGrouping::getMessages());
 
-//            $this->validate($request, InventoryGrouping::getRules(), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
+            $groupingData = Binput::all();
 
             $grouping = $this->dispatchNow(new CreateInventoryGroupingsCommand(
                 $this->getUser(),
@@ -94,18 +94,18 @@ class InventoryGroupingsController extends AbstractApiController
 
             return $this->setData(['msg' => 'Outfit was created successfully', 'grouping' => $grouping->toJson()])->respond();
         } catch (ForbiddenUserAccessException $e) {
-            return $this->setStatusCode(403)->setData(['msg' => $e])->respond();
+            return $this->setStatusCode(403)->setData(['msg' => $e->getMessage()])->respond();
         } catch (ForbiddenModelAccessException $e) {
-            return $this->setStatusCode(403)->setData(['msg' => $e])->respond();
+            return $this->setStatusCode(403)->setData(['msg' => $e->getMessage()])->respond();
         } catch (RequestedQuantityCannotBeSatisfiedException $e) {
-            return $this->setStatusCode(401)->setData(['msg' => $e])->respond();
+            return $this->setStatusCode(401)->setData(['msg' => $e->getMessage()])->respond();
         } catch (ValidationException $e) {
             return $this->setStatusCode(401)
-                ->setData(['msg' => 'Some fields require input: '.$e->validator->messages()->first()])
+                ->setData(['msg' => $e->validator->messages()])
                 ->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)
-                ->setData(['msg' => $e])
+                ->setData(['msg' => $e->getMessage()])
                 ->respond();
         }
     }
@@ -122,9 +122,9 @@ class InventoryGroupingsController extends AbstractApiController
         try {
             $grouping = $this->checkIds($username, $groupingId);
 
-            $groupingData = Binput::get('grouping', []);
+            $this->validate($request, InventoryGrouping::getUpdateRules($groupingId), InventoryGrouping::getMessages());
 
-//            $this->validate($request, InventoryGrouping::getUpdateRules($groupingId), ['uuid.required' => 'The Unique ID field is required.', 'images.required' => 'You must add at least 1 image.']);
+            $groupingData = Binput::all();
 
             $updated = $this->dispatchNow(new UpdateInventoryGroupingCommand(
                 $this->getUser(),
@@ -148,7 +148,7 @@ class InventoryGroupingsController extends AbstractApiController
             return $this->setStatusCode(401)->setData(['msg' => $e])->respond();
         } catch (ValidationException $e) {
             return $this->setStatusCode(401)
-                ->setData(['msg' => 'Some fields require input: '.$e->validator->messages()->first()])
+                ->setData(['msg' => $e->validator->messages()])
                 ->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)

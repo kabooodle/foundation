@@ -44,12 +44,12 @@ class CreateInventoryGroupingsCommandHandler
         });
 
         if (count($inventoryIds) != $inventoryItems->count()) {
-            throw new ForbiddenModelAccessException('Not all grouping items belong to the current user.');
+            throw new ForbiddenModelAccessException('Not all inventory items belong to the current user.');
         }
 
         foreach ($inventoryItems as $item) {
             if (!$item->canSatisfyRequestedQuantityOf($command->getInitialQty())) {
-                throw new RequestedQuantityCannotBeSatisfiedException('Initial quantity of grouping exceeds satisfiable quantity of one or more grouping items.');
+                throw new RequestedQuantityCannotBeSatisfiedException('Quantity of the outfit exceeds available quantity of one or more inventory items.');
             }
         }
 
