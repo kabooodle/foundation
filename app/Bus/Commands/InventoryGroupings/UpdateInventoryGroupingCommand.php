@@ -66,6 +66,16 @@ final class UpdateInventoryGroupingCommand
     protected $categories;
 
     /**
+     * @var bool
+     */
+    protected $autoAdd;
+
+    /**
+     * @var bool
+     */
+    protected $maxQuantity;
+
+    /**
      * UpdateInventoryGroupingCommand constructor.
      *
      * @param User $user
@@ -78,6 +88,8 @@ final class UpdateInventoryGroupingCommand
      * @param array $inventory
      * @param null $description
      * @param string $categories
+     * @param bool $autoAdd
+     * @param bool $maxQuantity
      */
     public function __construct(
         User $user,
@@ -89,7 +101,9 @@ final class UpdateInventoryGroupingCommand
         array $image,
         array $inventory,
         $description = null,
-        string $categories)
+        string $categories,
+        bool $autoAdd,
+        bool $maxQuantity)
     {
         $this->user = $user;
         $this->grouping = $grouping;
@@ -101,6 +115,8 @@ final class UpdateInventoryGroupingCommand
         $this->inventory = $inventory;
         $this->description = $description;
         $this->categories = $categories;
+        $this->autoAdd = $autoAdd;
+        $this->maxQuantity = $maxQuantity;
     }
 
     /**
@@ -181,5 +197,21 @@ final class UpdateInventoryGroupingCommand
     public function getCategories(): string
     {
         return $this->categories;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAutoAdd(): bool
+    {
+        return $this->autoAdd;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isMaxQuantity(): bool
+    {
+        return $this->maxQuantity;
     }
 }

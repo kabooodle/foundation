@@ -30,7 +30,7 @@
                             <label
                                 class="form-control-label"
                                 :class="showErrors && grouping.validationErrors.price_usd.status ? 'text-danger' : null">Price *</label>
-                            <input type="checkbox" v-model="autoAddPriceUsd">
+                            <input type="checkbox" v-model="grouping.auto_add">
                             <label>Auto Add</label>
                         </div>
                         <div class="col-sm-6">
@@ -39,7 +39,7 @@
                                 step="0.01"
                                 min="0.00"
                                 v-model="grouping.price_usd"
-                                :readonly="autoAddPriceUsd"
+                                :readonly="grouping.auto_add"
                                 class="form-control">
                             <span v-show="showErrors && grouping.validationErrors.price_usd.status" class="text-danger">{{ grouping.validationErrors.price_usd.message }}</span>
                         </div>
@@ -57,7 +57,7 @@
                                 :class="(showErrors || exceedsAvailableQty) && grouping.validationErrors.initial_qty.status ? 'text-danger' : null"
                             >Quantity *
                             </label>
-                            <input type="checkbox" v-model="forceMaxQuantity">
+                            <input type="checkbox" v-model="grouping.max_quantity">
                             <label>Max</label>
                         </div>
                         <div class="col-sm-6">
@@ -65,7 +65,7 @@
                                 type="number"
                                 min="0"
                                 v-model="grouping.initial_qty"
-                                :readonly="forceMaxQuantity"
+                                :readonly="grouping.max_quantity"
                                 class="form-control">
                             <span v-show="(showErrors || exceedsAvailableQty) && grouping.validationErrors.initial_qty.status" class="text-danger">{{ grouping.validationErrors.initial_qty.message }}</span>
                         </div>
@@ -137,13 +137,14 @@
                     </div>
                     <div v-show="!retrievingInventory">
                         <inventory-group
-                            v-for="group in inventory"
+                            v-for="group in inventory.groups"
                             :key="group.id"
                             :ukey=grouping.id
                             :group=group
                             group_type="inventory"
                             :display_footer_buttons="false"
                             :previously-selected-ids=selectedInventoryIds
+                            :selected-quantity-adjustment=selectedQuantityAdjustment
                             :use-available-qty=true
                             :disable-unavailable=true
                         ></inventory-group>
@@ -183,7 +184,8 @@
                 required: true
             },
             inventory: {
-                type: Array,
+                type: Object,
+                required: true,
             },
             restrictedInventoryIds: {
                 type: Array,
@@ -217,8 +219,6 @@
             return {
                 showingInventory: false,
                 deleting: false,
-                autoAddPriceUsd: true,
-                forceMaxQuantity: true,
                 exceedsAvailableQty: false,
             }
         },
@@ -280,30 +280,27 @@
                        !this.grouping.validationErrors.inventory.status &&
                        !this.grouping.validationErrors.image.status;
             },
+            selectedQuantityAdjustment: function () {
+                if (this.edit && this.grouping.locked) {
+                    return this.grouping.initial_qty;
+                } else {
+                    return 0;
+                }
+            },
         },
         watch: {
             grouping: {
                 handler: function (val) {
                     this.limitInitialQtyByMaxInitialQty();
-                    if (this.autoAddPriceUsd) {
+                    if (this.grouping.auto_add) {
                         this.grouping.price_usd = this.allInventoryPriceUsd;
                     }
-                    if (this.forceMaxQuantity) {
+                    if (this.grouping.max_quantity) {
                         this.grouping.initial_qty = this.maxInitialQty;
                     }
                     this.validateInput();
                 },
                 deep: true
-            },
-            autoAddPriceUsd: function (val) {
-                if (val === true) {
-                    this.grouping.price_usd = this.allInventoryPriceUsd;
-                }
-            },
-            forceMaxQuantity: function (val) {
-                if (val === true) {
-                    this.grouping.initial_qty = this.maxInitialQty;
-                }
             },
             validating: function (val) {
                 if (val) {
@@ -410,9 +407,9 @@
                     this.grouping.inventory.splice(index, 1);
                 }
             });
-            Array.min = function( array ){
-                return Math.min.apply( Math, array );
-            };
+            Array.min = function (array) {
+                return Math.min.apply(Math, array);
+            }
         },
         components: {
             'inventory-group': ListableGrouping,

@@ -47,7 +47,7 @@ class UpdateInventoryGroupingCommandHandler
         }
 
         foreach ($inventoryItems as $item) {
-            if (!$item->canSatisfyRequestedQuantityOf($command->getInitialQty())) {
+            if (!$item->canSatisfyRequestedQuantityOf($command->getInitialQty() - $command->getGrouping()->initial_qty)) {
                 throw new RequestedQuantityCannotBeSatisfiedException('Quantity of the outfit exceeds available quantity of one or more inventory items.');
             }
         }
@@ -59,14 +59,16 @@ class UpdateInventoryGroupingCommandHandler
             $grouping->locked = $command->isLocked();
             $grouping->price_usd = $command->getPrice();
             $grouping->initial_qty = $command->getInitialQty();
+            $grouping->auto_add = $command->isAutoAdd();
+            $grouping->max_quantity = $command->isMaxQuantity();
 
             $imageData = $command->getImage();
 
-            $currentFile = Files::whereKey($imageData['key'])->first();
-
-            if ($currentFile) {
-                $grouping->cover_photo_file_id = $currentFile->id;
+            if (is_numeric($imageData['id'])) {
+                $grouping->cover_photo_file_id = $imageData['id'];
             } else {
+                $grouping->files()->delete();
+
                 $newFile = Files::create([
                     'location' => $imageData['location'],
                     'key' => $imageData['key'],

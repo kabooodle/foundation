@@ -89,8 +89,9 @@ class InventoryGroupingsController extends AbstractApiController
                 array_get($groupingData, 'image', []),
                 array_get($groupingData, 'inventory', []),
                 array_get($groupingData, 'description'),
-                implode(',', array_get($groupingData, 'categories', []))
-            ));
+                implode(',', array_get($groupingData, 'categories', [])),
+                (bool)array_get($groupingData, 'auto_add'),
+                (bool)array_get($groupingData, 'max_quantity')));
 
             return $this->setData(['msg' => 'Outfit was created successfully', 'grouping' => $grouping->toJson()])->respond();
         } catch (ForbiddenUserAccessException $e) {
@@ -136,8 +137,9 @@ class InventoryGroupingsController extends AbstractApiController
                 array_get($groupingData, 'image', []),
                 array_get($groupingData, 'inventory', []),
                 array_get($groupingData, 'description'),
-                implode(',', array_get($groupingData, 'categories', []))
-            ));
+                implode(',', array_get($groupingData, 'categories', [])),
+                (bool)array_get($groupingData, 'auto_add'),
+                (bool)array_get($groupingData, 'max_quantity')));
 
             return $this->setData(['msg' => 'Outfit '.$updated->name.' updated', 'grouping' => $updated->toJson()])->respond();
         } catch (ForbiddenUserAccessException $e) {

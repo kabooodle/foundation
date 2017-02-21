@@ -150,6 +150,10 @@
                     return [];
                 },
             },
+            selectedQuantityAdjustment: {
+                type: Number,
+                required: false,
+            },
             useAvailableQty: {
                 type: Boolean,
                 default: false
@@ -175,6 +179,7 @@
                 self.group.subgroupings.forEach(function (subgroup) {
                     subgroup.listables.forEach(function (listable) {
                         if (self.previouslySelectedIds.indexOf(listable.id) > -1) {
+                            listable.available_qty += self.selectedQuantityAdjustment;
                             self.addListable(subgroup, listable);
                             self.clickSubgroupingDrawer(self.group, subgroup);
                         }

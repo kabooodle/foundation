@@ -27,7 +27,7 @@
                         :edit=edit
                         :key="grouping.id"
                         :grouping=grouping
-                        :inventory=inventoryGrouped
+                        :inventory=inventory
                         :restricted-inventory-ids=restrictedInventoryIds
                         :s3_key_url="s3_key_url"
                         v-on:duplicate-grouping="duplicateGrouping(grouping)"
@@ -84,8 +84,10 @@
                 ids: [],
                 groupings: [],
                 retrievingInventory: false,
-                inventory: [],
-                inventoryGrouped: [],
+                inventory: {
+                    'raw': [],
+                    'groups': [],
+                },
                 restrictedInventoryIds: [],
                 showErrors: false,
                 validating: false,
@@ -135,8 +137,8 @@
                 self.retrievingInventory = true;
                 this.$http.get(this.inventoryEndpoint)
                     .then(function (response) {
-                        self.inventory = response.data.data.inventory;
-                        self.inventoryGrouped = response.data.data.groupings;
+                        self.inventory.raw = response.data.data.inventory;
+                        self.inventory.groups = response.data.data.groupings;
                     }, function (response) {
 
                     }).finally(()=>{
@@ -169,6 +171,8 @@
                     'inventory': [],
                     'image': null,
                     'duplicating': false,
+                    'auto_add': true,
+                    'max_quantity': true,
                     'validationErrors': {
                         'name': {
                             'status': false,
@@ -205,6 +209,8 @@
                     'inventory': grouping.inventory,
                     'image': grouping.image,
                     'duplicating': false,
+                    'auto_add': grouping.auto_add,
+                    'max_quantity': grouping.max_quantity,
                     'validationErrors': {
                         'name': {
                             'status': grouping.validationErrors.name.status,
@@ -241,6 +247,8 @@
                     'inventory': this.editGrouping.inventory_items,
                     'image': this.editGrouping.coverimage,
                     'duplicating': false,
+                    'auto_add': this.editGrouping.auto_add,
+                    'max_quantity': this.editGrouping.max_quantity,
                     'validationErrors': {
                         'name': {
                             'status': false,
