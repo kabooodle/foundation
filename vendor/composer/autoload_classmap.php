@@ -16,6 +16,7 @@ return array(
     'AddFirstLastNameToUsersTbl' => $baseDir . '/resources/database/migrations/2016_12_12_020304_add_first_last_name_to_users_tbl.php',
     'AddFullNameToAddressesTable' => $baseDir . '/resources/database/migrations/2016_12_29_072632_add_full_name_to_addresses_table.php',
     'AddGuestToUsersTbl' => $baseDir . '/resources/database/migrations/2016_12_11_213948_add_guest_to_users_tbl.php',
+    'AddMaxQuantityAndAutoAddToInventoryGroupingsTable' => $baseDir . '/resources/database/migrations/2017_02_21_043150_add_max_quantity_and_auto_add_to_inventory_groupings_table.php',
     'AddObjectIdToAddressesTable' => $baseDir . '/resources/database/migrations/2017_01_01_013034_add_object_id_to_addresses_table.php',
     'AddSoftDeletesToParticipantsTable' => $baseDir . '/resources/database/migrations/2014_11_03_154831_add_soft_deletes_to_participants_table.php',
     'AddSoftdeletesToThreadsTable' => $baseDir . '/resources/database/migrations/2014_12_04_124531_add_softdeletes_to_threads_table.php',

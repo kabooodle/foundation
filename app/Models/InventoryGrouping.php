@@ -97,6 +97,8 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         'cover_photo_file_id' => null,
         'date_received' => '',
         'price_usd' => 0.0,
+        'auto_add' => true,
+        'max_quantity' => true,
     ];
 
     /**
@@ -112,6 +114,8 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         'initial_qty' => 'int',
         'date_received' => 'date',
         'price_usd' => 'double',
+        'auto_add' => 'boolean',
+        'max_quantity' => 'boolean',
     ];
 
     /**
@@ -127,6 +131,8 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         'barcode',
         'initial_qty',
         'cover_photo_file_id',
+        'auto_add',
+        'max_quantity',
         'date_received',
         'tags',
         'created_by',

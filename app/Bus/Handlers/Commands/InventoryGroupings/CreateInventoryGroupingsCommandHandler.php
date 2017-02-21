@@ -61,6 +61,8 @@ class CreateInventoryGroupingsCommandHandler
                 'locked' => $command->isLocked(),
                 'price_usd' => $command->getPrice(),
                 'initial_qty' => $command->getInitialQty(),
+                'auto_add' => $command->isAutoAdd(),
+                'max_quantity' => $command->isMaxQuantity(),
             ]);
 
             $grouping->inventoryItems()->sync($inventoryIds);
