@@ -12,7 +12,7 @@ return array(
      |
      */
 
-    'enabled' => false,
+    'enabled' => true,
 
     /*
      |--------------------------------------------------------------------------
@@ -83,12 +83,12 @@ return array(
      */
 
     'collectors' => array(
-        'phpinfo'         => true,  // Php version
-        'messages'        => true,  // Messages
+        'phpinfo'         => false,  // Php version
+        'messages'        => false,  // Messages
         'time'            => true,  // Time Datalogger
         'memory'          => true,  // Memory usage
         'exceptions'      => true,  // Exception displayer
-        'log'             => true,  // Logs from Monolog (merged in messages if enabled)
+        'log'             => false,  // Logs from Monolog (merged in messages if enabled)
         'db'              => true,  // Show database (PDO) queries and bindings
         'views'           => true,  // Views with their data
         'route'           => true,  // Current route information
@@ -135,7 +135,7 @@ return array(
             'data' => true,    //Note: Can slow down the application, because the data can be quite large..
         ),
         'route' => array(
-            'label' => true  // show complete route on bar
+            'label' => false  // show complete route on bar
         ),
         'logs' => array(
             'file' => null

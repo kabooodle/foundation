@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Api\Inventory;
 
+use DB;
 use Binput;
 use Bugsnag;
 use Exception;
@@ -13,12 +14,15 @@ use Illuminate\Http\Request;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Models\Listing\FacebookListingOptions;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Facebook\Exceptions\FacebookAuthenticationException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
+use Kabooodle\Transformers\Inventory\InventoryTransformer;
+use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
@@ -29,6 +33,8 @@ use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListing
  */
 class InventoryApiController extends AbstractApiController
 {
+    use PaginatesTrait;
+
     /**
      * @return \Illuminate\Http\Response
      */
@@ -88,6 +94,92 @@ class InventoryApiController extends AbstractApiController
         ];
 
         return $this->setData($data)->respond();
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detailed(Request $request)
+    {
+//        $data = $this->getUser()->inventory()->NoEagerLoads()->with(['sales', 'claims', 'views', 'style' => function($q){
+//            $q->orderBy('name', 'desc');
+//        }, 'styleSize' => function($q){
+//            $q->orderBy('sort_order', 'desc');
+//        }]);
+
+        $select = DB::select("
+            SELECT 
+            i.id,
+            CONCAT(s.name, ' - ', is.name) as item_name,
+            s.name as style_name,
+            is.name as size_name,
+            f.location as cover_photo_location,
+            CONCAT('$', IFNULL(SUM(c.accepted_price), 0)) AS accepted_price_sum,
+            CONCAT('$', IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0)) AS gross,
+            IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
+            IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
+            IFNULL(COUNT(DISTINCT(v.id)), 0) AS pageviews_count,
+            i.initial_qty as qty_on_hand
+            FROM inventory as i
+            LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
+            LEFT JOIN inventory_sizes as `is` ON is.id=i.inventory_sizes_id
+            LEFT JOIN claims as c ON c.listable_id = i.id AND c.listable_type =\"Kabooodle\\\Models\\\Inventory\"
+            LEFT JOIN claims as uc ON c.listable_id = i.id and c.listable_type = \"Kabooodle\\\Models\\\InventoryGrouping\"
+            LEFT JOIN views as v on v.viewable_id = i.id AND v.viewable_type = \"Kabooodle\\\Models\\\Inventory\"
+            INNER JOIN files as f ON f.id = i.cover_photo_file_id
+            WHERE i.user_id = ?
+            AND i.deleted_at is null
+            GROUP BY i.id
+            ORDER BY s.name, is.sort_order", [$this->getUser()->id]);
+
+
+//
+//        if ($request->has('style_id') && $request->get('style_id')) {
+//            $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
+//        }
+//        if ($request->has('size_id') && $request->get('size_id')) {
+//            $data = $data->whereIn('inventory_sizes_id', $request->get('size_id'));
+//        }
+//        if ($request->has('qty_0')) {
+//            $data = $data->where('initial_qty', 0);
+//        }
+//        if ($request->has('flashsale_id')) {
+//            $data = $data->whereHas('flashsales', function ($q) use ($request) {
+//                $q->whereIn('flashsales.id', $request->get('flashsale_id'));
+//            });
+//        }
+//        if ($request->has('has_sales')) {
+//            $data = $data->has('sales', '>', 0);
+//        }
+//        if ($request->has('has_claims')) {
+//            $data = $data->has('pendingClaims', '>', 0);
+//        }
+
+        // FIXME!!
+        // Solution: Rewrite query as raw sql.
+        // Problem: We are paginating the data in chunks of 50. However, we aren't calling paginate on the DB query,
+        // but instead on the collection.  This is so that we can sort alphabetically correctly, which can
+        // only be done on the results.  This pitfall of this is if we have a lot of data returned, for example 2000 items,
+        // we would be sorting all 2000 items, then chunking it into 50.
+        // If we used the native pagination on the query builder, it would only return chunks of 50 results at a time
+        // lessening the overhead.  However, sorting the results alphabeitcally doesn't work.
+//        $data = $data->get();
+
+
+//        $data = $selec->sortBy(function($post) {
+//            return sprintf('%-12s%s', $post->style->name, $post->styleSize->sort_order);
+//        });
+        $data = $this->paginateData($request, collect($select));
+
+        return \Response::json($data);
+
+//        $view = \Response::json(fractal()
+//            ->collection($data)
+//            ->transformWith(new InventoryTransformer())
+//            ->paginateWith(new IlluminatePaginatorAdapter($data)));
+
     }
 
     /**

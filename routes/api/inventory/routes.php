@@ -8,6 +8,10 @@ $api->get('users/{username}/inventory', [
     'as' => 'inventory.index',
     'uses' =>  \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@index',
 ]);
+$api->get('users/{username}/inventory/detailed', [
+    'as' => 'inventory.detailed.index',
+    'uses' =>  \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@detailed',
+]);
 $api->get('inventory/{inventoryid}/comments', [
     'as' => 'inventory.comments.index',
     'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryCommentsController::class.'@index'
