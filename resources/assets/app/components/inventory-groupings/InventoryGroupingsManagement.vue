@@ -89,7 +89,7 @@
                 restrictedInventoryIds: [],
                 showErrors: false,
                 validating: false,
-                allGroupingInputIsValid: false,
+                allGroupingInputIsValid: true,
             }
         },
         created: function () {
@@ -287,7 +287,6 @@
                 self.saving = true;
                 this.$http.post(this.saveInventoryGroupingsEndpoint, this.saveGroupingsData)
                     .then(function (response) {
-                        console.log(response);
                         notify({
                             'text': 'Your outfit' + (this.groupings.length > 1 ? 's were' : ' was') +' saved!',
                             'type': 'success'
@@ -300,9 +299,10 @@
                             window.location.href = self.inventoryGroupingsIndexRoute;
                         }, {text: 'Would you like to create another outfit?'});
                     }, function (response) {
-                        console.log(response);
+                        self.showErrors = true;
+                        self.handleValidationErrorsResponse(response);
                         notify({
-                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'text': response.body.data.msg,
                             'type': 'error'
                         });
                     }).finally(()=>{
@@ -319,8 +319,10 @@
                             'type': 'success'
                         });
                     }, function (response) {
+                        self.showErrors = true;
+                        self.handleValidationErrorsResponse(response);
                         notify({
-                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'text': response.body.data.msg,
                             'type': 'error'
                         });
                     }).finally(()=>{
@@ -360,7 +362,15 @@
                 }
             },
             updateValidationStatus: function (e) {
-                this.allGroupingInputIsValid = e.status;
+                this.allGroupingInputIsValid = true;
+            },
+            handleValidationErrorsResponse: function (response) {
+                if (response.body.data.validationErrors) {
+                    for (var input in response.body.data.validationErrors) {
+                        this.groupings[0].validationErrors[input].status = true;
+                        this.groupings[0].validationErrors[input].message = response.body.data.validationErrors[input][0];
+                    }
+                }
             },
         },
         components: {

@@ -101,7 +101,7 @@ class InventoryGroupingsController extends AbstractApiController
             return $this->setStatusCode(401)->setData(['msg' => $e->getMessage()])->respond();
         } catch (ValidationException $e) {
             return $this->setStatusCode(401)
-                ->setData(['msg' => $e->validator->messages()])
+                ->setData(['msg' => 'There appears to be an issue with your input. Please correct the issue(s) an try again.', 'validationErrors' => $e->validator->messages()])
                 ->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)
@@ -148,7 +148,7 @@ class InventoryGroupingsController extends AbstractApiController
             return $this->setStatusCode(401)->setData(['msg' => $e])->respond();
         } catch (ValidationException $e) {
             return $this->setStatusCode(401)
-                ->setData(['msg' => $e->validator->messages()])
+                ->setData(['msg' => 'There appears to be an issue with your input. Please correct the issue(s) an try again.', 'validationErrors' => $e->validator->messages()])
                 ->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)
