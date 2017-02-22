@@ -92,8 +92,6 @@ new Vue({
         // },
 
         performSearch(){
-
-
             this.moreParams = {
                 filter: this.search_filter
             }
@@ -113,6 +111,16 @@ new Vue({
             this.totals.pageviews = body.pageviews_count;
             this.totals.pending_sales = body.pending_sales_count;
             this.totals.qty_on_hand = body.qty_on_hand;
+            $(function(){
+                setTimeout(function(){
+                    $("table:not(.no-tablesaw)").each(function(){
+                        var currentTable = $(this);
+                        currentTable.addClass('tablesaw tablesaw-stack');
+                        currentTable.attr("data-tablesaw-mode", "stack");
+                        $(document.body).trigger( "enhance.tablesaw" );
+                    });
+                }, 400);
+            });
         },
         onPaginationData (paginationData) {
             this.$refs.pagination.setPaginationData(paginationData)

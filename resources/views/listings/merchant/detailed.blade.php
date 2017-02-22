@@ -21,8 +21,8 @@
             <h4>Listed Inventory Items</h4>
         </div>
         <div class="box-divider"></div>
-        <div class="box-body">
-            <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
+        <div class="box-body" data>
+            <table class="table table-condensed table-as-list white">
                 <thead>
                 <tr>
                     <th scope="col">Item</th>

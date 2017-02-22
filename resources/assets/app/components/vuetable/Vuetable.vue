@@ -5,12 +5,12 @@
             <template v-for="field in fields">
                 <template v-if="field.visible">
                     <template v-if="isSpecialField(field.name)">
-                        <th v-if="extractName(field.name) == '__checkbox'"
+                        <th scope="col" v-if="extractName(field.name) == '__checkbox'"
                             :class="['vuetable-th-checkbox-'+trackBy, field.titleClass]">
                             <input type="checkbox" @change="toggleAllCheckboxes(field.name, $event)"
                                    :checked="checkCheckboxesState(field.name)">
                         </th>
-                        <th v-if="extractName(field.name) == '__component'"
+                        <th scope="col" v-if="extractName(field.name) == '__component'"
                             @click="orderBy(field, $event)"
                             :class="['vuetable-th-component-'+trackBy, field.titleClass, {'sortable': isSortable(field)}]">
                             {{ field.title || '' }}
@@ -18,7 +18,7 @@
                                :class="sortIcon(field)"
                                :style="{opacity: sortIconOpacity(field)}"></i>
                         </th>
-                        <th v-if="extractName(field.name) == '__slot'"
+                        <th scope="col" v-if="extractName(field.name) == '__slot'"
                             @click="orderBy(field, $event)"
                             :class="['vuetable-th-slot-'+extractArgs(field.name), field.titleClass, {'sortable': isSortable(field)}]">
                             {{ field.title || '' }}
@@ -26,15 +26,15 @@
                                :class="sortIcon(field)"
                                :style="{opacity: sortIconOpacity(field)}"></i>
                         </th>
-                        <th v-if="extractName(field.name) == '__sequence'"
+                        <th scope="col" v-if="extractName(field.name) == '__sequence'"
                             :class="['vuetable-th-sequence', field.titleClass || '']" v-html="field.title || ''">
                         </th>
-                        <th v-if="notIn(extractName(field.name), ['__sequence', '__checkbox', '__component', '__slot'])"
+                        <th scope="col" v-if="notIn(extractName(field.name), ['__sequence', '__checkbox', '__component', '__slot'])"
                             :class="['vuetable-th-'+field.name, field.titleClass || '']" v-html="field.title || ''">
                         </th>
                     </template>
                     <template v-else>
-                        <th @click="orderBy(field, $event)"
+                        <th scope="col" @click="orderBy(field, $event)"
                             :id="'_' + field.name"
                             :class="['vuetable-th-'+field.name, field.titleClass,  {'sortable': isSortable(field)}]">
                             {{  getTitle(field) }}&nbsp;
