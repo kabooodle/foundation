@@ -1,5 +1,4 @@
 <tr>
-    <td><input type="checkbox" class="listing-item-checkbox" data-id="{{ $item->id }}" value="{{ $item->id }}"></td>
     <td> <div class="avatar-thumbnail-container">
             <div class="avatar-thumbnail _32">
                 <img src="{{ $item->listedItem->cover_photo->location }}">

@@ -16,6 +16,7 @@
     <td>{{ $listing->items_count }}</td>
     <td>{{ $listing->accepted_sales_count }}</td>
     <td>{{ $listing->pending_sales_count }}</td>
+        <td>{{ $listing->pageviews_count }}</td>
     <td>${{ $listing->gross }}</td>
     <td>@if($listing->type == Kabooodle\Models\Listings::TYPE_CUSTOM) n/a @else {!! listingStatusHtml($listing->status) !!} @endif</td>
     @unless(isset($_excludeActionCol))

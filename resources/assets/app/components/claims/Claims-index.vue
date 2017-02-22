@@ -3,14 +3,14 @@
         <tr
                 v-for="claim in all_claims"
                 :data-claim-id="claim.uuid" >
-            <td><input
-                        @change="selectedClaimsChanged(claim, $event)"
-                        type="checkbox"
-                        class="claim_checks"
-                        :data-id="claim.id"
-                        name="claims[]"
-                        :value="claim.id">
-            </td>
+            <!--<td><input-->
+                        <!--@change="selectedClaimsChanged(claim, $event)"-->
+                        <!--type="checkbox"-->
+                        <!--class="claim_checks"-->
+                        <!--:data-id="claim.id"-->
+                        <!--name="claims[]"-->
+                        <!--:value="claim.id">-->
+            <!--</td>-->
             <td>
                 <div class="avatar-thumbnail-container">
                     <div class="avatar-thumbnail _32">

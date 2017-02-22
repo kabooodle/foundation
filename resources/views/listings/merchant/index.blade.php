@@ -27,8 +27,9 @@
                         <th scope="col">Items</th>
                         <th scope="col">Sales</th>
                         <th scope="col">Pending</th>
+                        <th scope="col">Views</th>
                         <th scope="col">Gross</th>
-                        <th scope="col">Status</th>
+                        <th scope="col">Listing Status</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>

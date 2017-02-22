@@ -1,5 +1,5 @@
 
-<td><input type="checkbox" class="shipment_checkbox"></td>
+{{--<td><input type="checkbox" class="shipment_checkbox"></td>--}}
 <td>
     <div class="avatar-thumbnail-container">
         <div class="avatar-thumbnail _32">

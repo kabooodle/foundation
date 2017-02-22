@@ -3,6 +3,8 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
+import DetailedTotals from './DetailedTotals.vue';
+import Spinny from '../Spinner.vue';
 import Vuetable from '../vuetable/Vuetable.vue';
 import VuetablePagination from '../vuetable/VuetablePagination.vue';
 import VuetablePaginationInfo from '../vuetable/VuetablePaginationInfo.vue';
@@ -10,12 +12,28 @@ import VuetablePaginationInfo from '../vuetable/VuetablePaginationInfo.vue';
 new Vue({
     el: '#manage_inventory',
     data: {
+        search_filter: null,
+        moreParams: {},
+        actions: {
+            loading: true,
+            loaded: false
+        },
+        totals: {
+            gross: 0,
+            pageviews: 0,
+            qty_on_hand: 0,
+            accepted_sales: 0,
+            pending_sales: 0
+        },
         columns: [
             {
                 name: 'name_alt',
                 title: 'Item',
             },
-            'qty_on_hand',
+            {
+                name: 'qty_on_hand',
+                title: 'Qty on hand',
+            },
             {
                 name: 'accepted_sales_count',
                 title: 'Accepted sales',
@@ -72,6 +90,30 @@ new Vue({
         //
         //     return transformed;
         // },
+
+        performSearch(){
+
+
+            this.moreParams = {
+                filter: this.search_filter
+            }
+            Vue.nextTick( () => this.$refs.vuetable.refresh() )
+        },
+        onLoaded(){
+            this.actions.loading = false;
+            this.actions.loaded = true;
+        },
+        onLoading(){
+            this.actions.loading = true;
+        },
+        onLoadSuccess(response){
+            let body = response.body.totals;
+            this.totals.accepted_sales = body.accepted_sales_count;
+            this.totals.gross = body.gross;
+            this.totals.pageviews = body.pageviews_count;
+            this.totals.pending_sales = body.pending_sales_count;
+            this.totals.qty_on_hand = body.qty_on_hand;
+        },
         onPaginationData (paginationData) {
             this.$refs.pagination.setPaginationData(paginationData)
             this.$refs.paginationInfo.setPaginationData(paginationData)
@@ -97,6 +139,8 @@ new Vue({
         }
     },
     components: {
+        'detailed-totals' : DetailedTotals,
+        'spinny' : Spinny,
         Vuetable,
         VuetablePagination,
         VuetablePaginationInfo,

@@ -25,7 +25,6 @@
             <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
                 <thead>
                 <tr>
-                    <th scope="col"><input type="checkbox" @change="selectAll"></th>
                     <th scope="col">Item</th>
                     <th scope="col">Sales</th>
                     <th scope="col">Pending</th>
@@ -37,7 +36,7 @@
                         @if($listing->type == Kabooodle\Models\Listings::TYPE_FACEBOOK)
                         Facebook
                             @endif
-                            Status
+                            Listing Status
                     </th>
                     @endif
                     <th></th>
