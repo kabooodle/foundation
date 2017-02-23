@@ -11,7 +11,7 @@
                     facebook_refresh_endpoint="{{ apiRoute('social.refresh') }}"
                     save_endpoint="{{ apiRoute('listings.store') }}"
                     :show_select_buttons="true"
-                    endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"
+                    endpoint="{{ apiRoute('listables.index', [webUser()->username]) }}"
             ></create-listing>
 
 @endsection
