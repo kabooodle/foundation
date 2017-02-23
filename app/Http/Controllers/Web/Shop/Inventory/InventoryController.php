@@ -50,7 +50,7 @@ class InventoryController extends Controller
             return redirect('/');
         }
 
-        return $this->view('inventory.detailed');
+        return $this->view('inventory.index');
     }
 
     /**
@@ -61,7 +61,7 @@ class InventoryController extends Controller
      */
     public function simple(Request $request, $username)
     {
-        return $this->view('inventory.index');
+        return $this->view('inventory.simple');
     }
 
     /**

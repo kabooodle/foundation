@@ -272,24 +272,24 @@ abstract class AbstractListingModel extends BaseEloquentModel
      */
     public static function getStyleGroupings(string $listingUuid)
     {
-        return DB::table('inventory_type_styles')
-            ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
-            ->join('inventory_sizes', 'inventory_sizes.id', '=', 'inventory.inventory_sizes_id')
-            ->join('listing_items', 'listing_items.listable_id', '=', 'inventory.id')
+        return DB::table('v_listables')
+            ->leftJoin('inventory_type_styles', 'inventory_type_styles.id', '=', 'v_listables.inventory_type_styles_id')
+            ->leftJoin('inventory_sizes', 'inventory_sizes.id', '=', 'v_listables.inventory_sizes_id')
+            ->join('listing_items', 'listing_items.listable_id', '=', 'v_listables.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listings.uuid', $listingUuid)
             ->whereNull('listing_items.deleted_at')
             ->whereNull('listings.deleted_at')
-            ->whereNull('inventory.deleted_at')
-            ->groupBy('inventory.id')
+            ->whereNull('v_listables.deleted_at')
+            ->groupBy('v_listables.uuid')
             ->groupBy('inventory_type_styles_id')
             ->groupBy('inventory_sizes_id')
-            ->select([
-                'inventory_sizes.id as size_id',
-                'inventory_type_styles.id as style_id',
-                'inventory_type_styles.name as style_name',
-                'inventory_sizes.name as size_name'
-            ])
+            ->selectRaw("
+                inventory_sizes.id as size_id, 
+                IFNULL(inventory_type_styles.id, 'outfits') as style_id,
+                IFNULL(inventory_type_styles.name, 'Outfits') as style_name,
+                inventory_sizes.name as size_name
+            ")
             ->get();
     }
 

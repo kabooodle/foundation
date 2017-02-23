@@ -36,9 +36,6 @@
                         <a href="{{ route('merchant.listings.show', [$listing->uuid]) }}" class="dropdown-item">Manage albums</a>
                     @endif
                     <div class="divider"></div>
-                    @if(Kabooodle\Models\Listings::isStillEditable($listing->status) && $listing->type !== Kabooodle\Models\Listings::TYPE_CUSTOM )
-                        <a href="{{ route('merchant.listings.edit', [$listing->uuid]) }}" class="dropdown-item">Edit</a>
-                    @endif
                     <button type="button" @click="deleteListingItem('{{ apiRoute('listings.destroy', [$listing->id]) }}', {{ $listing->id }}, $event)" class="text-danger bg-danger-hover text-white-hover dropdown-item">Delete</button>
                     @if($listing->type == Kabooodle\Models\Listings::TYPE_FACEBOOK && ! in_array($listing->status,['deleted', 'queued_delete']))
                         <button type="button" @click="deleteFacebookListing('{{ apiRoute('listings.facebook.destroy', [$listing->id]) }}', {{ $listing->id }}, $event)" class="text-danger bg-danger-hover text-white-hover dropdown-item">Delete from Facebook</button>

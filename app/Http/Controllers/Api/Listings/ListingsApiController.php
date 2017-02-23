@@ -16,6 +16,7 @@ use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleNewListingsCommand;
 use Kabooodle\Foundation\Exceptions\Listings\ListingExceedsHourlyLimitException;
+use Kabooodle\Models\ListingItemGrouping;
 use Kabooodle\Models\Listings;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Models\Listing\FacebookListingOptions;
@@ -75,7 +76,13 @@ class ListingsApiController extends AbstractApiController
 
             if ($style_query) {
                 $items = $items->filter(function ($item) use ($style_query) {
-                    return in_array($item->listedItem->inventory_type_styles_id, $style_query);
+                    if (in_array($item->listedItem->inventory_type_styles_id, $style_query)
+                        || (in_array('outfits', $style_query) && $item->subclass_name == ListingItemGrouping::class)) {
+
+                        return $item;
+
+                    }
+                    return false;
                 });
             }
 
