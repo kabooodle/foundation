@@ -27,8 +27,9 @@ new Vue({
         },
         columns: [
             {
-                name: 'name_alt',
+                name: 'name_with_cover_photo',
                 title: 'Item',
+                callback: 'nameWithImg'
             },
             {
                 name: 'qty_on_hand',
@@ -48,7 +49,7 @@ new Vue({
             },
             {
                 name: 'accepted_price_sum',
-                title: 'gross',
+                title: 'Gross',
             },
         ],
         css: {
@@ -90,7 +91,16 @@ new Vue({
         //
         //     return transformed;
         // },
+        nameWithImg(val){
+            let fields = val.split('::');
 
+            return '<div class="avatar-thumbnail-container"> ' +
+                '<div class="avatar-thumbnail _32 m-r-xs"> ' +
+                '<img src="'+fields[1]+'"> ' +
+                '</div> ' +
+                '<span>'+fields[0]+'</span> ' +
+                '</div>';
+        },
         performSearch(){
             this.moreParams = {
                 filter: this.search_filter

@@ -132,6 +132,12 @@
                         <a href="{{ route('flashsales.index') }}"
                            class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Browse</a>
 
+                            @if(webUser())
+                                <div class="divider"></div>
+                            <a href="{{ route('flashsales.index') }}"
+                               class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Manage Active Sales</a>
+                            @endif
+
                     </div>
                 </li>
             </ul>

@@ -2,7 +2,7 @@
 @extends('layouts.full', ['contentId' => 'manage_inventory'])
 
 @section('body-menu')
-    <div class="text-center center-block">
+    <div class="pull-right">
         <a
                 href="{{ route('shop.inventory.create', [webUser()->username]) }}"
                 class="btn primary btn-sm">Add Inventory
@@ -15,6 +15,7 @@
                 href="{{ route('merchant.listings.create') }}"
                 class="btn primary btn-sm">Create Sales Listings
         </a>
+        <a href="{{ route('shop.inventory.index', [webUser()->username]) }}" class="btn white btn-sm">Detailed View</a>
     </div>
 @endsection
 

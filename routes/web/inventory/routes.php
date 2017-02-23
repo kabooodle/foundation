@@ -18,9 +18,9 @@ Route::group(['middleware' => ['auth']], function () {
             'as' => 'shop.inventory.query',
             'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryController::class.'@queryIndex'
         ]);
-        Route::get('shop/{username}/inventory/detailed/show', [
-            'as' =>'shop.inventory.detailed.show',
-            'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryController::class.'@detailed'
+        Route::get('shop/{username}/inventory-simple', [
+            'as' =>'shop.inventory.overview.show',
+            'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryController::class.'@simple'
         ]);
         Route::resource('shop.claims', \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryClaimsController::class, [
             'only' => ['index', 'show', 'update', 'destroy'],

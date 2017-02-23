@@ -154,6 +154,7 @@ class InventoryApiController extends AbstractApiController
             i.name,
             i.name_alt,
             CONCAT(i.name_alt,'_', i.id) as name_with_id,
+            CONCAT(i.name_alt, '::', f.location) as name_with_cover_photo,
             f.location as cover_photo_location,
             CONCAT('$', IFNULL(SUM(c.accepted_price), 0)) AS accepted_price_sum,
             CONCAT('$', IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0)) AS gross,
