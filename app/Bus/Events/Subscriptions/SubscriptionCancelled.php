@@ -4,7 +4,7 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Events\User;
+namespace Kabooodle\Bus\Events\Subscriptions;
 
 use Kabooodle\Models\User;
 use Laravel\Cashier\Subscription;

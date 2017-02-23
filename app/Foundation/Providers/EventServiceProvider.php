@@ -112,6 +112,14 @@ class EventServiceProvider extends ServiceProvider
             \Kabooodle\Bus\Handlers\Events\Social\UserFacebookCredentialsRevokedEventHandler::class
         ],
 
+        // SUBSCRIPTION EVENTS
+        \Kabooodle\Bus\Events\Subscriptions\InvoicePaymentFailed::class => [
+            \Kabooodle\Bus\Handlers\Events\Subscription\NotifyUserInvoicePaymentFailed::class
+        ],
+        \Kabooodle\Bus\Events\Subscriptions\SubscriptionCancelled::class => [
+            \Kabooodle\Bus\Handlers\Events\Subscription\NotifyUserSubscriptionCancelled::class
+        ],
+
         // USER EVENTS
         \Kabooodle\Bus\Events\User\UserWasCreatedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\User\AddNewUserToGenericTrial::class,

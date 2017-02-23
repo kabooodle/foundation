@@ -8,10 +8,10 @@ namespace Kabooodle\Http\Controllers\Web\Webhooks;
 
 use Kabooodle\Models\User;
 use Symfony\Component\HttpFoundation\Response;
-use Kabooodle\Bus\Events\User\SubscriptionCancelled;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Kabooodle\Bus\Events\User\UserSubscriptionCameOffTrial;
 use Kabooodle\Bus\Events\Subscriptions\InvoicePaymentFailed;
+use Kabooodle\Bus\Events\Subscriptions\SubscriptionCancelled;
 
 /**
  * Class StripeWebhooksController
