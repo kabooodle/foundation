@@ -84,38 +84,6 @@ class InventoryApiController extends AbstractApiController
             }
         }
 
-        $outfits = InventoryGrouping::whereUserId($this->getUser()->id)->orderBy('name')->get();
-
-        if ($outfits->count() > 0) {
-            $id = $outfits->count() + 1;
-            $groupings[$id] = [
-                'name' => 'Outfits',
-                'total' => $outfits->count(),
-                'id' => $id,
-            ];
-            foreach ($outfits as $item) {
-                $groupings[$id]['subgroupings'][$item->id]['id'] =$item->id;
-                $groupings[$id]['subgroupings'][$item->id]['order'] = 0;
-                $groupings[$id]['subgroupings'][$item->id]['name'] = $item->name;
-                $groupings[$id]['subgroupings'][$item->id]['total_qty'] = $item->available_quantity;
-                $groupings[$id]['subgroupings'][$item->id]['listables'][] = [
-                    'id' => $item->id,
-                    'name_uuid' => $item->name_uuid,
-                    'name' => $item->name,
-                    'name_alt' => 'outfits',
-                    'uuid' => $item->uuid,
-                    'initial_qty' => $item->initial_qty,
-                    'available_qty' => $item->available_quantity,
-                    'price_usd' => $item->price_usd,
-                    'wholesale_price_usd' => $item->wholesale_price_usd,
-                    'cover_photo' => $item->cover_photo,
-                    'listable_item_class' => get_class($item),
-                    'listing_item_class' => $item->getListingItemClass(),
-                    'hash_id' => $item->hash_id,
-                ];
-            }
-        }
-
         sort($groupings);
 
         $data = [

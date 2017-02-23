@@ -30,8 +30,15 @@
                             <label
                                 class="form-control-label"
                                 :class="showErrors && grouping.validationErrors.price_usd.status ? 'text-danger' : null">Price *</label>
-                            <input type="checkbox" v-model="grouping.auto_add">
-                            <label>Auto Add</label>
+                            <div class="checkbox m-b-0 checkbox-slider--b-flat">
+                                <label>
+                                    <input
+                                        v-model="grouping.auto_add"
+                                        data-type="magic-toggler"
+                                        type="checkbox" />
+                                    <span class="text-sm">Auto Add</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="col-sm-6">
                             <input
@@ -45,7 +52,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="form-control-label col-sm-3">Wholesale Price</label>
+                        <label class="form-control-label col-sm-3">Accum Wholesale Price</label>
                         <div class="col-sm-6">
                             <div class="form-control" style="border: none">{{ allInventoryWholesalePriceUsd }}</div>
                         </div>
@@ -57,8 +64,15 @@
                                 :class="(showErrors || exceedsAvailableQty) && grouping.validationErrors.initial_qty.status ? 'text-danger' : null"
                             >Quantity *
                             </label>
-                            <input type="checkbox" v-model="grouping.max_quantity">
-                            <label>Max</label>
+                            <div class="checkbox m-b-0 checkbox-slider--b-flat">
+                                <label>
+                                    <input
+                                        v-model="grouping.max_quantity"
+                                        data-type="magic-toggler"
+                                        type="checkbox" />
+                                    <span class="text-sm">Max</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="col-sm-6">
                             <input
