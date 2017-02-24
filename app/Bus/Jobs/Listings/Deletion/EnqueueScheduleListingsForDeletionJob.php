@@ -4,26 +4,27 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Jobs;
+namespace Kabooodle\Bus\Jobs\Listings\Deletion;
 
 use Carbon\Carbon;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
 use Kabooodle\Libraries\QueueHelper;
+use Kabooodle\Bus\Jobs\AbstractEnqueueJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Kabooodle\Bus\Events\Listings\ListingItemWasQueued;
 
 /**
- * Class EnqueueScheduleListingsJob
+ * Class EnqueueScheduleListingsForDeletionJob
  */
-class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQueue
+class EnqueueScheduleListingsForDeletionJob extends AbstractEnqueueJob implements ShouldQueue
 {
     /**
-     * @var array
+     * @var Collection
      */
-    public $listingIds;
+    public $listingModels;
 
     /**
      * @var int
@@ -36,11 +37,11 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
     public $timestamp;
 
     /**
-     * @param array $listingIds
+     * @param Collection $listingModels
      */
-    public function __construct(array $listingIds)
+    public function __construct(Collection $listingModels)
     {
-        $this->listingIds = $listingIds;
+        $this->listingModels = $listingModels;
     }
 
     /**
@@ -72,7 +73,7 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
         $listingItems = collect([]);
 
         /** @var Collection $listingModels */
-        $listingModels = Listings::whereIn('id', $this->listingIds)->get();
+        $listingModels = $this->listingModels;
 
         // We shuffle just to randomize the parent listings and keep our process as random as possible.
         $shuffledListings = $listingModels->shuffle();

@@ -238,6 +238,23 @@ abstract class AbstractListingModel extends BaseEloquentModel
     }
 
     /**
+     * @param Carbon $startTime
+     * @param Carbon $endTime
+     *
+     * @return mixed
+     */
+    public static function getScheduledForDeletionListings(Carbon $startTime, Carbon $endTime)
+    {
+        return Listings::noEagerLoads()
+            ->facebook()
+            ->where('scheduled_for_deletion', '>=', $startTime->format('Y-m-d H:i:s'))
+            ->where('scheduled_for_deletion', '<=', $endTime->format('Y-m-d H:i:s'))
+            ->where('status', '=', self::STATUS_SCHEDULED_DELETE)
+            ->randomize()
+            ->get();
+    }
+
+    /**
      * @param array $listingIds
      * @param Carbon $timestamp
      * @param string $status

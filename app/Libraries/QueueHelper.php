@@ -33,14 +33,25 @@ class QueueHelper
     ];
 
     /**
-     * @var array
-     */
+ * @var array
+ */
     public static $Q_FBSCHEDULER = [
         'iron-facebook-scheduler',
         'iron-facebook-scheduler-b',
         'iron-facebook-scheduler-c',
         'iron-facebook-scheduler-d',
         'iron-facebook-scheduler-e'
+    ];
+
+    /**
+     * @var array
+     */
+    public static $Q_FBSCHEDULER_DELETE = [
+        'iron-facebook-scheduler-delete',
+        'iron-facebook-scheduler-delete-b',
+        'iron-facebook-scheduler-delete-c',
+        'iron-facebook-scheduler-delete-d',
+        'iron-facebook-scheduler-delete-e'
     ];
 
     /**
@@ -98,6 +109,14 @@ class QueueHelper
     public static function pickFacebookScheduler()
     {
         return self::makeRandomSelection(self::$Q_FBSCHEDULER);
+    }
+
+    /**
+     * @return string
+     */
+    public static function pickFacebookSchedulerDelete()
+    {
+        return self::makeRandomSelection(self::$Q_FBSCHEDULER_DELETE);
     }
 
     /**
