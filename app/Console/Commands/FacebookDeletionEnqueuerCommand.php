@@ -10,11 +10,12 @@ use Carbon\Carbon;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Illuminate\Console\Command;
+use Kabooodle\Models\ListingItems;
 use Kabooodle\Libraries\QueueHelper;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Kabooodle\Bus\Jobs\EnqueueScheduleListingsJob;
+use Kabooodle\Services\Listings\ListingsService;
 use Kabooodle\Bus\Jobs\Listings\Deletion\EnqueueScheduleListingsForDeletionJob;
+use Kabooodle\Bus\Jobs\Listings\Deletion\EnqueueScheduleListingItemForDeletionJob;
 
 /**
  * Class FacebookDeletionEnqueuerCommand
@@ -22,6 +23,11 @@ use Kabooodle\Bus\Jobs\Listings\Deletion\EnqueueScheduleListingsForDeletionJob;
 class FacebookDeletionEnqueuerCommand extends Command
 {
     use DispatchesJobs;
+
+    /**
+     * @var
+     */
+    protected $listingService;
 
     /**
      * The name and signature of the console command.
@@ -36,11 +42,6 @@ class FacebookDeletionEnqueuerCommand extends Command
     public $timestamp;
 
     /**
-     * @var string
-     */
-    public $queueConnectionGroupName = 'iron-facebook-scheduler';
-
-    /**
      * This is step 1 of 3.
      *
      * Step 1 is FacebookEnqueuerCommand
@@ -51,16 +52,23 @@ class FacebookDeletionEnqueuerCommand extends Command
     {
         $this->timestamp = Carbon::now();
 
-        $listings = $this->getScheduledListings();
+        $this->handleListings();
 
+        $this->handleListingItems();
+    }
+
+    /**
+     * Handles Listings that have been scheduled for deletion.
+     */
+    public function handleListings()
+    {
+        $listings = $this->getScheduledListings();
         $this->output->writeln($listings->count().' Listings found.');
         if ($listings && $listings->count() > 0) {
-
-            $job = $this->buildJob($listings);
-
-            $this->dispatch($job);
-
             $listingsIds = $listings->pluck('id')->toArray();
+
+            $job = $this->buildListingsJob($listingsIds);
+            $this->dispatch($job);
 
             // Update the Queues status to processing.
             Listings::updateListingsStatus(
@@ -70,21 +78,72 @@ class FacebookDeletionEnqueuerCommand extends Command
             );
         }
 
-        $this->output->writeln('Completed');
+        $this->output->writeln('Listings Completed');
+
+        return;
+    }
+
+    public function handleListingItems()
+    {
+        $listingItems = $this->getScheduledListingItems();
+        $this->output->writeln($listingItems->count().' Listing Items found.');
+
+        if ($listingItems && $listingItems->count() > 0) {
+            $listingItemIds = $listingItems->pluck('id')->toArray();
+            // Listing Items are queued one by one, not in a batch.
+            foreach($listingItemIds as $listingItemId) {
+                $job = $this->buildListingItemJob($listingItemId);
+                $this->dispatch($job);
+            }
+            // Update the Queues status to processing.
+            ListingItems::updateListingsStatus(
+                $listingItemIds,
+                $this->timestamp,
+                Listings::STATUS_QUEUED_DELETE
+            );
+        }
+
+        $this->output->writeln('Listing Items Completed');
 
         return;
     }
 
     /**
-     * @param Collection $listings
+     * @param array $listingIds
      *
-     * @return EnqueueScheduleListingsJob
+     * @return EnqueueScheduleListingsForDeletionJob
      */
-    public function buildJob(Collection $listings)
+    public function buildListingsJob(array $listingIds)
     {
         $queueConnectionName = QueueHelper::pickFacebookSchedulerDelete();
 
-        $job = new EnqueueScheduleListingsForDeletionJob($listings);
+        $job = new EnqueueScheduleListingsForDeletionJob($listingIds);
+        $job->onConnection($queueConnectionName);
+
+        // Store details about the job in the DB for our own personal records.
+        $localQueueDb = Queues::create([
+            'queue' => $queueConnectionName,
+            'queue_group' => $queueConnectionName,
+            'payload' => serialize($job),
+            'status' => Queues::STATUS_QUEUED,
+            'status_updated_at' => $this->timestamp
+        ]);
+
+        $job->setQueuesId($localQueueDb->id);
+
+        return $job;
+    }
+
+    /**
+     * @param int $listingItemId
+     *
+     * @return EnqueueScheduleListingItemForDeletionJob
+     */
+    public function buildListingItemJob(int $listingItemId)
+    {
+        $queueConnectionName = QueueHelper::pickFacebookSchedulerDelete();
+
+        $job = new EnqueueScheduleListingItemForDeletionJob($listingItemId);
         $job->onConnection($queueConnectionName);
 
         // Store details about the job in the DB for our own personal records.
@@ -104,16 +163,28 @@ class FacebookDeletionEnqueuerCommand extends Command
     /**
      * @return mixed
      */
+    public function getScheduledListingItems()
+    {
+        return $this->getListingServiceInstance()->getScheduledForDeletionListingItems();
+    }
+
+    /**
+     * @return mixed
+     */
     public function getScheduledListings()
     {
-        $cachedNow = Carbon::now()->getTimestamp();
+        return $this->getListingServiceInstance()->getScheduledForDeletionListings();
+    }
 
-        // Set the start time to now
-        $startTime = Carbon::createFromTimestamp($cachedNow);
+    /**
+     * @return ListingsService
+     */
+    public function getListingServiceInstance()
+    {
+        if (!$this->listingService) {
+            $this->listingService = app()->make(ListingsService::class);
+        }
 
-        // Our endtime lookahead is 4 minutes, 59 seconds.
-        $endTime = Carbon::createFromTimestamp($cachedNow)->addMinutes(4)->addSeconds(59);
-
-        return Listings::getScheduledForDeletionListings($startTime, $endTime);
+        return $this->listingService;
     }
 }

@@ -68,6 +68,7 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
      */
     protected $dates = [
         'status_updated_at',
+        'scheduled_for_deletion',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -97,6 +98,7 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
         'fb_album_node_id' => null,
         'fb_response_object_id' => null,
         'fb_response' => '',
+        'scheduled_for_deletion' => null,
         'owner_id' => 0,
         'listable_id' => 0,
         'type' => self::TYPE_FACEBOOK,

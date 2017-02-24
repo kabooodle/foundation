@@ -8,9 +8,11 @@ namespace Kabooodle\Services\Listings;
 
 use Carbon\Carbon;
 use Kabooodle\Models\User;
+use Kabooodle\Models\Listings;
+use Kabooodle\Models\ListingItems;
 use Kabooodle\Models\AbstractListingModel;
-use Kabooodle\Repositories\Listings\ListingsRepositoryInterface;
 use Kabooodle\Services\Social\Facebook\FacebookSdkService;
+use Kabooodle\Repositories\Listings\ListingsRepositoryInterface;
 use Kabooodle\Foundation\Exceptions\FacebookTokenInvalidException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingExceedsHourlyLimitException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
@@ -21,6 +23,7 @@ use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListing
 class ListingsService
 {
     const HOURLY_QUOTA_LISTING_LIMIT = 600;
+    const SCHEDULER_LOOKAHEAD_FROM_NOW_SECONDS = 299; // 4 minutes, 49 seconds
 
     /**
      * @var ListingsRepositoryInterface
@@ -117,5 +120,29 @@ class ListingsService
         }
 
         return $this->findAvailableTimeToScheduleDeletion($user, $startTime->addMinutes(60), $itemsCount);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getScheduledForDeletionListings()
+    {
+        $cachedNow = Carbon::now()->getTimestamp();
+        $startTime = Carbon::createFromTimestamp($cachedNow);
+        $endTime = Carbon::createFromTimestamp($cachedNow)->addSeconds(self::SCHEDULER_LOOKAHEAD_FROM_NOW_SECONDS);
+
+        return Listings::getScheduledForDeletionListings($startTime, $endTime);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getScheduledForDeletionListingItems()
+    {
+        $cachedNow = Carbon::now()->getTimestamp();
+        $startTime = Carbon::createFromTimestamp($cachedNow);
+        $endTime = Carbon::createFromTimestamp($cachedNow)->addSeconds(self::SCHEDULER_LOOKAHEAD_FROM_NOW_SECONDS);
+
+        return ListingItems::getScheduledForDeletionListingItems($startTime, $endTime);
     }
 }

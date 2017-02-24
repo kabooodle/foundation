@@ -256,6 +256,7 @@ class ListingsApiController extends AbstractApiController
                 'msg' => trans('alerts.listings.facebook_token_invalid')
             ])->setStatusCode(401)->respond();
         } catch (Exception $e) {
+            dd($e->getMessage());
             return $this->setStatusCode(500)->setData([
                 'msg' => trans('alerts.error_generic_retry')
             ])->respond();

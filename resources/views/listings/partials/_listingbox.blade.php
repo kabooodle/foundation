@@ -4,7 +4,7 @@
             <a class="text-primary" href="{{ route('merchant.listings.index') }}">@include('listings._listingtype', ['_type' => $listing->type, '_size' => 20]) {{ $listing->present()->listingParentName() }}</a>
         </p>
     </div>
-    @if($listing->type <> Kabooodle\Models\Listings::TYPE_CUSTOM)
+    @if($listing->type <> Kabooodle\Models\Listings::TYPE_CUSTOM && $listing->scheduled_for)
     <div class="box-divider"></div>
     <div class="box-body">
         <p class="clearfix p-b-0 m-b-0">

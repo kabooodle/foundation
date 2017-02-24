@@ -15,7 +15,7 @@ use Kabooodle\Bus\Events\Listings\ListingWasDeleted;
 use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
 use Kabooodle\Repositories\Listings\ListingsRepositoryInterface;
 use Kabooodle\Bus\Commands\Claim\RejectClaimForInventoryItemCommand;
-use Kabooodle\Bus\Commands\Listings\DeleteListingItemFromFacebookCommand;
+use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingItemForDeletionCommand;
 
 /**
  * Class DeleteListingCommandHandler
@@ -64,8 +64,8 @@ class DeleteListingCommandHandler
                     }
 
                     if ($item->status <> ListingItems::STATUS_QUEUED_DELETE && $item->status <> ListingItems::STATUS_DELETED) {
-                        $job = new DeleteListingItemFromFacebookCommand($actor->id, $listing->id, $item->id);
-                        $job->onConnection(QueueHelper::pickFacebookDeleter());
+                        $job = new ScheduleFacebookListingItemForDeletionCommand($actor->id, $item->id);
+                        $job->onConnection(QueueHelper::pickFacebookSchedulerDelete());
                         $this->dispatch($job);
                     } else {
                         $item->delete();

@@ -8,6 +8,7 @@ namespace Kabooodle\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Kabooodle\Console\Commands\FacebookDeletionEnqueuerCommand;
 use Kabooodle\Console\Commands\FacebookEnqueuerCommand;
 use Kabooodle\Console\Commands\Subscription\TrialExpiring;
 
@@ -22,6 +23,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         FacebookEnqueuerCommand::class,
+        FacebookDeletionEnqueuerCommand::class,
         TrialExpiring::class,
     ];
 

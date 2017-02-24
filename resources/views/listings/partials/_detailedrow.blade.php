@@ -11,7 +11,7 @@
     <td>{{ $item->watchers->count() }}</td>
     <td>${{ $item->sales->sum('price') }}</td>
     @if($item->type <> Kabooodle\Models\Listings::TYPE_CUSTOM)
-        <td>{!! $item->present()->getStatus()  !!}</td>
+        <td>{!! $item->present()->getStatus()  !!} {!! $item->present()->facebookPhotoLink() !!}</td>
     @endif
     <td>
         <div class="pull-md-right">

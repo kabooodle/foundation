@@ -7,15 +7,13 @@
 namespace Kabooodle\Http\Controllers\Api\Listings;
 
 use Exception;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingItemForDeletionCommand;
 use Kabooodle\Foundation\Exceptions\FacebookTokenInvalidException;
-use Kabooodle\Models\ListingItems;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Listings\DeleteListingItemCommand;
 use Kabooodle\Bus\Events\Listings\FacebookListingItemWasDeleted;
-use Kabooodle\Bus\Commands\Listings\DeleteListingItemFromFacebookCommand;
 use Kabooodle\Services\Listings\ListingsService;
 
 /**
@@ -71,21 +69,10 @@ class ListingItemsApiController extends AbstractApiController
     public function destroyFromFacebook(Request $request, $listingId, $itemId)
     {
         try {
-            $item = ListingItems::where('listing_id', '=', $listingId)
-                ->where('id', '=', $itemId)
-                ->where('owner_id', '=', $this->getUser()->id)
-                ->where('status', '<>', ListingItems::STATUS_QUEUED_DELETE)
-                ->firstOrFail();
+            $this->listingService->assertFacebookAccessTokenIsValid($this->getUser());
 
-            $this->listingService->assertFacebookAccessTokenIsValid($this->getUser()->id);
-
-            $item->status = ListingItems::STATUS_QUEUED_DELETE;
-            $item->status_updated_at = Carbon::now();
-            $item->save();
-
-            $job = new DeleteListingItemFromFacebookCommand($this->getUser()->id, $listingId, $itemId);
-            $this->dispatch($job);
-
+            $job = new ScheduleFacebookListingItemForDeletionCommand($this->getUser(), $itemId);
+            $item = $this->dispatch($job);
             return $this->setData([
                 'msg' => 'Item was successfully queued for deletion from Facebook.',
                 'html' => view('listings.partials._detailedrow')->with(compact('item'))->render()

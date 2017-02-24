@@ -337,15 +337,6 @@ class Listings extends AbstractListingModel
      * @param $scope
      * @return $this
      */
-    public function scopeRandomize($scope)
-    {
-        return $scope->orderByRaw('RAND()');
-    }
-
-    /**
-     * @param $scope
-     * @return $this
-     */
     public function scopeStatusScheduled($scope)
     {
         return $scope->where('status', '=', self::STATUS_SCHEDULED);

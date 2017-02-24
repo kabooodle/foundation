@@ -1492,6 +1492,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateListingAndListingItemsTblEnum' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_13_204936_update_listing_and_listing_items_tbl_enum.php',
         'UpdateListingAndListingItemsTblUpdateStatusCols' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_24_064409_update_listing_and_listing_items_tbl_update_status_cols.php',
         'UpdateListingItemsAddListingMessage' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_11_022416_update_listing_items_add_listing_message.php',
+        'UpdateListingItemsAddScheduledForCol' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_24_191910_update_listing_items_add_scheduled_for_col.php',
         'UpdateListingTableAddDisableText' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_02_233734_update_listing_table_add_disable_text.php',
         'UpdateListingTableAddScheduledForDeletion' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_24_061645_update_listing_table_add_scheduled_for_deletion.php',
         'UpdateListingTblAddDateCols' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_04_035822_update_listing_tbl_add_date_cols.php',

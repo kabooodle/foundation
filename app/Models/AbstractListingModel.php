@@ -26,6 +26,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
     const STATUS_SCHEDULED_DELETE = 'scheduled_delete';
     const STATUS_QUEUED_LIST = 'queued';
     const STATUS_PROCESSING = 'processing';
+    const STATUS_PROCESSING_DELETE = 'processing_delete';
     const STATUS_PARTIAL = 'partial';
     const STATUS_SUCCESS = 'success';
     const STATUS_COMPLETED = 'completed';
@@ -38,6 +39,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
     const STATUSES = [
         self::STATUS_SCHEDULED,
         self::STATUS_SCHEDULED_DELETE,
+        self::STATUS_PROCESSING_DELETE,
         self::STATUS_QUEUED_LIST,
         self::STATUS_PROCESSING,
         self::STATUS_PARTIAL,
@@ -50,6 +52,15 @@ abstract class AbstractListingModel extends BaseEloquentModel
         self::STATUS_THROTTLED,
         self::STATUS_FAILED_DELETE
     ];
+
+    /**
+     * @param $scope
+     * @return $this
+     */
+    public function scopeRandomize($scope)
+    {
+        return $scope->orderByRaw('RAND()');
+    }
 
     /**
      * @param $scope
@@ -246,6 +257,23 @@ abstract class AbstractListingModel extends BaseEloquentModel
     public static function getScheduledForDeletionListings(Carbon $startTime, Carbon $endTime)
     {
         return Listings::noEagerLoads()
+            ->facebook()
+            ->where('scheduled_for_deletion', '>=', $startTime->format('Y-m-d H:i:s'))
+            ->where('scheduled_for_deletion', '<=', $endTime->format('Y-m-d H:i:s'))
+            ->where('status', '=', self::STATUS_SCHEDULED_DELETE)
+            ->randomize()
+            ->get();
+    }
+
+    /**
+     * @param Carbon $startTime
+     * @param Carbon $endTime
+     *
+     * @return mixed
+     */
+    public static function getScheduledForDeletionListingItems(Carbon $startTime, Carbon $endTime)
+    {
+        return ListingItems::noEagerLoads()
             ->facebook()
             ->where('scheduled_for_deletion', '>=', $startTime->format('Y-m-d H:i:s'))
             ->where('scheduled_for_deletion', '<=', $endTime->format('Y-m-d H:i:s'))

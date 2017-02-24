@@ -65,7 +65,7 @@ class DeleteListingItemFromFacebookCommandHandler
             Log::error('Deleting listing item from facebook: There is no facebook item - '.$logString);
             $listingItem->status = ListingItems::STATUS_DELETED;
             $listingItem->status_updated_at = Carbon::now();
-            $listingItem->status_history = 'Listing item already (queued) deleted.';
+            $listingItem->status_history = 'Listing item possibly already deleted or not listed.';
             $listingItem->save();
 
             $command->delete();

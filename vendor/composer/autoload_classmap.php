@@ -856,6 +856,7 @@ return array(
     'UpdateListingAndListingItemsTblEnum' => $baseDir . '/resources/database/migrations/2016_12_13_204936_update_listing_and_listing_items_tbl_enum.php',
     'UpdateListingAndListingItemsTblUpdateStatusCols' => $baseDir . '/resources/database/migrations/2017_02_24_064409_update_listing_and_listing_items_tbl_update_status_cols.php',
     'UpdateListingItemsAddListingMessage' => $baseDir . '/resources/database/migrations/2017_01_11_022416_update_listing_items_add_listing_message.php',
+    'UpdateListingItemsAddScheduledForCol' => $baseDir . '/resources/database/migrations/2017_02_24_191910_update_listing_items_add_scheduled_for_col.php',
     'UpdateListingTableAddDisableText' => $baseDir . '/resources/database/migrations/2016_12_02_233734_update_listing_table_add_disable_text.php',
     'UpdateListingTableAddScheduledForDeletion' => $baseDir . '/resources/database/migrations/2017_02_24_061645_update_listing_table_add_scheduled_for_deletion.php',
     'UpdateListingTblAddDateCols' => $baseDir . '/resources/database/migrations/2017_01_04_035822_update_listing_tbl_add_date_cols.php',

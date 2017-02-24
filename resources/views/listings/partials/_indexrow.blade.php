@@ -11,7 +11,7 @@
             {{ $listing->flashsale_name }}
         @endif
     </td>
-    <td>{{ humanizeDateTime($listing->scheduled_for) }}</td>
+    <td>{{ $listing->scheduled_for ? humanizeDateTime($listing->scheduled_for) : null }}</td>
     <td>{{ $listing->type ==  Kabooodle\Models\Listings::TYPE_FACEBOOK ? $listing->albums_count : 'n/a' }}</td>
     <td>{{ $listing->items_count }}</td>
     <td>{{ $listing->accepted_sales_count }}</td>

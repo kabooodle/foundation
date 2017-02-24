@@ -37,6 +37,8 @@ class DeleteListingFromFacebookCommandHandler
     }
 
     /**
+     * Make sure this command/handler were dispatching from a facebook scheduler command!
+     *
      * @param DeleteListingFromFacebookCommand $command
      */
     public function handle(DeleteListingFromFacebookCommand $command)
