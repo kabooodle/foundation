@@ -72,7 +72,7 @@ class EnqueueScheduleListingsJob extends AbstractEnqueueJob implements ShouldQue
         $listingItems = collect([]);
 
         /** @var Collection $listingModels */
-        $listingModels = Listings::whereIn('id', $this->listingIds)->with(['listingItems', function($q){
+        $listingModels = Listings::whereIn('id', $this->listingIds)->with(['listingItems' => function($q){
             $q->where('status', '=', ListingItems::STATUS_SCHEDULED);
         }])->get();
 

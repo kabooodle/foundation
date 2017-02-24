@@ -201,7 +201,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
         AND li.ignore = 0
         ";
 
-        return DB::select($query, [$startTime, $endTime, $userId]);
+        return DB::select($query, [$startTime, $endTime, $userId, $startTime, $endTime, $userId]);
     }
 
     /**
