@@ -10,6 +10,7 @@ use DB;
 use Bugsnag;
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Kabooodle\Foundation\Exceptions\FacebookTokenInvalidException;
 use Kabooodle\Models\Files;
 use Kabooodle\Models\Listings;
@@ -32,9 +33,9 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     public $queuesId;
 
     /**
-     * @var ListingItems
+     * @var int
      */
-    public $listingItem;
+    public $listingItemId;
 
     /**
      * @var string
@@ -42,11 +43,11 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     public $timestamp;
 
     /**
-     * @param ListingItems $listingItem
+     * @param int $listingItemId
      */
-    public function __construct(ListingItems $listingItem)
+    public function __construct(int $listingItemId)
     {
-        $this->listingItem = $listingItem;
+        $this->listingItemId = $listingItemId;
     }
 
     /**
@@ -107,6 +108,9 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
         } catch (FacebookTokenInvalidException $e) {
             Bugsnag::notifyException($e);
             $this->failedJobHandler($listingItem, ['status_history' => 'Invalid Facebook token']);
+            $this->job->delete();
+        } catch (ModelNotFoundException $e) {
+            Bugsnag::notifyException($e);
             $this->job->delete();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
@@ -174,11 +178,11 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     }
 
     /**
-     * @return ListingItems
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
     public function getListingItem()
     {
-        return $this->listingItem;
+        return ListingItems::findOrFail($this->listingItemId);
     }
 
     /**
