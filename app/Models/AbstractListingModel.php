@@ -23,6 +23,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
     ];
 
     const STATUS_SCHEDULED = 'scheduled';
+    const STATUS_SCHEDULED_DELETE = 'scheduled_delete';
     const STATUS_QUEUED_LIST = 'queued';
     const STATUS_PROCESSING = 'processing';
     const STATUS_PARTIAL = 'partial';
@@ -36,6 +37,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
     const STATUS_THROTTLED = 'throttled';
     const STATUSES = [
         self::STATUS_SCHEDULED,
+        self::STATUS_SCHEDULED_DELETE,
         self::STATUS_QUEUED_LIST,
         self::STATUS_PROCESSING,
         self::STATUS_PARTIAL,
@@ -183,11 +185,21 @@ abstract class AbstractListingModel extends BaseEloquentModel
      */
     public static function queryGetItemsDuringDateTimeBlockForUser(int $userId, $startTime, $endTime)
     {
-        $query = "SELECT * FROM listing_items as li 
+        $query = "
+        SELECT * FROM listing_items as li 
         INNER JOIN listings as l ON l.id = li.listing_id
         WHERE (l.scheduled_for BETWEEN ? and ?)
         AND l.owner_id = ?
-        AND li.ignore = 0";
+        AND li.ignore = 0
+        
+        UNION
+        
+        SELECT * FROM listing_items as li 
+        INNER JOIN listings as l ON l.id = li.listing_id
+        WHERE (l.scheduled_for_deletion BETWEEN ? and ?)
+        AND l.owner_id = ?
+        AND li.ignore = 0
+        ";
 
         return DB::select($query, [$startTime, $endTime, $userId]);
     }

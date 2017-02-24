@@ -16,7 +16,7 @@
     <td>
         <div class="pull-md-right">
             <a class="btn btn-xs white pull-left" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">View item listing</a>
-            @if($item->type == Kabooodle\Models\Listings::TYPE_FACEBOOK && ! in_array($item->status,['deleted', 'queued_delete']))
+            @if($item->type == Kabooodle\Models\Listings::TYPE_FACEBOOK && ! in_array($item->status,['deleted', 'scheduled_delete', 'queued_delete']))
                 <div class="dropdown pull-right m-l-xs">
                     <a class="btn btn-xs white dropdown-toggle no-caret" href="#" data-toggle="dropdown">
                         <i class="hidden-sm-down fa fa-ellipsis-h" aria-hidden="true"></i>

@@ -95,6 +95,10 @@ if (! function_exists('listingStatusHtml')) {
     function listingStatusHtml($status)
     {
         switch ($status) {
+            case 'scheduled_delete':
+                $class = 'brown-400';
+                $text = 'Scheduled for deletion';
+                break;
             case 'processing':
                 $class = 'deep-orange-400';
                 $text = 'Uploading';

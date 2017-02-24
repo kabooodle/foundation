@@ -7,13 +7,13 @@
 namespace Kabooodle\Bus\Jobs;
 
 use Carbon\Carbon;
-use Kabooodle\Bus\Events\Listings\ListingItemWasQueued;
-use Kabooodle\Libraries\QueueHelper;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
+use Kabooodle\Libraries\QueueHelper;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
+use Kabooodle\Bus\Events\Listings\ListingItemWasQueued;
 
 /**
  * Class EnqueueScheduleListingsJob

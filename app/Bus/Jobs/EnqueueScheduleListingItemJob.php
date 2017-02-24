@@ -7,14 +7,17 @@
 namespace Kabooodle\Bus\Jobs;
 
 use DB;
+use Bugsnag;
 use Exception;
 use Carbon\Carbon;
+use Kabooodle\Foundation\Exceptions\FacebookTokenInvalidException;
 use Kabooodle\Models\Files;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\ListingItems;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Facebook\Exceptions\FacebookThrottleException;
+use Kabooodle\Services\Listings\ListingsService;
 use Kabooodle\Services\Social\Facebook\FacebookSdkService;
 use Kabooodle\Foundation\Exceptions\Listings\ListingPhotoMissingException;
 
@@ -82,6 +85,10 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
             // Update the listing item status as "processing"
             $this->updateQueueStatus($this->queuesId, $this->timestamp, Queues::STATUS_PROCESSING, $this->job->attempts());
 
+            // Throws exception is token is invalid.
+            // This is handled as a successful job, because we dont want to repeat the job over and over.
+            $this->getListingService()->assertFacebookAccessTokenIsValid($listingItem->owner);
+
             $facebookParams = $this->buildFacebookAlbumParams($listingItem);
 
             $response = $facebook->postPhotoToGroupAlbum(
@@ -97,7 +104,12 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
             $this->successfulJobHandler($listingItem, ['fb_response_object_id' => $response['id']]);
 
             $this->job->delete();
+        } catch (FacebookTokenInvalidException $e) {
+            Bugsnag::notifyException($e);
+            $this->failedJobHandler($listingItem, ['status_history' => 'Invalid Facebook token']);
+            $this->job->delete();
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             $this->failedJobHandler($listingItem);
 
             throw $e;
@@ -114,12 +126,13 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     }
 
     /**
-     * @param $listingItem
+     * @param       $listingItem
+     * @param array $attributes
      */
-    public function failedJobHandler($listingItem)
+    public function failedJobHandler($listingItem, array $attributes = [])
     {
         // Update the status to the appropriate status based on the result.
-        $this->updateListingItemsStatus([$listingItem->id], $this->timestamp, ListingItems::STATUS_FAILED);
+        $this->updateListingItemsStatus([$listingItem->id], $this->timestamp, ListingItems::STATUS_FAILED, $attributes);
 
         // Update the associated queue in the DB
         $this->updateQueueStatus($this->queuesId, $this->timestamp, Queues::STATUS_FAILED, $this->job->attempts());
@@ -169,14 +182,6 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
     }
 
     /**
-     * @return \Illuminate\Foundation\Application|FacebookSdkService|mixed
-     */
-    public function getFacebookService()
-    {
-        return app(\Kabooodle\Services\Social\Facebook\FacebookSdkService::class);
-    }
-
-    /**
      * @param ListingItems $listingItem
      *
      * @return Files
@@ -198,5 +203,21 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
                 ) and  listing_id = ?';
 
         return DB::select($sql, [$listingId, $listingId]);
+    }
+
+    /**
+     * @return \Illuminate\Foundation\Application|ListingsService|mixed
+     */
+    public function getListingService()
+    {
+        return app(ListingsService::class);
+    }
+
+    /**
+     * @return \Illuminate\Foundation\Application|FacebookSdkService|mixed
+     */
+    public function getFacebookService()
+    {
+        return app(\Kabooodle\Services\Social\Facebook\FacebookSdkService::class);
     }
 }

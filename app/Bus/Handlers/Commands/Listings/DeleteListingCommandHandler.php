@@ -13,6 +13,7 @@ use Kabooodle\Libraries\QueueHelper;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Events\Listings\ListingWasDeleted;
 use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
+use Kabooodle\Repositories\Listings\ListingsRepositoryInterface;
 use Kabooodle\Bus\Commands\Claim\RejectClaimForInventoryItemCommand;
 use Kabooodle\Bus\Commands\Listings\DeleteListingItemFromFacebookCommand;
 
@@ -22,6 +23,19 @@ use Kabooodle\Bus\Commands\Listings\DeleteListingItemFromFacebookCommand;
 class DeleteListingCommandHandler
 {
     use DispatchesJobs;
+
+    /**
+     * @var ListingsRepositoryInterface
+     */
+    protected $listingRepository;
+
+    /**
+     * @param ListingsRepositoryInterface $listingsRepository
+     */
+    public function __construct(ListingsRepositoryInterface $listingsRepository)
+    {
+        $this->listingRepository = $listingsRepository;
+    }
 
     /**
      * @param DeleteListingCommand $command

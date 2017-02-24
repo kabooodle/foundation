@@ -101,7 +101,7 @@ class DeleteListingItemFromFacebookCommandHandler
 
         $listingItem->status = ListingItems::STATUS_DELETED;
         $listingItem->status_updated_at = Carbon::now();
-        $listingItem->status_history = null;
+        $listingItem->status_history = '';
         $listingItem->save();
 
         $command->delete();

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Kabooodle\Bus\Commands\Listings\CheckFacebookListingsQuotaForPeriod;
 use Kabooodle\Bus\Commands\Listings\PrepareDeleteListingFromFacebookCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
+use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingDeletionCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleNewListingsCommand;
 use Kabooodle\Foundation\Exceptions\FacebookTokenExpiredException;
@@ -204,7 +205,7 @@ class ListingsApiController extends AbstractApiController
         } catch (ListingConflictsWithExistingListingException $e) {
             return $this->setStatusCode(500)->setData(['msg' => 'The date and time block you selected conflicts with an existing listing. Please select a new block of time.'])->respond();
         } catch (FacebookTokenInvalidException $e) {
-            return $this->setStatusCode(401)->setData(['msg' => 'You need to connect (or reconnect) your ' . env('APP_NAME') . ' account to Facebook.'])->respond();
+            return $this->setStatusCode(401)->setData(['msg' => trans('alerts.listings.facebook_token_invalid')])->respond();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
 
@@ -241,13 +242,19 @@ class ListingsApiController extends AbstractApiController
     public function destroyFromFacebook(Request $request, $id)
     {
         try {
-            $job = new PrepareDeleteListingFromFacebookCommand($this->getUser(), $id);
+            $this->listingService->assertFacebookAccessTokenIsValid($this->getUser());
+
+            $job = new ScheduleFacebookListingDeletionCommand($this->getUser(), $id);
             $listing = $this->dispatchNow($job);
 
             return $this->setData([
-                'msg' => trans('alerts.listings.success_listing_deleted'),
+                'msg' => trans('alerts.listings.success_listing_fb_deleted'),
                 'html' => view('listings.partials._indexrow')->with(compact('listing'))->render()
             ])->respond();
+        } catch (FacebookTokenInvalidException $e) {
+            return $this->setData([
+                'msg' => trans('alerts.listings.facebook_token_invalid')
+            ])->setStatusCode(401)->respond();
         } catch (Exception $e) {
             return $this->setStatusCode(500)->setData([
                 'msg' => trans('alerts.error_generic_retry')

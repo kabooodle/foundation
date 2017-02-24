@@ -52,6 +52,7 @@ class Listings extends AbstractListingModel
     protected $dates = [
         'scheduled_for',
         'scheduled_until',
+        'scheduled_for_deletion',
         'status_updated_at',
         'claimable_at',
         'claimable_until',
@@ -71,6 +72,7 @@ class Listings extends AbstractListingModel
     protected $attributes = [
         'scheduled_for' => null,
         'scheduled_until' => null,
+        'scheduled_for_deletion' => null,
         'claimable_until' => null,
         'claimable_at' => null,
         'owner_id' => 0,

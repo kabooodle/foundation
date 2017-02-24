@@ -9,12 +9,14 @@ namespace Kabooodle\Http\Controllers\Api\Listings;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Kabooodle\Foundation\Exceptions\FacebookTokenInvalidException;
 use Kabooodle\Models\ListingItems;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Listings\DeleteListingItemCommand;
 use Kabooodle\Bus\Events\Listings\FacebookListingItemWasDeleted;
 use Kabooodle\Bus\Commands\Listings\DeleteListingItemFromFacebookCommand;
+use Kabooodle\Services\Listings\ListingsService;
 
 /**
  * Class ListingItemsApiController
@@ -22,6 +24,19 @@ use Kabooodle\Bus\Commands\Listings\DeleteListingItemFromFacebookCommand;
 class ListingItemsApiController extends AbstractApiController
 {
     use DispatchesJobs;
+
+    /**
+     * @var ListingsService
+     */
+    public $listingService;
+
+    /**
+     * @param ListingsService $listingsService
+     */
+    public function __construct(ListingsService $listingsService)
+    {
+        $this->listingService = $listingsService;
+    }
 
     /**
      * @param Request $request
@@ -62,6 +77,8 @@ class ListingItemsApiController extends AbstractApiController
                 ->where('status', '<>', ListingItems::STATUS_QUEUED_DELETE)
                 ->firstOrFail();
 
+            $this->listingService->assertFacebookAccessTokenIsValid($this->getUser()->id);
+
             $item->status = ListingItems::STATUS_QUEUED_DELETE;
             $item->status_updated_at = Carbon::now();
             $item->save();
@@ -73,6 +90,10 @@ class ListingItemsApiController extends AbstractApiController
                 'msg' => 'Item was successfully queued for deletion from Facebook.',
                 'html' => view('listings.partials._detailedrow')->with(compact('item'))->render()
             ])->respond();
+        } catch (FacebookTokenInvalidException $e) {
+            return $this->setData([
+                'msg' => trans('alerts.listings.facebook_token_invalid')
+            ])->setStatusCode(401)->respond();
         } catch (Exception $e) {
             return $this->setData([
                 'msg' => trans('alerts.error_generic_retry')
