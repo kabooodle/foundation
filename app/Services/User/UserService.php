@@ -6,6 +6,8 @@
 
 namespace Kabooodle\Services\User;
 
+use Carbon\Carbon;
+use Kabooodle\Models\User;
 use Kabooodle\Repositories\User\UserRepositoryInterface;
 
 /**
@@ -27,5 +29,16 @@ class UserService
     public function __construct(UserRepositoryInterface $repository)
     {
         $this->repository = $repository;
+    }
+
+    /**
+     * @param User   $user
+     * @param Carbon $date
+     *
+     * @return bool
+     */
+    public function checkDateIsBeforeFacebookTokenExpires(User $user, Carbon $date)
+    {
+        // Check the date occurs before the FB token's expiration date.
     }
 }

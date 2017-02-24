@@ -15,6 +15,8 @@ use Kabooodle\Bus\Commands\Listings\PrepareDeleteListingFromFacebookCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleNewListingsCommand;
+use Kabooodle\Foundation\Exceptions\FacebookTokenExpiredException;
+use Kabooodle\Foundation\Exceptions\FacebookTokenInvalidException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingExceedsHourlyLimitException;
 use Kabooodle\Models\ListingItemGrouping;
 use Kabooodle\Models\Listings;
@@ -25,6 +27,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Facebook\Exceptions\FacebookAuthenticationException;
 use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Services\Listings\ListingsService;
+use Kabooodle\Services\User\UserService;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
@@ -35,6 +39,26 @@ use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListing
 class ListingsApiController extends AbstractApiController
 {
     use DispatchesJobs, PaginatesTrait;
+
+    /**
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
+     * @var ListingsService
+     */
+    protected $listingService;
+
+    /**
+     * @param UserService     $userService
+     * @param ListingsService $listingsService
+     */
+    public function __construct(UserService $userService, ListingsService $listingsService)
+    {
+        $this->userService = $userService;
+        $this->listingService = $listingsService;
+    }
 
     /**
      * @param Request $request
@@ -122,10 +146,11 @@ class ListingsApiController extends AbstractApiController
      */
     public function store(Request $request)
     {
-        $facebooksales = Binput::get('facebooksales', []);
-        $flashsales = Binput::get('flashsales', []);
-        $facebookOptions = (array)Binput::get('options', []);
-        $facebooksales_meta = Binput::get('facebooksales_meta', null);
+        $facebooksales = Binput::get('facebooksales', []); // All the facebook listings
+        $flashsales = Binput::get('flashsales', []); // All the flash sale listings
+
+        $facebookOptions = (array) Binput::get('options', []); // All the facebook options
+        $facebooksales_meta = Binput::get('facebooksales_meta', null); // Facebook listings meta
 
         // Date to list it and remove it
         $listAt = array_get($facebookOptions, 'list_at', null);
@@ -136,21 +161,28 @@ class ListingsApiController extends AbstractApiController
         $itemMessage = array_get($facebookOptions, 'item_message', false);
 
         try {
-            //
-            if ($claimableAt && strtotime($claimableAt) < strtotime($listAt)) {
-                throw new ListingClaimableDateIsBeforeListingDateException('The earliest date an item can be claimed cannot come before the listing date.');
-            }
-
             $facebookListings = null;
             $flashsaleListings = null;
 
             if ($facebookOptions && $facebooksales) {
+                // Build our Facebook Listing Options object
                 $listingOptions = new FacebookListingOptions($listAt, $removeAt, $claimableAt, $claimableUntil, $itemMessage);
 
-                $job = new CheckFacebookListingsQuotaForPeriod($this->getUser(), $listingOptions->getStartsAt()->toDateTimeString(),
-                    $listingOptions->getEndsAt()->toDateTimeString(), (int) $facebooksales_meta['total_listables']);
-                $this->dispatchNow($job);
+                // Make sure access token is valid.
+                $this->listingService->assertFacebookAccessTokenIsValid($this->getUser());
 
+                // claimable date cannot be before the listing is event scheduled
+                $this->listingService->assertListingClaimableDateIsBeforeListingDateException($claimableAt, $listAt);
+
+                // Check the listings does not exceed the hourly quota
+                $this->listingService->assertNumberOfItemsDoesNotExceedFacebookHourlyQuota(
+                    $this->getUser(),
+                    $listingOptions->getStartsAt()->toDateTimeString(),
+                    $listingOptions->getEndsAt()->toDateTimeString(),
+                    (int) $facebooksales_meta['total_listables']
+                );
+
+                // FacebookListingsJob
                 $facebookListings = new ScheduleFacebookListingCommand($this->getUser(), $listingOptions, $facebooksales);
             }
 
@@ -171,6 +203,8 @@ class ListingsApiController extends AbstractApiController
             return $this->setStatusCode(500)->setData(['msg' => $e->getMessage() ?: 'You must select as least 1 item for listing.'])->respond();
         } catch (ListingConflictsWithExistingListingException $e) {
             return $this->setStatusCode(500)->setData(['msg' => 'The date and time block you selected conflicts with an existing listing. Please select a new block of time.'])->respond();
+        } catch (FacebookTokenInvalidException $e) {
+            return $this->setStatusCode(401)->setData(['msg' => 'You need to connect (or reconnect) your ' . env('APP_NAME') . ' account to Facebook.'])->respond();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
 

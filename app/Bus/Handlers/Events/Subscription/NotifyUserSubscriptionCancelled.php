@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Events\Subscription;
 
 use Bugsnag;
+use Exception;
 use Kabooodle\Models\User;
 use Kabooodle\Libraries\Emails\PiperEmail;
 use Kabooodle\Bus\Events\Subscriptions\SubscriptionCancelled;
