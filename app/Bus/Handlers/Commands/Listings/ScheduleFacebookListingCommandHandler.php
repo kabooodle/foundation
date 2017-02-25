@@ -129,14 +129,11 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
                 foreach ($sale['listables'] as $listableItem) {
 
                     // Skip items that do not belong to the user.
-                    // Skip items that have an incorrect listing item class.
-                    if (! $this->listableItemBelongsToUser($listableItem['id'], $listableItem['listable_item_class'], $actor)
-                        || !class_exists($listableItem['listing_item_class'])
-                    ) {
+                    if (! $this->listableItemBelongsToUser($listableItem['id'], $actor)) {
                         continue;
                     }
 
-                    $listingItem = new $listableItem['listing_item_class'];
+                    $listingItem = new ListingItems;
                     $listingItem->listing_id = $listing->id;
                     $listingItem->owner_id = $actor->id;
                     $listingItem->fb_group_node_id = $sale['sale']['id'];

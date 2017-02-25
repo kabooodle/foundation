@@ -345,6 +345,14 @@ class User extends BaseEloquentModel implements
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function listables()
+    {
+        return $this->hasMany(Listable::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function inventory()
     {
         return $this->hasMany(Inventory::class, 'user_id');
@@ -737,7 +745,7 @@ class User extends BaseEloquentModel implements
     {
         return $this->hasManyThrough(Claims::class,  Inventory::class, 'user_id', 'listable_id', 'id')
             ->where('claims.listable_type', Inventory::class)
-            ->where('inventory.user_id', $this->id)
+            ->where('listables.user_id', $this->id)
             ->with(['shipments', 'shipments.transaction']);
     }
 
@@ -768,7 +776,7 @@ class User extends BaseEloquentModel implements
     {
         return $this->hasManyThrough(Claims::class,  InventoryGrouping::class, 'user_id', 'listable_id', 'id')
             ->where('claims.listable_type', InventoryGrouping::class)
-            ->where('inventory_groupings.user_id', $this->id)
+            ->where('listables.user_id', $this->id)
             ->with(['shipments', 'shipments.transaction']);
     }
 

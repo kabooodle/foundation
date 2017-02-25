@@ -240,12 +240,12 @@ class Listings extends AbstractListingModel
                 IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
                 FROM listings AS l
                 INNER JOIN listing_items AS li ON li.listing_id = l.id AND l.owner_id = li.owner_id AND l.type = li.type
-                left JOIN v_listables AS i ON i.id = li.listable_id
+                left JOIN listables AS i ON i.id = li.listable_id
                 LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
                 LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_group_node_id
                 LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
-				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id AND c.listable_type = i.class
-                LEFT JOIN v_pageviews as v on v.viewable_id = i.id AND v.viewable_type = i.class
+				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id AND c.listable_type = i.subclass_name
+                LEFT JOIN v_pageviews as v on v.viewable_id = i.id AND v.viewable_type = i.subclass_name
                 WHERE l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
                 AND l.deleted_at IS NULL
                 AND l.deleted_at IS NULL 
@@ -274,7 +274,7 @@ class Listings extends AbstractListingModel
     {
         $sql = "
                 SELECT
-                i.class,
+                i.subclass_name,
                 l.id as id,
                 fs.name AS flashsale_name,
                 fb.facebook_node_name AS fb_name,
@@ -293,12 +293,12 @@ class Listings extends AbstractListingModel
                 IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
                 FROM listings AS l
                 INNER JOIN listing_items AS li ON li.listing_id = l.id
-                left JOIN v_listables AS i ON i.id = li.listable_id
+                left JOIN listables AS i ON i.id = li.listable_id
                 left JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
                 LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_album_node_id
                 LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
-				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id AND c.listable_type = i.class
-                LEFT JOIN v_pageviews as v on v.viewable_id = i.id AND v.viewable_type = i.class
+				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id AND c.listable_type = i.subclass_name
+                LEFT JOIN v_pageviews as v on v.viewable_id = i.id AND v.viewable_type = i.subclass_name
                 WHERE l.uuid = ? AND l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
                 AND l.deleted_at IS NULL
                 AND l.deleted_at IS NULL 
@@ -389,14 +389,5 @@ class Listings extends AbstractListingModel
         }
 
         return $this->scheduled_for;
-    }
-
-    public function loadItemsListedItem()
-    {
-        foreach ($this->items as $item) {
-            if ($item->relations['listedItem'] == null) {
-                $item->load('listedItem');
-            }
-        }
     }
 }

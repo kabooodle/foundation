@@ -8,7 +8,7 @@ namespace Kabooodle\Bus\Handlers\Events\Claim;
 
 use Bugsnag;
 use Exception;
-use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Contracts\ListableInterface;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Claims;
 use Kabooodle\Models\Inventory;
@@ -118,9 +118,9 @@ class ItemWasClaimedEventHandler
 
     /**
      * @param User $seller
-     * @param Listable $listedItem
+     * @param ListableInterface $listedItem
      */
-    public function toEmail(User $seller, Listable $listedItem)
+    public function toEmail(User $seller, ListableInterface $listedItem)
     {
         $email = new KitEmail;
         $email->setView('inventory.claims.emails.claimed_toseller')
@@ -136,9 +136,9 @@ class ItemWasClaimedEventHandler
     /**
      * @param User      $user
      * @param Claims    $claim
-     * @param Listable $listedItem
+     * @param ListableInterface $listedItem
      */
-    public function toWeb(User $user, Claims $claim, Listable $listedItem)
+    public function toWeb(User $user, Claims $claim, ListableInterface $listedItem)
     {
         $pusher = new WebSocket;
         $pusher->setChannelName('private.'.env('APP_ENV').'.claims.'.$user->id)
@@ -153,9 +153,9 @@ class ItemWasClaimedEventHandler
     /**
      * @param User      $user
      * @param Claims    $claim
-     * @param Listable $listedItem
+     * @param ListableInterface $listedItem
      */
-    public function toDatabase(User $user, Claims $claim, Listable $listedItem)
+    public function toDatabase(User $user, Claims $claim, ListableInterface $listedItem)
     {
         $title = $listedItem->getTitle().' was claimed by '. $claim->claimedBy->username;
 

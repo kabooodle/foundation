@@ -7,7 +7,7 @@
 namespace Kabooodle\Bus\Commands\Claim;
 
 use Kabooodle\Models\Contracts\Claimable;
-use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Contracts\ListableInterface;
 use Kabooodle\Models\Email;
 use Kabooodle\Models\User;
 
@@ -26,14 +26,14 @@ class ClaimListedItemCommand
      * ClaimListedItemCommand constructor.
      * @param User $claimedBy
      * @param Claimable $listingItem
-     * @param Listable $listedItem
+     * @param ListableInterface $listedItem
      * @param bool $guest
      * @param Email|null $email
      */
     public function __construct(
         User $claimedBy,
         Claimable $listingItem,
-        Listable $listedItem,
+        ListableInterface $listedItem,
         $guest = false,
         Email $email = null)
     {
@@ -53,7 +53,7 @@ class ClaimListedItemCommand
     }
 
     /**
-     * @return Listable
+     * @return ListableInterface
      */
     public function getListedItem()
     {

@@ -65,8 +65,6 @@ class ListingsController extends Controller
             return $this->redirect()->to('/');
         }
 
-        $listing->loadItemsListedItem();
-
         $rawCategories = collect(Listings::getStyleGroupings($listingUuid));
 
         $categories = $rawCategories->sortBy('style_name')->groupBy('style_name')->transform(function($item, $k){

@@ -32,13 +32,7 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
         UuidableTrait,
         ClaimableTrait,
         WatchableTrait,
-        SingleTableInheritance,
         ViewableTrait;
-
-    const SUB_TYPES = [
-        ListingItemSingle::class,
-        ListingItemGrouping::class,
-    ];
 
     /**
      * @var array
@@ -107,7 +101,6 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
         'status_history' => '',
         'make_available_at' => null,
         'ignore' => false,
-        'subclass_name' => ListingItemSingle::class,
         'item_message' => null,
     ];
 
@@ -129,22 +122,8 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
         'status_history',
         'make_available_at',
         'ignore',
-        'subclass_name',
         'item_message'
     ];
-
-    /**
-     * @return string
-     */
-    public function getListableClassName(): string
-    {
-        if ($this->attributes['subclass_name'] == ListingItemSingle::class) {
-            return Inventory::class;
-        } else if ($this->attributes['subclass_name'] == ListingItemGrouping::class) {
-            return InventoryGrouping::class;
-        }
-        return '';
-    }
 
     /**
      * @param $value
@@ -209,7 +188,7 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
      */
     public function listedItem(): BelongsTo
     {
-        return $this->belongsTo($this->getListableClassName(), 'listable_id');
+        return $this->belongsTo(Listable::class, 'listable_id');
     }
 
     /**

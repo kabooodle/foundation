@@ -91,7 +91,7 @@ class ListingsApiController extends AbstractApiController
                 throw new ModelNotFoundException;
             }
 
-            $listing->loadItemsListedItem();
+//            $listing->loadItemsListedItem();
 
             $items = $listing->items;
 

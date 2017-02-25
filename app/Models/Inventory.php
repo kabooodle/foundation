@@ -9,7 +9,7 @@ namespace Kabooodle\Models;
 use DB;
 use Carbon\Carbon;
 use Kabooodle\Bus\Events\Listables\ListableQuantityUpdatedEvent;
-use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Contracts\ListableInterface;
 use Kabooodle\Models\Contracts\Viewable;
 use Kabooodle\Models\Traits\ListableTrait;
 use Kabooodle\Models\Traits\ViewableTrait;
@@ -29,18 +29,8 @@ use Kabooodle\Models\Contracts\Commentable;
  * Class Inventory
  * @package Kabooodle\Models
  */
-class Inventory extends BaseEloquentModel implements Commentable, LikeableInterface, Revisionable, Listable, Viewable
+class Inventory extends Listable implements ListableInterface
 {
-    use CommentableTrait,
-        FollowableTrait,
-        LikeableTrait,
-        ObfuscatesIdTrait,
-        RevisionableTrait,
-        SoftDeletes,
-        TaggableTrait,
-        ListableTrait,
-        ViewableTrait;
-
     /**
      * @var array
      */
@@ -65,83 +55,6 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
 //        'comments',
 //        'sales'
     ];
-
-    /**
-     * @const string
-     */
-    const LISTING_ITEM_CLASS = ListingItemSingle::class;
-
-    /**
-     * @return array
-     */
-    public function getAlgoliaRecord()
-    {
-        return array_merge($this->toArray(), [
-            'oid' => $this->getUUID(),
-            'route' => route('shop.inventory.show', [$this->user->username, $this->getUUID()])
-        ]);
-    }
-
-    /**
-     * @var array
-     */
-    protected $attributes = [
-        'user_id' => 0,
-        'uuid' => '',
-        'inventory_type_id' => 0,
-        'inventory_type_styles_id' => 0,
-        'inventory_sizes_id' => 0,
-        'name' => '',
-        'description' => '',
-        'cover_photo_file_id' => null,
-        'barcode' => null,
-        'initial_qty' => null,
-        'date_received' => '',
-        'price_usd' => 0.0,
-        'wholesale_price_usd' => 0.0,
-    ];
-
-    /**
-     * @var array
-     */
-    protected $casts = [
-        'uuid' => 'string',
-        'user_id' => 'int',
-        'inventory_type_id' => 'int',
-        'inventory_type_styles_id' => 'int',
-        'inventory_sizes_id' => 'int',
-        'name' => 'string',
-        'description' => 'string',
-        'barcode' => 'string',
-        'date_received' => 'date',
-        'price_usd' => 'double',
-        'wholesale_price_usd' => 'double'
-    ];
-
-    /**
-     * @var array
-     */
-    protected $fillable = [
-        'user_id',
-        'uuid',
-        'inventory_type_id',
-        'inventory_type_styles_id',
-        'inventory_sizes_id',
-        'price_usd',
-        'wholesale_price_usd',
-        'cover_photo_file_id',
-        'name',
-        'description',
-        'barcode',
-        'initial_qty',
-        'date_received',
-        'tags'
-    ];
-
-    /**
-     * @var string
-     */
-    protected $table = 'inventory';
 
     /**
      * @return array
@@ -186,21 +99,10 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     {
         parent::boot();
 
-        self::creating(function($model){
-            $model->date_received = Carbon::now();
-        });
-
-        self::saving(function(self $model){
+        self::saving(function(self $model) {
+            $model->name_alt = $model->style->name . ' - ' . $model->size->name;
             if(! $model->wholesale_price_usd || is_null($model->wholesale_price_usd)) {
                 $model->wholesale_price_usd = $model->style->wholesale_price_usd;
-            }
-            if(!$model->uuid) {
-                $model->uuid = str_random(16);
-            }
-
-            if ($model->isDirty('initial_qty')) {
-                event(new ListableQuantityUpdatedEvent($model));
-                return true;
             }
         });
     }
@@ -213,14 +115,6 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     public static function factory(array $attributes)
     {
         return self::create($attributes);
-    }
-
-    /**
-     * @return User
-     */
-    public function getOwner(): User
-    {
-        return $this->owner;
     }
 
     /**
@@ -245,22 +139,6 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     public function getNameAndSize(): string
     {
         return $this->style->name. ' '.$this->styleSize->name;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function owner()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user()
-    {
-        return $this->owner();
     }
 
     /**
@@ -320,29 +198,13 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function claims()
-    {
-        return $this->morphMany(Claims::class, 'listable');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function pendingClaims()
-    {
-        return $this->claims()->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function groupingsClaims()
     {
         return $this->hasMany(Claims::class, 'listable_id')
             ->whereListableType(InventoryGrouping::class)
-            ->whereIn('listable_id', $this->groupings()->lists('inventory_groupings.id'));
+            ->whereIn('listable_id', $this->groupings()->lists('listables.id'));
     }
 
     /**
@@ -352,7 +214,7 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     {
         return $this->hasMany(Claims::class, 'listable_id')
             ->whereListableType(InventoryGrouping::class)
-            ->whereIn('listable_id', $this->lockedGroupings()->lists('inventory_groupings.id'));
+            ->whereIn('listable_id', $this->lockedGroupings()->lists('listables.id'));
     }
 
     /**
@@ -362,96 +224,7 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     {
         return $this->hasMany(Claims::class, 'listable_id')
             ->whereListableType(InventoryGrouping::class)
-            ->whereIn('listable_id', $this->unlockedGroupings()->lists('inventory_groupings.id'));
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function sales()
-    {
-        return $this->acceptedClaims();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-     */
-    public function files()
-    {
-        return $this->morphMany(Files::class, 'fileable');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-     */
-    public function images()
-    {
-        return $this->files();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCoverPhotoAttribute()
-    {
-        return $this->coverimage;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function coverimage()
-    {
-        return $this->belongsTo(Files::class, 'cover_photo_file_id');
-    }
-
-    /**
-     * @return null
-     */
-    public function firstImage()
-    {
-        $images = $this->files;
-        if ($images->count() > 0) {
-            return $images->sortBy('order')->first();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRemainingImages()
-    {
-        $firstImage = $this->firstImage();
-        return $this->images->filter(function($item) use ($firstImage){
-            return $item->id <> $firstImage->id;
-        });
-    }
-
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function getWatchers()
-    {
-        $watches = DB::table('users')
-            ->join('watchables', 'watchables.user_id', '=', 'users.id')
-            ->join('listing_items', 'listing_items.id', '=', 'watchables.watchable_id')
-            ->join('inventory', 'listing_items.inventory_id', '=', 'inventory.id')
-            ->where('watchables.watchable_type', ListingItems::class)
-            ->where('watchables.deleted_at', null)
-            ->select('users.*')
-            ->get();
-
-        return collect($watches);
-    }
-
-    /**
-     * @return string
-     */
-    public function getNameAttribute() : string
-    {
-        return $this->getName();
+            ->whereIn('listable_id', $this->unlockedGroupings()->lists('listables.id'));
     }
 
     /**
@@ -477,14 +250,6 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
     public function getAvailableQuantity(): int
     {
         return $this->initial_qty - ($this->lockedGroupings->sum('initial_qty') + $this->getOnHoldQuantity());
-    }
-
-    /**
-     * @return int
-     */
-    public function getAvailableQuantityAttribute()
-    {
-        return $this->getAvailableQuantity();
     }
 
     /**
@@ -528,21 +293,5 @@ class Inventory extends BaseEloquentModel implements Commentable, LikeableInterf
         ];
 
         $filters = $base + $filters;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasViewableChild(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @return null
-     */
-    public function getViewableChild()
-    {
-        return null;
     }
 }

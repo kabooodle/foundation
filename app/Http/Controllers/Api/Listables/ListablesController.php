@@ -71,8 +71,6 @@ class ListablesController extends AbstractApiController
                         'price_usd' => $item->price_usd,
                         'wholesale_price_usd' => $item->wholesale_price_usd,
                         'cover_photo' => $item->cover_photo,
-                        'listable_item_class' => get_class($item),
-                        'listing_item_class' => $item->getListingItemClass(),
                         'hash_id' => $item->hash_id,
                     ];
                 }
@@ -109,8 +107,6 @@ class ListablesController extends AbstractApiController
                     'price_usd' => $item->price_usd,
                     'wholesale_price_usd' => $item->wholesale_price_usd,
                     'cover_photo' => $item->cover_photo,
-                    'listable_item_class' => get_class($item),
-                    'listing_item_class' => $item->getListingItemClass(),
                     'hash_id' => $item->hash_id,
                 ];
             }

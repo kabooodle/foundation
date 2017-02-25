@@ -7,7 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Events\Listables;
 
 use Illuminate\Bus\Queueable;
-use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Contracts\ListableInterface;
 use Kabooodle\Models\Watches;
 use Kabooodle\Models\ListingItems;
 use Illuminate\Queue\SerializesModels;
@@ -42,11 +42,11 @@ class ListableQuantityUpdatedHandler implements ShouldQueue
     }
 
     /**
-     * @param Listable $listableItem
+     * @param ListableInterface $listableItem
      *
      * @return bool
      */
-    public function handleItemWhoseQuantityChangedFromZero(Listable $listableItem)
+    public function handleItemWhoseQuantityChangedFromZero(ListableInterface $listableItem)
     {
         $listings = $this->getListingsForItem($listableItem);
         if ($listings) {
@@ -66,11 +66,11 @@ class ListableQuantityUpdatedHandler implements ShouldQueue
     }
 
     /**
-     * @param Listable $model
+     * @param ListableInterface $model
      *
      * @return bool
      */
-    public function checkIfQuantityChangedFromZero(Listable $model)
+    public function checkIfQuantityChangedFromZero(ListableInterface $model)
     {
         $originalQuantity = $model->getOriginal('initial_qty');
 
@@ -78,11 +78,11 @@ class ListableQuantityUpdatedHandler implements ShouldQueue
     }
 
     /**
-     * @param Listable $listableItem
+     * @param ListableInterface $listableItem
      *
      * @return bool|ListingItems
      */
-    public function getListingsForItem(Listable $listableItem)
+    public function getListingsForItem(ListableInterface $listableItem)
     {
         $listings = $listableItem->listings;
 

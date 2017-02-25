@@ -7,20 +7,15 @@
 namespace Kabooodle\Models\Contracts;
 
 /**
- * Interface Listable
+ * Interface ListableInterface
  * @package Kabooodle\Models\Contracts
  */
-interface Listable
+interface ListableInterface
 {
-    /**
-     * @return string
-     */
-    public function getListingItemClass(): string;
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function listings();
+    public function listingItems();
 
     /**
      * @return mixed

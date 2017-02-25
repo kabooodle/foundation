@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models\Traits;
 
+use Kabooodle\Models\ListingItems;
 use Kabooodle\Models\Listings;
 
 /**
@@ -15,19 +16,11 @@ use Kabooodle\Models\Listings;
 trait ListableTrait
 {
     /**
-     * @return string
-     */
-    public function getListingItemClass(): string
-    {
-        return static::LISTING_ITEM_CLASS;
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function listings()
+    public function listingItems()
     {
-        return $this->hasMany($this->getListingItemClass(), 'listable_id');
+        return $this->hasMany(ListingItems::class, 'listable_id');
     }
 
     /**

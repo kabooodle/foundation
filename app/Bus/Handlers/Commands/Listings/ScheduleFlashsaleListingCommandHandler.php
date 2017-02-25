@@ -8,6 +8,7 @@ namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use DB;
 use Carbon\Carbon;
+use Kabooodle\Models\ListingItems;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\FlashSales;
@@ -129,16 +130,13 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
         foreach ($listables as $listableItem) {
             // Skip inventory items that do not belong to the user.
             // Skip items already in the flash sale by the user.
-            // Skip items that have an incorrect listing item class.
-            if (!$this->listableItemBelongsToUser($listableItem['id'], $listableItem['listable_item_class'], $actor)
-                || $this->itemAlreadyInFlashsale($listing, $listableItem['listing_item_class'],
-                    $listableItem['id'])
-                || !class_exists($listableItem['listing_item_class'])
+            if (!$this->listableItemBelongsToUser($listableItem['id'], $actor)
+                || $this->itemAlreadyInFlashsale($listing, $listableItem['id'])
             ) {
                 continue;
             }
 
-            $listingItem = new $listableItem['listing_item_class'];
+            $listingItem = new ListingItems;
             $listingItem->listing_id = $listing->id;
             $listingItem->owner_id = $actor->id;
             $listingItem->listable_id = $listableItem['id'];
@@ -159,17 +157,16 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
 
     /**
      * @param Listings $listing
-     * @param string   $listableType
      * @param int      $listableId
      *
      * @return mixed
      */
-    protected function itemAlreadyInFlashsale(Listings $listing, string $listableType, int $listableId)
+    protected function itemAlreadyInFlashsale(Listings $listing, int $listableId)
     {
         $listingItems = $listing->listingItems;
 
-        return $listingItems->filter(function ($listingItem) use ($listableType, $listableId) {
-            return $listingItem->listable_id == $listableId && $listingItem->subclass_name == $listableType;
+        return $listingItems->filter(function ($listingItem) use ($listableId) {
+            return $listingItem->listable_id == $listableId;
         })->first();
     }
 

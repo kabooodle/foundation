@@ -56,19 +56,13 @@ abstract class AbstractScheduleListingsCommandHandler
      * TODO: is it faster to run a normal sql query vs filtering through the eager loaded collection?
      *
      * @param int $listableId
-     * @param string $listableType
      * @param User $actor
      *
      * @return bool
      */
-    public function listableItemBelongsToUser(int $listableId, string $listableType, User $actor)
+    public function listableItemBelongsToUser(int $listableId, User $actor)
     {
-        if ($listableType == Inventory::class) {
-            return $actor->inventory->where('id', $listableId)->first();
-        } else if ($listableType == InventoryGrouping::class) {
-            return $actor->inventoryGroupings->where('id', $listableId)->first();
-        }
-        return false;
+        return $actor->listables->where('id', $listableId)->first();
     }
 
     /**

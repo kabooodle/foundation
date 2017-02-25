@@ -71,8 +71,6 @@ class InventoryApiController extends AbstractApiController
                         'price_usd' => $item->price_usd,
                         'wholesale_price_usd' => $item->wholesale_price_usd,
                         'cover_photo' => $item->cover_photo,
-                        'listable_item_class' => get_class($item),
-                        'listing_item_class' => $item->getListingItemClass(),
                         'hash_id' => $item->hash_id,
                     ];
                 }
@@ -101,16 +99,16 @@ class InventoryApiController extends AbstractApiController
      */
     public function detailed(Request $request)
     {
-        $q = DB::table('v_listables as i')
+        $q = DB::table('listables as i')
             ->leftJoin('inventory_type_styles as s', 's.id','=', 'i.inventory_type_styles_id')
             ->leftJoin('inventory_sizes as is', 'is.id', '=', 'i.inventory_sizes_id')
             ->leftJoin('claims as c', function($q){
                 $q->on('c.listable_id', '=', 'i.id');
-                $q->on('c.listable_type', '=', 'i.class');
+                $q->on('c.listable_type', '=', 'i.subclass_name');
             })
             ->leftJoin('v_pageviews as v', function($q){
                 $q->on('v.viewable_id', '=', 'i.id');
-                $q->on('v.viewable_type', '=', 'i.class');
+                $q->on('v.viewable_type', '=', 'i.subclass_name');
             })
             ->join('files as f', 'f.id', '=', 'i.cover_photo_file_id')
             ->where('i.user_id', '=', $this->getUser()->id)
@@ -118,7 +116,7 @@ class InventoryApiController extends AbstractApiController
             ->whereNull('c.deleted_at')
             ->selectRaw(DB::raw("
             i.id,
-            i.class,
+            i.subclass_name,
             i.name,
             i.name_alt,
             CONCAT(i.name_alt,'_', i.id) as name_with_id,
@@ -157,7 +155,7 @@ class InventoryApiController extends AbstractApiController
 //            IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
 //            IFNULL(SUM(v.count), 0) AS pageviews_count,
 //            IFNULL(SUM(i.initial_qty),0) as qty_on_hand
-//            FROM v_listables as i
+//            FROM listables as i
 //            LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
 //            LEFT JOIN inventory_sizes as `is` ON is.id=i.inventory_sizes_id
 //            LEFT JOIN claims as c ON c.listable_id = i.id AND c.listable_type = i.class
