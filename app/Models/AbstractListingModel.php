@@ -202,6 +202,8 @@ abstract class AbstractListingModel extends BaseEloquentModel
         WHERE (l.scheduled_for BETWEEN ? and ?)
         AND l.owner_id = ?
         AND li.ignore = 0
+        AND li.deleted_at is null
+        AND l.deleted_at is null
         
         UNION
         
@@ -210,6 +212,8 @@ abstract class AbstractListingModel extends BaseEloquentModel
         WHERE (l.scheduled_for_deletion BETWEEN ? and ?)
         AND l.owner_id = ?
         AND li.ignore = 0
+        AND li.deleted_at is null
+        AND l.deleted_at is null
         ";
 
         return DB::select($query, [$startTime, $endTime, $userId, $startTime, $endTime, $userId]);

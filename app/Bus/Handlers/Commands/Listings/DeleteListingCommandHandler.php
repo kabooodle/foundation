@@ -9,7 +9,6 @@ namespace Kabooodle\Bus\Handlers\Commands\Listings;
 use DB;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
-use Kabooodle\Libraries\QueueHelper;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Events\Listings\ListingWasDeleted;
 use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
@@ -62,14 +61,13 @@ class DeleteListingCommandHandler
                             $watcher->delete();
                         }
                     }
-
-                    if ($item->status <> ListingItems::STATUS_QUEUED_DELETE && $item->status <> ListingItems::STATUS_DELETED) {
-                        $job = new ScheduleFacebookListingItemForDeletionCommand($actor->id, $item->id);
-                        $job->onConnection(QueueHelper::pickFacebookSchedulerDelete());
-                        $this->dispatch($job);
-                    } else {
+// Removed because its weird to delete but not really delete...
+//                    if ($item->status <> ListingItems::STATUS_QUEUED_DELETE && $item->status <> ListingItems::STATUS_DELETED) {
+//                        $job = new ScheduleFacebookListingItemForDeletionCommand($actor, $item->id);
+//                        $this->dispatch($job);
+//                    } else {@jordan
                         $item->delete();
-                    }
+//                    }
                 }
             }
 
