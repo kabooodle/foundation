@@ -30,10 +30,10 @@ trait CommentableControllerTrait
      *
      * @return array
      */
-    public function handleStoreComment(User $actor, Commentable $commentable, $commentText)
+    public function handleStoreComment(User $actor, Commentable $commentable, $commentText, $referringUrl = null)
     {
         /** @var Comments $comment */
-        $comment = $this->dispatchNow(new AddCommentCommand($actor, $commentable, $commentText));
+        $comment = $this->dispatchNow(new AddCommentCommand($actor, $commentable, $commentText, $referringUrl));
 
         // Gott refresh this relationship.
         $commentable->load('comments');

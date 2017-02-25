@@ -6,7 +6,9 @@
 
 namespace Kabooodle\Bus\Events\Comments;
 
+use Kabooodle\Models\Comments;
 use Illuminate\Queue\SerializesModels;
+use Kabooodle\Models\Contracts\Commentable;
 
 /**
  * Class CommentWasCreatedEvent
@@ -27,12 +29,10 @@ final class CommentWasCreatedEvent
     public $comment;
 
     /**
-     * CommentWasCreatedEvent constructor.
-     *
-     * @param \Kabooodle\Models\Comments                       $comment
-     * @param \Kabooodle\Models\Contracts\Commentable $commentable
+     * @param Comments    $comment
+     * @param Commentable $commentable
      */
-    public function __construct(\Kabooodle\Models\Comments $comment, \Kabooodle\Models\Contracts\Commentable $commentable)
+    public function __construct(Comments $comment, Commentable $commentable)
     {
         $this->comment = $comment;
         $this->commentable = $commentable;

@@ -62,7 +62,7 @@ class InventoryCommentsController extends AbstractApiController
     {
         try {
             $commentable = Inventory::findOrFail(Binput::clean($commentableId));
-            $data = self::handleStoreComment($this->getUser(), $commentable, $request->getCommentText());
+            $data = self::handleStoreComment($this->getUser(), $commentable, $request->getCommentText(), $request->header('referer'));
 
             return $this->setData($data)->respond();
         } catch (ValidationException $e) {

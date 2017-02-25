@@ -32,6 +32,7 @@ class AddCommentCommandHandler
             $comment->commentable_type = get_class($commentable);
             $comment->text_raw = $command->getComment();
             $comment->user_id = $command->getActor()->id;
+            $comment->reference_url = $command->getReferringUrl();
 
             $comment->save();
 
