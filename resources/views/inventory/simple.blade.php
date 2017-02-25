@@ -3,19 +3,19 @@
 
 @section('body-menu')
     <div class="pull-right">
-        <a
-                href="{{ route('shop.inventory.create', [webUser()->username]) }}"
-                class="btn primary btn-sm">Add Inventory
-        </a>
-        <a
-                href="{{ route('shop.outfits.create', [webUser()->username]) }}"
-                class="btn primary btn-sm">Create Outfits
-        </a>
-        <a
-                href="{{ route('merchant.listings.create') }}"
-                class="btn primary btn-sm">Create Sales Listings
-        </a>
-        <a href="{{ route('shop.inventory.index', [webUser()->username]) }}" class="btn white btn-sm">Detailed View</a>
+        {{--<a--}}
+                {{--href="{{ route('shop.inventory.create', [webUser()->username]) }}"--}}
+                {{--class="btn primary btn-sm">Add Inventory--}}
+        {{--</a>--}}
+        {{--<a--}}
+                {{--href="{{ route('shop.outfits.create', [webUser()->username]) }}"--}}
+                {{--class="btn primary btn-sm">Create Outfits--}}
+        {{--</a>--}}
+        {{--<a--}}
+                {{--href="{{ route('merchant.listings.create') }}"--}}
+                {{--class="btn primary btn-sm">Create Sales Listings--}}
+        {{--</a>--}}
+        <a href="{{ route('shop.inventory.index', [webUser()->username]) }}" class="btn white btn-sm"><i class="fa fa-th-list" aria-hidden="true"></i> Detailed View</a>
     </div>
 @endsection
 
@@ -69,7 +69,7 @@
 
 
     <listable-groupings
-            listablegroupings_endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"
+            listablegroupings_endpoint="{{ apiRoute('listables.index', [webUser()->username]) }}"
             :display_footer_buttons="true"
     ></listable-groupings>
 

@@ -2,23 +2,21 @@
 
 
 @section('body-menu')
-    <div class="pull-left">
-        <button class="btn white btn-sm">Download</button>
-    </div>
     <div class="pull-right">
-        <a
-                href="{{ route('shop.inventory.create', [webUser()->username]) }}"
-                class="btn primary btn-sm">Add Inventory
-        </a>
-        <a
-                href="{{ route('shop.outfits.create', [webUser()->username]) }}"
-                class="btn primary btn-sm">Create Outfits
-        </a>
-        <a
-                href="{{ route('merchant.listings.create') }}"
-                class="btn primary btn-sm">Create Sales Listings
-        </a>
-        <a href="{{ route('shop.inventory.overview.show', [webUser()->username]) }}" class="btn white btn-sm">Simple View</a>
+        {{--<a--}}
+                {{--href="{{ route('shop.inventory.create', [webUser()->username]) }}"--}}
+                {{--class="btn primary btn-sm">Add Inventory--}}
+        {{--</a>--}}
+        {{--<a--}}
+                {{--href="{{ route('shop.outfits.create', [webUser()->username]) }}"--}}
+                {{--class="btn primary btn-sm">Create Outfits--}}
+        {{--</a>--}}
+        {{--<a--}}
+                {{--href="{{ route('merchant.listings.create') }}"--}}
+                {{--class="btn primary btn-sm">Create Sales Listings--}}
+        {{--</a>--}}
+        <button class="btn white btn-sm">Download</button>
+        <a href="{{ route('shop.inventory.overview.show', [webUser()->username]) }}" class="btn white btn-sm"><i class="fa fa-object-group" aria-hidden="true"></i> Simple View</a>
     </div>
 @endsection
 
