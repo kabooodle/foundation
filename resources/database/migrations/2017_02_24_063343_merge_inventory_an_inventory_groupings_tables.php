@@ -12,6 +12,7 @@ class MergeInventoryAnInventoryGroupingsTables extends Migration
      */
     public function up()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::table('inventory', function (Blueprint $table) {
             $table->rename('listables');
         });
@@ -32,6 +33,7 @@ class MergeInventoryAnInventoryGroupingsTables extends Migration
         DB::statement('UPDATE `listables` SET `subclass_name` = "Kabooodle\\\Models\\\Inventory"');
 
         DB::statement( 'DROP VIEW v_listables' );
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**

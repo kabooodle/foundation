@@ -12,6 +12,7 @@ class RestablishForeignKeysForNullableListablesTable extends Migration
      */
     public function up()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::table('listables', function (Blueprint $table) {
             $table->dropForeign('inventory_inventory_type_id_foreign');
             $table->dropForeign('inventory_inventory_type_styles_id_foreign');
@@ -34,6 +35,7 @@ class RestablishForeignKeysForNullableListablesTable extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**

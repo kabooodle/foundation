@@ -12,6 +12,7 @@ class DropInventoryGroupingsTableRemoveSubclassFromListingItems extends Migratio
      */
     public function up()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::table('inventory_groupings_inventory', function (Blueprint $table) {
             $table->dropForeign('inventory_groupings_inventory_inventory_grouping_id_foreign');
             $table->dropForeign('inventory_groupings_inventory_inventory_id_foreign');
@@ -38,6 +39,7 @@ class DropInventoryGroupingsTableRemoveSubclassFromListingItems extends Migratio
         Schema::table('listing_items', function (Blueprint $table) {
             $table->dropColumn('subclass_name');
         });
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**
