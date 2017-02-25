@@ -60,7 +60,7 @@ class CommentWasCreatedEventHandler implements ShouldQueue
      */
     public function toOwner(User $commentableOwner, Comments $comment, Commentable $commentable)
     {
-        if ($commentableOwner->checkIsNotifyable('inventory_commented', 'email')) {
+        if ($commentableOwner->checkIsNotifyable('commented_on_item', 'email')) {
             if ($commentableOwner->primaryEmail->isVerified()) {
                 $mailer = new KitEmail;
 
@@ -96,21 +96,22 @@ class CommentWasCreatedEventHandler implements ShouldQueue
      */
     public function toMentioned(User $user,  User $commentableOwner, Comments $comment, Commentable $commentable)
     {
-//        if ($user->checkIsNotifyable('inventory_commented', 'email')) {
-//            if ($user->primaryEmail->isVerified()) {
-//                $mailer = new KitEmail;
-//
-//                $mailer->setView('comments.emails.newcomment_onowner')
-//                    ->setParameters(['comment' => $comment, 'commentable' => $commentable])
-//                    ->setCallable(function ($mail) use ($commentableOwner) {
-//                        $mail->to($commentableOwner->email)
-//                            ->subject('New comment');
-//                    })
-//                    ->send();
-//            }
-//        }
-
         $title = $comment->author->username.' mentioned you in a comment on '.$commentable->getName();
+
+        if ($user->checkIsNotifyable('comment_mentioned', 'email')) {
+            if ($user->primaryEmail->isVerified()) {
+                $mailer = new KitEmail;
+                $email = $user->email;
+
+                $mailer->setView('comments.emails.mentioned_in_comment')
+                    ->setParameters(['comment' => $comment, 'commentable' => $commentable])
+                    ->setCallable(function ($mail) use ($email, $title) {
+                        $mail->to($email)
+                            ->subject($title);
+                    })
+                    ->send();
+            }
+        }
 
         $notification = new NotificationNotices;
         $notification->user_id = $user->id;
@@ -136,7 +137,7 @@ class CommentWasCreatedEventHandler implements ShouldQueue
             // [0] holds the matches, [1] holds the matches without the ampersand.
             $usernames = array_map(function($mention){
                 return strtolower(trim($mention));
-            }, $mentions[1]);
+            }, array_unique($mentions[1]));
 
             return User::whereIn('username', $usernames)->get();
         }

@@ -1,4 +1,4 @@
-{!! $comment->author->username !!} commented on {!!  $commentable->getName()  !!}:<br><Br>
+{!! $comment->author->username !!} mentioned you in a comment on {!!  $commentable->getName()  !!}:<br><Br>
 
 {!! nl2br($comment->text)  !!}
 

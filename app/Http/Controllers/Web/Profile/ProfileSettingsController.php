@@ -198,7 +198,7 @@ class ProfileSettingsController extends Controller
                 return false;
             }
             return $notification;
-        })->groupBy('group');
+        })->sortBy('group')->groupBy('group');
 
         $userNotifications = webUser()->notificationsettings;
 

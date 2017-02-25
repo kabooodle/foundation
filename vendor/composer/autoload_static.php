@@ -1509,6 +1509,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateListingsTblAddFacebookResponseTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_09_224554_update_listings_tbl_add_facebook_response_tbl.php',
         'UpdateListingsTblAddQueue' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_14_202419_update_listings_tbl_add_queue.php',
         'UpdateNotificationUsersTblChangeNameToTitle' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_07_192822_update_notification_users_tbl_change_name_to_title.php',
+        'UpdateNotificationsAddCommentsSubAndCommentsNotification' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_25_101746_update_notifications_add_comments_sub_and_comments_notification.php',
         'UpdateNotificationsPivot' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_02_103104_update_notifications_pivot.php',
         'UpdateNotificationsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_02_063042_update_notifications_table.php',
         'UpdateNotificationsTblAddFlashsaleNotifications' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_22_041938_update_notifications_tbl_add_flashsale_notifications.php',
