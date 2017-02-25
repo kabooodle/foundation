@@ -7,6 +7,7 @@
 namespace Kabooodle\Models\Listing;
 
 use Carbon\Carbon;
+use Kabooodle\Services\Listings\ListingsService;
 
 /**
  * Class FacebookListingOptions
@@ -28,8 +29,8 @@ final class FacebookListingOptions
      */
     public function __construct(string $startsAt = null, string $endsAt = null, string $claimingStartsAt = null, string $claimingEndsAt = null, string $itemMessage = null)
     {
-        $this->setStartsAt($startsAt ?: Carbon::now()->addHour()->toDateTimeString());
-        $this->setEndsAt($endsAt ?: Carbon::now()->addHour()->toDateTimeString());
+        $this->setStartsAt($startsAt ?: Carbon::now()->addSeconds(ListingsService::SCHEDULER_LOOKAHEAD_FROM_NOW_SECONDS)->toDateTimeString());
+        $this->setEndsAt($endsAt ?: Carbon::now()->addHours(168)->toDateTimeString()); // 7 days
         $this->setClaimingStartsAt($claimingStartsAt);
         $this->setClaimingEndsAt($claimingEndsAt);
         $this->setItemMessage($itemMessage);

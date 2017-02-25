@@ -109,9 +109,8 @@ class EnqueueScheduleListingItemForDeletionJob extends AbstractEnqueueJob implem
         if (! is_null($listingItem->listing->scheduled_for_deletion)) {
             $remainingListingItems = $this->getRemainingListingItems($listingItem->listing_id);
 
-            \Log::info('remaining items: '. count($remainingListingItems));
-
-            if (! $remainingListingItems || count($remainingListingItems) == 0) {
+            // TODO: I added <= 5 as a buffer because 100% isn't the best. Figure out algorithm to better identify accuracy
+            if (! $remainingListingItems || count($remainingListingItems) == 0 || count($remainingListingItems) <= 5) {
                 // Update the status to the appropriate status based on the result.
                 $this->updateListingsStatus([$listingItem->listing_id], $this->timestamp, Listings::STATUS_DELETED);
             }

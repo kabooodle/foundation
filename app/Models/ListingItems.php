@@ -343,12 +343,15 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
             $id = $this->obfuscateIdToString($this->id);
             $route = str_replace(['https://', 'http://'], '', str_replace(['api.', 'app.', 'api', 'app'], 'www.', route('externalclaim.show', [$id])));
             $itemMessage = str_ireplace($placeholders['url'], ' '.$route.' ', $itemMessage);
-
             $itemMessage = str_ireplace($placeholders['price'], $this->listedItem->getPrice(), $itemMessage);
 
-            $itemMessage = str_ireplace($placeholders['style'], $this->listedItem->style->name, $itemMessage);
-
-            $itemMessage = str_ireplace($placeholders['size'], $this->listedItem->size->name, $itemMessage);
+            if ($this->getListableClassName() == InventoryGrouping::class) {
+                $itemMessage = str_ireplace($placeholders['style'], 'Outfits', $itemMessage);
+                $itemMessage = str_ireplace($placeholders['size'], null, $itemMessage);
+            } else {
+                $itemMessage = str_ireplace($placeholders['style'], $this->listedItem->style->name, $itemMessage);
+                $itemMessage = str_ireplace($placeholders['size'], $this->listedItem->size->name, $itemMessage);
+            }
 
             return $itemMessage;
         }

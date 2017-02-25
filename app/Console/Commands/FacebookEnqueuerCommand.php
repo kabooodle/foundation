@@ -6,12 +6,12 @@
 
 namespace Kabooodle\Console\Commands;
 
+use Bugsnag;
 use Carbon\Carbon;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
 use Illuminate\Console\Command;
 use Kabooodle\Libraries\QueueHelper;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Jobs\EnqueueScheduleListingsJob;
 use Kabooodle\Bus\Events\Listings\ListingsWereQueued;
@@ -49,26 +49,30 @@ class FacebookEnqueuerCommand extends Command
      */
     public function handle()
     {
-        $this->timestamp = Carbon::now();
+        try {
+            $this->timestamp = Carbon::now();
 
-        $listings = $this->getScheduledListings();
-        $listingsIds = $listings->pluck('id')->toArray();
-        $this->output->writeln($listings->count().' Listings found.');
-        if ($listings && $listings->count() > 0) {
+            $listings = $this->getScheduledListings();
+            $listingsIds = $listings->pluck('id')->toArray();
+            $this->output->writeln($listings->count().' Listings found.');
+            if ($listings && $listings->count() > 0) {
 
-            $job = $this->buildJob($listingsIds);
+                // Update the Queues status to processing.
+                Listings::updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
 
-            $this->dispatch($job);
+                $job = $this->buildJob($listingsIds);
 
-            // Update the Queues status to processing.
-            Listings::updateListingsStatus($listingsIds, $this->timestamp, Listings::STATUS_QUEUED_LIST);
+                $this->dispatch($job);
 
-            event(new ListingsWereQueued($listings, $job));
+                event(new ListingsWereQueued($listings, $job));
+            }
+
+            $this->output->writeln('Completed');
+
+            return;
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
         }
-
-        $this->output->writeln('Completed');
-
-        return;
     }
 
     /**

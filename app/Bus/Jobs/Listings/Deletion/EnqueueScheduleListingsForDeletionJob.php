@@ -64,6 +64,10 @@ class EnqueueScheduleListingsForDeletionJob extends AbstractEnqueueJob implement
      */
     public function handle()
     {
+        if (! $this->listingIds || count($this->listingIds) == 0){
+            return;
+        }
+
         $this->timestamp = Carbon::now();
 
         // Update the Queues status to processing.

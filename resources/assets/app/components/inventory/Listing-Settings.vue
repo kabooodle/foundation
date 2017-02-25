@@ -157,7 +157,7 @@
 
                 this.$nextTick(function(){
 
-                    let minDate = moment().add('1', 'hour');
+                    let minDate = moment().add('299', 'second');
                     let options = {
                         format: "MM/DD/YYYY hh:mma",
                         allowInputToggle: true,

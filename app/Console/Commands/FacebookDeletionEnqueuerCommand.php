@@ -6,6 +6,8 @@
 
 namespace Kabooodle\Console\Commands;
 
+use Bugsnag;
+use Exception;
 use Carbon\Carbon;
 use Kabooodle\Models\Queues;
 use Kabooodle\Models\Listings;
@@ -50,11 +52,15 @@ class FacebookDeletionEnqueuerCommand extends Command
      */
     public function handle()
     {
-        $this->timestamp = Carbon::now();
+        try {
+            $this->timestamp = Carbon::now();
 
-        $this->handleListings();
+            $this->handleListings();
 
-        $this->handleListingItems();
+            $this->handleListingItems();
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+        }
     }
 
     /**
@@ -66,16 +72,16 @@ class FacebookDeletionEnqueuerCommand extends Command
         $this->output->writeln($listings->count().' Listings found.');
         if ($listings && $listings->count() > 0) {
             $listingsIds = $listings->pluck('id')->toArray();
-
-            $job = $this->buildListingsJob($listingsIds);
-            $this->dispatch($job);
-
             // Update the Queues status to processing.
             Listings::updateListingsStatus(
                 $listingsIds,
                 $this->timestamp,
                 Listings::STATUS_QUEUED_DELETE
             );
+
+            $job = $this->buildListingsJob($listingsIds);
+
+            $this->dispatch($job);
         }
 
         $this->output->writeln('Listings Completed');
@@ -90,17 +96,18 @@ class FacebookDeletionEnqueuerCommand extends Command
 
         if ($listingItems && $listingItems->count() > 0) {
             $listingItemIds = $listingItems->pluck('id')->toArray();
-            // Listing Items are queued one by one, not in a batch.
-            foreach($listingItemIds as $listingItemId) {
-                $job = $this->buildListingItemJob($listingItemId);
-                $this->dispatch($job);
-            }
             // Update the Queues status to processing.
             ListingItems::updateListingsStatus(
                 $listingItemIds,
                 $this->timestamp,
                 Listings::STATUS_QUEUED_DELETE
             );
+
+            // Listing Items are queued one by one, not in a batch.
+            foreach($listingItemIds as $listingItemId) {
+                $job = $this->buildListingItemJob($listingItemId);
+                $this->dispatch($job);
+            }
         }
 
         $this->output->writeln('Listing Items Completed');

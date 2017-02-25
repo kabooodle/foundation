@@ -31,7 +31,7 @@ class NotifyListingsWereQueued implements ShouldQueue
     public function handle(ListingsWereQueued $event)
     {
         // Collection of Listings
-        $listings = Listings::whereIn($event->getListings())->get();
+        $listings = Listings::whereIn('id', $event->getListings())->get();
 
         foreach ($listings as $listing) {
 
