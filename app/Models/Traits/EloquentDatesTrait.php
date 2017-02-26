@@ -46,14 +46,14 @@ trait EloquentDatesTrait
      */
     public function setAttribute($key, $value)
     {
-        if ($value && (in_array($key, $this->getDates()) || $this->isDateCastable($key))) {
-            if (!isset($value->tzName) || $value->tzName <> 'UTC') {
-                $value = static::convertToUTC($this->fromDateTime__set($value));
-            }
-
-            $this->attributes[$key] = $value;
-            return $this;
-        }
+//        if ($value && (in_array($key, $this->getDates()) || $this->isDateCastable($key))) {
+//            if (!isset($value->tzName) || $value->tzName <> 'UTC') {
+//                $value = static::convertToUTC($this->fromDateTime__set($value));
+//            }
+//
+//            $this->attributes[$key] = $value;
+//            return $this;
+//        }
 
         return parent::setAttribute($key, $value);
     }
@@ -83,7 +83,16 @@ trait EloquentDatesTrait
      */
     protected function asDateTime($value)
     {
+        if ($value instanceof Carbon) {
+            return $value;
+        }
+
+//        $tz = Carbon::now(current_timezone())->offsetHours;
+
+        /** @var Carbon $value */
         $value = parent::asDateTime($value);
+
+//        return $value->addHours($tz);
 
         return $value->setTimezone(current_timezone());
     }
