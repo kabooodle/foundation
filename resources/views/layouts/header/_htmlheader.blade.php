@@ -48,6 +48,7 @@
         Vue.http.headers.common['Authorization'] = "Bearer " + $('meta[name=user_hash]').attr("content");
         @endif
         $(function () {
+            moment.tz('UTC').format();
             @if(webUser())
             moment.tz('{{ webUser()->timezone}}').format();
             $.ajaxPrefilter(function (options, originalOptions, xhr) {

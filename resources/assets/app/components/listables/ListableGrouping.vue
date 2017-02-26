@@ -19,6 +19,7 @@
                 <div class="col-sm-10">
                     <div class="pull-left btn-group-prpl">
                         <button
+                                :style="subgroupingBtnHidden(subgroup) ? 'display: none': null"
                                 class="btn btn-subgroup white btn-xs"
                                 style="margin-right: 3px;"
                                 v-for="subgroup in group.subgroupings"
@@ -72,8 +73,10 @@
 
                                     <div
                                             v-for="item in subgroup.listables"
+                                            :style="hideUnavailable && item.available_qty <= 0 ? 'display: none': null"
                                             :key="item.id"
-                                            class="col-sm-2 p-r-0 btn-group-prpl" style="width:110px !important;">
+                                            class="col-sm-2 p-r-0 btn-group-prpl"
+                                            style="width:110px !important;">
                                         <button
                                             @click.prevent="clickListable(subgroup, item)"
                                             style="border-radius: .25rem;"
@@ -162,6 +165,10 @@
                 type: Boolean,
                 default: false
             },
+            hideUnavailable: {
+                type: Boolean,
+                default: false
+            }
         },
         data(){
             return initial_state();
@@ -390,6 +397,18 @@
             },
             subgroupingBtnDisabled: function (subgroup) {
                 if (this.disableUnavailable) {
+                    var disable = true;
+                    subgroup.listables.forEach(function (listable) {
+                        if (listable.available_qty > 0)
+                            disable = false;
+                    });
+                    return disable;
+                } else {
+                    return false;
+                }
+            },
+            subgroupingBtnHidden: function (subgroup) {
+                if (this.hideUnavailable) {
                     var disable = true;
                     subgroup.listables.forEach(function (listable) {
                         if (listable.available_qty > 0)

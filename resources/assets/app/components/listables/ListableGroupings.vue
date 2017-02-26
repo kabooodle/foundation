@@ -21,13 +21,36 @@
                     Unselect all
                     <span class="text-sm text-muted block">({{this.listables.length}})</span>
                 </button>
+
+                        <div class="text-center center-block center m-t-sm">
+                                <label class="checkbox">
+                                    <input
+                                            @change="toggleDisableUnavailable"
+                                            type="checkbox"
+                                            value="1"
+                                            class="has-value"
+                                           :checked="disableUnavailable"
+                                    ><span class="text-sm">Disable unavailable items</span>
+                                </label>
+                                <label class="checkbox">
+                                    <input
+                                            @change="toggleHideUnavailable"
+                                            :checked="hideUnavailable"
+                                            type="checkbox"
+                                            value="1"
+                                            class="has-value">
+                                    <span class="text-sm">Hide unavailable items</span>
+                                </label>
+                        </div>
             </div>
             <listable-grouping
                 v-for="group in listable_groupings"
                 key="group.id"
-                :group="group"
                 group_type="inventory"
+                :group="group"
                 :display_footer_buttons="display_footer_buttons"
+                :disable-unavailable="disableUnavailable"
+                :hide-unavailable="hideUnavailable"
             ></listable-grouping>
         </div>
         <popout-overlay></popout-overlay>
@@ -53,6 +76,8 @@
         },
         data(){
             return{
+                disableUnavailable: true,
+                hideUnavailable: false,
                 listables: [],
                 listable_groupings: [],
                 actions: {
@@ -84,6 +109,12 @@
             });
         },
         methods: {
+            toggleHideUnavailable(){
+                this.hideUnavailable = (!this.hideUnavailable);
+            },
+            toggleDisableUnavailable(){
+                this.disableUnavailable = (!this.disableUnavailable);
+            },
             resetSelectedListables(){
                 $Bus.$emit('listings:selected:listables:reset');
             },
