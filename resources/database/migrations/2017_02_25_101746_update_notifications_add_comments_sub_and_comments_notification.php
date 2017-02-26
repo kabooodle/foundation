@@ -15,10 +15,10 @@ class UpdateNotificationsAddCommentsSubAndCommentsNotification extends Migration
     {
         DB::statement("ALTER TABLE notifications CHANGE `group` `group`  ENUM('claims', 'comments','flashsales', 'general', 'inventory','listings', 'messenger')");
 
-        Notifications::findOrFail(328454)->update([
-            'name' => 'commented_on_item',
-            'group' => 'comments',
-        ]);
+//        Notifications::findOrFail(328454)->update([
+//            'name' => 'commented_on_item',
+//            'group' => 'comments',
+//        ]);
 
         Notifications::insert([
             'name' => 'comment_mentioned',

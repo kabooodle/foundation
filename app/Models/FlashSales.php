@@ -13,13 +13,10 @@ use Kabooodle\Models\Traits\WatchableTrait;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Queue\SerializesModels;
 use Kabooodle\Presenters\PresentableTrait;
-use Kabooodle\Models\Traits\LikeableTrait;
-use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Kabooodle\Models\Traits\AuthorableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
 
@@ -30,7 +27,6 @@ use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
 class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInterface
 {
     use AuthorableTrait,
-        EloquentDatesTrait,
         FollowableTrait,
         ObfuscatesIdTrait,
         PresentableTrait,

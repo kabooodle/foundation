@@ -31,9 +31,9 @@ class InventoryCommentsController extends AbstractApiController
      */
     public function index(Request $request, $commentableId)
     {
-        $comments = Comments::where('commentable_id', $commentableId)->get();
+        $inventoryItem = Inventory::with('comments')->findOrFail($commentableId);
 
-        return $this->collection($comments);
+        return $this->collection($inventoryItem->comments);
     }
 
     /**

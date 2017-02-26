@@ -11,7 +11,6 @@ use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\EmojifyableTrait;
-use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Libraries\Linkify\LinkifyableTrait;
 use Kabooodle\Presenters\Models\Comments\CommentsModelPresenter;

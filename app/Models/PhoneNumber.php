@@ -7,15 +7,12 @@
 namespace Kabooodle\Models;
 
 use Carbon\Carbon;
-use Kabooodle\Models\Traits\EloquentDatesTrait;
 
 /**
  * Class PhoneNumber
  */
 class PhoneNumber extends BaseEloquentModel
 {
-    use EloquentDatesTrait;
-
     /**
      * @var array
      */

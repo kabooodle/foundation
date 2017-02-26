@@ -10,7 +10,6 @@ use DB;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
 
 /**
@@ -18,7 +17,7 @@ use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
  */
 class Listings extends AbstractListingModel
 {
-    use EloquentDatesTrait, PresentableTrait, SoftDeletes, UuidableTrait;
+    use PresentableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array

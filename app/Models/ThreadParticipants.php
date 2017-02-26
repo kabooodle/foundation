@@ -7,14 +7,13 @@
 namespace Kabooodle\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Kabooodle\Models\Traits\EloquentDatesTrait;
 
 /**
  * Class ThreadParticipants
  */
 class ThreadParticipants extends BaseEloquentModel
 {
-    use EloquentDatesTrait, SoftDeletes;
+    use SoftDeletes;
 
     /**
      * The database table used by the model.

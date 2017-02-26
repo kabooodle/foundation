@@ -6,15 +6,11 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Models\Traits\EloquentDatesTrait;
-
 /**
  * Class Threads
  */
 class Threads extends BaseEloquentModel
 {
-    use EloquentDatesTrait;
-
     /**
      * @var string
      */
