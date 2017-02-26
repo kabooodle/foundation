@@ -83,6 +83,7 @@ trait EloquentDatesTrait
      */
     protected function asDateTime($value)
     {
+        // https://andrew.cool/blog/49/Easy-timezones-in-Laravel-with-Carbon
         if ($value instanceof Carbon) {
             return $value;
         }
