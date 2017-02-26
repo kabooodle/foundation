@@ -40,17 +40,17 @@ trait EloquentDatesTrait
     }
 
     /**
-     * Overload Laravel setAttribute to convert dates to UTC.
+     * Overload Laravel asDateTime to convert dates from UTC.
      *
      * {@inheritdoc}
      */
-    public function getAttributeValue($key)
+    public function asDateTime($value)
     {
-        if ((in_array($key, $this->getDates()) || $this->isDateCastable($key))) {
-            return static::formatDateAttribute(parent::getAttributeValue($key));
+        if ($value instanceof Carbon) {
+            return $value;
         }
 
-        return parent::getAttributeValue($key);
+        return static::formatDateAttribute(parent::asDateTime($value));
     }
 
     /**
