@@ -14,7 +14,10 @@
     @endpush
 
     <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js"  data-apikey="c587cbc4daf53552ae8bd305b63fb68c"></script>
-    <script type="text/javascript">
+    @if(!webUser())
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.6/jstz.min.js" integrity="sha256-68s1Vjqw1KVP2DiR5uNilZQjf+tF6IrQI9PjKTY88nM=" crossorigin="anonymous"></script>
+    @endif
+    <script>
         var KABOOODLE_APP = window.KABOOODLE_APP || {};
         KABOOODLE_APP.env = '{{ env('APP_ENV') }}';
         KABOOODLE_APP.currentUser = {!! $_current_user !!};
@@ -44,6 +47,9 @@
     <script src="{{ staticAsset('/assets/js/vendor.js') }}"></script>
     <script type="text/javascript">
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
+        @if(!webUser())
+            Vue.http.headers.common['X-TZ'] = jstz.determine().name();
+        @endif
         @if(webUser())
         Vue.http.headers.common['Authorization'] = "Bearer " + $('meta[name=user_hash]').attr("content");
         @endif
@@ -56,12 +62,16 @@
                 }
             });
             @endif
+            var ajaxHeaders = {
+                '_token': $('meta[name="token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')
+            };
+            @if(!webUser())
+            ajaxHeaders['X-TZ'] = jstz.determine().name();
+            @endif
             $.ajaxSetup({
                 async: true,
-                headers: {
-                    '_token': $('meta[name="token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')
-                }
+                headers: ajaxHeaders
             });
         });
     </script>

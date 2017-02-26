@@ -32,7 +32,7 @@ class TrackViewableViewCommandHandler implements ShouldQueue
         $ip = $command->getIpAddress();
 
         $view = View::create([
-            'viewer_id' => $actor->id,
+            'viewer_id' => $actor ? $actor->id : null,
             'viewable_type' => get_class($resource),
             'viewable_id' => $resource->id,
             'ip_address' => $ip,

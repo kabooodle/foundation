@@ -24,6 +24,10 @@ if (!function_exists('current_timezone')) {
             return user()->timezone;
         }
 
+        if ($timezone = app('request')->header('X-TZ')) {
+            return $timezone;
+        }
+
         return 'UTC';
     }
 }
