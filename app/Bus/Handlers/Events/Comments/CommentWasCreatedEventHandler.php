@@ -17,6 +17,7 @@ use Kabooodle\Models\NotificationNotices;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Kabooodle\Models\Contracts\Commentable;
 use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
+use Kabooodle\Services\Comments\CommentsService;
 
 /**
  * Class CommentWasCreatedEventHandler
@@ -25,6 +26,19 @@ use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
 class CommentWasCreatedEventHandler implements ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
+
+    /**
+     * @var CommentsService
+     */
+    public $commentsService;
+
+    /**
+     * @param CommentsService $commentsService
+     */
+    public function __construct(CommentsService $commentsService)
+    {
+        $this->commentsService = $commentsService;
+    }
 
     /**
      * @param CommentWasCreatedEvent $event
@@ -132,14 +146,9 @@ class CommentWasCreatedEventHandler implements ShouldQueue
      */
     public function checkCommentHasMentions(string $string)
     {
-        preg_match_all('/@([\w_\-\.]+\s)/', $string, $mentions);
+        $mentions = $this->commentsService->getMentionsFromComment($string);
         if ($mentions && count($mentions) > 0) {
-            // [0] holds the matches, [1] holds the matches without the ampersand.
-            $usernames = array_map(function($mention){
-                return strtolower(trim($mention));
-            }, array_unique($mentions[1]));
-
-            return User::whereIn('username', $usernames)->get();
+            return $this->commentsService->getUsernamesFromMentions($mentions[1]);
         }
 
         return [];

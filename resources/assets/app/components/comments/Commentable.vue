@@ -11,8 +11,11 @@
                 <div class="box-body">
                     <div class="streamline b-l m-l-md" id="comments_container">
                         <div v-for="comment in comments">
-                            <div class="sl-item"
-                                 :data-id="comment.uuid"
+                            <div
+                                    :id="'comment_'+comment.id"
+                                    class="sl-item"
+                                 :data-uuid="comment.uuid"
+                                 :data-id="comment.id"
                                  :data-author-id="comment.author.public_hash"
                                  :data-author="comment.author.name">
                                 <div class="sl-left">
@@ -27,7 +30,11 @@
                                     <div v-html="comment.text"></div>
                                     <div class="sl-footer sl-date clearfix">
                                         <ul class="text-muted list-inline pull-left">
-                                            <li class="list-inline-item"><timestamp :timestamp="comment.created_at"></timestamp></li>
+                                            <li class="list-inline-item">
+                                                <a :href="'#comment_'+comment.id">
+                                                    <timestamp :timestamp="comment.created_at"></timestamp>
+                                                </a>
+                                            </li>
                                             <li class="list-inline-item" v-if="userCanDelete(comment)"><button type="button" class="white btn btn-text btn-xs" @click="deleteComment(comment, $event)">Delete</button></li>
                                         </ul>
                                     </div>

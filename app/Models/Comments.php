@@ -11,6 +11,7 @@ use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\EmojifyableTrait;
+use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Libraries\Linkify\LinkifyableTrait;
 use Kabooodle\Presenters\Models\Comments\CommentsModelPresenter;
@@ -21,7 +22,7 @@ use Kabooodle\Presenters\Models\Comments\CommentsModelPresenter;
  */
 class Comments extends BaseEloquentModel implements Revisionable
 {
-    use EmojifyableTrait, LinkifyableTrait, PresentableTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
+    use EloquentDatesTrait, EmojifyableTrait, LinkifyableTrait, PresentableTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
 
     const CONVERT_EMOJI = true;
 
@@ -74,6 +75,15 @@ class Comments extends BaseEloquentModel implements Revisionable
     protected $hidden = [
         'commentable_id',
         'commentable_type'
+    ];
+
+    /**
+     * @var array
+     */
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     public static function boot()
