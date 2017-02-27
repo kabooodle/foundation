@@ -103,6 +103,10 @@ if (! function_exists('listingStatusHtml')) {
                 $class = 'brown-400';
                 $text = 'Scheduled for deletion';
                 break;
+            case 'processing_delete':
+                $class = 'brown-400';
+                $text = 'Deleting';
+                break;
             case 'processing':
                 $class = 'deep-orange-400';
                 $text = 'Uploading';
