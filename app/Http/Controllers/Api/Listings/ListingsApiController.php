@@ -179,7 +179,6 @@ class ListingsApiController extends AbstractApiController
                 $this->listingService->assertNumberOfItemsDoesNotExceedFacebookHourlyQuota(
                     $this->getUser(),
                     $listingOptions->getStartsAt()->toDateTimeString(),
-                    $listingOptions->getEndsAt()->toDateTimeString(),
                     (int) $facebooksales_meta['total_listables']
                 );
 
@@ -193,17 +192,21 @@ class ListingsApiController extends AbstractApiController
 
             $this->dispatchNow(new ScheduleNewListingsCommand($this->getUser(), $facebookListings, $flashsaleListings));
 
-            return $this->setData(['msg' => 'Listings successfully created!'])->respond();
+            return $this->setData(['msg' => 'Listings successfully scheduled!'])->respond();
         } catch (FacebookAuthenticationException $e) {
             $msg = 'Your facebook credentials are invalid. Please re-authorize ' . env('APP_NAME') . ' for your facebook account, via our settings page.';
 
             return $this->setData(['msg' => $msg])->setStatusCode(500)->respond();
         } catch (ListingExceedsHourlyLimitException $e) {
-            return $this->setStatusCode(500)->setData(['msg' => $e->getMessage() ?: 'You have too many ('.$e->getTotalForHour().') facebook listings scheduled for the time period.'])->respond();
+            return $this->setStatusCode(500)->setData([
+                'msg' => trans('alerts.listings.listings_exceeds_hourly_limit',
+                    [
+                        'allowed' => $e->getMaximumTotalAllowedForHour(),
+                        'current'=> $e->getTotalExistingListingsForHour()
+                    ])
+            ])->respond();
         } catch (MissingMandatoryParametersException $e) {
             return $this->setStatusCode(500)->setData(['msg' => $e->getMessage() ?: 'You must select as least 1 item for listing.'])->respond();
-        } catch (ListingConflictsWithExistingListingException $e) {
-            return $this->setStatusCode(500)->setData(['msg' => 'The date and time block you selected conflicts with an existing listing. Please select a new block of time.'])->respond();
         } catch (FacebookTokenInvalidException $e) {
             return $this->setStatusCode(401)->setData(['msg' => trans('alerts.listings.facebook_token_invalid')])->respond();
         } catch (Exception $e) {

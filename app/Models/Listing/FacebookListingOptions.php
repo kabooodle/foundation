@@ -29,8 +29,9 @@ final class FacebookListingOptions
      */
     public function __construct(string $startsAt = null, string $endsAt = null, string $claimingStartsAt = null, string $claimingEndsAt = null, string $itemMessage = null)
     {
-        $this->setStartsAt($startsAt ?: Carbon::now()->addSeconds(ListingsService::SCHEDULER_LOOKAHEAD_FROM_NOW_SECONDS)->toDateTimeString());
-        $this->setEndsAt($endsAt ?: Carbon::now()->addHours(168)->toDateTimeString()); // 7 days
+        \Log::info('first '. $startsAt);
+        $this->setStartsAt($startsAt ?: Carbon::now(current_timezone())->addSeconds(ListingsService::SCHEDULER_LOOKAHEAD_FROM_NOW_SECONDS)->toDateTimeString());
+        $this->setEndsAt($endsAt ?: Carbon::now(current_timezone())->addHours(168)->toDateTimeString()); // 7 days
         $this->setClaimingStartsAt($claimingStartsAt);
         $this->setClaimingEndsAt($claimingEndsAt);
         $this->setItemMessage($itemMessage);
@@ -41,7 +42,10 @@ final class FacebookListingOptions
      */
     public function setStartsAt($startsAt)
     {
-        $this->startsAt = Carbon::createFromTimestamp(strtotime($startsAt));
+        \Log::info(strtotime($startsAt));
+        \Log::info('starts at raw '.$startsAt);
+        $this->startsAt = Carbon::createFromTimestamp(strtotime($startsAt), current_timezone());
+        \Log::info('starts at after '.print_r($this->startsAt, true));
     }
 
     /**
@@ -49,7 +53,7 @@ final class FacebookListingOptions
      */
     public function setEndsAt($endsAt)
     {
-        $this->endsAt = Carbon::createFromTimestamp(strtotime($endsAt));
+        $this->endsAt = Carbon::createFromTimestamp(strtotime($endsAt.' UTC'))->setTimezone('UTC');
     }
 
     /**
@@ -58,7 +62,7 @@ final class FacebookListingOptions
     public function setClaimingStartsAt($claimingStartsAt)
     {
         if ($claimingStartsAt) {
-            $this->claimingStartsAt = Carbon::createFromTimestamp(strtotime($claimingStartsAt));
+            $this->claimingStartsAt = Carbon::createFromTimestamp(strtotime($claimingStartsAt.' UTC'))->setTimezone('UTC');
         }
     }
 
@@ -68,7 +72,7 @@ final class FacebookListingOptions
     public function setClaimingEndsAt($claimingEndsAt)
     {
         if ($claimingEndsAt) {
-            $this->claimingEndsAt = Carbon::createFromTimestamp(strtotime($claimingEndsAt));
+            $this->claimingEndsAt = Carbon::createFromTimestamp(strtotime($claimingEndsAt.' UTC'))->setTimezone('UTC');
         }
     }
 

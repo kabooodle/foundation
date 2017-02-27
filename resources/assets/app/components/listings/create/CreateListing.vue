@@ -425,7 +425,7 @@
                             albums: 0,
                             id: sales[0].sale.id, // peek into the array and get this from the first object as all objects have the same sale id/name
                             name: sales[0].sale.name,
-                            sales: sales,
+                            sales: [],
                         };
 
                         for (let i=0; i<sales.length; i++){
@@ -435,6 +435,17 @@
                             tempsale.albums++;
 
                             tempsale.listables += sale.listables.length;
+                            tempsale.sales.push({
+                                album: sale.album,
+                                album_id: sale.album_id,
+                                listables: sale.listables,
+                                sale_id: sale.sale_id,
+                                sale_type: sale.sale_type,
+                                sale: {
+                                    id: sale.sale.id,
+                                    name: sale.sale.name
+                                }
+                            });
                         }
 
                         // Push our object to the state

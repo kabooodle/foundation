@@ -191,15 +191,14 @@ abstract class AbstractListingModel extends BaseEloquentModel
     /**
      * @param int $userId
      * @param $startTime
-     * @param $endTime
      * @return bool
      */
-    public static function queryGetItemsDuringDateTimeBlockForUser(int $userId, $startTime, $endTime)
+    public static function queryGetItemsDuringDateTimeBlockForUser(int $userId, $startTime)
     {
-        $query = "
+        $query = " 
         SELECT * FROM listing_items as li 
         INNER JOIN listings as l ON l.id = li.listing_id
-        WHERE (l.scheduled_for BETWEEN ? and ?)
+        WHERE l.scheduled_for BETWEEN date_sub(?, interval 1 hour) and date_add(?, interval 1 hour)
         AND l.owner_id = ?
         AND li.ignore = 0
         AND li.deleted_at is null
@@ -209,14 +208,14 @@ abstract class AbstractListingModel extends BaseEloquentModel
         
         SELECT * FROM listing_items as li 
         INNER JOIN listings as l ON l.id = li.listing_id
-        WHERE (l.scheduled_for_deletion BETWEEN ? and ?)
+        WHERE l.scheduled_for_deletion BETWEEN date_sub(?, interval 1 hour) and date_add(?, interval 1 hour)
         AND l.owner_id = ?
         AND li.ignore = 0
         AND li.deleted_at is null
         AND l.deleted_at is null
         ";
 
-        return DB::select($query, [$startTime, $endTime, $userId, $startTime, $endTime, $userId]);
+        return DB::select($query, [$startTime, $startTime, $userId, $startTime, $startTime, $userId]);
     }
 
     /**
@@ -232,7 +231,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
         $results = self::queryGetItemsDuringDateTimeBlockForUser($userId, $startTime, $endTime);
         $countResults = count($results);
 
-        return ($countResults + $incomingItemsCount) > 600;
+        return ($countResults + $incomingItemsCount) > 900;
     }
 
     /**

@@ -205,7 +205,7 @@ function confirmModal(confirmCB, closeCB, options) {
             easing: 'linear',
             speed: 1
         },
-        timeout: 4000,
+        timeout: 14000,
         buttons: [
             {
                 addClass: 'btn btn-sm primary noty-btn-primary noty-btn', text: 'Continue', onClick: function ($noty) {
@@ -378,7 +378,7 @@ function notify(options){
             open: 'animated bounceInDown',
             close: 'animated bounceOutUp'
         },
-        timeout: 4000,
+        timeout: 14000,
         closeWith: ['button','click']
     };
 

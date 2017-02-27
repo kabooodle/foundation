@@ -22,8 +22,13 @@ use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListing
  */
 class ListingsService
 {
-    const HOURLY_QUOTA_LISTING_LIMIT = 600;
+    const HOURLY_QUOTA_LISTING_LIMIT = 700;
     const SCHEDULER_LOOKAHEAD_FROM_NOW_SECONDS = 299; // 4 minutes, 49 seconds
+
+    /**
+     * @var int
+     */
+    protected $totalScheduledResultsFound;
 
     /**
      * @var ListingsRepositoryInterface
@@ -61,15 +66,15 @@ class ListingsService
     /**
      * @param User $user
      * @param      $startTime
-     * @param      $endTime
      * @param      $itemsCount
      *
      * @return bool
      */
-    public function checkNumberOfItemsDoesNotExceedFacebookHourlyQuota(User $user, $startTime, $endTime, $itemsCount)
+    public function checkNumberOfItemsDoesNotExceedFacebookHourlyQuota(User $user, $startTime, int $itemsCount)
     {
-        $results = AbstractListingModel::queryGetItemsDuringDateTimeBlockForUser($user->id, $startTime, $endTime);
-        $countResults = count($results);
+        \Log::info('Checking items ['.$itemsCount.'] for FB quota on ['. $startTime.']');
+        $results = AbstractListingModel::queryGetItemsDuringDateTimeBlockForUser($user->id, $startTime);
+        $countResults = $this->totalScheduledResultsFound = count($results);
 
         return ($countResults + $itemsCount) > self::HOURLY_QUOTA_LISTING_LIMIT;
     }
@@ -77,15 +82,18 @@ class ListingsService
     /**
      * @param User $user
      * @param      $startTime
-     * @param      $endTime
      * @param      $itemsCount
      *
      * @throws ListingExceedsHourlyLimitException
      */
-    public function assertNumberOfItemsDoesNotExceedFacebookHourlyQuota(User $user, $startTime, $endTime, $itemsCount)
+    public function assertNumberOfItemsDoesNotExceedFacebookHourlyQuota(User $user, $startTime, $itemsCount)
     {
-        if ($this->checkNumberOfItemsDoesNotExceedFacebookHourlyQuota($user, $startTime, $endTime, $itemsCount)) {
-            throw new ListingExceedsHourlyLimitException;
+        if ($this->checkNumberOfItemsDoesNotExceedFacebookHourlyQuota($user, $startTime, $itemsCount)) {
+            $exception = new ListingExceedsHourlyLimitException;
+            $exception->setMaximumTotalAllowedForHour(self::HOURLY_QUOTA_LISTING_LIMIT);
+            $exception->setTotalExistingListings($this->totalScheduledResultsFound);
+
+            throw $exception;
         }
     }
 
@@ -114,8 +122,7 @@ class ListingsService
      */
     public function findAvailableTimeToScheduleDeletion(User $user, Carbon $startTime, int $itemsCount)
     {
-        $endTime = $startTime->copy()->addMinutes(59);
-        if (! $this->checkNumberOfItemsDoesNotExceedFacebookHourlyQuota($user, $startTime->toDateTimeString(), $endTime->toDateTimeString(), $itemsCount)) {
+        if (! $this->checkNumberOfItemsDoesNotExceedFacebookHourlyQuota($user, $startTime->toDateTimeString(), $itemsCount)) {
             return $startTime;
         }
 

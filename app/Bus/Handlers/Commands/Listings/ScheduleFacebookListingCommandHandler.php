@@ -8,17 +8,15 @@ namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use DB;
 use Carbon\Carbon;
-use Facebook\Facebook;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
+use Kabooodle\Services\Listings\ListingsService;
 use Kabooodle\Models\Listing\FacebookListingOptions;
-use Facebook\Exceptions\FacebookAuthenticationException;
 use Kabooodle\Bus\Events\Listings\ListingScheduledEvent;
-use Kabooodle\Services\Social\Facebook\FacebookSdkService;
 use Kabooodle\Bus\Commands\Listings\ScheduleListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
-use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
+use Kabooodle\Foundation\Exceptions\Listings\ListingExceedsHourlyLimitException;
 
 /**
  * Class ScheduleFacebookListingCommandHandler
@@ -29,6 +27,19 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
      * @var bool
      */
     public $postingNow = false;
+
+    /**
+     * @var ListingsService
+     */
+    public $listingsService;
+
+    /**
+     * @param ListingsService $listingsService
+     */
+    public function __construct(ListingsService $listingsService)
+    {
+        $this->listingsService = $listingsService;
+    }
 
     /**
      * @param ScheduleFacebookListingCommand $command
@@ -46,7 +57,7 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
         /** @var Carbon $scheduledFor */
         $scheduledFor = $this->normalizeScheduledDateTime($command->getFacebookListingOptions()->getStartsAt());
 
-        $this->assertFacebookCredentialsAreValid();
+        $this->assertFacebookCredentialsAreValid($actor);
 
         return DB::transaction(function () use ($actor, $scheduledFor, $command) {
 
@@ -151,10 +162,10 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
                     // There really is no way to know if its a duplicate at this time.
                     // Flag duplicates as ignored listings.
                     // We do not actually "skip" them because we want to provide full transparency to the user.
-                    if ($this->itemAlreadyInFacebookAlbum($actor, $sale['album']['id'], $listableItem['id'])) {
-                        $listingItem->ignore = true;
-                        $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
-                    }
+//                    if ($this->itemAlreadyInFacebookAlbum($actor, $sale['album']['id'], $listableItem['id'])) {
+//                        $listingItem->ignore = true;
+//                        $listingItem->status = ListingItems::STATUS_IGNORED_DUPLICATE;
+//                    }
 
                     $listableItems[] = $listingItem;
                 }
@@ -189,7 +200,7 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
      * @param array $facebookListedItems
      *
      * @return bool
-     * @throws ListingConflictsWithExistingListingException
+     *      * @throws ListingExceedsHourlyLimitException
      */
     public function assertListingDoesNotConflictWithExistingListing(Carbon $dateTime, User $actor, array $facebookListedItems)
     {
@@ -197,31 +208,20 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
         $minDateTime = $dateTime->format('Y-m-d H:i:s.u');
         $maxDateTime = $dateTime->addMinutes(self::MAX_LOOKAHEAD_MINUTES)->format('Y-m-d H:i:s.u');
 
-        $hourlyQuoteExceeded = ListingItems::checkIfAttemptedListingExceedsHourlyQuota(
-            $actor->id,
+        $this->listingsService->assertNumberOfItemsDoesNotExceedFacebookHourlyQuota(
+            $actor,
             $minDateTime,
-            $maxDateTime,
             count($facebookListedItems)
         );
-
-        if ($hourlyQuoteExceeded) {
-            throw new ListingConflictsWithExistingListingException;
-        }
 
         return true;
     }
 
     /**
-     * @return bool
-     * @throws FacebookAuthenticationException
+     * @param User $user
      */
-    public function assertFacebookCredentialsAreValid()
+    public function assertFacebookCredentialsAreValid(User $user)
     {
-        $fb = app(FacebookSdkService::class);
-        if (! $fb->testAccessToken()){
-            throw new FacebookAuthenticationException;
-        }
-
-        return true;
+        $this->listingsService->assertFacebookAccessTokenIsValid($user);
     }
 }
