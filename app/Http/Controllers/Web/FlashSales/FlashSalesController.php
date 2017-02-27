@@ -107,10 +107,7 @@ class FlashSalesController extends Controller
                 return redirect()->route('flashsales.show', [$idAndName]);
             }
 
-            $startsEnds = new StartsAndEndsAt(
-                strtotime(Binput::get('starts_at')),
-                strtotime(Binput::get('ends_at'))
-            );
+            $startsEnds = new StartsAndEndsAt(Binput::get('starts_at'), Binput::get('ends_at'));
 
             $item = $this->dispatchNow(new UpdateFlashsaleCommand(
                 $item,

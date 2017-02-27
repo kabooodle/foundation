@@ -72,10 +72,7 @@ class FlashsalesApiController extends AbstractApiController
         try {
             $this->validate($request, FlashSales::getRules());
 
-            $startsEnds = new StartsAndEndsAt(
-                strtotime(Binput::get('starts_at')),
-                strtotime(Binput::get('ends_at'))
-            );
+            $startsEnds = new StartsAndEndsAt(Binput::get('starts_at'), Binput::get('ends_at'));
 
             if ($startsEnds->getStartsAt() <= Carbon::now(current_timezone())) {
                 throw new FlashsaleInvalidStartDateException('Start date must be after now.');

@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Models\ShippingTransactions;
 use Kabooodle\Models\User;
+use Kabooodle\Services\DateFactory;
 use Messages;
 use Shippo_Error;
 use Illuminate\Http\Request;
@@ -32,6 +33,19 @@ use Kabooodle\Foundation\Exceptions\Shippo\NoRatesFoundForParcelException;
 class ShippingOrderController extends Controller
 {
     use PaginatesTrait;
+
+    /**
+     * @var DateFactory
+     */
+    public $dateFactory;
+
+    /**
+     * @param DateFactory $dateFactory
+     */
+    public function __construct(DateFactory $dateFactory)
+    {
+        $this->dateFactory = $dateFactory;
+    }
 
     /**
      * @param Request $request
@@ -57,8 +71,8 @@ class ShippingOrderController extends Controller
         }
 
         if ($filters['startdate'] && $filters['enddate']) {
-            $startDate = Carbon::createFromTimestamp(strtotime($filters['startdate'].' 00:00:00'))->format('Y-m-d H:i:s');
-            $endDate = Carbon::createFromTimestamp(strtotime($filters['enddate'].' 23:59:59'))->format('Y-m-d H:i:s');
+            $startDate = $this->dateFactory->parse($filters['startdate'].' 00:00:00')->format('Y-m-d H:i:s');
+            $endDate = $this->dateFactory->parse($filters['enddate'].' 23:59:59')->format('Y-m-d H:i:s');
             $shipments = $shipments->whereBetween('created_at', [$startDate, $endDate]);
         }
 

@@ -7,6 +7,7 @@
 namespace Kabooodle\Models\Listing;
 
 use Carbon\Carbon;
+use Kabooodle\Services\DateFactory;
 use Kabooodle\Services\Listings\ListingsService;
 
 /**
@@ -21,6 +22,11 @@ final class FacebookListingOptions
     public $itemMessage;
 
     /**
+     * @var DateFactory
+     */
+    public $dateFactory;
+
+    /**
      * @param string|null $startsAt
      * @param string|null $endsAt
      * @param string|null $claimingStartsAt
@@ -29,9 +35,9 @@ final class FacebookListingOptions
      */
     public function __construct(string $startsAt = null, string $endsAt = null, string $claimingStartsAt = null, string $claimingEndsAt = null, string $itemMessage = null)
     {
-        \Log::info('first '. $startsAt);
-        $this->setStartsAt($startsAt ?: Carbon::now(current_timezone())->addSeconds(ListingsService::SCHEDULER_LOOKAHEAD_FROM_NOW_SECONDS)->toDateTimeString());
-        $this->setEndsAt($endsAt ?: Carbon::now(current_timezone())->addHours(168)->toDateTimeString()); // 7 days
+        $this->dateFactory = app()->make(DateFactory::class);
+        $this->setStartsAt($startsAt ?: $this->dateFactory->now()->addSeconds(ListingsService::SCHEDULER_LOOKAHEAD_FROM_NOW_SECONDS)->toDateTimeString());
+        $this->setEndsAt($endsAt ?: $this->dateFactory->now()->addHours(168)->toDateTimeString()); // 7 days
         $this->setClaimingStartsAt($claimingStartsAt);
         $this->setClaimingEndsAt($claimingEndsAt);
         $this->setItemMessage($itemMessage);
@@ -42,10 +48,7 @@ final class FacebookListingOptions
      */
     public function setStartsAt($startsAt)
     {
-        \Log::info(strtotime($startsAt));
-        \Log::info('starts at raw '.$startsAt);
-        $this->startsAt = Carbon::createFromTimestamp(strtotime($startsAt), current_timezone());
-        \Log::info('starts at after '.print_r($this->startsAt, true));
+        $this->startsAt = $this->dateFactory->parse($startsAt);
     }
 
     /**
@@ -53,7 +56,7 @@ final class FacebookListingOptions
      */
     public function setEndsAt($endsAt)
     {
-        $this->endsAt = Carbon::createFromTimestamp(strtotime($endsAt.' UTC'))->setTimezone('UTC');
+        $this->endsAt = $this->dateFactory->parse($endsAt);
     }
 
     /**
@@ -62,7 +65,7 @@ final class FacebookListingOptions
     public function setClaimingStartsAt($claimingStartsAt)
     {
         if ($claimingStartsAt) {
-            $this->claimingStartsAt = Carbon::createFromTimestamp(strtotime($claimingStartsAt.' UTC'))->setTimezone('UTC');
+            $this->claimingStartsAt = $this->dateFactory->parse($claimingStartsAt);
         }
     }
 
@@ -72,7 +75,7 @@ final class FacebookListingOptions
     public function setClaimingEndsAt($claimingEndsAt)
     {
         if ($claimingEndsAt) {
-            $this->claimingEndsAt = Carbon::createFromTimestamp(strtotime($claimingEndsAt.' UTC'))->setTimezone('UTC');
+            $this->claimingEndsAt = $this->dateFactory->parse($claimingEndsAt);
         }
     }
 
