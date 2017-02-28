@@ -101,15 +101,15 @@
              */
             handleResponse(response){
                 if (this.filtering) {
-                    this.flashsales = response.body.data.data;
+                    this.flashsales = response.body.data;
                     $Bus.$emit('listing-filter:completed', this.flashsales);
                 } else {
-                    _.each(response.body.data.data, (a)=>{
+                    _.each(response.body.data, (a)=>{
                         this.flashsales.push(a);
                     });
                 }
 
-                this.makePagination(response.body.data);
+                this.makePagination(response.body.meta.pagination);
                 this.filtering = false;
                 $Bus.$emit('fetch:completed', this.flashsales);
 

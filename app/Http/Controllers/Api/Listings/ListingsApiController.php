@@ -30,6 +30,7 @@ use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Services\Listings\ListingsService;
 use Kabooodle\Services\User\UserService;
+use Kabooodle\Transformers\Listings\ListingItemsTransformer;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
@@ -91,8 +92,6 @@ class ListingsApiController extends AbstractApiController
                 throw new ModelNotFoundException;
             }
 
-//            $listing->loadItemsListedItem();
-
             $items = $listing->items;
 
             $style_query = Binput::get('styles', false);
@@ -129,9 +128,7 @@ class ListingsApiController extends AbstractApiController
                 return $item->id;
             })->values();
 
-            $items = $this->paginateData($request, $items);
-
-            return $this->setData($items)->respond();
+            return $this->response->paginator($this->paginateData($request, $items), new ListingItemsTransformer);
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
 

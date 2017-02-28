@@ -33,9 +33,9 @@
             </div>
             <div class="m-b-0 h-2x"><a :href="show_endpoint" class="_800">{{ flashsale.name }}</a></div>
             <div class="text-xs pull-right">
-                <a :href="show_endpoint"><span class="_600">{{ flashsale.watchers.length }}</span> <span class="text-muted"> Watchers</span></a>
-                <a class="m-l-sm" :href="show_endpoint"><span class="_600">{{ flashsale.sellers.length }}</span>  <span class="text-muted">Sellers</span></a>
-                <a class="m-l-sm" :href="show_endpoint"><span class="_600">{{ flashsale.listing_items.length }}</span><span class="text-muted"> Items</span></a>
+                <a :href="show_endpoint"><span class="_600">{{ flashsale.watchers }}</span> <span class="text-muted"> Watchers</span></a>
+                <a class="m-l-sm" :href="show_endpoint"><span class="_600">{{ flashsale.sellers }}</span>  <span class="text-muted">Sellers</span></a>
+                <a class="m-l-sm" :href="show_endpoint"><span class="_600">{{ flashsale.listing_items }}</span><span class="text-muted"> Items</span></a>
             </div>
         </div>
     </div>

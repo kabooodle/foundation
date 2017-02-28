@@ -96,7 +96,7 @@
 
                             <template v-if="selected.sale">
                                 <div class="form-group m-t-1" v-if="selected.sale.sale_type == 'flashsale'">
-                                    <div class="box white m-t-1" v-if="selected.sale.sale_id">
+                                    <div class="box white m-t-1" v-if="selected.sale">
                                         <div class="box-body">
                                             <div class="checkbox m-b-0 checkbox-slider--b-flat">
                                                 <label>
@@ -131,12 +131,11 @@
                                             <div class="m-t-0">
                                                 <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables.length }} items associated. <a href="javascript:;" class="text-primary">View</a></span>
                                                 <div
-                                                        class="m-l-2 m-t-1" style="display: none;">
+                                                        class="m-l-2 m-t-1" >
                                                     <div class="inline m-r-sm"
-
                                                          v-for="listable in selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables"
                                                          :key="listable.id"
-
+                                                         :style="! toggle_albums ? 'display: none;' : null"
                                                     >
                                                         <span
                                                                 class="avatar_container _48 avatar-thumbnail">
@@ -284,19 +283,10 @@
     </div>
 </template>
 <style>
-    .avatar_container:hover {
-
-    }
-    .avatar_container:hover img {
-        opacity: .6;
-    }
-    .avatar_container:hover .fa{
-        /*display: inline-block;*/
-        cursor: pointer;
-    }
     .avatar_container .fa {
         margin: 0;
         padding: 0;
+        cursor: pointer;
     }
 </style>
 <script>

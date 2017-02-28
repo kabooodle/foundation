@@ -20,6 +20,8 @@ use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Flashsale\UpdateFlashsaleCommand;
 use Kabooodle\Bus\Commands\Flashsale\DeleteFlashsaleCommand;
+use Kabooodle\Transformers\Flashsales\FlashsaleListingItemTransformer;
+use Kabooodle\Transformers\Flashsales\FlashsalesTransformer;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleTimeSlotDateException;
 use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleInvalidEndDateException;
@@ -45,7 +47,7 @@ class FlashsalesApiController extends AbstractApiController
         // returning everything, then chunking the collection of data.
         $data = FlashSales::withoutExpired()
             ->orderByStartDate()
-            ->with('coverimage', 'listingItems', 'watchers');
+            ->with('coverimage', 'watchers');
 
         if ($searchName = Binput::get('name', false)) {
             $data = $data->where('name', 'LIKE', '%' . $searchName . '%');
@@ -59,7 +61,7 @@ class FlashsalesApiController extends AbstractApiController
             return $flashsale->canUserViewPrivateSale($user);
         }));
 
-        return $this->setData($data)->respond();
+        return $this->response->paginator($data, new FlashsalesTransformer);
     }
 
     /**
@@ -264,13 +266,13 @@ class FlashsalesApiController extends AbstractApiController
 
             if ($style_query ) {
                 $items = $items->filter(function($item) use ($style_query){
-                    return in_array($item->inventoryItem->inventory_type_styles_id, $style_query);
+                    return in_array($item->listedItem->inventory_type_styles_id, $style_query);
                 });
             }
 
             if ($size_query ) {
                 $items = $items->filter(function($item) use ($size_query){
-                    return in_array($item->inventoryItem->inventory_sizes_id, $size_query);
+                    return in_array($item->listedItem->inventory_sizes_id, $size_query);
                 });
             }
 
@@ -286,9 +288,8 @@ class FlashsalesApiController extends AbstractApiController
                 return $item->id;
             })->values();
 
-            $items = $this->paginateData($request, $items);
 
-            return $this->setData($items)->respond();
+            return $this->response->paginator($this->paginateData($request, $items), new FlashsaleListingItemTransformer);
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();

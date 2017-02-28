@@ -112,15 +112,15 @@
              */
             handleResponse(response){
                 if (this.filtering) {
-                    this.items = response.body.data.data;
+                    this.items = response.body.data;
                     $Bus.$emit('listing-filter:completed', this.items);
                 } else {
-                    _.each(response.body.data.data, (a)=>{
+                    _.each(response.body.data, (a)=>{
                         this.items.push(a);
                     });
                 }
 
-                this.makePagination(response.body.data);
+                this.makePagination(response.body.meta.pagination);
                 this.filtering = false;
 
                 // If we have reached the end, tell our infinite loader we're completed,
@@ -143,9 +143,9 @@
             makePagination: function(data){
                 const pagination = {
                     current_page: data.current_page,
-                    last_page: data.last_page,
-                    next_page_url: data.next_page_url,
-                    prev_page_url: data.prev_page_url,
+                    last_page: data.current_page > 1 ? data.current_page - 1 : null,
+                    next_page_url: data.links.next,
+                    prev_page_url: data.links.previous,
                     total: data.total,
                     to: data.to
                 }

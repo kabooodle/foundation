@@ -361,7 +361,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
     public static function getStyleGroupingsForFlashsale(int $flashsaleId)
     {
         return DB::table('inventory_type_styles')
-            ->join('listables', 'ilistablesnventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
+            ->join('listables', 'listables.inventory_type_styles_id', '=', 'inventory_type_styles.id')
             ->join('inventory_sizes', 'inventory_sizes.id', '=', 'listables.inventory_sizes_id')
             ->join('listing_items', 'listing_items.listable_id', '=', 'listables.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
