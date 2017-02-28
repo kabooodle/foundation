@@ -6,24 +6,7 @@
 
 namespace Kabooodle\Models;
 
-use DB;
-use Carbon\Carbon;
-use Kabooodle\Bus\Events\Listables\ListableQuantityUpdatedEvent;
 use Kabooodle\Models\Contracts\ListableInterface;
-use Kabooodle\Models\Contracts\Viewable;
-use Kabooodle\Models\Traits\ListableTrait;
-use Kabooodle\Models\Traits\ViewableTrait;
-use Sofa\Revisionable\Revisionable;
-use Kabooodle\Models\Traits\TaggableTrait;
-use Kabooodle\Models\Traits\LikeableTrait;
-use Kabooodle\Models\Traits\FollowableTrait;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Kabooodle\Models\Traits\CommentableTrait;
-use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use AlgoliaSearch\Laravel\AlgoliaEloquentTrait;
-use Sofa\Revisionable\Laravel\RevisionableTrait;
-use Kabooodle\Models\Contracts\LikeableInterface;
-use Kabooodle\Models\Contracts\Commentable;
 
 /**
  * Class Inventory

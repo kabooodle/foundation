@@ -43,7 +43,8 @@ class InventoryApiController extends AbstractApiController
     {
         // Begin the user inventory query.
         $groupings = [];
-        $inventory = $this->getUser()->inventory()->NoEagerLoads()->with(['style', 'styleSize', 'files'])->get();
+        $inventory = Inventory::noEagerLoads()->with(['claims', 'style', 'styleSize', 'files'])
+            ->where('user_id', '=', $this->getUser()->id)->get();
         $grouped = $inventory->groupBy('inventory_type_styles_id');
         foreach($grouped as $styleId => $items) {
             $groupings[$styleId] = [
@@ -85,7 +86,7 @@ class InventoryApiController extends AbstractApiController
         sort($groupings);
 
         $data = [
-            'inventory' => $inventory,
+//            'inventory' => $inventory,
             'groupings' => $groupings,
         ];
 
