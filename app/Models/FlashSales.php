@@ -550,7 +550,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function canUserViewPrivateSale($user = null)
     {
-        $guest = ! $user || $user == null;
+        $guest = ! $user;
         if ($this->privacy == 'private') {
             return $guest ? false : $this->sellers->where('id', $user->id);
         }

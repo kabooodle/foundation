@@ -12,7 +12,7 @@
                         :watch_endpoint="watch_endpoint.replace(/::0::/, flashsale.id)"
                 ></flashsale-card>
             </div>
-            <infinite-loading :distance="100" :on-infinite="fetchInfinite" ref="listingFinite">
+            <infinite-loading :distance="40" :on-infinite="fetchInfinite" ref="listingFinite">
                 <span slot="no-more"><span v-if="!fetching">End results.</span></span>
                 <span slot="no-results"><span v-if="!fetching">End results.</span></span>
                 <span slot="spinner"><spinny class="text-center center-block" :size="'' + 38"></spinny></span>

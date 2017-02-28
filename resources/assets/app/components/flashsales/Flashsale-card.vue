@@ -16,7 +16,7 @@
                             btn_size_class="block pull-right label dark-white text-color btn-xs"
                             able_type="Kabooodle\Models\Flashsales"
                             :able_id="'' + flashsale.id"
-                            :already_following="flashsale.is_watched ? 'true' : 'false'"
+                            :already_following="flashsale.is_watched ? 1 : 0"
                             :endpoint="watch_endpoint"
                     ></followable>
                 <template v-if="i_am_admin">

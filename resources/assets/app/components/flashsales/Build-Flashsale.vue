@@ -368,7 +368,7 @@
             },
             registerDateTimePicker(){
                 this.$nextTick(function(){
-                    let minDate = moment().add('1', 'hour');
+                    let minDate = moment().add('5', 'minute');
                     let options = {
                         format: "MM/DD/YYYY hh:mma",
                         allowInputToggle: true,
@@ -466,7 +466,7 @@
                 // have a matching resource found in sellers_groups_containers
                 // HACKY until we can vuex the state.
 
-                if (this.seller_groups_containers.length) {
+                if (this.seller_groups_containers && this.seller_groups_containers.length) {
                     const actualIds = _.pluck(_.pluck(this.sellers_groups_containers, 'selected_group'), 'id');
                     this.seller_groups = _.uniq(_.filter(this.seller_groups, (group)=>{
                         return _.contains(actualIds, group.id);

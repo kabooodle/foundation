@@ -55,7 +55,7 @@ class FlashsalesApiController extends AbstractApiController
 
         // Filter through the items and hide private items where the user is not
         // a seller.  Reminder, sellers include admins, owner, sellers.
-        $data->setCollection($data->filter(function ($flashsale) use ($user) {
+        $data->setCollection($data->filter(function (FlashSales $flashsale) use ($user) {
             return $flashsale->canUserViewPrivateSale($user);
         }));
 

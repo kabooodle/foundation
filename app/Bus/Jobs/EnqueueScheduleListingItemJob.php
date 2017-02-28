@@ -88,7 +88,8 @@ class EnqueueScheduleListingItemJob extends AbstractEnqueueJob implements Should
 
             // Throws exception is token is invalid.
             // This is handled as a successful job, because we dont want to repeat the job over and over.
-            $this->getListingService()->assertFacebookAccessTokenIsValid($listingItem->owner);
+            // TODO: Is this a call?
+//            $this->getListingService()->assertFacebookAccessTokenIsValid($listingItem->owner);
 
             $facebookParams = $this->buildFacebookAlbumParams($listingItem);
 

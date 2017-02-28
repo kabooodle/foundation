@@ -79,17 +79,18 @@ class DeleteListingItemFromFacebookCommandHandler
         // If the access token has expired, then we're fucked because it IS a long-lived token
         // so the only way to generate a new one, is to login again on the client side.
         // The user needs to do this.
-        if (! $this->facebookService->testAccessToken($owner->getFacebookUserToken())) {
-            Log::error('Deleting listing item from facebook: User facebook token expired or invalid - '.$logString);
-            $listingItem->status = ListingItems::STATUS_FAILED_DELETE;
-            $listingItem->status_updated_at = Carbon::now();
-            $listingItem->status_history = 'Facebook access token expired or invalid.';
-            $listingItem->save();
-
-            $command->delete();
-
-            return;
-        }
+        //
+//        if (! $this->facebookService->testAccessToken($owner->getFacebookUserToken())) {
+//            Log::error('Deleting listing item from facebook: User facebook token expired or invalid - '.$logString);
+//            $listingItem->status = ListingItems::STATUS_FAILED_DELETE;
+//            $listingItem->status_updated_at = Carbon::now();
+//            $listingItem->status_history = 'Facebook access token expired or invalid.';
+//            $listingItem->save();
+//
+//            $command->delete();
+//
+//            return;
+//        }
 
 
         try {

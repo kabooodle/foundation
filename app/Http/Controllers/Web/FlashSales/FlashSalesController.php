@@ -55,11 +55,6 @@ class FlashSalesController extends Controller
         return $this->view('flashsales.show')->with(compact('flashsale', 'categories', 'sellersCategories'));
     }
 
-
-
-
-
-
     /**
      * Show the form for creating a new resource.
      *
