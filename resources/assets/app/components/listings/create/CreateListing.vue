@@ -96,6 +96,20 @@
 
                             <template v-if="selected.sale">
                                 <div class="form-group m-t-1" v-if="selected.sale.sale_type == 'flashsale'">
+                                    <div class="box white m-t-1" v-if="selected.sale.sale_id">
+                                        <div class="box-body">
+                                            <div class="checkbox m-b-0 checkbox-slider--b-flat">
+                                                <label>
+                                                    <input
+                                                            :checked="toggle_albums"
+                                                            @click="toggleSalesItems($event)"
+                                                            data-type="albums-associated-toggler"
+                                                            type="checkbox" />
+                                                    <span class="text-sm">Toggle all albums with associated items</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <label class="control-label">Select sale(s)</label>
                                     <div class="m-b-sm" v-for="sale in postables.flashsales" >
                                         <label class="form-check-label block md-check">
@@ -118,12 +132,19 @@
                                                 <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables.length }} items associated. <a href="javascript:;" class="text-primary">View</a></span>
                                                 <div
                                                         class="m-l-2 m-t-1" style="display: none;">
-                                                    <div class="inline m-r-sm" v-for="listable in selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables">
+                                                    <div class="inline m-r-sm"
+
+                                                         v-for="listable in selected.sales[_.findIndex(selected.sales, {sale_id: sale.id})].listables"
+                                                         :key="listable.id"
+
+                                                    >
                                                         <span
                                                                 class="avatar_container _48 avatar-thumbnail">
                                                               <img :src="listable.cover_photo.location">
-                                                            <span class="pull-right"  @click="removeItemFromFlashsale(listable, sale.id, $event)" style="margin: -6px 2px 0 0"><i class="fa fa-times text-danger pointer"></i></span>
                                                         </span>
+                                                        <div class="block" style="margin: -6px 2px 0 0">
+                                                            <span class="text-right" @click="removeItemFromFlashsale(listable, sale.id, $event)" ><i class="fa fa-times text-danger pointer"></i></span>
+                                                        </div>
                                                 </div>
                                             </div>
                                         </template>
@@ -157,6 +178,20 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="box white m-t-1" v-if="selected.sale.sale_id">
+                                        <div class="box-body">
+                                            <div class="checkbox m-b-0 checkbox-slider--b-flat">
+                                                <label>
+                                                    <input
+                                                            :checked="toggle_albums"
+                                                            @click="toggleSalesItems($event)"
+                                                            data-type="albums-associated-toggler"
+                                                            type="checkbox" />
+                                                    <span class="text-sm">Toggle all albums with associated items</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group m-t-1" v-if="selected.sale.sale_id">
                                         <label v-if="selected.listables.length" class="control-label">Select an album below to add all {{ selected.listables.length}} items into</label>
                                         <div class="m-b-sm" v-for="album in postables.facebookgroups[_.findIndex(postables.facebookgroups, {id: selected.sale.sale_id})].albums" >
@@ -177,17 +212,27 @@
                                             </label>
                                             <template v-if="_.findIndex(selected.sales, {album_id: album.id}) > -1">
                                                 <div class="m-t-0">
-                                                    <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables.length }} items associated. <a href="javascript:;" @click.prevent="toggleAlbumItems(album.id, $event)" class="text-primary">View</a></span>
+                                                    <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables.length }} items associated.
+                                                        <a
+                                                                v-html="toggle_albums ? 'Hide' : 'View'"
+                                                                href="javascript:;"
+                                                                @click.prevent="toggleAlbumItems(album.id, $event)"
+                                                                class="text-primary">Hide</a></span>
                                                     <div
                                                             :id="'album_items_'+album.id"
-                                                            class="m-l-2 m-t-1" style="display: none;">
+                                                            class="m-l-2 m-t-1"
+                                                            :style="! toggle_albums ? 'display: none;' : null">
 
-                                                        <div class="inline m-r-sm" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables">
+                                                        <div class="inline m-r-sm" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables"
+                                                        :key="listable.id"
+                                                        >
                                                         <span
                                                                 class="avatar_container _48 avatar-thumbnail">
                                                               <img :src="listable.cover_photo.location">
-                                                            <span class="pull-right"  @click="removeItemFromAlbum(listable, album, $event)" style="margin: -6px 2px 0 0"><i class="fa fa-times text-danger pointer"></i></span>
                                                         </span>
+                                                            <div class="block" style="margin: -6px 2px 0 0">
+                                                                <span class="text-right"  @click="removeItemFromAlbum(listable, album, $event)"><i class="fa fa-times text-danger pointer"></i></span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                  </div>
@@ -313,6 +358,7 @@
                 matches: [],
             },
 
+            toggle_albums: true,
             facebook_listing_options: {}
         }
     };
@@ -393,6 +439,9 @@
             });
         },
         methods: {
+            toggleSalesItems(e){
+                this.toggle_albums = e.target.checked;
+            },
             prepareSalesForPreview(){
 
                 this.facebook_listing_options = {};
@@ -583,18 +632,18 @@
                     }).value();
 
                 let inventoryMatcher = new InventoryToAlbumMatcher(haystack, needles);
-                inventoryMatcher.performSearch();
+                inventoryMatcher.performSearch().then(()=>{
+                    this.matching_listables.matches = inventoryMatcher.matches();
+                    this.matching_listables.misses = inventoryMatcher.misses();
 
-                this.matching_listables.matches = inventoryMatcher.matches();
-                this.matching_listables.misses = inventoryMatcher.misses();
+                    let assigned = this.assignMatchingsToAlbums(inventoryMatcher.matchResults(), inventoryMatcher.misses());
 
-                let assigned = this.assignMatchingsToAlbums(inventoryMatcher.matchResults(), inventoryMatcher.misses());
+                    if (assigned === false) {
+                        return false;
+                    }
 
-                if (assigned === false) {
-                    return false;
-                }
-
-                return true;
+                    return true;
+                });
             },
 
             assignMatchingsToAlbums(matching_albums, misses){

@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Web\Social\Facebook;
 
 use Messages;
+use Exception;
 use Illuminate\Http\Request;
 use Facebook\FacebookResponse;
 use Facebook\Exceptions\FacebookSDKException;
@@ -108,8 +109,7 @@ class FacebookController extends Controller
             $this->fb->delete('/me/permissions', [],  webUser()->facebook_access_token);
             event(new UserFacebookCredentialsRevokedEvent(webUser()));
 
-        } catch (Exception $e) {}
-
+        } catch (Exception $e) { }
         // The reason our default is to indicate "success on revoke" is because, we really dont care.
         // That is to say, if revocation fails, we will still delete the local facebook token data anyway,
         // so that we dont use it again and the user is therefore forced to login again to FB.
@@ -120,7 +120,6 @@ class FacebookController extends Controller
         $user->facebook_access_token = null;
         $user->facebook_access_token_expires = null;
         $user->save();
-
         return redirect()->route('profile.social.edit');
     }
 }

@@ -126,12 +126,14 @@ class InventoryToAlbumMatcher {
     }
 
     performSearch(){
-        let fuse = new Fuse(this.haystack(), this.constructor.fuseOptions());
-
-        for (let i = 0; i < this.needles().length; i++) {
-            let needle = this.needles()[i];
-            setTimeout(this.performNeedleSearch(fuse, needle), 0); // Hoped this would prevent browser freeze
-        }
+        return new Promise((resolve)=>{
+            let fuse = new Fuse(this.haystack(), this.constructor.fuseOptions());
+            for (let i = 0; i < this.needles().length; i++) {
+                let needle = this.needles()[i];
+                this.performNeedleSearch(fuse, needle);
+            }
+            resolve();
+        });
     }
 
     performNeedleSearch(fuse, needle){
