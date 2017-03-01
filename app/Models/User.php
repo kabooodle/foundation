@@ -1174,4 +1174,36 @@ class User extends BaseEloquentModel implements
     {
         return ! $this->onGenericTrial() && $this->hasAtLeastMerchantSubscription();
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function subscriptionCoupons()
+    {
+        return $this->belongsToMany(SubscriptionCoupons::class, 'subscription_coupon_users', 'user_id', 'subscription_coupon_id')
+            ->withPivot([
+                'couponable_type',
+                'couponable_id',
+                'coupon_applied_on'
+            ])
+            ->withTimestamps();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function appliedSubscriptionCoupons()
+    {
+        return $this->subscriptionCoupons()
+            ->wherePivot('coupon_applied_on', '<>', 'null');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function pendingSubscriptionCoupons()
+    {
+        return $this->subscriptionCoupons()
+            ->wherePivot('coupon_applied_on', '=', 'null');
+    }
 }

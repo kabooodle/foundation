@@ -1474,6 +1474,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateClaimsTblMakePriceNullable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_28_191411_update_claims_tbl_make_price_nullable.php',
         'UpdateColLongblob' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_08_165133_update_col_longblob.php',
         'UpdateCommentsTblAddRefUrl' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_25_094857_update_comments_tbl_add_ref_url.php',
+        'UpdateCouponsAddCols' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_01_182236_update_coupons_add_cols.php',
         'UpdateCreditChargeTypesTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_23_070657_update_credit_charge_types_tbl.php',
         'UpdateCreditTransactionsTblAmount' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_29_213729_update_credit_transactions_tbl_amount.php',
         'UpdateFacebookNodesAddParentNode' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_04_232446_update_facebook_nodes_add_parent_node.php',
