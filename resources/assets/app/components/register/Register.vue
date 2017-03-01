@@ -48,8 +48,8 @@
         </div>
 
         <div class="md-form-group">
-            <input v-model="referredBy" type="text" name="referred_by" class="md-input">
-            <label>Referred By User <small class="">(username or email)</small></label>
+            <input v-model="referrer" type="text" name="referred_by" class="md-input">
+            <label>Referred By User <small class="">(username)</small></label>
         </div>
 
         <p class="">By clicking on "Create Account" below, you are agreeing to the <a href="" class="text-primary">Terms of Service</a> and the <a href="" class="text-primary">Privacy Policy</a>.</p>
@@ -63,6 +63,10 @@
 <script>
     export default{
         props: {
+            referrer: {
+                type: String,
+                default : null,
+            },
             route: {
                 type: String,
                 required: true
@@ -83,7 +87,6 @@
                 username: null,
                 email: null,
                 password: null,
-                referredBy: null,
             }
         },
         created(){

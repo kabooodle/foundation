@@ -42,7 +42,8 @@
 
 
     @if(webUser()->referrals->count() > 0)
-    <div class="padding white p-b-0">
+        <div class="box m-t-3">
+            <div class="box-body">
         <div class="row">
             @foreach(webUser()->referrals as $referral)
                 <div class="col-md-4">
@@ -56,21 +57,21 @@
                             <div class="list-body">
                                 <div class="_500"><a href="">{!! $referral->name !!}</a></div>
                                 <div class="text-muted">joined: {{ $referral->created_at->diffForHumans() }}</div>
-                                <div class="text-muted text-sm">{{ $referral->subscribed('main') ? 'Qualified!' : 'not yet qualified' }}</div>
+                                <div class="text-muted text-sm">{{ ! $referral->myReferralQualifies() ? 'Qualified!' : 'not yet qualified' }}</div>
                             </div>
                         </li>
                     </ul>
                 </div>
             @endforeach
         </div>
-    </div>
+            </div>
+        </div>
     @else
         <div class="box m-t-3">
             <div class="box-body">
                 <p class="text-center m-b-0">No referrals yet!</p>
             </div>
         </div>
-
     @endif
 
     @push('footer-scripts')
@@ -83,7 +84,6 @@
             $('#btn-social-facebook').click(function(e){
                 e.preventDefault();
                 let href = $(this).data('href');
-                console.log(href);
                 FB.ui({
                     method: 'share',
                     display: 'popup',

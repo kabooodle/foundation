@@ -49,12 +49,13 @@ Route::get('privacy', function(){
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@index'
     ]);
 
-    Route::get('/invite/{userName}', [
+    Route::get('/invite/{username}', [
         'as' => 'invite.index',
+        'middleware' => 'referral',
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@invite'
     ]);
 
-    Route::get('/users/{userName}', [
+    Route::get('/users/{username}', [
         'as' => 'user.profile',
         'uses' => \Kabooodle\Http\Controllers\Web\Users\UsersController::class.'@userProfile'
     ]);

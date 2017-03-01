@@ -25,7 +25,10 @@ class UsersController extends Controller
      */
     public function userProfile(Request $request)
     {
-        $viewedUser = User::where('username', $request->userName)->first();
+        $viewedUser = User::where('username', $request->username)->first();
+        if (! $viewedUser) {
+            return redirect('/');
+        }
         return view('userprofile')->with(compact('viewedUser'));
     }
 

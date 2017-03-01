@@ -64,11 +64,9 @@ class ScheduleFacebookListingDeletionCommandHandler
                     $listing->status = Listings::STATUS_DELETED;
                     $listing->status_updated_at = Carbon::now();
                     $listing->scheduled_for_deletion = null;
-                    $listing->scheduled_for = null;
                 } else {
 
                     $listing->status = Listings::STATUS_SCHEDULED_DELETE;
-                    $listing->scheduled_for = null;
                     $listing->status_updated_at = Carbon::now();
                     $listing->scheduled_for_deletion = $startTime->toDateTimeString();
                     $listing->status_history = 'Scheduled for facebook deletion';

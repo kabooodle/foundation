@@ -1166,4 +1166,12 @@ class User extends BaseEloquentModel implements
     {
         return $this->morphedByMany(FlashSales::class, 'followable')->where('followables.deleted_at', null);
     }
+
+    /**
+     * @return bool
+     */
+    public function myReferralQualifies()
+    {
+        return ! $this->onGenericTrial() && $this->hasAtLeastMerchantSubscription();
+    }
 }

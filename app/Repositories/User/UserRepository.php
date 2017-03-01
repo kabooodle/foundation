@@ -65,4 +65,14 @@ class UserRepository implements UserRepositoryInterface
             ->groupBy('id')
             ->get();
     }
+
+    /**
+     * @param string $username
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function getByUsername(string $username)
+    {
+        return $this->model->where('username', '=', $username)->first();
+    }
 }

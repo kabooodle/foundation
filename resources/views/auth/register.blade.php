@@ -8,9 +8,9 @@
         </a>
     </div>
 
-
     <div class="p-a-md box-color r box-shadow-z1 text-color" id="register-content">
         <register
+                referrer="{{ isset($referrer) ? $referrer : null }}"
                 route="{{ route('auth.register.store') }}"
                 csrf="{{ csrf_token() }}"
                 redirect="{{ $redirect or null }}"

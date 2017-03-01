@@ -26,4 +26,11 @@ interface UserRepositoryInterface
      * @return mixed
      */
     public function getByUsernames(array $usernames);
+
+    /**
+     * @param string $username
+     *
+     * @return mixed
+     */
+    public function getByUsername(string $username);
 }
