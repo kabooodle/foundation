@@ -384,12 +384,14 @@
             allSubgroupingBtnDisabled: function (group) {
                 if (this.disableUnavailable) {
                     var disable = true;
-                    group.subgroupings.forEach(function (subgrouping) {
-                        subgrouping.listables.forEach(function (listable) {
-                            if (listable.available_qty > 0)
-                                disable = false;
+                    if (group.subgroupings && group.subgroupings.length) {
+                        group.subgroupings.forEach(function (subgrouping) {
+                            subgrouping.listables.forEach(function (listable) {
+                                if (listable.available_qty > 0)
+                                    disable = false;
+                            });
                         });
-                    });
+                    }
                     return disable;
                 } else {
                     return false;
