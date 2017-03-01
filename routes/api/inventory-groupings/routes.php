@@ -4,6 +4,10 @@ $api->get('users/{username}/inventory-groupings', [
     'as' => 'inventory-groupings.index',
     'uses' =>  \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@index',
 ]);
+$api->get('users/{username}/inventory-groupings/detailed', [
+    'as' => 'inventory-groupings.detailed.index',
+    'uses' =>  \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@detailed',
+]);
 $api->get('users/{username}/inventory-groupings/{groupingId}', [
     'as' => 'inventory-groupings.show',
     'uses' => \Kabooodle\Http\Controllers\Api\InventoryGroupings\InventoryGroupingsController::class.'@show'

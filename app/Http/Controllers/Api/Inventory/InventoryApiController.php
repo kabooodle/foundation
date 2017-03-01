@@ -100,43 +100,44 @@ class InventoryApiController extends AbstractApiController
      */
     public function detailed(Request $request)
     {
-        $q = DB::table('listables as i')
-            ->leftJoin('inventory_type_styles as s', 's.id','=', 'i.inventory_type_styles_id')
-            ->leftJoin('inventory_sizes as is', 'is.id', '=', 'i.inventory_sizes_id')
+        $q = DB::table('listables as l')
+            ->leftJoin('inventory_type_styles as s', 's.id','=', 'l.inventory_type_styles_id')
+            ->leftJoin('inventory_sizes as is', 'is.id', '=', 'l.inventory_sizes_id')
             ->leftJoin('claims as c', function($q){
-                $q->on('c.listable_id', '=', 'i.id');
-                $q->on('c.listable_type', '=', 'i.subclass_name');
+                $q->on('c.listable_id', '=', 'l.id');
+                $q->on('c.listable_type', '=', 'l.subclass_name');
             })
             ->leftJoin('v_pageviews as v', function($q){
-                $q->on('v.viewable_id', '=', 'i.id');
-                $q->on('v.viewable_type', '=', 'i.subclass_name');
+                $q->on('v.viewable_id', '=', 'l.id');
+                $q->on('v.viewable_type', '=', 'l.subclass_name');
             })
-            ->join('files as f', 'f.id', '=', 'i.cover_photo_file_id')
-            ->where('i.user_id', '=', $this->getUser()->id)
-            ->whereNull('i.deleted_at')
+            ->join('files as f', 'f.id', '=', 'l.cover_photo_file_id')
+            ->where('l.user_id', '=', $this->getUser()->id)
+            ->where('l.subclass_name', '=', Inventory::class)
+            ->whereNull('l.deleted_at')
             ->whereNull('c.deleted_at')
             ->selectRaw(DB::raw("
-            i.id,
-            i.subclass_name,
-            i.name,
-            i.name_alt,
-            CONCAT(i.name_alt,'_', i.id) as name_with_id,
-            CONCAT(i.name_alt, '::', f.location) as name_with_cover_photo,
+            l.id,
+            l.subclass_name,
+            l.name,
+            l.name_alt,
+            CONCAT(l.name_alt,'_', l.id) as name_with_id,
+            CONCAT(l.name_alt, '::', f.location) as name_with_cover_photo,
             f.location as cover_photo_location,
             CONCAT('$', IFNULL(SUM(c.accepted_price), 0)) AS accepted_price_sum,
             CONCAT('$', IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0)) AS gross,
             IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
             IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
             IFNULL(SUM(v.count), 0) AS pageviews_count,
-            IFNULL(SUM(i.initial_qty),0) as qty_on_hand
+            IFNULL(SUM(l.initial_qty),0) as qty_on_hand
             "))
             ->groupBy(DB::raw('name_with_id asc WITH rollup'));
 
         if (Binput::has('filter')) {
             $filter = Binput::get('filter');
             $q->where(function($q) use ($filter) {
-                $q->where('i.name', 'like', '%'.$filter.'%');
-                $q->orWhere('i.name_alt', 'like', '%'.$filter.'%');
+                $q->where('l.name', 'like', '%'.$filter.'%');
+                $q->orWhere('l.name_alt', 'like', '%'.$filter.'%');
             });
         }
 
@@ -144,26 +145,26 @@ class InventoryApiController extends AbstractApiController
 //
 //        $sql = "
 //            SELECT
-//            i.id,
-//            i.class,
-//            i.name,
-//            i.name_alt,
-//            CONCAT(i.name_alt,'_', i.id) as name_with_id,
+//            l.id,
+//            l.class,
+//            l.name,
+//            l.name_alt,
+//            CONCAT(l.name_alt,'_', l.id) as name_with_id,
 //            f.location as cover_photo_location,
 //            CONCAT('$', IFNULL(SUM(c.accepted_price), 0)) AS accepted_price_sum,
 //            CONCAT('$', IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0)) AS gross,
 //            IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
 //            IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
 //            IFNULL(SUM(v.count), 0) AS pageviews_count,
-//            IFNULL(SUM(i.initial_qty),0) as qty_on_hand
+//            IFNULL(SUM(l.initial_qty),0) as qty_on_hand
 //            FROM listables as i
-//            LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
-//            LEFT JOIN inventory_sizes as `is` ON is.id=i.inventory_sizes_id
-//            LEFT JOIN claims as c ON c.listable_id = i.id AND c.listable_type = i.class
-//            LEFT JOIN v_pageviews as v on v.viewable_id = i.id AND v.viewable_type = i.class
-//            INNER JOIN files as f ON f.id = i.cover_photo_file_id
-//            WHERE i.user_id = ?
-//            AND i.deleted_at is null
+//            LEFT JOIN inventory_type_styles AS s ON s.id = l.inventory_type_styles_id
+//            LEFT JOIN inventory_sizes as `is` ON is.id=l.inventory_sizes_id
+//            LEFT JOIN claims as c ON c.listable_id = l.id AND c.listable_type = l.class
+//            LEFT JOIN v_pageviews as v on v.viewable_id = l.id AND v.viewable_type = l.class
+//            INNER JOIN files as f ON f.id = l.cover_photo_file_id
+//            WHERE l.user_id = ?
+//            AND l.deleted_at is null
 //            and c.deleted_at is null
 //            GROUP BY name_with_id asc
 //            WITH rollup

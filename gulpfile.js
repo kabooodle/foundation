@@ -18,11 +18,11 @@ elixir(function (mix) {
     mix.browserify('app/components/inventory/inventory-show.js');
     mix.browserify('app/components/inventory/inventory-create.js');
     mix.browserify('app/components/inventory/inventory-edit.js');
-    mix.browserify('app/components/inventory/inventory-detailed.js');
 
-
-    mix.browserify('app/components/inventory-groupings/inventory-groupings.js');
     mix.browserify('app/components/inventory-groupings/inventory-groupings-management.js');
+    mix.browserify('app/components/inventory-groupings/inventory-groupings-simple.js');
+
+    mix.browserify('app/components/listables/listables-detailed.js');
 
     mix.browserify('app/components/profile/settings.js');
     mix.browserify('app/components/profile/emails.js');
