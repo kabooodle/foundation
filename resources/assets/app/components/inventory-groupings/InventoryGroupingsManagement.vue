@@ -93,7 +93,7 @@
                 restrictedInventoryIds: [],
                 showErrors: false,
                 validating: false,
-                allGroupingInputIsValid: true,
+                allGroupingInputIsValid: false,
             }
         },
         created: function () {

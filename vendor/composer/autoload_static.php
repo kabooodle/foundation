@@ -660,6 +660,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'AddSubclassNameToListingItemsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_12_073400_add_subclass_name_to_listing_items_table.php',
         'AddVerifiedToClaimsTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_12_213316_add_verified_to_claims_tbl.php',
         'Adobe_Font_Metrics' => __DIR__ . '/..' . '/phenx/php-font-lib/classes/Adobe_Font_Metrics.php',
+        'AllowNullDescriptionOnListablesTable' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_01_221326_allow_null_description_on_listables_table.php',
         'AlterShippingAddressesTableToAddresses' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_12_010835_alter_shipping_addresses_table_to_addresses.php',
         'Attribute_Translator' => __DIR__ . '/..' . '/dompdf/dompdf/include/attribute_translator.cls.php',
         'Block_Frame_Decorator' => __DIR__ . '/..' . '/dompdf/dompdf/include/block_frame_decorator.cls.php',

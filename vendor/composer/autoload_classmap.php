@@ -24,6 +24,7 @@ return array(
     'AddSubclassNameToListingItemsTable' => $baseDir . '/resources/database/migrations/2017_01_12_073400_add_subclass_name_to_listing_items_table.php',
     'AddVerifiedToClaimsTbl' => $baseDir . '/resources/database/migrations/2016_12_12_213316_add_verified_to_claims_tbl.php',
     'Adobe_Font_Metrics' => $vendorDir . '/phenx/php-font-lib/classes/Adobe_Font_Metrics.php',
+    'AllowNullDescriptionOnListablesTable' => $baseDir . '/resources/database/migrations/2017_03_01_221326_allow_null_description_on_listables_table.php',
     'AlterShippingAddressesTableToAddresses' => $baseDir . '/resources/database/migrations/2016_12_12_010835_alter_shipping_addresses_table_to_addresses.php',
     'Attribute_Translator' => $vendorDir . '/dompdf/dompdf/include/attribute_translator.cls.php',
     'Block_Frame_Decorator' => $vendorDir . '/dompdf/dompdf/include/block_frame_decorator.cls.php',

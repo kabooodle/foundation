@@ -310,13 +310,6 @@
                     'message': message,
                 };
             },
-            inputIsValid: function () {
-                return !this.validationErrors.name.status &&
-                       !this.validationErrors.price_usd.status &&
-                       !this.validationErrors.initial_qty.status &&
-                       !this.validationErrors.inventory.status &&
-                       !this.validationErrors.image.status;
-            },
             selectedQuantityAdjustment: function () {
                 if (this.edit && this.grouping.locked) {
                     return this.grouping.initial_qty;
@@ -418,7 +411,14 @@
                     this.validationErrors.image.message = '';
                 }
 
-                this.$emit('validated', {'status': this.inputIsValid});
+                this.$emit('validated', {'status': this.inputIsValid()});
+            },
+            inputIsValid: function () {
+                return !this.validationErrors.name.status &&
+                       !this.validationErrors.price_usd.status &&
+                       !this.validationErrors.initial_qty.status &&
+                       !this.validationErrors.inventory.status &&
+                       !this.validationErrors.image.status;
             },
         },
         created: function () {
