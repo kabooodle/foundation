@@ -1,4 +1,4 @@
-@extends('layouts.full', ['contentId' => 'manage_inventory'])
+@extends('layouts.full', ['contentId' => 'inventory-groupings'])
 
 @section('body-menu')
     <div class="pull-right">
@@ -7,12 +7,10 @@
 @endsection
 
 @section('body-content')
-    <div id="inventory-groupings">
-        <inventory-groupings-display
-            inventory-groupings-endpoint="{{ apiRoute('inventory-groupings.index', [webUser()->username]) }}"
-            inventory-groupings-index-route="{{ route('shop.outfits.index', [webUser()->username]) }}"
-        ></inventory-groupings-display>
-    </div>
+    <inventory-groupings-display
+        inventory-groupings-endpoint="{{ apiRoute('inventory-groupings.index', [webUser()->username]) }}"
+        inventory-groupings-index-route="{{ route('shop.outfits.index', [webUser()->username]) }}"
+    ></inventory-groupings-display>
 @endsection
 
 @push('footer-scripts')

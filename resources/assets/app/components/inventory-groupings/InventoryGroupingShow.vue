@@ -1,30 +1,47 @@
 <template>
     <div>
-        <div class="col-sm-3">
-            <div class="box white">
+        <div class="col-sm-3 m-b-md">
+            <div class="box white m-b-sm">
                 <div class="box-body">
                     <div class="col-xs-12">
                         <span class="pull-right" @click="destroy">
                             <spinny v-if="deleting"></spinny>
                             <i v-else class="fa fa-times text-danger pointer" aria-hidden="true"></i>
                         </span>
-                    </div>
-                    <div class="col-xs-12">
+                        <h6>
+                            {{ grouping.name }}
+                        </h6>
                         <image :src=grouping.coverimage.location style="width: 100%; height: 200px"></image>
                     </div>
                     <div class="col-xs-12">
-                        <span class="pull-right" @click="edit">
-                            <spinny v-if="editing"></spinny>
-                            <i v-else class="fa fa-pencil pointer" aria-hidden="true"></i>
+                        <span class="text-sm clearfix block" style="margin: 5px">
+                            <span class="pull-left">
+                                Qty:
+                                <span class="text-muted">{{ grouping.available_quantity }}</span>
+                            </span>
+                            <span class="text-muted pull-right">${{ grouping.price_usd }}</span>
                         </span>
-                        {{ grouping.name }}
                     </div>
                     <div style="clear: both"></div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="text-center center-block">
+                    <button type="button" class="btn btn-xs _400 white"><a :href=viewRoute>View</a></button>
+                    <button type="button" class="btn btn-xs _400 white"><a :href=editRoute>Edit</a></button>
+                    <button type="button" class="btn btn-xs _400 white"><a :href=claimRoute>Claim</a></button>
                 </div>
             </div>
         </div>
     </div>
 </template>
+<style>
+    .delete-outfit-icon {
+        position: absolute;
+        top: -13px;
+        right: -6px;
+    }
+</style>
 <script>
     import Spinny from '../Spinner.vue';
 
@@ -43,7 +60,9 @@
             return {
                 editing: false,
                 deleting: false,
-                editRoute: this.inventoryGroupingsIndexRoute + '/' + this.grouping.obfuscate_id + '/edit'
+                viewRoute: this.inventoryGroupingsIndexRoute + '/' + this.grouping.obfuscate_id,
+                editRoute: this.inventoryGroupingsIndexRoute + '/' + this.grouping.obfuscate_id + '/edit',
+                claimRoute: this.inventoryGroupingsIndexRoute + '/' + this.grouping.obfuscate_id,
             }
         },
         methods: {

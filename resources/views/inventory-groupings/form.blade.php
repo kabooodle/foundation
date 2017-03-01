@@ -1,7 +1,9 @@
-@extends('layouts.full', ['contentId' => 'manage_inventory'])
+@extends('layouts.full', ['contentId' => 'inventory-groupings-management'])
 
 @section('body-menu')
-
+    {{--<div class="pull-right">--}}
+        {{--<button class="btn primary btn-sm">Save Outfit</button>--}}
+    {{--</div>--}}
 @endsection
 
 
@@ -10,16 +12,14 @@
 @endpush
 
 @section('body-content')
-    <div id="inventory-groupings-management">
-        <manager
-            :edit="{{ isset($grouping) ? 1 : 0 }}"
-            :edit-grouping="{{ isset($grouping) ? $grouping : '{}' }}"
-            s3_key_url="{{ apiRoute('api.files.sign') }}"
-            inventory-groupings-endpoint="{{ apiRoute('inventory-groupings.index', [webUser()->username]) }}"
-            inventory-endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"
-            inventory-groupings-index-route="{{ route('shop.outfits.index', [webUser()->username]) }}"
-        ></manager>
-    </div>
+    <manager
+        :edit="{{ isset($grouping) ? 1 : 0 }}"
+        :edit-grouping="{{ isset($grouping) ? $grouping : '{}' }}"
+        s3_key_url="{{ apiRoute('api.files.sign') }}"
+        inventory-groupings-endpoint="{{ apiRoute('inventory-groupings.index', [webUser()->username]) }}"
+        inventory-endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"
+        inventory-groupings-index-route="{{ route('shop.outfits.index', [webUser()->username]) }}"
+    ></manager>
 @endsection
 
 @push('footer-scripts')
