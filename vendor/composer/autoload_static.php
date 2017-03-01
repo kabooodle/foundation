@@ -727,6 +727,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'CreateShippingWebhookTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_09_190517_create_shipping_webhook_tbl.php',
         'CreateSocialAccountsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_04_053942_create_social_accounts_table.php',
         'CreateSofaRevisionsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2015_03_05_000000_create_sofa_revisions_table.php',
+        'CreateSubCoupons' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_01_010042_create_sub_coupons_.php',
         'CreateTagGroupsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_06_29_073615_create_tag_groups_table.php',
         'CreateTaggedTable' => __DIR__ . '/../..' . '/resources/database/migrations/2014_01_07_073615_create_tagged_table.php',
         'CreateTagsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2014_01_07_073615_create_tags_table.php',
