@@ -1450,6 +1450,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'StripeTblChanges' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_04_003518_stripe_tbl_changes.php',
         'Style' => __DIR__ . '/..' . '/dompdf/dompdf/include/style.cls.php',
         'Stylesheet' => __DIR__ . '/..' . '/dompdf/dompdf/include/stylesheet.cls.php',
+        'SubscriptionCouponsSeeder' => __DIR__ . '/../..' . '/resources/database/seeds/SubscriptionCouponsSeeder.php',
         'TCPDF_Adapter' => __DIR__ . '/..' . '/dompdf/dompdf/include/tcpdf_adapter.cls.php',
         'Table_Cell_Frame_Decorator' => __DIR__ . '/..' . '/dompdf/dompdf/include/table_cell_frame_decorator.cls.php',
         'Table_Cell_Frame_Reflower' => __DIR__ . '/..' . '/dompdf/dompdf/include/table_cell_frame_reflower.cls.php',

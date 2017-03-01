@@ -814,6 +814,7 @@ return array(
     'StripeTblChanges' => $baseDir . '/resources/database/migrations/2016_08_04_003518_stripe_tbl_changes.php',
     'Style' => $vendorDir . '/dompdf/dompdf/include/style.cls.php',
     'Stylesheet' => $vendorDir . '/dompdf/dompdf/include/stylesheet.cls.php',
+    'SubscriptionCouponsSeeder' => $baseDir . '/resources/database/seeds/SubscriptionCouponsSeeder.php',
     'TCPDF_Adapter' => $vendorDir . '/dompdf/dompdf/include/tcpdf_adapter.cls.php',
     'Table_Cell_Frame_Decorator' => $vendorDir . '/dompdf/dompdf/include/table_cell_frame_decorator.cls.php',
     'Table_Cell_Frame_Reflower' => $vendorDir . '/dompdf/dompdf/include/table_cell_frame_reflower.cls.php',

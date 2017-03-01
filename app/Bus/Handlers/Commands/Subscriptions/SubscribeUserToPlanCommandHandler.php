@@ -6,10 +6,14 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Subscriptions;
 
+use Carbon\Carbon;
+use DB;
 use Exception;
 use Kabooodle\Models\User;
 use Stripe\Error\InvalidRequest;
 use Laravel\Cashier\Subscription;
+use Kabooodle\Models\SubscriptionCoupons;
+use Illuminate\Database\Eloquent\Collection;
 use Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent;
 use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToPlanCommand;
 use Kabooodle\Foundation\Exceptions\Subscription\UserHasNoCreditCardOnFileException;
@@ -20,6 +24,11 @@ use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadySubscribedToPlanExce
  */
 class SubscribeUserToPlanCommandHandler
 {
+    /**
+     * @var null|Collection
+     */
+    public $pendingCoupons;
+
     /**
      * @param SubscribeUserToPlanCommand $command
      * @return Subscription|null
@@ -60,7 +69,8 @@ class SubscribeUserToPlanCommandHandler
                     $actor,
                     $subscriptionName,
                     $plan,
-                    (int) ($skipTrial ? 0 : $trialDays)
+                    0,
+                    $this->getApplicableCoupon($actor)
                 );
             } else {
 
@@ -91,15 +101,20 @@ class SubscribeUserToPlanCommandHandler
                 }
             }
         } catch (InvalidRequest $e) {
+            // I believe this is thrown if the user doesn't exist on stripe
+            // but on our end they do.  I don't know why or when this would occur, except in testing
+            // where we delete them remotely from stripe but not locally?
             if ($e->getHttpStatus() == 404) {
                 $subscription = $this->newSubscription($actor, $subscriptionName, $plan, 0);
             } else {
-                // Unsure of other expcetions that can be thrown.
+                // Unsure of other exceptions that can be thrown.
                 throw $e;
             }
         } catch (Exception $e) {
             throw $e;
         }
+
+        $this->applyPendingCoupons();
 
         $actor->trial_ends_at = null;
         $actor->save();
@@ -111,19 +126,73 @@ class SubscribeUserToPlanCommandHandler
 
     /**
      * @param User $actor
-     * @param      $subscriptionName
-     * @param      $plan
-     * @param int  $trialDays
-     *
+     * @param $subscriptionName
+     * @param $plan
+     * @param int $trialDays
+     * @param string|null $stripeCouponId
      * @return Subscription
      */
-    public function newSubscription(User $actor, $subscriptionName, $plan, $trialDays = 0)
+    public function newSubscription(User $actor, $subscriptionName, $plan, $trialDays = 0, string $stripeCouponId = null)
     {
-        return $actor->newSubscription($subscriptionName, $plan)
-            ->trialDays((int) $trialDays)
-            ->create(null, [
-                'email' => $actor->email,
-                'id' => $actor->id,
-            ]);
+        $subscription = $actor->newSubscription($subscriptionName, $plan)->trialDays((int) $trialDays);
+
+        if ($stripeCouponId) {
+            $subscription = $subscription->withCoupon($stripeCouponId);
+        }
+
+        return $subscription->create(null, [
+            'email' => $actor->email,
+            'id' => $actor->id,
+        ]);
+    }
+
+    /**
+     * The user may have unused coupons that we need to associate to their FIRST time subscription.
+     * Currently, these coupons are only based on referrals and nothing more.
+     *
+     * @param User $actor
+     * @return null|string
+     */
+    public function getApplicableCoupon(User $actor)
+    {
+        if ($this->pendingCoupons = $actor->pendingSubscriptionCoupons->count() > 0) {
+            $count = $this->pendingCoupons->count();
+
+            // Only allow max of 6 coupons to be redeemed for referrals
+            if ($count >= 6) {
+                return SubscriptionCoupons::COUPON_6_MO_FREE;
+            } elseif ($count == 5) {
+                return SubscriptionCoupons::COUPON_5_MO_FREE;
+            } elseif ($count == 4) {
+                return SubscriptionCoupons::COUPON_4_MO_FREE;
+            } elseif ($count == 3) {
+                return SubscriptionCoupons::COUPON_3_MO_FREE;
+            } elseif ($count == 2) {
+                return SubscriptionCoupons::COUPON_2_MO_FREE;
+            } else {
+                return SubscriptionCoupons::COUPON_1_MO_FREE;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return void
+     */
+    public function applyPendingCoupons()
+    {
+        $pendingCoupons = $this->pendingCoupons;
+        if ($pendingCoupons->count() == 0) {
+            return;
+        }
+
+        $timestamp = Carbon::now();
+
+        foreach($pendingCoupons as $pendingCoupon) {
+            $pendingCoupon->pivot->coupon_applied_on = $timestamp;
+            $pendingCoupon->pivot->save();
+            $pendingCoupon->save();
+        }
     }
 }

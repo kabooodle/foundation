@@ -25,12 +25,7 @@ class UpdateCouponsAddCols extends Migration
             $table->integer('subscription_id')->unsigned()->after('id');
         });
 
-        \Kabooodle\Models\SubscriptionCoupons::forceCreate([
-            'name' => 'Free month for a qualifying referral',
-            'coupon_id' => 'free_month_for_referral',
-            'coupon_amount_off' => '100',
-            'type' => 'percent',
-        ]);
+        Artisan::call('db:seed', array('--class' => 'SubscriptionCouponsSeeder'));
     }
 
     /**
