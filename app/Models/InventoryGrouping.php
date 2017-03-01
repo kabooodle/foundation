@@ -91,7 +91,7 @@ class InventoryGrouping extends Listable implements ListableInterface
     {
         return [
             'name.required' => 'Your outfit must have a name.',
-            'name.unique' => 'Your outfits must all have a unique name. You already have an outfit by the same name.',
+            'name.unique' => 'You already have an outfit by the same name.',
             'price_usd.required' => 'Your outfit must have a price.',
             'price_usd.min' => 'Your outfit price must be a positive number.',
             'price_usd.numeric' => 'Your outfit price must be a positive number.',

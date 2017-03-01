@@ -27,6 +27,7 @@
                         :edit=edit
                         :key="grouping.id"
                         :grouping=grouping
+                        :validation-errors=validationErrors[grouping.id]
                         :inventory=inventory
                         :restricted-inventory-ids=restrictedInventoryIds
                         :s3_key_url="s3_key_url"
@@ -83,6 +84,7 @@
                 viewRoute: this.inventoryGroupingsIndexRoute + '/' + this.editGrouping.obfuscate_id,
                 ids: [],
                 groupings: [],
+                validationErrors: {},
                 retrievingInventory: false,
                 inventory: {
                     'raw': [],
@@ -161,8 +163,31 @@
             },
             addGrouping: function () {
                 this.adding = true;
+                let id = this.getNewId();
+                this.validationErrors[id] = {
+                    'name': {
+                        'status': false,
+                        'message': '',
+                    },
+                    'price_usd': {
+                        'status': false,
+                        'message': '',
+                    },
+                    'initial_qty': {
+                        'status': false,
+                        'message': '',
+                    },
+                    'inventory': {
+                        'status': false,
+                        'message': '',
+                    },
+                    'image': {
+                        'status': false,
+                        'message': '',
+                    }
+                };
                 this.groupings.push({
-                    'id': this.getNewId(),
+                    'id': id,
                     'name': null,
                     'description': null,
                     'locked': true,
@@ -173,34 +198,35 @@
                     'duplicating': false,
                     'auto_add': true,
                     'max_quantity': true,
-                    'validationErrors': {
-                        'name': {
-                            'status': false,
-                            'message': '',
-                        },
-                        'price_usd': {
-                            'status': false,
-                            'message': '',
-                        },
-                        'initial_qty': {
-                            'status': false,
-                            'message': '',
-                        },
-                        'inventory': {
-                            'status': false,
-                            'message': '',
-                        },
-                        'image': {
-                            'status': false,
-                            'message': '',
-                        },
-                    },
                 });
                 this.adding = false;
             },
             duplicateGrouping: function (grouping) {
+                let id = this.getNewId();
+                this.validationErrors[id] = {
+                    'name': {
+                        'status': this.validationErrors[grouping.id.toString()].name.status,
+                        'message': this.validationErrors[grouping.id.toString()].name.message,
+                    },
+                    'price_usd': {
+                        'status': this.validationErrors[grouping.id.toString()].price_usd.status,
+                        'message': this.validationErrors[grouping.id.toString()].price_usd.message,
+                    },
+                    'initial_qty': {
+                        'status': this.validationErrors[grouping.id.toString()].initial_qty.status,
+                        'message': this.validationErrors[grouping.id.toString()].initial_qty.message,
+                    },
+                    'inventory': {
+                        'status': this.validationErrors[grouping.id.toString()].inventory.status,
+                        'message': this.validationErrors[grouping.id.toString()].inventory.message,
+                    },
+                    'image': {
+                        'status': this.validationErrors[grouping.id.toString()].image.status,
+                        'message': this.validationErrors[grouping.id.toString()].image.message,
+                    }
+                };
                 this.groupings.push({
-                    'id': this.getNewId(),
+                    'id': id,
                     'name': grouping.name,
                     'description': grouping.description,
                     'locked': grouping.locked,
@@ -211,34 +237,35 @@
                     'duplicating': false,
                     'auto_add': grouping.auto_add,
                     'max_quantity': grouping.max_quantity,
-                    'validationErrors': {
-                        'name': {
-                            'status': grouping.validationErrors.name.status,
-                            'message': grouping.validationErrors.name.message,
-                        },
-                        'price_usd': {
-                            'status': grouping.validationErrors.price_usd.status,
-                            'message': grouping.validationErrors.price_usd.message,
-                        },
-                        'initial_qty': {
-                            'status': grouping.validationErrors.initial_qty.status,
-                            'message': grouping.validationErrors.initial_qty.message,
-                        },
-                        'inventory': {
-                            'status': grouping.validationErrors.inventory.status,
-                            'message': grouping.validationErrors.inventory.message,
-                        },
-                        'image': {
-                            'status': grouping.validationErrors.image.status,
-                            'message': grouping.validationErrors.image.message,
-                        },
-                    },
                 });
                 grouping.duplicating = false;
             },
             setEditGrouping: function () {
+                let id = this.editGrouping.id.toString();
+                this.validationErrors[id] = {
+                    'name': {
+                        'status': false,
+                        'message': '',
+                    },
+                    'price_usd': {
+                        'status': false,
+                        'message': '',
+                    },
+                    'initial_qty': {
+                        'status': false,
+                        'message': '',
+                    },
+                    'inventory': {
+                        'status': false,
+                        'message': '',
+                    },
+                    'image': {
+                        'status': false,
+                        'message': '',
+                    }
+                };
                 this.groupings.push({
-                    'id': this.editGrouping.id.toString(),
+                    'id': id,
                     'name': this.editGrouping.name,
                     'description': this.editGrouping.description,
                     'locked': this.editGrouping.locked,
@@ -249,28 +276,6 @@
                     'duplicating': false,
                     'auto_add': this.editGrouping.auto_add,
                     'max_quantity': this.editGrouping.max_quantity,
-                    'validationErrors': {
-                        'name': {
-                            'status': false,
-                            'message': '',
-                        },
-                        'price_usd': {
-                            'status': false,
-                            'message': '',
-                        },
-                        'initial_qty': {
-                            'status': false,
-                            'message': '',
-                        },
-                        'inventory': {
-                            'status': false,
-                            'message': '',
-                        },
-                        'image': {
-                            'status': false,
-                            'message': '',
-                        },
-                    },
                 });
             },
             save: function () {
@@ -370,13 +375,13 @@
                 }
             },
             updateValidationStatus: function (e) {
-                this.allGroupingInputIsValid = true;
+                this.allGroupingInputIsValid = e.status;
             },
             handleValidationErrorsResponse: function (response) {
                 if (response.body.data.validationErrors) {
                     for (var input in response.body.data.validationErrors) {
-                        this.groupings[0].validationErrors[input].status = true;
-                        this.groupings[0].validationErrors[input].message = response.body.data.validationErrors[input][0];
+                        this.validationErrors[this.groupings[0].id][input].status = true;
+                        this.validationErrors[this.groupings[0].id][input].message = response.body.data.validationErrors[input][0];
                     }
                 }
             },

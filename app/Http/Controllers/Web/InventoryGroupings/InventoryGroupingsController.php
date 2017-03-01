@@ -57,6 +57,17 @@ class InventoryGroupingsController extends Controller
      *
      * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse|Redirector
      */
+    public function simple(Request $request, $username)
+    {
+        return $this->view('inventory-groupings.simple');
+    }
+
+    /**
+     * @param Request $request
+     * @param $username
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse|Redirector
+     */
     public function create(Request $request, $username)
     {
         if (webUser()->username <> $username) {

@@ -10,7 +10,7 @@ import VuetablePagination from '../vuetable/VuetablePagination.vue';
 import VuetablePaginationInfo from '../vuetable/VuetablePaginationInfo.vue';
 
 new Vue({
-    el: '#manage_inventory',
+    el: '#manage_listables',
     data: {
         search_filter: null,
         moreParams: {},

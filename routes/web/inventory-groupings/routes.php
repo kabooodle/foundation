@@ -6,5 +6,9 @@ Route::group(['middleware' => ['auth']], function () {
             'parameters' => ['shop' => 'username'],
             'except' => ['store', 'update', 'destroy'],
         ]);
+        Route::get('shop/{username}/outfits-simple', [
+            'as' =>'shop.outfits.overview.index',
+            'uses' => \Kabooodle\Http\Controllers\Web\InventoryGroupings\InventoryGroupingsController::class.'@simple'
+        ]);
     });
 });

@@ -1,4 +1,4 @@
-@extends('layouts.full', ['contentId' => 'manage_inventory'])
+@extends('layouts.full', ['contentId' => 'manage_listables'])
 
 
 @section('body-menu')
@@ -80,5 +80,5 @@
 @endsection
 
 @push('footer-scripts')
-<script src="{{ staticAsset('/assets/js/inventory-detailed.js') }}"></script>
+<script src="{{ staticAsset('/assets/js/listables-detailed.js') }}"></script>
 @endpush
