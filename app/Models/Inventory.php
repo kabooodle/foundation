@@ -7,6 +7,7 @@
 namespace Kabooodle\Models;
 
 use Kabooodle\Models\Contracts\ListableInterface;
+use Kabooodle\Presenters\Models\Inventory\InventoryPresenter;
 
 /**
  * Class Inventory
@@ -38,6 +39,11 @@ class Inventory extends Listable implements ListableInterface
 //        'comments',
 //        'sales'
     ];
+
+    /**
+     * @var string
+     */
+    protected $presenter = InventoryPresenter::class;
 
     /**
      * @return array

@@ -14,6 +14,7 @@ use Kabooodle\Models\Contracts\ListableInterface;
 use Kabooodle\Models\Contracts\Viewable;
 use Kabooodle\Models\Traits\ListableTrait;
 use Kabooodle\Models\Traits\ViewableTrait;
+use Kabooodle\Presenters\PresentableTrait;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
@@ -36,6 +37,7 @@ class Listable extends BaseEloquentModel implements Commentable, LikeableInterfa
         FollowableTrait,
         LikeableTrait,
         ObfuscatesIdTrait,
+        PresentableTrait,
         RevisionableTrait,
         SingleTableInheritance,
         SoftDeletes,

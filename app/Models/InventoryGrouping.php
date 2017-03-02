@@ -14,6 +14,7 @@ use Kabooodle\Models\Contracts\ListableInterface;
 use Kabooodle\Models\Contracts\Viewable;
 use Kabooodle\Models\Traits\ListableTrait;
 use Kabooodle\Models\Traits\ViewableTrait;
+use Kabooodle\Presenters\Models\InventoryGrouping\InventoryGroupingPresenter;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
@@ -51,6 +52,11 @@ class InventoryGrouping extends Listable implements ListableInterface
     protected $with = [
         'files',
     ];
+
+    /**
+     * @var string
+     */
+    protected $presenter = InventoryGroupingPresenter::class;
 
     /**
      * @return array
