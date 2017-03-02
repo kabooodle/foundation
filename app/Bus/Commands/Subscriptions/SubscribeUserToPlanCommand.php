@@ -47,7 +47,7 @@ final class SubscribeUserToPlanCommand
      * @param bool $skipTrial
      * @param int  $trialDays
      */
-    public function __construct(User $actor, $subscriptionName, $planId, $skipTrial = false, $trialDays = 30)
+    public function __construct(User $actor, $subscriptionName, $planId, $skipTrial = true, $trialDays = 30)
     {
         $this->actor = $actor;
         $this->subscriptionName = $subscriptionName;

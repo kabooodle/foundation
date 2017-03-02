@@ -970,10 +970,12 @@ class User extends BaseEloquentModel implements
 
         $defaultCard = false;
 
-        foreach ($customer->sources->data as $card) {
-            if ($card->id === $customer->default_source) {
-                $defaultCard = $card;
-                break;
+        if ($customer->sources) {
+            foreach ($customer->sources->data as $card) {
+                if ($card->id === $customer->default_source) {
+                    $defaultCard = $card;
+                    break;
+                }
             }
         }
 
@@ -1170,7 +1172,7 @@ class User extends BaseEloquentModel implements
     /**
      * @return bool
      */
-    public function myReferralQualifies()
+    public function myAccountIsAQualifyingReferral()
     {
         return ! $this->onGenericTrial() && $this->hasAtLeastMerchantSubscription();
     }
@@ -1178,32 +1180,37 @@ class User extends BaseEloquentModel implements
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function subscriptionCoupons()
+    public function qualifiedReferrals()
     {
-        return $this->belongsToMany(SubscriptionCoupons::class, 'subscription_coupon_users', 'user_id', 'subscription_coupon_id')
-            ->withPivot([
-                'couponable_type',
-                'couponable_id',
-                'coupon_applied_on'
-            ])
-            ->withTimestamps();
+        return $this->hasMany(Referrals::class, 'referred_id');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return mixed
      */
-    public function appliedSubscriptionCoupons()
+    public function pendingQualifiedReferrals()
     {
-        return $this->subscriptionCoupons()
-            ->wherePivot('coupon_applied_on', '<>', 'null');
+        return $this->qualifiedReferrals()->whereNull('coupon_applied_at');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return mixed
      */
-    public function pendingSubscriptionCoupons()
+    public function appliedQualifiedReferrals()
     {
-        return $this->subscriptionCoupons()
-            ->wherePivot('coupon_applied_on', '=', 'null');
+        return $this->qualifiedReferrals()->whereNotNull('coupon_applied_at');
+    }
+
+    /**
+     * @return int
+     */
+    public function getPendingQualifiedReferralTotal()
+    {
+        $qualifiedReferrals = $this->pendingQualifiedReferrals;
+        if ($qualifiedReferrals->count() >= 6) {
+            return 6;
+        }
+
+        return $qualifiedReferrals->count();
     }
 }

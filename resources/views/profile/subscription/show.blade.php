@@ -10,11 +10,14 @@
         </div>
         <div class="box-divider"></div>
         <div class="box-body clearfix">
+            @if(webUser()->pendingQualifiedReferrals->count() > 0)
+                @include('profile.subscription.partials._coupon')
+            @endif
             @include('profile.subscription.partials._plan', [
-            '_price' => $plan['price'],
-            '_plan' => $planGroup,
-            '_hideButtons' => true
-        ])
+                '_price' => $plan['price'],
+                '_plan' => $planGroup,
+                '_hideButtons' => true
+            ])
         </div>
         <form method="POST" action="{{ route('profile.subscription.store', [$plan['id']]) }}">
             {{ csrf_field() }}

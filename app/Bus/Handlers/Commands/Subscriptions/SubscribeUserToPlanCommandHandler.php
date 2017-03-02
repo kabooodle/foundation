@@ -6,13 +6,14 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Subscriptions;
 
-use Carbon\Carbon;
-use DB;
+use Bugsnag;
 use Exception;
+use Carbon\Carbon;
 use Kabooodle\Models\User;
+use Illuminate\Support\Str;
+use Kabooodle\Models\Referrals;
 use Stripe\Error\InvalidRequest;
 use Laravel\Cashier\Subscription;
-use Kabooodle\Models\SubscriptionCoupons;
 use Illuminate\Database\Eloquent\Collection;
 use Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent;
 use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToPlanCommand;
@@ -27,7 +28,23 @@ class SubscribeUserToPlanCommandHandler
     /**
      * @var null|Collection
      */
-    public $pendingCoupons;
+    public $pendingQualifiedReferrals;
+
+    /**
+     * @var string
+     */
+    public $couponCodeUsed;
+
+    /**
+     * @var bool
+     */
+    public $poppingCherry = false;
+
+    /**
+     * Stores whether we are swapping the users' plan with a different one.
+     * @var bool
+     */
+    public $swapping = false;
 
     /**
      * @param SubscribeUserToPlanCommand $command
@@ -42,8 +59,6 @@ class SubscribeUserToPlanCommandHandler
         /** @var User $actor */
         $actor = $command->getActor();
         $plan = $command->getPlanId();
-        $skipTrial = $command->skipTrial();
-        $trialDays = $command->getTrialDays();
         $subscriptionName = $command->getSubscriptionName();
 
         // No card?!
@@ -51,99 +66,98 @@ class SubscribeUserToPlanCommandHandler
             throw new UserHasNoCreditCardOnFileException;
         }
 
-        // Stores whether or not this is the first subscription ever for the user.
-        $poppingCherry = false;
-
-        // Stores whether we are swapping the users' plan with a different one.
-        $swapping = false;
-
         try {
             // Does the user have any subscriptions at all?
             if ($actor->subscriptions()->count() == 0) {
-
                 // Create their first ever subscription to the plan!
-                // Woot woot! congrats!
-                $poppingCherry = true;
-
-                $subscription = $this->newSubscription(
-                    $actor,
-                    $subscriptionName,
-                    $plan,
-                    0,
-                    $this->getApplicableCoupon($actor)
-                );
+                $subscription = $this->handleNewCustomer($actor, $subscriptionName, $plan);
             } else {
-
-                // At this point, the user is clearly subscribed to SOME SORT OF plan
-                // We need to determine if the current plan they have has been cancelled but is on grace period
-                // If so, we will just resume their subscription.
-                // Otherwise, we will swap their existing with the new subscription.
-                $subscription = $actor->currentSubscription();
-                if ($skipTrial) {
-                    $subscription->trial_ends_at = null;
-                }
-
-                $subscription->name = $subscriptionName;
-
-                // If the current subscription has been cancelled or is on the grace period,
-                // then we are going to resume it.
-                if ($subscription->cancelled() && $subscription->onGracePeriod()) {
-                    $subscription->resume();
-                    $subscription->ends_at = null;
-                } else {
-                    // We can't swap to the same plan.
-                    if ($actor->subscribedToPlan($plan, $subscriptionName)) {
-                        throw new UserAlreadySubscribedToPlanException($plan);
-                    }
-
-                    $swapping = true;
-                    $subscription->swap($plan);
-                }
+                $subscription = $this->handleExistingCustomer($actor, $subscriptionName, $plan);
             }
-        } catch (InvalidRequest $e) {
-            // I believe this is thrown if the user doesn't exist on stripe
-            // but on our end they do.  I don't know why or when this would occur, except in testing
-            // where we delete them remotely from stripe but not locally?
-            if ($e->getHttpStatus() == 404) {
-                $subscription = $this->newSubscription($actor, $subscriptionName, $plan, 0);
-            } else {
-                // Unsure of other exceptions that can be thrown.
-                throw $e;
-            }
+
+            // Cleanup
+            $actor->trial_ends_at = null;
+            $actor->save();
+
+            event(new UserWasSubscribedToPlanEvent($actor, $actor->currentSubscription(), $plan, $this->poppingCherry, $this->swapping));
+
+            return $subscription;
         } catch (Exception $e) {
+            Bugsnag::notifyException($e);
             throw $e;
         }
+    }
 
-        $this->applyPendingCoupons();
+    /**
+     * Creates a new Stripe Customer
+     *
+     * @param User   $actor
+     * @param string $subscriptionName
+     * @param string $plan
+     * @param int    $trialDays
+     *
+     * @return $this|Subscription
+     */
+    public function handleNewCustomer(User $actor, string $subscriptionName, $plan, int $trialDays = 0)
+    {
+        $this->poppingCherry = true;
 
-        $actor->trial_ends_at = null;
-        $actor->save();
+        $subscription = $actor->newSubscription($subscriptionName, $plan)->trialDays((int) $trialDays);
 
-        event(new UserWasSubscribedToPlanEvent($actor, $subscription, $plan, $poppingCherry, $swapping));
+        if ($coupon = $this->getApplicableReferralCouponForBrandNewSubscriber($actor, $plan)) {
+            $subscription = $subscription->withCoupon($coupon);
+        }
+
+        $subscription->create(null, [
+            'email' => $actor->email,
+            'id' => $actor->id,
+        ]);
+
+        $this->markPendingQualifiedReferralsAsApplied();
 
         return $subscription;
     }
 
     /**
-     * @param User $actor
-     * @param $subscriptionName
-     * @param $plan
-     * @param int $trialDays
-     * @param string|null $stripeCouponId
-     * @return Subscription
+     * Updates existing Stripe Customer's subscription
+     *
+     * @param User         $actor
+     * @param string       $subscriptionName
+     * @param string       $plan
+     * @param bool         $skipTrial
+     *
+     * @return Subscription|mixed
+     * @throws UserAlreadySubscribedToPlanException
      */
-    public function newSubscription(User $actor, $subscriptionName, $plan, $trialDays = 0, string $stripeCouponId = null)
+    public function handleExistingCustomer(User $actor, string $subscriptionName, $plan, bool $skipTrial = true)
     {
-        $subscription = $actor->newSubscription($subscriptionName, $plan)->trialDays((int) $trialDays);
-
-        if ($stripeCouponId) {
-            $subscription = $subscription->withCoupon($stripeCouponId);
+        // At this point, the user is clearly subscribed to SOME SORT OF plan
+        // We need to determine if the current plan they have has been cancelled but is on grace period
+        // If so, we will just resume their subscription.
+        // Otherwise, we will swap their existing with the new subscription.
+        $subscription = $actor->currentSubscription();
+        if ($skipTrial) {
+            $subscription->trial_ends_at = null;
         }
 
-        return $subscription->create(null, [
-            'email' => $actor->email,
-            'id' => $actor->id,
-        ]);
+        $subscription->name = $subscriptionName;
+
+        // If the current subscription has been cancelled or is on the grace period,
+        // then we are going to resume it.
+        if ($subscription->cancelled() && $subscription->onGracePeriod()) {
+            $subscription->resume();
+            $subscription->ends_at = null;
+        } else {
+            // We can't swap to the same plan.
+            if ($actor->subscribedToPlan($plan, $subscriptionName)) {
+                throw new UserAlreadySubscribedToPlanException($plan);
+            }
+
+            $this->swapping = true;
+            $subscription->swap($plan);
+
+            return $subscription;
+        }
     }
 
     /**
@@ -153,25 +167,31 @@ class SubscribeUserToPlanCommandHandler
      * @param User $actor
      * @return null|string
      */
-    public function getApplicableCoupon(User $actor)
+    public function getApplicableReferralCouponForBrandNewSubscriber(User $actor, $plan)
     {
-        if ($this->pendingCoupons = $actor->pendingSubscriptionCoupons->count() > 0) {
-            $count = $this->pendingCoupons->count();
+        $this->pendingQualifiedReferrals = $actor->pendingQualifiedReferrals;
+        $count = $this->pendingQualifiedReferrals->count();
+
+        if ($count > 0) {
 
             // Only allow max of 6 coupons to be redeemed for referrals
             if ($count >= 6) {
-                return SubscriptionCoupons::COUPON_6_MO_FREE;
+                $couponCode = Referrals::COUPON_6_MO_FREE;
             } elseif ($count == 5) {
-                return SubscriptionCoupons::COUPON_5_MO_FREE;
+                $couponCode = Referrals::COUPON_5_MO_FREE;
             } elseif ($count == 4) {
-                return SubscriptionCoupons::COUPON_4_MO_FREE;
+                $couponCode = Referrals::COUPON_4_MO_FREE;
             } elseif ($count == 3) {
-                return SubscriptionCoupons::COUPON_3_MO_FREE;
+                $couponCode = Referrals::COUPON_3_MO_FREE;
             } elseif ($count == 2) {
-                return SubscriptionCoupons::COUPON_2_MO_FREE;
+                $couponCode = Referrals::COUPON_2_MO_FREE;
             } else {
-                return SubscriptionCoupons::COUPON_1_MO_FREE;
+                $couponCode = Referrals::COUPON_1_MO_FREE;
             }
+
+            $this->couponCodeUsed = $couponCode;
+
+            return $couponCode;
         }
 
         return null;
@@ -180,19 +200,20 @@ class SubscribeUserToPlanCommandHandler
     /**
      * @return void
      */
-    public function applyPendingCoupons()
+    public function markPendingQualifiedReferralsAsApplied()
     {
-        $pendingCoupons = $this->pendingCoupons;
-        if ($pendingCoupons->count() == 0) {
+        if (! $this->pendingQualifiedReferrals || $this->pendingQualifiedReferrals->count() == 0) {
             return;
         }
 
         $timestamp = Carbon::now();
+        $groupHash = Str::random();
 
-        foreach($pendingCoupons as $pendingCoupon) {
-            $pendingCoupon->pivot->coupon_applied_on = $timestamp;
-            $pendingCoupon->pivot->save();
-            $pendingCoupon->save();
+        foreach ($this->pendingQualifiedReferrals as $pendingReferral) {
+            $pendingReferral->coupon_applied_at = $timestamp;
+            $pendingReferral->group_hash = $groupHash;
+            $pendingReferral->stripe_coupon_id = $this->couponCodeUsed;
+            $pendingReferral->save();
         }
     }
 }

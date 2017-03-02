@@ -42,6 +42,7 @@ return array(
     'ChangeClaimableToListableAndShoppableToListingItemIdOnClaimsTable' => $baseDir . '/resources/database/migrations/2017_02_09_174826_change_claimable_to_listable_and_shoppable_to_listing_item_id_on_claims_table.php',
     'ChangeInventoryItemObjectDataToListableOnClaimsTable' => $baseDir . '/resources/database/migrations/2017_02_09_180153_change_inventory_item_object_data_toListable_on_claims_table.php',
     'ChangePageviewsToViews' => $baseDir . '/resources/database/migrations/2017_01_22_054305_change_pageviews_to_views.php',
+    'CleanupCouponMigrationsAndSeed' => $baseDir . '/resources/database/migrations/2017_03_01_231122_cleanup_coupon_migrations_and_seed.php',
     'CreateCategoriesTbl' => $baseDir . '/resources/database/migrations/2016_08_28_082531_create_categories_tbl.php',
     'CreateClaimsTbl' => $baseDir . '/resources/database/migrations/2016_09_02_202655_create_claims_tbl.php',
     'CreateCommentsTbl' => $baseDir . '/resources/database/migrations/2016_10_01_235142_create_comments_tbl.php',

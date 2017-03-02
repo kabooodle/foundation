@@ -57,7 +57,7 @@
                             <div class="list-body">
                                 <div class="_500"><a href="">{!! $referral->name !!}</a></div>
                                 <div class="text-muted">joined: {{ $referral->created_at->diffForHumans() }}</div>
-                                <div class="text-muted text-sm">{{ ! $referral->myReferralQualifies() ? 'Qualified!' : 'not yet qualified' }}</div>
+                                <div class="text-muted text-sm">{{ $referral->myAccountIsAQualifyingReferral() ? 'Qualified!' : 'not yet qualified' }}</div>
                             </div>
                         </li>
                     </ul>

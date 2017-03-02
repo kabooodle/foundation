@@ -37,6 +37,10 @@
         </div>
     @endif
 
+    @if(webUser()->pendingQualifiedReferrals->count() > 0)
+        @include('profile.subscription.partials._coupon')
+    @endif
+
     @if(webUser()->isEarlyAdapter())
         @include('profile.subscription.partials._earlyadapter', [
         '_plan' => \Kabooodle\Models\Plans::getEarlyAdapterPlan(),
