@@ -13,6 +13,11 @@ namespace Kabooodle\Models\Contracts;
 interface ListableInterface
 {
     /**
+     * @return string
+     */
+    public function getEditRoute(): string;
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function listingItems();

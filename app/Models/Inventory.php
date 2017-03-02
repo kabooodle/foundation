@@ -277,4 +277,12 @@ class Inventory extends Listable implements ListableInterface
 
         $filters = $base + $filters;
     }
+
+    /**
+     * @return string
+     */
+    public function getEditRoute(): string
+    {
+        return route('shop.inventory.edit', [$this->user->username, $this->getUUID()]);
+    }
 }

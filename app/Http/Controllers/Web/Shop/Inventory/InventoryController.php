@@ -123,11 +123,14 @@ class InventoryController extends Controller
         $item = Inventory::with(['sales', 'views'])->findOrFail($decryptedId);
 
         if ($item) {
+            $data = [
+                'listable' => $item,
+            ];
             if ($request->ajax()) {
-                return $this->view('inventory.partials._show')->with(compact('item'))->render();
+                return $this->view('inventory.partials._show', $data)->render();
             }
 
-            return $this->view('inventory.show')->with(compact('item'));
+            return $this->view('listables.show', $data);
         }
 
         return $this->redirect(route('shop.inventory.index', [$username]));

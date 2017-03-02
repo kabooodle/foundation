@@ -88,14 +88,14 @@ class InventoryGroupingsController extends Controller
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
 
-        $grouping = InventoryGrouping::with(['sales', 'views'])->findOrFail($decryptedId);
+        $grouping = InventoryGrouping::with(['comments','sales', 'views'])->findOrFail($decryptedId);
 
         if ($grouping) {
             $data = [
-                'grouping' => $grouping,
+                'listable' => $grouping,
             ];
 
-            return $this->view('inventory-groupings.show', $data);
+            return $this->view('listables.show', $data);
         }
 
         return $this->redirect(route('shop.outfits.index', [$username]));

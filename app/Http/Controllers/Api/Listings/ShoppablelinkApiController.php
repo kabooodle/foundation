@@ -29,7 +29,7 @@ class ShoppablelinkApiController extends AbstractApiController
     public function store(Request $request)
     {
         try {
-            $this->validate($request, ['name' => 'required', 'id' => 'required|exists:inventory,id']);
+            $this->validate($request, ['name' => 'required', 'id' => 'required|exists:listables,id']);
 
             $job = new CreateOrUpdateCustomListingCommand($this->getUser(), Binput::get('name'), [Binput::get('id')]);
             $this->dispatchNow($job);

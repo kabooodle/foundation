@@ -230,4 +230,12 @@ class InventoryGrouping extends Listable implements ListableInterface
 
         $filters = $base + $filters;
     }
+
+    /**
+     * @return string
+     */
+    public function getEditRoute(): string
+    {
+        return route('shop.outfits.edit', [$this->user->username, $this->getUUID()]);
+    }
 }
