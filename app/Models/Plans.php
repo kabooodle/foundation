@@ -53,6 +53,18 @@ final class Plans
     ];
 
     /**
+     * @return array
+     */
+    public static function getMonthlyPlans()
+    {
+        return [
+            self::PLAN_EARLY_ADOPTER,
+            self::PLAN_MERCHANT_MONTH,
+            self::PLAN_MERCHANTPLUS_MONTH
+        ];
+    }
+
+    /**
      * @return mixed
      */
     public static function getAllPlans()

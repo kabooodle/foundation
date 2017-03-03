@@ -21,6 +21,7 @@ use Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent;
 use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToPlanCommand;
 use Kabooodle\Foundation\Exceptions\Subscription\UserHasNoCreditCardOnFileException;
 use Kabooodle\Foundation\Exceptions\Subscription\UserAlreadySubscribedToPlanException;
+use Stripe\Plan;
 
 /**
  * Class SubscribeUserToPlanCommandHandler
@@ -82,6 +83,11 @@ class SubscribeUserToPlanCommandHandler
         }
 
         try {
+
+            // We need to know which coupon we are applying
+            // We need to know which pendingReferrals are being applied, and which remain as is.
+            $coupons = $this->getApplicableReferralCouponForBrandNewSubscriber($actor, $plan);
+
             // Does the user have any subscriptions at all?
             if ($actor->subscriptions()->count() == 0) {
                 // Create their first ever subscription to the plan!
@@ -94,7 +100,13 @@ class SubscribeUserToPlanCommandHandler
             $actor->trial_ends_at = null;
             $actor->save();
 
-            event(new UserWasSubscribedToPlanEvent($actor, $actor->currentSubscription(), $plan, $this->poppingCherry, $this->swapping));
+            event(new UserWasSubscribedToPlanEvent(
+                $actor,
+                $actor->currentSubscription(),
+                $plan,
+                $this->poppingCherry,
+                $this->swapping)
+            );
 
             return $subscription;
         } catch (Exception $e) {
@@ -150,6 +162,8 @@ class SubscribeUserToPlanCommandHandler
         // We need to determine if the current plan they have has been cancelled but is on grace period
         // If so, we will just resume their subscription.
         // Otherwise, we will swap their existing with the new subscription.
+
+        /** @var Subscription $subscription */
         $subscription = $actor->currentSubscription();
         if ($skipTrial) {
             $subscription->trial_ends_at = null;
@@ -169,6 +183,8 @@ class SubscribeUserToPlanCommandHandler
             }
 
             $this->swapping = true;
+
+            // Check for coupon
             $subscription->swap($plan);
 
             return $subscription;
@@ -176,16 +192,40 @@ class SubscribeUserToPlanCommandHandler
     }
 
     /**
+     * @param User $actor
+     * @param string $plan
+     * @return array|void
+     */
+    public function getPendingAndApplicableQualifiedReferrals(User $actor, string $plan)
+    {
+        $pendingQualifiedReferrals = $actor->pendingQualifiedReferrals;
+        if ($pendingQualifiedReferrals->count() > 0) {
+            if (in_array($plan , Plans::getMonthlyPlans())) {
+                // For monthly plans, we only use 1 qualified referral, which will be applied to their initial month.
+                return $pendingQualifiedReferrals->first();
+            } else {
+                // Because we only allow a max of 6 coupons ever, we only allow a new annual plan be discounted by 6 coupons.
+                // Which is also a 6 month discount.
+                $chunk = $pendingQualifiedReferrals->chunk(6);
+
+                return $chunk[0];
+            }
+        }
+
+        return collect([]);
+    }
+
+    /**
      * The user may have unused coupons that we need to associate to their FIRST time subscription.
      * Currently, these coupons are only based on referrals and nothing more.
      *
-     * @param User $actor
+     * @param User   $actor
+     * @param string $plan
      * @return null|string
      */
-    public function getApplicableReferralCouponForBrandNewSubscriber(User $actor, $plan)
+    public function getApplicableReferralCouponForBrandNewSubscriber(User $actor, string $plan)
     {
-        $this->pendingQualifiedReferrals = $actor->pendingQualifiedReferrals;
-        $count = $this->pendingQualifiedReferrals->count();
+        $count = $this->getPendingAndApplicableQualifiedReferrals($actor, $plan);
 
         if ($count > 0) {
             // If the user signed up for a year long account,
@@ -220,21 +260,7 @@ class SubscribeUserToPlanCommandHandler
                     $couponCode = Referrals::COUPON_1_MO_MERCHANT_ANNUAL_FREE;
                 }
             } else {
-
-                // Monthly, you can only add
-                if ($count >= 6) {
-                    $couponCode = Referrals::COUPON_6_MO_FREE;
-                } elseif ($count == 5) {
-                    $couponCode = Referrals::COUPON_5_MO_FREE;
-                } elseif ($count == 4) {
-                    $couponCode = Referrals::COUPON_4_MO_FREE;
-                } elseif ($count == 3) {
-                    $couponCode = Referrals::COUPON_3_MO_FREE;
-                } elseif ($count == 2) {
-                    $couponCode = Referrals::COUPON_2_MO_FREE;
-                } else {
-                    $couponCode = Referrals::COUPON_1_MO_FREE;
-                }
+                $couponCode = Referrals::COUPON_1_MO_FREE;
             }
 
             $this->couponCodeUsed = $couponCode;
@@ -246,9 +272,9 @@ class SubscribeUserToPlanCommandHandler
     }
 
     /**
-     * @return void
+     * @param array $ids
      */
-    public function markPendingQualifiedReferralsAsApplied()
+    public function markPendingQualifiedReferralsAsApplied(array $ids = [])
     {
         if (! $this->pendingQualifiedReferrals || $this->pendingQualifiedReferrals->count() == 0) {
             return;
