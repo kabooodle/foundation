@@ -8,7 +8,7 @@
                         <div id="item-{{$listable->id}}-carousel" class="carousel image-carousel-container slide" data-ride="carousel">
                             <div class="carousel-outer">
                                 <div class="carousel-inner" role="listbox">
-                                    @foreach($listable->images as $key => $image)
+                                    @foreach($listable->getAllImages() as $key => $image)
                                         <div class="carousel-item {{ $key == 0 ? 'active' : null }}" >
                                             <img
                                                 data-toggle="lightbox"
@@ -29,7 +29,7 @@
                                 </a>
                             </div>
                             <ol class="carousel-indicators">
-                                @foreach($listable->images as $key=>$image)
+                                @foreach($listable->getAllImages() as $key => $image)
                                     <li data-target="#item-{{$listable->id}}-carousel" data-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : null }}">
                                         <img src="{{ $image->location }}" style="width: 64px; height: 64px;">
                                     </li>
