@@ -8,6 +8,10 @@ return [
     'error_generic_retry' => 'An error occurred, please try again',
     'success_save' => 'Save successful',
 
+    'closedbeta' => [
+        'join_success' => 'Thank you! We will notify you very soon! Don\'t forget to follow us on social media'
+    ],
+
 
     'listings' => [
         'listings_exceeds_hourly_limit' => 'You can only list :allowed per hour. You already have :current scheduled to be listed (or deleted) for the selected time period. Please try a choose a different time or remove some items.',

@@ -12,6 +12,8 @@ elixir(function (mix) {
     // Kabooodle VUE APP
     mix.browserify('app/app.js');
 
+    mix.browserify('app/components/closed-beta.js');
+
     // VUE Components
     mix.browserify('app/components/inventory/inventory-management.js');
     mix.browserify('app/components/inventory/manage/inventory-management-b.js');

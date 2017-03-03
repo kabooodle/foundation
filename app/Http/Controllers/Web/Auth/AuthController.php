@@ -87,10 +87,16 @@ class AuthController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\View\View
+     * @param Request $request
+     *
+     * @return $this|\Illuminate\Contracts\View\View
      */
-    public function getRegister()
+    public function getRegister(Request $request)
     {
+        if (app()->environment() == 'production' || $request->has('closedbeta')) {
+            return $this->view('auth.comingsoon');
+        }
+
         $referrer = $this->referralService->getReferral();
 
         return $this->view('auth.register')->with(compact('referrer'));
