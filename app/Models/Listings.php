@@ -183,6 +183,14 @@ class Listings extends AbstractListingModel
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function listables()
+    {
+        return $this->belongsToMany(Listable::class, 'listing_items', 'listing_id', 'listable_id');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function owner()

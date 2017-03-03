@@ -31,7 +31,7 @@
 
 @section('body-content')
 
-    @include('listables.partials._show', ['item' => $listable])
+    @include('listables.partials._show', ['listable' => $listable])
 
     @include('listables.partials._claimmodal', [
        'post' => route('shop.inventory.claim', [$listable->user->username, $listable->getUUID()]),

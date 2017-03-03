@@ -71,11 +71,12 @@
             </div>
         </div>
 
-    @include('inventory.partials._show', [
-        'item' => $listingItem->listedItem
+    @include('listables.partials._show', [
+        'listable' => $listingItem->listedItem,
+        'listingItem' => $listingItem,
     ])
 
-    @include('inventory.partials._claimmodal', [
+    @include('listables.partials._claimmodal', [
         'post' => apiRoute('listings.listingitems.claims.store', [$listingItem->listing_id, $listingItem->id]),
         'guestClaimEndpoint' => apiRoute('listings.listingitems.claims.guest-store', [$listingItem->listing_id, $listingItem->id]),
         'redirect' => Request::url()
@@ -83,8 +84,8 @@
 
     @include('comments.container', [
         'comment_model' => $listingItem->listedItem,
-        'comment_index_route' => apiRoute('inventory.comments.index', [$listingItem->listedItem->id]),
-        'comment_post_route' => apiRoute('inventory.comments.store', [$listingItem->listedItem->id])
+        'comment_index_route' => apiRoute('listables.comments.index', [$listingItem->owner->username, $listingItem->listedItem->id]),
+        'comment_post_route' => apiRoute('listables.comments.store', [$listingItem->owner->username, $listingItem->listedItem->id])
     ])
 @endsection
 

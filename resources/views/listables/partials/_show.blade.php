@@ -11,10 +11,10 @@
                                     @foreach($listable->images as $key => $image)
                                         <div class="carousel-item {{ $key == 0 ? 'active' : null }}" >
                                             <img
-                                                    data-toggle="lightbox"
-                                                    data-remote="{{ $image->location }}"
-                                                    data-gallery="gallery"
-                                                    src="{{ $image->location }}"
+                                                data-toggle="lightbox"
+                                                data-remote="{{ $image->location }}"
+                                                data-gallery="gallery"
+                                                src="{{ $image->location }}"
                                             >
                                         </div>
                                     @endforeach
@@ -59,11 +59,9 @@
                     <div class="box-body">
                         <p class="m-b-lg text-muted text">{!! nl2br($listable->description) !!}</p>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    {{ $listable->present()->listableShowOutfitSection() }} outfit stuff displayed
+                    <div class="box no-shadow white p-a">
+                        {!! $listable->present()->listableShowOutfitSection(isset($listingItem) ? $listingItem : null) !!}
+                    </div>
                 </div>
             </div>
         </div>

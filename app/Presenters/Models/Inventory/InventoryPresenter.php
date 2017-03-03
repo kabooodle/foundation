@@ -6,7 +6,7 @@
 
 namespace Kabooodle\Presenters\Models\Inventory;
 
-use Kabooodle\Models\Inventory;
+use Kabooodle\Models\ListingItems;
 use Kabooodle\Presenters\PresenterAbstract;
 
 /**
@@ -15,8 +15,20 @@ use Kabooodle\Presenters\PresenterAbstract;
  */
 class InventoryPresenter extends PresenterAbstract
 {
-    public function listableShowOutfitSection()
+    public function listableShowOutfitSection(ListingItems $listingItem = null)
     {
-        return Inventory::class;
+        $groupings = $this->entity->groupings;
+        if ($listingItem) {
+            $groupings = $groupings->filter(function ($grouping) use ($listingItem) {
+                return $listingItem->listing->listables->contains($grouping);
+            });
+        }
+        $data = [
+            'listable' => $this->entity,
+            'groupings' => $groupings,
+            'listing' => $listingItem ? $listingItem->listing : null,
+        ];
+
+        return $groupings->count() ? view('inventory.partials._listables_outfits_div', $data) : null;
     }
 }
