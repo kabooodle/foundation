@@ -29,7 +29,7 @@
         font-weight: 700;
         font-size: 80px;
         line-height: 100px;
-        margin-bottom: 20px;
+        margin-bottom: 40px;
     }
     h6 {
         line-height: 36px;
@@ -49,8 +49,14 @@
     }
     @media (max-width: 414px) {
         h1 {
-            font-size: 40px;
-            line-height: 60px;
+            margin-top: 20px;
+            font-size: 26px;
+            line-height: 40px;
+            margin-bottom: 20px;
+        }
+        h6 {
+            font-size: 14px;
+            line-height: 26px;
         }
     }
 </style>
@@ -68,7 +74,7 @@
                 <h1>
                     Our private beta is ending soon!
                 </h1>
-                <h6 class="m-t-3">
+                <h6 class="">
                     We are currently finishing our private beta-testing
                     which means we will soon be opening up registration for everyone! Add your email address below, to be
                     notified of when registration is officially open.
