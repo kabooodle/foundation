@@ -17,18 +17,18 @@
                     ],
                 'inventory' => [
                         'title' => 'Inventory',
-                        'body' => 'Unlimited items, &amp; quantities. Includes tools to ensure you never oversell an item again.',
+                        'body' => 'Unlimited items, &amp; quantities. Includes tools to ensure you never oversell an item again. Unlimited photos? Also yes.',
                     'icon'=>'inventory.png'
                 ],
                 'wanted' => [
                         'title' => 'Hey, I wanted that!',
-                        'body' => 'Run out of an item? Customers can automatically be notified the moment it becomes available!',
+                        'body' => 'Run out of an item? Customers can automatically be notified the moment a watched item becomes available!',
                     'icon' => 'hey_i_wanted_that.png'
                 ],
                 'shipping' => [
                         'title' => 'Shipping',
                         'icon' =>'shipping.png',
-                    'body' =>'Ship single items or in bulk through USPS. Labels and automated tracking? You bet!'
+                    'body' =>'Ship single items or in bulk through USPS. Labels and automated tracking? You bet! Additional costs? Never.'
                 ],
                 'groupings' => [
                         'title' => 'Inventory groupings',
@@ -43,7 +43,7 @@
                     'sell' => [
                             'title' => 'Sell and display',
                             'icon' => 'sell_and_display.png',
-                            'body' => 'List your inventory to facebook, and to custom flash sales.  Add custom time constraints.'
+                            'body' => 'List your inventory to facebook, custom flash sales, anywhere.  Customizable schedule and claim times.'
                     ],
                     'notifications' => [
                             'title' => 'Notifications',
@@ -285,7 +285,7 @@
                         <img src="{{staticAsset('/assets/images/home/icons/cloud_secure.png')}}" class="card-img-top">
                         <div class="card-block">
                             <h4 class="card-title">Secure Infrastructure</h4>
-                            <p class="card-text">We’ve employed secure connections where information is encrypted to ensure maximum uptime and safety of your records.</p>
+                            <p class="card-text">We’ve .</p>
                         </div>
                     </div>
                 </div>
