@@ -7,6 +7,7 @@
 namespace Kabooodle\Services\Referrals;
 
 use Kabooodle\Models\User;
+use Kabooodle\Models\Referrals;
 use Kabooodle\Services\User\UserService;
 
 /**

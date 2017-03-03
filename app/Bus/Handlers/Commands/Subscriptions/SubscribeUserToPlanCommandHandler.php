@@ -9,12 +9,14 @@ namespace Kabooodle\Bus\Handlers\Commands\Subscriptions;
 use Bugsnag;
 use Exception;
 use Carbon\Carbon;
+use Kabooodle\Models\Plans;
 use Kabooodle\Models\User;
 use Illuminate\Support\Str;
 use Kabooodle\Models\Referrals;
 use Stripe\Error\InvalidRequest;
 use Laravel\Cashier\Subscription;
 use Illuminate\Database\Eloquent\Collection;
+use Kabooodle\Services\Referrals\ReferralsService;
 use Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent;
 use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToPlanCommand;
 use Kabooodle\Foundation\Exceptions\Subscription\UserHasNoCreditCardOnFileException;
@@ -45,6 +47,19 @@ class SubscribeUserToPlanCommandHandler
      * @var bool
      */
     public $swapping = false;
+
+    /**
+     * @var ReferralsService
+     */
+    public $referralsService;
+
+    /**
+     * @param ReferralsService $referralsService
+     */
+    public function __construct(ReferralsService $referralsService)
+    {
+        $this->referralsService = $referralsService;
+    }
 
     /**
      * @param SubscribeUserToPlanCommand $command
@@ -173,20 +188,53 @@ class SubscribeUserToPlanCommandHandler
         $count = $this->pendingQualifiedReferrals->count();
 
         if ($count > 0) {
-
-            // Only allow max of 6 coupons to be redeemed for referrals
-            if ($count >= 6) {
-                $couponCode = Referrals::COUPON_6_MO_FREE;
-            } elseif ($count == 5) {
-                $couponCode = Referrals::COUPON_5_MO_FREE;
-            } elseif ($count == 4) {
-                $couponCode = Referrals::COUPON_4_MO_FREE;
-            } elseif ($count == 3) {
-                $couponCode = Referrals::COUPON_3_MO_FREE;
-            } elseif ($count == 2) {
-                $couponCode = Referrals::COUPON_2_MO_FREE;
+            // If the user signed up for a year long account,
+            // we need to discount their subscription...
+            if ($plan == Plans::PLAN_MERCHANTPLUS_ANNUAL) {
+                // Only allow max of 6 coupons to be redeemed for referrals
+                if ($count >= 6) {
+                    $couponCode = Referrals::COUPON_6_MO_MERCHANT_PLUS_ANNUAL_FREE;
+                } elseif ($count == 5) {
+                    $couponCode = Referrals::COUPON_5_MO_MERCHANT_PLUS_ANNUAL_FREE;
+                } elseif ($count == 4) {
+                    $couponCode = Referrals::COUPON_4_MO_MERCHANT_PLUS_ANNUAL_FREE;
+                } elseif ($count == 3) {
+                    $couponCode = Referrals::COUPON_3_MO_MERCHANT_PLUS_ANNUAL_FREE;
+                } elseif ($count == 2) {
+                    $couponCode = Referrals::COUPON_2_MO_MERCHANT_PLUS_ANNUAL_FREE;
+                } else {
+                    $couponCode = Referrals::COUPON_1_MO_MERCHANT_PLUS_ANNUAL_FREE;
+                }
+            } elseif ($plan == PLANS::PLAN_MERCHANT_ANNUAL) {
+                if ($count >= 6) {
+                    $couponCode = Referrals::COUPON_6_MO_MERCHANT_ANNUAL_FREE;
+                } elseif ($count == 5) {
+                    $couponCode = Referrals::COUPON_5_MO_MERCHANT_ANNUAL_FREE;
+                } elseif ($count == 4) {
+                    $couponCode = Referrals::COUPON_4_MO_MERCHANT_ANNUAL_FREE;
+                } elseif ($count == 3) {
+                    $couponCode = Referrals::COUPON_3_MO_MERCHANT_ANNUAL_FREE;
+                } elseif ($count == 2) {
+                    $couponCode = Referrals::COUPON_2_MO_MERCHANT_ANNUAL_FREE;
+                } else {
+                    $couponCode = Referrals::COUPON_1_MO_MERCHANT_ANNUAL_FREE;
+                }
             } else {
-                $couponCode = Referrals::COUPON_1_MO_FREE;
+
+                // Monthly, you can only add
+                if ($count >= 6) {
+                    $couponCode = Referrals::COUPON_6_MO_FREE;
+                } elseif ($count == 5) {
+                    $couponCode = Referrals::COUPON_5_MO_FREE;
+                } elseif ($count == 4) {
+                    $couponCode = Referrals::COUPON_4_MO_FREE;
+                } elseif ($count == 3) {
+                    $couponCode = Referrals::COUPON_3_MO_FREE;
+                } elseif ($count == 2) {
+                    $couponCode = Referrals::COUPON_2_MO_FREE;
+                } else {
+                    $couponCode = Referrals::COUPON_1_MO_FREE;
+                }
             }
 
             $this->couponCodeUsed = $couponCode;
