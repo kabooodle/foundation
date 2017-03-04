@@ -2,7 +2,7 @@
     <div class="p-md">
         <div class="p-a">
             <div class="row">
-                <div class="col-xs-8">
+                <div class="col-xs-7">
                     <div class="clearfix">
                         <a class="navbar-brand kabooodle-brand">
                             <span class="svg-logo">
@@ -19,7 +19,7 @@
                     </div>
                 </div>
 
-                <div class="col-xs-4">
+                <div class="col-xs-5">
                     <div class="clearfix">
                         <div class="pull-right">
                             @include('partials._socialicons')

@@ -22,8 +22,8 @@ class GetUsedInventoryCategoriesCommandHandler
     {
         $user = $command->getActor();
         $data = DB::table('tagging_tagged')
-            ->join('inventory', 'taggable_id', '=', 'inventory.id')
-            ->where('inventory.user_id', '=', $user->id)
+            ->join('listables', 'taggable_id', '=', 'listables.id')
+            ->where('listables.user_id', '=', $user->id)
             ->groupBy('tagging_tagged.id')
             ->get();
 

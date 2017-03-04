@@ -2,12 +2,7 @@
 
 @section('body-content')
 
-        <div class="text-center center-block">
-            <a href="/home" class="">
-                <span class="inline"><img src="{{ staticAsset('/assets/images/logo/logo-prpl-md.png') }}"></span>
-            </a>
-        </div>
-
+    @include('auth.partials.logo')
 
     <div class="p-a-md box-color r box-shadow-z1 text-color" id="sign-in-content">
 

@@ -375,7 +375,7 @@
         <h2 class="section-sub-title text-center">Register and start selling and buying in minutes. No card
             required.</h2>
         <div class="cta-group text-center">
-            <a href="/auth/register?a=merchant" class="btn btn-lg cta-ready">Start ny 30 day free trial!!!</a>
+            <a href="/auth/register?a=merchant" class="btn btn-lg cta-ready">Start my 30 day free trial!</a>
         </div>
     </section>
 
