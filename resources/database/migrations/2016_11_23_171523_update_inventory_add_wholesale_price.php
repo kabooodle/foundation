@@ -12,7 +12,7 @@ class UpdateInventoryAddWholesalePrice extends Migration
      */
     public function up()
     {
-        Schema::table(\Kabooodle\Models\Inventory::getTableName(), function(Blueprint $table){
+        Schema::table('inventory', function(Blueprint $table){
             $table->decimal('wholesale_price_usd', 6,2)->after('price_usd');
         });
 
@@ -29,7 +29,7 @@ class UpdateInventoryAddWholesalePrice extends Migration
      */
     public function down()
     {
-        Schema::table(\Kabooodle\Models\Inventory::getTableName(), function(Blueprint $table){
+        Schema::table('inventory', function(Blueprint $table){
             $table->dropColumn('wholesale_price_usd');
         });
 

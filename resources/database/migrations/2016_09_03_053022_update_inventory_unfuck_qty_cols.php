@@ -12,7 +12,7 @@ class UpdateInventoryUnfuckQtyCols extends Migration
      */
     public function up()
     {
-        Schema::table(\Kabooodle\Models\Inventory::getTableName(), function(Blueprint $table){
+        Schema::table('inventory', function(Blueprint $table){
             $table->dropColumn('current_qty');
         });
     }

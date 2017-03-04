@@ -12,7 +12,7 @@ class UpdateInventoryTblAddTypeStyleSize extends Migration
      */
     public function up()
     {
-        Schema::table(\Kabooodle\Models\Inventory::getTableName(), function(Blueprint $table){
+        Schema::table('inventory', function(Blueprint $table){
             $table->dropColumn([
                 'inventory_category_id',
                 'size'
@@ -23,7 +23,7 @@ class UpdateInventoryTblAddTypeStyleSize extends Migration
             $table->integer('inventory_sizes_id')->unsigned()->after('id');
 
             $table->foreign('inventory_type_id')
-                ->references('id')->on(\Kabooodle\Models\InventoryType::getTableName())
+                ->references('id')->on('inventory')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
