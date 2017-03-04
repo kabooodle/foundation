@@ -91,5 +91,6 @@
     "github-oauth": {
       "github.com": "940518d694316861963030a87ad682004bda7e07"
     }
-  }
+  },
+  "minimum-stability": "dev"
 }

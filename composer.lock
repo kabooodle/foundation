@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a77ece1521d39063800e143f7042f30a",
+    "content-hash": "63b198e1c92c80f998eb4fbe3f522277",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -7385,7 +7385,7 @@
         "nexmo/client": 10,
         "tymon/jwt-auth": 20
     },
-    "prefer-stable": true,
+    "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.5.9 || ^7.0"
