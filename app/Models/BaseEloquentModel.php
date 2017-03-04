@@ -7,6 +7,8 @@
 namespace Kabooodle\Models;
 
 use Eloquent;
+use Kabooodle\Models\Contracts\Hashable;
+use Kabooodle\Models\Traits\HashableTrait;
 use ReflectionClass;
 use Illuminate\Support\Str;
 use Kabooodle\Models\Traits\EloquentDatesTrait;
@@ -15,9 +17,10 @@ use Kabooodle\Models\Traits\EloquentDatesTrait;
  * Class BaseEloquentModel
  * @package Kabooodle\Models
  */
-class BaseEloquentModel extends Eloquent
+class BaseEloquentModel extends Eloquent implements Hashable
 {
     use EloquentDatesTrait;
+    use HashableTrait;
 
     /**
      * @var bool
@@ -42,14 +45,14 @@ class BaseEloquentModel extends Eloquent
         parent::boot();
 
         self::creating(function ($model) {
-            if ($model->created_by && user()) {
-                $model->created_by = user()->id;
+            if ($model->created_by && webUser()) {
+                $model->created_by = webUser()->id;
             }
         });
 
         self::updating(function ($model) {
-            if ($model->updated_by && user()) {
-                $model->updated_by = user()->id;
+            if ($model->updated_by && webUser()) {
+                $model->updated_by = webUser()->id;
             }
         });
     }

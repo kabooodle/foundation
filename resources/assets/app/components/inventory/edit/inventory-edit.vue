@@ -147,6 +147,7 @@
         </div>
     </div>
 </template>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <script>
     import Multiselect from 'vue-multiselect';
     import FileUpload from '../../FileUpload.vue';
@@ -249,7 +250,7 @@
             },
             // Iterates over styles and returns single item
             getStyleById: function(id) {
-                return _.findWhere(this.styles, {id: id});
+                return _.find(this.styles, {id: id});
             },
             changeStyle: function(e){
                 var $el = $(e.target),

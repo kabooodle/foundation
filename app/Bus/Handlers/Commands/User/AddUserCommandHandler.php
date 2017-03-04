@@ -7,12 +7,13 @@
 namespace Kabooodle\Bus\Handlers\Commands\User;
 
 use DB;
-use Kabooodle\Models\User;
-use Kabooodle\Models\Email;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Commands\User\AddUserCommand;
-use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 use Kabooodle\Bus\Events\Email\EmailWasCreatedEvent;
+use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
+use Kabooodle\Models\Email;
+use Kabooodle\Models\User;
+use Kabooodle\Services\User\UserService;
 
 /**
  * Class AddUserCommandHandler
@@ -23,19 +24,35 @@ class AddUserCommandHandler
     use DispatchesJobs;
 
     /**
+     * @var UserService
+     */
+    public $userService;
+
+    /**
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
+    /**
      * @param AddUserCommand $command
      *
      * @return User
      */
     public function handle(AddUserCommand $command)
     {
-        return DB::transaction(function() use ($command) {
+        return DB::transaction(function () use ($command) {
+
+            $referral = $this->lookupReferralByUsername($command->getReferralUsername());
+
             $user = User::factory([
                 'first_name' => $command->getFirstName(),
                 'last_name' => $command->getLastName(),
                 'username' => $command->getUsername(),
                 'password' => bcrypt($command->getPassword()),
-                'referred_by_user_id' => $command->getReferralId()
+                'referred_by_user_id' => $referral ? $referral->id : null
             ]);
 
             $email = Email::factory([
@@ -46,9 +63,20 @@ class AddUserCommandHandler
             ]);
 
             event(new UserWasCreatedEvent($user, $command->getAccountType()));
-            event(new EmailWasCreatedEvent($email));
 
             return $user;
         });
+    }
+
+    /**
+     * @param string|null $username
+     *
+     * @return mixed
+     */
+    public function lookupReferralByUsername(string $username = null)
+    {
+        $referral = $this->userService->repository->getByUsername($username);
+
+        return $referral;
     }
 }

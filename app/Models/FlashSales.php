@@ -13,13 +13,10 @@ use Kabooodle\Models\Traits\WatchableTrait;
 use Sofa\Revisionable\Revisionable;
 use Illuminate\Queue\SerializesModels;
 use Kabooodle\Presenters\PresentableTrait;
-use Kabooodle\Models\Traits\LikeableTrait;
-use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\FollowableTrait;
 use Kabooodle\Models\Traits\AuthorableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
-use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
 
@@ -30,8 +27,6 @@ use Kabooodle\Presenters\Models\Flashsales\FlashsaleModelPresenter;
 class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInterface
 {
     use AuthorableTrait,
-        ClaimableTrait,
-        EloquentDatesTrait,
         FollowableTrait,
         ObfuscatesIdTrait,
         PresentableTrait,
@@ -386,7 +381,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function claims()
     {
-        return $this->morphMany(Claims::class, 'shoppable');
+        return $this->morphMany(Claims::class, 'listable');
     }
 
     /**
@@ -555,7 +550,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function canUserViewPrivateSale($user = null)
     {
-        $guest = ! $user || $user == null;
+        $guest = ! $user;
         if ($this->privacy == 'private') {
             return $guest ? false : $this->sellers->where('id', $user->id);
         }

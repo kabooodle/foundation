@@ -6,8 +6,12 @@
                 @click="is_following ? unfollowMe($event) : followMe($event)"
                 class="btn-follow btn "
                 :class="btnclass"
+                :key="this.able_type+'_'+this.able_id"
         >
-            <span v-html="is_following ? unfollow_text : follow_text"></span>
+            <span>
+                <span class="unfollow" v-if="is_following === true">{{ unfollow_text }}</span>
+                <span class="follow" v-else>{{ follow_text }}</span>
+            </span>
             <spinner v-if="processing" :size="'' + 10"></spinner>
         </button>
     </span>
@@ -76,21 +80,18 @@
         },
         created (){
             if (this.doWeHaveCurrentUser()) {
-                if (this.isUserFollowingEntity()) {
+                if (this.already_following == 1) {
                     this.following = true;
                 }
             }
         },
         mounted (){
             this.disable = false;
-//            if (! this.entityIsMe()) {
-//                this.disable = false;
-//            }
         },
         computed: {
             btnclass : function(){
                 let theClass = ' white '+this.btn_size_class;
-                if (this.following) {
+                if (this.is_following) {
                     theClass = this.btn_active_class + ' ' + this.btn_size_class;
                 }
                 if (this.processing || this.disable || this.entityIsMe) {
@@ -101,7 +102,7 @@
             },
             is_following: function () {
                 if (this.doWeHaveCurrentUser()) {
-                    return this.already_following || this.following;
+                    return this.following;
                 }
             },
             entityIsMe: function(){

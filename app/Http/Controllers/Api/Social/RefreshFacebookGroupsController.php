@@ -9,9 +9,10 @@ namespace Kabooodle\Http\Controllers\Api\Social;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Kabooodle\Bus\Commands\Social\Facebook\GetUserFacebookGroupsCommand;
-use Kabooodle\Bus\Commands\Social\Facebook\RefreshUserFacebookGroupsCommand;
+use Kabooodle\Bus\Commands\User\ExtendFacebookAccessTokenCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Services\Social\Facebook\FacebookSdkService;
+use Kabooodle\Bus\Commands\Social\Facebook\RefreshUserFacebookGroupsCommand;
 
 /**
  * Class RefreshFacebookGroupsController
@@ -33,11 +34,9 @@ class RefreshFacebookGroupsController extends AbstractApiController
                 'userID' => 'required'
             ]);
 
-            $user = $this->getUser();
-            $user->facebook_access_token = $request->get('accessToken');
-            $user->save();
+            $this->dispatch(new ExtendFacebookAccessTokenCommand($this->getUser(), $request->get('accessToken')));
 
-            $this->dispatchNow(new RefreshUserFacebookGroupsCommand($user));
+            $this->dispatchNow(new RefreshUserFacebookGroupsCommand($this->getUser()));
 
             $route = route('inventory.postables');
             $l = \Request::create($route);

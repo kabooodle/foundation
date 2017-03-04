@@ -1,6 +1,7 @@
 <?php
 use Carbon\Carbon;
 use Dingo\Api\Facade\API;
+use Illuminate\Contracts\Encryption\EncryptException;
 
 if (!function_exists('defaultAvatar')) {
     /**
@@ -21,6 +22,10 @@ if (!function_exists('current_timezone')) {
     {
         if (user()) {
             return user()->timezone;
+        }
+
+        if ($timezone = app('request')->header('X-TZ')) {
+            return $timezone;
         }
 
         return 'UTC';
@@ -94,6 +99,14 @@ if (! function_exists('listingStatusHtml')) {
     function listingStatusHtml($status)
     {
         switch ($status) {
+            case 'scheduled_delete':
+                $class = 'brown-400';
+                $text = 'Scheduled for deletion';
+                break;
+            case 'processing_delete':
+                $class = 'brown-400';
+                $text = 'Deleting';
+                break;
             case 'processing':
                 $class = 'deep-orange-400';
                 $text = 'Uploading';
@@ -108,14 +121,14 @@ if (! function_exists('listingStatusHtml')) {
                 break;
             case 'queued_delete':
                 $class = 'warning';
-                $text = 'Queued Delete';
+                $text = 'Queued to delete';
                 break;
             case 'ignored_duplicate':
                 $class = 'warn';
                 $text = 'Ignored Duplicate';
                 break;
             case 'deleted':
-                $class = 'brown-800';
+                $class = 'brown-400';
                 $text = 'Deleted';
                 break;
             case 'completed':
@@ -193,7 +206,7 @@ if (!function_exists('staticAsset')) {
 
         $useCloundfront = $url && env('AWS_USE_CLOUDFRONT', false);
 
-        $postPart = ltrim($path, '/') . ($cacheBust ? '?v='.getAppVersion() : null);
+        $postPart = ltrim($path, '/') . ($cacheBust ? '?v='.(app()->isLocal() ? str_random() : getAppVersion()) : null);
 
         return  $useCloundfront ? '//' . $url . '/' . $postPart : '/' . $postPart;
     }
@@ -1618,5 +1631,26 @@ if (! function_exists('onHoldInterval')) {
     function onHoldInterval()
     {
         return new DateInterval('PT5M');
+    }
+}
+
+if (! function_exists('decryptHashedResource')) {
+    /**
+     * @param $hash
+     *
+     * @return array
+     * @throws EncryptException
+     */
+    function decryptHashedResource($hash)
+    {
+        $decrypted = \Crypt::decrypt($hash);
+        $class = strtok($decrypted, '::');
+        $id = substr($decrypted, strpos($decrypted, "::") + 2);
+
+        if (! class_exists($class)) {
+            throw new EncryptException('Hashed resource given does not exist');
+        }
+
+        return [$class, $id];
     }
 }

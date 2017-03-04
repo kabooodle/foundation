@@ -7,7 +7,6 @@
 namespace Kabooodle\Models;
 
 use Kabooodle\Models\Traits\EmojifyableTrait;
-use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Kabooodle\Libraries\Linkify\LinkifyableTrait;
 
 /**
@@ -15,7 +14,7 @@ use Kabooodle\Libraries\Linkify\LinkifyableTrait;
  */
 class ThreadMessages extends BaseEloquentModel
 {
-    use EloquentDatesTrait, EmojifyableTrait, LinkifyableTrait;
+    use EmojifyableTrait, LinkifyableTrait;
 
     const CONVERT_EMOJI = true;
 

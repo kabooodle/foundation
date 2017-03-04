@@ -30,17 +30,22 @@ final class AddCommentCommand
     public $comment;
 
     /**
-     * AddCommentCommand constructor.
-     *
-     * @param User $actor
-     * @param Commentable $commentable
-     * @param string $comment
+     * @var string
      */
-    public function __construct(User $actor, Commentable $commentable, string $comment)
+    public $referringUrl;
+
+    /**
+     * @param User        $actor
+     * @param Commentable $commentable
+     * @param string      $comment
+     * @param string|null $referringUrl
+     */
+    public function __construct(User $actor, Commentable $commentable, string $comment, string $referringUrl = null)
     {
         $this->actor = $actor;
         $this->commentable = $commentable;
         $this->comment = $comment;
+        $this->referringUrl = $referringUrl;
     }
 
     /**
@@ -65,5 +70,13 @@ final class AddCommentCommand
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getReferringUrl()
+    {
+        return $this->referringUrl;
     }
 }

@@ -31,6 +31,7 @@
     "fideloper/proxy": "^3.1",
     "graham-campbell/binput": "3.4.0",
     "graham-campbell/htmlmin": "4.5.1",
+    "helpscout/api": "^1.8",
     "laravel/cashier": "6.0.19",
     "laravel/framework": "5.2.31",
     "laravelcollective/html": "5.2.4",
@@ -50,7 +51,8 @@
     "wildbit/laravel-postmark-provider": "3.0.0",
     "zackkitzmiller/tiny": "1.2.2",
     "vinkla/pusher": "^2.4",
-    "jonnypickett/eloquent-sti": "^1.0"
+    "jonnypickett/eloquent-sti": "^1.0",
+    "spatie/laravel-newsletter": "^3.4"
   },
   "require-dev": {
     "alt-three/testbench": "^1.8",
@@ -89,5 +91,6 @@
     "github-oauth": {
       "github.com": "940518d694316861963030a87ad682004bda7e07"
     }
-  }
+  },
+  "minimum-stability": "dev"
 }

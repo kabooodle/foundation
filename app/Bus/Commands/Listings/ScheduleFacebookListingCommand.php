@@ -20,45 +20,29 @@ final class ScheduleFacebookListingCommand
     public $actor;
 
     /**
-     * @var array
-     */
-    public $facebookAlbums;
-
-    /**
-     * @var int
-     */
-    public $facebookGroupId;
-
-    /**
-     * @var array
-     */
-    public $selectedItems;
-
-    /**
      * @var FacebookListingOptions
      */
     public $facebookListingOptions;
 
     /**
+     * @var array
+     */
+    public $facebookSales;
+
+    /**
      * @param User                   $actor
-     * @param array                  $facebookAlbums
-     * @param int|null               $facebookGroupId
-     * @param array                  $selectedItems
      * @param FacebookListingOptions $facebookListingOptions
+     * @param array                  $facebookSales
      */
     public function __construct(
         User $actor,
-        array $facebookAlbums = [],
-        int $facebookGroupId = null,
-        array $selectedItems = [],
-        FacebookListingOptions $facebookListingOptions
+        FacebookListingOptions $facebookListingOptions,
+        array $facebookSales
     )
     {
         $this->actor = $actor;
-        $this->facebookAlbums = $facebookAlbums;
-        $this->facebookGroupId = $facebookGroupId;
-        $this->selectedItems = $selectedItems;
         $this->facebookListingOptions = $facebookListingOptions;
+        $this->facebookSales = $facebookSales;
     }
 
     /**
@@ -70,34 +54,18 @@ final class ScheduleFacebookListingCommand
     }
 
     /**
-     * @return array
-     */
-    public function getFacebookAlbums(): array
-    {
-        return $this->facebookAlbums;
-    }
-
-    /**
-     * @return int
-     */
-    public function getFacebookGroupId()
-    {
-        return $this->facebookGroupId;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSelectedItems(): array
-    {
-        return $this->selectedItems;
-    }
-
-    /**
      * @return FacebookListingOptions
      */
     public function getFacebookListingOptions(): FacebookListingOptions
     {
         return $this->facebookListingOptions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFacebookSales(): array
+    {
+        return $this->facebookSales;
     }
 }

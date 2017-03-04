@@ -10,7 +10,6 @@ use DB;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
 
 /**
@@ -18,7 +17,7 @@ use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
  */
 class Listings extends AbstractListingModel
 {
-    use EloquentDatesTrait, PresentableTrait, SoftDeletes, UuidableTrait;
+    use PresentableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array
@@ -52,6 +51,7 @@ class Listings extends AbstractListingModel
     protected $dates = [
         'scheduled_for',
         'scheduled_until',
+        'scheduled_for_deletion',
         'status_updated_at',
         'claimable_at',
         'claimable_until',
@@ -71,6 +71,7 @@ class Listings extends AbstractListingModel
     protected $attributes = [
         'scheduled_for' => null,
         'scheduled_until' => null,
+        'scheduled_for_deletion' => null,
         'claimable_until' => null,
         'claimable_at' => null,
         'owner_id' => 0,
@@ -153,8 +154,8 @@ class Listings extends AbstractListingModel
      */
     public function claims()
     {
-        return $this->hasManyThrough(Claims::class, ListingItems::class, 'listing_id', 'shoppable_id')
-            ->where('shoppable_type', ListingItems::class);
+        return $this->hasManyThrough(Claims::class, ListingItems::class, 'listing_id', 'listing_item_id')
+            ->where('listable_type', ListingItems::class);
     }
 
     /**
@@ -179,6 +180,14 @@ class Listings extends AbstractListingModel
     public function items()
     {
         return $this->hasMany(ListingItems::class, 'listing_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function listables()
+    {
+        return $this->belongsToMany(Listable::class, 'listing_items', 'listing_id', 'listable_id');
     }
 
     /**
@@ -215,10 +224,6 @@ class Listings extends AbstractListingModel
      */
     public static function getQueriedListings(int $userId)
     {
-        //                IFNULL(COUNT(DISTINCT(p.id)), 0) AS pageviews_count,
-        //                LEFT JOIN pageviews AS p ON p.shoppable_id = li.id AND p.inventory_id = li.inventory_id
-
-        //                IF(l.type = 'facebook', l.scheduled_for, fs.starts_at) as scheduled_for,
         $sql = "SELECT
                 l.id as id,
                 l.scheduled_for AS scheduled_for,
@@ -238,17 +243,20 @@ class Listings extends AbstractListingModel
                 IFNULL(SUM(c.accepted_price), 0) AS accepted_price_sum,
                 IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
                 IFNULL(SUM(c.accepted = 0),0) AS rejected_sales_count,
+                IFNULL(SUM(v.count), 0) AS pageviews_count,
                 IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
                 FROM listings AS l
                 INNER JOIN listing_items AS li ON li.listing_id = l.id AND l.owner_id = li.owner_id AND l.type = li.type
-                INNER JOIN inventory AS i ON i.id = li.listable_id
+                left JOIN listables AS i ON i.id = li.listable_id
                 LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
                 LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_group_node_id
                 LEFT JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
-				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.claimable_id = li.listable_id AND c.claimed_by = l.owner_id
+				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id AND c.listable_type = i.subclass_name
+                LEFT JOIN v_pageviews as v on v.viewable_id = i.id AND v.viewable_type = i.subclass_name
                 WHERE l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
+                AND l.deleted_at IS NULL
                 AND l.deleted_at IS NULL 
-                AND li.deleted_at IS NULL
+                and li.deleted_at IS NULL
                 GROUP BY l.id
                 ORDER BY l.scheduled_for DESC
                 ";
@@ -273,6 +281,7 @@ class Listings extends AbstractListingModel
     {
         $sql = "
                 SELECT
+                i.subclass_name,
                 l.id as id,
                 fs.name AS flashsale_name,
                 fb.facebook_node_name AS fb_name,
@@ -287,28 +296,33 @@ class Listings extends AbstractListingModel
                 IFNULL(SUM(c.accepted_price), 0) AS accepted_price_sum,
                 IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
                 IFNULL(SUM(c.accepted = 0),0) AS rejected_sales_count,
+                IFNULL(SUM(v.count), 0) AS pageviews_count,
                 IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
                 FROM listings AS l
                 INNER JOIN listing_items AS li ON li.listing_id = l.id
-                INNER JOIN inventory AS i ON i.id = li.listable_id
-                INNER JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
+                left JOIN listables AS i ON i.id = li.listable_id
+                left JOIN inventory_type_styles AS s ON s.id = i.inventory_type_styles_id
                 LEFT JOIN facebook_nodes AS fb ON fb.facebook_node_id = li.fb_album_node_id
                 LEFT JOIN flashsales as fs ON fs.id = li.flashsale_id
-				LEFT JOIN claims AS c ON c.shoppable_id = li.id AND c.claimable_id = li.listable_id AND c.claimed_by = l.owner_id
+				LEFT JOIN claims AS c ON c.listing_item_id = li.id AND c.listable_id = li.listable_id AND c.claimed_by = l.owner_id AND c.listable_type = i.subclass_name
+                LEFT JOIN v_pageviews as v on v.viewable_id = i.id AND v.viewable_type = i.subclass_name
                 WHERE l.uuid = ? AND l.owner_id = ? AND l.type = li.type AND l.id = li.listing_id
-                AND l.type = ?
+                AND l.deleted_at IS NULL
                 AND l.deleted_at IS NULL 
-                AND li.deleted_at IS NULL
+                and li.deleted_at IS NULL
+                AND l.type = ?
                 GROUP BY ::groupby::
-                ORDER BY l.scheduled_for DESC
+                ORDER BY ::orderby:: ASC
                 ";
 
         if ($this->isFacebook()) {
             $type = Listings::TYPE_FACEBOOK;
             $sql = str_replace('::groupby::', " li.fb_album_node_id ", $sql);
+            $sql = str_replace('::orderby::', " fb.facebook_node_name ", $sql);
         } else {
             $type = Listings::TYPE_FLASHSALE;
-            $sql = str_replace('::groupby::', "f.id ", $sql);
+            $sql = str_replace('::groupby::', " f.id ", $sql);
+            $sql = str_replace('::orderby::', " fs.name ", $sql);
         }
 
 
@@ -324,15 +338,6 @@ class Listings extends AbstractListingModel
     public function scopeScheduledFor($scope, $operator = '>=', $date)
     {
         return $scope->where('scheduled_for', $operator, $date);
-    }
-
-    /**
-     * @param $scope
-     * @return $this
-     */
-    public function scopeRandomize($scope)
-    {
-        return $scope->orderByRaw('RAND()');
     }
 
     /**
@@ -391,14 +396,5 @@ class Listings extends AbstractListingModel
         }
 
         return $this->scheduled_for;
-    }
-
-    public function loadItemsListedItem()
-    {
-        foreach ($this->items as $item) {
-            if ($item->relations['listedItem'] == null) {
-                $item->load('listedItem');
-            }
-        }
     }
 }

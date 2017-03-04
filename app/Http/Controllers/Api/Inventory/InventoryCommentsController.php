@@ -31,9 +31,9 @@ class InventoryCommentsController extends AbstractApiController
      */
     public function index(Request $request, $commentableId)
     {
-        $comments = Comments::where('commentable_id', $commentableId)->get();
+        $inventoryItem = Inventory::with('comments')->findOrFail($commentableId);
 
-        return $this->collection($comments);
+        return $this->collection($inventoryItem->comments);
     }
 
     /**
@@ -62,7 +62,7 @@ class InventoryCommentsController extends AbstractApiController
     {
         try {
             $commentable = Inventory::findOrFail(Binput::clean($commentableId));
-            $data = self::handleStoreComment($this->getUser(), $commentable, $request->getCommentText());
+            $data = self::handleStoreComment($this->getUser(), $commentable, $request->getCommentText(), $request->header('referer'));
 
             return $this->setData($data)->respond();
         } catch (ValidationException $e) {

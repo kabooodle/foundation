@@ -39,14 +39,13 @@ class ClaimListedItemCommandHandler
         $claim = DB::transaction(function () use ($command) {
             // Claim the item (put it into an escrow type account)
             $claim = Claims::create([
-                'claimable_type' => get_class($command->getListedItem()),
-                'claimable_id' => $command->getListedItem()->id,
+                'listable_type' => get_class($command->getListedItem()),
+                'listable_id' => $command->getListedItem()->id,
                 'claimed_by' => $command->getClaimedBy()->id,
-                'inventory_item_object_data' => $command->getListedItem(),
+                'listable_item_object_data' => $command->getListedItem(),
                 'verified' => !$command->isGuest(),
                 'price' => $command->getListedItem()->getPrice(),
-                'shoppable_id' => $command->getShoppable()->id,
-                'shoppable_type' => get_class($command->getShoppable())
+                'listing_item_id' => $command->getListingItem()->id,
             ]);
 
             // Decrement the inventory item's quantity

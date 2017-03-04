@@ -6,9 +6,9 @@
 
 namespace Kabooodle\Http\Controllers\Web\Referrals;
 
-use Kabooodle\Models\User;
 use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Web\Controller;
+use Kabooodle\Services\Referrals\ReferralsService;
 
 /**
  * Class ReferralsController
@@ -16,6 +16,19 @@ use Kabooodle\Http\Controllers\Web\Controller;
  */
 class ReferralsController extends Controller
 {
+    /**
+     * @var ReferralsService
+     */
+    public $referralService;
+
+    /**
+     * @param ReferralsService $referralsService
+     */
+    public function __construct(ReferralsService $referralsService)
+    {
+        $this->referralService = $referralsService;
+    }
+
     /**
      * @return \Illuminate\Contracts\View\View
      */
@@ -30,7 +43,11 @@ class ReferralsController extends Controller
      */
     public function invite(Request $request)
     {
-        $referrer = User::where('username', $request->userName)->first();
+        $referrer = $this->referralService->getReferral();
+        if (! $referrer) {
+            return redirect()->route('auth.register');
+        }
+
         return view('auth.register')->with(compact('referrer'));
     }
 }

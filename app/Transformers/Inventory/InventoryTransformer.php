@@ -25,15 +25,19 @@ class InventoryTransformer extends TransformerAbstract
         return [
             'id' => $inventory->id,
             'name' => $inventory->name,
+            'name_with_variant' => $inventory->name_with_variant,
             'price_usd' => $inventory->price_usd,
-            'initial_qty' => $inventory->getAvailableQuantity(),
             'type_id' => $inventory->type->id,
             'style_id' => $inventory->style->id,
             'style' => $inventory->style,
             'size' => $inventory->styleSize,
             'item' => $inventory->files,
-            'pending' => $inventory->pendingClaims,
-            'sales' => $inventory->sales
+            'pending' => $inventory->pendingClaims->count(),
+            'sales' => $inventory->sales->count(),
+            'qty_on_hold' => $inventory->getOnHoldQuantity(),
+            'views' => $inventory->views->count(),
+            'qty_on_hand' => $inventory->getAvailableQuantity(),
+            'gross' => $inventory->acceptedClaims->sum('accepted_price')
         ];
     }
 }

@@ -10,10 +10,11 @@ use DB;
 use Carbon\Carbon;
 use Kabooodle\Bus\Events\Listables\ListableQuantityUpdatedEvent;
 use Kabooodle\Models\Contracts\Claimable;
-use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Contracts\ListableInterface;
 use Kabooodle\Models\Contracts\Viewable;
 use Kabooodle\Models\Traits\ListableTrait;
 use Kabooodle\Models\Traits\ViewableTrait;
+use Kabooodle\Presenters\Models\InventoryGrouping\InventoryGroupingPresenter;
 use Sofa\Revisionable\Revisionable;
 use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Models\Traits\LikeableTrait;
@@ -31,113 +32,31 @@ use Kabooodle\Models\Contracts\Commentable;
  * Class InventoryGrouping
  * @package Kabooodle\Models
  */
-class InventoryGrouping extends BaseEloquentModel implements Commentable, LikeableInterface, Revisionable, Listable, Claimable, Viewable
+class InventoryGrouping extends Listable implements ListableInterface
 {
-    use ClaimableTrait,
-        CommentableTrait,
-        FollowableTrait,
-        LikeableTrait,
-        ObfuscatesIdTrait,
-        RevisionableTrait,
-        SoftDeletes,
-        TaggableTrait,
-        ListableTrait,
-        ViewableTrait;
-
     /**
      * @var array
      */
     protected $appends = [
-        'name_with_variant',
+        'obfuscate_id',
         'name_uuid',
         'available_quantity',
         'cover_photo',
         'wholesale_price_usd',
+        'hash_id',
     ];
 
     /**
      * @var array
      */
     protected $with = [
-//        'tagged',
-//        'flashsales',
-//        'claims', // <- deathtrap of recursion
         'files',
-//        'comments',
-//        'sales'
-    ];
-
-    /**
-     * @const string
-     */
-    const LISTING_ITEM_CLASS = ListingItemGrouping::class;
-
-    /**
-     * @return array
-     */
-    public function getAlgoliaRecord()
-    {
-        return array_merge($this->toArray(), [
-            'oid' => $this->getUUID(),
-            'route' => route('shop.inventory-groupings.show', [$this->user->username, $this->getUUID()])
-        ]);
-    }
-
-    /**
-     * @var array
-     */
-    protected $attributes = [
-        'user_id' => 0,
-        'uuid' => '',
-        'name' => '',
-        'description' => '',
-        'locked' => true,
-        'barcode' => null,
-        'initial_qty' => null,
-        'cover_photo_file_id' => null,
-        'date_received' => '',
-        'price_usd' => 0.0,
-    ];
-
-    /**
-     * @var array
-     */
-    protected $casts = [
-        'uuid' => 'string',
-        'user_id' => 'int',
-        'name' => 'string',
-        'description' => 'string',
-        'locked' => 'boolean',
-        'barcode' => 'string',
-        'initial_qty' => 'int',
-        'date_received' => 'date',
-        'price_usd' => 'double',
-    ];
-
-    /**
-     * @var array
-     */
-    protected $fillable = [
-        'user_id',
-        'uuid',
-        'price_usd',
-        'name',
-        'description',
-        'locked',
-        'barcode',
-        'initial_qty',
-        'cover_photo_file_id',
-        'date_received',
-        'tags',
-        'created_by',
-        'updated_by',
-        'deleted_by',
     ];
 
     /**
      * @var string
      */
-    protected $table = 'inventory_groupings';
+    protected $presenter = InventoryGroupingPresenter::class;
 
     /**
      * @return array
@@ -145,8 +64,11 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     public static function getRules()
     {
         $rules = [
-            'name' => 'required|unique:inventory_groupings,name,NULL,id,deleted_at,NULL,user_id,',
-            'price_usd' => 'required|min:0|digits_between:0,100000000|numeric',
+            'name' => 'required|unique:listables,name,NULL,id,deleted_at,NULL,subclass_name,'.InventoryGrouping::class.',user_id,',
+            'price_usd' => 'required|min:0|numeric',
+            'initial_qty' => 'required|min:1|numeric',
+            'inventory' => 'required|array',
+            'image' => 'required|array',
         ];
 
         $rules['name'] .= user()->id;
@@ -168,23 +90,33 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         return $rules;
     }
 
+    /**
+     * @return array
+     */
+    public static function getMessages()
+    {
+        return [
+            'name.required' => 'Your outfit must have a name.',
+            'name.unique' => 'You already have an outfit by the same name.',
+            'price_usd.required' => 'Your outfit must have a price.',
+            'price_usd.min' => 'Your outfit price must be a positive number.',
+            'price_usd.numeric' => 'Your outfit price must be a positive number.',
+            'initial_qty.required' => 'Your outfit must have a quantity.',
+            'initial_qty.min' => 'Your outfit quantity must be at least one.',
+            'initial_qty.numeric' => 'Your outfit quantity must be a number.',
+            'inventory.required' => 'Your outfit must have inventory attached.',
+            'inventory.array' => 'Your outfit must have inventory attached.',
+            'image.required' => 'Your outfit must have an image attached.',
+            'image.array' => 'Your outfit must have an image attached.',
+        ];
+    }
+
     public static function boot()
     {
         parent::boot();
 
-        self::creating(function($model){
-            $model->date_received = Carbon::now();
-        });
-
-        self::saving(function(self $model){
-            if(!$model->uuid) {
-                $model->uuid = str_random(16);
-            }
-
-            if ($model->isDirty('initial_qty')) {
-                event(new ListableQuantityUpdatedEvent($model));
-                return true;
-            }
+        self::saving(function(self $model) {
+            $model->name_alt = 'Outfit - ' . $model->name;
         });
     }
 
@@ -216,43 +148,19 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     }
 
     /**
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getName(): string
+    public function getAllImages()
     {
-        return $this->attributes['name'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getNameAttribute(): string
-    {
-        return $this->getName();
-    }
-
-    /**
-     * @return User
-     */
-    public function getOwner(): User
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function owner()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user()
-    {
-        return $this->owner();
+        $ids = array_merge([$this->cover_photo_file_id],$this->inventoryItems->lists('cover_photo_file_id')->all());
+        return Files::leftJoin('listables', 'files.fileable_id', '=', 'listables.id')
+            ->where(function ($q) use ($ids) {
+                $q->whereIn('files.id', $ids);
+                $q->whereIn('fileable_type', [InventoryGrouping::class, Inventory::class]);
+            })
+            ->orderBy('files.fileable_type', 'desc')
+            ->orderBy('listables.name_alt', 'desc')
+            ->get();
     }
 
     /**
@@ -261,103 +169,6 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     public function inventoryItems()
     {
         return $this->belongsToMany(Inventory::class, 'inventory_groupings_inventory');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function claims()
-    {
-        return $this->morphMany(Claims::class, 'claimable');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function pendingClaims()
-    {
-        return $this->hasMany(Claims::class, 'listable_id')->whereNull('accepted')->whereNull('accepted_on')->whereNull('rejected_on');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function sales()
-    {
-        return $this->acceptedClaims();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-     */
-    public function files()
-    {
-        return $this->morphMany(Files::class, 'fileable');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-     */
-    public function images()
-    {
-        return $this->files();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCoverPhotoAttribute()
-    {
-        return $this->coverimage;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function coverimage()
-    {
-        return $this->belongsTo(Files::class, 'cover_photo_file_id');
-    }
-
-    /**
-     * @return null
-     */
-    public function firstImage()
-    {
-        $images = $this->files;
-        if ($images->count() > 0) {
-            return $images->sortBy('order')->first();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRemainingImages()
-    {
-        $firstImage = $this->firstImage();
-        return $this->images->filter(function($item) use ($firstImage){
-            return $item->id <> $firstImage->id;
-        });
-    }
-
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function getWatchers()
-    {
-        $watches = DB::table('users')
-            ->join('watchables', 'watchables.user_id', '=', 'users.id')
-            ->join('listing_items', 'listing_items.id', '=', 'watchables.watchable_id')
-            ->join('inventory_groupings', 'listing_items.listable_id', '=', 'inventory_groupings.id')
-            ->where('watchables.watchable_type', ListingItemGrouping::class)
-            ->where('watchables.deleted_at', null)
-            ->select('users.*')
-            ->get();
-
-        return collect($watches);
     }
 
     /**
@@ -379,14 +190,6 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
         } else {
             return min([$selfAvailableQuantity] + $this->getItemsAvailableQuantity());
         }
-    }
-
-    /**
-     * @return int
-     */
-    public function getAvailableQuantityAttribute()
-    {
-        return $this->getAvailableQuantity();
     }
 
     /**
@@ -451,18 +254,10 @@ class InventoryGrouping extends BaseEloquentModel implements Commentable, Likeab
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function hasViewableChild(): bool
+    public function getEditRoute(): string
     {
-        return false;
-    }
-
-    /**
-     * @return null
-     */
-    public function getViewableChild()
-    {
-        return null;
+        return route('shop.outfits.edit', [$this->user->username, $this->getUUID()]);
     }
 }

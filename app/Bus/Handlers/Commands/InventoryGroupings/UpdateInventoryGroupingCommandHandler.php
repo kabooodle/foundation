@@ -31,44 +31,51 @@ class UpdateInventoryGroupingCommandHandler
     public function handle(UpdateInventoryGroupingCommand $command)
     {
         $user = $command->getUser();
-        $inventoryIds = $command->getInventoryIds();
+        $inventoryIds = [];
+        $inventoryData = $command->getInventory();
+
+        foreach($inventoryData as $data) {
+            $inventoryIds[] = $data['id'];
+        }
 
         $inventoryItems = Inventory::whereIn('id', $inventoryIds)->get()->filter(function ($item) use ($user) {
             return $item->user_id == $user->id;
         });
 
         if (count($inventoryIds) != $inventoryItems->count()) {
-            throw new ForbiddenModelAccessException('Not all grouping items belong to the current user.');
+            throw new ForbiddenModelAccessException('Not all inventory items belong to the current user.');
         }
 
         foreach ($inventoryItems as $item) {
-            if (!$item->canSatisfyRequestedQuantityOf($command->getInitialQty())) {
-                throw new RequestedQuantityCannotBeSatisfiedException('Initial quantity of grouping exceeds satisfiable quantity of one or more grouping items.');
+            if (!$item->canSatisfyRequestedQuantityOf($command->getInitialQty() - $command->getGrouping()->initial_qty)) {
+                throw new RequestedQuantityCannotBeSatisfiedException('Quantity of the outfit exceeds available quantity of one or more inventory items.');
             }
         }
 
-        return DB::transaction(function () use ($command) {
+        return DB::transaction(function () use ($command, $inventoryIds) {
             $grouping = $command->getGrouping();
             $grouping->name = $command->getName();
             $grouping->description = $command->getDescription();
             $grouping->locked = $command->isLocked();
             $grouping->price_usd = $command->getPrice();
             $grouping->initial_qty = $command->getInitialQty();
+            $grouping->auto_add = $command->isAutoAdd();
+            $grouping->max_quantity = $command->isMaxQuantity();
 
-            $currentFile = Files::whereKey($command->getImages()['key'])->first();
+            $imageData = $command->getImage();
 
-            if ($currentFile) {
-                $grouping->cover_photo_file_id = $currentFile->id;
+            if (is_numeric($imageData['id'])) {
+                $grouping->cover_photo_file_id = $imageData['id'];
             } else {
+                $grouping->files()->delete();
+
                 $newFile = Files::create([
-                    'location' => $command->getImages()['location'],
-                    'key' => $command->getImages()['key'],
-                    'bucket_name' => $command->getImages()['bucket'],
+                    'location' => $imageData['location'],
+                    'key' => $imageData['key'],
+                    'bucket_name' => $imageData['bucket'],
                     'fileable_type' => get_class($grouping),
                     'fileable_id' => $grouping->id
                 ]);
-
-                $grouping->files()->save($newFile);
 
                 $grouping->cover_photo_file_id = $newFile->id;
             }
@@ -78,6 +85,8 @@ class UpdateInventoryGroupingCommandHandler
             }
 
             $grouping->save();
+
+            $grouping->inventoryItems()->sync($inventoryIds);
 
             event(new InventoryGroupingWasUpdatedEvent($grouping));
 

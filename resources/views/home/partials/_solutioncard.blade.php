@@ -4,6 +4,6 @@
     </div>
     <div class="card-block">
         <h4 class="card-title">{{ $_card['title'] }}</h4>
-        <p class="card-text">{{ $_card['body'] }}</p>
+        <p class="card-text">{!! $_card['body']  !!}</p>
     </div>
 </div>

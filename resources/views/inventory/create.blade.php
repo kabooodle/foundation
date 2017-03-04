@@ -18,7 +18,7 @@
                         <i class="fa fa-question-circle" aria-hidden="true"></i>
                     </a>
                 </h2>
-                <small>Once an item is in your inventory, you can add it to any sale, anytime!</small>
+                <small>Once an item is in your inventory, you can add it to any sale or outfit, anytime!</small>
             </div>
             <div class="box-divider m-a-0"></div>
             <div class="box-body">

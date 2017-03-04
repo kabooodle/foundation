@@ -5,7 +5,6 @@ import OnboardCard from '../OnboardCard.vue';
 
 new Vue({
     el: '#flashsales_index',
-
     data: {
         flashsales: [],
         search: {

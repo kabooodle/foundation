@@ -11,9 +11,13 @@
 //    return redirect('http://www.kabooodle.com');
 //});
 
-Route::get('privacy', function(){
-   return view('content.privacy');
+Route::get('/legal/privacy', function(){
+   return view('content.legal.privacy');
 });
+Route::get('/legal/terms-service', function(){
+    return view('content.legal.terms');
+});
+
 
 
 //Route::group(['domain' => getEnvDomain(true)], function(){
@@ -49,12 +53,13 @@ Route::get('privacy', function(){
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@index'
     ]);
 
-    Route::get('/invite/{userName}', [
+    Route::get('/invite/{username}', [
         'as' => 'invite.index',
+        'middleware' => 'referral',
         'uses' => \Kabooodle\Http\Controllers\Web\Referrals\ReferralsController::class.'@invite'
     ]);
 
-    Route::get('/users/{userName}', [
+    Route::get('/users/{username}', [
         'as' => 'user.profile',
         'uses' => \Kabooodle\Http\Controllers\Web\Users\UsersController::class.'@userProfile'
     ]);

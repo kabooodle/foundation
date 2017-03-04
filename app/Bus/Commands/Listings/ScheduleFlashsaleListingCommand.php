@@ -19,29 +19,18 @@ final class ScheduleFlashsaleListingCommand
     public $actor;
 
     /**
-     * @var int
-     */
-    public $flashSaleId;
-
-    /**
      * @var array
      */
-    public $selectedItems;
+    public $flashSales;
 
     /**
-     * @param User                   $actor
-     * @param int|null               $flashSaleId
-     * @param array                  $selectedItems
+     * @param User  $actor
+     * @param array $flashSales
      */
-    public function __construct(
-        User $actor,
-        int $flashSaleId = null,
-        array $selectedItems = []
-    )
+    public function __construct(User $actor, array $flashSales)
     {
         $this->actor = $actor;
-        $this->flashSaleId = $flashSaleId;
-        $this->selectedItems = $selectedItems;
+        $this->flashSales = $flashSales;
     }
 
     /**
@@ -53,18 +42,10 @@ final class ScheduleFlashsaleListingCommand
     }
 
     /**
-     * @return int
-     */
-    public function getFlashSaleId(): int
-    {
-        return $this->flashSaleId;
-    }
-
-    /**
      * @return array
      */
-    public function getSelectedItems(): array
+    public function getFlashSales(): array
     {
-        return $this->selectedItems;
+        return $this->flashSales;
     }
 }

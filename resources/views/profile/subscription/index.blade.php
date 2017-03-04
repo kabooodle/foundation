@@ -10,7 +10,7 @@
         <div class="box-divider"></div>
         <div class="box-body clearfix">
             <p class="">Using {{ env('APP_NAME') }} to browse items and submit claims is free.  If you wish to have access to merchant inventory tools, including a b c, we offer various subscription plans.</p>
-            @if(webUser()->currentSubscription())
+            @if(webUser()->currentSubscription() && webUser()->upcomingInvoice())
                 <p class="m-b-0">Your next scheduled billing date is: {{ webUser()->upcomingInvoice()->date()->format('F jS Y') }}, for {{ webUser()->upcomingInvoice()->total() }}.</p>
             @endif
         </div>
@@ -29,12 +29,16 @@
     @if($subscription && $subscription->cancelled())
         <div class="box info">
             <div class="box-body clearfix">
-                <p class="m-b-0">You cancelled your subscription on <strong>{{ $subscription->updated_at->format('l, F jS \a\t h:ia') }}</strong></p>
+                <p class="m-b-0">You cancelled your subscription on <strong>{{ $subscription->updated_at->format('l, F jS Y \a\t h:ia') }}</strong></p>
                 @if($subscription->onGracePeriod())
-                    <p class="m-b-0">You'll still be able to access your account until <strong>{{ $subscription->ends_at->format('l, F jS \a\t h:ia') }}</strong></p>
+                    <p class="m-b-0">You'll still be able to access your account until <strong>{{ $subscription->ends_at->format('l, F jS Y \a\t h:ia') }}</strong></p>
                 @endif
             </div>
         </div>
+    @endif
+
+    @if(webUser()->pendingQualifiedReferrals->count() > 0)
+        @include('profile.subscription.partials._coupon')
     @endif
 
     @if(webUser()->isEarlyAdapter())

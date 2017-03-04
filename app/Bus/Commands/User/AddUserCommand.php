@@ -43,20 +43,20 @@ final class AddUserCommand
     public $accountType;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public $referralId;
+    public $referralUsername;
 
     /**
-     * @param        $firstName
-     * @param        $lastName
-     * @param        $username
-     * @param        $email
-     * @param        $password
-     * @param string $accountType
-     * @param null   $referralId
+     * @param             $firstName
+     * @param             $lastName
+     * @param             $username
+     * @param             $email
+     * @param             $password
+     * @param string      $accountType
+     * @param string|null $referralUsername
      */
-    public function __construct($firstName, $lastName, $username, $email, $password, string $accountType, $referralId = null)
+    public function __construct($firstName, $lastName, $username, $email, $password, string $accountType, string $referralUsername = null)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
@@ -64,7 +64,7 @@ final class AddUserCommand
         $this->email = $email;
         $this->password = $password;
         $this->accountType = $accountType;
-        $this->referralId = $referralId;
+        $this->referralUsername = $referralUsername;
     }
 
     /**
@@ -118,8 +118,8 @@ final class AddUserCommand
     /**
      * @return mixed
      */
-    public function getReferralId()
+    public function getReferralUsername()
     {
-        return $this->referralId;
+        return $this->referralUsername;
     }
 }

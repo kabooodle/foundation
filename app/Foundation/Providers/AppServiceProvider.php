@@ -8,8 +8,8 @@ namespace Kabooodle\Foundation\Providers;
 
 use URL;
 use AltThree\Bus\Dispatcher;
+use Kabooodle\Services\DateFactory;
 use Illuminate\Pagination\Paginator;
-use Kabooodle\Services\EventDispatcher;
 use Illuminate\Support\ServiceProvider;
 use Kabooodle\Libraries\Messages\Messages;
 use Kabooodle\Libraries\Messages\MessagesInterface;
@@ -38,6 +38,8 @@ class AppServiceProvider extends ServiceProvider
         $dispatcher->mapUsing(function ($command) {
             return Dispatcher::simpleMapping($command, 'Kabooodle\Bus', 'Kabooodle\Bus\Handlers');
         });
+
+        $this->registerDateFactory();
     }
 
     /**
@@ -72,5 +74,13 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
         $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
+    }
+
+    public function registerDateFactory()
+    {
+        return $this->app->singleton(DateFactory::class, function($app){
+            $appTimezone = $app['config']->get('app.timezone');
+            return new DateFactory($appTimezone, current_timezone());
+        });
     }
 }

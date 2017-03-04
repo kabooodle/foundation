@@ -74,7 +74,7 @@ new Vue({
         },
         updateDefaultPricings(){
             let styleId = this.getSelectedStyleId();
-            let style = _.findWhere(this.inventory_types[0].styles, {id: styleId});
+            let style = _.find(this.inventory_types[0].styles, {id: styleId});
 
             this.wholesale_price = moneyfy(style.wholesale_price_usd_less_5_percent);
             this.price = moneyfy(style.suggested_price_usd);

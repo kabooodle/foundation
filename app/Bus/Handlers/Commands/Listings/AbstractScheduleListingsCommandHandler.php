@@ -7,10 +7,10 @@
 namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use Carbon\Carbon;
-use Kabooodle\Models\Inventory;
-use Kabooodle\Models\InventoryGrouping;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Listings;
+use Kabooodle\Models\Inventory;
+use Kabooodle\Models\InventoryGrouping;
 
 /**
  * Class AbstractScheduleListingsCommandHandler
@@ -56,31 +56,27 @@ abstract class AbstractScheduleListingsCommandHandler
      * TODO: is it faster to run a normal sql query vs filtering through the eager loaded collection?
      *
      * @param int $listableId
-     * @param string $listableType
      * @param User $actor
      *
      * @return bool
      */
-    public function listableItemBelongsToUser(int $listableId, string $listableType, User $actor)
+    public function listableItemBelongsToUser(int $listableId, User $actor)
     {
-        if ($listableType == Inventory::class) {
-            return $actor->inventory()->whereId($listableId)->first();
-        } else if ($listableType == InventoryGrouping::class) {
-            return $actor->inventoryGroupings()->whereID($listableId)->find();
-        }
-        return false;
+        return $actor->listables->where('id', $listableId)->first();
     }
 
     /**
-     * @param $command
-     * @param Carbon|null            $scheduledFor
+     * @param User        $user
+     * @param int|null    $existingId
+     * @param Carbon|null $scheduledFor
+     * @param null        $options
      *
      * @return Listings
      */
-    public function buildListing($command, Carbon $scheduledFor = null)
+    public function buildListing(User $user, int $existingId = null,  Carbon $scheduledFor = null, $options = null)
     {
         $listing = new Listings;
-        $listing->owner_id = $command->getActor()->id;
+        $listing->owner_id = $user->id;
         $listing->scheduled_for = $scheduledFor;
         $listing->status = Listings::STATUS_SCHEDULED;
         $listing->status_updated_at = $this->now;

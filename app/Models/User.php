@@ -345,6 +345,14 @@ class User extends BaseEloquentModel implements
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function listables()
+    {
+        return $this->hasMany(Listable::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function inventory()
     {
         return $this->hasMany(Inventory::class, 'user_id');
@@ -735,9 +743,9 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventory()
     {
-        return $this->hasManyThrough(Claims::class,  Inventory::class, 'user_id', 'claimable_id', 'id')
-            ->where('claims.claimable_type', Inventory::class)
-            ->where('inventory.user_id', $this->id)
+        return $this->hasManyThrough(Claims::class,  Inventory::class, 'user_id', 'listable_id', 'id')
+            ->where('claims.listable_type', Inventory::class)
+            ->where('listables.user_id', $this->id)
             ->with(['shipments', 'shipments.transaction']);
     }
 
@@ -766,9 +774,9 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyInventoryGroupings()
     {
-        return $this->hasManyThrough(Claims::class,  InventoryGrouping::class, 'user_id', 'claimable_id', 'id')
-            ->where('claims.claimable_type', InventoryGrouping::class)
-            ->where('inventory_groupings.user_id', $this->id)
+        return $this->hasManyThrough(Claims::class,  InventoryGrouping::class, 'user_id', 'listable_id', 'id')
+            ->where('claims.listable_type', InventoryGrouping::class)
+            ->where('listables.user_id', $this->id)
             ->with(['shipments', 'shipments.transaction']);
     }
 
@@ -786,7 +794,7 @@ class User extends BaseEloquentModel implements
      */
     public function claimsOnMyClaimables()
     {
-        return $this->claimsOnMyInventory->merge($this->claimsOnMyInventoryGroupings);
+        return $this->pendingClaimsOnMyInventory->merge($this->pendingClaimsOnMyInventoryGroupings);
     }
 
     /**
@@ -962,10 +970,12 @@ class User extends BaseEloquentModel implements
 
         $defaultCard = false;
 
-        foreach ($customer->sources->data as $card) {
-            if ($card->id === $customer->default_source) {
-                $defaultCard = $card;
-                break;
+        if ($customer->sources) {
+            foreach ($customer->sources->data as $card) {
+                if ($card->id === $customer->default_source) {
+                    $defaultCard = $card;
+                    break;
+                }
             }
         }
 
@@ -1075,7 +1085,8 @@ class User extends BaseEloquentModel implements
     public function genericTrialEndsInDays()
     {
         if ($this->onGenericTrial()) {
-            return $this->trial_ends_at->diffForHumans();
+            $now = Carbon::now(webUser()->timzeone);
+            return $this->trial_ends_at->diff($now)->days < 1 ? 'today' : 'in '.$this->trial_ends_at->diffInDays($now).' days';
         }
 
         return null;
@@ -1156,5 +1167,50 @@ class User extends BaseEloquentModel implements
     public function flashsalesFollowing()
     {
         return $this->morphedByMany(FlashSales::class, 'followable')->where('followables.deleted_at', null);
+    }
+
+    /**
+     * @return bool
+     */
+    public function myAccountIsAQualifyingReferral()
+    {
+        return ! $this->onGenericTrial() && $this->hasAtLeastMerchantSubscription();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function qualifiedReferrals()
+    {
+        return $this->hasMany(Referrals::class, 'referred_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function pendingQualifiedReferrals()
+    {
+        return $this->qualifiedReferrals()->whereNull('coupon_applied_at');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function appliedQualifiedReferrals()
+    {
+        return $this->qualifiedReferrals()->whereNotNull('coupon_applied_at');
+    }
+
+    /**
+     * @return int
+     */
+    public function getPendingQualifiedReferralTotal()
+    {
+        $qualifiedReferrals = $this->pendingQualifiedReferrals;
+        if ($qualifiedReferrals->count() >= 6) {
+            return 6;
+        }
+
+        return $qualifiedReferrals->count();
     }
 }

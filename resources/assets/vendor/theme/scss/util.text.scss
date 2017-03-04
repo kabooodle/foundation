@@ -21,6 +21,11 @@
 @include text-wariant(dark, $dark);
 @include text-wariant(blue, $blue);
 
+.white-on-hover:hover {
+  color: #fff;
+  opacity: 1;
+}
+
 .text-white {
   color: $full-white !important;
 }
@@ -176,6 +181,11 @@
 .text-u-l,
 .text-u-l-primary,
 .text-u-l-on-hover:hover {
+  text-decoration: underline;
+}
+
+._u,
+._underline {
   text-decoration: underline;
 }
 

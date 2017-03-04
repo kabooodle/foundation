@@ -105,7 +105,7 @@
             },
             isUserFollowingEntity(){
                 if (this.doWeHaveCurrentUser()) {
-                    return _.findWhere(this.current_user_following, {
+                    return _.find(this.current_user_following, {
                         followable_type: this.followable_type,
                         followable_id: parseInt(this.followable_id),
                         user_id: parseInt(this.current_user.id)

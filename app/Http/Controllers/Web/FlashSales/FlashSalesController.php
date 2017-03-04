@@ -46,7 +46,7 @@ class FlashSalesController extends Controller
 
         $rawCategories = collect(Listings::getStyleGroupingsForFlashsale($flashsale->id));
 
-        $categories = $rawCategories->groupBy('style_name')->transform(function($item, $k){
+        $categories = $rawCategories->sortBy('style_name')->groupBy('style_name')->transform(function($item, $k){
             return $item->groupBy('size_name');
         });
 
@@ -54,11 +54,6 @@ class FlashSalesController extends Controller
 
         return $this->view('flashsales.show')->with(compact('flashsale', 'categories', 'sellersCategories'));
     }
-
-
-
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -107,10 +102,7 @@ class FlashSalesController extends Controller
                 return redirect()->route('flashsales.show', [$idAndName]);
             }
 
-            $startsEnds = new StartsAndEndsAt(
-                strtotime(Binput::get('starts_at')),
-                strtotime(Binput::get('ends_at'))
-            );
+            $startsEnds = new StartsAndEndsAt(Binput::get('starts_at'), Binput::get('ends_at'));
 
             $item = $this->dispatchNow(new UpdateFlashsaleCommand(
                 $item,

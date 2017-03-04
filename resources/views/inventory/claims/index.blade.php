@@ -1,22 +1,22 @@
 @extends('layouts.full', ['contentId' => 'claims_index'])
 
 
-@if($data->getCollection()->count() > 0)
-@section('body-menu')
-    <div class="btn-toolbar center-block text-center">
-            <div class="btn-group dropdown">
-                <button class="btn white btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <span class="dropdown-label">Bulk</span>
-                    <span class="caret"></span>
-                </button>
-            <div class="dropdown-menu text-left text-sm">
-                <a class="dropdown-item" href="">Accept</a>
-                <a class="dropdown-item" href="">Reject</a>
-            </div>
-        </div>
-    </div>
-@endsection
-@endif
+{{--@if($data->getCollection()->count() > 0)--}}
+{{--@section('body-menu')--}}
+    {{--<div class="btn-toolbar center-block text-center">--}}
+            {{--<div class="btn-group dropdown">--}}
+                {{--<button class="btn white btn-sm dropdown-toggle" data-toggle="dropdown">--}}
+                    {{--<span class="dropdown-label">Bulk</span>--}}
+                    {{--<span class="caret"></span>--}}
+                {{--</button>--}}
+            {{--<div class="dropdown-menu text-left text-sm">--}}
+                {{--<a class="dropdown-item" href="">Accept</a>--}}
+                {{--<a class="dropdown-item" href="">Reject</a>--}}
+            {{--</div>--}}
+        {{--</div>--}}
+    {{--</div>--}}
+{{--@endsection--}}
+{{--@endif--}}
 
 
 @section('body-content')
@@ -32,7 +32,7 @@
                 <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
                     <thead>
                     <tr class="  ">
-                        <th><input type="checkbox" id="checkAll" @click="toggleChecks"></th>
+                        {{--<th><input type="checkbox" id="checkAll" @click="toggleChecks"></th>--}}
                         <th class="text-muted">Item</th>
                         <th class="text-muted p-l-0 m-l-0">Claim Price</th>
                         <th class="text-muted p-l-0 m-l-0">Claimer</th>

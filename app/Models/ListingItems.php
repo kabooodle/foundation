@@ -8,37 +8,31 @@ namespace Kabooodle\Models;
 
 use Carbon\Carbon;
 use JonnyPickett\EloquentSTI\SingleTableInheritance;
+use Kabooodle\Models\Contracts\Claimable;
 use Kabooodle\Models\Contracts\Viewable;
+use Kabooodle\Models\Traits\ClaimableTrait;
 use Kabooodle\Models\Traits\ViewableTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Kabooodle\Models\Traits\WatchableTrait;
-use Kabooodle\Models\Traits\ShoppableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Models\Contracts\WatchableInterface;
-use Kabooodle\Models\Contracts\ShoppableInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Kabooodle\Presenters\Models\Listings\ListingItemsModelPresenter;
 
 /**
  * Class ListingItems
  */
-class ListingItems extends AbstractListingModel implements ShoppableInterface, WatchableInterface, Viewable
+class ListingItems extends AbstractListingModel implements WatchableInterface, Viewable, Claimable
 {
     use ObfuscatesIdTrait,
         PresentableTrait,
-        ShoppableTrait,
         SoftDeletes,
         UuidableTrait,
+        ClaimableTrait,
         WatchableTrait,
-        SingleTableInheritance,
         ViewableTrait;
-
-    const SUB_TYPES = [
-        ListingItemSingle::class,
-        ListingItemGrouping::class,
-    ];
 
     /**
      * @var array
@@ -68,6 +62,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     protected $dates = [
         'status_updated_at',
+        'scheduled_for_deletion',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -97,6 +92,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'fb_album_node_id' => null,
         'fb_response_object_id' => null,
         'fb_response' => '',
+        'scheduled_for_deletion' => null,
         'owner_id' => 0,
         'listable_id' => 0,
         'type' => self::TYPE_FACEBOOK,
@@ -105,7 +101,6 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status_history' => '',
         'make_available_at' => null,
         'ignore' => false,
-        'subclass_name' => ListingItemSingle::class,
         'item_message' => null,
     ];
 
@@ -127,22 +122,8 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
         'status_history',
         'make_available_at',
         'ignore',
-        'subclass_name',
         'item_message'
     ];
-
-    /**
-     * @return string
-     */
-    public function getListableClassName(): string
-    {
-        if ($this->attributes['subclass_name'] == ListingItemSingle::class) {
-            return Inventory::class;
-        } else if ($this->attributes['subclass_name'] == ListingItemGrouping::class) {
-            return InventoryGrouping::class;
-        }
-        return '';
-    }
 
     /**
      * @param $value
@@ -183,7 +164,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     public function claims()
     {
-        return $this->morphMany(Claims::class, 'shoppable');
+        return $this->hasMany(Claims::class, 'listing_item_id');
     }
 
     /**
@@ -207,7 +188,7 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
      */
     public function listedItem(): BelongsTo
     {
-        return $this->belongsTo($this->getListableClassName(), 'listable_id');
+        return $this->belongsTo(Listable::class, 'listable_id');
     }
 
     /**
@@ -341,12 +322,15 @@ class ListingItems extends AbstractListingModel implements ShoppableInterface, W
             $id = $this->obfuscateIdToString($this->id);
             $route = str_replace(['https://', 'http://'], '', str_replace(['api.', 'app.', 'api', 'app'], 'www.', route('externalclaim.show', [$id])));
             $itemMessage = str_ireplace($placeholders['url'], ' '.$route.' ', $itemMessage);
-
             $itemMessage = str_ireplace($placeholders['price'], $this->listedItem->getPrice(), $itemMessage);
 
-            $itemMessage = str_ireplace($placeholders['style'], $this->listedItem->style->name, $itemMessage);
-
-            $itemMessage = str_ireplace($placeholders['size'], $this->listedItem->size->name, $itemMessage);
+            if ($this->getListableClassName() == InventoryGrouping::class) {
+                $itemMessage = str_ireplace($placeholders['style'], 'Outfits', $itemMessage);
+                $itemMessage = str_ireplace($placeholders['size'], null, $itemMessage);
+            } else {
+                $itemMessage = str_ireplace($placeholders['style'], $this->listedItem->style->name, $itemMessage);
+                $itemMessage = str_ireplace($placeholders['size'], $this->listedItem->size->name, $itemMessage);
+            }
 
             return $itemMessage;
         }

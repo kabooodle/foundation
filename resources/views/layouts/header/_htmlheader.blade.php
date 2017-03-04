@@ -13,12 +13,16 @@
     <link href="https://fonts.googleapis.com/css?family=Kreon:400,700" rel="stylesheet">
     @endpush
 
-    <script type="text/javascript">
-        const KABOOODLE_APP = window.KABOOODLE_APP || {};
+    <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js"  data-apikey="c587cbc4daf53552ae8bd305b63fb68c"></script>
+    @if(!webUser())
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.6/jstz.min.js" integrity="sha256-68s1Vjqw1KVP2DiR5uNilZQjf+tF6IrQI9PjKTY88nM=" crossorigin="anonymous"></script>
+    @endif
+    <script>
+        var KABOOODLE_APP = window.KABOOODLE_APP || {};
         KABOOODLE_APP.env = '{{ env('APP_ENV') }}';
         KABOOODLE_APP.currentUser = {!! $_current_user !!};
         KABOOODLE_APP.makeStaticAsset = function (url) {
-            let staticAsset = '{{ staticAsset('[URL]') }}';
+            var staticAsset = '{{ staticAsset('[URL]') }}';
             return staticAsset.replace('[URL]', url);
         };
     </script>
@@ -43,31 +47,35 @@
     <script src="{{ staticAsset('/assets/js/vendor.js') }}"></script>
     <script type="text/javascript">
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="token"]').attr('content');
+        @if(!webUser())
+            Vue.http.headers.common['X-TZ'] = jstz.determine().name();
+        @endif
         @if(webUser())
         Vue.http.headers.common['Authorization'] = "Bearer " + $('meta[name=user_hash]').attr("content");
         @endif
         $(function () {
             @if(webUser())
+            moment.tz('{{ webUser()->timezone}}').format();
             $.ajaxPrefilter(function (options, originalOptions, xhr) {
                 if (options.url.toLowerCase().indexOf("amazonaws") <= 0) {
                     xhr.setRequestHeader("Authorization", "Bearer " + $('meta[name=user_hash]').attr("content") + "");
                 }
             });
             @endif
+            var ajaxHeaders = {
+                '_token': $('meta[name="token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')
+            };
+            @if(!webUser())
+            ajaxHeaders['X-TZ'] = jstz.determine().name();
+            @endif
             $.ajaxSetup({
                 async: true,
-                headers: {
-                    '_token': $('meta[name="token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')
-                }
+                headers: ajaxHeaders
             });
         });
-        @if(webUser())
-        moment.tz('{{ webUser()->timezone}}').format();
-        @endif
     </script>
     @endpush
-
 
     @stack('header-styles')
 

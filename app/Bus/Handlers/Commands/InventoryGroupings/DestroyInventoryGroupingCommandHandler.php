@@ -25,6 +25,8 @@ class DestroyInventoryGroupingCommandHandler
      */
     public function handle(DestroyInventoryGroupingCommand $command)
     {
-
+        $grouping = $command->getInventoryGrouping();
+        $grouping->delete();
+        return !is_null($grouping->deleted_at);
     }
 }

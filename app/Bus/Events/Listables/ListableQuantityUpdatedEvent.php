@@ -6,7 +6,7 @@
 
 namespace Kabooodle\Bus\Events\Listables;
 
-use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Contracts\ListableInterface;
 
 /**
  * Class ListableQuantityUpdatedEvent
@@ -14,22 +14,22 @@ use Kabooodle\Models\Contracts\Listable;
 final class ListableQuantityUpdatedEvent
 {
     /**
-     * @var Listable
+     * @var ListableInterface
      */
     public $listableItem;
 
     /**
-     * @param Listable $listableItem
+     * @param ListableInterface $listableItem
      */
-    public function __construct(Listable $listableItem)
+    public function __construct(ListableInterface $listableItem)
     {
         $this->listableItem = $listableItem;
     }
 
     /**
-     * @return Listable
+     * @return ListableInterface
      */
-    public function getListableItem(): Listable
+    public function getListableItem(): ListableInterface
     {
         return $this->listableItem;
     }

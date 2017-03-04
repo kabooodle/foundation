@@ -8,6 +8,8 @@ namespace Kabooodle\Http\Controllers\Web\Auth;
 
 use Auth;
 use Binput;
+use Kabooodle\Services\Referrals\ReferralsService;
+use Kabooodle\Services\User\UserService;
 use Messages;
 use Validator;
 use Exception;
@@ -54,9 +56,23 @@ class AuthController extends Controller
     protected $redirectAfterLogout = '/home';
 
     /**
+     * @var UserService
      */
-    public function __construct()
+    public $userService;
+
+    /**
+     * @var ReferralsService
+     */
+    public $referralService;
+
+    /**
+     * @param UserService      $userService
+     * @param ReferralsService $referralsService
+     */
+    public function __construct(UserService $userService, ReferralsService $referralsService)
     {
+        $this->userService = $userService;
+        $this->referralService = $referralsService;
         $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
     }
 
@@ -71,11 +87,19 @@ class AuthController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\View\View
+     * @param Request $request
+     *
+     * @return $this|\Illuminate\Contracts\View\View
      */
-    public function getRegister()
+    public function getRegister(Request $request)
     {
-        return $this->view('auth.register');
+        if (app()->environment() == 'production' || $request->has('closedbeta')) {
+            return $this->view('auth.comingsoon');
+        }
+
+        $referrer = $this->referralService->getReferral();
+
+        return $this->view('auth.register')->with(compact('referrer'));
     }
 
     /**
@@ -92,6 +116,8 @@ class AuthController extends Controller
                 $redirect = '/';
             }
 
+            $referral = $this->referralService->getReferral() ? : Binput::get('referred_by', null);
+
             if ($email && $email->user->isGuest()) {
                 $guest = $email->user;
                 $this->validate($request, User::getConvertGuestRules($guest));
@@ -103,7 +129,7 @@ class AuthController extends Controller
                     $request->get('last_name'),
                     $request->get('username'),
                     $request->get('password'),
-                    $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
+                    $referral
                 ));
             } else {
                 $this->validate($request, User::getRules(), ['email.unique' => 'Email address is unavailable.']);
@@ -115,7 +141,7 @@ class AuthController extends Controller
                     $request->get('email'),
                     $request->get('password'),
                     $request->get('account_type'),
-                    $request->session()->get(ReferralProgramMiddleware::SESSION_KEY)
+                    $referral
                 ));
             }
 

@@ -19,4 +19,18 @@ interface UserRepositoryInterface
      * @return Collection
      */
     public function getTrialAccountsNotNotified(int $lookahead);
+
+    /**
+     * @param array $usernames
+     *
+     * @return mixed
+     */
+    public function getByUsernames(array $usernames);
+
+    /**
+     * @param string $username
+     *
+     * @return mixed
+     */
+    public function getByUsername(string $username);
 }

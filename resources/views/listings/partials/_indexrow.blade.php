@@ -11,18 +11,19 @@
             {{ $listing->flashsale_name }}
         @endif
     </td>
-    <td>{{ humanizeDateTime($listing->scheduled_for) }}</td>
+    <td>{{ $listing->scheduled_for ? humanizeDateTime($listing->scheduled_for) : null }}</td>
     <td>{{ $listing->type ==  Kabooodle\Models\Listings::TYPE_FACEBOOK ? $listing->albums_count : 'n/a' }}</td>
     <td>{{ $listing->items_count }}</td>
     <td>{{ $listing->accepted_sales_count }}</td>
     <td>{{ $listing->pending_sales_count }}</td>
+        <td>{{ $listing->pageviews_count }}</td>
     <td>${{ $listing->gross }}</td>
     <td>@if($listing->type == Kabooodle\Models\Listings::TYPE_CUSTOM) n/a @else {!! listingStatusHtml($listing->status) !!} @endif</td>
     @unless(isset($_excludeActionCol))
     <td>
         <div class="pull-md-right">
             <div class="dropdown">
-                <a class="text-muted btn btn-xs white dropdown-toggle no-caret" href="#" data-toggle="dropdown">
+                <a class="btn btn-xs white dropdown-toggle no-caret" href="#" data-toggle="dropdown">
                     <i class="hidden-sm-down fa fa-ellipsis-h" aria-hidden="true"></i>
                     <span class="hidden-sm-up">Options</span>
                 </a>
@@ -35,10 +36,12 @@
                         <a href="{{ route('merchant.listings.show', [$listing->uuid]) }}" class="dropdown-item">Manage albums</a>
                     @endif
                     <div class="divider"></div>
-                    @if(Kabooodle\Models\Listings::isStillEditable($listing->status) && $listing->type !== Kabooodle\Models\Listings::TYPE_CUSTOM )
-                        <a href="{{ route('merchant.listings.edit', [$listing->uuid]) }}" class="dropdown-item">Edit</a>
+                    @if(! in_array($listing->status,['processing_delete', 'queued_delete']))
+                    <button type="button" @click="deleteListingItem('{{ apiRoute('listings.destroy', [$listing->id]) }}', {{ $listing->id }}, $event)" class="text-danger bg-danger-hover text-white-hover dropdown-item">Delete</button>
                     @endif
-                    <button type="button" @click="deleteListingConfirm('{{ apiRoute('listings.destroy', [$listing->id]) }}', {{ $listing->id }}, $event)" class="text-danger bg-danger-hover text-white-hover dropdown-item">Delete</button>
+                    @if($listing->type == Kabooodle\Models\Listings::TYPE_FACEBOOK && ! in_array($listing->status,['deleted', 'scheduled_delete', 'processing_delete', 'queued_delete']))
+                        <button type="button" @click="deleteFacebookListing('{{ apiRoute('listings.facebook.destroy', [$listing->id]) }}', {{ $listing->id }}, $event)" class="text-danger bg-danger-hover text-white-hover dropdown-item">Delete from Facebook</button>
+                    @endif
                 </div>
             </div>
         </div>

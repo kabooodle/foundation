@@ -7,6 +7,7 @@
 namespace Kabooodle\Models\Dates;
 
 use Carbon\Carbon;
+use Kabooodle\Services\DateFactory;
 
 /**
  * Class StartsAndEndsAt
@@ -32,8 +33,9 @@ class StartsAndEndsAt
      */
     public function __construct($startsAtTimestamp, $endsAtTimestamp)
     {
-        $this->startsAt = Carbon::createFromTimestamp($startsAtTimestamp);
-        $this->endsAt = Carbon::createFromTimestamp($endsAtTimestamp);
+        $dateFactory = app()->make(DateFactory::class);
+        $this->startsAt = $dateFactory->parse($startsAtTimestamp);
+        $this->endsAt = $dateFactory->parse($endsAtTimestamp);
     }
 
     /**

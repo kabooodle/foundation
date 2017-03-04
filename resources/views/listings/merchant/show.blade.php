@@ -42,7 +42,7 @@
                     <td>{{ $item->items_count }}</td>
                     <td>{{ $item->accepted_sales_count }}</td>
                     <td>{{ $item->pending_sales_count }}</td>
-                    <td>0</td>
+                    <td>{{ $item->pageviews_count }}</td>
                     <td>${{ $item->gross }}</td>
                     <td>
                         <div class="pull-md-right">

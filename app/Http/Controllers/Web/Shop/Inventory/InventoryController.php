@@ -59,81 +59,9 @@ class InventoryController extends Controller
      *
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|Redirector
      */
-    public function detailed(Request $request, $username)
+    public function simple(Request $request, $username)
     {
-        if (webUser()->username <> $username) {
-            return redirect('/');
-        }
-
-        $data = webUser()->inventory()->NoEagerLoads()->with(['style', 'styleSize']);
-
-        if ($request->has('style_id') && $request->get('style_id')) {
-            $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
-        }
-        if ($request->has('size_id') && $request->get('size_id')) {
-            $data = $data->whereIn('inventory_sizes_id', $request->get('size_id'));
-        }
-        if ($request->has('qty_0')) {
-            $data = $data->where('initial_qty', 0);
-        }
-        if ($request->has('flashsale_id')) {
-            $data = $data->whereHas('flashsales', function ($q) use ($request) {
-                $q->whereIn('flashsales.id', $request->get('flashsale_id'));
-            });
-        }
-        if ($request->has('has_sales')) {
-            $data = $data->has('sales', '>', 0);
-        }
-        if ($request->has('has_claims')) {
-            $data = $data->has('pendingClaims', '>', 0);
-        }
-
-        $data = $data->get();
-
-        $data = $this->paginateData($request, $data);
-
-        if ($request->wantsJson()) {
-            return Response::json($data);
-//            return Response::json(fractal()
-//                ->collection($data)
-//                ->transformWith(new InventoryTransformer())
-//                ->paginateWith(new IlluminatePaginatorAdapter($data)));
-        }
-
-        // Base filters.
-        $filters = [
-            'styles' => [],
-            'sizes' => [],
-            'flashSales' => [],
-            'claims' => [],
-            'approvedsales'  => []
-        ];
-
-        // Build arrays of filterable data.
-        // We only want the user to have filters that are relevant to their inventory.
-        foreach ($data as $item) {
-            // we need all styles
-            $filters['styles'][] = $item->style;
-            // we need all sizes
-            $filters['sizes'][] = $item->style->sizes->find($item->inventory_sizes_id);
-            // we need flashsales
-            if ($item->flashsales->count() > 0) {
-                foreach ($item->flashsales as $flashsale) {
-                    $filters['flashSales'][] = $flashsale;
-                }
-            }
-        }
-
-        $filters['styles'] = collect($filters['styles'])->sortBy('name')->unique();
-        $filters['sizes'] = collect($filters['sizes'])->sortBy('order')->sortBy('name')->unique();
-        $filters['flashSales'] = collect($filters['flashSales'])->sortBy('name')->unique()->filter(function ($sale) {
-            return $sale->saleHasEnded() ? false : true;
-        });
-        $filters['claims'] = collect($filters['claims'])->unique()->filter(function ($claim) {
-            return $claim->wasRejected() ? false : true;
-        });
-
-        return $this->view('inventory.detailed')->with(compact('data', 'filters'));
+        return $this->view('inventory.simple');
     }
 
     /**
@@ -192,14 +120,17 @@ class InventoryController extends Controller
     public function show(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString($idAndName);
-        $item = Inventory::with(['sales', 'pageViews'])->findOrFail($decryptedId);
+        $item = Inventory::with(['sales', 'views'])->findOrFail($decryptedId);
 
         if ($item) {
+            $data = [
+                'listable' => $item,
+            ];
             if ($request->ajax()) {
-                return $this->view('inventory.partials._show')->with(compact('item'))->render();
+                return $this->view('inventory.partials._show', $data)->render();
             }
 
-            return $this->view('inventory.show')->with(compact('item'));
+            return $this->view('listables.show', $data);
         }
 
         return $this->redirect(route('shop.inventory.index', [$username]));
@@ -289,8 +220,8 @@ class InventoryController extends Controller
     public function postables(Request $request)
     {
         // Returns array
-        $facebookGroups = webUser()->getFacebookGroups();
-        $flashSales = webUser()->currentFlashsalesAsSellerAndAdmins();
+        $facebookGroups = webUser()->getFacebookGroups() ? : [];
+        $flashSales = webUser()->currentFlashsalesAsSellerAndAdmins() ? : [];
 
         return Response::json(['data' => ['flashsales' => $flashSales, 'facebookgroups' => $facebookGroups]], 200);
     }

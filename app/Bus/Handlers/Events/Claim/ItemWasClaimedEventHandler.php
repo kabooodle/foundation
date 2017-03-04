@@ -8,7 +8,7 @@ namespace Kabooodle\Bus\Handlers\Events\Claim;
 
 use Bugsnag;
 use Exception;
-use Kabooodle\Models\Contracts\Listable;
+use Kabooodle\Models\Contracts\ListableInterface;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Claims;
 use Kabooodle\Models\Inventory;
@@ -59,7 +59,7 @@ class ItemWasClaimedEventHandler
         $claimedBy = $claim->claimedBy;
         $seller = $listedItem->owner;
         $availableQty = $listedItem->getAvailableQuantity();
-        $shoppable = $claim->shoppable;
+        $shoppable = $claim->listingItem;
 
         // If a claimed item was claimed via facebook, we need to handle any business logic
         // Currently, there is only one rule: Create a FB request, adding a "Sold" comment to photo.
@@ -73,10 +73,10 @@ class ItemWasClaimedEventHandler
 
         // 2nd business logic requires that we count the number of facebook albums this item has been posted to
         // and if the item is out of stock, we need to post claimed to all the remaining sales as well.
-//        if ($event->getclaim()->claimable->facebooksales->count() > 0 && $availableQty == 0) {
+//        if ($event->getclaim()->listable->facebooksales->count() > 0 && $availableQty == 0) {
 //            \Log::info('Posting sold comment to multiple fb items!');
 //            try {
-//                foreach ($event->getclaim()->claimable->facebooksales as $facebookSaleItem) {
+//                foreach ($event->getclaim()->listable->facebooksales as $facebookSaleItem) {
 //                    // Ignore the facebook photo we've already posted to.
 //                    if ($facebookSaleItem->facebook_post_id == $shoppable->facebook_post_id) {
 //                        continue;
@@ -118,9 +118,9 @@ class ItemWasClaimedEventHandler
 
     /**
      * @param User $seller
-     * @param Listable $listedItem
+     * @param ListableInterface $listedItem
      */
-    public function toEmail(User $seller, Listable $listedItem)
+    public function toEmail(User $seller, ListableInterface $listedItem)
     {
         $email = new KitEmail;
         $email->setView('inventory.claims.emails.claimed_toseller')
@@ -136,9 +136,9 @@ class ItemWasClaimedEventHandler
     /**
      * @param User      $user
      * @param Claims    $claim
-     * @param Listable $listedItem
+     * @param ListableInterface $listedItem
      */
-    public function toWeb(User $user, Claims $claim, Listable $listedItem)
+    public function toWeb(User $user, Claims $claim, ListableInterface $listedItem)
     {
         $pusher = new WebSocket;
         $pusher->setChannelName('private.'.env('APP_ENV').'.claims.'.$user->id)
@@ -153,9 +153,9 @@ class ItemWasClaimedEventHandler
     /**
      * @param User      $user
      * @param Claims    $claim
-     * @param Listable $listedItem
+     * @param ListableInterface $listedItem
      */
-    public function toDatabase(User $user, Claims $claim, Listable $listedItem)
+    public function toDatabase(User $user, Claims $claim, ListableInterface $listedItem)
     {
         $title = $listedItem->getTitle().' was claimed by '. $claim->claimedBy->username;
 

@@ -20,6 +20,8 @@ use Kabooodle\Bus\Commands\Flashsale\AddFlashsaleCommand;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Flashsale\UpdateFlashsaleCommand;
 use Kabooodle\Bus\Commands\Flashsale\DeleteFlashsaleCommand;
+use Kabooodle\Transformers\Flashsales\FlashsaleListingItemTransformer;
+use Kabooodle\Transformers\Flashsales\FlashsalesTransformer;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleTimeSlotDateException;
 use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleInvalidEndDateException;
@@ -45,7 +47,7 @@ class FlashsalesApiController extends AbstractApiController
         // returning everything, then chunking the collection of data.
         $data = FlashSales::withoutExpired()
             ->orderByStartDate()
-            ->with('coverimage', 'listingItems', 'watchers');
+            ->with('coverimage', 'watchers');
 
         if ($searchName = Binput::get('name', false)) {
             $data = $data->where('name', 'LIKE', '%' . $searchName . '%');
@@ -55,11 +57,11 @@ class FlashsalesApiController extends AbstractApiController
 
         // Filter through the items and hide private items where the user is not
         // a seller.  Reminder, sellers include admins, owner, sellers.
-        $data->setCollection($data->filter(function ($flashsale) use ($user) {
+        $data->setCollection($data->filter(function (FlashSales $flashsale) use ($user) {
             return $flashsale->canUserViewPrivateSale($user);
         }));
 
-        return $this->setData($data)->respond();
+        return $this->response->paginator($data, new FlashsalesTransformer);
     }
 
     /**
@@ -72,10 +74,7 @@ class FlashsalesApiController extends AbstractApiController
         try {
             $this->validate($request, FlashSales::getRules());
 
-            $startsEnds = new StartsAndEndsAt(
-                strtotime(Binput::get('starts_at')),
-                strtotime(Binput::get('ends_at'))
-            );
+            $startsEnds = new StartsAndEndsAt(Binput::get('starts_at'), Binput::get('ends_at'));
 
             if ($startsEnds->getStartsAt() <= Carbon::now(current_timezone())) {
                 throw new FlashsaleInvalidStartDateException('Start date must be after now.');
@@ -267,13 +266,13 @@ class FlashsalesApiController extends AbstractApiController
 
             if ($style_query ) {
                 $items = $items->filter(function($item) use ($style_query){
-                    return in_array($item->inventoryItem->inventory_type_styles_id, $style_query);
+                    return in_array($item->listedItem->inventory_type_styles_id, $style_query);
                 });
             }
 
             if ($size_query ) {
                 $items = $items->filter(function($item) use ($size_query){
-                    return in_array($item->inventoryItem->inventory_sizes_id, $size_query);
+                    return in_array($item->listedItem->inventory_sizes_id, $size_query);
                 });
             }
 
@@ -289,9 +288,8 @@ class FlashsalesApiController extends AbstractApiController
                 return $item->id;
             })->values();
 
-            $items = $this->paginateData($request, $items);
 
-            return $this->setData($items)->respond();
+            return $this->response->paginator($this->paginateData($request, $items), new FlashsaleListingItemTransformer);
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();

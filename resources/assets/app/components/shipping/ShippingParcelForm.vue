@@ -556,8 +556,8 @@
                             value: parseInt(this.id),
                             claimer_id: this.claimer.id,
                             date: this.updated_at_human,
-                            image: this.inventory_item_object_data.cover_photo.location,
-                            name: this.claimer.username+', '+this.inventory_item_object_data.name+' - '+this.inventory_item_object_data.style_size.name+', $'+this.price
+                            image: this.listable_item_object_data.cover_photo.location,
+                            name: this.claimer.username+', '+this.listable_item_object_data.name+' - '+this.listable_item_object_data.style_size.name+', $'+this.price
                         });
                     });
                 }
@@ -623,7 +623,7 @@
 
                 // Check claimer id
                 if(elSelectedClaimerId) {
-                    let selectedClaim = _.findWhere(this.claims, {id: parseInt(elSelectedVal)});
+                    let selectedClaim = _.find(this.claims, {id: parseInt(elSelectedVal)});
                     //Check if the claimer id is the same as the one already selected
                     if(this.selectedClaimer != elSelectedClaimerId){
                         // Reset the claims and claimer

@@ -1,13 +1,6 @@
 <template>
     <span>
-        <modal
-                use_header="false"
-                :modal_id="modal_id"
-        >
-            <template slot="modal_header">
-                <h6 class="m-b-0">Optional settings for listing to facebook</h6>
-            </template>
-            <template slot="modal_body">
+
                 <div class="form-group m-b-1">
                     <div class="card b p-a dker">
                         <div class="row">
@@ -44,10 +37,10 @@
                             <label class="control-label">Photo message</label>
                             <textarea class="form-control" id="options_item_message" rows="5" v-model="$data.options.item_message" placeholder="An example: Claim here {url}"></textarea>
                             <small class="text-xs block text-muted">Pre-defined tags you can optionally use</small>
-                            <button class="btn btn-clipboard white btn-xs" data-clipboard-action="copy" data-clipboard-text="{price}">{price}</button>
-                            <button class="btn btn-clipboard white btn-xs"  data-clipboard-action="copy" data-clipboard-text="{url}">{url}</button>
-                            <button class="btn btn-clipboard white btn-xs"  data-clipboard-action="copy" data-clipboard-text="{style}">{style}</button>
-                            <button class="btn btn-clipboard white btn-xs"  data-clipboard-action="copy" data-clipboard-text="{size}">{size}</button>
+                            <button class="btn btn-clipboard white btn-xs" data-animation="false" data-clipboard-action="copy" data-clipboard-text="{price}">{price}</button>
+                            <button class="btn btn-clipboard white btn-xs"  data-animation="false" data-clipboard-action="copy" data-clipboard-text="{url}">{url}</button>
+                            <button class="btn btn-clipboard white btn-xs"  data-animation="false" data-clipboard-action="copy" data-clipboard-text="{style}">{style}</button>
+                            <button class="btn btn-clipboard white btn-xs"  data-animation="false" data-clipboard-action="copy" data-clipboard-text="{size}">{size}</button>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label">Example message (with fake data)</label>
@@ -55,27 +48,13 @@
                         </div>
                     </div>
                 </div>
-            </template>
-            <template slot="modal_footer">
-                <button class="btn primary btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="saveOptions" type="button">Save &amp; list items to Facebook
-                <spinny v-if="processing_listing"></spinny>
-                </button>
-                <button class="btn white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="clearOptions" type="button">Clear settings</button>
-                <button class="btn-link white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="closeModal" type="button">Close</button>
-            </template>
-        </modal>
+
+                <!--<button class="btn white btn-sm" :disabled="processing_listing" :class="processing_listing ? 'disabled' : null" @click="clearOptions" type="button">Clear settings</button>-->
     </span>
 </template>
 <script>
-    import Modal from '../Modal.vue';
     import Spinny from '../Spinner.vue';
     export default{
-        props: {
-            modal_id: {
-                default: 'kbdl-mdl-listings',
-                type: String,
-            }
-        },
         data(){
             return {
                 processing_listing: false,
@@ -101,6 +80,10 @@
                     this.processing_listing = false;
                 }
             });
+
+            $Bus.$on('listings:saving', ()=>{
+                $Bus.$emit('listings:options:get', this.options);
+            });
         },
         computed: {
             message_preview(){
@@ -123,9 +106,6 @@
             },
         },
         methods: {
-            closeModal(){
-                $('#'+this.modal_id).modal('hide');
-            },
             saveOptions(event){
                 event.preventDefault();
                 $Bus.$emit('listing.options:saved', this.options);
@@ -177,7 +157,7 @@
 
                 this.$nextTick(function(){
 
-                    let minDate = moment().add('1', 'hour');
+                    let minDate = moment().add('299', 'second');
                     let options = {
                         format: "MM/DD/YYYY hh:mma",
                         allowInputToggle: true,
@@ -252,7 +232,6 @@
             }
         },
         components: {
-            'modal': Modal,
             'spinny' : Spinny
         }
     }

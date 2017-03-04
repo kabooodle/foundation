@@ -1,4 +1,4 @@
-@extends('layouts.full')
+@extends('layouts.full', ['contentId' => 'merchant_listings_detailed_items'])
 
 
 
@@ -21,11 +21,10 @@
             <h4>Listed Inventory Items</h4>
         </div>
         <div class="box-divider"></div>
-        <div class="box-body">
-            <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
+        <div class="box-body" data>
+            <table class="table table-condensed table-as-list white">
                 <thead>
                 <tr>
-                    <th scope="col"><input type="checkbox"></th>
                     <th scope="col">Item</th>
                     <th scope="col">Sales</th>
                     <th scope="col">Pending</th>
@@ -33,36 +32,27 @@
                     <th scope="col">Watchers</th>
                     <th scope="col">Gross</th>
                     @if($listing->type <> Kabooodle\Models\Listings::TYPE_CUSTOM)
-                    <th scope="col">Status</th>
+                    <th scope="col">
+                        @if($listing->type == Kabooodle\Models\Listings::TYPE_FACEBOOK)
+                        Facebook
+                            @endif
+                            Listing Status
+                    </th>
                     @endif
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($listing->listingItems as $item)
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td> <div class="avatar-thumbnail-container">
-                            <div class="avatar-thumbnail _32">
-                                <img src="{{ $item->listedItem->cover_photo->location }}">
-                            </div>
-                            <span>{{ $item->listedItem->name_with_variant }}</span>
-                        </div></td>
-                    <td>{{ $item->sales->count() }}</td>
-                    <td>{{ $item->pendingSales->count() }}</td>
-                    <td>{{ $item->views->count() }}</td>
-                    <td>{{ $item->watchers->count() }}</td>
-                    <td>${{ $item->sales->sum('price') }}</td>
-                    @if($listing->type <> Kabooodle\Models\Listings::TYPE_CUSTOM)
-                    <td>{!! $item->present()->getStatus()  !!}</td>
-                    @endif
-                    <td><a class="btn btn-xs white" href="{{ route('listingitems.show', [$item->obfuscateIdToString()]) }}">View item listing</td>
-                </tr>
+                    @include('listings.partials._detailedrow', ['item' => $item])
                 @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 
-
 @endsection
+
+@push('footer-scripts')
+<script src="{{ staticAsset('/assets/js/listing-detailed.js') }}"></script>
+@endpush

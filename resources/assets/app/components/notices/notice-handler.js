@@ -31,7 +31,7 @@ new Vue({
             if (this.fetching_new_notices == true || this.unread.length == 0) {
                 return false;
             }
-            const ids = _.pluck(this.unread, 'id');
+            const ids = _.map(this.unread, 'id');
             this.$http.post(endpoint, {ids}, {
                 before(request) {
                     if (this.previousRequest) {

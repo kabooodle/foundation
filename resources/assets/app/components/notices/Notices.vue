@@ -7,6 +7,7 @@
             <template v-if="notices.length">
                 <notice
                         v-for="notice in notices"
+                        :key="notice.id"
                         :id="notice.id"
                         :is_read="notice.is_read"
                         :priority="notice.priority"

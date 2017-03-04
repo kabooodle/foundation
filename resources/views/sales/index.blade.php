@@ -90,7 +90,7 @@
             <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
                 <thead>
                 <tr>
-                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"><input type="checkbox" id="checkAll"></th>
+                    {{--<th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"><input type="checkbox" id="checkAll"></th>--}}
                     <th scope="col" data-tablesaw-sortable-col>Item</th>
                     <th scope="col" data-tablesaw-sortable-col>Price</th>
                     <th scope="col" data-tablesaw-sortable-col>Accepted on</th>

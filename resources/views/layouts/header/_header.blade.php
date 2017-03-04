@@ -78,19 +78,24 @@
                                class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add Inventory</a>
                             <a href="{{  route('shop.inventory.index', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Inventory</a>
+
+                            <div class="divider"></div>
+                            <a href="{{  route('shop.outfits.create', [webUser()->username]) }}"
+                               class="dropdown-item {{ Request::is('shop/*/outfits/create') ? 'active' : null }}">Create Outfits</a>
                             <a href="{{  route('shop.outfits.index', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/outfits') ? 'active' : null }}">Outfits</a>
+
+                            <div class="divider"></div>
+                            <a href="{{ route('merchant.listings.create') }}" class="dropdown-item {{ Request::is('merchant/listings/create') ? 'active' : null }}"><span>Create sales listing</span></a>
+                            <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Manage Listings</span></a>
+
                             <div class="divider"></div>
                             <a href="{{ route('shop.claims.index', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Pending Claims
                                 <span class="">({{ webUser()->pendingClaimsOnMyInventory()->count() }})</span>
                             </a>
-
                             <a  href="{{  route('merchant.sales.index') }}"
                                 class="dropdown-item {{ Request::is('merchant/sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
-
-                            <div class="divider"></div>
-                            <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Manage Listings</span></a>
 
                             @if(webUser()->isSubscribedToMerchantPlus())
                                 <div class="divider"></div>
@@ -126,6 +131,12 @@
                         @endif
                         <a href="{{ route('flashsales.index') }}"
                            class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Browse</a>
+
+                            @if(webUser())
+                                <div class="divider"></div>
+                            <a href="{{ route('flashsales.index') }}"
+                               class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Manage Active Sales</a>
+                            @endif
 
                     </div>
                 </li>

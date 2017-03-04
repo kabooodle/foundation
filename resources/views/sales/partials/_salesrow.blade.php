@@ -1,11 +1,11 @@
 
-<td><input type="checkbox" class="shipment_checkbox"></td>
+{{--<td><input type="checkbox" class="shipment_checkbox"></td>--}}
 <td>
     <div class="avatar-thumbnail-container">
         <div class="avatar-thumbnail _32">
-            <img src="{{ $sale->claimable->cover_photo->location }}">
+            <img src="{{ $sale->listable->cover_photo->location }}">
         </div>
-        <span>{{ $sale->claimable->name_with_variant }}</span>
+        <span>{{ $sale->listable->name_with_variant }}</span>
     </div>
 </td>
 <td>${{ $sale->accepted_price ? : $sale->price }}</td>

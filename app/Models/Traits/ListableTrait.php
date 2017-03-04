@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Models\Traits;
 
+use Kabooodle\Models\ListingItems;
 use Kabooodle\Models\Listings;
 
 /**
@@ -15,19 +16,11 @@ use Kabooodle\Models\Listings;
 trait ListableTrait
 {
     /**
-     * @return string
-     */
-    public function getListingItemClass(): string
-    {
-        return static::LISTING_ITEM_CLASS;
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function listings()
+    public function listingItems()
     {
-        return $this->hasMany($this->getListingItemClass(), 'listable_id');
+        return $this->hasMany(ListingItems::class, 'listable_id');
     }
 
     /**
@@ -78,5 +71,29 @@ trait ListableTrait
     public function canSatisfyRequestedQuantityOf($qty = 1): bool
     {
         return $this->getAvailableQuantity() >= $qty;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function pendingClaims()
+    {
+        return $this->claims()->whereNull('accepted');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function acceptedClaims()
+    {
+        return $this->claims()->where('accepted', true)->whereNotNull('accepted_on');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function rejectedClaims()
+    {
+        return $this->claims()->where('accepted', false)->whereNotNull('rejected_on');
     }
 }

@@ -8,6 +8,7 @@ namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
 use Binput;
 use Kabooodle\Bus\Commands\Claim\VerifyClaimCommand;
+use Kabooodle\Services\DateFactory;
 use Response;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,6 +25,19 @@ use Kabooodle\Bus\Commands\Claim\RejectClaimForClaimableItemCommand;
 class InventoryClaimsController extends Controller
 {
     use ObfuscatesIdTrait, PaginatesTrait;
+
+    /**
+     * @var DateFactory
+     */
+    public $dateFactory;
+
+    /**
+     * @param DateFactory $dateFactory
+     */
+    public function __construct(DateFactory $dateFactory)
+    {
+        $this->dateFactory = $dateFactory;
+    }
 
     /**
      * @return \Illuminate\Contracts\View\View
@@ -51,7 +65,7 @@ class InventoryClaimsController extends Controller
         })->first();
 
         if ($claim) {
-            $timestamp = Binput::get('accepted_on', false) ? Carbon::createFromTimestamp(strtotime(Binput::get('accepted_on'))) : null;
+            $timestamp = Binput::get('accepted_on', false) ? $this->dateFactory->parse(Binput::get('accepted_on')) : null;
             $result = $this->dispatchNow(new AcceptClaimForClaimableItemCommand(
                 webUser(),
                 $claimsUUID,

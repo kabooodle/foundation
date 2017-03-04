@@ -6,19 +6,24 @@
 
 namespace Kabooodle\Http\Controllers\Api\Inventory;
 
+use DB;
 use Binput;
 use Bugsnag;
 use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
+use Kabooodle\Models\InventoryGrouping;
 use Kabooodle\Models\Listing\FacebookListingOptions;
+use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Facebook\Exceptions\FacebookAuthenticationException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
 use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
 use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
+use Kabooodle\Transformers\Inventory\InventoryTransformer;
+use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
@@ -29,6 +34,8 @@ use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListing
  */
 class InventoryApiController extends AbstractApiController
 {
+    use PaginatesTrait;
+
     /**
      * @return \Illuminate\Http\Response
      */
@@ -36,9 +43,10 @@ class InventoryApiController extends AbstractApiController
     {
         // Begin the user inventory query.
         $groupings = [];
-        $data = $this->getUser()->inventory()->NoEagerLoads()->with(['style', 'styleSize', 'files']);
-        $data = $data->get()->groupBy('inventory_type_styles_id');
-        foreach($data as $styleId => $items) {
+        $inventory = Inventory::noEagerLoads()->with(['claims', 'style', 'styleSize', 'files'])
+            ->where('user_id', '=', $this->getUser()->id)->get();
+        $grouped = $inventory->groupBy('inventory_type_styles_id');
+        foreach($grouped as $styleId => $items) {
             $groupings[$styleId] = [
                 'name' => null,
                 'total' => $items->count(),
@@ -49,30 +57,27 @@ class InventoryApiController extends AbstractApiController
                     if(! $groupings[$styleId]['name']) {
                         $groupings[$styleId]['name'] = $item->style->name;
                     }
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['id'] = $item->styleSize->id;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['name'] = $item->styleSize->name;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['sizes'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
-                    $groupings[$styleId]['sizes'][$item->styleSize->id]['items'][] = [
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['id'] = $item->styleSize->id;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['name'] = $item->styleSize->name;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['listables'][] = [
                         'id' => $item->id,
                         'name_uuid' => $item->name_uuid,
                         'uuid' => $item->uuid,
-                        'size_id' => $item->styleSize->id,
-                        'size_name' => $item->styleSize->name,
-                        'style_id' => $styleId,
-                        'style_name' => $item->style->name,
-                        'images' => $item->files->toArray(),
+                        'name' => $item->name_with_variant,
+                        'name_alt' => $item->name,
                         'initial_qty' => $item->initial_qty,
+                        'available_qty' => $item->available_quantity,
                         'price_usd' => $item->price_usd,
-                        'files' => $item->files,
+                        'wholesale_price_usd' => $item->wholesale_price_usd,
                         'cover_photo' => $item->cover_photo,
-                        'listable_item_class' => get_class($item),
-                        'listing_item_class' => $item->getListingItemClass(),
+                        'hash_id' => $item->hash_id,
                     ];
                 }
 
                 // Sort based on the order key.
-                usort($groupings[$styleId]['sizes'], function ($item1, $item2) {
+                usort($groupings[$styleId]['subgroupings'], function ($item1, $item2) {
                     return $item1['order'] <=> $item2['order'];
                 });
             }
@@ -80,7 +85,147 @@ class InventoryApiController extends AbstractApiController
 
         sort($groupings);
 
-        return $this->setData($groupings)->respond();
+        $data = [
+//            'inventory' => $inventory,
+            'groupings' => $groupings,
+        ];
+
+        return $this->setData($data)->respond();
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detailed(Request $request)
+    {
+        $q = DB::table('listables as l')
+            ->leftJoin('inventory_type_styles as s', 's.id','=', 'l.inventory_type_styles_id')
+            ->leftJoin('inventory_sizes as is', 'is.id', '=', 'l.inventory_sizes_id')
+            ->leftJoin('claims as c', function($q){
+                $q->on('c.listable_id', '=', 'l.id');
+                $q->on('c.listable_type', '=', 'l.subclass_name');
+            })
+            ->leftJoin('v_pageviews as v', function($q){
+                $q->on('v.viewable_id', '=', 'l.id');
+                $q->on('v.viewable_type', '=', 'l.subclass_name');
+            })
+            ->join('files as f', 'f.id', '=', 'l.cover_photo_file_id')
+            ->where('l.user_id', '=', $this->getUser()->id)
+            ->where('l.subclass_name', '=', Inventory::class)
+            ->whereNull('l.deleted_at')
+            ->whereNull('c.deleted_at')
+            ->selectRaw(DB::raw("
+            l.id,
+            l.subclass_name,
+            l.name,
+            l.name_alt,
+            CONCAT(l.name_alt,'_', l.id) as name_with_id,
+            CONCAT(l.name_alt, '::', f.location) as name_with_cover_photo,
+            f.location as cover_photo_location,
+            CONCAT('$', IFNULL(SUM(c.accepted_price), 0)) AS accepted_price_sum,
+            CONCAT('$', IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0)) AS gross,
+            IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
+            IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
+            IFNULL(SUM(v.count), 0) AS pageviews_count,
+            IFNULL(SUM(l.initial_qty),0) as qty_on_hand
+            "))
+            ->groupBy(DB::raw('name_with_id asc WITH rollup'));
+
+        if (Binput::has('filter')) {
+            $filter = Binput::get('filter');
+            $q->where(function($q) use ($filter) {
+                $q->where('l.name', 'like', '%'.$filter.'%');
+                $q->orWhere('l.name_alt', 'like', '%'.$filter.'%');
+            });
+        }
+
+        $select = $q->get();
+//
+//        $sql = "
+//            SELECT
+//            l.id,
+//            l.class,
+//            l.name,
+//            l.name_alt,
+//            CONCAT(l.name_alt,'_', l.id) as name_with_id,
+//            f.location as cover_photo_location,
+//            CONCAT('$', IFNULL(SUM(c.accepted_price), 0)) AS accepted_price_sum,
+//            CONCAT('$', IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0)) AS gross,
+//            IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
+//            IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
+//            IFNULL(SUM(v.count), 0) AS pageviews_count,
+//            IFNULL(SUM(l.initial_qty),0) as qty_on_hand
+//            FROM listables as i
+//            LEFT JOIN inventory_type_styles AS s ON s.id = l.inventory_type_styles_id
+//            LEFT JOIN inventory_sizes as `is` ON is.id=l.inventory_sizes_id
+//            LEFT JOIN claims as c ON c.listable_id = l.id AND c.listable_type = l.class
+//            LEFT JOIN v_pageviews as v on v.viewable_id = l.id AND v.viewable_type = l.class
+//            INNER JOIN files as f ON f.id = l.cover_photo_file_id
+//            WHERE l.user_id = ?
+//            AND l.deleted_at is null
+//            and c.deleted_at is null
+//            GROUP BY name_with_id asc
+//            WITH rollup
+//            ";
+//
+//        $select = DB::select($sql, [$this->getUser()->id]);
+
+//
+//        if ($request->has('style_id') && $request->get('style_id')) {
+//            $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
+//        }
+//        if ($request->has('size_id') && $request->get('size_id')) {
+//            $data = $data->whereIn('inventory_sizes_id', $request->get('size_id'));
+//        }
+//        if ($request->has('qty_0')) {
+//            $data = $data->where('initial_qty', 0);
+//        }
+//        if ($request->has('flashsale_id')) {
+//            $data = $data->whereHas('flashsales', function ($q) use ($request) {
+//                $q->whereIn('flashsales.id', $request->get('flashsale_id'));
+//            });
+//        }
+//        if ($request->has('has_sales')) {
+//            $data = $data->has('sales', '>', 0);
+//        }
+//        if ($request->has('has_claims')) {
+//            $data = $data->has('pendingClaims', '>', 0);
+//        }
+
+        // FIXME!!
+        // Solution: Rewrite query as raw sql.
+        // Problem: We are paginating the data in chunks of 50. However, we aren't calling paginate on the DB query,
+        // but instead on the collection.  This is so that we can sort alphabetically correctly, which can
+        // only be done on the results.  This pitfall of this is if we have a lot of data returned, for example 2000 items,
+        // we would be sorting all 2000 items, then chunking it into 50.
+        // If we used the native pagination on the query builder, it would only return chunks of 50 results at a time
+        // lessening the overhead.  However, sorting the results alphabeitcally doesn't work.
+//        $data = $data->get();
+
+
+//        $data = $selec->sortBy(function($post) {
+//            return sprintf('%-12s%s', $post->style->name, $post->styleSize->sort_order);
+//        });
+
+        if ($select) {
+            $rolledup = array_pop($select);
+            $rolledupData = [
+                'accepted_price_sum' => $rolledup->accepted_price_sum,
+                'gross' => $rolledup->gross,
+                'accepted_sales_count' => $rolledup->accepted_sales_count,
+                'pending_sales_count' => $rolledup->pending_sales_count,
+                'pageviews_count' => $rolledup->pageviews_count,
+                'qty_on_hand' => $rolledup->qty_on_hand,
+            ];
+        }
+
+        $data = collect($select);
+
+        $data = $this->paginateData($request, $data);
+
+        return \Response::json(['data' => $data, 'totals' => isset($rolledupData) ? $rolledupData : []]);
     }
 
     /**

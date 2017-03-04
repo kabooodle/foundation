@@ -10,6 +10,7 @@ use DB;
 use Kabooodle\Models\Comments;
 use Kabooodle\Bus\Commands\Comments\AddCommentCommand;
 use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
+use Kabooodle\Services\Comments\CommentsService;
 
 /**
  * Class AddCommentCommandHandler
@@ -17,6 +18,19 @@ use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
  */
 class AddCommentCommandHandler
 {
+    /**
+     * @var CommentsService
+     */
+    protected $commentsService;
+
+    /**
+     * @param CommentsService $commentsService
+     */
+    public function __construct(CommentsService $commentsService)
+    {
+        $this->commentsService = $commentsService;
+    }
+
     /**
      * @param AddCommentCommand $command
      *
@@ -30,8 +44,9 @@ class AddCommentCommandHandler
             $comment = new Comments;
             $comment->commentable_id = $commentable->id;
             $comment->commentable_type = get_class($commentable);
-            $comment->text_raw = $command->getComment();
+            $comment->text_raw = $this->commentsService->highlightUsernames($command->getComment());
             $comment->user_id = $command->getActor()->id;
+            $comment->reference_url = $command->getReferringUrl();
 
             $comment->save();
 

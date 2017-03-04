@@ -7,8 +7,9 @@
 namespace Kabooodle\Http\Middleware;
 
 use Auth;
+use Binput;
 use Closure;
-use Kabooodle\Models\User;
+use Kabooodle\Services\Referrals\ReferralsService;
 
 /**
  * Class ReferralProgramMiddleware
@@ -16,8 +17,18 @@ use Kabooodle\Models\User;
  */
 class ReferralProgramMiddleware
 {
-    const SESSION_KEY = 'kabooodle_referrer';
-    const REQUEST_KEY = 'referred_by';
+    /**
+     * @var ReferralsService
+     */
+    public $referralService;
+
+    /**
+     * @param ReferralsService $referralsService
+     */
+    public function __construct(ReferralsService $referralsService)
+    {
+        $this->referralService = $referralsService;
+    }
 
     /**
      * @param  \Illuminate\Http\Request $request
@@ -30,9 +41,7 @@ class ReferralProgramMiddleware
     {
         $response = $next($request);
 
-        if (Auth::guard($guard)->guest()
-            && !$this->sessionValueExists($request)
-        ) {
+        if (Auth::guard($guard)->guest() && !$this->sessionValueExists($request)) {
             $this->setSessionValue($request);
         }
 
@@ -46,7 +55,7 @@ class ReferralProgramMiddleware
      */
     public function sessionValueExists($request)
     {
-        return (bool) $request->session()->has(self::SESSION_KEY) && $request->session()->get(self::REQUEST_KEY) == $request->userName;
+        return (bool) $request->session()->has($this->referralService::REFERRAL_BY_USERNAME) && $request->session()->get($this->referralService::REFERRAL_BY_USERNAME) == trim($request->username);
     }
 
     /**
@@ -56,9 +65,8 @@ class ReferralProgramMiddleware
      */
     public function setSessionValue($request)
     {
-        if ($user = User::where('username', $request->userName)->first()) {
-            $request->session()->put(self::SESSION_KEY, $user->id);
-            $request->session()->put(self::REQUEST_KEY, $user->username);
+        if ($user = $this->referralService->lookupRefereeByUsername(Binput::clean($request->username))) {
+            $request->session()->put($this->referralService::REFERRAL_BY_USERNAME, $user->username);
         }
     }
 }

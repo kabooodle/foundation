@@ -23,8 +23,10 @@ abstract class AbstractListingModel extends BaseEloquentModel
     ];
 
     const STATUS_SCHEDULED = 'scheduled';
+    const STATUS_SCHEDULED_DELETE = 'scheduled_delete';
     const STATUS_QUEUED_LIST = 'queued';
     const STATUS_PROCESSING = 'processing';
+    const STATUS_PROCESSING_DELETE = 'processing_delete';
     const STATUS_PARTIAL = 'partial';
     const STATUS_SUCCESS = 'success';
     const STATUS_COMPLETED = 'completed';
@@ -32,9 +34,12 @@ abstract class AbstractListingModel extends BaseEloquentModel
     const STATUS_QUEUED_DELETE = 'queued_delete';
     const STATUS_IGNORED_DUPLICATE = 'ignored_duplicate';
     const STATUS_FAILED = 'failed';
+    const STATUS_FAILED_DELETE = 'delete_failed';
     const STATUS_THROTTLED = 'throttled';
     const STATUSES = [
         self::STATUS_SCHEDULED,
+        self::STATUS_SCHEDULED_DELETE,
+        self::STATUS_PROCESSING_DELETE,
         self::STATUS_QUEUED_LIST,
         self::STATUS_PROCESSING,
         self::STATUS_PARTIAL,
@@ -45,7 +50,17 @@ abstract class AbstractListingModel extends BaseEloquentModel
         self::STATUS_IGNORED_DUPLICATE,
         self::STATUS_FAILED,
         self::STATUS_THROTTLED,
+        self::STATUS_FAILED_DELETE
     ];
+
+    /**
+     * @param $scope
+     * @return $this
+     */
+    public function scopeRandomize($scope)
+    {
+        return $scope->orderByRaw('RAND()');
+    }
 
     /**
      * @param $scope
@@ -176,18 +191,31 @@ abstract class AbstractListingModel extends BaseEloquentModel
     /**
      * @param int $userId
      * @param $startTime
-     * @param $endTime
      * @return bool
      */
-    public static function queryGetItemsDuringDateTimeBlockForUser(int $userId, $startTime, $endTime)
+    public static function queryGetItemsDuringDateTimeBlockForUser(int $userId, $startTime)
     {
-        $query = "SELECT * FROM listing_items as li 
+        $query = " 
+        SELECT * FROM listing_items as li 
         INNER JOIN listings as l ON l.id = li.listing_id
-        WHERE (l.scheduled_for BETWEEN ? and ?)
+        WHERE l.scheduled_for BETWEEN date_sub(?, interval 1 hour) and date_add(?, interval 1 hour)
         AND l.owner_id = ?
-        AND li.ignore = 0";
+        AND li.ignore = 0
+        AND li.deleted_at is null
+        AND l.deleted_at is null
+        
+        UNION
+        
+        SELECT * FROM listing_items as li 
+        INNER JOIN listings as l ON l.id = li.listing_id
+        WHERE l.scheduled_for_deletion BETWEEN date_sub(?, interval 1 hour) and date_add(?, interval 1 hour)
+        AND l.owner_id = ?
+        AND li.ignore = 0
+        AND li.deleted_at is null
+        AND l.deleted_at is null
+        ";
 
-        return DB::select($query, [$startTime, $endTime, $userId]);
+        return DB::select($query, [$startTime, $startTime, $userId, $startTime, $startTime, $userId]);
     }
 
     /**
@@ -203,7 +231,7 @@ abstract class AbstractListingModel extends BaseEloquentModel
         $results = self::queryGetItemsDuringDateTimeBlockForUser($userId, $startTime, $endTime);
         $countResults = count($results);
 
-        return ($countResults + $incomingItemsCount) > 600;
+        return ($countResults + $incomingItemsCount) > 900;
     }
 
     /**
@@ -219,6 +247,40 @@ abstract class AbstractListingModel extends BaseEloquentModel
             ->scheduledFor('>=', $startTime->format('Y-m-d H:i:s'))
             ->scheduledFor('<=', $endTime->format('Y-m-d H:i:s'))
             ->statusScheduled()
+            ->randomize()
+            ->get();
+    }
+
+    /**
+     * @param Carbon $startTime
+     * @param Carbon $endTime
+     *
+     * @return mixed
+     */
+    public static function getScheduledForDeletionListings(Carbon $startTime, Carbon $endTime)
+    {
+        return Listings::noEagerLoads()
+            ->facebook()
+            ->where('scheduled_for_deletion', '>=', $startTime->format('Y-m-d H:i:s'))
+            ->where('scheduled_for_deletion', '<=', $endTime->format('Y-m-d H:i:s'))
+            ->where('status', '=', self::STATUS_SCHEDULED_DELETE)
+            ->randomize()
+            ->get();
+    }
+
+    /**
+     * @param Carbon $startTime
+     * @param Carbon $endTime
+     *
+     * @return mixed
+     */
+    public static function getScheduledForDeletionListingItems(Carbon $startTime, Carbon $endTime)
+    {
+        return ListingItems::noEagerLoads()
+            ->facebook()
+            ->where('scheduled_for_deletion', '>=', $startTime->format('Y-m-d H:i:s'))
+            ->where('scheduled_for_deletion', '<=', $endTime->format('Y-m-d H:i:s'))
+            ->where('status', '=', self::STATUS_SCHEDULED_DELETE)
             ->randomize()
             ->get();
     }
@@ -270,24 +332,24 @@ abstract class AbstractListingModel extends BaseEloquentModel
      */
     public static function getStyleGroupings(string $listingUuid)
     {
-        return DB::table('inventory_type_styles')
-            ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
-            ->join('inventory_sizes', 'inventory_sizes.id', '=', 'inventory.inventory_sizes_id')
-            ->join('listing_items', 'listing_items.listable_id', '=', 'inventory.id')
+        return DB::table('listables')
+            ->leftJoin('inventory_type_styles', 'inventory_type_styles.id', '=', 'listables.inventory_type_styles_id')
+            ->leftJoin('inventory_sizes', 'inventory_sizes.id', '=', 'listables.inventory_sizes_id')
+            ->join('listing_items', 'listing_items.listable_id', '=', 'listables.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listings.uuid', $listingUuid)
             ->whereNull('listing_items.deleted_at')
             ->whereNull('listings.deleted_at')
-            ->whereNull('inventory.deleted_at')
-            ->groupBy('inventory.id')
+            ->whereNull('listables.deleted_at')
+            ->groupBy('listables.uuid')
             ->groupBy('inventory_type_styles_id')
             ->groupBy('inventory_sizes_id')
-            ->select([
-                'inventory_sizes.id as size_id',
-                'inventory_type_styles.id as style_id',
-                'inventory_type_styles.name as style_name',
-                'inventory_sizes.name as size_name'
-            ])
+            ->selectRaw("
+                inventory_sizes.id as size_id, 
+                IFNULL(inventory_type_styles.id, 'outfits') as style_id,
+                IFNULL(inventory_type_styles.name, 'Outfits') as style_name,
+                inventory_sizes.name as size_name
+            ")
             ->get();
     }
 
@@ -299,15 +361,15 @@ abstract class AbstractListingModel extends BaseEloquentModel
     public static function getStyleGroupingsForFlashsale(int $flashsaleId)
     {
         return DB::table('inventory_type_styles')
-            ->join('inventory', 'inventory.inventory_type_styles_id', '=', 'inventory_type_styles.id')
-            ->join('inventory_sizes', 'inventory_sizes.id', '=', 'inventory.inventory_sizes_id')
-            ->join('listing_items', 'listing_items.listable_id', '=', 'inventory.id')
+            ->join('listables', 'listables.inventory_type_styles_id', '=', 'inventory_type_styles.id')
+            ->join('inventory_sizes', 'inventory_sizes.id', '=', 'listables.inventory_sizes_id')
+            ->join('listing_items', 'listing_items.listable_id', '=', 'listables.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listing_items.flashsale_id', $flashsaleId)
             ->whereNull('listing_items.deleted_at')
             ->whereNull('listings.deleted_at')
-            ->whereNull('inventory.deleted_at')
-            ->groupBy('inventory.id')
+            ->whereNull('listables.deleted_at')
+            ->groupBy('listables.id')
             ->groupBy('inventory_type_styles_id')
             ->groupBy('inventory_sizes_id')
             ->select([

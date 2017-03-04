@@ -53,6 +53,7 @@ class Comments extends BaseEloquentModel implements Revisionable
         'commentable_type' => 'string',
         'text_raw' => 'string',
         'text' => 'string',
+        'reference_url' => 'string'
     ];
 
     /**
@@ -63,7 +64,8 @@ class Comments extends BaseEloquentModel implements Revisionable
         'commentable_parent_id',
         'commentable_id',
         'commentable_type',
-        'text_raw'
+        'text_raw',
+        'reference_url'
     ];
 
     /**

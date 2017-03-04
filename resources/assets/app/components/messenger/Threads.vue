@@ -4,6 +4,7 @@
         <div class="list white" v-if="threads">
             <thread
                     v-for="thread in threads"
+                    :key="thread.id"
                     :thread="thread"
                     :endpoint="thread_endpoint.replace(/::ID::/, thread.id)"
             ></thread>

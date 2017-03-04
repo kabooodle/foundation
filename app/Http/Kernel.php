@@ -7,6 +7,7 @@
 namespace Kabooodle\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Kabooodle\Http\Middleware\ApiAllowAuthAndNonAuthMiddleware;
 use Kabooodle\Http\Middleware\ReferralProgramMiddleware;
 
 /**
@@ -59,6 +60,8 @@ class Kernel extends HttpKernel
         'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
         'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
         'jwt.renew' => \Tymon\JWTAuth\Http\Middleware\AuthenticateAndRenew::class,
+        'referral' => \Kabooodle\Http\Middleware\ReferralProgramMiddleware::class, // We only need this for the referral page
+        'api_allow_auth_and_non' => ApiAllowAuthAndNonAuthMiddleware::class // Checks and stores JTW token, gracefully lets non auth too
         //'referral' => \Kabooodle\Http\Middleware\ReferralProgramMiddleware::class,
     ];
 }

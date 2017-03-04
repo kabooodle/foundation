@@ -7,11 +7,14 @@
 namespace Kabooodle\Bus\Handlers\Commands\Listings;
 
 use DB;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Kabooodle\Bus\Commands\Claim\RejectClaimForInventoryItemCommand;
 use Kabooodle\Models\Listings;
+use Kabooodle\Models\ListingItems;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Events\Listings\ListingWasDeleted;
 use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
+use Kabooodle\Repositories\Listings\ListingsRepositoryInterface;
+use Kabooodle\Bus\Commands\Claim\RejectClaimForInventoryItemCommand;
+use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingItemForDeletionCommand;
 
 /**
  * Class DeleteListingCommandHandler
@@ -19,6 +22,19 @@ use Kabooodle\Bus\Commands\Listings\DeleteListingCommand;
 class DeleteListingCommandHandler
 {
     use DispatchesJobs;
+
+    /**
+     * @var ListingsRepositoryInterface
+     */
+    protected $listingRepository;
+
+    /**
+     * @param ListingsRepositoryInterface $listingsRepository
+     */
+    public function __construct(ListingsRepositoryInterface $listingsRepository)
+    {
+        $this->listingRepository = $listingsRepository;
+    }
 
     /**
      * @param DeleteListingCommand $command
@@ -45,9 +61,13 @@ class DeleteListingCommandHandler
                             $watcher->delete();
                         }
                     }
-
-                    // delete the listing item
-                    $item->delete();
+// Removed because its weird to delete but not really delete...
+//                    if ($item->status <> ListingItems::STATUS_QUEUED_DELETE && $item->status <> ListingItems::STATUS_DELETED) {
+//                        $job = new ScheduleFacebookListingItemForDeletionCommand($actor, $item->id);
+//                        $this->dispatch($job);
+//                    } else {@jordan
+                        $item->delete();
+//                    }
                 }
             }
 

@@ -84,6 +84,10 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Listings\ListingItemWasQueued::class => [
             \Kabooodle\Bus\Handlers\Events\Listings\NotifyListingItemWasQueued::class,
         ],
+        // LISTING ITEMS
+        \Kabooodle\Bus\Events\Listings\ListingItemWasDeleted::class => [
+            \Kabooodle\Bus\Handlers\Events\Listings\HandleListingItemWasDeleted::class
+        ],
 
         // PROFILE EVENTS
         \Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent::class => [
@@ -106,6 +110,14 @@ class EventServiceProvider extends ServiceProvider
         // SOCIAL EVENTS
         \Kabooodle\Bus\Events\Social\UserFacebookCredentialsRevokedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Social\UserFacebookCredentialsRevokedEventHandler::class
+        ],
+
+        // SUBSCRIPTION EVENTS
+        \Kabooodle\Bus\Events\Subscriptions\InvoicePaymentFailed::class => [
+            \Kabooodle\Bus\Handlers\Events\Subscription\NotifyUserInvoicePaymentFailed::class
+        ],
+        \Kabooodle\Bus\Events\Subscriptions\SubscriptionCancelled::class => [
+            \Kabooodle\Bus\Handlers\Events\Subscription\NotifyUserSubscriptionCancelled::class
         ],
 
         // USER EVENTS

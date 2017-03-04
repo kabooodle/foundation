@@ -53,4 +53,26 @@ class UserRepository implements UserRepositoryInterface
             ->havingRaw(DB::Raw('users.id IS NOT NULL'))
             ->get();
     }
+
+    /**
+     * @param array $usernames
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getByUsernames(array $usernames)
+    {
+        return $this->model->whereIn('username', $usernames)
+            ->groupBy('id')
+            ->get();
+    }
+
+    /**
+     * @param string $username
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function getByUsername(string $username)
+    {
+        return $this->model->where('username', '=', $username)->first();
+    }
 }

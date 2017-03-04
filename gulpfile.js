@@ -12,12 +12,20 @@ elixir(function (mix) {
     // Kabooodle VUE APP
     mix.browserify('app/app.js');
 
+    mix.browserify('app/components/home.js');
+    mix.browserify('app/components/closed-beta.js');
+
     // VUE Components
     mix.browserify('app/components/inventory/inventory-management.js');
     mix.browserify('app/components/inventory/manage/inventory-management-b.js');
-    mix.browserify('app/components/inventory/inventory-show.js');
     mix.browserify('app/components/inventory/inventory-create.js');
     mix.browserify('app/components/inventory/inventory-edit.js');
+
+    mix.browserify('app/components/inventory-groupings/inventory-groupings-management.js');
+    mix.browserify('app/components/inventory-groupings/inventory-groupings-simple.js');
+
+    mix.browserify('app/components/listables/listables-detailed.js');
+    mix.browserify('app/components/listables/listables-show.js');
 
     mix.browserify('app/components/profile/settings.js');
     mix.browserify('app/components/profile/emails.js');
@@ -32,9 +40,11 @@ elixir(function (mix) {
 
     mix.browserify('app/components/claims/claims-index.js');
 
+    mix.browserify('app/components/listings/listing-detailed.js');
     mix.browserify('app/components/listings/listing-index-merchant.js');
     mix.browserify('app/components/listings/listing-items-page.js');
     mix.browserify('app/components/listings/listing-index.js');
+    mix.browserify('app/components/listings/listing-create.js');
 
     mix.browserify('app/components/notices/notice-handler.js');
 

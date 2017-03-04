@@ -18,7 +18,7 @@ class InventoryTableSeeder extends Seeder
         }
 
         foreach ($users as $user) {
-            $user->inventory()->saveMany(factory(\Kabooodle\Models\Inventory::class, 20)->create(['user_id' => $user->id])->all());
+            $user->inventory()->saveMany(factory(\Kabooodle\Models\Inventory::class, 600)->create(['user_id' => $user->id])->all());
         }
     }
 }

@@ -6,15 +6,11 @@
 
 namespace Kabooodle\Models;
 
-use Kabooodle\Models\Traits\EloquentDatesTrait;
-
 /**
  * Class FlashsaleGroups
  */
 class FlashsaleGroups extends BaseEloquentModel
 {
-    use EloquentDatesTrait;
-
     /**
      * @var string
      */

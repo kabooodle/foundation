@@ -7,9 +7,9 @@
 namespace Kabooodle\Bus\Commands\Claim;
 
 use Kabooodle\Models\Contracts\Claimable;
+use Kabooodle\Models\Contracts\ListableInterface;
 use Kabooodle\Models\Email;
 use Kabooodle\Models\User;
-use Kabooodle\Models\Contracts\ShoppableInterface;
 
 /**
  * Class ClaimListedItemCommand.
@@ -17,7 +17,7 @@ use Kabooodle\Models\Contracts\ShoppableInterface;
 class ClaimListedItemCommand
 {
     protected $claimedBy;
-    protected $shoppable;
+    protected $listingItem;
     protected $listedItem;
     protected $guest;
     protected $email;
@@ -25,20 +25,20 @@ class ClaimListedItemCommand
     /**
      * ClaimListedItemCommand constructor.
      * @param User $claimedBy
-     * @param ShoppableInterface $shoppable
-     * @param Claimable $listedItem
+     * @param Claimable $listingItem
+     * @param ListableInterface $listedItem
      * @param bool $guest
      * @param Email|null $email
      */
     public function __construct(
         User $claimedBy,
-        ShoppableInterface $shoppable,
-        Claimable $listedItem,
+        Claimable $listingItem,
+        ListableInterface $listedItem,
         $guest = false,
         Email $email = null)
     {
         $this->claimedBy = $claimedBy;
-        $this->shoppable = $shoppable;
+        $this->listingItem = $listingItem;
         $this->listedItem = $listedItem;
         $this->guest = $guest;
         $this->email = $email;
@@ -53,7 +53,7 @@ class ClaimListedItemCommand
     }
 
     /**
-     * @return Claimable
+     * @return ListableInterface
      */
     public function getListedItem()
     {
@@ -61,11 +61,11 @@ class ClaimListedItemCommand
     }
 
     /**
-     * @return ShoppableInterface
+     * @return Claimable
      */
-    public function getShoppable()
+    public function getListingItem()
     {
-        return $this->shoppable;
+        return $this->listingItem;
     }
 
     /**

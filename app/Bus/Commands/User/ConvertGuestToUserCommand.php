@@ -45,21 +45,20 @@ final class ConvertGuestToUserCommand
     protected $password;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $referralId;
+    protected $referralUsername;
 
     /**
-     * ConvertGuestToUserCommand constructor.
-     * @param User $guest
-     * @param Email $email
-     * @param $firstName
-     * @param $lastName
-     * @param $username
-     * @param $password
-     * @param null $referralId
+     * @param User        $guest
+     * @param Email       $email
+     * @param             $firstName
+     * @param             $lastName
+     * @param             $username
+     * @param             $password
+     * @param string|null $referralUsername
      */
-    public function __construct(User $guest, Email $email, $firstName, $lastName, $username, $password, $referralId = null)
+    public function __construct(User $guest, Email $email, $firstName, $lastName, $username, $password, string $referralUsername = null)
     {
         $this->guest = $guest;
         $this->email = $email;
@@ -67,7 +66,7 @@ final class ConvertGuestToUserCommand
         $this->lastName = $lastName;
         $this->username = $username;
         $this->password = $password;
-        $this->referralId = $referralId;
+        $this->referralUsername = $referralUsername;
     }
 
     /**
@@ -121,8 +120,8 @@ final class ConvertGuestToUserCommand
     /**
      * @return mixed
      */
-    public function getReferralId()
+    public function getReferralUsername()
     {
-        return $this->referralId;
+        return $this->referralUsername;
     }
 }
