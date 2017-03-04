@@ -301,7 +301,7 @@
                         <img width="160" src="{{staticAsset('/assets/images/home/icons/support.png')}}"
                              class="card-img-top">
                         <div class="card-block">
-                            <h4 class="card-title">Friendly Support</h4>
+                            <h4 class="card-title">Professional Support</h4>
                             <p class="card-text">Our knowledgeable support team is eager to assist you with any
                                 questions you may have. If you have suggestions, ideas, complaints, question, or are bored, we'd love to chat!</p>
                         </div>
