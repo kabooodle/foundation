@@ -52,7 +52,7 @@
             <label>Referred By User <small class="">(username)</small></label>
         </div>
 
-        <p class="">By clicking on "Create Account" below, you are agreeing to the <a href="" class="text-primary">Terms of Service</a> and the <a href="" class="text-primary">Privacy Policy</a>.</p>
+        <p class="text-sm">By clicking on "Create Account" below, you are agreeing to the <a href="/legal/terms-service" class="text-primary">Terms of Service</a> and the <a href="/legal/privacy" class="text-primary">Privacy Policy</a>.</p>
 
         <button type="submit" class="btn primary btn-block p-x-md">Create Account</button>
     </form>

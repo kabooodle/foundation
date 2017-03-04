@@ -11,9 +11,13 @@
 //    return redirect('http://www.kabooodle.com');
 //});
 
-Route::get('privacy', function(){
-   return view('content.privacy');
+Route::get('/legal/privacy', function(){
+   return view('content.legal.privacy');
 });
+Route::get('/legal/terms-service', function(){
+    return view('content.legal.terms');
+});
+
 
 
 //Route::group(['domain' => getEnvDomain(true)], function(){

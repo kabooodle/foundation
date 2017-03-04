@@ -21,6 +21,11 @@
 @include text-wariant(dark, $dark);
 @include text-wariant(blue, $blue);
 
+.white-on-hover:hover {
+  color: #fff;
+  opacity: 1;
+}
+
 .text-white {
   color: $full-white !important;
 }

@@ -3,21 +3,30 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
-#hs-beacon.beacon-move iframe{
-  right: 64px !important;
+#hs-beacon iframe,
+#back-to-top {
   -webkit-transition: all .5s ease;
   -moz-transition: all .5s ease;
   -o-transition: all .5s ease;
   -ms-transition: all .5s ease;
   transition: all .5s ease;
 }
+
+#hs-beacon.beacon-offset iframe:first-child {
+  bottom: 176px !important;
+}
+#hs-beacon.beacon-offset iframe:not(:first-child):last-child {
+  bottom: 250px !important;
+}
+#back-to-top.beacon-offset {
+  bottom: 190px !important;
+}
+
+#hs-beacon.beacon-move iframe{
+  right: 64px !important;
+}
 #hs-beacon iframe{
   right: 5px !important;
-  -webkit-transition: all .5s ease;
-  -moz-transition: all .5s ease;
-  -o-transition: all .5s ease;
-  -ms-transition: all .5s ease;
-  transition: all .5s ease;
 }
 
 #back-to-top {
