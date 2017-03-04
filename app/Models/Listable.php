@@ -257,6 +257,14 @@ class Listable extends BaseEloquentModel implements Commentable, LikeableInterfa
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllImages()
+    {
+        return $this->images()->get();
+    }
+
+    /**
      * @return mixed
      */
     public function getCoverPhotoAttribute()

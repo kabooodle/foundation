@@ -148,6 +148,22 @@ class InventoryGrouping extends Listable implements ListableInterface
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllImages()
+    {
+        $ids = array_merge([$this->cover_photo_file_id],$this->inventoryItems->lists('cover_photo_file_id')->all());
+        return Files::leftJoin('listables', 'files.fileable_id', '=', 'listables.id')
+            ->where(function ($q) use ($ids) {
+                $q->whereIn('files.id', $ids);
+                $q->whereIn('fileable_type', [InventoryGrouping::class, Inventory::class]);
+            })
+            ->orderBy('files.fileable_type', 'desc')
+            ->orderBy('listables.name_alt', 'desc')
+            ->get();
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function inventoryItems()
