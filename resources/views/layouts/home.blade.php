@@ -9,8 +9,11 @@
     @include('layouts.header._htmlheader')
 
     <body class=" @yield('body-class', null) home-content ">
-        <div class="app">
-            @yield('content')
+        <div class="app" >
+
+            <div id="home-container">
+                @yield('content')
+            </div>
 
             @include('layouts.footer._htmlfooter')
 

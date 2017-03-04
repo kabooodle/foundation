@@ -2,13 +2,24 @@
 
 @push('header-styles')
 <style>
+    html {
+        overflow: hidden;
+    }
     html, body{
         height: 100%;
     }
     body {
+        overflow: scroll;
+        -webkit-overflow-scrolling: touch;
         margin: 0;
         padding: 0;
-        background: url(/assets/images/home/closed_beta_bg.jpg) center center fixed;
+        background-image: url(/assets/images/home/closed_beta_bg.jpg);
+        background-size: cover;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-attachment: fixed;
+        background-position: center center;
         background-size:  cover;
         color: #fff;
     }
@@ -20,6 +31,7 @@
     }
     body .app {
         padding-top: 0 !important;
+        display: block;
     }
     h1, h2, h3 {
         color: #fff;
@@ -47,6 +59,11 @@
             text-align: center;
         }
     }
+    @media (max-width: @iphone-screen) {
+        body {
+            background-attachment: scroll;
+        }
+    }
     @media (max-width: 414px) {
         h1 {
             margin-top: 20px;
@@ -64,7 +81,7 @@
 
 @section('body-content')
 
-    <div class="p-l-2 p-r-2" id="">
+    <div class="p-l-2 p-r-2 p-b-1" id="">
         <div class="row">
             <div class="col-md-7">
                 <a class="text-left" href="/home">@include('partials._logo_svg_lg')</a>

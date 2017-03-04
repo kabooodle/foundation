@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "23913ae572382939b8137a6929a247c9",
+    "content-hash": "a77ece1521d39063800e143f7042f30a",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -1773,6 +1773,48 @@
                 "uri"
             ],
             "time": "2016-06-24T23:00:38+00:00"
+        },
+        {
+            "name": "helpscout/api",
+            "version": "1.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/helpscout/helpscout-api-php.git",
+                "reference": "fb18302040478c1543f3cac1748c811c5f2b4b53"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/helpscout/helpscout-api-php/zipball/fb18302040478c1543f3cac1748c811c5f2b4b53",
+                "reference": "fb18302040478c1543f3cac1748c811c5f2b4b53",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.3.2",
+                "shuber/curl": "dev-master"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "HelpScout\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "API client for the Help Scout API",
+            "homepage": "http://www.helpscout.net",
+            "keywords": [
+                "API-Client",
+                "api",
+                "helpscout"
+            ],
+            "time": "2016-06-13T14:12:27+00:00"
         },
         {
             "name": "iron-io/iron_core",
@@ -4129,6 +4171,39 @@
                 "usps"
             ],
             "time": "2016-06-28T23:38:09+00:00"
+        },
+        {
+            "name": "shuber/curl",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hamstar/curl.git",
+                "reference": "6624992df201f9fd7262080117385dd09b0ecd2b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hamstar/curl/zipball/6624992df201f9fd7262080117385dd09b0ecd2b",
+                "reference": "6624992df201f9fd7262080117385dd09b0ecd2b",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "curl.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP Wrapper for Curl",
+            "keywords": [
+                "bot",
+                "curl",
+                "scraper",
+                "spider"
+            ],
+            "time": "2013-11-23 01:44:31"
         },
         {
             "name": "sofa/revisionable",
@@ -7304,14 +7379,13 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
         "dingo/api": 20,
         "nexmo/client": 10,
-        "nexmo/laravel": 10,
         "tymon/jwt-auth": 20
     },
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.5.9 || ^7.0"

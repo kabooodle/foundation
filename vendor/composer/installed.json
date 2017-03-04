@@ -7554,5 +7554,84 @@
             "mailchimp",
             "newsletter"
         ]
+    },
+    {
+        "name": "shuber/curl",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/hamstar/curl.git",
+            "reference": "6624992df201f9fd7262080117385dd09b0ecd2b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/hamstar/curl/zipball/6624992df201f9fd7262080117385dd09b0ecd2b",
+            "reference": "6624992df201f9fd7262080117385dd09b0ecd2b",
+            "shasum": ""
+        },
+        "time": "2013-11-23T01:44:31+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "files": [
+                "curl.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "PHP Wrapper for Curl",
+        "keywords": [
+            "bot",
+            "curl",
+            "scraper",
+            "spider"
+        ]
+    },
+    {
+        "name": "helpscout/api",
+        "version": "1.8.1",
+        "version_normalized": "1.8.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/helpscout/helpscout-api-php.git",
+            "reference": "fb18302040478c1543f3cac1748c811c5f2b4b53"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/helpscout/helpscout-api-php/zipball/fb18302040478c1543f3cac1748c811c5f2b4b53",
+            "reference": "fb18302040478c1543f3cac1748c811c5f2b4b53",
+            "shasum": ""
+        },
+        "require": {
+            "ext-curl": "*",
+            "php": ">=5.3.2",
+            "shuber/curl": "dev-master"
+        },
+        "require-dev": {
+            "codeclimate/php-test-reporter": "dev-master",
+            "phpunit/phpunit": "4.*"
+        },
+        "time": "2016-06-13T14:12:27+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "HelpScout\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "API client for the Help Scout API",
+        "homepage": "http://www.helpscout.net",
+        "keywords": [
+            "API-Client",
+            "api",
+            "helpscout"
+        ]
     }
 ]

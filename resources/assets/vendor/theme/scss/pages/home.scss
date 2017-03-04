@@ -6,10 +6,6 @@ $warning-primary : #f77a99;
 html,body {
   background-color: #fff;
 }
-body {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
-}
-
 
 .home-content {
 
@@ -52,12 +48,12 @@ body {
     right: 19px;
     color: #9446ed;
     font-size: 25px;
-    z-index: 8999;
+    z-index: 200;
   }
 
   // Boilerplate
   .section {
-    height: 52rem;
+    height: 50rem;
     padding: 50px 0;
     postion: relative;
     &.section-w-bg {
@@ -125,7 +121,7 @@ body {
 
   .card-lg {
     .card-title {
-      margin: 50px 0;
+      margin: 30px 0;
     }
   }
 
@@ -210,7 +206,7 @@ body {
 
   // Solutions Section
   .section-solutions {
-    height: 104rem;
+    height: 100rem;
     .wrapper-border {
       border: 2px solid #eeeff2;
     }
@@ -390,7 +386,7 @@ body {
     .cta-group {
       position: relative;
       .btn {
-        width: 240px;
+        //width: 240px;
         color: #fff;
         font-weight: 700;
         &:last-of-type {
@@ -408,6 +404,22 @@ body {
   }
 
 
+
+
+  // Ready Section
+  .section-contact {
+    background-color: #fff;
+    .section-bg {
+      background: transparent url(/assets/images/home/section_contact_bg.jpg) center no-repeat;
+      background-size: cover;
+    }
+    .section-title {
+      color: $blue-text-primary;
+    }
+    .section-sub-title {
+      color: #97a1c2;
+    }
+  }
 
 
 
@@ -788,7 +800,7 @@ body {
 
 
     .hero {
-      max-height: 40rem;
+      max-height: 46rem;
       .hero-inner {
         max-width:100%;
         width: 100%;
@@ -811,7 +823,7 @@ body {
     }
 
     .section-solutions {
-      height: 230rem;
+      height: 238rem;
       .card-as-list {
         text-align: center;
         margin-bottom: 35px;
@@ -886,7 +898,7 @@ body {
 
   @media (max-width: 414px) {
     .section-solutions {
-      min-height: 230rem;
+      min-height: 236rem;
     }
     .section-pricing {
       min-height:108rem;
@@ -899,6 +911,9 @@ body {
     }
     .section-ready {
       min-height: 26rem;
+    }
+    .section-contact{
+      height: 24rem;
     }
   }
 
@@ -917,16 +932,13 @@ body {
     }
 
     .section-solutions {
-      min-height: 243rem;
-    }
-    .section-pricing {
-      min-height: 94rem;
+      min-height: 254rem;
     }
     .section-services {
       min-height: 95rem;
     }
     .section-pricing {
-      min-height: 106rem;
+      min-height: 110rem;
     }
     .section-about {
       min-height: 58rem;
@@ -941,10 +953,13 @@ body {
 
   @media (max-width: 375px) {
     .section-solutions {
-      min-height: 250rem;
+      min-height: 246rem;
     }
     .section-pricing {
       min-height: 109rem;
+    }
+    .section-contact{
+      height: 24rem;
     }
   }
 
@@ -963,13 +978,13 @@ body {
       }
     }
     .section-solutions {
-      min-height: 277rem;
+      min-height: 284rem;
     }
     .section-pricing {
       min-height: 112rem;
     }
     .section-services {
-      min-height: 104rem;
+      min-height: 98rem;
     }
     .section-about {
       min-height: 60rem;

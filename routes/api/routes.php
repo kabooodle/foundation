@@ -30,6 +30,13 @@ $api->version('v1', function ($api) {
             'expires' => 5,
             'uses' => \Kabooodle\Http\Controllers\Api\GeneralController::class.'@joinClosedBeta'
         ]);
+        $api->post('contact', [
+            'as' => 'contact.store',
+            'middleware' => 'api.throttle',
+            'limit' => 100,
+            'expires' => 5,
+            'uses' => \Kabooodle\Http\Controllers\Api\Contact\ContactController::class.'@store'
+        ]);
 
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'queues' . DIRECTORY_SEPARATOR . 'routes.php';
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'inventory' . DIRECTORY_SEPARATOR . 'routes.php';

@@ -11,6 +11,9 @@ return [
     'closedbeta' => [
         'join_success' => 'Thank you! We will notify you very soon! Don\'t forget to follow us on social media'
     ],
+    'contact' => [
+      'success' => 'Thank you! We will be in contact shortly.'
+    ],
 
 
     'listings' => [

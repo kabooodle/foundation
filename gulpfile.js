@@ -12,6 +12,7 @@ elixir(function (mix) {
     // Kabooodle VUE APP
     mix.browserify('app/app.js');
 
+    mix.browserify('app/components/home.js');
     mix.browserify('app/components/closed-beta.js');
 
     // VUE Components
