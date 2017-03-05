@@ -121,7 +121,7 @@
                                                 <span class="text-muted">{{ inventory.available_qty }}</span>
                                             </span>
                                             <span class="pull-right">
-                                                <i @click="grouping.inventory.splice(index, 1)" class="fa fa-times text-danger pointer"></i>
+                                                <i @click="unattachInventory(index)" class="fa fa-times text-danger pointer"></i>
                                             </span>
                                         </span>
                                     </div>
@@ -168,7 +168,6 @@
                         <inventory-group
                             v-for="group in inventory.groups"
                             :key="group.id"
-                            :ukey=grouping.id
                             :group=group
                             group_type="inventory"
                             :display_footer_buttons="false"
@@ -176,6 +175,8 @@
                             :selected-quantity-adjustment=selectedQuantityAdjustment
                             :use-available-qty=true
                             :disable-unavailable=true
+                            v-on:listable-selected=addInventory
+                            v-on:listable-removed=removeInventory
                         ></inventory-group>
                     </div>
                 </div>
@@ -339,6 +340,29 @@
             },
         },
         methods: {
+            addInventory: function (group, subgroup, inventory) {
+                if (this.selectedInventoryIds.indexOf(inventory.id) == -1) {
+                    this.grouping.inventory.push(inventory);
+                } else {
+                    var index = this.grouping.inventory.indexOf(this.grouping.inventory.find(function (item) {
+                        return item.id == inventory.id;
+                    }));
+                    if (index > -1) {
+                        this.grouping.inventory.splice(index, 1);
+                        this.grouping.inventory.push(inventory);
+                    }
+                }
+            },
+            removeInventory: function (group, subgroup, inventory) {
+                var index = this.grouping.inventory.indexOf(inventory);
+                if (index > -1) {
+                    this.grouping.inventory.splice(index, 1);
+                }
+            },
+            unattachInventory: function (index) {
+                var listable = this.grouping.inventory.splice(index, 1)[0];
+                $Bus.$emit('listable-unselected', listable);
+            },
             duplicateGrouping: function () {
                 this.grouping.duplicating = true;
                 this.$emit('duplicate-grouping');
@@ -424,25 +448,6 @@
         created: function () {
             $Bus.$on('image:uploaded:'+this.grouping.id, (el, data)=> {
                 this.grouping.image = data;
-            });
-            $Bus.$on('listable:selected:'+this.grouping.id, (group, subgroup, inventory)=> {
-                if (this.selectedInventoryIds.indexOf(inventory.id) == -1) {
-                    this.grouping.inventory.push(inventory);
-                } else {
-                    var index = this.grouping.inventory.indexOf(this.grouping.inventory.find(function (item) {
-                        return item.id == inventory.id;
-                    }));
-                    if (index > -1) {
-                        this.grouping.inventory.splice(index, 1);
-                        this.grouping.inventory.push(inventory);
-                    }
-                }
-            });
-            $Bus.$on('listable:removed:'+this.grouping.id, (group, subgroup, inventory)=> {
-                var index = this.grouping.inventory.indexOf(inventory);
-                if (index > -1) {
-                    this.grouping.inventory.splice(index, 1);
-                }
             });
             Array.min = function (array) {
                 return Math.min.apply(Math, array);

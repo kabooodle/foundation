@@ -222,6 +222,13 @@
             $Bus.$on(this.group.id+'::listings:selected:listables:get', ()=>{
                 $Bus.$emit(this.group.id+'::listings:selected:listables', this.group.id, subgroup_id, this.selected.listables);
             });
+
+            $Bus.$on('listable-unselected', (listable) =>{
+                var index = self.selected.listables.findIndex(x => x.id == listable.id);
+                if (index > -1) {
+                    self.selected.listables.splice(index, 1);
+                }
+            });
         },
         methods: {
             editItemButtonClicked(item, event){
@@ -278,6 +285,7 @@
                             key = key+':'+this.ukey;
                         }
                         $Bus.$emit(key, this.group, subgroup, listable);
+                        this.$emit('listable-selected', this.group, subgroup, listable);
                     }
                 }
             },
@@ -291,6 +299,7 @@
                         key = key+':'+this.ukey;
                     }
                     $Bus.$emit(key, this.group, subgroup, listable);
+                    this.$emit('listable-removed', this.group, subgroup, listable);
                 }
             },
 
