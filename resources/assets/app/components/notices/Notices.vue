@@ -4,7 +4,7 @@
             <spinny class="text-center center-block"></spinny>
         </template>
         <template v-else>
-            <template v-if="notices.length">
+            <template v-if=notices.length>
                 <notice
                         v-for="notice in notices"
                         :key="notice.id"
