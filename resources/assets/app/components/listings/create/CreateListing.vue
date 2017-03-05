@@ -57,6 +57,7 @@
                             :show_select_buttons="show_select_buttons"
                             :listablegroupings_endpoint="endpoint"
                             :display_footer_buttons="false"
+                            :initial-disable-unavailable="true"
                     ></listable-groups>
                 </template>
 

@@ -51,6 +51,7 @@
                 :display_footer_buttons="display_footer_buttons"
                 :disable-unavailable="disableUnavailable"
                 :hide-unavailable="hideUnavailable"
+                :inventory-index-route=inventoryIndexRoute
             ></listable-grouping>
         </div>
         <popout-overlay></popout-overlay>
@@ -73,10 +74,19 @@
                 type: Boolean,
                 default: false
             },
+            inventoryIndexRoute: {
+                type: String,
+                required: self.display_footer_buttons,
+            },
+            initialDisableUnavailable: {
+                type: Boolean,
+                //required: true,
+                default: false
+            },
         },
         data(){
             return{
-                disableUnavailable: true,
+                disableUnavailable: this.initialDisableUnavailable,
                 hideUnavailable: false,
                 listables: [],
                 listable_groupings: [],

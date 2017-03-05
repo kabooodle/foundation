@@ -69,8 +69,9 @@
 
 
     <listable-groupings
-            listablegroupings_endpoint="{{ apiRoute('listables.index', [webUser()->username]) }}"
+            listablegroupings_endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"
             :display_footer_buttons="true"
+            inventory-index-route="{{ route('shop.inventory.index', [webUser()->username]) }}"
     ></listable-groupings>
 
 

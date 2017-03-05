@@ -103,7 +103,7 @@
                                                     class="btn btn-xs _400 pull-left white"
                                             >Edit</button>
                                             <a
-                                                    :href="this.window.location.href+'/'+item.name_uuid"
+                                                    :href="claimRoute(item)"
                                                     target="_blank"
                                                     class="btn btn-xs _400 pull-right white"
                                             >Claim</a>
@@ -168,7 +168,11 @@
             hideUnavailable: {
                 type: Boolean,
                 default: false
-            }
+            },
+            inventoryIndexRoute: {
+                type: String,
+                required: self.display_footer_buttons,
+            },
         },
         data(){
             return initial_state();
@@ -231,6 +235,9 @@
             });
         },
         methods: {
+            claimRoute: function (item) {
+                return this.inventoryIndexRoute + '/' +item.name_uuid
+            },
             editItemButtonClicked(item, event){
                 $Bus.$emit('popout-overlay:request-open');
 
