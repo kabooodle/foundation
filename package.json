@@ -1,8 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "prod": "gulp --production",
-    "dev": "gulp watch"
+    "prod": "gulp --production"
   },
   "dependencies": {
     "aliasify": "^2.1.0",
