@@ -1574,7 +1574,7 @@ if (! function_exists('getAppVersion')) {
      */
     function getAppVersion()
     {
-        return Kabooodle\Foundation\Application\KabooodleApplication::RELEASE_VERSION;
+        return Kabooodle\Foundation\Application\KabooodleApplication::APP_VERSION;
     }
 }
 

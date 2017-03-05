@@ -182,7 +182,6 @@
 
     </div>
 </template>
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <script>
     import BuildGroup from './Build-Flashsale-Group.vue';
     import FileUpload from '../FileUpload.vue';

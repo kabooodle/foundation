@@ -65,7 +65,6 @@ new Vue({
             fireRefreshEventOnWindow();
 
             collapseable_toggler.click(function () {
-                console.log('hi');
                 collapseable_el.is(':visible') ? collapseable_el.removeClass('show').hide() : collapseable_el.addClass('show').show();
             });
 

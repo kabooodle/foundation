@@ -223,3 +223,13 @@
 .text-white-hover:hover {
   color: #fff !important;
 }
+
+.nav-pills .show .dropdown-menu {
+  position: static;
+  float: none;
+  width: auto;
+  margin-top: 0;
+  background-color: transparent;
+  border: 0;
+  box-shadow: none;
+}

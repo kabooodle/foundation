@@ -57,7 +57,6 @@
         </inline-field>
     </span>
 </template>
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <script>
     import InlineField from '../InlineField.vue';
     import Multiselect from 'vue-multiselect';
