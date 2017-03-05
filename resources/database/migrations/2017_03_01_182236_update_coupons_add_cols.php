@@ -24,8 +24,6 @@ class UpdateCouponsAddCols extends Migration
         Schema::table('subscription_coupon_users', function(Blueprint $table){
             $table->integer('subscription_id')->unsigned()->after('id');
         });
-
-        Artisan::call('db:seed', array('--class' => 'SubscriptionCouponsSeeder'));
     }
 
     /**

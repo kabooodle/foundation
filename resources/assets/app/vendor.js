@@ -27,6 +27,7 @@ global.multiselect = require('../vendor/bootstrap-multiselect/dist/js/bootstrap-
 
 import VueTimeago from 'vue-timeago';
 
+
 Vue.use(VueResource);
 Vue.use(VueTimeago, {
     name: 'timeago', // component name, `timeago` by default
@@ -37,5 +38,3 @@ Vue.use(VueTimeago, {
 });
 
 global.$Bus = new Vue();
-
-// Vue.config.devtools = false;

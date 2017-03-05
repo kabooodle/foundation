@@ -11,6 +11,13 @@
 //    return redirect('http://www.kabooodle.com');
 //});
 
+Route::get('/', function(){
+    if(webUser()) {
+        return redirect()->route('user.profile');
+    }
+    return redirect('/home');
+});
+
 Route::get('/legal/privacy', function(){
    return view('content.legal.privacy');
 });
@@ -22,12 +29,6 @@ Route::get('/legal/terms-service', function(){
 
 //Route::group(['domain' => getEnvDomain(true)], function(){
 
-    Route::group(['middleware' => 'auth'], function () {
-        Route::get('/', [
-            'as' => 'user.profile',
-            'uses' => \Kabooodle\Http\Controllers\Web\Users\UsersController::class.'@getUser'
-        ]);
-    });
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'auth' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'claims' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'inventory' . DIRECTORY_SEPARATOR . 'routes.php';

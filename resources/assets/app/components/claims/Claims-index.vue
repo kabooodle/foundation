@@ -98,7 +98,6 @@
             selectedClaimsChanged : function(claim, event){
                 event.preventDefault();
                 const el = event.target;
-                console.log('hi');
                 if(el.checked) {
                     this.addToSelectedClaims(claim);
                 } else {
