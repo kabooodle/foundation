@@ -14,7 +14,7 @@
     $cards = [
         'sales_analytics' => [
             'title' => 'Sales analytics',
-            'body' => 'Understand <span class="_500">which sales have better outcomes.</span>  The who, what, where, when, why, and how.',
+            'body' => 'Understand <span class="_500">which sales yield better results.</span>  The who, what, where, when, why, and how.',
             'icon' => 'salesanalytics.png'
         ],
         'inventory' => [
@@ -65,7 +65,7 @@
         'engagements' => [
             'title' => 'Engagements',
             'icon' => 'engagements.png',
-            'body' => 'Whether through a listing, or directly, communicate directly with your customers anytime.'
+            'body' => 'Whether through a listing, or directly, communicate instantly with your customers anytime.'
         ],
         'friends' => [
             'title' => 'Friends with benefits',
@@ -303,7 +303,7 @@
                         <div class="card-block">
                             <h4 class="card-title">Professional Support</h4>
                             <p class="card-text">Our knowledgeable support team is eager to assist you with any
-                                questions you may have. If you have suggestions, ideas, complaints, question, or are bored, we'd love to chat!</p>
+                                questions you may have. If you have suggestions, ideas, complaints, questions, or are bored, we'd love to chat!</p>
                         </div>
                     </div>
                 </div>
@@ -372,7 +372,7 @@
     <section class="section section-w-bg section-ready">
         <div class="section-bg"></div>
         <h1 id="ready" class="section-title text-center">Ready to get started?</h1>
-        <h2 class="section-sub-title text-center">Register and start selling and buying in minutes. No card
+        <h2 class="section-sub-title text-center">Register to begin selling and buying in minutes. No card
             required.</h2>
         <div class="cta-group text-center">
             <a href="/auth/register?a=merchant" class="btn btn-lg cta-ready">Start my 30 day free trial!</a>

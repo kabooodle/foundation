@@ -53,8 +53,14 @@ class Handler extends ExceptionHandler
 
         if ($request->is('*api*')) {
             app('Barryvdh\Cors\Stack\CorsService')->addActualRequestHeaders($response, $request);
+
+            return $response;
         }
 
-        return $response;
+        if ($this->isHttpException($e)) {
+            return $this->toIlluminateResponse($this->renderHttpException($e), $e);
+        } else {
+            return response()->view('errors.500');
+        }
     }
 }
