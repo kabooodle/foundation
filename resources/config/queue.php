@@ -79,7 +79,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'general-queue',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
 
 
@@ -94,7 +94,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'viewtracker-queue',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-viewtracker-b' => [
             'driver'  => 'iron',
@@ -103,7 +103,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'viewtracker-queue-b',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
 
 
@@ -118,7 +118,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'email-queue',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-emails' => [
             'driver'  => 'iron',
@@ -127,7 +127,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'email-queue',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-emails-b' => [
             'driver'  => 'iron',
@@ -136,7 +136,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'email-queue-b',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-emails-c' => [
             'driver'  => 'iron',
@@ -145,7 +145,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'email-queue-c',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-emails-d' => [
             'driver'  => 'iron',
@@ -154,7 +154,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'email-queue-d',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-emails-e' => [
             'driver'  => 'iron',
@@ -163,7 +163,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'email-queue-e',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-emails-f' => [
             'driver'  => 'iron',
@@ -172,7 +172,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'email-queue-f',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-emails-g' => [
             'driver'  => 'iron',
@@ -181,7 +181,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'email-queue-g',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
 
 
@@ -195,7 +195,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-scheduler-queue',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-scheduler-b' => [
             'driver'  => 'iron',
@@ -204,7 +204,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-scheduler-queue-b',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-scheduler-c' => [
             'driver'  => 'iron',
@@ -213,7 +213,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-scheduler-queue-c',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-scheduler-d' => [
             'driver'  => 'iron',
@@ -222,7 +222,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-scheduler-queue-d',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-scheduler-e' => [
             'driver'  => 'iron',
@@ -231,7 +231,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-scheduler-queue-e',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
 
 
@@ -247,7 +247,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-lister-b' => [
             'driver'  => 'iron',
@@ -256,7 +256,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue-b',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-lister-c' => [
             'driver'  => 'iron',
@@ -265,7 +265,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue-c',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-lister-d' => [
             'driver'  => 'iron',
@@ -274,7 +274,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue-d',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-lister-e' => [
             'driver'  => 'iron',
@@ -283,7 +283,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue-e',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-lister-f' => [
             'driver'  => 'iron',
@@ -292,7 +292,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue-f',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-lister-g' => [
             'driver'  => 'iron',
@@ -301,7 +301,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue-g',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-lister-h' => [
             'driver'  => 'iron',
@@ -310,7 +310,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue-h',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-lister-i' => [
             'driver'  => 'iron',
@@ -319,7 +319,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue-i',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-lister-j' => [
             'driver'  => 'iron',
@@ -328,7 +328,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-lister-queue-j',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
 
 
@@ -342,7 +342,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-deleter-queue',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-deleter-b' => [
             'driver'  => 'iron',
@@ -351,7 +351,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-deleter-queue-b',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-deleter-c' => [
             'driver'  => 'iron',
@@ -360,7 +360,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-deleter-queue-c',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-deleter-d' => [
             'driver'  => 'iron',
@@ -369,7 +369,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-deleter-queue-d',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
         'iron-facebook-deleter-e' => [
             'driver'  => 'iron',
@@ -378,7 +378,7 @@ return [
             'project' => env('IRON_QUEUE_ID'),
             'queue'   => 'fb-deleter-queue-e',
             'encrypt' => true,
-            'timeout' => 60
+            'timeout' => 300
         ],
     ],
 
