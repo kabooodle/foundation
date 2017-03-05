@@ -86,10 +86,12 @@
         </div>
     </div>
 
-    <script>
-        const notifications_route = '{{ route('profile.notifications.update') }}';
-    </script>
-
-    <script src="{{  staticAsset('/assets/js/profile-notifications.js') }}"></script>
-
 @endsection
+
+@push('footer-scripts')
+<script>
+    const notifications_route = '{{ route('profile.notifications.update') }}';
+</script>
+
+<script src="{{  staticAsset('/assets/js/profile-notifications.js') }}"></script>
+@endpush

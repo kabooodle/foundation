@@ -314,7 +314,7 @@
                         <div class="card-block">
                             <h4 class="card-title">Device Friendly</h4>
                             <p class="card-text">Whether using a PC, Mac, or mobile device, your data is always
-                                accessible and in sync. Our native iPad app is nearing completion and brings
+                                accessible and in sync. Our native iPhone app is nearing completion and brings
                                 simplicity through mobility.</p>
                         </div>
                     </div>

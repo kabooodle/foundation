@@ -97,7 +97,7 @@
                     notified of when registration is officially open.
                 </h6>
                 <h6 class="m-t-2">
-                    Also note, we are putting the final touches on our iPad/iPhone app, and will notify and invite
+                    Also note, we are putting the final touches on our iPhone app, and will notify and invite
                     anyone interested in testing as soon as the next version is available.
                 </h6>
                 <div class="form-group m-t-5" id="closed-beta">

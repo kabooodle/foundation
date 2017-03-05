@@ -13,7 +13,7 @@
 
 Route::get('/', function(){
     if(webUser()) {
-        return redirect()->route('user.profile');
+        return redirect()->route('user.profile', [webUser()->username]);
     }
     return redirect('/home');
 });
