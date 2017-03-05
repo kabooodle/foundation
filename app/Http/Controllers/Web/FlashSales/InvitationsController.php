@@ -79,7 +79,7 @@ class InvitationsController extends Controller
             }
         }
 
-        return redirect('/');
+        return abort(404);
     }
 
     /**

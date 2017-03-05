@@ -1212,7 +1212,7 @@ class User extends BaseEloquentModel implements
      */
     public function qualifiedReferrals()
     {
-        return $this->hasMany(Referrals::class, 'referred_id');
+        return $this->hasMany(QualifiedReferrals::class, 'referred_id');
     }
 
     /**

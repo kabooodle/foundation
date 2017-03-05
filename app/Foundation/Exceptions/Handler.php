@@ -57,10 +57,14 @@ class Handler extends ExceptionHandler
             return $response;
         }
 
+        if (env('APP_DEBUG')) {
+            return $response;
+        }
+
         if ($this->isHttpException($e)) {
             return $this->toIlluminateResponse($this->renderHttpException($e), $e);
-        } else {
-            return response()->view('errors.500');
         }
+
+        return response()->view('errors.500');
     }
 }

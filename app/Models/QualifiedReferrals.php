@@ -11,9 +11,9 @@ use Kabooodle\Models\Traits\EloquentDatesTrait;
 use Sofa\Revisionable\Laravel\RevisionableTrait;
 
 /**
- * Class Referrals
+ * Class QualifiedReferrals
  */
-class Referrals extends BaseEloquentModel implements Revisionable
+class QualifiedReferrals extends BaseEloquentModel implements Revisionable
 {
     use EloquentDatesTrait, RevisionableTrait;
 
@@ -51,7 +51,7 @@ class Referrals extends BaseEloquentModel implements Revisionable
     /**
      * @var string
      */
-    protected $table = 'referrals';
+    protected $table = 'qualified_referrals';
 
     /**
      * @var array

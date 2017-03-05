@@ -47,7 +47,7 @@ class InventoryController extends Controller
     public function index(Request $request, $username)
     {
         if (webUser()->username <> $username) {
-            return redirect('/');
+            return abort(404);
         }
 
         return $this->view('inventory.index');

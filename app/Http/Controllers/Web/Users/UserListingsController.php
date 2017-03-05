@@ -27,7 +27,7 @@ class UserListingsController extends Controller
         $user = User::where('username', '=', $username)->first();
 
         if (! $user) {
-            return redirect('/');
+            return abort(404);
         }
 
         return $this->view('users.listings.index')->with(compact('user'));
@@ -45,7 +45,7 @@ class UserListingsController extends Controller
         $user = User::where('username', '=', $username)->first();
 
         if (! $user) {
-            return redirect('/');
+            return abort(404);
         }
 
         return $this->view('users.listings.show')->with(compact('user', 'listingId'));

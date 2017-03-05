@@ -16,6 +16,8 @@ elixir(function (mix) {
     mix.browserify('app/components/home.js');
     mix.browserify('app/components/closed-beta.js');
 
+    mix.browserify('app/components/referrals/referrals.js');
+
     // VUE Components
     mix.browserify('app/components/inventory/inventory-management.js');
     mix.browserify('app/components/inventory/manage/inventory-management-b.js');

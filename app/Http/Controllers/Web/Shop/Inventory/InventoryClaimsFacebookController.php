@@ -38,7 +38,7 @@ class InventoryClaimsFacebookController extends Controller
            return $this->view('shop.facebookclaim')->with(['item' => $facebookItem->inventory, 'facebook' => $facebookItem]);
        }
 
-       return redirect('/');
+       return abort(404);
    }
 
     /**

@@ -133,6 +133,10 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\User\UserLoggedInEvent::class => [
             \Kabooodle\Bus\Handlers\Events\User\UserLoggedInListener::class
         ],
+        \Kabooodle\Bus\Events\User\ReferralHasQualified::class => [
+            \Kabooodle\Bus\Handlers\Events\User\StoreQualifiedReferral::class
+//            \Kabooodle\Bus\Handlers\Events\User\NotifyReferredByOfQualifiedReferral::class
+        ],
 
         // EMAIL EVENTS
         \Kabooodle\Bus\Events\Email\EmailWasCreatedEvent::class => [

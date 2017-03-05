@@ -127,7 +127,7 @@ class ProfileSubscriptionsController extends Controller
 
             Messages::success('Congratulations! Your subscription was activated!');
 
-            return redirect('/');
+            return redirect()->route('user.profile', [$user->username]);
         } catch (ValidationException $e) {
             Messages::error($e->validator->messages()->first());
 

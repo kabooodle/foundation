@@ -27,7 +27,7 @@ class UsersController extends Controller
     {
         $viewedUser = User::where('username', $request->username)->first();
         if (! $viewedUser) {
-            return redirect('/');
+            return abort(404);
         }
         return view('userprofile')->with(compact('viewedUser'));
     }
