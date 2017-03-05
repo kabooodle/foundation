@@ -23,7 +23,7 @@ class UpdateInventoryTblAddTypeStyleSize extends Migration
             $table->integer('inventory_sizes_id')->unsigned()->after('id');
 
             $table->foreign('inventory_type_id')
-                ->references('id')->on('inventory')
+                ->references('id')->on('inventory_type')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
