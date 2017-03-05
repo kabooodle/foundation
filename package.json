@@ -1,8 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "prod": "gulp --production"
+    "prod": "gulp --production",
+    "dev": "gulp watch"
   },
+  "devDependencies": {},
   "dependencies": {
     "aliasify": "2.1.0",
     "block-ui": "2.70.1",
@@ -25,20 +27,17 @@
     "imports-loader": "0.6.5",
     "intro.js": "2.4.0",
     "jquery": "2.1.0",
-    "laravel-elixir" : "6.0.0-15",
-    "laravel-elixir-browserify-official": "0.1.3",
-    "laravel-elixir-vueify": "1.0.6",
+    "laravel-elixir": "5.0.0",
+    "laravel-elixir-vueify": "1.0.0",
     "lodash": "4.17.4",
     "moment": "2.17.1",
     "moment-timezone": "0.5.11",
-    "noty": "2.3.8",
     "perfect-scrollbar": "0.6.14",
     "select2": "4.0.3",
     "select2-bootstrap-theme": "0.1.0-beta.9",
     "selectize": "0.12.3",
     "tablesaw": "3.0.0-beta.3",
     "tether": "1.4.0",
-    "turbolinks": "5.0.0",
     "vue": "2.1.8",
     "vue-infinite-loading": "2.0.0",
     "vue-loader": "9.7.0",
