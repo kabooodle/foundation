@@ -40,6 +40,11 @@ interface ListableInterface
     /**
      * @return string
      */
+    public function getTitleAttribute(): string;
+
+    /**
+     * @return string
+     */
     public function getPrice(): string;
 
     /**

@@ -241,7 +241,7 @@
             editItemButtonClicked(item, event){
                 $Bus.$emit('popout-overlay:request-open');
 
-                this.$http.get(window.location.href+'/'+item.name_uuid+'/edit', {
+                this.$http.get(this.inventoryIndexRoute + '/' + item.name_uuid + '/edit', {
                     async: false,
                     before(request) {
                         // Before each ajax request, abort the previous request

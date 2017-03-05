@@ -53,7 +53,7 @@ class SalesController extends Controller
             'purchasers' => $request->has('purchasers') ? array_filter(Binput::get('purchasers')) : false
         ];
 
-        $sales = webUser()->acceptedClaimsOnMyInventory()->noEagerLoads()->with(['listedItem']);
+        $sales = webUser()->acceptedClaimsOnMyListables()->noEagerLoads()->with(['listedItem']);
 
         // Categories filter
         if ($filters['categories']) {

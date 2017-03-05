@@ -16,7 +16,7 @@
                     <div class="avatar-thumbnail _32">
                         <img :src="getFile(claim)">
                     </div>
-                    <span>{{ claim.listable_item_object_data.name_with_variant }}</span>
+                    <span>{{ claim.listable_item_object_data.title }}</span>
                 </div>
             </td>
             <td >${{ claim.price }}</td>

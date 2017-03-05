@@ -24,6 +24,7 @@ class Inventory extends Listable implements ListableInterface
         'available_quantity',
         'cover_photo',
         'hash_id',
+        'title',
     ];
 
     /**
@@ -112,6 +113,14 @@ class Inventory extends Listable implements ListableInterface
     public function getTitle() : string
     {
         return $this->getNameAndSize();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitleAttribute(): string
+    {
+        return $this->getTitle();
     }
 
     /**

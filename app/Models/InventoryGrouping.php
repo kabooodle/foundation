@@ -44,6 +44,7 @@ class InventoryGrouping extends Listable implements ListableInterface
         'cover_photo',
         'wholesale_price_usd',
         'hash_id',
+        'title',
     ];
 
     /**
@@ -145,6 +146,14 @@ class InventoryGrouping extends Listable implements ListableInterface
     public function getTitle(): string
     {
         return $this->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitleAttribute(): string
+    {
+        return $this->getTitle();
     }
 
     /**

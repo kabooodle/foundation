@@ -728,6 +728,36 @@ class User extends BaseEloquentModel implements
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function claimsOnMyListables()
+    {
+        return $this->hasManyThrough(Claims::class,  Listable::class, 'user_id', 'listable_id', 'id')
+            ->where('listables.user_id', $this->id)
+            ->with(['shipments', 'shipments.transaction']);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function acceptedClaimsOnMyListables()
+    {
+        return $this->claimsOnMyListables()
+            ->whereAccepted(true)
+            ->whereNotNull('accepted_on')
+            ->orderBy('accepted_on', 'desc');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function pendingClaimsOnMyListables()
+    {
+        return $this->claimsOnMyListables()
+            ->whereNull('accepted');
+    }
+
+    /**
      * @return mixed
      */
     public function acceptedClaimsOnMyInventory()
