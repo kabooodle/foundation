@@ -21,25 +21,26 @@ class FollowController extends Controller
     use PaginatesTrait;
 
     /**
-     * @return \Illuminate\Contracts\View\View
+     * @param Request $request
+     *
+     * @return $this
      */
     public function followers(Request $request)
     {
         $viewedUser = User::where('username', $request->username)->first();
 
-        $followers = $viewedUser->followers;
-
-        //$followers = $this->paginateData($request, $user->followers);
-
-        return view('users.follow.followers')->with(compact('viewedUser', 'followers'));
+        return view('users.follow.followers')->with(compact('viewedUser'));
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return $this
+     */
     public function following(Request $request)
     {
         $viewedUser = User::where('username', $request->username)->first();
 
-        $usersFollowing = $this->paginateData($request, $viewedUser->usersFollowing);
-
-        return view('users.follow.following')->with(compact('viewedUser', 'usersFollowing'));
+        return view('users.follow.following')->with(compact('viewedUser'));
     }
 }
