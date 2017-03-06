@@ -24,7 +24,6 @@ new Vue({
     methods: {
         toggleStyleListItem(styleId, event){
             let $el = $(event.target).closest('.style-list-item');
-            styleId = parseInt(styleId);
             if ($el.hasClass('active')) {
                 $el.removeClass('active');
                 let index = this.styles.indexOf(styleId);
