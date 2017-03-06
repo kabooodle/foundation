@@ -67,69 +67,10 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-9">
                 @yield('profile-body')
             </div>
 
-            <div class="col-md-3">
-                <div class="box">
-                    <div class="box-header">
-                        <h4>Just followed you</h4>
-                    </div>
-                    <div class="list-group no-radius no-borders">
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm success"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Jonathan Morina</span>
-                        </a>
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm success"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Mason Yarnell</span>
-                        </a>
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm warning"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Mike Mcalidek</span>
-                        </a>
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm danger"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Cris Labiso</span>
-                        </a>
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm dker"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Daniel Sandvid</span>
-                        </a>
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm dker"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Helder Oliveira</span>
-                        </a>
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm dker"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Jeff Broderik</span>
-                        </a>
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm dker"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Daniel Sandvid</span>
-                        </a>
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm dker"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Helder Oliveira</span>
-                        </a>
-                        <a data-toggle="modal" data-target="#chat" data-dismiss="modal"  class="list-group-item text-ellipsis">
-                            <span class="w-8 rounded m-r-sm dker"></span>
-                            <img src="https://unsplash.it/32/32/?random" class="w-24 m-r-sm img-circle">
-                            <span>Jeff Broderik</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

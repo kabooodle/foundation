@@ -106,7 +106,7 @@
                 }
             },
             entityIsMe: function(){
-                if(this.doWeHaveCurrentUser()) {
+                if (this.doWeHaveCurrentUser()) {
                     return this.able_type.toLowerCase().includes('user') && parseInt(this.current_user.id) == parseInt(this.able_id);
                 }
                 return false;
