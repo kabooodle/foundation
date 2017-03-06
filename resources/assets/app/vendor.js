@@ -4,7 +4,8 @@ global.VueResource = require('vue-resource');
 global.Tether = require('tether');
 require('bootstrap');
 global._ = require('lodash');
-global.moment = require('moment');
+// global.moment = require('moment');
+global.moment = require('moment-timezone');
 
 global.slider = require('bootstrap-slider');
 
@@ -21,7 +22,6 @@ global.datetimepicker = require('eonasdan-bootstrap-datetimepicker');
 require('../vendor/tablesaw/tablesaw');
 require('perfect-scrollbar/jquery')($);
 require('bootstrap-select');
-require('moment-timezone');
 //
 // // Use the localized version because the NPM version is being fuckity.
 global.multiselect = require('../vendor/bootstrap-multiselect/dist/js/bootstrap-multiselect');
