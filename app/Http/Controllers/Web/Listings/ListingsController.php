@@ -41,7 +41,7 @@ class ListingsController extends Controller
     public function customLink(Request $request, $listingName, $listingItemUuid)
     {
         $inventoryId = $this->obfuscateFromURIString($listingItemUuid);
-        $listingItem = ListingItems::where('inventory_id', '=', $inventoryId)->with('listing', 'inventoryItem')
+        $listingItem = ListingItems::where('listable_id', '=', $inventoryId)->with('listing', 'listedItem')
             ->whereHas('listing', function($q) use ($listingName) {
                 $q->where('name', '=', $listingName);
             })->firstOrFail();
