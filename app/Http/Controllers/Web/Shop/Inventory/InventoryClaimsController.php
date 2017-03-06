@@ -44,7 +44,7 @@ class InventoryClaimsController extends Controller
      */
     public function index(Request $request, $username)
     {
-        $data = webUser()->claimsOnMyClaimables();
+        $data = webUser()->pendingClaimsOnMyListables;
         $data = $this->paginateData($request, $data);
 
         return $this->view('inventory.claims.index')->with(compact('data'));
@@ -59,7 +59,7 @@ class InventoryClaimsController extends Controller
      */
     public function update(Request $request, $username, $claimsUUID)
     {
-        $data = webUser()->claimsOnMyClaimables();
+        $data = webUser()->claimsOnMyListables();
         $claim = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();
