@@ -4,6 +4,7 @@
         <message
                 v-if="messages"
                 v-for="message in messages"
+                :key="message.id"
                 :message="message"
         ></message>
     </div>

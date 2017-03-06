@@ -2,11 +2,15 @@
         <div class="input-group">
             <input type="text" v-model.trim="msg" class="form-control" @keydown.enter="storeResponse" :class="ready ? null : 'disabled'" :disabled="ready ? false : true" placeholder="Say something">
             <span class="input-group-btn">
-                <button class="btn white" type="button" @click="storeResponse" :class="ready ? null : 'disabled'" :disabled="ready ? false : true">Send</button>
+                <button class="btn white" type="button" @click="storeResponse" :class="ready ? null : 'disabled'" :disabled="ready ? false : true">
+                    Send
+                    <spinny v-if="sending"></spinny>
+                </button>
             </span>
         </div>
 </template>
 <script>
+    import Spinny from '../Spinner.vue';
     export default{
         props: {
             endpoint: {
@@ -19,6 +23,7 @@
                 msg: null,
                 ready: false,
                 storing: false,
+                sending: false,
                 typing: false,
             }
         },
@@ -29,17 +34,21 @@
         },
         methods: {
             storeResponse(event){
-                if (this.msg == '') {
+                if (this.msg == '' || !this.msg) {
                     return false;
                 }
                 this.sending = true;
                 this.ready = false;
                 this.$http.put(this.endpoint, {msg: this.msg}).then((response)=>{
+                    this.msg = null;
+                }, ()=>{}).finally(()=>{
                     this.sending = false;
                     this.ready = true;
-                    this.msg = null;
                 });
             },
         },
+        components: {
+            'spinny' : Spinny
+        }
     }
 </script>

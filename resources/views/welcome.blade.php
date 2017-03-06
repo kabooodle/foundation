@@ -9,25 +9,14 @@
 
             <div class="col-sm-6 col-md-pull-6 col-md-3">
                 <div class="box">
-                    <div class="box-tool">
-                        <ul class="nav">
-                            <li class="nav-item inline dropdown">
-                                <a class="nav-link text-muted" data-toggle="dropdown">
-                                    <i class="material-icons md-18">&#xe164;</i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-scale pull-right dark">
-                                    <a class="dropdown-item" href>Activities</a>
-                                    <a class="dropdown-item" href>Feed</a>
-                                    <a class="dropdown-item" href>Photo</a>
-                                    <div class="dropdown-divider"></div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
                     <div class="p-a-md text-center">
-                        <p><img src="https://unsplash.it/90/90/?random" class="img-circle w-xs"></p>
-                        <a href="{{ route('user.profile', [$viewedUser->username]) }}" class="text-md block">{{ $viewedUser->full_name }}</a>
-                        <p><small>{{ $viewedUser->email }}</small></p>
+                        <span class="avatar_container _96 inline avatar-thumbnail">
+                            <img alt="..." src="{{ webUser()->avatar->location}}">
+                        </span>
+                        <a href="{{ route('user.profile', [$viewedUser->username]) }}" class="m-b-sm text-md block">
+                            {{ $viewedUser->username }}
+                        </a>
+                        {{--<p><small>{{ $viewedUser->email }}</small></p>--}}
                         <div>
                             <a href="" class="btn btn-icon btn-social rounded white btn-sm">
                                 <i class="fa fa-facebook"></i>
@@ -143,5 +132,5 @@
 @endsection
 
 @push('footer-scripts')
-<script src="/assets/js/profile.js"></script>
+<script src="{{ staticAsset('/assets/js/profile.js') }}"></script>
 @endpush
