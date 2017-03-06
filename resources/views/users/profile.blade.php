@@ -2,16 +2,13 @@
 
 @section('body-content')
 
-
     <div class="p-l p-r" id="profilePage">
         <div class="row">
-        @yield('profile-body')
-
-            <div class="col-sm-6 col-md-pull-6 col-md-3">
+            <div class="col-md-3">
                 <div class="box">
                     <div class="p-a-md text-center">
                         <span class="avatar_container _96 inline avatar-thumbnail">
-                            <img alt="..." src="{{ webUser()->avatar->location}}">
+                            <img alt="..." src="{{ $viewedUser->avatar->location}}">
                         </span>
                         <a href="{{ route('user.profile', [$viewedUser->username]) }}" class="m-b-sm text-md block">
                             {{ $viewedUser->username }}
@@ -64,13 +61,17 @@
                         </div>
                     </div>
                     {{--<div class="p-a">--}}
-                        {{--<a href class="text-ellipsis"><i class="fa fa-link text-muted m-r-sm"></i> apack.com/subdomain</a>--}}
-                        {{--<a href class="text-ellipsis"><i class="fa fa-globe text-muted m-r-sm"></i> yourdomain.com</a>--}}
+                    {{--<a href class="text-ellipsis"><i class="fa fa-link text-muted m-r-sm"></i> apack.com/subdomain</a>--}}
+                    {{--<a href class="text-ellipsis"><i class="fa fa-globe text-muted m-r-sm"></i> yourdomain.com</a>--}}
                     {{--</div>--}}
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-3">
+            <div class="col-md-6">
+                @yield('profile-body')
+            </div>
+
+            <div class="col-md-3">
                 <div class="box">
                     <div class="box-header">
                         <h4>Just followed you</h4>
@@ -131,7 +132,6 @@
             </div>
         </div>
     </div>
-
 
 @endsection
 

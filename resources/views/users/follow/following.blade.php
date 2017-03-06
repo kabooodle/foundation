@@ -1,8 +1,8 @@
-@extends('welcome')
+@extends('users.profile')
 
 @section('profile-body')
 
-<div class="col-sm-12 col-md-push-3 col-md-6">
+
     <div class="box">
         <div class="box-header b-b">
             <h3>Following</h3>
@@ -30,7 +30,7 @@
                     @endforeach
                 </div>
                     @else
-                        @if(webUser()->id == $viewedUser->id)
+                        @if(webUser() && webUser()->id == $viewedUser->id)
                             <p>You aren't following anyone!</p>
                         @else
                             <p>{{ $viewedUser->username }} is not following anyone.</p>
@@ -39,5 +39,5 @@
 
         </div>
     </div>
-</div>
+
 @endsection

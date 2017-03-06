@@ -29,7 +29,8 @@ class UsersController extends Controller
         if (! $viewedUser) {
             return abort(404);
         }
-        return view('userprofile')->with(compact('viewedUser'));
+
+        return view('users.profile')->with(compact('viewedUser'));
     }
 
     public function getUser(Request $request)

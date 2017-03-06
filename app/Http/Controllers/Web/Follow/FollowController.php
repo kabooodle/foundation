@@ -31,7 +31,7 @@ class FollowController extends Controller
 
         //$followers = $this->paginateData($request, $user->followers);
 
-        return view('follow.followers')->with(compact('viewedUser', 'followers'));
+        return view('users.follow.followers')->with(compact('viewedUser', 'followers'));
     }
 
     public function following(Request $request)
@@ -40,6 +40,6 @@ class FollowController extends Controller
 
         $usersFollowing = $this->paginateData($request, $viewedUser->usersFollowing);
 
-        return view('follow.following')->with(compact('viewedUser', 'usersFollowing'));
+        return view('users.follow.following')->with(compact('viewedUser', 'usersFollowing'));
     }
 }
