@@ -45,7 +45,7 @@
                             <message-user
                                     recipient_name="{{ $viewedUser->username }}"
                                     recipient_id="{{ $viewedUser->id }}"
-                                    endpoint="{{ route('messenger.store') }}"
+                                    endpoint="{{ apiRoute('messenger.store') }}"
                             ></message-user>
                         </div>
                     </div>

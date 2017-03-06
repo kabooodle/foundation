@@ -36,6 +36,7 @@ class MessengerApiController extends AbstractApiController
     {
         $threads = Threads::with(['messages', 'participants.user', 'participantsExcludingCreator.user'])
             ->forUser($this->getUser()->id)
+            ->orderBy('created_at', 'desc')
             ->paginate(100);
 
         return $this->setData($threads)->respond();
@@ -57,7 +58,12 @@ class MessengerApiController extends AbstractApiController
 
             $recipients = explode(',', Binput::get('recipient'));
 
-            $this->dispatch(new CreateNewThreadCommand($this->getUser(), $recipients, Binput::get('subject'), Binput::get('message', '')));
+            $this->dispatch(new CreateNewThreadCommand(
+                $this->getUser(),
+                $recipients,
+                Binput::get('subject'),
+                Binput::get('message', '')
+            ));
 
             return $this->noContent();
         } catch (ValidationException $e) {
