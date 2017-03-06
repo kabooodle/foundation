@@ -19,7 +19,7 @@ use Kabooodle\Bus\Commands\Listings\ScheduleNewListingsCommand;
 use Kabooodle\Foundation\Exceptions\FacebookTokenExpiredException;
 use Kabooodle\Foundation\Exceptions\FacebookTokenInvalidException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingExceedsHourlyLimitException;
-use Kabooodle\Models\ListingItemGrouping;
+use Kabooodle\Models\InventoryGrouping;
 use Kabooodle\Models\Listings;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Models\Listing\FacebookListingOptions;
@@ -94,31 +94,29 @@ class ListingsApiController extends AbstractApiController
 
             $items = $listing->items;
 
-            $style_query = Binput::get('styles', false);
-            $size_query = Binput::get('sizes', false);
-            $sellers_query = Binput::get('sellers', false);
+            $style_query = Binput::get('styles', []);
+            $size_query = Binput::get('sizes', []);
+            $sellers_query = Binput::get('sellers', []);
 
-            if ($style_query) {
+            if (!empty($style_query)) {
                 $items = $items->filter(function ($item) use ($style_query) {
                     if (in_array($item->listedItem->inventory_type_styles_id, $style_query)
-                        || (in_array('outfits', $style_query) && $item->subclass_name == ListingItemGrouping::class)) {
-
+                        || (in_array('outfits', $style_query) && $item->listedItem instanceof InventoryGrouping)) {
                         return $item;
-
                     }
                     return false;
                 });
             }
 
-            if ($size_query) {
-                $items = $items->filter(function ($item) use ($size_query) {
-                    return in_array($item->listedItem->inventory_sizes_id, $size_query);
+            if (!empty($size_query)) {
+                $items = $items->filter(function ($item) use ($size_query, $style_query) {
+                    return in_array($item->listedItem->inventory_sizes_id, $size_query) || (in_array('outfits', $style_query) && $item->listedItem instanceof InventoryGrouping);
                 });
             }
 
-            if ($sellers_query) {
-                $items = $items->filter(function ($item) use ($sellers_query) {
-                    return in_array($item->owner_id, $sellers_query);
+            if (!empty($sellers_query)) {
+                $items = $items->filter(function ($item) use ($sellers_query, $style_query) {
+                    return in_array($item->owner_id, $sellers_query) || (in_array('outfits', $style_query) && $item->listedItem instanceof InventoryGrouping);
                 });
             }
 
