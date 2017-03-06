@@ -5,7 +5,7 @@
         <div class="avatar-thumbnail _32">
             <img src="{{ $sale->listable->cover_photo->location }}">
         </div>
-        <span>{{ $sale->listable->name_with_variant }}</span>
+        <span>{{ $sale->listable->title }}</span>
     </div>
 </td>
 <td>${{ $sale->accepted_price ? : $sale->price }}</td>

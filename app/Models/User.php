@@ -820,14 +820,6 @@ class User extends BaseEloquentModel implements
     }
 
     /**
-     * @return mixed
-     */
-    public function claimsOnMyClaimables()
-    {
-        return $this->pendingClaimsOnMyInventory->merge($this->pendingClaimsOnMyInventoryGroupings);
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function claimsAsSeller()

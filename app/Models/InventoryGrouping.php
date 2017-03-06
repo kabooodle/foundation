@@ -145,7 +145,7 @@ class InventoryGrouping extends Listable implements ListableInterface
      */
     public function getTitle(): string
     {
-        return $this->getName();
+        return $this->name_alt;
     }
 
     /**
