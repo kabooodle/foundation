@@ -11,7 +11,9 @@
                         <h6>
                             {{ grouping.name }}
                         </h6>
-                        <image :src=grouping.coverimage.location style="width: 100%; height: 200px"></image>
+                        <div class="avatar_container inline avatar-thumbnail">
+                            <image :src=grouping.coverimage.location></image>
+                        </div>
                     </div>
                     <div class="col-xs-12">
                         <span class="text-sm clearfix block" style="margin: 5px">

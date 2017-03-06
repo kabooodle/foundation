@@ -32,7 +32,7 @@ class CreateOrUpdateCustomListingCommandHandler extends AbstractScheduleListings
         return DB::transaction(function () use ($actor, $command) {
 
             /** @var Listings $listing */
-            $listing = $this->buildListing($command);
+            $listing = $this->buildListing($command->getActor(), null, null, $command);
 
             $listingItems = $this->buildListingItems($listing, $command);
 
@@ -47,20 +47,21 @@ class CreateOrUpdateCustomListingCommandHandler extends AbstractScheduleListings
     }
 
     /**
-     * @param ScheduleListingCommand $command
-     * @param Carbon                 $scheduledFor
-     *
-     * @return Listings
+     * @param User $user
+     * @param int|null $existingId
+     * @param Carbon|null $scheduledFor
+     * @param null $options
+     * @return \Illuminate\Database\Eloquent\Model|Listings|null|static
      */
-    public function buildListing($command, Carbon $scheduledFor = null)
+    public function buildListing(User $user, int $existingId = null,  Carbon $scheduledFor = null, $options = null)
     {
         // Insert or Update
-        $listing = Listings::where('name', '=', $command->getSaleName())
-            ->where('owner_id', '=', $command->getActor()->id)->first();
+        $listing = Listings::where('name', '=', $options->getSaleName())
+            ->where('owner_id', '=', $user->id)->first();
 
         if (!$listing) {
-            $listing = parent::buildListing($command, $this->now);
-            $listing->name = $command->getSaleName();
+            $listing = parent::buildListing($user, null, $this->now);
+            $listing->name = $options->getSaleName();
             $listing->status = Listings::STATUS_COMPLETED;
             $listing->save();
         }
@@ -85,7 +86,7 @@ class CreateOrUpdateCustomListingCommandHandler extends AbstractScheduleListings
 
                 // Skip inventory items that do not belong to the user.
                 // Skip items already in the flash sale by the user.
-                if (!$this->listableItemBelongsToUser($selectedItem, null, $actor) || $this->itemAlreadyInSale($listing, $selectedItem)
+                if (!$this->listableItemBelongsToUser($selectedItem, $actor) || $this->itemAlreadyInSale($listing, $selectedItem)
                 ) {
                     continue;
                 }
@@ -93,7 +94,7 @@ class CreateOrUpdateCustomListingCommandHandler extends AbstractScheduleListings
                 $listingItem = new ListingItems;
                 $listingItem->listing_id = $listing->id;
                 $listingItem->owner_id = $actor->id;
-                $listingItem->inventory_id = $selectedItem;
+                $listingItem->listable_id = $selectedItem;
 
                 // Copy the type and status from the parent listing.
                 // Status may actually change and be different, below otherwise they start the same.

@@ -148,8 +148,8 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-xs-12">
-                                <div v-show="imageSrc" id="inventory-grouping-image-div">
-                                    <image id="inventory-grouping-image" :src=imageSrc style="width: 100%; height: 100%;"></image>
+                                <div v-show="imageSrc" class="item block avatar-thumbnail" id="inventory-grouping-image-div">
+                                    <image id="inventory-grouping-image" :src=imageSrc></image>
                                 </div>
                                 <span v-show="showErrors && validationErrors.image.status" class="text-danger">{{ validationErrors.image.message }}</span>
                             </div>

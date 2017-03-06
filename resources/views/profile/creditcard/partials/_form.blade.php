@@ -50,7 +50,7 @@ $opaques = [
     </div>
 </div>
 
-<p class="">We do <u>not</u> store your full credit card number or CVC code after we submit it to our credit card processor, Stripe. Stripe does store and protects this information. They are a major credit card processor who specializes in handling this information. You can find out more about Stripe and their PCI compliance at <a href="https://stripe.com/" class="_500 text-primary">their website</a>.</p>
+<p class="">We do <u>not</u> store your full credit card number or CVC code after we submit it to our credit card processor, Stripe. Stripe does store and protects this information. They are a major credit card processor who specializes in handling this information. You can find out more about Stripe and their PCI compliance at <a href="https://stripe.com/docs/security/stripe" class="_500 text-primary">their website</a>.</p>
 
 
 @push('footer-scripts')

@@ -44,7 +44,7 @@ class Threads extends BaseEloquentModel
     {
         $participants = $this->participantsExcludingCreator;
 
-        return implode(',', $participants->pluck('user.full_name_with_username')->toArray());
+        return implode(',', $participants->pluck('user.username')->toArray());
     }
 
     /**

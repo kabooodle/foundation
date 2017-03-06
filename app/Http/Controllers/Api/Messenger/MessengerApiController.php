@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Api\Messenger;
 
 use Binput;
+use Bugsnag;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -108,9 +109,7 @@ class MessengerApiController extends AbstractApiController
     public function update(Request $request, $threadId)
     {
         try {
-            $this->validate($request, [
-                'msg' => 'required|filled'
-            ]);
+            $this->validate($request, ['msg' => 'required|filled']);
 
             $thread = Threads::ForUser($this->getUser()->id)
                 ->where('messenger_threads.id', $threadId)
@@ -123,13 +122,13 @@ class MessengerApiController extends AbstractApiController
             $this->dispatch(new CreateNewMessageForThreadCommand($thread, $this->getUser(), Binput::get('msg', '')));
 
             return $this->noContent();
+        } catch (ValidationException $e) {
+            return $this->setStatusCode(401)->setData([
+                'msg' => $e->validator->messages()->first()
+            ])->respond();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)->respond();
-        } catch (ValidationException $e) {
-            return $this->setStatusCode(500)->setData([
-                'msg' => $e->validator->messages()->first()
-            ])->respond();
         }
     }
 
