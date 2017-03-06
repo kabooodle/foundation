@@ -42,7 +42,11 @@
                                     followable_type="user"
                                     followable_id="{{ $viewedUser->id }}">
                             </followable>
-
+                            <message-user
+                                    recipient_name="{{ $viewedUser->username }}"
+                                    recipient_id="{{ $viewedUser->id }}"
+                                    endpoint="{{ route('messenger.store') }}"
+                            ></message-user>
                         </div>
                     </div>
                     <div class="row no-gutter b-t">
