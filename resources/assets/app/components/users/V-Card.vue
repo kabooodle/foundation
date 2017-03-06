@@ -1,5 +1,5 @@
 <template>
-    <div class="box b b-a m-b-0 no-shadow white">
+    <div class="box b b-a m-b-0 no-shadow white" :class="outer_class">
         <div class="list-item p-a-sm p-sm" :class="extra_class" >
             <div class="list-left" v-if="use_avatar">
                 <a :href="'/users/'+ user.username" class="avatar_container inline avatar-thumbnail" :class="'_'+avatar_size">
@@ -23,20 +23,6 @@
                 </div>
             </div>
         </div>
-        <!--<div class="row no-gutter b-t">-->
-            <!--<div class="col-xs-6 b-r">-->
-                <!--<span class="p-sm block text-center" ui-toggle-class="">-->
-                    <!--<strong class="block">30</strong>-->
-                    <!--<span class="block text-xs text-muted">Followers</span>-->
-                <!--</span>-->
-            <!--</div>-->
-            <!--<div class="col-xs-6">-->
-                <!--<span class="p-sm block text-center" ui-toggle-class="">-->
-                    <!--<strong class="block">30</strong>-->
-                    <!--<span class="block text-xs text-muted">Following</span>-->
-                <!--</span>-->
-            <!--</div>-->
-        <!--</div>-->
     </div>
 </template>
 <script>
@@ -48,6 +34,7 @@
             avatar_size: {
                 default: '64'
             },
+            outer_class: {},
             extra_class: {},
             able_id: {
                 required: true,

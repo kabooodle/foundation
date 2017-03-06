@@ -154,6 +154,10 @@ class AuthController extends Controller
 
             Messages::success("Welcome to ".env('APP_NAME').", {$user->first_name}!");
 
+            if ($redirect == '/') {
+                $redirect = route('user.profile', [$user->username]);
+            }
+
             return $this->redirect($redirect);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());

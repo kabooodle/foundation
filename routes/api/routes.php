@@ -55,6 +55,7 @@ $api->version('v1', function ($api) {
             require_once __DIR__ . DIRECTORY_SEPARATOR . 'messenger' . DIRECTORY_SEPARATOR . 'routes.php';
             require_once __DIR__ . DIRECTORY_SEPARATOR . 'phonenumbers' . DIRECTORY_SEPARATOR . 'routes.php';
             require_once __DIR__ . DIRECTORY_SEPARATOR . 'shipping' . DIRECTORY_SEPARATOR . 'routes.php';
+            require_once __DIR__ . DIRECTORY_SEPARATOR . 'referrals' . DIRECTORY_SEPARATOR . 'routes.php';
         });
 
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'user' . DIRECTORY_SEPARATOR . 'routes.php';

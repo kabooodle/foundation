@@ -15,7 +15,7 @@ use Sofa\Revisionable\Laravel\RevisionableTrait;
  */
 class QualifiedReferrals extends BaseEloquentModel implements Revisionable
 {
-    use EloquentDatesTrait, RevisionableTrait;
+    use RevisionableTrait;
 
     const COUPON_6_MO_FREE = '6_months_free_referral';
     const COUPON_5_MO_FREE = '5_months_free_referral';

@@ -3,6 +3,8 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
+import ReferralCards from './ReferralCards.vue';
+
 new Vue({
     el: '#referrals_index',
     created(){
@@ -18,5 +20,8 @@ new Vue({
                 href: url,
             }, function(response){ });
         },
+    },
+    components: {
+        'referral-cards' : ReferralCards
     }
 });

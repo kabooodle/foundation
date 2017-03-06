@@ -44,40 +44,12 @@
         </div>
     </div>
 
-
-    @if(webUser()->referrals->count() > 0)
-        <div class="box m-t-3">
-            <div class="box-body">
-                <div class="row">
-                    @foreach(webUser()->referrals as $referral)
-                        <div class="col-md-4">
-                            <ul class="list p-b-0 b-a {{ $referral->subscribed('main') ? 'b-success' : null }}">
-                                <li class="list-item">
-                                    <a href="http://kabooodle.dev/shop/jaketoolson" class="list-left">
-                            <span class="w-40 avatar">
-                              <img src="https://placekitten.com/g/32/32" alt="...">
-                                                        </span>
-                                    </a>
-                                    <div class="list-body">
-                                        <div class="_500"><a href="">{!! $referral->name !!}</a></div>
-                                        <div class="text-muted">
-                                            joined: {{ $referral->created_at->diffForHumans() }}</div>
-                                        <div class="text-muted text-sm">{{ $referral->myAccountIsAQualifyingReferral() ? 'Qualified!' : 'not yet qualified' }}</div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    @else
-        <div class="box m-t-3">
-            <div class="box-body">
-                <p class="text-center m-b-0">No referrals yet!</p>
-            </div>
-        </div>
-    @endif
+    <referral-cards
+            message_endpoint="{{ apiRoute('messenger.store') }}"
+            referrals_endpoint="{{ apiRoute('referrals.index') }}"
+    >
+        <p class="text-center m-b-0">No referrals yet!</p>
+    </referral-cards>
 
 @endsection
 
