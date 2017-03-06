@@ -360,24 +360,24 @@ abstract class AbstractListingModel extends BaseEloquentModel
      */
     public static function getStyleGroupingsForFlashsale(int $flashsaleId)
     {
-        return DB::table('inventory_type_styles')
-            ->join('listables', 'listables.inventory_type_styles_id', '=', 'inventory_type_styles.id')
-            ->join('inventory_sizes', 'inventory_sizes.id', '=', 'listables.inventory_sizes_id')
+        return DB::table('listables')
+            ->leftJoin('inventory_type_styles', 'inventory_type_styles.id', '=', 'listables.inventory_type_styles_id')
+            ->leftJoin('inventory_sizes', 'inventory_sizes.id', '=', 'listables.inventory_sizes_id')
             ->join('listing_items', 'listing_items.listable_id', '=', 'listables.id')
             ->join('listings','listings.id', '=', 'listing_items.listing_id')
             ->where('listing_items.flashsale_id', $flashsaleId)
             ->whereNull('listing_items.deleted_at')
             ->whereNull('listings.deleted_at')
             ->whereNull('listables.deleted_at')
-            ->groupBy('listables.id')
+            ->groupBy('listables.uuid')
             ->groupBy('inventory_type_styles_id')
             ->groupBy('inventory_sizes_id')
-            ->select([
-                'inventory_sizes.id as size_id',
-                'inventory_type_styles.id as style_id',
-                'inventory_type_styles.name as style_name',
-                'inventory_sizes.name as size_name'
-            ])
+            ->selectRaw("
+                inventory_sizes.id as size_id, 
+                IFNULL(inventory_type_styles.id, 'outfits') as style_id,
+                IFNULL(inventory_type_styles.name, 'Outfits') as style_name,
+                inventory_sizes.name as size_name
+            ")
             ->get();
     }
 

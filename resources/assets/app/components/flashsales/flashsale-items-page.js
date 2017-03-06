@@ -23,6 +23,37 @@ new Vue({
         },
     },
     methods: {
+        toggleStyleListItem(styleId, event){
+            let $el = $(event.target).closest('.style-list-item');
+            if ($el.hasClass('active')) {
+                $el.removeClass('active');
+                let index = this.styles.indexOf(styleId);
+                if (index >= 0) {
+                    this.styles.splice(index, 1);
+                }
+            } else {
+                $el.addClass('active');
+                this.styles.push(styleId);
+            }
+        },
+        toggleSizeListItem(sizeId, styleId, event){
+            let $el = $(event.target).closest('.size-list-item');
+            sizeId = parseInt(sizeId);
+            styleId = parseInt(styleId);
+
+            if ($el.hasClass('active')) {
+                $el.removeClass('active');
+                $el.find('.nav-text').find('i.selected-icon').remove();
+                let index = this.sizes.indexOf(sizeId);
+                if (index >= 0) {
+                    this.sizes.splice(index, 1);
+                }
+            } else {
+                $el.addClass('active');
+                $el.find('.nav-text').html($el.find('.nav-text').html()+' <i class="fa selected-icon fa-check-circle" aria-hidden="true"></i>');
+                this.sizes.push(sizeId);
+            }
+        },
         toggleFilterParent(key, id, event){
             let $el = $(event.target).closest('.style-list-item');
             id = parseInt(id);

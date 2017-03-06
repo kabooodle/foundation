@@ -10,7 +10,9 @@ use Binput;
 use Bugsnag;
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Kabooodle\Http\Controllers\Traits\FilterListingItemsTrait;
 use Kabooodle\Models\FlashSales;
 use Kabooodle\Models\Dates\StartsAndEndsAt;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -32,7 +34,7 @@ use Kabooodle\Foundation\Exceptions\Flashsales\FlashsaleInvalidStartDateExceptio
  */
 class FlashsalesApiController extends AbstractApiController
 {
-    use DispatchesJobs, PaginatesTrait;
+    use DispatchesJobs, PaginatesTrait, FilterListingItemsTrait;
 
     /**
      * @param Request $request
@@ -260,34 +262,11 @@ class FlashsalesApiController extends AbstractApiController
 
             $items = $listing->listingItems;
 
-            $style_query = Binput::get('styles', false);
-            $size_query = Binput::get('sizes', false);
-            $sellers_query = Binput::get('sellers', false);
+            $style_query = Binput::get('styles', []);
+            $size_query = Binput::get('sizes', []);
+            $sellers_query = Binput::get('sellers', []);
 
-            if ($style_query ) {
-                $items = $items->filter(function($item) use ($style_query){
-                    return in_array($item->listedItem->inventory_type_styles_id, $style_query);
-                });
-            }
-
-            if ($size_query ) {
-                $items = $items->filter(function($item) use ($size_query){
-                    return in_array($item->listedItem->inventory_sizes_id, $size_query);
-                });
-            }
-
-            if ($sellers_query) {
-                $items = $items->filter(function($item) use ($sellers_query){
-                    return in_array($item->owner_id, $sellers_query);
-                });
-            }
-
-            $items = $items->sortBy(function($item){
-                return $item->make_available_at;
-            })->sortBy(function($item){
-                return $item->id;
-            })->values();
-
+            $items = $this->filterListingItems($items, $style_query, $size_query, $sellers_query);
 
             return $this->response->paginator($this->paginateData($request, $items), new FlashsaleListingItemTransformer);
         } catch (Exception $e) {

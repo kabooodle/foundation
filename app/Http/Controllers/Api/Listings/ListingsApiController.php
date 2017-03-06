@@ -19,7 +19,7 @@ use Kabooodle\Bus\Commands\Listings\ScheduleNewListingsCommand;
 use Kabooodle\Foundation\Exceptions\FacebookTokenExpiredException;
 use Kabooodle\Foundation\Exceptions\FacebookTokenInvalidException;
 use Kabooodle\Foundation\Exceptions\Listings\ListingExceedsHourlyLimitException;
-use Kabooodle\Models\InventoryGrouping;
+use Kabooodle\Http\Controllers\Traits\FilterListingItemsTrait;
 use Kabooodle\Models\Listings;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Models\Listing\FacebookListingOptions;
@@ -40,7 +40,7 @@ use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListing
  */
 class ListingsApiController extends AbstractApiController
 {
-    use DispatchesJobs, PaginatesTrait;
+    use DispatchesJobs, PaginatesTrait, FilterListingItemsTrait;
 
     /**
      * @var UserService
@@ -98,33 +98,7 @@ class ListingsApiController extends AbstractApiController
             $size_query = Binput::get('sizes', []);
             $sellers_query = Binput::get('sellers', []);
 
-            if (!empty($style_query)) {
-                $items = $items->filter(function ($item) use ($style_query) {
-                    if (in_array($item->listedItem->inventory_type_styles_id, $style_query)
-                        || (in_array('outfits', $style_query) && $item->listedItem instanceof InventoryGrouping)) {
-                        return $item;
-                    }
-                    return false;
-                });
-            }
-
-            if (!empty($size_query)) {
-                $items = $items->filter(function ($item) use ($size_query, $style_query) {
-                    return in_array($item->listedItem->inventory_sizes_id, $size_query) || (in_array('outfits', $style_query) && $item->listedItem instanceof InventoryGrouping);
-                });
-            }
-
-            if (!empty($sellers_query)) {
-                $items = $items->filter(function ($item) use ($sellers_query, $style_query) {
-                    return in_array($item->owner_id, $sellers_query) || (in_array('outfits', $style_query) && $item->listedItem instanceof InventoryGrouping);
-                });
-            }
-
-            $items = $items->sortBy(function ($item) {
-                return $item->make_available_at;
-            })->sortBy(function ($item) {
-                return $item->id;
-            })->values();
+            $items = $this->filterListingItems($items, $style_query, $size_query, $sellers_query);
 
             return $this->response->paginator($this->paginateData($request, $items), new ListingItemsTransformer);
         } catch (Exception $e) {
