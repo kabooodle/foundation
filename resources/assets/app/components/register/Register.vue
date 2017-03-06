@@ -57,9 +57,6 @@
         <button type="submit" class="btn primary btn-block p-x-md">Create Account</button>
     </form>
 </template>
-<style>
-
-</style>
 <script>
     export default{
         props: {
@@ -90,6 +87,15 @@
             }
         },
         created(){
+//            this.$nextTick(()=>{
+            $(function(){
+                $('[data-toggle="selectpicker"]').selectpicker({
+                    style: 'btn-default'
+                });
+            });
+
+//            });
+
             this.checkQueryString(location.search);
         },
         methods: {

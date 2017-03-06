@@ -504,10 +504,6 @@ $(function () {
 
     $('[data-scrollable="scrollable"]').perfectScrollbar();
 
-    $('[data-toggle="selectpicker"]').selectpicker({
-        style: 'btn-default'
-    });
-
     clippy('[data-clipboard-target]');
 
     $('.dropdown.dropdown-onhover').hover(function () {
