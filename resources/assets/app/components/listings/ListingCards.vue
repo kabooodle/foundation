@@ -1,6 +1,5 @@
 <template>
     <div>
-        <spinny v-if="fetching" :size="'' + 28" class="text-center center-block" ></spinny>
             <listing-card
                     v-for="item in items"
                     :key="item.id"
@@ -64,8 +63,6 @@
                 this.items = [];
                 this.fetchItems(this.fetch_endpoint, {styles: styles, sizes: sizes, sellers: sellers});
             });
-
-            this.fetchItems(this.fetch_endpoint);
         },
         methods:{
             /**
@@ -76,10 +73,14 @@
             fetchInfinite(){
                 let url = this.pagination.next_page_url;
 
+                if (this.items.length == 0 || ! this.items.length) {
+                    url = this.fetch_endpoint;
+                }
+
                 // Check if there is a next_page_url as per our pagination.
                 // If there isn't, that means we've reached the end, so we dont need to continue fetching.
                 if (url) {
-                    this.fetchItems(this.pagination.next_page_url);
+                    this.fetchItems(url);
                 } else {
                     this.fetching = false;
                     this.$nextTick(()=>{

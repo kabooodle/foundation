@@ -13,7 +13,7 @@ class UpdateUsersTblAddShippingSetting extends Migration
     public function up()
     {
         Schema::table(\Kabooodle\Models\User::getTableName(), function(Blueprint $table){
-            $table->tinyInteger('kabooodle_as_shipping')->default(1)->after('stripe_id');
+            $table->tinyInteger('kabooodle_as_shipping')->default(0)->after('stripe_id');
         });
     }
 

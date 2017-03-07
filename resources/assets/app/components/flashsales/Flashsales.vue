@@ -1,6 +1,5 @@
 <template>
     <div>
-        <spinny v-if="fetching" :size="'' + 28" class="text-center center-block" ></spinny>
             <div
                     v-for="flashsale in flashsales"
                     :key="flashsale.id"
@@ -46,9 +45,6 @@
                 pagination : {},
             }
         },
-        mounted(){
-            this.fetchItems(this.fetch_endpoint);
-        },
         created(){
             $Bus.$on('flashsales:filter', (salename, sellers)=>{
                 this.filtering = true;
@@ -65,10 +61,15 @@
             fetchInfinite(){
                 let url = this.pagination.next_page_url;
 
+                if (this.flashsales.length == 0 || ! this.flashsales.length) {
+                    url = this.fetch_endpoint;
+                }
+
+
                 // Check if there is a next_page_url as per our pagination.
                 // If there isn't, that means we've reached the end, so we dont need to continue fetching.
                 if (url) {
-                    this.fetchItems(this.pagination.next_page_url);
+                    this.fetchItems(url);
                 } else {
                     this.$nextTick(()=>{
                         this.$refs.listingFinite.$emit('$InfiniteLoading:complete');

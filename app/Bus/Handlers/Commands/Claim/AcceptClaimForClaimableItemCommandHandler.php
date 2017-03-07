@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Bus\Handlers\Commands\Claim;
 
+use Carbon\Carbon;
 use DB;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Bus\Commands\Claim\VerifyClaimCommand;
@@ -36,6 +37,13 @@ class AcceptClaimForClaimableItemCommandHandler
             $claim->accepted_price = $command->getAcceptedPrice() ? : null;
             $claim->accepted_on = $command->getTimestamp();
             $claim->accepted = true;
+
+            // If user's subscription is NOT merchant plus, then
+            // flag the claim as having been manually shipped.
+            if (! $command->getUser()->isSubscribedToMerchantPlus()) {
+                $claim->shipped_manually = 1;
+                $claim->shipped_manually_on = Carbon::now();
+            }
 
             $claim->save();
 

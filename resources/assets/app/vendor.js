@@ -5,6 +5,7 @@ global.Tether = require('tether');
 require('bootstrap');
 require('bootstrap-select');
 global._ = require('lodash');
+require('moment');
 global.moment = require('moment-timezone');
 global.slider = require('bootstrap-slider');
 

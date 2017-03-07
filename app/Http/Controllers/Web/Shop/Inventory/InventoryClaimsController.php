@@ -59,7 +59,7 @@ class InventoryClaimsController extends Controller
      */
     public function update(Request $request, $username, $claimsUUID)
     {
-        $data = webUser()->claimsOnMyListables();
+        $data = webUser()->claimsOnMyListables;
         $claim = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();
