@@ -94,7 +94,9 @@ class AuthController extends Controller
     public function getRegister(Request $request)
     {
         if (app()->environment() == 'production' || $request->has('closedbeta')) {
-            return $this->view('auth.comingsoon');
+            if ($request->get('p') <> 'lacroix') {
+                return $this->view('auth.comingsoon');
+            }
         }
 
         $referrer = $this->referralService->getReferral();
