@@ -64,6 +64,12 @@
         {{ Form::password('newPassword_confirmation', array('placeholder' => 'Confirm New Password','class' => 'form-control')) }}
     </div>
 </div>
+<div class="form-group row {{ $errors->has('about_me') ? 'has-danger' : null }}">
+    <label class="control-label col-sm-3">About You</label>
+    <div class="col-sm-6">
+        {{ Form::textarea('about_me', $_user ? $_user->about_me : null, array('placeholder' => 'Blurb about yourself that is viewable on your public profile','class' => 'form-control')) }}
+    </div>
+</div>
 
 @push('footer-scripts')
 <script src="{{ staticAsset('/assets/js/settings.js') }}"></script>

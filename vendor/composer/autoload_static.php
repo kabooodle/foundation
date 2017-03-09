@@ -1551,6 +1551,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateTransactionsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_10_011013_update_transactions_table.php',
         'UpdateUserAddUsername' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_24_054927_update_user_add_username.php',
         'UpdateUserTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_12_063105_update_user_tbl.php',
+        'UpdateUsersAddSocialLinksAndAbout' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_09_091851_update_users_add_social_links_and_about.php',
         'UpdateUsersProfileAddPhoneNumber' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_09_022103_update_users_profile_add_phone_number.php',
         'UpdateUsersTblAddAvatar' => __DIR__ . '/../..' . '/resources/database/migrations/2016_10_31_194814_update_users_tbl_add_avatar.php',
         'UpdateUsersTblAddReferreredById' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_17_005109_update_users_tbl_add_referrered_by_id.php',

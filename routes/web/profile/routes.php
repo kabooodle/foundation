@@ -39,6 +39,10 @@ Route::group(['middleware' => 'auth'], function () {
         'as' => 'profile.social.edit',
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@getSocial'
     ]);
+    Route::post('/profile/socialprofiles', [
+        'as' => 'profile.social.update',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@postSocial'
+    ]);
 
     Route::get('/purchases', [
         'as' => 'profile.purchases.index',

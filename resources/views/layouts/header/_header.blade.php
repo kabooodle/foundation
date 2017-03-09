@@ -48,6 +48,7 @@
                                                                                                                                       "busy b-white right"></i></span></a>
                     <div class="dropdown-menu pull-right">
                         <a class="dropdown-item" href="{{ route('user.profile', [webUser()->username]) }}"><span>Public Profile</span></a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('profile.index') }}"><span>Account Settings</span></a>
                         @if(webUser()->hasAtLeastMerchantSubscription() || (webUser()->getAvailableBalance() > 0))
                             <a class="dropdown-item hidden-lg-up" href="{{ route('profile.credits.index') }}"><span>${{ webUser()->getAvailableBalance() }} Credits</span></a>

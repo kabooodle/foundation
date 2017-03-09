@@ -54,7 +54,8 @@ class ProfileSettingsController extends Controller
             'password' => Binput::get('password'),
             'newPassword' => Binput::get('newPassword'),
             'newPassword_confirmation' => Binput::get('newPassword_confirmation'),
-            'timezone' => Binput::get('timezone')
+            'timezone' => Binput::get('timezone'),
+            'about_me' => Binput::get('about_me')
         ];
 
         // Set Validation Rules
@@ -107,6 +108,8 @@ class ProfileSettingsController extends Controller
                 }
             }
 
+            webUser()->about_me = $input['about_me'] ? nl2br($input['about_me']) : null;
+
             webUser()->save();
 
             event(new UserSettingsUpdated(user()));
@@ -143,6 +146,21 @@ class ProfileSettingsController extends Controller
     public function getSocial()
     {
         return $this->view('profile.social');
+    }
+
+
+    public function postSocial()
+    {
+        $user = webUser();
+        $user->social_instagram = trim(Binput::get('social_instagram', null));
+        $user->social_twitter = trim(Binput::get('social_twitter', null));
+        $user->social_youtube = trim(Binput::get('social_youtube', null));
+        $user->social_website = trim(Binput::get('social_website', null));
+        $user->save();
+
+        Messages::success("Profile updated!");
+
+        return redirect()->route('profile.social.edit');
     }
 
     /**

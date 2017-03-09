@@ -15,18 +15,36 @@
                         </a>
                         {{--<p><small>{{ $viewedUser->email }}</small></p>--}}
                         <div>
-                            <a href="" class="btn btn-icon btn-social rounded white btn-sm">
-                                <i class="fa fa-facebook"></i>
-                                <i class="fa fa-facebook indigo"></i>
-                            </a>
-                            <a href="" class="btn btn-icon btn-social rounded white btn-sm">
-                                <i class="fa fa-twitter"></i>
-                                <i class="fa fa-twitter light-blue"></i>
-                            </a>
-                            <a href="" class="btn btn-icon btn-social rounded white btn-sm">
-                                <i class="fa fa-google-plus"></i>
-                                <i class="fa fa-google-plus red"></i>
-                            </a>
+                            @if($viewedUser->facebook_user_id)
+                                <a href="http://www.facebook.com/{{ $viewedUser->facebook_user_id }}" class="btn btn-icon btn-social rounded white btn-sm">
+                                    <i class="fa fa-facebook"></i>
+                                    <i class="fa fa-facebook indigo"></i>
+                                </a>
+                            @endif
+                            @if($viewedUser->social_twitter)
+                                <a href="{{ $viewedUser->social_twitter }}" class="btn btn-icon btn-social rounded white btn-sm">
+                                    <i class="fa fa-twitter"></i>
+                                    <i class="fa fa-twitter light-blue"></i>
+                                </a>
+                            @endif
+                            @if($viewedUser->social_instagram)
+                                <a href="{{ $viewedUser->social_instagram}}" class="btn btn-icon btn-social rounded white btn-sm">
+                                    <i class="fa fa-instagram"></i>
+                                    <i class="fa fa-instagram pink"></i>
+                                </a>
+                            @endif
+                            @if($viewedUser->social_youtube)
+                                <a href="{{ $viewedUser->social_youtube }}" class="btn btn-icon btn-social rounded white btn-sm">
+                                    <i class="fa fa-youtube"></i>
+                                    <i class="fa fa-youtube red"></i>
+                                </a>
+                            @endif
+                                @if($viewedUser->social_website)
+                                    <a href="{{ $viewedUser->social_website }}" class="btn btn-icon btn-social rounded white btn-sm">
+                                        <i class="fa fa-globe"></i>
+                                        <i class="fa fa-globe green"></i>
+                                    </a>
+                                @endif
                         </div>
                         <div class="text-center m-t">
 
