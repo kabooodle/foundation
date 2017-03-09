@@ -87,17 +87,15 @@
             }
         },
         created(){
-//            this.$nextTick(()=>{
-            $(function(){
-                $('[data-toggle="selectpicker"]').selectpicker({
-                    style: 'btn-default'
-                });
-            });
-
-//            });
-
             this.checkQueryString(location.search);
         },
+//        mounted(){
+//            this.$nextTick(()=>{
+//                $('[data-toggle="selectpicker"]').selectpicker({
+//                    style: 'btn-default'
+//                });
+//            });
+//        },
         methods: {
             checkQueryString(query){
                     if (!query) {
