@@ -69,13 +69,13 @@
                         </div>
                         <div class="col-sm-10">
                             <div class="item-box"  >
-                                <div class="row row-horizon">
+                                <div class="row row-horizon" style="position: relative; overflow: auto; ">
 
                                     <div
                                             v-for="item in subgroup.listables"
                                             :style="hideUnavailable && item.available_qty <= 0 ? 'display: none': null"
                                             :key="item.id"
-                                            class="col-sm-2 p-r-0 btn-group-prpl"
+                                            class="col-sm-2 p-r-0 m-b-2 btn-group-prpl"
                                             style="width:110px !important;">
                                         <button
                                             @click.prevent="clickListable(subgroup, item)"
@@ -270,6 +270,9 @@
                 const index = this.opened.indexOf(subgroup.id);
                 if (index == -1) {
                     this.opened.push(subgroup.id);
+                    this.$nextTick(()=>{
+                        $('.row-horizon').perfectScrollbar();
+                    });
                 }
             },
 
@@ -277,6 +280,9 @@
                 const index = this.opened.indexOf(subgroup.id);
                 if (index > -1) {
                     this.opened.splice(index, 1);
+                    this.$nextTick(()=>{
+                        $('.row-horizon').perfectScrollbar();
+                    });
                 }
             },
 
@@ -443,3 +449,11 @@
         }
     }
 </script>
+<style>
+    .ps-scrollbar-x {
+        height: 11px !important;
+    }
+    .ps-scrollbar-x-rail {
+        opacity: .9 !important;
+    }
+</style>

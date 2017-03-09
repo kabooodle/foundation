@@ -43,7 +43,7 @@
 
                     <div ui-view class="app-body" id="view">
                         <div class="container">
-                            <div class="p-t-2 p-b-2">
+                            <div class="p-t-2 p-b-2 p-l-1 p-r-1">
                                 @yield('body-content')
                             </div>
                         </div>

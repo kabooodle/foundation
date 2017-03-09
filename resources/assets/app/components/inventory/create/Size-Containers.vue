@@ -1,6 +1,8 @@
 <template>
     <div>
-        <div class="box" v-for="size_container in size_containers" >
+        <div class="box"
+             v-for="size_container in size_containers"
+             :key="size_container.id" >
             <button type="button" @click="deleteSizeContainer(size_container, $event)" style="position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3" class=" m-l-1 pull-right btn white btn-xs text-muted "><i class="fa fa-times" aria-hidden="true"></i></button>
             <size-container
                     :images="size_container.images"
@@ -34,6 +36,10 @@
                 responseData.json = JSON.stringify(responseData);
                 var sizeEl = el.closest('.sizing_container'),
                         sizeContainerId = sizeEl.data('id');
+
+                this.$nextTick(()=>{
+                    $('.row-horizon').perfectScrollbar('update');
+                });
 
                 var container = ($.findFirst(this.size_containers, function(obj) {
                     return obj.id == sizeContainerId;
@@ -104,3 +110,11 @@
         }
     }
 </script>
+<style>
+    .ps-scrollbar-x {
+        height: 11px !important;
+    }
+    .ps-scrollbar-x-rail {
+        opacity: .9 !important;
+    }
+</style>

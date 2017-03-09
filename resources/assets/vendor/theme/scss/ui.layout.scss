@@ -207,3 +207,41 @@ body{
 }
 
 
+
+@media (min-width: 990px) and (max-width: 992px) {
+	.container {
+		max-width: 990px;
+	}
+}
+
+
+
+@media (max-width: 991px) {
+	.container {
+		max-width: 991px;
+	}
+}
+
+@media (max-width: 767px) {
+	.container {
+		max-width: 767px;
+	}
+}
+
+@media (max-width: 414px) {
+	.container {
+		max-width: 413px;
+	}
+}
+
+@media (max-width: 375px) {
+	.container {
+		max-width: 374px;
+	}
+}
+
+@media (max-width: 320px) {
+	.container {
+		max-width: 319px;
+	}
+}

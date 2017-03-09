@@ -90,5 +90,4 @@
 @push('footer-scripts')
 
 <script src="{{staticAsset('/assets/js/inventory-create.js')}}"></script>
-
 @endpush

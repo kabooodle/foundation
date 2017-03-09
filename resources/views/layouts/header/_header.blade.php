@@ -1,6 +1,6 @@
 <div class="app-header navbar-md prpl-1000 box-shadow">
     <div class="navbar clearfix">
-        <a class="navbar-item pull-right hidden-md-up m-a-0 m-l" data-target="#navbar-4" data-toggle="collapse"><i class=
+        <a class="navbar-item right hidden-md-up m-a-0 m-l" data-target="#primary_header_nav" data-toggle="collapse"><i class=
                                               "material-icons"></i></a>
         <a href="{{ webUser() ? '/users/'.webUser()->username : '/home' }}"
                                                                            class="navbar-brand kabooodle-brand">
@@ -68,7 +68,7 @@
             @endif
         </ul>
 
-        <div class="collapse navbar-toggleable-sm" data-pjax="" id="navbar-4">
+        <div class="collapse navbar-toggleable-sm" data-pjax="" id="primary_header_nav">
             <ul class="nav navbar-nav pull-left nav-active-border b-warning">
                 @if(webUser() && webUser()->hasAtLeastMerchantSubscription())
                     <li class="nav-item dropdown">
