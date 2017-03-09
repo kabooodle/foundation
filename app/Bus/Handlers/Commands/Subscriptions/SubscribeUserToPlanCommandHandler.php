@@ -92,7 +92,7 @@ class SubscribeUserToPlanCommandHandler
             }
 
             // Cleanup
-            if (in_array($plan, Plans::PLAN_MERCHANTPLUS_ANNUAL, Plans::PLAN_MERCHANTPLUS_MONTH)) {
+            if (in_array($plan, [Plans::PLAN_MERCHANTPLUS_ANNUAL, Plans::PLAN_MERCHANTPLUS_MONTH])) {
                 $actor->kabooodle_as_shipping = 1;
             }
 

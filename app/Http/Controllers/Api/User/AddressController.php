@@ -6,8 +6,10 @@
 
 namespace Kabooodle\Http\Controllers\Api\User;
 
+use Shippo_InvalidRequestError;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Kabooodle\Bus\Commands\Address\AddAddressCommand;
 use Kabooodle\Bus\Commands\Address\DestroyAddressCommand;
 use Kabooodle\Bus\Commands\Address\MakeAddressPrimaryCommand;
@@ -89,10 +91,16 @@ class AddressController extends AbstractApiController
                 $validatedAddress->metadata));
 
             return $this->setData(['address' => $address])->respond();
+        } catch (Shippo_InvalidRequestError $e) {
+            return $this->setData(['msg' => 'The address fields are missing data, please try again.'])
+                ->setStatusCode(401)
+                ->respond($e);
         } catch (InvalidAddressException $e) {
-            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond($e);
+            return $this->setData(['msg' => 'The address fields are missing data, please try again.'])->setStatusCode(401)->respond($e);
+        }  catch (ValidationException $e) {
+            return $this->setData(['msg' => 'The address fields are missing data, please try again.'])->setStatusCode(401)->respond($e);
         } catch (Exception $e) {
-            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond($e);
+            return $this->setData(['msg' => $e->getMessage()])->setStatusCode(500)->respond($e);
         }
     }
 
@@ -109,6 +117,8 @@ class AddressController extends AbstractApiController
             $this->dispatchNow(new MakeAddressPrimaryCommand($address));
 
             return $this->respond();
+        } catch (Shippo_InvalidRequestError $e) {
+            return $this->setData(['msg' => 'The address fields are missing data, please try again.'])->setStatusCode(401)->respond($e);
         } catch (Exception $e) {
             return $this->setStatusCode(500)->respond();
         }

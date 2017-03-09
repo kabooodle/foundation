@@ -897,6 +897,7 @@ return array(
     'UpdateTransactionsTable' => $baseDir . '/resources/database/migrations/2016_11_10_011013_update_transactions_table.php',
     'UpdateUserAddUsername' => $baseDir . '/resources/database/migrations/2016_08_24_054927_update_user_add_username.php',
     'UpdateUserTbl' => $baseDir . '/resources/database/migrations/2016_08_12_063105_update_user_tbl.php',
+    'UpdateUsersProfileAddPhoneNumber' => $baseDir . '/resources/database/migrations/2017_03_09_022103_update_users_profile_add_phone_number.php',
     'UpdateUsersTblAddAvatar' => $baseDir . '/resources/database/migrations/2016_10_31_194814_update_users_tbl_add_avatar.php',
     'UpdateUsersTblAddReferreredById' => $baseDir . '/resources/database/migrations/2016_09_17_005109_update_users_tbl_add_referrered_by_id.php',
     'UpdateUsersTblAddShippingSetting' => $baseDir . '/resources/database/migrations/2016_11_12_015714_update_users_tbl_add_shipping_setting.php',

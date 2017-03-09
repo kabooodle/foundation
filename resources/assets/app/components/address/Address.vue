@@ -3,7 +3,7 @@
         <div class="col-sm-8">
             <span>
                 <strong>{{ address.name }}</strong>
-                <span class="block">{{ address.street1 }}, {{ address.city }}, {{ address.state }}, {{ address.zip }}</span>
+                <span class="block">{{ address.street1 }}, {{ address.city }}, {{ address.state }}, {{ address.zip }} {{ address.phone }}</span>
             </span>
         </div>
         <div class="col-sm-3">

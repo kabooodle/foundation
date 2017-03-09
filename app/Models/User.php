@@ -66,7 +66,8 @@ class User extends BaseEloquentModel implements
         'full_name',
         'full_name_with_username',
         'name',
-        'email'
+        'email',
+        'profile_url'
     ];
 
     /**
@@ -1234,5 +1235,13 @@ class User extends BaseEloquentModel implements
         }
 
         return $qualifiedReferrals->count();
+    }
+
+    /**
+     * @return string
+     */
+    public function getProfileUrlAttribute()
+    {
+        return route('user.profile', [$this->username]);
     }
 }

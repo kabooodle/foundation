@@ -112,6 +112,7 @@ class ShippingParcelController extends AbstractApiController
             'to.state' => 'required',
             'to.zip' => 'required',
             'to.email' => 'required',
+            'to.phone' => 'required',
 
             'from.name' => 'required',
             'from.street1' => 'required',

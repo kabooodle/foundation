@@ -63,7 +63,7 @@ class Address extends BaseEloquentModel implements Revisionable
         'state' => '',
         'zip' => '',
         'country' => 'US',
-        'phone' => null,
+        'phone' => '',
         'is_residential' => true,
         'metadata' => ''
     ];
@@ -85,6 +85,7 @@ class Address extends BaseEloquentModel implements Revisionable
             'city' => 'required',
             'state' => 'required',
             'zip' => 'required',
+            'phone' => 'required'
         ];
     }
 

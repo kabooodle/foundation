@@ -191,7 +191,7 @@
                             <template slot="input">
                                 <div class="col-sm-4">
                                     <input name="to[phone]" class="form-control">
-                                    <small class="text-xs text-muted">(optional)</small>
+                                    <small class="text-xs text-muted">(USPS requirement)</small>
                                 </div>
                             </template>
                         </inline-field>
@@ -219,16 +219,16 @@
                     </div>
                     <div class="box-divider"></div>
                     <div class="box-body">
-                        <inline-field :errors="form_errors" class="form-group row" >
-                            <template slot="label">Pre-saved Addresses</template>
-                            <template slot="input">
-                                <div class="col-sm-4">
-                                    <select class="form-control">
-                                        <option></option>
-                                    </select>
-                                </div>
-                            </template>
-                        </inline-field>
+                        <!--<inline-field :errors="form_errors" class="form-group row" >-->
+                            <!--<template slot="label">Pre-saved Addresses</template>-->
+                            <!--<template slot="input">-->
+                                <!--<div class="col-sm-4">-->
+                                    <!--<select class="form-control">-->
+                                        <!--<option></option>-->
+                                    <!--</select>-->
+                                <!--</div>-->
+                            <!--</template>-->
+                        <!--</inline-field>-->
 
                         <inline-field :errors="form_errors" class="form-group row" field_name="from.name">
                             <template slot="label">Sender Name</template>
@@ -302,7 +302,7 @@
                             <template slot="input">
                                 <div class="col-sm-4">
                                     <input name="from[phone]" class="form-control" >
-                                    <small class="text-xs text-muted">(optional)</small>
+                                    <small class="text-xs text-muted">(USPS requirement)</small>
                                 </div>
                             </template>
                         </inline-field>

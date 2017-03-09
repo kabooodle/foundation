@@ -58,9 +58,10 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="form-control-label col-sm-3">Phone <small class="block text-muted">(Optional)</small></label>
+                        <label class="form-control-label col-sm-3">Phone</label>
                         <div class="col-md-4">
                             <input type="text" v-model="phone" class="form-control">
+                            <span class="block text-xs text-muted">(USPS requires this for certain shipment types)</span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -403,7 +404,7 @@
                         });
                     }, function (response) {
                         notify({
-                            'text': 'We\'re sorry. Something went wrong. Please try again.',
+                            'text': response.body.data.msg,
                             'type': 'error'
                         });
                     }).finally(()=>{
