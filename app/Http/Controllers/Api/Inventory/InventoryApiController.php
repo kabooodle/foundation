@@ -142,74 +142,10 @@ class InventoryApiController extends AbstractApiController
         }
 
         $select = $q->get();
-//
-//        $sql = "
-//            SELECT
-//            l.id,
-//            l.class,
-//            l.name,
-//            l.name_alt,
-//            CONCAT(l.name_alt,'_', l.id) as name_with_id,
-//            f.location as cover_photo_location,
-//            CONCAT('$', IFNULL(SUM(c.accepted_price), 0)) AS accepted_price_sum,
-//            CONCAT('$', IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0)) AS gross,
-//            IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
-//            IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
-//            IFNULL(SUM(v.count), 0) AS pageviews_count,
-//            IFNULL(SUM(l.initial_qty),0) as qty_on_hand
-//            FROM listables as i
-//            LEFT JOIN inventory_type_styles AS s ON s.id = l.inventory_type_styles_id
-//            LEFT JOIN inventory_sizes as `is` ON is.id=l.inventory_sizes_id
-//            LEFT JOIN claims as c ON c.listable_id = l.id AND c.listable_type = l.class
-//            LEFT JOIN v_pageviews as v on v.viewable_id = l.id AND v.viewable_type = l.class
-//            INNER JOIN files as f ON f.id = l.cover_photo_file_id
-//            WHERE l.user_id = ?
-//            AND l.deleted_at is null
-//            and c.deleted_at is null
-//            GROUP BY name_with_id asc
-//            WITH rollup
-//            ";
-//
-//        $select = DB::select($sql, [$this->getUser()->id]);
-
-//
-//        if ($request->has('style_id') && $request->get('style_id')) {
-//            $data = $data->whereIn('inventory_type_styles_id', $request->get('style_id'));
-//        }
-//        if ($request->has('size_id') && $request->get('size_id')) {
-//            $data = $data->whereIn('inventory_sizes_id', $request->get('size_id'));
-//        }
-//        if ($request->has('qty_0')) {
-//            $data = $data->where('initial_qty', 0);
-//        }
-//        if ($request->has('flashsale_id')) {
-//            $data = $data->whereHas('flashsales', function ($q) use ($request) {
-//                $q->whereIn('flashsales.id', $request->get('flashsale_id'));
-//            });
-//        }
-//        if ($request->has('has_sales')) {
-//            $data = $data->has('sales', '>', 0);
-//        }
-//        if ($request->has('has_claims')) {
-//            $data = $data->has('pendingClaims', '>', 0);
-//        }
-
-        // FIXME!!
-        // Solution: Rewrite query as raw sql.
-        // Problem: We are paginating the data in chunks of 50. However, we aren't calling paginate on the DB query,
-        // but instead on the collection.  This is so that we can sort alphabetically correctly, which can
-        // only be done on the results.  This pitfall of this is if we have a lot of data returned, for example 2000 items,
-        // we would be sorting all 2000 items, then chunking it into 50.
-        // If we used the native pagination on the query builder, it would only return chunks of 50 results at a time
-        // lessening the overhead.  However, sorting the results alphabeitcally doesn't work.
-//        $data = $data->get();
-
-
-//        $data = $selec->sortBy(function($post) {
-//            return sprintf('%-12s%s', $post->style->name, $post->styleSize->sort_order);
-//        });
 
         if ($select) {
+            // I've intentionally added WITH ROLLUP to the query to put the requirement of summing/totalling on MYSQL
+            // However, we dont want to display this with the data. So remove it from the array and add it elsewhere.
             $rolledup = array_pop($select);
             $rolledupData = [
                 'accepted_price_sum' => $rolledup->accepted_price_sum,
