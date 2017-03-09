@@ -90,6 +90,7 @@
         </div>
     </div>
 </template>
+<style src="./../../multiselect/vue-multiselect.min.css"></style>
 <script>
     import FileUpload from  '../../FileUpload.vue';
     import Multiselect from 'vue-multiselect';

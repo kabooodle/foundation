@@ -61,6 +61,7 @@
         </modal>
     </div>
 </template>
+<style src="./../multiselect/vue-multiselect.min.css"></style>
 <script>
     import currentUser from '../current-user';
     import Multiselect from 'vue-multiselect';

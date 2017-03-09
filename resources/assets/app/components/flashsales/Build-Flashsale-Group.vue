@@ -58,6 +58,7 @@
         </modal>
     </span>
 </template>
+<style src="./../multiselect/vue-multiselect.min.css"></style>
 <script>
     function initialState (){
         return {

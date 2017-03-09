@@ -6,17 +6,18 @@
 
 namespace Kabooodle\Http\Controllers\Api\Listings;
 
+use Bugsnag;
 use Exception;
-use Illuminate\Http\Request;
-use Kabooodle\Bus\Commands\User\AddGuestCommand;
+use Kabooodle\Models\User;
 use Kabooodle\Models\Email;
+use Illuminate\Http\Request;
 use Kabooodle\Models\ListingItems;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Kabooodle\Bus\Commands\User\AddGuestCommand;
+use Kabooodle\Bus\Commands\Claim\ClaimListedItemCommand;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
-use Kabooodle\Bus\Commands\Claim\ClaimListedItemCommand;
 use Kabooodle\Foundation\Exceptions\Claim\RequestedQuantityCannotBeSatisfiedException;
-use Kabooodle\Models\User;
 
 /**
  * Class ListingItemsClaimsController
