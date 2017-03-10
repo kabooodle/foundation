@@ -7,9 +7,8 @@
 namespace Kabooodle\Bus\Handlers\Events\User;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToGenericTrialCommand;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
-use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToPlanCommand;
+use Kabooodle\Bus\Commands\Subscriptions\SubscribeUserToGenericTrialCommand;
 
 /**
  * Class AddNewUserToGenericTrial

@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="md-form-group">
-                    <select class="md-input" name="account_type" data-toggle="selectpicker" data-style="btn white" data-width="100%">
+                    <select class="md-input" v-model="selected_account" name="account_type" data-toggle="selectpicker" data-style="btn white" data-width="100%">
                         <option data-subtext="Always free" value="basic" :selected="selected_account == 'basic'">Basic</option>
                         <option data-subtext="30 day free trial" value="merchant" :selected="selected_account == 'merchant'">Merchant</option>
                         <option data-subtext="30 day free trial" value="merchant" :selected="selected_account == 'merchant_plus'">Merchant Plus</option>

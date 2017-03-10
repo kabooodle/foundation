@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Api\Files;
 
 use Binput;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 
@@ -31,6 +32,9 @@ class FilesApiController extends AbstractApiController
         if (!$filename || !$user) {
             return $this->setStatusCode(500)->respond();
         }
+
+        // Only allow alphanumeric - _ . in filenames.  Anything else, replace with _
+        $filename = preg_replace('/[^A-Za-z0-9.-_]/i', '_', $filename);
 
         $acl = 'public-read';
         $bucket = env('AWS_BUCKET');
