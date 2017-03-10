@@ -890,6 +890,7 @@ return array(
     'UpdateShippingTbl' => $baseDir . '/resources/database/migrations/2016_11_07_050555_update_shipping_tbl_.php',
     'UpdateShippingTransactionsAddRateDataCols' => $baseDir . '/resources/database/migrations/2016_09_20_190136_update_shipping_transactions_add_rate_data_cols.php',
     'UpdateShippingTxnAddLabelColumn' => $baseDir . '/resources/database/migrations/2016_11_08_222544_update_shipping_txn_add_label_column.php',
+    'UpdateSocialInstragramSpelling' => $baseDir . '/resources/database/migrations/2017_03_10_001207_update_social_instragram_spelling.php',
     'UpdateTablesForAuthorable' => $baseDir . '/resources/database/migrations/2016_08_27_010740_update_tables_for_authorable.php',
     'UpdateTablesNeedingIncrementHigher' => $baseDir . '/resources/database/migrations/2017_01_29_061641_update_tables_needing_increment_higher.php',
     'UpdateTagsTable' => $baseDir . '/resources/database/migrations/2016_06_29_073615_update_tags_table.php',
