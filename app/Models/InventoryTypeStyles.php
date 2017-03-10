@@ -50,6 +50,7 @@ class InventoryTypeStyles extends BaseEloquentModel implements Revisionable
         'slug',
         'sort_order',
         'wholesale_price_usd',
+        'suggested_price_usd',
         'wholesale_price_usd_less_5_percent'
     ];
 

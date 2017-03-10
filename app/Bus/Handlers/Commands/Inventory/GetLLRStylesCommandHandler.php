@@ -37,7 +37,7 @@ class GetLLRStylesCommandHandler
 
         $styles = InventoryTypeStyles::whereHas('type', function ($q) {
             $q->where('slug', '=', 'lularoe');
-        })->with('sizes')->get();
+        })->with('sizes')->sortBy('sort_order', 'asc')->get();
 
         $this->cache->add(self::TAG, $styles, 43800);
 
