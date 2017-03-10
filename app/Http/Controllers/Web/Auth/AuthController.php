@@ -157,7 +157,7 @@ class AuthController extends Controller
             Messages::success("Welcome to ".env('APP_NAME').", {$user->first_name}!");
 
             if ($redirect == '/') {
-                $redirect = route('user.profile', [$user->username]);
+                $redirect = route('profile.index');
             }
 
             return $this->redirect($redirect);

@@ -86,7 +86,13 @@ class UpdateInventoryItemCommandHandler
 
             $coverPhotoKey = $command->getCoverPhotoKey();
             $coverPhotoFile = $existingImages->first(function($value, $file) use ($coverPhotoKey) {
-                return $file->id == $coverPhotoKey;
+                // Numeric if the selected cover photo is an existing file in the DB
+                // otherwise, check the "key" because this means its a newly uploaded photo
+                if (is_numeric($coverPhotoKey)) {
+                    return $file->id == $coverPhotoKey;
+                } else {
+                    return $file->key == $coverPhotoKey;
+                }
             });
 
             $item->cover_photo_file_id = $coverPhotoFile->id;

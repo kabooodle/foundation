@@ -14,7 +14,7 @@
     $cards = [
         'sales_analytics' => [
             'title' => 'Sales analytics',
-            'body' => 'Understand <span class="_500">which sales yield better results.</span>  The who, what, where, when, why, and how.',
+            'body' => 'Understand <span class="_500">which sales yield better results.</span>  Know the who, what, where, when, why, and how.',
             'icon' => 'salesanalytics.png'
         ],
         'inventory' => [

@@ -1544,6 +1544,8 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateShippingTbl' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_07_050555_update_shipping_tbl_.php',
         'UpdateShippingTransactionsAddRateDataCols' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_20_190136_update_shipping_transactions_add_rate_data_cols.php',
         'UpdateShippingTxnAddLabelColumn' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_08_222544_update_shipping_txn_add_label_column.php',
+        'UpdateSocialInstragramSpelling' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_10_001207_update_social_instragram_spelling.php',
+        'UpdateStyleSizesTbls' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_10_050016_update_style_sizes_tbls.php',
         'UpdateTablesForAuthorable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_08_27_010740_update_tables_for_authorable.php',
         'UpdateTablesNeedingIncrementHigher' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_29_061641_update_tables_needing_increment_higher.php',
         'UpdateTagsTable' => __DIR__ . '/../..' . '/resources/database/migrations/2016_06_29_073615_update_tags_table.php',

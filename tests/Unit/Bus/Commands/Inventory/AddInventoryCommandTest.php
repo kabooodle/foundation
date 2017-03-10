@@ -25,6 +25,7 @@ class AddInventoryCommandTest extends BaseTestCase
             'typeId' => 1,
             'styleId' => 1,
             'price' => (string) 100,
+            'wholesalePrice' => (string) 100,
             'sizings' => [],
             'description' => 'foo bar'
         ];
@@ -34,6 +35,7 @@ class AddInventoryCommandTest extends BaseTestCase
             $params['typeId'],
             $params['styleId'],
             $params['price'],
+            $params['wholesalePrice'],
             $params['sizings'],
             $params['description']
         );

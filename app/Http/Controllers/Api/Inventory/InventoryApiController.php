@@ -201,7 +201,7 @@ class InventoryApiController extends AbstractApiController
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)
-                ->setData(['msg' => $e])
+                ->setData(['msg' => $e->getTraceAsString()])
                 ->respond();
         }
     }

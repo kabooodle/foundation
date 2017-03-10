@@ -171,7 +171,7 @@
                             <template slot="input">
                                 <div class="col-sm-2">
                                     <select name="to[state]" class="form-control">
-                                        <option v-for="state in states" :value="state">{{ state }}</option>
+                                        <option v-for="(state, $index) in states" :value="$index">{{ state }}</option>
                                     </select>
                                 </div>
                             </template>
@@ -282,7 +282,7 @@
                             <template slot="input">
                                 <div class="col-sm-2">
                                     <select name="from[state]" class="form-control">
-                                        <option v-for="state in states" :value="state">{{ state }}</option>
+                                        <option v-for="(state, $index) in states" :value="$index">{{ state }}</option>
                                     </select>
                                 </div>
                             </template>
@@ -367,6 +367,10 @@
             states: {
                 required: true,
                 type: Object
+            },
+            sender_address: {
+                type: Object,
+                required: true
             }
         },
         data(){
@@ -411,6 +415,7 @@
 
                 scope.setClaimerEl();
                 scope.setPackagingEl();
+                scope.fillSenderAddress();
 
                 claimerEl.on('select2:select', function(event){
                     scope.claimReferenceChanged(event);
@@ -610,7 +615,7 @@
                 // Set address
                 if(elSelectedType == 'claimed_item') {
                     let claim = this.getClaimById(elSelectedVal);
-                    let address = claim.claimer.ship_to_address;
+                    let address = claim.claimer.primary_ship_to_address;
                     $('[name="to[name]"]').val(claim.claimer.name);
                     $('[name="to[email]"]').val(claim.claimer.email);
                     if(address) {
@@ -682,6 +687,14 @@
                 $.each(this.getAddressKeys(), function(k,v){
                     if(v in address) {
                         $('[name="to['+v+']"]').val(address[v]);
+                    }
+                });
+            },
+
+            fillSenderAddress: function(){
+                $.each(this.getAddressKeys(), (k,v)=>{
+                    if (v in this.sender_address) {
+                        $('[name="from['+v+']"]').val(this.sender_address[v]);
                     }
                 });
             },

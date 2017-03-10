@@ -79,7 +79,7 @@ class InventoryType extends BaseEloquentModel implements Revisionable
      */
     public function styles()
     {
-        return $this->hasMany(InventoryTypeStyles::class, 'inventory_type_id');
+        return $this->hasMany(InventoryTypeStyles::class, 'inventory_type_id')->orderBy('sort_order');
     }
 
     /**

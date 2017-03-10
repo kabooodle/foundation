@@ -8,6 +8,7 @@ namespace Kabooodle\Foundation\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Kabooodle\Services\EventDispatcher;
+use Illuminate\Contracts\Queue\Factory;
 
 /**
  * Class EventDispatcherServiceProvider
@@ -19,7 +20,7 @@ class EventDispatcherServiceProvider extends ServiceProvider
     {
         $this->app->singleton('events', function ($app) {
             return (new EventDispatcher($app))->setQueueResolver(function () use ($app) {
-                return $app->make('Illuminate\Contracts\Queue\Factory');
+                return $app->make(Factory::class);
             });
         });
     }
