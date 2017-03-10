@@ -21,15 +21,21 @@ class AddUserCommandTest extends BaseTestCase
     protected function getObjectAndParams()
     {
         $params = [
-            'name' => 'Jake T',
+            'firstName' => 'jake',
+            'lastName' => 'toolson',
+            'username' => 'jaketoolson',
             'email' => 'jake@kabooodle.com',
-            'password' => '23fasd443@$u'
+            'password' => '23fasd443@$u',
+            'accountType' => 'merchant'
         ];
 
         $object = new AddUserCommand(
-            $params['name'],
+            $params['firstName'],
+            $params['lastName'],
+            $params['username'],
             $params['email'],
-            $params['password']
+            $params['password'],
+            $params['accountType']
         );
 
         return compact('params', 'object');
