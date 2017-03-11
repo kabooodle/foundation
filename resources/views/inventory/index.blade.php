@@ -67,10 +67,17 @@
                                         <span class="hidden-sm-up">Options</span>
                                     </a>
                                     <div class="dropdown-menu dropdown-over dropdown-menu-sm pull-xs-none dropdown-menu-right">
-                                        <a href="http://kabooodle.dev/listing/8ef012b6-174e-4e52-b58d-8570f9fed9ca" class="dropdown-item">Edit</a>
-                                        <a href="http://kabooodle.dev/merchant/listings/8ef012b6-174e-4e52-b58d-8570f9fed9ca" class="dropdown-item">Claim</a>
+                                        <button
+                                                @click="editItemButtonClicked(props.rowData.slug, '{{ route('shop.inventory.edit', [webUser()->username, 'K']) }}', $event)"
+                                                type="button"
+                                                class="dropdown-item">Edit</button>
+                                        <button
+                                                type="button"
+                                                @click="claimButtonClicked(props.rowData.slug, '{{ route('shop.inventory.show', [webUser()->username, 'K']) }}', $event)"
+                                                class="dropdown-item">Claim</button>
                                         <div class="divider"></div>
-                                        <a href="http://kabooodle.dev/merchant/listings/8ef012b6-174e-4e52-b58d-8570f9fed9ca" class="dropdown-item">Archive</a>
+                                        <button
+                                        @click="archiveItem(props.rowData.id, '{{ apiRoute('inventory.archive', ['K']) }}', $event)" type="button" class="dropdown-item">Archive</button>
                                     </div>
                                 </div>
                         </div>
@@ -92,6 +99,8 @@
             </div>
         </div>
     </div>
+
+    <popout-overlay></popout-overlay>
 
 @endsection
 

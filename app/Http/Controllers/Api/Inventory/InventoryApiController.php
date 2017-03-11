@@ -89,7 +89,6 @@ class InventoryApiController extends AbstractApiController
         sort($groupings);
 
         $data = [
-//            'inventory' => $inventory,
             'groupings' => $groupings,
         ];
 
@@ -125,6 +124,7 @@ class InventoryApiController extends AbstractApiController
             l.subclass_name,
             l.name,
             l.name_alt,
+            l.slug,
             CONCAT(l.name_alt,'_', l.id) as name_with_id,
             CONCAT(l.name_alt, '::', f.location) as name_with_cover_photo,
             f.location as cover_photo_location,

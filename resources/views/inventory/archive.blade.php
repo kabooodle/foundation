@@ -42,7 +42,7 @@
                     <template slot="actions" scope="props">
                         <div class="clearfix">
                             <button
-                                             class="btn btn-xs white"
+                                             class="pull-md-right btn btn-xs white"
                             @click="unarchiveItem(props.rowData.id, props.rowData.unarchive_endpoint, $event)">
                             Unarchive</button>
                         </div>

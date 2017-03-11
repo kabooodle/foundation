@@ -3,6 +3,7 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
+import PopoutOverlay from '../Popover.vue';
 import DetailedTotals from './DetailedTotals.vue';
 import Spinny from '../Spinner.vue';
 import Vuetable from '../vuetable/Vuetable.vue';
@@ -12,6 +13,7 @@ import VuetablePaginationInfo from '../vuetable/VuetablePaginationInfo.vue';
 new Vue({
     el: '#manage_listables',
     data: {
+        previousRequest: null,
         selectedTo: [],
         search_filter: null,
         moreParams: {},
@@ -71,8 +73,52 @@ new Vue({
             },
         },
     },
-
     methods: {
+        archiveItem(id, endpoint, e){
+            endpoint = endpoint.replace('K', id);
+            this.$emit('archiving-item', id);
+            let parentDropdown = $(e.target).closest('.dropdown').find('.dropdown-toggle');
+            parentDropdown.prop('disabled', true).addClass('disabled');
+            this.$http.put(endpoint).then((response)=>{
+                $(e.target).closest('tr').fadeOut();
+                notify({
+                    type: 'success',
+                    text: response.body.data.msg
+                });
+            }, (response)=>{
+                notify({
+                    text: response.body.data.msg
+                });
+                parentDropdown.prop('disabled', false).removeClass('disabled');
+            });
+        },
+        editItemButtonClicked(slug, route, event){
+            $Bus.$emit('popout-overlay:request-open');
+            route = route.replace('K', slug);
+
+            this.$http.get(route, {
+                async: false,
+                before(request) {
+                    // Before each ajax request, abort the previous request
+                    // and add this request to an array of requests for reference.
+                    $Bus.$emit('popout-overlay:change-prompt', false);
+                    if (this.previousRequest) {
+                        this.previousRequest.abort();
+                    }
+                    this.previousRequest = request;
+                }
+            }).then((response)=>{
+                setTimeout(()=>{
+                    $Bus.$emit('popout-overlay:change-content', response.body);
+                },0);
+            }, (response)=>{
+                $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
+            });
+        },
+        claimButtonClicked(slug, route, event){
+            route = route.replace('K', slug);
+            window.location = route;
+        },
         nameWithImg(val){
             let fields = val.split('::');
 
@@ -171,6 +217,7 @@ new Vue({
     },
     components: {
         'detailed-totals' : DetailedTotals,
+        'popout-overlay' : PopoutOverlay,
         'spinny' : Spinny,
         Vuetable,
         VuetablePagination,

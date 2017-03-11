@@ -141,6 +141,7 @@ class Listable extends BaseEloquentModel implements Commentable, LikeableInterfa
         'wholesale_price_usd',
         'cover_photo_file_id',
         'name',
+        'slug',
         'description',
         'barcode',
         'initial_qty',
@@ -167,6 +168,10 @@ class Listable extends BaseEloquentModel implements Commentable, LikeableInterfa
         self::saving(function(self $model){
             if(!$model->uuid) {
                 $model->uuid = str_random(16);
+            }
+
+            if(! $model->slug || $model->slug !== $model->getUUID()) {
+                $model->slug = $model->getUUID();
             }
 
             if ($model->isDirty('initial_qty')) {

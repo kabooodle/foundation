@@ -77,9 +77,6 @@ new Vue({
 
             });
         },
-        watch:{
-
-        },
         transform: function(data) {
             var transformed = {}
             var pagination = data.meta.pagination;
