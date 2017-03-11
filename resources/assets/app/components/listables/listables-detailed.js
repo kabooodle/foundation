@@ -12,6 +12,7 @@ import VuetablePaginationInfo from '../vuetable/VuetablePaginationInfo.vue';
 new Vue({
     el: '#manage_listables',
     data: {
+        selectedTo: [],
         search_filter: null,
         moreParams: {},
         actions: {
@@ -26,6 +27,7 @@ new Vue({
             pending_sales: 0
         },
         columns: [
+            '__checkbox:id',
             {
                 name: 'name_with_cover_photo',
                 title: 'Item',
@@ -51,6 +53,7 @@ new Vue({
                 name: 'accepted_price_sum',
                 title: 'Gross',
             },
+            '__slot:actions'
         ],
         css: {
             pagination: {
@@ -68,29 +71,8 @@ new Vue({
             },
         },
     },
+
     methods: {
-        // transform: function(data) {
-        //     var transformed = {}
-        //     var pagination = data.meta.pagination;
-        //
-        //     let from = ((pagination.current_page * pagination.per_page) - pagination.per_page) + 1;
-        //     let to = (pagination.current_page * pagination.per_page);
-        //
-        //     transformed.pagination = {
-        //         per_page: pagination.per_page,
-        //         current_page: pagination.current_page,
-        //         last_page: pagination.total_pages,
-        //         next_page_url: pagination.links.hasOwnProperty('next') ? pagination.links.next : null,
-        //         prev_page_url: pagination.links.hasOwnProperty('previous') ? pagination.links.previous : null,
-        //         from: from,
-        //         to: (to > pagination.total ? pagination.total : to),
-        //         total: pagination.total,
-        //     }
-        //
-        //     transformed.data = data.data;
-        //
-        //     return transformed;
-        // },
         nameWithImg(val){
             let fields = val.split('::');
 
@@ -106,6 +88,31 @@ new Vue({
                 filter: this.search_filter
             }
             Vue.nextTick( () => this.$refs.vuetable.refresh() )
+        },
+        bulkDelete(route){
+            if (confirmModal(($noty)=>{
+                $noty.$buttons.find('.btn').addClass('disabled').prop('disabled', true);
+                if (this.selectedTo.length && this.selectedTo.length > 0) {
+                    this.$http.post(route, {ids: this.selectedTo}).then((response)=>{
+                        notify({
+                            type: 'success',
+                            text: response.body.data.msg
+                        });
+                        this.selectedTo = [];
+                        this.$refs.vuetable.selectedTo = [];
+                        this.$refs.vuetable.refresh();
+                        setTimeout(function(){
+                            $noty.close();
+                        },0);
+                    }, (response)=>{
+
+                    }).finally(()=>{
+                        $noty.$buttons.find('.btn').removeClass('disabled').prop('disabled', false);
+                    });
+                }
+                },()=>{
+
+                }));
         },
         onLoaded(){
             this.actions.loading = false;
@@ -143,6 +150,12 @@ new Vue({
             console.log('cellClicked: ', field.name)
             this.$refs.vuetable.toggleDetailRow(data.id)
         },
+        onCheckboxToggled(checked, item){
+            this.selectedTo = this.$refs.vuetable.selectedTo;
+        },
+        onCheckboxToggledAll(checked){
+            this.selectedTo = this.$refs.vuetable.selectedTo;
+        }
     },
     events: {
         'filter-set' (filterText) {

@@ -47,7 +47,7 @@
         </thead>
         <tbody v-cloak>
         <template v-for="(item, index) in tableData">
-            <tr @dblclick="onRowDoubleClicked(item, $event)" @click="onRowClicked(item, $event)" :render="onRowChanged(item)" :class="onRowClass(item, index)">
+            <tr @dblclick="onRowDoubleClicked(item, $event)" @click="onRowClicked(item, $event)" :data-id="item.id" :render="onRowChanged(item)" :class="onRowClass(item, index)">
                 <template v-for="field in fields">
                     <template v-if="field.visible">
                         <template v-if="isSpecialField(field.name)">
@@ -57,7 +57,7 @@
                             <td v-if="extractName(field.name) == '__handle'" :class="['vuetable-handle', field.dataClass]">
                                 <i :class="['sort-handle', css.sortHandleIcon]"></i>
                             </td>
-                            <td v-if="extractName(field.name) == '__checkbox'" :class="['vuetable-checkboxes', field.dataClass]">
+                            <td v-if="extractName(field.name) == '__checkbox'" :data-id="item.id" :class="['vuetable-checkboxes', field.dataClass]">
                                 <input type="checkbox"
                                        @change="toggleCheckbox(item, field.name, $event)"
                                        :checked="rowSelected(item, field.name)">

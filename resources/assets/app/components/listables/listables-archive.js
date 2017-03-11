@@ -11,6 +11,7 @@ import VuetablePaginationInfo from '../vuetable/VuetablePaginationInfo.vue';
 new Vue({
     el: '#manage_archives',
     data: {
+        selectedTo: [],
         search_filter: null,
         moreParams: {},
         actions: {
@@ -25,6 +26,7 @@ new Vue({
             pending_sales: 0
         },
         columns: [
+            '__checkbox:id',
             {
                 name: 'name_with_cover_photo',
                 title: 'Item',
@@ -64,6 +66,7 @@ new Vue({
             },
         },
     },
+
     methods: {
         unarchiveItem(id, endpoint, e){
             this.$emit('deleting-'+id);
@@ -73,6 +76,9 @@ new Vue({
             }, (response)=>{
 
             });
+        },
+        watch:{
+
         },
         transform: function(data) {
             var transformed = {}
@@ -142,6 +148,37 @@ new Vue({
             console.log('cellClicked: ', field.name)
             this.$refs.vuetable.toggleDetailRow(data.id)
         },
+        onCheckboxToggled(checked, item){
+            this.selectedTo = this.$refs.vuetable.selectedTo;
+        },
+        onCheckboxToggledAll(checked){
+            this.selectedTo = this.$refs.vuetable.selectedTo;
+        },
+        bulkActivate(route){
+            if (confirmModal(($noty)=>{
+                    $noty.$buttons.find('.btn').addClass('disabled').prop('disabled', true);
+                    if (this.selectedTo.length && this.selectedTo.length > 0) {
+                        this.$http.post(route, {ids: this.selectedTo}).then((response)=>{
+                            notify({
+                                type: 'success',
+                                text: response.body.data.msg
+                            });
+                            this.selectedTo = [];
+                            this.$refs.vuetable.selectedTo = [];
+                            this.$refs.vuetable.refresh();
+                            setTimeout(function(){
+                                $noty.close();
+                            },0);
+                        }, (response)=>{
+
+                        }).finally(()=>{
+                            $noty.$buttons.find('.btn').removeClass('disabled').prop('disabled', false);
+                        });
+                    }
+                },()=>{
+
+                }));
+        }
     },
     events: {
         'filter-set' (filterText) {

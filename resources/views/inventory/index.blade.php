@@ -2,6 +2,9 @@
 
 
 @section('body-menu')
+    <div class="pull-left">
+
+    </div>
     <div class="pull-right">
         <a href="{{ route('shop.inventory.archive.index', [webuser()->username]) }}" class="btn white btn-sm">Archived Inventory</a>
         <a href="{{ route('shop.inventory.overview.show', [webUser()->username]) }}" class="btn white btn-sm"><i class="fa fa-object-group" aria-hidden="true"></i> Simple View</a>
@@ -25,6 +28,13 @@
         <div class="box-header">
             <div class=" center-block text-center " >
                 <div class="row">
+                    <div class="col-sm-3">
+                        <button
+                                @click="bulkDelete('{{ apiRoute('inventory.archive.bulk') }}')"
+                                v-if="selectedTo.length"
+                                type="button"
+                                class="pull-left btn white">Bulk Archive (@{{ selectedTo.length }})</button>
+                    </div>
                     <div class="col-md-6 col-sm-12 col-xs-12 col-md-offset-3">
                         <input type="text" name="name" v-model="search_filter" class="form-control" @keyup.enter="performSearch" placeholder="Search by item name">
                     </div>
@@ -43,11 +53,29 @@
                           :fields="columns"
                           :per-page="50"
                           :append-params="moreParams"
+                          @vuetable:checkbox-toggled="onCheckboxToggled"
+                          @vuetable:checkbox-toggled-all="onCheckboxToggledAll"
                           @vuetable:loaded="onLoaded"
                           @vuetable:loading="onLoading"
                           @vuetable:load-success="onLoadSuccess"
                           @vuetable:pagination-data="onPaginationData"
-                ></vuetable>
+                >
+                    <template slot="actions" scope="props">
+                        <div class="clearfix pull-md-right">
+                                <div class="dropdown">
+                                    <a href="#" data-toggle="dropdown" class="btn btn-xs white dropdown-toggle no-caret"><i aria-hidden="true" class="hidden-sm-down fa fa-ellipsis-h"></i>
+                                        <span class="hidden-sm-up">Options</span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-over dropdown-menu-sm pull-xs-none dropdown-menu-right">
+                                        <a href="http://kabooodle.dev/listing/8ef012b6-174e-4e52-b58d-8570f9fed9ca" class="dropdown-item">Edit</a>
+                                        <a href="http://kabooodle.dev/merchant/listings/8ef012b6-174e-4e52-b58d-8570f9fed9ca" class="dropdown-item">Claim</a>
+                                        <div class="divider"></div>
+                                        <a href="http://kabooodle.dev/merchant/listings/8ef012b6-174e-4e52-b58d-8570f9fed9ca" class="dropdown-item">Archive</a>
+                                    </div>
+                                </div>
+                        </div>
+                    </template>
+                </vuetable>
 
                 <div class="vuetable-pagination">
                     <vuetable-pagination-info
