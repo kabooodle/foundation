@@ -37,7 +37,7 @@
         <div class="box-header">
             <div class=" center-block text-center " >
                 <div class="row">
-                    <div class="col-xs-6 col-xs-offset-3">
+                    <div class="col-md-6 col-sm-12 col-xs-12 col-md-offset-3">
                         <input type="text" name="name" v-model="search_filter" class="form-control" @keyup.enter="performSearch" placeholder="Search by item name">
                     </div>
                 </div>

@@ -1,29 +1,13 @@
-@extends('layouts.full', ['contentId' => 'manage_listables'])
-
-@section('body-menu')
-    <div class="pull-right">
-        <a href="{{ route('shop.outfits.overview.index', [webUser()->username]) }}" class="btn white btn-sm"><i class="fa fa-th" aria-hidden="true"></i> Simple View</a>
-    </div>
-@endsection
+@extends('layouts.full', ['contentId' => 'manage_archives'])
 
 @section('body-content')
-    <detailed-totals
-            v-if="actions.loaded"
-            :gross="totals.gross"
-            :pageviews="totals.pageviews"
-            :qty_on_hand="totals.qty_on_hand"
-            :accepted_sales="totals.accepted_sales"
-            :pending_sales="totals.pending_sales"
-    ></detailed-totals>
-
-
 
     <div class="box white">
         <div class="box-header">
             <div class=" center-block text-center " >
                 <div class="row">
                     <div class="col-md-6 col-sm-12 col-xs-12 col-md-offset-3">
-                        <input type="text" name="name" v-model="search_filter" class="form-control" @keyup.enter="performSearch" placeholder="Search by outfit name">
+                        <input type="text" name="name" v-model="search_filter" class="form-control" @keyup.enter="performSearch" placeholder="Search by item name">
                     </div>
                 </div>
             </div>
@@ -34,17 +18,27 @@
             <div class="vuetable-wrapper">
                 <vuetable ref="vuetable"
                           wrapper-class="vuetable-wrapper"
-                          api-url="{{ apiRoute('inventory-groupings.detailed.index', [webUser()->username]) }}"
-                          pagination-path="data"
-                          data-path="data.data"
+                          api-url="{{ apiRoute('inventory.archive.index') }}"
+                          pagination-path="pagination"
+                          data-path="data"
                           :fields="columns"
                           :per-page="50"
+                          :item-actions="itemActions"
                           :append-params="moreParams"
                           @vuetable:loaded="onLoaded"
                           @vuetable:loading="onLoading"
                           @vuetable:load-success="onLoadSuccess"
                           @vuetable:pagination-data="onPaginationData"
-                ></vuetable>
+                >
+                    <template slot="actions" scope="props">
+                        <div class="clearfix">
+                            <button
+                                             class="btn btn-xs white"
+                            @click="unarchiveItem(props.rowData.id, props.rowData.unarchive_endpoint, $event)">
+                            Unarchive</button>
+                        </div>
+                    </template>
+                </vuetable>
 
                 <div class="vuetable-pagination">
                     <vuetable-pagination-info
@@ -61,8 +55,9 @@
             </div>
         </div>
     </div>
+
 @endsection
 
 @push('footer-scripts')
-    <script src="{{ staticAsset("/assets/js/listables-detailed.js") }}"></script>
+<script src="{{ staticAsset('/assets/js/listables-archive.js') }}"></script>
 @endpush

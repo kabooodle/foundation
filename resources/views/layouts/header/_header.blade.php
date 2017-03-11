@@ -81,6 +81,8 @@
                                class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add Inventory</a>
                             <a href="{{  route('shop.inventory.index', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Inventory</a>
+                            <a href="{{  route('shop.inventory.archive.index', [webUser()->username]) }}"
+                               class="dropdown-item {{ Request::is('shop/*/inventory-archive') ? 'active' : null }}">Inventory Archive</a>
 
                             <div class="divider"></div>
                             <a href="{{  route('shop.outfits.create', [webUser()->username]) }}"

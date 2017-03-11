@@ -4,7 +4,7 @@
             {{ humanized }}
         </template>
         <template v-else>
-            <timeago :since="rfc_timestamp"></timeago>
+            <timeago :since="iso_timestamp"></timeago>
         </template>
     </span>
 </template>
@@ -21,14 +21,14 @@
             }
         },
         computed : {
-            rfc_timestamp(){
-              return moment(this.timestamp).format('ddd, MM MMM YYYY HH:mm:ss ZZ');
+            iso_timestamp(){
+              return moment(this.timestamp).format();
             },
             older_than_week :function(){
-                return moment(this.rfc_timestamp).isBefore(moment().subtract(1, 'weeks'));
+                return moment(this.iso_timestamp).isBefore(moment().subtract(1, 'weeks'));
             },
             humanized : function(){
-                return moment(this.rfc_timestamp);
+                return moment(this.iso_timestamp);
             },
         }
     }

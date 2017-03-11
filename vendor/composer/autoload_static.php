@@ -1518,6 +1518,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateInventoryTypeStylesSuggestedPrices' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_04_184307_update_inventory_type_styles_suggested_prices.php',
         'UpdateInventoryUnfuckQtyCols' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_03_053022_update_inventory_unfuck_qty_cols.php',
         'UpdateInvnetoryAddUuid' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_01_041205_update_invnetory_add_uuid.php',
+        'UpdateListablesTblAddArchivedAt' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_10_231509_update_listables_tbl_add_archived_at.php',
         'UpdateListingAndListingItemsTblEnum' => __DIR__ . '/../..' . '/resources/database/migrations/2016_12_13_204936_update_listing_and_listing_items_tbl_enum.php',
         'UpdateListingAndListingItemsTblUpdateStatusCols' => __DIR__ . '/../..' . '/resources/database/migrations/2017_02_24_064409_update_listing_and_listing_items_tbl_update_status_cols.php',
         'UpdateListingItemsAddListingMessage' => __DIR__ . '/../..' . '/resources/database/migrations/2017_01_11_022416_update_listing_items_add_listing_message.php',

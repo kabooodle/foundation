@@ -27,6 +27,7 @@ elixir(function (mix) {
     mix.browserify('app/components/inventory-groupings/inventory-groupings-management.js');
     mix.browserify('app/components/inventory-groupings/inventory-groupings-simple.js');
 
+    mix.browserify('app/components/listables/listables-archive.js');
     mix.browserify('app/components/listables/listables-detailed.js');
     mix.browserify('app/components/listables/listables-show.js');
 

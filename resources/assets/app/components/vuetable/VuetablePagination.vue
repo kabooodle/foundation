@@ -38,6 +38,7 @@
         </a>
     </div>
 </template>
+
 <script>
     import PaginationMixin from './VuetablePaginationMixin.vue'
 

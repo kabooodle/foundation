@@ -32,8 +32,9 @@ a.close-overlay {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 20px;
+  padding: 10px;
   z-index: 9998;
+  background: #501f88;
 }
 .overlay-content {
   border: 8px solid #fff;
