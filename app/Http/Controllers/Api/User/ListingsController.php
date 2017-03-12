@@ -13,6 +13,7 @@ use Kabooodle\Models\Listable;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Models\User;
 use Kabooodle\Transformers\Listings\UserListingsTransformer;
 
 /**
@@ -28,18 +29,17 @@ class ListingsController extends AbstractApiController
      */
     public function index(Request $request, string $username)
     {
-        $user = $this->getUser();
-        $listings = Listings::noEagerLoads()->with(['morphedType', 'items','owner' => function($q) use ($username) {
-            $q->where('username', '=', Binput::clean($username));
-        }])
-//            ->where('scheduled_for', '>=', DB::raw('NOW()'))
+        $actor = $this->getUser();
+        $owner = User::where('username', '=', $username)->firstOrFail();
+        $listings = Listings::noEagerLoads()->with(['morphedType', 'items'])
+            ->where('owner_id', '=', $owner->id)
             ->orderBy('scheduled_for', 'asc')
             ->paginate(config('pagination.per-page'));
 
         // Filter through the items and hide private items where the user is not
         // a seller.  Reminder, sellers include admins, owner, sellers.
-        $listings->setCollection($listings->filter(function (Listings $listing) use ($user) {
-            return $listing->isFlashsale() ? $listing->flashSale->canUserViewPrivateSale($user) : $listing;
+        $listings->setCollection($listings->filter(function (Listings $listing) use ($actor) {
+            return $listing->isFlashsale() ? $listing->flashSale->canUserViewPrivateSale($actor) : $listing;
         }));
 
         return $this->response->paginator($listings, new UserListingsTransformer);
