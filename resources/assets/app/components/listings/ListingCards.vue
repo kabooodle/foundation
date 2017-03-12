@@ -9,11 +9,9 @@
                     :show_endpoint="show_endpoint.replace(/::1::/, item.id_to_string)"
             ></listing-card>
             <infinite-loading :distance="50" :on-infinite="fetchInfinite" ref="listingFinite">
-                <span slot="no-more">
-                    No more results.
-                </span>
+                <span slot="no-more"></span>
                 <span slot="no-results">
-                    No more results.
+                    No listing items found.
                 </span>
                 <span slot="spinner">
                     <spinny class="text-center center-block" :size="'' + 38"></spinny>
@@ -116,9 +114,12 @@
                     this.items = response.body.data;
                     $Bus.$emit('listing-filter:completed', this.items);
                 } else {
-                    _.each(response.body.data, (a)=>{
-                        this.items.push(a);
-                    });
+                    if (response.body.data.length){
+                        _.each(response.body.data, (a)=>{
+                            this.items.push(a);
+                        });
+                        this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
+                    }
                 }
 
                 this.makePagination(response.body.meta.pagination);

@@ -28,7 +28,7 @@
                 return moment(this.iso_timestamp).isBefore(moment().subtract(1, 'weeks'));
             },
             humanized : function(){
-                return moment(this.iso_timestamp);
+                return moment(this.iso_timestamp).format(this.format);
             },
         }
     }
