@@ -14,12 +14,9 @@
             ></vcard>
         </div>
         <infinite-loading :distance="50" :on-infinite="fetchInfinite" ref="listingFinite">
-            <span slot="no-more">
-                No more results.
-            </span>
+            <span slot="no-more"></span>
             <span slot="no-results">
-                <span v-if="items.length">No more results.</span>
-                <span v-else>{{ no_results_text }}</span>
+                <span>{{ no_results_text }}</span>
             </span>
             <span slot="spinner">
                 <spinny class="text-center center-block" :size="'' + 38"></spinny>
@@ -109,9 +106,12 @@
              * @param  objectresponse
              */
             handleResponse(response){
-                _.each(response.body.data, (a)=>{
-                    this.items.push(a);
-                });
+                if(response.body.data.length > 0){
+                    this.$refs.listingFinite.$emit('$InfiniteLoading:loaded');
+                    _.each(response.body.data, (a)=>{
+                        this.items.push(a);
+                    });
+                }
 
                 this.makePagination(response.body.meta.pagination);
 

@@ -6,8 +6,11 @@
         <div class="box-header">
             <h3>Listings</h3>
         </div>
+        <div class="box-divider"></div>
+        <div class="box-body">
+            <listings-list
+                    fetch_endpoint="{{ apiRoute('users.listings.index', [$viewedUser->username]) }}"
+            ></listings-list>
+        </div>
     </div>
-    <listings-list
-            fetch_endpoint="{{ apiRoute('users.listings.index', [$viewedUser->username]) }}"
-    ></listings-list>
 @endsection

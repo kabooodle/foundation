@@ -54,11 +54,13 @@ class ListingsController extends AbstractApiController
      */
     public function show(Request $request, string $username, $listingId)
     {
+        $owner = User::where('username', '=', $username)->firstOrFail();
         $listings = ListingItems::noEagerLoads()->with(['listing','owner' => function($q) use ($username) {
             $q->where('username', '=', Binput::clean($username));
-        }])->get();
+        }])
+            ->where('owner_id', '=', $owner->id)
+            ->get();
 
-//        $categories = $this->api()->get(apiRoute());
         $listing = $listings->first()->listing;
 
         return $this->setData(['listings' => $listings, 'listing' => $listing])->respond();

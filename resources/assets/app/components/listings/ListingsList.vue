@@ -9,15 +9,13 @@
             ></user-listing>
         </div>
         <infinite-loading :distance="50" :on-infinite="fetchInfinite" ref="listingFinite">
-                <span slot="no-more">
-                    No more results.
-                </span>
+            <span slot="no-more"></span>
             <span slot="no-results">
-                    No more results.
-                </span>
+                No scheduled listings to view.
+            </span>
             <span slot="spinner">
-                    <spinny class="text-center center-block" :size="'' + 38"></spinny>
-                </span>
+                <spinny class="text-center center-block" :size="'' + 38"></spinny>
+            </span>
         </infinite-loading>
     </div>
 </template>
@@ -88,9 +86,12 @@
              * @param  objectresponse
              */
             handleResponse(response){
-                _.each(response.body.data, (a)=>{
-                    this.listings.push(a);
-                });
+                if (response.body.data.length) {
+                    _.each(response.body.data, (a)=>{
+                        this.listings.push(a);
+                    });
+                    this.$refs.listingFinite.$emit('$InfiniteLoading:loaded');
+                }
 
                 this.makePagination(response.body.meta.pagination);
 
