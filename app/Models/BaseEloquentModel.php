@@ -68,6 +68,18 @@ class BaseEloquentModel extends Eloquent implements Hashable
     }
 
     /**
+     * @param $query
+     *
+     * @return mixed
+     */
+    public function scopeNoAppends($query)
+    {
+        $this->setAppends([]);
+
+        return $query;
+    }
+
+    /**
      * @return mixed
      */
     public static function getTableName()

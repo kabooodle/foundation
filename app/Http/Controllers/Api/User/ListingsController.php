@@ -31,7 +31,7 @@ class ListingsController extends AbstractApiController
     {
         $actor = $this->getUser();
         $owner = User::where('username', '=', $username)->firstOrFail();
-        $listings = Listings::noEagerLoads()->with(['morphedType', 'items'])
+        $listings = Listings::noAppends()->noEagerLoads()->with(['morphedType', 'items'])
             ->where('owner_id', '=', $owner->id)
             ->orderBy('scheduled_for', 'asc')
             ->paginate(config('pagination.per-page'));

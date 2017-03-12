@@ -118,7 +118,7 @@
                         _.each(response.body.data, (a)=>{
                             this.items.push(a);
                         });
-                        this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
+                        this.$refs.listingFinite.$emit('$InfiniteLoading:loaded');
                     }
                 }
 
