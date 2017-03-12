@@ -30,7 +30,7 @@ class UsersController extends Controller
             return abort(404);
         }
 
-        return view('users.profile')->with(compact('viewedUser'));
+        return view('users.listings.index')->with(compact('viewedUser'));
     }
 
     public function getUser(Request $request)

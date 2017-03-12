@@ -3,17 +3,14 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
-import PopoutOverlay from '../Popover.vue';
-import DetailedTotals from './DetailedTotals.vue';
 import Spinny from '../Spinner.vue';
 import Vuetable from '../vuetable/Vuetable.vue';
 import VuetablePagination from '../vuetable/VuetablePagination.vue';
 import VuetablePaginationInfo from '../vuetable/VuetablePaginationInfo.vue';
 
 new Vue({
-    el: '#manage_listables',
+    el: '#manage_archives',
     data: {
-        previousRequest: null,
         selectedTo: [],
         search_filter: null,
         moreParams: {},
@@ -40,22 +37,18 @@ new Vue({
                 title: 'Qty on hand',
             },
             {
-                name: 'accepted_sales_count',
-                title: 'Accepted sales',
-            },
-            {
-                name: 'pending_sales_count',
-                title: 'Pending claims',
-            },
-            {
-                name: 'pageviews_count',
-                title: 'Item views'
-            },
-            {
-                name: 'accepted_price_sum',
-                title: 'Gross',
+                name: 'archived_at',
+                title: 'Archived on',
             },
             '__slot:actions'
+        ],
+        itemActions: [
+            {
+                name: 'unarchiveItem',
+                label: 'Unarchive',
+                icon: '',
+                class: 'btn white btn-x'
+            },
         ],
         css: {
             pagination: {
@@ -73,51 +66,38 @@ new Vue({
             },
         },
     },
-    methods: {
-        archiveItem(id, endpoint, e){
-            endpoint = endpoint.replace('K', id);
-            this.$emit('archiving-item', id);
-            let parentDropdown = $(e.target).closest('.dropdown').find('.dropdown-toggle');
-            parentDropdown.prop('disabled', true).addClass('disabled');
-            this.$http.put(endpoint).then((response)=>{
-                $(e.target).closest('tr').fadeOut();
-                notify({
-                    type: 'success',
-                    text: response.body.data.msg
-                });
-            }, (response)=>{
-                notify({
-                    text: response.body.data.msg
-                });
-                parentDropdown.prop('disabled', false).removeClass('disabled');
-            });
-        },
-        editItemButtonClicked(slug, route, event){
-            $Bus.$emit('popout-overlay:request-open');
-            route = route.replace('K', slug);
 
-            this.$http.get(route, {
-                async: false,
-                before(request) {
-                    // Before each ajax request, abort the previous request
-                    // and add this request to an array of requests for reference.
-                    $Bus.$emit('popout-overlay:change-prompt', false);
-                    if (this.previousRequest) {
-                        this.previousRequest.abort();
-                    }
-                    this.previousRequest = request;
-                }
-            }).then((response)=>{
-                setTimeout(()=>{
-                    $Bus.$emit('popout-overlay:change-content', response.body);
-                },0);
+    methods: {
+        unarchiveItem(id, endpoint, e){
+            this.$emit('deleting-'+id);
+            $(e.target).prop('disabled', true).addClass('disabled');
+            this.$http.delete(endpoint).then((response)=>{
+                $(e.target).closest('tr').fadeOut();
             }, (response)=>{
-                $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
+
             });
         },
-        claimButtonClicked(slug, route, event){
-            route = route.replace('K', slug);
-            window.location = route;
+        transform: function(data) {
+            var transformed = {}
+            var pagination = data.meta.pagination;
+
+            let from = ((pagination.current_page * pagination.per_page) - pagination.per_page) + 1;
+            let to = (pagination.current_page * pagination.per_page);
+
+            transformed.pagination = {
+                per_page: pagination.per_page,
+                current_page: pagination.current_page,
+                last_page: pagination.total_pages,
+                next_page_url: pagination.links.hasOwnProperty('next') ? pagination.links.next : null,
+                prev_page_url: pagination.links.hasOwnProperty('previous') ? pagination.links.previous : null,
+                from: from,
+                to: (to > pagination.total ? pagination.total : to),
+                total: pagination.total,
+            }
+
+            transformed.data = data.data;
+
+            return transformed;
         },
         nameWithImg(val){
             let fields = val.split('::');
@@ -135,31 +115,6 @@ new Vue({
             }
             Vue.nextTick( () => this.$refs.vuetable.refresh() )
         },
-        bulkDelete(route){
-            if (confirmModal(($noty)=>{
-                $noty.$buttons.find('.btn').addClass('disabled').prop('disabled', true);
-                if (this.selectedTo.length && this.selectedTo.length > 0) {
-                    this.$http.post(route, {ids: this.selectedTo}).then((response)=>{
-                        notify({
-                            type: 'success',
-                            text: response.body.data.msg
-                        });
-                        this.selectedTo = [];
-                        this.$refs.vuetable.selectedTo = [];
-                        this.$refs.vuetable.refresh();
-                        setTimeout(function(){
-                            $noty.close();
-                        },0);
-                    }, (response)=>{
-
-                    }).finally(()=>{
-                        $noty.$buttons.find('.btn').removeClass('disabled').prop('disabled', false);
-                    });
-                }
-                },()=>{
-
-                }));
-        },
         onLoaded(){
             this.actions.loading = false;
             this.actions.loaded = true;
@@ -168,12 +123,6 @@ new Vue({
             this.actions.loading = true;
         },
         onLoadSuccess(response){
-            let body = response.body.totals;
-            this.totals.accepted_sales = body.accepted_sales_count;
-            this.totals.gross = body.gross;
-            this.totals.pageviews = body.pageviews_count;
-            this.totals.pending_sales = body.pending_sales_count;
-            this.totals.qty_on_hand = body.qty_on_hand;
             $(function(){
                 setTimeout(function(){
                     $("table:not(.no-tablesaw)").each(function(){
@@ -201,6 +150,31 @@ new Vue({
         },
         onCheckboxToggledAll(checked){
             this.selectedTo = this.$refs.vuetable.selectedTo;
+        },
+        bulkActivate(route){
+            if (confirmModal(($noty)=>{
+                    $noty.$buttons.find('.btn').addClass('disabled').prop('disabled', true);
+                    if (this.selectedTo.length && this.selectedTo.length > 0) {
+                        this.$http.post(route, {ids: this.selectedTo}).then((response)=>{
+                            notify({
+                                type: 'success',
+                                text: response.body.data.msg
+                            });
+                            this.selectedTo = [];
+                            this.$refs.vuetable.selectedTo = [];
+                            this.$refs.vuetable.refresh();
+                            setTimeout(function(){
+                                $noty.close();
+                            },0);
+                        }, (response)=>{
+
+                        }).finally(()=>{
+                            $noty.$buttons.find('.btn').removeClass('disabled').prop('disabled', false);
+                        });
+                    }
+                },()=>{
+
+                }));
         }
     },
     events: {
@@ -216,8 +190,6 @@ new Vue({
         }
     },
     components: {
-        'detailed-totals' : DetailedTotals,
-        'popout-overlay' : PopoutOverlay,
         'spinny' : Spinny,
         Vuetable,
         VuetablePagination,

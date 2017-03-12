@@ -141,7 +141,7 @@
                                         :ukey=grouping.id
                                         :s3_key_url="s3_key_url"
                                         multiple="false"
-                                        :button_title="grouping.image ? 'Replace Image' : 'Add Image'"
+                                        :button_title="grouping.image ? 'Replace Cover Photo' : 'Add Cover Photo'"
                                     ></file-upload>
                                 </span>
                             </div>

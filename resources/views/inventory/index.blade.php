@@ -2,20 +2,11 @@
 
 
 @section('body-menu')
+    <div class="pull-left">
+
+    </div>
     <div class="pull-right">
-        {{--<a--}}
-                {{--href="{{ route('shop.inventory.create', [webUser()->username]) }}"--}}
-                {{--class="btn primary btn-sm">Add Inventory--}}
-        {{--</a>--}}
-        {{--<a--}}
-                {{--href="{{ route('shop.outfits.create', [webUser()->username]) }}"--}}
-                {{--class="btn primary btn-sm">Create Outfits--}}
-        {{--</a>--}}
-        {{--<a--}}
-                {{--href="{{ route('merchant.listings.create') }}"--}}
-                {{--class="btn primary btn-sm">Create Sales Listings--}}
-        {{--</a>--}}
-        <button class="btn white btn-sm">Download</button>
+        <a href="{{ route('shop.inventory.archive.index', [webuser()->username]) }}" class="btn white btn-sm">Archived Inventory</a>
         <a href="{{ route('shop.inventory.overview.show', [webUser()->username]) }}" class="btn white btn-sm"><i class="fa fa-object-group" aria-hidden="true"></i> Simple View</a>
     </div>
 @endsection
@@ -37,7 +28,14 @@
         <div class="box-header">
             <div class=" center-block text-center " >
                 <div class="row">
-                    <div class="col-xs-6 col-xs-offset-3">
+                    <div class="col-sm-3">
+                        <button
+                                @click="bulkDelete('{{ apiRoute('inventory.archive.bulk') }}')"
+                                v-if="selectedTo.length"
+                                type="button"
+                                class="pull-left btn white">Bulk Archive (@{{ selectedTo.length }})</button>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12 col-md-offset-3">
                         <input type="text" name="name" v-model="search_filter" class="form-control" @keyup.enter="performSearch" placeholder="Search by item name">
                     </div>
                 </div>
@@ -55,11 +53,36 @@
                           :fields="columns"
                           :per-page="50"
                           :append-params="moreParams"
+                          @vuetable:checkbox-toggled="onCheckboxToggled"
+                          @vuetable:checkbox-toggled-all="onCheckboxToggledAll"
                           @vuetable:loaded="onLoaded"
                           @vuetable:loading="onLoading"
                           @vuetable:load-success="onLoadSuccess"
                           @vuetable:pagination-data="onPaginationData"
-                ></vuetable>
+                >
+                    <template slot="actions" scope="props">
+                        <div class="clearfix pull-md-right">
+                                <div class="dropdown">
+                                    <a href="#" data-toggle="dropdown" class="btn btn-xs white dropdown-toggle no-caret"><i aria-hidden="true" class="hidden-sm-down fa fa-ellipsis-h"></i>
+                                        <span class="hidden-sm-up">Options</span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-over dropdown-menu-sm pull-xs-none dropdown-menu-right">
+                                        <button
+                                                @click="editItemButtonClicked(props.rowData.slug, '{{ route('shop.inventory.edit', [webUser()->username, 'K']) }}', $event)"
+                                                type="button"
+                                                class="dropdown-item">Edit</button>
+                                        <button
+                                                type="button"
+                                                @click="claimButtonClicked(props.rowData.slug, '{{ route('shop.inventory.show', [webUser()->username, 'K']) }}', $event)"
+                                                class="dropdown-item">Claim</button>
+                                        <div class="divider"></div>
+                                        <button
+                                        @click="archiveItem(props.rowData.id, '{{ apiRoute('inventory.archive', ['K']) }}', $event)" type="button" class="dropdown-item">Archive</button>
+                                    </div>
+                                </div>
+                        </div>
+                    </template>
+                </vuetable>
 
                 <div class="vuetable-pagination">
                     <vuetable-pagination-info
@@ -76,6 +99,8 @@
             </div>
         </div>
     </div>
+
+    <popout-overlay></popout-overlay>
 
 @endsection
 

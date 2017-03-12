@@ -9,9 +9,12 @@ namespace Kabooodle\Http\Controllers\Api\User;
 use DB;
 use Binput;
 use Illuminate\Http\Request;
+use Kabooodle\Models\Listable;
 use Kabooodle\Models\Listings;
 use Kabooodle\Models\ListingItems;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Models\User;
+use Kabooodle\Transformers\Listings\UserListingsTransformer;
 
 /**
  * Class ListingsController
@@ -26,14 +29,20 @@ class ListingsController extends AbstractApiController
      */
     public function index(Request $request, string $username)
     {
-        $listings = Listings::noEagerLoads()->with(['items','owner' => function($q) use ($username) {
-            $q->where('username', '=', Binput::clean($username));
-        }])
-            ->where('scheduled_for', '>=', DB::raw('NOW()'))
+        $actor = $this->getUser();
+        $owner = User::where('username', '=', $username)->firstOrFail();
+        $listings = Listings::noEagerLoads()->with(['morphedType', 'items'])
+            ->where('owner_id', '=', $owner->id)
             ->orderBy('scheduled_for', 'asc')
             ->paginate(config('pagination.per-page'));
 
-        return $this->setData($listings)->respond();
+        // Filter through the items and hide private items where the user is not
+        // a seller.  Reminder, sellers include admins, owner, sellers.
+        $listings->setCollection($listings->filter(function (Listings $listing) use ($actor) {
+            return $listing->isFlashsale() ? $listing->flashSale->canUserViewPrivateSale($actor) : $listing;
+        }));
+
+        return $this->response->paginator($listings, new UserListingsTransformer);
     }
 
     /**
@@ -45,11 +54,13 @@ class ListingsController extends AbstractApiController
      */
     public function show(Request $request, string $username, $listingId)
     {
+        $owner = User::where('username', '=', $username)->firstOrFail();
         $listings = ListingItems::noEagerLoads()->with(['listing','owner' => function($q) use ($username) {
             $q->where('username', '=', Binput::clean($username));
-        }])->get();
+        }])
+            ->where('owner_id', '=', $owner->id)
+            ->get();
 
-//        $categories = $this->api()->get(apiRoute());
         $listing = $listings->first()->listing;
 
         return $this->setData(['listings' => $listings, 'listing' => $listing])->respond();

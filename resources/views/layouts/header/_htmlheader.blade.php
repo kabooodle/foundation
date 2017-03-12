@@ -5,10 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="user_hash" content="{{ $_auth_token }}">
     <meta name="token" content="{{ csrf_token() }}">
-
-    @push('facebook-tags')
-    <meta property="og:image" content="{{ staticAsset('/assets/images/home/section_hero_bg.jpg') }}" />
-    @endpush
+    @stack('facebook-tags')
 
     @push('header-styles')
     <link rel="stylesheet" href="{{ staticAsset('/assets/css/vendor.css') }}" type="text/css"/>
@@ -82,8 +79,6 @@
     @endpush
 
     @stack('header-styles')
-
-    @stack('facebook-tags')
 
     @stack('header-scripts')
 </head>

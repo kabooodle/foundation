@@ -7,6 +7,7 @@
 namespace Kabooodle\Models;
 
 use DB;
+use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,7 +18,7 @@ use Kabooodle\Presenters\Models\Listings\ListingsModelPresenter;
  */
 class Listings extends AbstractListingModel
 {
-    use PresentableTrait, SoftDeletes, UuidableTrait;
+    use ObfuscatesIdTrait, PresentableTrait, SoftDeletes, UuidableTrait;
 
     /**
      * @var array
@@ -347,6 +348,14 @@ class Listings extends AbstractListingModel
     public function scopeStatusScheduled($scope)
     {
         return $scope->where('status', '=', self::STATUS_SCHEDULED);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function morphedType()
+    {
+        return $this->isFlashsale() ? $this->flashSale() : $this->facebookNode();
     }
 
     /**

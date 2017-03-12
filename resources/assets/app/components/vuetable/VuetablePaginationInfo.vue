@@ -3,6 +3,7 @@
          v-html="paginationInfo">
     </div>
 </template>
+
 <script>
     import PaginationInfoMixin from './VuetablePaginationInfoMixin.vue'
 

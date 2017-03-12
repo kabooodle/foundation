@@ -57,17 +57,14 @@
             </div>
         </div>
         <div class="form-group row ">
-            <label for="description" class="col-sm-3 form-control-label">Description
-                <small class="block text-muted text-sm">(Optional)</small>
-            </label>
+            <label for="description" class="col-sm-3 form-control-label">Description</label>
             <div class="col-sm-7">
                 <textarea class="form-control" name="description" rows="2">{{ item.description }}</textarea>
+                <small class="block text-muted text-sm">(Optional)</small>
             </div>
         </div>
         <div class="form-group row">
-            <label for="categories" class="col-sm-3 form-control-label">Categories
-                <small class="block text-muted text-sm">(Optional)</small>
-            </label>
+            <label for="categories" class="col-sm-3 form-control-label">Categories</label>
             <div class="col-sm-7">
                 <multiselect
                         v-model="category_value"
@@ -81,6 +78,7 @@
                         @remove="removeTag"
                         @tag="addTag">
                 </multiselect>
+                <small class="block text-muted text-sm">(Optional)</small>
                 <template v-for="category in categories"><input type="hidden" name="categories[]" :value="category.name"></template>
             </div>
         </div>
@@ -129,20 +127,41 @@
 
         <div class="form-group row m-t-md">
             <div class="col-sm-offset-3 col-sm-7">
-                <span class="pull-left">
+                <!--<div class="clearfix">-->
+
+                <button
+                        type="submit"
+                        class="btn pull-left primary block"
+                        :disabled="processing || archiving || activating"
+                        :class="processing ? 'disabled' : null"
+                        @click="validateForm(item, $event)"> Save <spinny v-if="processing"></spinny>
+                </button>
+                <span class="pull-left m-l-sm">
                     <image-attach
+                            :disabled="processing || archiving || activating"
                             btn-class-size=""
                             :user_hash="item.user.public_hash"
                             :s3_key_url="api_route"
                             multiple="true"></image-attach>
                 </span>
+
                 <button
-                        type="submit"
-                        class="btn primary"
-                        :disabled="processing"
+                        v-if="archived"
+                        type="button"
+                        class="btn m-l-xs pull-left white block"
+                        :disabled="processing || activating"
                         :class="processing ? 'disabled' : null"
-                        @click="validateForm(item, $event)"> Save <spinny v-if="processing"></spinny>
+                        @click="activateItem(item, $event)"> Unarchive <spinny v-if="activating"></spinny>
                 </button>
+                <button
+                        v-if="!archived"
+                        type="button"
+                        class="btn m-l-xs pull-left white block"
+                        :disabled="processing || archiving"
+                        :class="processing ? 'disabled' : null"
+                        @click="archiveItem(item, $event)"> Archive <spinny v-if="archiving"></spinny>
+                </button>
+                <!--</div>-->
             </div>
         </div>
     </div>
@@ -167,6 +186,9 @@
                 wholesale_price_usd : null,
                 price_usd : null,
                 cover_photo: null,
+                archived : false,
+                activating: false,
+                archiving: false,
             }
         },
         watch : {
@@ -178,6 +200,9 @@
             }
         },
         created(){
+            if (this.item.archived_at) {
+                this.archived = true;
+            }
 
             this.cover_photo = this.item.cover_photo_file_id;
 
@@ -296,6 +321,38 @@
                     return false;
                 }).finally(function(){
                     this.processing = false;
+                });
+            },
+            archiveItem(item, event){
+                event.preventDefault();
+                const scope = this;
+                let $form = $(event.target).closest('form');
+                let action = $form.prop('action').replace('edit', '');
+                this.archiving = true;
+                this.$http.put(action+'/archive', $form.serializeObject()).then(function(response){
+                    notify({text:  response.body.data.msg, type: 'success'});
+                    this.archived = true;
+                    $Bus.$emit('inventory-item:updated', scope.item, JSON.parse(response.body.data.item));
+                }, function(response){
+                    notify({text:  response.body.data.msg});
+                }).finally(function(){
+                    this.archiving = false;
+                });
+            },
+            activateItem(item, event){
+                event.preventDefault();
+                const scope = this;
+                let $form = $(event.target).closest('form');
+                let action = $form.prop('action').replace('edit', '');
+                this.activating = true;
+                this.$http.delete(action+'/archive', $form.serializeObject()).then(function(response){
+                    notify({text:  response.body.data.msg, type: 'success'});
+                    this.archived = false;
+                    $Bus.$emit('inventory-item:updated', scope.item, JSON.parse(response.body.data.item));
+                }, function(response){
+                    notify({text:  response.body.data.msg});
+                }).finally(function(){
+                    this.activating = false;
                 });
             },
         },

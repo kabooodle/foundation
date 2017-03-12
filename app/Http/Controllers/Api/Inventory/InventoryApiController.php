@@ -11,6 +11,9 @@ use Binput;
 use Bugsnag;
 use Exception;
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\Listable\ActivateListableCommand;
+use Kabooodle\Bus\Commands\Listable\ArchiveListableCommand;
+use Kabooodle\Foundation\Exceptions\Listings\ListingNotArchiveableBelongsToOutfitsException;
 use Kabooodle\Models\Inventory;
 use Illuminate\Validation\ValidationException;
 use Kabooodle\Models\InventoryGrouping;
@@ -43,7 +46,7 @@ class InventoryApiController extends AbstractApiController
     {
         // Begin the user inventory query.
         $groupings = [];
-        $inventory = Inventory::noEagerLoads()->with(['claims', 'style', 'styleSize', 'files'])
+        $inventory = Inventory::noEagerLoads()->active()->with(['claims', 'style', 'styleSize', 'files'])
             ->where('user_id', '=', $this->getUser()->id)->get();
         $grouped = $inventory->groupBy('inventory_type_styles_id');
         foreach($grouped as $styleId => $items) {
@@ -86,7 +89,6 @@ class InventoryApiController extends AbstractApiController
         sort($groupings);
 
         $data = [
-//            'inventory' => $inventory,
             'groupings' => $groupings,
         ];
 
@@ -116,11 +118,13 @@ class InventoryApiController extends AbstractApiController
             ->where('l.subclass_name', '=', Inventory::class)
             ->whereNull('l.deleted_at')
             ->whereNull('c.deleted_at')
+            ->whereNull('l.archived_at')
             ->selectRaw(DB::raw("
             l.id,
             l.subclass_name,
             l.name,
             l.name_alt,
+            l.slug,
             CONCAT(l.name_alt,'_', l.id) as name_with_id,
             CONCAT(l.name_alt, '::', f.location) as name_with_cover_photo,
             f.location as cover_photo_location,
@@ -198,6 +202,64 @@ class InventoryApiController extends AbstractApiController
             return $this->setStatusCode(401)
                 ->setData(['msg' => 'Some fields require input: '.$e->validator->messages()->first()])
                 ->respond();
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            return $this->setStatusCode(500)
+                ->setData(['msg' => $e->getTraceAsString()])
+                ->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function archive(Request $request, $id)
+    {
+        try {
+            $listable = $this->getUser()->inventory()->findOrFail($id);
+
+            $this->dispatchNow(new ArchiveListableCommand(
+                $listable,
+                $this->getUser()
+            ));
+
+            return $this->setData([
+                'msg' => "Item archived",
+            ])->respond();
+        } catch (ListingNotArchiveableBelongsToOutfitsException  $e) {
+            return $this->setStatusCode(500)
+                ->setData(['msg' => 'Item cannot be archived as it is currently associated to an outfit'])
+                ->respond();
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            return $this->setStatusCode(500)
+                ->setData(['msg' => $e->getTraceAsString()])
+                ->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function activate(Request $request, $id)
+    {
+        try {
+            $listable = $this->getUser()->inventory()->findOrFail($id);
+
+            $this->dispatchNow(new ActivateListableCommand(
+                $listable,
+                $this->getUser()
+            ));
+
+            return $this->setData([
+                'msg' => "Item unarchived",
+            ])->respond();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)

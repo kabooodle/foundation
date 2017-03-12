@@ -1,5 +1,11 @@
 @extends('layouts.full')
 
+@push('facebook-tags')
+<meta property="og:image" content="{{ $viewedUser->avatar->location }}" />
+<meta property="og:title" content="{{ $viewedUser->username }} Kabooodle profile" />
+@endpush
+
+
 @section('body-content')
 
     <div class="p-l p-r" id="profilePage">
@@ -47,7 +53,6 @@
                                 @endif
                         </div>
                         <div class="text-center m-t">
-
                             <followable
                                     able_type="{{ get_class($viewedUser) }}"
                                     able_id="{{ $viewedUser->id }}"
@@ -78,17 +83,12 @@
                             </a>
                         </div>
                     </div>
-                    {{--<div class="p-a">--}}
-                    {{--<a href class="text-ellipsis"><i class="fa fa-link text-muted m-r-sm"></i> apack.com/subdomain</a>--}}
-                    {{--<a href class="text-ellipsis"><i class="fa fa-globe text-muted m-r-sm"></i> yourdomain.com</a>--}}
-                    {{--</div>--}}
                 </div>
             </div>
 
             <div class="col-md-9">
                 @yield('profile-body')
             </div>
-
         </div>
     </div>
 

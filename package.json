@@ -41,7 +41,7 @@
     "tether": "1.4.0",
     "vue": "2.1.8",
     "vue-infinite-loading": "2.0.2",
-    "vue-loader": "9.7.0",
+    "vue-loader": "10.0.0",
     "vue-multiselect": "2.0.0-beta.14",
     "vue-resource": "1.2.0",
     "vue-timeago": "3.3.0",

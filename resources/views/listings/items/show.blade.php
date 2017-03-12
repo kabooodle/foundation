@@ -1,5 +1,11 @@
 @extends('layouts.full', ['contentId' => 'listing-item-page'])
 
+@push('facebook-tags')
+<meta property="og:title" content="{{ $listingItem->listedItem->name_alt }}" />
+<meta property="og:image"  content="{{ $listingItem->listedItem->cover_photo->location }}" />
+@endpush
+
+
 @section('body-menu')
     <div class="clearfix">
         <div class="pull-left">

@@ -4,6 +4,26 @@ $api->put('inventory/{id}', [
     'as' => 'inventory.update',
     'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@update'
 ]);
+$api->post('inventory/archive/bulk', [
+    'as' => 'inventory.archive.bulk',
+    'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryArchiveApiController::class.'@bulkArchive'
+]);
+$api->post('inventory/activate/bulk', [
+    'as' => 'inventory.activate.bulk',
+    'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryArchiveApiController::class.'@bulkActivate'
+]);
+$api->get('inventory/archive', [
+    'as' => 'inventory.archive.index',
+    'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryArchiveApiController::class.'@index'
+]);
+$api->put('inventory/{id}/archive', [
+    'as' => 'inventory.archive',
+    'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@archive'
+]);
+$api->delete('inventory/{id}/archive', [
+    'as' => 'inventory.activate',
+    'uses' => \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@activate'
+]);
 $api->get('users/{username}/inventory', [
     'as' => 'inventory.index',
     'uses' =>  \Kabooodle\Http\Controllers\Api\Inventory\InventoryApiController::class.'@index',

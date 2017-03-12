@@ -5,12 +5,12 @@
             <template v-for="field in fields">
                 <template v-if="field.visible">
                     <template v-if="isSpecialField(field.name)">
-                        <th scope="col" v-if="extractName(field.name) == '__checkbox'"
+                        <th v-if="extractName(field.name) == '__checkbox'"
                             :class="['vuetable-th-checkbox-'+trackBy, field.titleClass]">
                             <input type="checkbox" @change="toggleAllCheckboxes(field.name, $event)"
                                    :checked="checkCheckboxesState(field.name)">
                         </th>
-                        <th scope="col" v-if="extractName(field.name) == '__component'"
+                        <th v-if="extractName(field.name) == '__component'"
                             @click="orderBy(field, $event)"
                             :class="['vuetable-th-component-'+trackBy, field.titleClass, {'sortable': isSortable(field)}]">
                             {{ field.title || '' }}
@@ -18,7 +18,7 @@
                                :class="sortIcon(field)"
                                :style="{opacity: sortIconOpacity(field)}"></i>
                         </th>
-                        <th scope="col" v-if="extractName(field.name) == '__slot'"
+                        <th v-if="extractName(field.name) == '__slot'"
                             @click="orderBy(field, $event)"
                             :class="['vuetable-th-slot-'+extractArgs(field.name), field.titleClass, {'sortable': isSortable(field)}]">
                             {{ field.title || '' }}
@@ -26,15 +26,15 @@
                                :class="sortIcon(field)"
                                :style="{opacity: sortIconOpacity(field)}"></i>
                         </th>
-                        <th scope="col" v-if="extractName(field.name) == '__sequence'"
+                        <th v-if="extractName(field.name) == '__sequence'"
                             :class="['vuetable-th-sequence', field.titleClass || '']" v-html="field.title || ''">
                         </th>
-                        <th scope="col" v-if="notIn(extractName(field.name), ['__sequence', '__checkbox', '__component', '__slot'])"
+                        <th v-if="notIn(extractName(field.name), ['__sequence', '__checkbox', '__component', '__slot'])"
                             :class="['vuetable-th-'+field.name, field.titleClass || '']" v-html="field.title || ''">
                         </th>
                     </template>
                     <template v-else>
-                        <th scope="col" @click="orderBy(field, $event)"
+                        <th @click="orderBy(field, $event)"
                             :id="'_' + field.name"
                             :class="['vuetable-th-'+field.name, field.titleClass,  {'sortable': isSortable(field)}]">
                             {{  getTitle(field) }}&nbsp;
@@ -47,7 +47,7 @@
         </thead>
         <tbody v-cloak>
         <template v-for="(item, index) in tableData">
-            <tr @dblclick="onRowDoubleClicked(item, $event)" @click="onRowClicked(item, $event)" :render="onRowChanged(item)" :class="onRowClass(item, index)">
+            <tr @dblclick="onRowDoubleClicked(item, $event)" @click="onRowClicked(item, $event)" :data-id="item.id" :render="onRowChanged(item)" :class="onRowClass(item, index)">
                 <template v-for="field in fields">
                     <template v-if="field.visible">
                         <template v-if="isSpecialField(field.name)">
@@ -57,7 +57,7 @@
                             <td v-if="extractName(field.name) == '__handle'" :class="['vuetable-handle', field.dataClass]">
                                 <i :class="['sort-handle', css.sortHandleIcon]"></i>
                             </td>
-                            <td v-if="extractName(field.name) == '__checkbox'" :class="['vuetable-checkboxes', field.dataClass]">
+                            <td v-if="extractName(field.name) == '__checkbox'" :data-id="item.id" :class="['vuetable-checkboxes', field.dataClass]">
                                 <input type="checkbox"
                                        @change="toggleCheckbox(item, field.name, $event)"
                                        :checked="rowSelected(item, field.name)">
@@ -102,6 +102,7 @@
         </tbody>
     </table>
 </template>
+
 <script>
     export default {
         props: {
