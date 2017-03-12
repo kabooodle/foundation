@@ -1,5 +1,11 @@
 @extends('layouts.full', ['contentId' => 'flashsale-page'])
 
+
+@push('facebook-tags')
+<meta property="og:title" content="{{ $flashsale->name }}" />
+<meta property="og:image"  content="{{ $flashsale->coverimage->location }}" />
+@endpush
+
 @section('body-menu')
 
     <div class="pull-right">

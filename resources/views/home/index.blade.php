@@ -1,5 +1,9 @@
 @extends('layouts.home')
 
+@push('facebook-tags')
+<meta property="og:image" content="{{ staticAsset('/assets/images/home/section_hero_bg.jpg') }}" />
+@endpush
+
 @section('content')
 
     <sup class="achievement achievement-yr animated "

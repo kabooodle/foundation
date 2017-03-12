@@ -195,8 +195,8 @@ if (!function_exists('useCDN')) {
 
 if (!function_exists('staticAsset')) {
     /**
-     * @param      $path
-     * @param bool $cacheBust
+     * @param        $path
+     * @param bool   $cacheBust
      *
      * @return string
      */
@@ -210,7 +210,7 @@ if (!function_exists('staticAsset')) {
 
         $postPart = ltrim($path, '/') . ($cacheBust ? '?v='.($cacheBusterString) : null);
 
-        return  $useCloundfront ? '//' . $url . '/' . $postPart : '/' . $postPart;
+        return  $useCloundfront ? $url . '/' . $postPart : '/' . $postPart;
     }
 }
 

@@ -1,5 +1,11 @@
 @extends('layouts.full')
 
+@push('facebook-tags')
+<meta property="og:image" content="{{ $viewedUser->avatar->location }}" />
+<meta property="og:title" content="{{ $viewedUser->username }} Kabooodle profile" />
+@endpush
+
+
 @section('body-content')
 
     <div class="p-l p-r" id="profilePage">
