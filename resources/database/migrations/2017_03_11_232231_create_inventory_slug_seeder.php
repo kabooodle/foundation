@@ -12,12 +12,13 @@ class CreateInventorySlugSeeder extends Migration
      */
     public function up()
     {
+
         try {
             Schema::table('listables', function(Blueprint $table){
                 $table->string('slug')->after('subclass_name')->nullable();
                 $table->unique('slug', 'listables_unq_slug');
             });
-
+            DB::statement('ALTER TABLE listables MODIFY slug VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin;');
             Artisan::call('db:seed', array('--class' => 'ListablesSlugSeeder'));
         } catch (Exception $e) {
             throw $e;

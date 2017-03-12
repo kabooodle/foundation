@@ -367,6 +367,7 @@ function confirmModal(confirmCB, closeCB, options) {
 function notify(options){
 
     $.noty.clearQueue();
+    $.noty.closeAll();
 
     var defaults = {
         el: false,
