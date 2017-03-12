@@ -1,20 +1,13 @@
-@extends('layouts.full', ['contentId' => 'user_listings_index'])
+@extends('users.profile')
 
-@section('body-menu')
-    <div class="pull-left">
-        <button type="button" id="" class="btn-toggle-filters btn btn-sm white">Filter listings</button>
+@section('profile-body')
+
+    <div class="box white m-b-0">
+        <div class="box-header">
+            <h3>Listings</h3>
+        </div>
     </div>
+    <listings-list
+            fetch_endpoint="{{ apiRoute('users.listings.index', [$viewedUser->username]) }}"
+    ></listings-list>
 @endsection
-
-
-@section('body-content')
-    <user-listings
-            :user="{{ $user->toJson()  }}"
-            listing_endpoint="{{ apiRoute('users.listings.show', [$user->username, '::UUID::']) }}"
-            listings_endpoint="{{ apiRoute('users.listings.index', [$user->username]) }}"
-    ></user-listings>
-@endsection
-
-@push('footer-scripts')
-<script src="{{ staticAsset('/assets/js/user-listings-index.js') }}"></script>
-@endpush
