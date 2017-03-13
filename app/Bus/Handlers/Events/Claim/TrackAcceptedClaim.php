@@ -80,7 +80,7 @@ class TrackAcceptedClaim implements ShouldQueue
                 ],
             ];
 
-            $this->keenService->keenClient->addEvent('accepted_claim', $data);
+            $this->keenService->keenClient->addEvent('accepted_claims', $data);
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
         }
