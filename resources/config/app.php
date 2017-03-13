@@ -164,6 +164,7 @@ return [
         Kabooodle\Foundation\Providers\FacebookServiceProvider::class,
         Kabooodle\Foundation\Providers\HTMLServiceProvider::class,
         Kabooodle\Foundation\Providers\RepositoryServiceProvider::class,
+        Kabooodle\Foundation\Providers\KeenServiceProvider::class,
 
         Aws\Laravel\AwsServiceProvider::class,
         AlgoliaSearch\Laravel\AlgoliaServiceProvider::class,

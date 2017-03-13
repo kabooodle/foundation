@@ -16,6 +16,8 @@ elixir(function (mix) {
     mix.browserify('app/components/home.js');
     mix.browserify('app/components/closed-beta.js');
 
+    mix.browserify('app/components/analytics/analytics-index.js');
+
     mix.browserify('app/components/referrals/referrals.js');
 
     // VUE Components

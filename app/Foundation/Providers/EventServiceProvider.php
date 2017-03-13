@@ -7,6 +7,7 @@
 namespace Kabooodle\Foundation\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Kabooodle\Bus\Handlers\Events\Claim\TrackAcceptedClaim;
 use Kabooodle\Bus\Handlers\Events\User\AddNewUserToAllNotificationTypes;
 
 /**
@@ -28,6 +29,7 @@ class EventServiceProvider extends ServiceProvider
             \Kabooodle\Bus\Handlers\Events\Claim\ClaimWasRejectedEventHandler::class
         ],
         \Kabooodle\Bus\Events\Claim\ClaimWasAcceptedEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Claim\TrackAcceptedClaim::class,
             \Kabooodle\Bus\Handlers\Events\Claim\MoveClaimToShippingEventHandler::class,
             \Kabooodle\Bus\Handlers\Events\Claim\NotifyClaimWasAccepted::class,
         ],
@@ -91,7 +93,8 @@ class EventServiceProvider extends ServiceProvider
 
         // PROFILE EVENTS
         \Kabooodle\Bus\Events\Profile\UserWasSubscribedToPlanEvent::class => [
-            \Kabooodle\Bus\Handlers\Events\Profile\UserWasSubscribedToPlanEventHandler::class
+            \Kabooodle\Bus\Handlers\Events\Profile\UserWasSubscribedToPlanEventHandler::class,
+            \Kabooodle\Bus\Handlers\Events\User\CreateKeenPolicyForSubscribedUser::class,
         ],
 
         // SHIPPING EVENTS

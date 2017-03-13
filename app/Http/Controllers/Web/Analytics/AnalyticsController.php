@@ -17,13 +17,6 @@ class AnalyticsController extends Controller
 {
     public function index()
     {
-    }
-
-    public function sales()
-    {
-    }
-
-    public function postings()
-    {
+        return $this->view('analytics.index');
     }
 }

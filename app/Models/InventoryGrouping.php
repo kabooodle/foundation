@@ -45,6 +45,7 @@ class InventoryGrouping extends Listable implements ListableInterface
         'wholesale_price_usd',
         'hash_id',
         'title',
+        'listable_type_friendly_name'
     ];
 
     /**
@@ -268,5 +269,13 @@ class InventoryGrouping extends Listable implements ListableInterface
     public function getEditRoute(): string
     {
         return route('shop.outfits.edit', [$this->user->username, $this->getUUID()]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getListableTypeFriendlyNameAttribute(): string
+    {
+        return 'outfit';
     }
 }

@@ -113,6 +113,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         ),
         'K' => 
         array (
+            'KeenIO\\' => 7,
             'Kabooodle\\Tests\\' => 16,
             'Kabooodle\\' => 10,
         ),
@@ -137,6 +138,8 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         array (
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\Command\\Guzzle\\' => 26,
+            'GuzzleHttp\\Command\\' => 19,
             'GuzzleHttp\\' => 11,
             'GrahamCampbell\\TestBenchCore\\' => 29,
             'GrahamCampbell\\Security\\' => 24,
@@ -381,6 +384,10 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         array (
             0 => __DIR__ . '/..' . '/laravel/cashier/src',
         ),
+        'KeenIO\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/keen-io/keen-io/src',
+        ),
         'Kabooodle\\Tests\\' => 
         array (
             0 => __DIR__ . '/../..' . '/tests',
@@ -428,6 +435,14 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'GuzzleHttp\\Promise\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\Command\\Guzzle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle-services/src',
+        ),
+        'GuzzleHttp\\Command\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/command/src',
         ),
         'GuzzleHttp\\' => 
         array (
@@ -911,6 +926,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'JSToken' => __DIR__ . '/..' . '/mrclay/minify/min/lib/JSMinPlus.php',
         'JSTokenizer' => __DIR__ . '/..' . '/mrclay/minify/min/lib/JSMinPlus.php',
         'Javascript_Embedder' => __DIR__ . '/..' . '/dompdf/dompdf/include/javascript_embedder.cls.php',
+        'KeenReadKeySeeder' => __DIR__ . '/../..' . '/resources/database/seeds/KeenReadKeySeeder.php',
         'Line_Box' => __DIR__ . '/..' . '/dompdf/dompdf/include/line_box.cls.php',
         'List_Bullet_Frame_Decorator' => __DIR__ . '/..' . '/dompdf/dompdf/include/list_bullet_frame_decorator.cls.php',
         'List_Bullet_Frame_Reflower' => __DIR__ . '/..' . '/dompdf/dompdf/include/list_bullet_frame_reflower.cls.php',
@@ -1559,6 +1575,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateUsersAddSocialLinksAndAbout' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_09_091851_update_users_add_social_links_and_about.php',
         'UpdateUsersProfileAddPhoneNumber' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_09_022103_update_users_profile_add_phone_number.php',
         'UpdateUsersTblAddAvatar' => __DIR__ . '/../..' . '/resources/database/migrations/2016_10_31_194814_update_users_tbl_add_avatar.php',
+        'UpdateUsersTblAddKeenKey' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_13_042238_update_users_tbl_add_keen_key.php',
         'UpdateUsersTblAddReferreredById' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_17_005109_update_users_tbl_add_referrered_by_id.php',
         'UpdateUsersTblAddShippingSetting' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_12_015714_update_users_tbl_add_shipping_setting.php',
         'UsersTableSeeder' => __DIR__ . '/../..' . '/resources/database/seeds/UsersTableSeeder.php',

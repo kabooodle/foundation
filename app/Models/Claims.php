@@ -142,9 +142,9 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         });
     }
 
-    public function setListedItemObjectDataAttribute($value)
+    public function setListableItemObjectDataAttribute($value)
     {
-        $this->attributes['listed_item_object_data'] = $value->toJson();
+        $this->attributes['listable_item_object_data'] = $value->toJson();
     }
 
     /**
@@ -152,7 +152,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      *
      * @return array
      */
-    public function getListedItemObjectDataAttribute($value)
+    public function getListableItemObjectDataAttribute($value)
     {
         return (array) json_decode($value, true);
     }

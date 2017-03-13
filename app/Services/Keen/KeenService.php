@@ -1,0 +1,48 @@
+<?php
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
+ */
+
+namespace Kabooodle\Services\Keen;
+
+use Kabooodle\Models\User;
+use KeenIO\Client\KeenIOClient;
+
+/**
+ * Class KeenService
+ */
+class KeenService
+{
+    /**
+     * @var KeenIOClient
+     */
+    public $keenClient;
+
+    /**
+     * @param KeenIOClient $client
+     */
+    public function __construct(KeenIOClient $client)
+    {
+        $this->keenClient = $client;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return string
+     */
+    public function createScopedKeyForUser(User $user)
+    {
+        $filter = [
+            'property_name'  => 'owner.id',
+            'operator'       => 'eq',
+            'property_value' => $user->id,
+        ];
+
+        $filters = [$filter];
+        $allowedOperations = ['read'];
+
+        return $this->keenClient->createScopedKey($filters, $allowedOperations);
+    }
+}

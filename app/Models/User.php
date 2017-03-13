@@ -145,6 +145,7 @@ class User extends BaseEloquentModel implements
         'timezone',
         'kabooodle_as_shipping',
         'referred_by_user_id',
+        'keen_access_key'
     ];
 
     /**
@@ -166,7 +167,7 @@ class User extends BaseEloquentModel implements
         'activated',
         'access_token',
         'facebook_access_token',
-        'facebook_user_id'
+        'facebook_user_id',
     ];
 
     /**
@@ -1243,5 +1244,13 @@ class User extends BaseEloquentModel implements
     public function getProfileUrlAttribute()
     {
         return route('user.profile', [$this->username]);
+    }
+
+    /**
+     * @return null|string
+     */
+    public function hasKeenAccessKey()
+    {
+        return $this->keen_access_key;
     }
 }

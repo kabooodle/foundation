@@ -25,6 +25,7 @@ class Inventory extends Listable implements ListableInterface
         'cover_photo',
         'hash_id',
         'title',
+        'listable_type_friendly_name'
     ];
 
     /**
@@ -299,5 +300,13 @@ class Inventory extends Listable implements ListableInterface
     public function getEditRoute(): string
     {
         return route('shop.inventory.edit', [$this->user->username, $this->getUUID()]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getListableTypeFriendlyNameAttribute(): string
+    {
+        return 'item';
     }
 }

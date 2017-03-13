@@ -106,4 +106,9 @@ interface ListableInterface
      * @return mixed
      */
     public function rejectedClaims();
+
+    /**
+     * @return string
+     */
+    public function getListableTypeFriendlyNameAttribute(): string;
 }
