@@ -213,7 +213,7 @@
             }
 
             const scope = this;
-            this.wholesale_price_usd = this.item.wholesale_price_usd_less_5_percent;
+            this.wholesale_price_usd = this.item.wholesale_price_usd;
             this.price_usd = this.item.price_usd;
 
             if(this.existingimages.length){
