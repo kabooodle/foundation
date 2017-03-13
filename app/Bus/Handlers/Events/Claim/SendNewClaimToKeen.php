@@ -8,21 +8,14 @@ namespace Kabooodle\Bus\Handlers\Events\Claim;
 
 use Bugsnag;
 use Exception;
-use Kabooodle\Models\Claims;
-use Illuminate\Bus\Queueable;
 use Kabooodle\Services\Keen\KeenService;
-use KeenIO\Client\KeenIOClient;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Kabooodle\Bus\Events\Claim\ClaimWasAcceptedEvent;
+use Kabooodle\Bus\Events\Claim\NewItemWasClaimedEvent;
 
 /**
- * Class TrackAcceptedClaim
+ * Class SendNewClaimToKeen
  */
-class TrackAcceptedClaim implements ShouldQueue
+class SendNewClaimToKeen
 {
-    use InteractsWithQueue, Queueable;
-
     /**
      * @var KeenService
      */
@@ -37,11 +30,9 @@ class TrackAcceptedClaim implements ShouldQueue
     }
 
     /**
-     * @param ClaimWasAcceptedEvent $event
-     *
-     * @throws Exception
+     * @param NewItemWasClaimedEvent $event
      */
-    public function handle(ClaimWasAcceptedEvent $event)
+    public function handle(NewItemWasClaimedEvent $event)
     {
         try {
             /** @var Claims $claim */
@@ -80,7 +71,7 @@ class TrackAcceptedClaim implements ShouldQueue
                 ],
             ];
 
-            $this->keenService->keenClient->addEvent('accepted_claims', $data);
+            $this->keenService->keenClient->addEvent('claims', $data);
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
         }
