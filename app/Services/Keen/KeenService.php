@@ -28,6 +28,14 @@ class KeenService
     }
 
     /**
+     * @return KeenIOClient
+     */
+    public function getKeenClient()
+    {
+        return $this->keenClient;
+    }
+
+    /**
      * @param User $user
      *
      * @return string

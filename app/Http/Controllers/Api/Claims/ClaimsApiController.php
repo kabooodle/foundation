@@ -8,6 +8,7 @@ namespace Kabooodle\Http\Controllers\Api\Claims;
 
 use View;
 use Binput;
+use Bugsnag;
 use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;

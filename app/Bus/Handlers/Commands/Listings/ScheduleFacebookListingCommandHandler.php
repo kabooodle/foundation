@@ -59,9 +59,9 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
 
         $this->assertFacebookCredentialsAreValid($actor);
 
-        return DB::transaction(function () use ($actor, $scheduledFor, $command) {
+        $events = collect([]);
 
-            $events = [];
+        DB::transaction(function () use ($actor, $scheduledFor, $command, $events) {
 
             foreach($command->getFacebookSales() as $facebookGroup) {
                 /** @var Listings $listing */
@@ -78,9 +78,15 @@ class ScheduleFacebookListingCommandHandler extends AbstractScheduleListingsComm
 
                 $listing->listingItems()->saveMany($facebookInventoryItems);
 
-                $events[] = new ListingScheduledEvent($actor->id, $listing->id);
+                $events->push(new ListingScheduledEvent($actor->id, $listing->id));
             }
         });
+
+        if ($events->count() > 0) {
+            foreach($events as $event) {
+                event($event);
+            }
+        }
     }
 
     /**

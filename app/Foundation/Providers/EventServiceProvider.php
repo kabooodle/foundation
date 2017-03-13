@@ -79,6 +79,7 @@ class EventServiceProvider extends ServiceProvider
         // LISTINGS
         \Kabooodle\Bus\Events\Listings\ListingScheduledEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Listings\NotifyListingWasScheduled::class,
+            \Kabooodle\Bus\Handlers\Events\Listings\SendListingDataToKeen::class,
         ],
         \Kabooodle\Bus\Events\Listings\ListingsWereQueued::class => [
             \Kabooodle\Bus\Handlers\Events\Listings\NotifyListingsWereQueued::class,
@@ -100,7 +101,8 @@ class EventServiceProvider extends ServiceProvider
         // SHIPPING EVENTS
         \Kabooodle\Bus\Events\Shipping\ShippingTransactionWasCreatedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Shipping\MoveLabelToS3Handler::class,
-            \Kabooodle\Bus\Handlers\Events\Shipping\DispatchShippingWebhookHandler::class
+            \Kabooodle\Bus\Handlers\Events\Shipping\DispatchShippingWebhookHandler::class,
+            \Kabooodle\Bus\Handlers\Events\Shipping\SendShippingDataToKeen::class,
         ],
         \Kabooodle\Bus\Events\Shipping\ShippingLabelPrinted::class => [
             \Kabooodle\Bus\Handlers\Events\Shipping\ShippingLabelPrintedEventHandler::class

@@ -6,6 +6,19 @@
 
 @section('body-content')
 
+    <div class="row">
+        <div class="col-md-3">
+            <div id="sum_total"></div>
+        </div>
+        <div class="col-md-3">
+            <div id="sum_dollars"></div>
+        </div>
+
+        <div class="col-md-3">
+
+        </div>
+    </div>
+
     <div class="box white">
         <div class="box-header">
 

@@ -107,11 +107,6 @@
                                 <a href="{{  route('merchant.shipping.index') }}"
                                    class="dropdown-item {{ Request::is('merchant/shipping') ? 'active' : null }}"><span>Shipments</span></a>
                             @endif
-
-                            <div class="divider"></div>
-                            <a  href="{{  route('merchant.analytics.index') }}"
-                                class="dropdown-item {{ Request::is('merchant/analytics*') ? 'active' : null }}"><span>Analytics</span></a>
-                            <div class="divider"></div>
                         </div>
                     </li>
                 @endif

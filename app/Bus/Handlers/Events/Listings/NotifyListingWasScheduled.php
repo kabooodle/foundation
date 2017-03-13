@@ -19,10 +19,8 @@ use Kabooodle\Bus\Events\Listings\ListingScheduledEvent;
 /**
  * Class NotifyListingWasScheduled
  */
-final class NotifyListingWasScheduled implements ShouldQueue
+final class NotifyListingWasScheduled
 {
-    use Queueable, SerializesModels;
-
     /**
      * @param ListingScheduledEvent $event
      */
@@ -50,25 +48,17 @@ final class NotifyListingWasScheduled implements ShouldQueue
     public function toEmail(User $actor, Listings $listing)
     {
         $emailAddress = $actor->primaryEmail->address;
+        $listingItemsCount = $listing->items->count();
         $email = new KitEmail;
         $email->setView('listings.emails.newlisting')
-            ->setCallable(function($m) use ($emailAddress, $listing) {
+            ->setCallable(function($m) use ($emailAddress, $listingItemsCount) {
                 $m->to($emailAddress)
-                    ->subject('You scheduled a new listing with '.$listing->items->count().' items');
+                    ->subject('You scheduled a new listing with '.$listingItemsCount.' items');
             })
             ->setParameters([
                 'listing' => $listing,
                 'timezone' => $actor->timezone
             ])
             ->send();
-    }
-
-    /**
-     * @param User     $actor
-     * @param Listings $listing
-     */
-    public function toDatabase(User $actor, Listings $listing)
-    {
-
     }
 }

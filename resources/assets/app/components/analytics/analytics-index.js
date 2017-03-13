@@ -30,6 +30,33 @@ new Vue({
         });
 
         Keen.ready(()=>{
+
+            var query = new Keen.Query("sum", {
+                event_collection: "accepted_claim",
+                target_property: "price",
+                timeframe: "this_1_years",
+                timezone: "UTC"
+            });
+
+            this.keenClient.draw(query, document.getElementById("sum_dollars"), {
+                title: 'Total Dollars',
+                chartOptions: {
+                    prefix: '$',
+                }
+            });
+
+
+            var query = new Keen.Query("count", {
+                event_collection: "accepted_claim",
+                timeframe: "this_1_years",
+                timezone: "UTC"
+            });
+
+            this.keenClient.draw(query, document.getElementById("sum_total"), {
+                title: 'Total Sales',
+            });
+
+
             var query = new Keen.Query("count", {
                 event_collection: "accepted_claim",
                 group_by: [

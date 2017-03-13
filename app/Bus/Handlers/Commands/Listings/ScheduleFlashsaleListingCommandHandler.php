@@ -47,10 +47,9 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
         /** @var Carbon $scheduledFor */
         $scheduledFor = $this->normalizeScheduledDateTime();
 
-        return DB::transaction(function () use ($actor, $scheduledFor, $command) {
+        $events = collect([]);
 
-            $events = [];
-
+        DB::transaction(function () use ($actor, $scheduledFor, $command, $events) {
             /**
              * flashsale['listables'] array containing listables
              * flashsale['sale'] array containing Flashsale
@@ -77,9 +76,15 @@ class ScheduleFlashsaleListingCommandHandler extends AbstractScheduleListingsCom
 
                 $listing->save();
 
-                $events[] = new ListingScheduledEvent($actor->id, $listing->id);
+                $events->push(new ListingScheduledEvent($actor->id, $listing->id));
             }
         });
+
+        if ($events->count() > 0) {
+            foreach($events as $event){
+                event($event);
+            }
+        }
     }
 
     /**

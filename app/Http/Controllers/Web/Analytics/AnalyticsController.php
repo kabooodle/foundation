@@ -6,8 +6,6 @@
 
 namespace Kabooodle\Http\Controllers\Web\Analytics;
 
-use Binput;
-use Illuminate\Http\Request;
 use Kabooodle\Http\Controllers\Web\Controller;
 
 /**
@@ -17,6 +15,10 @@ class AnalyticsController extends Controller
 {
     public function index()
     {
+        // https://github.com/keen/keen-js/blob/master/docs/dataviz/c3.md
+        // https://github.com/keen/keen-js/blob/master/docs/visualization.md
+        // https://github.com/keen/keen-js
+        // https://github.com/keen/dashboards/blob/gh-pages/examples/starter-kit/keen.dashboard.js
         return $this->view('analytics.index');
     }
 }

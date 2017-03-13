@@ -11,6 +11,7 @@ use Kabooodle\Models\User;
 use Kabooodle\Models\View;
 use Kabooodle\Models\ListingItems;
 use Kabooodle\Models\InventoryGrouping;
+use Kabooodle\Services\Keen\KeenService;
 use Kabooodle\Models\Contracts\Viewable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -22,6 +23,19 @@ use Kabooodle\Bus\Commands\Views\TrackViewableViewCommand;
 class TrackViewableViewCommandHandler implements ShouldQueue
 {
     use DispatchesJobs;
+
+    /**
+     * @var KeenService
+     */
+    public $keenService;
+
+    /**
+     * @param KeenService $keenService
+     */
+    public function __construct(KeenService $keenService)
+    {
+        $this->keenService = $keenService;
+    }
 
     /**
      * @param TrackViewableViewCommand $command
@@ -44,7 +58,9 @@ class TrackViewableViewCommandHandler implements ShouldQueue
             'ip_address' => $ip,
         ]);
 
-        $this->completedCallback($command);
+        $this->recordChildViews($command);
+
+        $this->handleKeenTracking($view);
 
         return $view;
     }
@@ -52,7 +68,7 @@ class TrackViewableViewCommandHandler implements ShouldQueue
     /**
      * @param TrackViewableViewCommand $command
      */
-    public function completedCallback(TrackViewableViewCommand $command)
+    public function recordChildViews(TrackViewableViewCommand $command)
     {
         $resource = $command->getResource();
         $resourceName =  get_class($resource);
@@ -78,6 +94,27 @@ class TrackViewableViewCommandHandler implements ShouldQueue
                     $this->dispatchNow($job);
                 }
             }
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+        }
+    }
+
+    /**
+     * @param View $view
+     */
+    public function handleKeenTracking(View $view)
+    {
+        try {
+            $data = [
+                'owner' => $view->viewer,
+                'raw_object' => $view,
+                'viewable' => $view->viewable,
+                'viewable_type' => $view->viewable_type,
+                'viewable_id' => $view->viewable_id,
+                'ip_address' => $view->ip_address,
+            ];
+
+            $this->keenService->keenClient->addEvent('entity_views', $data);
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
         }
