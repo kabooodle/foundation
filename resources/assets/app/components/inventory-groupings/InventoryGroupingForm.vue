@@ -96,7 +96,7 @@
                                             v-model="grouping.locked"
                                             data-type="magic-toggler"
                                             type="checkbox" />
-                                    <span class="text-sm">Prevent items from being claimed individually</span>
+                                    <span class="text-sm">{{ lockedMessage }}</span>
                                 </label>
                             </div>
                         </div>
@@ -297,7 +297,7 @@
                 this.grouping.inventory.forEach(function (item) {
                     wholesale_price_usd += item.wholesale_price_usd;
                 });
-                return wholesale_price_usd;
+                return Number((wholesale_price_usd).toFixed(2));
             },
             quantityError: function () {
                 var message = '';
@@ -317,6 +317,12 @@
                 } else {
                     return 0;
                 }
+            },
+            lockedMessage: function () {
+                //if (this.grouping.initial_qty) {
+                    //return 'Prevent the quantity of ' + this.grouping.initial_qty + ' from being claimed individually from the attached items';
+                //}
+                return 'Prevent items from being claimed individually';
             },
         },
         watch: {

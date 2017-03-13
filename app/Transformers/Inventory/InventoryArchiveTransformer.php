@@ -35,7 +35,7 @@ class InventoryArchiveTransformer extends TransformerAbstract
             'cover_image' => $inventory->coverimage,
             'qty_on_hold' => $inventory->getOnHoldQuantity(),
             'qty_on_hand' => $inventory->getAvailableQuantity(),
-            'unarchive_endpoint' => apiRoute('inventory.activate', $inventory->id),
+            'unarchive_endpoint' => apiRoute('listables.activate', $inventory->id),
         ];
     }
 }

@@ -18,6 +18,14 @@ $api->get('users/{username}/listables/{groupingId}/comments', [
 ]);
 
 $api->group(['middleware' => 'jwt.auth'], function($api) {
+    $api->put('listables/{id}/archive', [
+        'as' => 'listables.archive',
+        'uses' => \Kabooodle\Http\Controllers\Api\Listables\ListablesController::class.'@archive'
+    ]);
+    $api->delete('listables/{id}/archive', [
+        'as' => 'listables.activate',
+        'uses' => \Kabooodle\Http\Controllers\Api\Listables\ListablesController::class.'@activate'
+    ]);
     // Inventory Groupings
     $api->post('users/{username}/listables', [
         'as' => 'listables.store',

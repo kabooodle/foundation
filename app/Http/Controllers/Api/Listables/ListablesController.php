@@ -8,25 +8,15 @@ namespace Kabooodle\Http\Controllers\Api\Listables;
 
 use DB;
 use Binput;
-use Bugsnag;
 use Exception;
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\Listables\ActivateListableCommand;
+use Kabooodle\Bus\Commands\Listables\ArchiveListableCommand;
+use Kabooodle\Foundation\Exceptions\Listables\ItemNotArchiveableBelongsToOutfitsException;
 use Kabooodle\Models\Inventory;
-use Illuminate\Validation\ValidationException;
 use Kabooodle\Models\InventoryGrouping;
-use Kabooodle\Models\Listing\FacebookListingOptions;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
-use Facebook\Exceptions\FacebookAuthenticationException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
-use Kabooodle\Bus\Commands\Inventory\UpdateInventoryItemCommand;
-use Kabooodle\Bus\Commands\Inventory\DeleteInventoryFromSaleCommand;
-use Kabooodle\Bus\Commands\Listings\ScheduleFacebookListingCommand;
-use Kabooodle\Bus\Commands\Listings\ScheduleFlashsaleListingCommand;
-use Kabooodle\Transformers\Inventory\InventoryTransformer;
-use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
-use Kabooodle\Foundation\Exceptions\Listings\ListingConflictsWithExistingListingException;
-use Kabooodle\Foundation\Exceptions\Listings\ListingClaimableDateIsBeforeListingDateException;
 
 /**
  * Class ListablesController
@@ -121,5 +111,63 @@ class ListablesController extends AbstractApiController
         ];
 
         return $this->setData($data)->respond();
+    }
+
+    /**
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function archive(Request $request, $id)
+    {
+        try {
+            $listable = $this->getUser()->listables()->findOrFail($id);
+
+            $this->dispatchNow(new ArchiveListableCommand(
+                $listable,
+                $this->getUser()
+            ));
+
+            return $this->setData([
+                'msg' => "Item archived",
+            ])->respond();
+        } catch (ItemNotArchiveableBelongsToOutfitsException  $e) {
+            return $this->setStatusCode(500)
+                ->setData(['msg' => 'Item cannot be archived as it is currently associated to an outfit'])
+                ->respond();
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            return $this->setStatusCode(500)
+                ->setData(['msg' => $e->getTraceAsString()])
+                ->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function activate(Request $request, $id)
+    {
+        try {
+            $listable = $this->getUser()->listables()->findOrFail($id);
+
+            $this->dispatchNow(new ActivateListableCommand(
+                $listable,
+                $this->getUser()
+            ));
+
+            return $this->setData([
+                'msg' => "Item unarchived",
+            ])->respond();
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            return $this->setStatusCode(500)
+                ->setData(['msg' => $e->getTraceAsString()])
+                ->respond();
+        }
     }
 }

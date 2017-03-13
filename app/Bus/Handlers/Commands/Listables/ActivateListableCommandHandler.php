@@ -4,10 +4,10 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Handlers\Commands\Listable;
+namespace Kabooodle\Bus\Handlers\Commands\Listables;
 
 use Kabooodle\Models\Listable;
-use Kabooodle\Bus\Commands\Listable\ActivateListableCommand;
+use Kabooodle\Bus\Commands\Listables\ActivateListableCommand;
 
 /**
  * Class ActivateListableCommandHandler

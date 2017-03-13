@@ -4,15 +4,15 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Commands\Listable;
+namespace Kabooodle\Bus\Commands\Listables;
 
 use Kabooodle\Models\User;
 use Kabooodle\Models\Contracts\ListableInterface;
 
 /**
- * Class ArchiveListableCommand
+ * Class ActivateListableCommand
  */
-final class ArchiveListableCommand
+final class ActivateListableCommand
 {
     /**
      * @var ListableInterface

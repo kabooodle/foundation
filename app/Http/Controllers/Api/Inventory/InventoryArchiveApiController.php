@@ -9,13 +9,11 @@ namespace Kabooodle\Http\Controllers\Api\Inventory;
 use Binput;
 use Exception;
 use Illuminate\Http\Request;
-use Kabooodle\Bus\Commands\Listable\ActivateListableCommand;
-use Kabooodle\Models\InventoryGrouping;
-use Kabooodle\Models\Listable;
+use Kabooodle\Bus\Commands\Listables\ActivateListableCommand;
 use Kabooodle\Models\Inventory;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
-use Kabooodle\Bus\Commands\Listable\ArchiveListableCommand;
+use Kabooodle\Bus\Commands\Listables\ArchiveListableCommand;
 use Kabooodle\Transformers\Inventory\InventoryArchiveTransformer;
 
 /**

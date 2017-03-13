@@ -68,16 +68,20 @@
                                     </a>
                                     <div class="dropdown-menu dropdown-over dropdown-menu-sm pull-xs-none dropdown-menu-right">
                                         <button
-                                                @click="editItemButtonClicked(props.rowData.slug, '{{ route('shop.inventory.edit', [webUser()->username, 'K']) }}', $event)"
-                                                type="button"
-                                                class="dropdown-item">Edit</button>
+                                            @click="viewItemButtonClicked(props.rowData.slug, '{{ route('shop.inventory.show', [webUser()->username, 'K']) }}', $event)"
+                                            type="button"
+                                            class="dropdown-item">View</button>
                                         <button
-                                                type="button"
-                                                @click="claimButtonClicked(props.rowData.slug, '{{ route('shop.inventory.show', [webUser()->username, 'K']) }}', $event)"
-                                                class="dropdown-item">Claim</button>
+                                            @click="editItemButtonClicked(props.rowData.slug, '{{ route('shop.inventory.edit', [webUser()->username, 'K']) }}', true, $event)"
+                                            type="button"
+                                            class="dropdown-item">Edit</button>
+                                        <button
+                                            type="button"
+                                            @click="claimButtonClicked(props.rowData.slug, '{{ route('shop.inventory.show', [webUser()->username, 'K']) }}', $event)"
+                                            class="dropdown-item">Claim</button>
                                         <div class="divider"></div>
                                         <button
-                                        @click="archiveItem(props.rowData.id, '{{ apiRoute('inventory.archive', ['K']) }}', $event)" type="button" class="dropdown-item">Archive</button>
+                                        @click="archiveItem(props.rowData.id, '{{ apiRoute('listables.archive', ['K']) }}', $event)" type="button" class="dropdown-item">Archive</button>
                                     </div>
                                 </div>
                         </div>

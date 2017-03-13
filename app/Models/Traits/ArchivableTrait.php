@@ -62,7 +62,7 @@ trait ArchivableTrait
      */
     public function archiveModel()
     {
-        $this->archived_at = Carbon::now()->toDateTimeString();
+        $this->archived_at = Carbon::now();
         $this->deleted_at = null;
         $this->save();
     }

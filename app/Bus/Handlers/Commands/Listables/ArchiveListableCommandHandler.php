@@ -4,11 +4,11 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
-namespace Kabooodle\Bus\Handlers\Commands\Listable;
+namespace Kabooodle\Bus\Handlers\Commands\Listables;
 
+use Kabooodle\Foundation\Exceptions\Listables\ItemNotArchiveableBelongsToOutfitsException;
 use Kabooodle\Models\Listable;
-use Kabooodle\Bus\Commands\Listable\ArchiveListableCommand;
-use Kabooodle\Foundation\Exceptions\Listings\ListingNotArchiveableBelongsToOutfitsException;
+use Kabooodle\Bus\Commands\Listables\ArchiveListableCommand;
 
 /**
  * Class ArchiveListableCommandHandler
@@ -18,15 +18,15 @@ class ArchiveListableCommandHandler
     /**
      * @param ArchiveListableCommand $command
      *
-     * @throws ListingNotArchiveableBelongsToOutfitsException
+     * @throws ItemNotArchiveableBelongsToOutfitsException
      */
     public function handle(ArchiveListableCommand $command)
     {
         /** @var Listable $listable */
         $listable = $command->getListable();
 
-        if ($listable->groupings->count() > 0) {
-            throw new ListingNotArchiveableBelongsToOutfitsException;
+        if ($listable->groupings && $listable->groupings->count() > 0) {
+            throw new ItemNotArchiveableBelongsToOutfitsException();
         }
 
         $listable->archiveModel();

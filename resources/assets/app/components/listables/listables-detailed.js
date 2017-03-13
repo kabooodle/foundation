@@ -92,28 +92,35 @@ new Vue({
                 parentDropdown.prop('disabled', false).removeClass('disabled');
             });
         },
-        editItemButtonClicked(slug, route, event){
-            $Bus.$emit('popout-overlay:request-open');
+        viewItemButtonClicked(slug, route, event){
+            window.location.href = route.replace('K', slug);
+        },
+        editItemButtonClicked(slug, route, ajax, event){
             route = route.replace('K', slug);
+            if (!ajax) {
+                window.location.href = route;
+            } else {
+                $Bus.$emit('popout-overlay:request-open');
 
-            this.$http.get(route, {
-                async: false,
-                before(request) {
-                    // Before each ajax request, abort the previous request
-                    // and add this request to an array of requests for reference.
-                    $Bus.$emit('popout-overlay:change-prompt', false);
-                    if (this.previousRequest) {
-                        this.previousRequest.abort();
+                this.$http.get(route, {
+                    async: false,
+                    before(request) {
+                        // Before each ajax request, abort the previous request
+                        // and add this request to an array of requests for reference.
+                        $Bus.$emit('popout-overlay:change-prompt', false);
+                        if (this.previousRequest) {
+                            this.previousRequest.abort();
+                        }
+                        this.previousRequest = request;
                     }
-                    this.previousRequest = request;
-                }
-            }).then((response)=>{
-                setTimeout(()=>{
+                }).then((response)=>{
+                    setTimeout(()=>{
                     $Bus.$emit('popout-overlay:change-content', response.body);
                 },0);
             }, (response)=>{
-                $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
-            });
+                    $Bus.$emit('popout-overlay:change-content', 'An error occurred, please try again.', false);
+                });
+            }
         },
         claimButtonClicked(slug, route, event){
             route = route.replace('K', slug);
