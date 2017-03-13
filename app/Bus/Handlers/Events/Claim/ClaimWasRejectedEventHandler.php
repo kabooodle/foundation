@@ -29,7 +29,7 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
     {
         /** @var Claims $claim */
         $claim = $event->getClaim();
-        $claimedBy = $claim->claimedBy;
+        $claimedBy = $claim->claimer;
 
         if ($claimedBy->primaryEmail->isVerified()) {
             $this->toEmail($claim, $claimedBy);

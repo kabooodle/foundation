@@ -27,7 +27,8 @@ class NotifyClaimWasAccepted implements ShouldQueue
     public function handle(ClaimWasAcceptedEvent $event)
     {
         $claim = $event->getClaim();
-        $claimedBy = $event->getActor();
+        $claimedBy = $claim->claimer;
+        $acceptedBy = $event->getActor();
 
         if ($claimedBy->primaryEmail && $claimedBy->primaryEmail->isVerified()) {
             $this->toEmail($claim, $claimedBy);
@@ -63,7 +64,7 @@ class NotifyClaimWasAccepted implements ShouldQueue
         $notification->payload = '';
         $notification->title = $title;
         $notification->description = '';
-        $notification->reference_url = route('profile.purchases.index');
+        $notification->reference_url = route('profile.purchases.show', [$claim->getUUID()]);
         $notification->save();
     }
 }

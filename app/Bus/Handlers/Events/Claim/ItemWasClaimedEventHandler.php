@@ -56,7 +56,7 @@ class ItemWasClaimedEventHandler
         // We need to email two people, the seller and the person who claimed the item.
         $claim = $event->getclaim();
         $listedItem = $claim->listedItem;
-        $claimedBy = $claim->claimedBy;
+        $claimedBy = $claim->claimer;
         $seller = $listedItem->owner;
         $availableQty = $listedItem->getAvailableQuantity();
         $shoppable = $claim->listingItem;
@@ -157,7 +157,7 @@ class ItemWasClaimedEventHandler
      */
     public function toDatabase(User $user, Claims $claim, ListableInterface $listedItem)
     {
-        $title = $listedItem->getTitle().' was claimed by '. $claim->claimedBy->username;
+        $title = $listedItem->getTitle().' was claimed by '. $claim->claimer->username;
 
         $notification = new NotificationNotices;
         $notification->user_id = $user->id;
@@ -167,6 +167,7 @@ class ItemWasClaimedEventHandler
         $notification->payload = '';
         $notification->title = $title;
         $notification->description = '';
+        $notification->reference_url = route('shop.claims.index', [$user->username]);
         $notification->save();
     }
 
