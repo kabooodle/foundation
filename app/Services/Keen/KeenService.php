@@ -36,6 +36,17 @@ class KeenService
     }
 
     /**
+     * @param       $collection
+     * @param array $event
+     *
+     * @return mixed
+     */
+    public function addEvent($collection, array $event = array())
+    {
+        return $this->getKeenClient()->addEvent($collection, $event);
+    }
+
+    /**
      * @param User $user
      *
      * @return string
