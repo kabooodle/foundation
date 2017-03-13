@@ -3,7 +3,19 @@
  * Copyright (c) 2017. Jacob Toolson <jake@kabooodle.com>
  */
 
+require('d3');
+window.c3 = require('c3');
 require('keen-js');
+
+const chartTypes = [
+    'areachart',
+    'barchart',
+    'columnchart',
+    'linechart',
+    'metric',
+    'piechart',
+    'table'
+];
 
 new Vue({
     el: '#analytics_index',
@@ -15,6 +27,38 @@ new Vue({
         this.keenClient = new Keen({
             projectId: this.keenConfig.project_id,
             readKey: this.keenConfig.read_key
+        });
+
+        Keen.ready(()=>{
+            var query = new Keen.Query("count", {
+                event_collection: "accepted_claim",
+                group_by: [
+                    "listable.name_alt"
+                ],
+                interval: "daily",
+                timeframe: "this_14_days",
+                timezone: "UTC"
+            });
+
+            this.keenClient.draw(query, document.getElementById("my_chart"), {
+                library: 'c3',
+                chartType: 'area',
+                title: 'Daily Total',
+                chartOptions: {
+                    legend: {
+                        position: 'right'
+                    },
+                    axis: {
+                        y: {
+                            tick: {
+                                format: function (d) {
+                                    return (parseInt(d) == d) ? d : null;
+                                }
+                            }
+                        },
+                    }
+                }
+            });
         });
     },
     methods: {

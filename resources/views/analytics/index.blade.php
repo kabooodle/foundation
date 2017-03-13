@@ -1,9 +1,20 @@
 @extends('layouts.full', ['contentId' => 'analytics_index'])
 
+@push('header-styles')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css" rel="stylesheet" type="text/css">
+@endpush
 
 @section('body-content')
 
-    Coming soon.
+    <div class="box white">
+        <div class="box-header">
+
+        </div>
+        <div class="box-body">
+            <div id="my_chart"></div>
+        </div>
+    </div>
+
 
 @endsection
 

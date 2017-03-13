@@ -13,7 +13,7 @@ class UpdateUsersTblAddKeenKey extends Migration
     public function up()
     {
             Schema::table('users', function(Blueprint $table){
-                $table->string('keen_access_key')->after('stripe_id')->nullable()->default(null);
+                $table->text('keen_access_key')->after('stripe_id')->nullable()->default(null);
             });
 
             Artisan::call('db:seed', array('--class' => 'KeenReadKeySeeder'));
