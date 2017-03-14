@@ -1,7 +1,7 @@
 <!DOCTYPE html>
     <html lang="en">
     @include('layouts.header._htmlheader')
-    <body class=" @yield('body-class', null)  {{ webUser() && webUser()->onGenericTrial() ? ' on-trial ' : null }} @hasSection('body-menu') @if(trim($__env->yieldContent('body-menu')) <> '') with-body-menu @else no-body-menu @endif @else  no-body-menu  @endif ">
+    <body class=" header-condensed @yield('body-class', null)  {{ webUser() && webUser()->onGenericTrial() ? ' on-trial ' : null }} @hasSection('body-menu') @if(trim($__env->yieldContent('body-menu')) <> '') with-body-menu @else no-body-menu @endif @else  no-body-menu  @endif ">
     <div id="fb-root"></div>
     <script>
         window.fbAsyncInit = function() {

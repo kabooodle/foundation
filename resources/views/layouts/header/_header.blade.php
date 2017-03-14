@@ -149,17 +149,17 @@
 </div>
 
 <script>
-    function init() {
-        window.addEventListener('scroll', function(e){
-            var distanceY = window.pageYOffset || document.documentElement.scrollTop,
-                    shrinkOn = 80,
-                    header = $(".app-header");
-            if (distanceY > shrinkOn) {
-                $('body').addClass('header-condensed');
-            } else {
-                $('body').removeClass('header-condensed');
-            }
-        });
-    }
-    window.onload = init();
+//    function init() {
+//        window.addEventListener('scroll', function(e){
+//            var distanceY = window.pageYOffset || document.documentElement.scrollTop,
+//                    shrinkOn = 80,
+//                    header = $(".app-header");
+//            if (distanceY > shrinkOn) {
+//                $('body').addClass('header-condensed');
+//            } else {
+//                $('body').removeClass('header-condensed');
+//            }
+//        });
+//    }
+//    window.onload = init();
 </script>
