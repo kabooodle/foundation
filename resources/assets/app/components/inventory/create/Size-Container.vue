@@ -5,7 +5,7 @@
                 <label class="col-sm-3 form-control-label">Size</label>
                 <div class="col-sm-9">
                     <div class="btn-group-prpl" data-toggle="buttons">
-                        <label class="form-control-label btn white" v-for="size in sizings" style="margin-right: 3px;">
+                        <label class="form-control-label btn white" :key="size.id" v-for="size in sizings" style="margin-right: 3px;">
                             <input
                                     required
                                     aria-required="true"
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="row row-horizon clearfix" style="position: relative; overflow: auto; ">
-                <div class="col-sm-4 thumbnail-container m-b-2"  v-for="(image, $index) in images" :key="image.id">
+                <div class="col-sm-4 thumbnail-container m-b-2"  v-for="(image, $index) in images" :key="id+'_'+image.id">
                     <div class="box no-shadow m-b-0 p-t-1 p-b-1 r b-1 b b-a" >
                         <div class="item" >
                             <div class="item-overlay active p-l p-r " style="z-index: 999;">

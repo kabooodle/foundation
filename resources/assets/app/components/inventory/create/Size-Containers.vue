@@ -3,7 +3,13 @@
         <div class="box"
              v-for="size_container in size_containers"
              :key="size_container.id" >
-            <button type="button" @click="deleteSizeContainer(size_container, $event)" style="position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3" class=" m-l-1 pull-right btn white btn-xs text-muted "><i class="fa fa-times" aria-hidden="true"></i></button>
+            <button
+                    type="button"
+                    @click="deleteSizeContainer(size_container, $event)"
+                    style="position: absolute; top: 0; right: 0; border: 0; border-radius: 0; opacity:.3"
+                    class=" m-l-1 pull-right btn white btn-xs text-muted ">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
             <size-container
                     :images="size_container.images"
                     :s3_key_url="s3_key_url"
