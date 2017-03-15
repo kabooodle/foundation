@@ -13,11 +13,23 @@ namespace Kabooodle\Models;
 class Files extends BaseEloquentModel
 {
     /**
+     * return array
+     */
+    const IMAGE_SIZES = [
+        32,
+        64,
+        96,
+        500,
+        900
+    ];
+
+    /**
      * @var array
      */
     protected $appends = [
         'json',
-        'original_location'
+        'original_location',
+        'thumb',
     ];
 
     /**
@@ -111,5 +123,15 @@ class Files extends BaseEloquentModel
     public function getOriginalLocationAttribute()
     {
         return $this->getOriginal('location');
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getThumbAttribute()
+    {
+        $key = '32x-'.$this->key;
+
+        return useCDN() ? staticAsset($key, false) : $this->location;
     }
 }

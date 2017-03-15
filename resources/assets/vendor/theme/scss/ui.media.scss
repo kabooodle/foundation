@@ -90,15 +90,16 @@ img {
     height: 26px !important;
   }
  & img {
-   position: absolute;
-   left: 50%;
-   top: 50%;
+   //position: absolute;
+   //left: 50%;
+   //top: 50%;
+   vertical-align: top;
    height: 100%;
    width: auto;
    border-radius: .25rem;
-   -webkit-transform: translate(-50%, -50%);
-   -ms-transform: translate(-50%, -50%);
-   transform: translate(-50%, -50%);
+   //-webkit-transform: translate(-50%, -50%);
+   //-ms-transform: translate(-50%, -50%);
+   //transform: translate(-50%, -50%);
    &.portrait {
      width: 100%;
      height: auto;
