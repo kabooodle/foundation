@@ -23,7 +23,6 @@
     ></detailed-totals>
 
 
-
     <div class="box white">
         <div class="box-header">
             <div class=" center-block text-center " >

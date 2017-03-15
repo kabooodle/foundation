@@ -599,6 +599,10 @@
             checkCheckboxesState: function(fieldName) {
                 if (! this.tableData) return
 
+                if (! Array.isArray(this.tableData)) {
+                    return;
+                }
+
                 let self = this
                 let idColumn = this.trackBy
                 let selector = 'th.vuetable-th-checkbox-' + idColumn + ' input[type=checkbox]'
