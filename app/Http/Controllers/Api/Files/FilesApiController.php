@@ -35,6 +35,7 @@ class FilesApiController extends AbstractApiController
 
         // Only allow alphanumeric - _ . in filenames.  Anything else, replace with _
         $filename = preg_replace('/[^A-Za-z0-9.-_]/i', '_', $filename);
+        $filename = str_random(32) . $filename;
 
         $acl = 'public-read';
         $bucket = env('AWS_BUCKET');
