@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
+use Kabooodle\Bus\Commands\Claim\ClaimListedItemCommand;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Messages;
 use Response;
@@ -202,7 +203,7 @@ class InventoryController extends Controller
         // We remove the eager loaded relationships on inventory because most of it is unnecessary.
         $item = $user->inventory()->noEagerLoads()->with('style', 'size', 'styleSize', 'files')->find($decryptedId);
         try {
-            $this->dispatchNow(new ClaimInventoryItemCommand(webUser(), $user, $item));
+            $this->dispatchNow(new ClaimListedItemCommand(webUser(), $item));
 
             Messages::success('Item claimed successfully!');
 
