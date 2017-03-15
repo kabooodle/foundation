@@ -143,6 +143,7 @@ class AuthController extends Controller
                     $request->get('email'),
                     $request->get('password'),
                     $request->get('account_type'),
+                    app('request')->header('X-TZ'),
                     $referral
                 ));
             }

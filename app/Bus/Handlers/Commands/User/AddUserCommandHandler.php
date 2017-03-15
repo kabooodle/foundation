@@ -52,7 +52,8 @@ class AddUserCommandHandler
                 'last_name' => $command->getLastName(),
                 'username' => $command->getUsername(),
                 'password' => bcrypt($command->getPassword()),
-                'referred_by_user_id' => $referral ? $referral->id : null
+                'referred_by_user_id' => $referral ? $referral->id : null,
+                'timezone' => $command->getTimezone() ? : 'America/Los_Angeles'
             ]);
 
             $email = Email::factory([

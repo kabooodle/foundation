@@ -43,6 +43,11 @@ final class AddUserCommand
     public $accountType;
 
     /**
+     * @var string
+     */
+    public $timezone;
+
+    /**
      * @var string|null
      */
     public $referralUsername;
@@ -54,9 +59,10 @@ final class AddUserCommand
      * @param             $email
      * @param             $password
      * @param string      $accountType
+     * @param string      $timezone
      * @param string|null $referralUsername
      */
-    public function __construct($firstName, $lastName, $username, $email, $password, string $accountType, string $referralUsername = null)
+    public function __construct($firstName, $lastName, $username, $email, $password, string $accountType, string $timezone, string $referralUsername = null)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
@@ -64,6 +70,7 @@ final class AddUserCommand
         $this->email = $email;
         $this->password = $password;
         $this->accountType = $accountType;
+        $this->timezone = $timezone;
         $this->referralUsername = $referralUsername;
     }
 
@@ -113,6 +120,14 @@ final class AddUserCommand
     public function getAccountType(): string
     {
         return $this->accountType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTimezone(): string
+    {
+        return $this->timezone;
     }
 
     /**
