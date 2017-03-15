@@ -55,39 +55,10 @@ class ItemWasClaimedEventHandler
     {
         // We need to email two people, the seller and the person who claimed the item.
         $claim = $event->getclaim();
+        /** @var ListableInterface $listedItem */
         $listedItem = $claim->listedItem;
         $claimedBy = $claim->claimer;
         $seller = $listedItem->owner;
-        $availableQty = $listedItem->getAvailableQuantity();
-        $shoppable = $claim->listingItem;
-
-        // If a claimed item was claimed via facebook, we need to handle any business logic
-        // Currently, there is only one rule: Create a FB request, adding a "Sold" comment to photo.
-//        if ($event->getclaim()->shoppable_type == FacebookItems::class) {
-//            try {
-//                $this->handleFacebookCommentToPhoto($shoppable->facebook_post_id, ['message' => 'Sold'], $seller->getFacebookUserToken());
-//            } catch (Exception $e) {
-//                // event()
-//            }
-//        }
-
-        // 2nd business logic requires that we count the number of facebook albums this item has been posted to
-        // and if the item is out of stock, we need to post claimed to all the remaining sales as well.
-//        if ($event->getclaim()->listable->facebooksales->count() > 0 && $availableQty == 0) {
-//            \Log::info('Posting sold comment to multiple fb items!');
-//            try {
-//                foreach ($event->getclaim()->listable->facebooksales as $facebookSaleItem) {
-//                    // Ignore the facebook photo we've already posted to.
-//                    if ($facebookSaleItem->facebook_post_id == $shoppable->facebook_post_id) {
-//                        continue;
-//                    }
-//                    // if remaining qty is 0 and we have facebook sales, post comment to the sales
-//                    $this->handleFacebookCommentToPhoto($facebookSaleItem->facebook_post_id,  ['message' => 'Sold'], $seller->getFacebookUserToken());
-//                }
-//            } catch (Exception $e) {
-//                // event()
-//            }
-//        }
 
         try {
 
@@ -95,7 +66,7 @@ class ItemWasClaimedEventHandler
 
             if ($claimedBy->primaryEmail && ($claimedBy->primaryEmail->isVerified() || $claimedBy->isGuest())) {
                 with(new KitEmail('inventory.claims.emails.claimed_toclaimer', ['item' => $listedItem], function ($mailer) use ($claimerEmail) {
-                    $mailer->to($claimerEmail)->subject('Item claimed.');
+                    $mailer->to($claimerEmail)->subject('You claimed an item');
                 }))->send();
             }
 
@@ -104,10 +75,6 @@ class ItemWasClaimedEventHandler
                     $this->toEmail($seller, $listedItem);
                 }
             }
-
-//            if ($seller->checkIsNotifyable('inventory_claimed', 'web')) {
-//                $this->toWeb($owner, $listing);
-//            }
 
             $this->toDatabase($seller, $claim, $listedItem);
 
