@@ -81,7 +81,15 @@ return [
             'encrypt' => true,
             'timeout' => 300
         ],
-
+        'iron' => [
+            'driver'  => 'iron',
+            'host'    => 'mq-aws-us-east-1-2.iron.io',
+            'token'   => env('IRON_QUEUE_TOKEN'),
+            'project' => env('IRON_QUEUE_ID'),
+            'queue'   => 'general-queue',
+            'encrypt' => true,
+            'timeout' => 300
+        ],
 
 
         ////////////////////---------
@@ -111,15 +119,7 @@ return [
         ////////////////////---------
         // EMAIL QUEUES
         ////////////////////---------
-        'iron' => [
-            'driver'  => 'iron',
-            'host'    => 'mq-aws-us-east-1-2.iron.io',
-            'token'   => env('IRON_QUEUE_TOKEN'),
-            'project' => env('IRON_QUEUE_ID'),
-            'queue'   => 'email-queue',
-            'encrypt' => true,
-            'timeout' => 300
-        ],
+
         'iron-emails' => [
             'driver'  => 'iron',
             'host'    => 'mq-aws-us-east-1-2.iron.io',
