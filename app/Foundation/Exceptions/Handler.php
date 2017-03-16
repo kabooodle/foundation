@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Foundation\Exceptions;
 
+use Bugsnag;
 use Exception;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -49,6 +50,8 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        Bugsnag::notifyException($e);
+
         $response = parent::render($request, $e);
 
         if ($request->is('*api*')) {
