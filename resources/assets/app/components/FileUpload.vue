@@ -83,7 +83,7 @@
                     <template v-if="has_multiple">
                     <input
                         type="file"
-                        name="file[]"
+                        name="file"
                         class="js-s3_fileupload"
                         :accept="acceptRegEx"
                         multiple="multiple"
