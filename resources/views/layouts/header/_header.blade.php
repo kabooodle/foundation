@@ -38,7 +38,7 @@
                             ></notices>
                         </ul>
                     </div>
-                    <a class="dropdown-item text-center" href="{{ route('notices.index') }}">View All Notices</a>
+                    {{--<a class="dropdown-item text-center" href="{{ route('notices.index') }}">View All Notices</a>--}}
                 </div>
                 </li>
                 <li class="nav-item dropdown ">
@@ -79,7 +79,7 @@
                         <div class="dropdown-menu">
                             <a href="{{  route('shop.inventory.create', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/inventory/create') ? 'active' : null }}">Add Inventory</a>
-                            <a href="{{  route('shop.inventory.index', [webUser()->username]) }}"
+                            <a href="{{  route('shop.inventory.overview.show', [webUser()->username]) }}"
                                class="dropdown-item {{ Request::is('shop/*/inventory') ? 'active' : null }}">Inventory</a>
 
                             <div class="divider"></div>
