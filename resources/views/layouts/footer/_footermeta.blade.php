@@ -59,6 +59,9 @@
         poweredBy: false,
     });
     $(function(){
+        HS.beacon.ready(function() {
+            $('#hs-beacon').hide();
+        });
         $(window).scroll(function () {
             var elem = '.app-footer';
             var pageTop = $(window).scrollTop();
@@ -78,6 +81,10 @@
                 $('#back-to-top').fadeOut();
                 $('#hs-beacon').removeClass('beacon-move');
             }
+        });
+        $('.js-toggle-help').click(function(){
+            $('#hs-beacon').show();
+            HS.beacon.toggle();
         });
         $('#back-to-top').click(function () {
             $('body,html').animate({
