@@ -49,6 +49,7 @@
                 group_type="inventory"
                 :group="group"
                 :display_footer_buttons="display_footer_buttons"
+                :display_toggle_all_buttons="display_toggle_all_buttons"
                 :disable-unavailable="disableUnavailable"
                 :hide-unavailable="hideUnavailable"
                 :inventory-index-route=inventoryIndexRoute
@@ -69,6 +70,10 @@
             listablegroupings_endpoint: {
                 required: true,
                 type: String
+            },
+            display_toggle_all_buttons: {
+                type: Boolean,
+                default: true
             },
             display_footer_buttons: {
                 type: Boolean,
