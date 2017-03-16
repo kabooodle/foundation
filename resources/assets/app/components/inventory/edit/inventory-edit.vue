@@ -174,7 +174,7 @@
     import Spinny from  '../../Spinner.vue';
 
     export default{
-        props: ["styles", "existingimages", "item", "tags", "api_route"],
+        props: ["styles", "existingimages", "item", "tags", "api_route", "archive_endpoint"],
         data : function() {
             return {
                 processing: false,
@@ -327,9 +327,9 @@
                 event.preventDefault();
                 const scope = this;
                 let $form = $(event.target).closest('form');
-                let action = $form.prop('action').replace('edit', '');
+                let action = this.archive_endpoint.replace('::ID::', item.id);
                 this.archiving = true;
-                this.$http.put(action+'/archive', $form.serializeObject()).then(function(response){
+                this.$http.put(action, $form.serializeObject()).then(function(response){
                     notify({text:  response.body.data.msg, type: 'success'});
                     this.archived = true;
                     $Bus.$emit('inventory-item:updated', scope.item, JSON.parse(response.body.data.item));
@@ -343,9 +343,9 @@
                 event.preventDefault();
                 const scope = this;
                 let $form = $(event.target).closest('form');
-                let action = $form.prop('action').replace('edit', '');
+                let action = this.archive_endpoint.replace('::ID::', item.id);
                 this.activating = true;
-                this.$http.delete(action+'/archive', $form.serializeObject()).then(function(response){
+                this.$http.delete(action, $form.serializeObject()).then(function(response){
                     notify({text:  response.body.data.msg, type: 'success'});
                     this.archived = false;
                     $Bus.$emit('inventory-item:updated', scope.item, JSON.parse(response.body.data.item));
