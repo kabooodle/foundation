@@ -54,6 +54,7 @@ class FilesApiController extends AbstractApiController
 		  "conditions": [
 		    {"bucket": "'.$bucket.'"},
 		    ["starts-with", "$key", "'.$filePath.'"],
+		    ["content-length-range",0,5242880],
 		    {"acl": "'.$acl.'"},
 		    {"success_action_status": "201"},
 		  ]
@@ -63,6 +64,7 @@ class FilesApiController extends AbstractApiController
         $signature = hex2b64(hmacsha1($awsSecretKey, $policy));
 
         $this->setData([
+            'filename' => $filename,
             'url' => "https://{$bucket}.s3.amazonaws.com",
             'key' => $filePath,
             'path' => $filePath,
