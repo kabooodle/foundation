@@ -11,7 +11,6 @@
                 <i class="fa fa-times" aria-hidden="true"></i>
             </button>
             <size-container
-                    :images="size_container.images"
                     :s3_key_url="s3_key_url"
                     :sizings="sizings"
                     :id="size_container.id"
@@ -37,28 +36,7 @@
         },
         created(){
 
-            $Bus.$on('image:uploaded', (el, responseData)=>{
 
-                responseData.json = JSON.stringify(responseData);
-                var sizeEl = el.closest('.sizing_container'),
-                        sizeContainerId = sizeEl.data('id');
-
-                this.$nextTick(()=>{
-                    $('.row-horizon').perfectScrollbar('update');
-                });
-
-                var container = ($.findFirst(this.size_containers, function(obj) {
-                    return obj.id == sizeContainerId;
-                }));
-
-                container.images.unshift(responseData);
-
-                this.$nextTick(()=>{
-                    $('#size_'+sizeContainerId).find("input.image_qty_btn").TouchSpin({
-                        min: 1
-                    });
-                });
-            });
 
             $Bus.$on('add-size', ()=>{
                 this.addSizeContainer();
