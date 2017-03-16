@@ -41,13 +41,7 @@ class InventoryToAlbumMatcher {
             distance: 0,
             maxPatternLength: 100,
             minMatchCharLength: 3,
-            keys: [{
-                name: "name",
-                weight: .6,
-            }, {
-                name: "name_alt",
-                weight: .4
-            }]
+            keys: ["name"],
         };
     }
 
@@ -109,6 +103,15 @@ class InventoryToAlbumMatcher {
 
     /**
      *
+     * @param {string} needle
+     * @returns {string}
+     */
+    prepareNeedle(needle){
+        return needle.toLowerCase().replace(' - ', ' ').trim();
+    }
+
+    /**
+     *
      * @param {number} score
      * @returns {number}
      */
@@ -142,11 +145,11 @@ class InventoryToAlbumMatcher {
 
         // Build the needle we are looking for in the haystack, or rather,
         // string we are searching for in the array of possibilities.
-        let name = needle.name.toLowerCase();
-        let name_alt = needle.name_alt.toLowerCase();
+        let name = this.prepareNeedle(needle.name);
+        let name_alt = this.prepareNeedle(needle.name_alt);
 
-        // first search param is by name;
-        let search_param = name;
+        // first search param is by name_alt;
+        let search_param = name_alt;
 
         // Search through the haystack, comparing our needle, and return array of all possible matches
         let found_results = fuse.search(search_param);
@@ -164,7 +167,7 @@ class InventoryToAlbumMatcher {
             match = ideal_match;
         } else {
             // No ideal match, so lets search now using a different needle, just to be sure.
-            found_results = fuse.search(name_alt);
+            found_results = fuse.search(name);
             let style_based_ideal_match = found_results[0];
 
             if (style_based_ideal_match && this.satisfiesMinScore(style_based_ideal_match.score)){

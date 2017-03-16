@@ -42,11 +42,23 @@
                 </div>
             </div>
         </div>
+        <modal modal_id="tour-modal" modal_class="tour-modal" :display_header="false" :display_footer="false">
+            <div slot="modal_body">
+                <div class="m-a-2 p-a-2 center text-center block-center center-block">
+                    <img src="/assets/images/kit1.png">
+                    <h5 class="m-t-3 m-b-3">Hi. I'm Kit. If you need help, I'm here to help guide you anytime.</h5>
+                    <button type="button" class="m-l-1 btn btn-lg white" @click.prevent="noTour">No thanks, Kit!</button>
+                    <button type="button" class="btn btn-success btn-lg" @click.prevent="startTour">Yes, take a tour!</button>
+                </div>
+            </div>
+        </modal>
     </div>
 </template>
 <script>
     import InventoryGroupingForm from './InventoryGroupingForm.vue'
     import Spinny from '../Spinner.vue';
+    import Modal from '../Modal.vue';
+    import onboard from './inventory-grouping-onboard';
 
     export default {
         props: {
@@ -103,6 +115,11 @@
             } else {
                 this.addGrouping();
             }
+            $Bus.$on('tour:changed', function (stepNumber, step) {
+                if (stepNumber == 8) {
+                    console.log('scroll up');
+                }
+            });
         },
         computed: {
             saveInventoryGroupingsEndpoint: function () {
@@ -146,6 +163,17 @@
                     }).finally(()=>{
                         self.retrievingInventory = false;
                 });
+            },
+            showTourModal: function () {
+                $('#tour-modal').modal('show');
+            },
+            startTour: function () {
+                $(document).find('.tour-modal').modal('hide');
+                $(document).find('.onboard-show-btn').hide();
+                onboard().start();
+            },
+            noTour: function () {
+                $(document).find('.tour-modal').modal('hide');
             },
             getNewId: function () {
                 var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -389,6 +417,7 @@
         components: {
             'inventory-grouping': InventoryGroupingForm,
             'spinny': Spinny,
+            'modal': Modal,
         },
     }
 </script>

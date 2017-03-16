@@ -8,6 +8,9 @@ export default function() {
         $(document).find('.onboard-show-btn').show();
     });
 
+    intro.onchange(function (newStep) {
+        $Bus.$emit('tour:changed', this._currentStep, newStep);
+    });
     intro.onexit(function() {
         $Bus.$emit('tour:finished');
     });

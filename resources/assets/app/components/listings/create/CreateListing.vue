@@ -608,10 +608,11 @@
                     .map(function(album){
 
                         album.name = album.name.toLowerCase() // lowercase string
-                                .replace(/\s+/g,' ').trim() // replace extra spaces with single space
+                                .replace(' - ',' ').trim() // replace dash separators with single space
+                                .replace(/\s+/g,' ') // replace extra spaces with single space
                                 .replace(/ \$[0-9]+$/, '') // Remove all $dollars with empty
                                 .replace(/all sizes/g, '') // FIXME: interesting results.
-                            + ' '; // Add white space to the end of the string... possible bugfix
+                            + ''; // Add white space to the end of the string... possible bugfix
 
                         // Add style key/value as a 2nd weighted search option
                         album.style = album.name.trim();

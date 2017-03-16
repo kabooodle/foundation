@@ -10,153 +10,163 @@
                     <div style="clear: both"></div>
                 </div>
                 <div class="col-sm-8">
-                    <div class="form-group row">
-                        <label
-                            class="form-control-label col-sm-3"
-                            :class="showErrors && validationErrors.name.status ? 'text-danger' : null">Name *</label>
-                        <div class="col-sm-6">
-                            <input type="text" v-model="grouping.name" class="form-control">
-                            <span v-show="showErrors && validationErrors.name.status" class="text-danger">{{ validationErrors.name.message }}</span>
+                    <div class="identifier-section">
+                        <div class="form-group row">
+                            <label
+                                class="form-control-label col-sm-3"
+                                :class="showErrors && validationErrors.name.status ? 'text-danger' : null">Name *</label>
+                            <div class="col-sm-6">
+                                <input type="text" v-model="grouping.name" class="form-control">
+                                <span v-show="showErrors && validationErrors.name.status" class="text-danger">{{ validationErrors.name.message }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="form-control-label col-sm-3">Description</label>
+                            <div class="col-sm-6">
+                                <textarea v-model="grouping.description" class="form-control" style="resize: none"></textarea>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="form-control-label col-sm-3">Description</label>
-                        <div class="col-sm-6">
-                            <textarea v-model="grouping.description" class="form-control" style="resize: none"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-6 col-sm-offset-3">
-                            <div class="checkbox m-b-0 checkbox-slider--b-flat">
-                                <label>
-                                    <input
+                    <div class="price-section">
+                        <div class="form-group row auto-add-section">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <div class="checkbox m-b-0 checkbox-slider--b-flat">
+                                    <label>
+                                        <input
                                             v-model="grouping.auto_add"
                                             data-type="magic-toggler"
                                             type="checkbox" />
-                                    <span class="text-sm">Automatically add prices of selected inventory</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label
-                            class="form-control-label col-sm-3"
-                            :class="showErrors && validationErrors.price_usd.status ? 'text-danger' : null">Price *</label>
-                        <div class="col-sm-6">
-                            <input
-                                type="number"
-                                step="0.01"
-                                min="0.00"
-                                v-model="grouping.price_usd"
-                                :readonly="grouping.auto_add"
-                                class="form-control">
-                            <span v-show="showErrors && validationErrors.price_usd.status" class="text-danger">{{ validationErrors.price_usd.message }}</span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="form-control-label col-sm-3">Accum Wholesale Price</label>
-                        <div class="col-sm-6">
-                            <div class="form-control" style="border: none">{{ allInventoryWholesalePriceUsd }}</div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-6 col-sm-offset-3">
-                            <div class="checkbox m-b-0 checkbox-slider--b-flat">
-                                <label>
-                                    <input
-                                        v-model="grouping.max_quantity"
-                                        data-type="magic-toggler"
-                                        type="checkbox" />
-                                    <span class="text-sm">Maximum quantity based on selected inventory</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label
-                            class="form-control-label col-sm-3"
-                            :class="(showErrors || exceedsAvailableQty) && validationErrors.initial_qty.status ? 'text-danger' : null"
-                        >Quantity *
-                        </label>
-                        <div class="col-sm-6">
-                            <input
-                                type="number"
-                                min="0"
-                                v-model="grouping.initial_qty"
-                                :readonly="grouping.max_quantity"
-                                class="form-control">
-                            <span v-show="(showErrors || exceedsAvailableQty) && validationErrors.initial_qty.status" class="text-danger">{{ validationErrors.initial_qty.message }}</span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-6 col-sm-offset-3">
-                            <div class="checkbox m-b-0 checkbox-slider--b-flat">
-                                <label>
-                                    <input
-                                            v-model="grouping.locked"
-                                            data-type="magic-toggler"
-                                            type="checkbox" />
-                                    <span class="text-sm">{{ lockedMessage }}</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label
-                            class="form-control-label col-sm-3"
-                            :class="showErrors && validationErrors.inventory.status ? 'text-danger' : null">
-                            <i :class="grouping.locked ? 'fa-lock' : 'fa-unlock'" class="fa text-primary" style="min-width: 16px; margin-right: 5px;"></i>
-                            Inventory *
-                        </label>
-                        <div class="col-sm-6">
-                            <div class="box m-b-0 form-control" style="box-shadow: none;">
-                                <div :id=attachedInventoryId class="box-body" style="min-height: 105px;">
-                                    <div v-for="(inventory, index) in grouping.inventory"
-                                        class="inline m-r-sm">
-                                        <span class="avatar_container _48 avatar-thumbnail">
-                                            <img :src="inventory.cover_photo.location" >
-                                        </span>
-                                        <span class="p-a-o text-sm clearfix block">
-                                            <span class="pull-left">Qty:
-                                                <span class="text-muted">{{ inventory.available_qty }}</span>
-                                            </span>
-                                            <span class="pull-right">
-                                                <i @click="unattachInventory(index)" class="fa fa-times text-danger pointer"></i>
-                                            </span>
-                                        </span>
-                                    </div>
+                                        <span class="text-sm">Automatically add prices of selected inventory</span>
+                                    </label>
                                 </div>
                             </div>
-                            <span v-show="showErrors && validationErrors.inventory.status" class="text-danger">{{ validationErrors.inventory.message }}</span>
-                            <span class="text-xs text-muted">{{ grouping.inventory.length }} items associated.</span>
+                        </div>
+                        <div class="form-group row">
+                            <label
+                                class="form-control-label col-sm-3"
+                                :class="showErrors && validationErrors.price_usd.status ? 'text-danger' : null">Price *</label>
+                            <div class="col-sm-6">
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0.00"
+                                    v-model="grouping.price_usd"
+                                    :readonly="grouping.auto_add"
+                                    class="form-control">
+                                <span v-show="showErrors && validationErrors.price_usd.status" class="text-danger">{{ validationErrors.price_usd.message }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="form-control-label col-sm-3">Accum Wholesale Price</label>
+                            <div class="col-sm-6">
+                                <div class="form-control" style="border: none">{{ allInventoryWholesalePriceUsd }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quantity-section">
+                        <div class="form-group row max-quantity-section">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <div class="checkbox m-b-0 checkbox-slider--b-flat">
+                                    <label>
+                                        <input
+                                            v-model="grouping.max_quantity"
+                                            data-type="magic-toggler"
+                                            type="checkbox" />
+                                        <span class="text-sm">Maximum quantity based on selected inventory</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label
+                                class="form-control-label col-sm-3"
+                                :class="(showErrors || exceedsAvailableQty) && validationErrors.initial_qty.status ? 'text-danger' : null"
+                            >Quantity *
+                            </label>
+                            <div class="col-sm-6">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    v-model="grouping.initial_qty"
+                                    :readonly="grouping.max_quantity"
+                                    class="form-control">
+                                <span v-show="(showErrors || exceedsAvailableQty) && validationErrors.initial_qty.status" class="text-danger">{{ validationErrors.initial_qty.message }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="inventory-section">
+                        <div class="form-group row locked-section">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <div class="checkbox m-b-0 checkbox-slider--b-flat">
+                                    <label>
+                                        <input
+                                                v-model="grouping.locked"
+                                                data-type="magic-toggler"
+                                                type="checkbox" />
+                                        <span class="text-sm">{{ lockedMessage }}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label
+                                class="form-control-label col-sm-3"
+                                :class="showErrors && validationErrors.inventory.status ? 'text-danger' : null">
+                                <i :class="grouping.locked ? 'fa-lock' : 'fa-unlock'" class="fa text-primary" style="min-width: 16px; margin-right: 5px;"></i>
+                                Inventory *
+                            </label>
+                            <div class="col-sm-6">
+                                <div class="box m-b-0 form-control" style="box-shadow: none;">
+                                    <div :id=attachedInventoryId class="box-body" style="min-height: 105px;">
+                                        <div v-for="(inventory, index) in grouping.inventory"
+                                            class="inline m-r-sm">
+                                            <span class="avatar_container _48 avatar-thumbnail">
+                                                <img :src="inventory.cover_photo.location" >
+                                            </span>
+                                            <span class="p-a-o text-sm clearfix block">
+                                                <span class="pull-left">Qty:
+                                                    <span class="text-muted">{{ inventory.available_qty }}</span>
+                                                </span>
+                                                <span class="pull-right">
+                                                    <i @click="unattachInventory(index)" class="fa fa-times text-danger pointer"></i>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span v-show="showErrors && validationErrors.inventory.status" class="text-danger">{{ validationErrors.inventory.message }}</span>
+                                <span class="text-xs text-muted">{{ grouping.inventory.length }} items associated.</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="clearfix">
-                        <div class="form-group row">
-                            <div class="col-xs-12">
-                                <span class="add-images-btn">
-                                    <file-upload
-                                        :ukey=grouping.id
-                                        :s3_key_url="s3_key_url"
-                                        multiple="false"
-                                        :button_title="grouping.image ? 'Replace Cover Photo' : 'Add Cover Photo'"
-                                    ></file-upload>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-xs-12">
-                                <div v-show="imageSrc" class="item block avatar-thumbnail" id="inventory-grouping-image-div">
-                                    <image id="inventory-grouping-image" :src=imageSrc></image>
+                        <div class="image-section">
+                            <div class="form-group row">
+                                <div class="col-xs-12">
+                                    <span class="add-images-btn">
+                                        <file-upload
+                                            :ukey=grouping.id
+                                            :s3_key_url="s3_key_url"
+                                            multiple="false"
+                                            :button_title="grouping.image ? 'Replace Cover Photo' : 'Add Cover Photo'"
+                                        ></file-upload>
+                                    </span>
                                 </div>
-                                <span v-show="showErrors && validationErrors.image.status" class="text-danger">{{ validationErrors.image.message }}</span>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-xs-12">
+                                    <div v-show="imageSrc" class="item block avatar-thumbnail" id="inventory-grouping-image-div">
+                                        <image id="inventory-grouping-image" :src=imageSrc></image>
+                                    </div>
+                                    <span v-show="showErrors && validationErrors.image.status" class="text-danger">{{ validationErrors.image.message }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-12 available-inventory-section">
                     <div style="margin: 15px">
                         <span class="text-primary">Available Inventory</span>
                         <small class="text-muted">Qty amounts shown below reflect amounts able to be associated to new outfits.</small>
