@@ -15,6 +15,7 @@
     <listable-groupings
             listablegroupings_endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"
             :display_footer_buttons="true"
+            :display_toggle_all_buttons="false"
             inventory-index-route="{{ route('shop.inventory.index', [webUser()->username]) }}"
     ></listable-groupings>
 

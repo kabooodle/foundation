@@ -35,6 +35,7 @@
                         </button>
 
                         <button
+                                v-if="display_toggle_all_buttons"
                                 class="btn white btn-xs"
                                 style="margin-left: 6px;"
                                 @click="clickSubgroupingAll"
@@ -142,6 +143,10 @@
             display_footer_buttons: {
                 type: Boolean,
                 default: false,
+            },
+            display_toggle_all_buttons: {
+                type: Boolean,
+                default: true,
             },
             ukey: {
                 type: String,

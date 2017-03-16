@@ -131,10 +131,10 @@ new Vue({
 
             return '<div class="avatar-thumbnail-container"> ' +
                 '<div class="avatar-thumbnail _32 m-r-xs"> ' +
-                '<img src="'+fields[1]+'"> ' +
+                '<img data-toggle="lightbox" data-remote="'+fields[1]+'" data-gallery="gallery" src="'+fields[1]+'"> ' +
                 '</div> ' +
                 '<span>'+fields[0]+'</span> ' +
-                '</div>';
+                '</div>';Handl
         },
         performSearch(){
             this.moreParams = {

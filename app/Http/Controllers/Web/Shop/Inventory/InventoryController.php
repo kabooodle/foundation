@@ -102,7 +102,7 @@ class InventoryController extends Controller
 
             Messages::success(count($items)." successfully added to your inventory!");
 
-            return $this->redirect(route('shop.inventory.index', [$username]));
+            return $this->redirect(route('shop.inventory.create', [$username]));
         } catch (ValidationException $e) {
             Messages::error('Some fields require input! '. $e->validator->messages()->first());
 
