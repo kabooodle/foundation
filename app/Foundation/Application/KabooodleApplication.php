@@ -20,7 +20,7 @@ class KabooodleApplication extends Application
      * @var string
      */
     const APP_VERSION = '0.9.70';
-    const RELEASE_VERSION = '0.9.70';
+    const RELEASE_VERSION = '0.9.71';
 
     /**
      * @return void

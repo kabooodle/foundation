@@ -16,10 +16,7 @@ class Files extends BaseEloquentModel
      * return array
      */
     const IMAGE_SIZES = [
-        32,
-        64,
         96,
-        500,
         900
     ];
 
@@ -130,7 +127,7 @@ class Files extends BaseEloquentModel
      */
     public function getThumbAttribute()
     {
-        $key = '32x-'.$this->key;
+        $key = '96x_'.$this->key;
 
         return useCDN() ? staticAsset($key, false) : $this->location;
     }
