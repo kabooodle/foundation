@@ -13,6 +13,7 @@
             :existingimages="{{ $item->files->toJson() }}"
             tags="{!! $item->tagsString()  !!}"
             api_route="{{ apiRoute('api.files.sign') }}"
+            archive_endpoint="{{ apiRoute('listables.archive', ['::ID::']) }}"
     ></inventory-edit>
 
 <script src="{{ staticAsset('/assets/js/inventory-edit.js') }}"></script>
