@@ -78,7 +78,9 @@
                 <div class="row">
                     <div class="col-sm-offset-3 col-sm-7">
                                         <span class="pull-left add-images-btn">
-                                            <image-attach :s3_key_url="s3_key_url" ></image-attach>
+                                            <image-attach
+                                                    :ukey="id"
+                                                    :s3_key_url="s3_key_url" ></image-attach>
                                         </span>
 
                         <button type="button" class="pull-left btn add-categories-btn white btn-sm "
@@ -100,10 +102,6 @@
             id: {
                 require: true,
             },
-            images: {
-                type: Array,
-                default: function () { return [] }
-            },
             s3_key_url: {
                 required: true,
                 type: String
@@ -118,6 +116,7 @@
                 display: {
                     categories: false,
                 },
+                images: [],
                 categories: [],
                 category: [],
             }
@@ -125,6 +124,18 @@
         mounted(){
             this.$nextTick(()=>{
                 $('.row-horizon').perfectScrollbar();
+            });
+
+            $Bus.$on('image:uploaded:'+this.id, (el, responseData)=>{
+                alert('image uploaded');
+                this.images.unshift(responseData);
+
+                this.$nextTick(()=>{
+                    $('.row-horizon').perfectScrollbar('update');
+                    $('#size_'+this.id).find("input.image_qty_btn").TouchSpin({
+                        min: 1
+                    });
+                });
             });
         },
         methods:{
