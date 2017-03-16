@@ -127,7 +127,6 @@
             });
 
             $Bus.$on('image:uploaded:'+this.id, (el, responseData)=>{
-                alert('image uploaded');
                 this.images.unshift(responseData);
 
                 this.$nextTick(()=>{
