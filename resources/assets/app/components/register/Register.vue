@@ -4,19 +4,6 @@
         <input type="hidden" name="_redirect" :value="redirect">
 
         <div class="row">
-            <div class="col-xs-12">
-                <div class="md-form-group">
-                    <select class="md-input" v-model="selected_account" name="account_type" data-toggle="selectpicker" data-style="btn white" data-width="100%">
-                        <option data-subtext="Always free" value="basic" :selected="selected_account == 'basic'">Basic</option>
-                        <option data-subtext="30 day free trial" value="merchant" :selected="selected_account == 'merchant'">Merchant</option>
-                        <option data-subtext="30 day free trial" value="merchant" :selected="selected_account == 'merchant_plus'">Merchant Plus</option>
-                    </select>
-                    <label>Account Type:</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
             <div class="col-xs-6">
                 <div class="md-form-group">
                     <input v-model="firstName" type="text" name="first_name" class="md-input">
@@ -35,6 +22,19 @@
         <div class="md-form-group">
             <input v-model="username" type="text" name="username" class="md-input">
             <label>Username</label>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="md-form-group">
+                    <select class="md-input" v-model="selected_account" name="account_type" data-style="btn white" data-width="100%">
+                        <option data-subtext="Always free" value="basic" :selected="selected_account == 'basic'">Basic</option>
+                        <option data-subtext="30 day free trial" value="merchant" :selected="selected_account == 'merchant'">Merchant</option>
+                        <option data-subtext="30 day free trial" value="merchant_plus" :selected="selected_account == 'merchant_plus'">Merchant Plus</option>
+                    </select>
+                    <label>Account Type:</label>
+                </div>
+            </div>
         </div>
 
         <div class="md-form-group">
@@ -79,7 +79,7 @@
         data() {
             return {
                 query_params: {},
-                selected_account: 'basic',
+                selected_account: 'merchant_plus',
                 accountType: 'basic',
                 firstName: null,
                 lastName: null,
