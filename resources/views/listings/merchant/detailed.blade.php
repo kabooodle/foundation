@@ -2,14 +2,6 @@
 
 
 
-@section('body-menu')
-    <div class="pull-left">
-        <a class="btn btn-sm white" href="{{ route('merchant.listings.index') }}">
-            Filter Listings
-        </a>
-    </div>
-
-@endsection
 
 
 @section('body-content')

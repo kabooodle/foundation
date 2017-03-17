@@ -241,7 +241,7 @@ class Listings extends AbstractListingModel
                 IFNULL(SUM(c.accepted_price), 0) AS accepted_price_sum,
                 IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
                 IFNULL(SUM(c.accepted = 0),0) AS rejected_sales_count,
-                IFNULL(SUM(v.count), 0) AS pageviews_count,
+                v.count AS pageviews_count,
                 IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
                 FROM listings AS l
                 INNER JOIN listing_items AS li ON li.listing_id = l.id AND l.owner_id = li.owner_id AND l.type = li.type
@@ -294,7 +294,7 @@ class Listings extends AbstractListingModel
                 IFNULL(SUM(c.accepted_price), 0) AS accepted_price_sum,
                 IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
                 IFNULL(SUM(c.accepted = 0),0) AS rejected_sales_count,
-                IFNULL(SUM(v.count), 0) AS pageviews_count,
+                v.count AS pageviews_count,
                 IFNULL(SUM(CASE WHEN c.accepted = 1 THEN (CASE WHEN c.price IS NULL THEN c.accepted_price ELSE c.price END) ELSE 0 END),0) AS gross
                 FROM listings AS l
                 INNER JOIN listing_items AS li ON li.listing_id = l.id

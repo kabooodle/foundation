@@ -1,12 +1,5 @@
 @extends('layouts.full', ['contentId' => 'merchant_listings_index'])
 
-@if($listings)
-@section('body-menu')
-    <div class="pull-left">
-        <button class="btn btn-sm white">Filter Listings</button>
-    </div>
-@endsection
-@endif
 
 @section('body-content')
 
@@ -20,7 +13,6 @@
             <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
                 <thead>
                     <tr>
-                        <th scope="col"><input type="checkbox"></th>
                         <th scope="col">Name</th>
                         <th scope="col">Scheduled For</th>
                         <th scope="col">Albums</th>

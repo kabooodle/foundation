@@ -1,17 +1,6 @@
 @extends('layouts.full')
 
 
-
-@section('body-menu')
-    <div class="pull-left">
-        <a class="btn btn-sm white" href="{{ route('merchant.listings.index') }}">
-            Filter Listings
-        </a>
-    </div>
-
-@endsection
-
-
 @section('body-content')
     @include('listings.partials._listingbox', ['listing' => $listing])
 
@@ -24,7 +13,6 @@
             <table data-tablesaw-mode="stack" class="tablesaw tablesaw-stack table table-condensed table-as-list white">
                 <thead>
                 <tr>
-                    <th scope="col"><input type="checkbox"></th>
                     <th scope="col">Album Name</th>
                     <th scope="col">Items</th>
                     <th scope="col">Sales</th>
@@ -37,7 +25,6 @@
                 <tbody>
                 @foreach($listings as $item)
                 <tr>
-                    <td><input type="checkbox"></td>
                     <td>{{ $item->type == 'facebook' ? $item->fb_name : $item->flashsale_name }}</td>
                     <td>{{ $item->items_count }}</td>
                     <td>{{ $item->accepted_sales_count }}</td>

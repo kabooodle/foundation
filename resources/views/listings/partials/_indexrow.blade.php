@@ -1,7 +1,7 @@
 <tr data-id="{{ $listing->id }}">
-    @unless(isset($_excludeActionCol))
-    <td><input type="checkbox"></td>
-    @endunless
+    {{--@unless(isset($_excludeActionCol))--}}
+    {{--<td><input type="checkbox"></td>--}}
+    {{--@endunless--}}
     <td>@include('listings._listingtype', ['_type' => $listing->type])
         @if($listing->type == Kabooodle\Models\Listings::TYPE_CUSTOM)
             {{ $listing->custom_name }}
