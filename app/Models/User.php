@@ -826,7 +826,7 @@ class User extends BaseEloquentModel implements
      */
     public function claimsAsSeller()
     {
-        return $this->claimsOnMyInventory();
+        return $this->claimsOnMyListables();
     }
 
     /**
@@ -836,7 +836,7 @@ class User extends BaseEloquentModel implements
      */
     public function claimsAsSellerNoShipping()
     {
-        $claims = $this->claimsOnMyInventory;
+        $claims = $this->claimsOnMyListables;
         if ($claims->count() > 0) {
             return $claims->filter(function (Claims $claim) {
                 // Ignore claims still pending and ones that have already shipped
