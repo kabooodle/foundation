@@ -1236,7 +1236,7 @@ if (! function_exists('hmacsha256')) {
      */
     function hmacsha256($key, $data)
     {
-        return hash_hmac('sha256', $data, $key);
+        return hash_hmac('sha256', $data, $key, true);
     }
 }
 

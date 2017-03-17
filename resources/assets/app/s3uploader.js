@@ -87,12 +87,14 @@
                             that.log('api.files.s3key: done', response);
                             data.url = response.data.url;
                             data.formData = {
-                                AWSAccessKeyId:         response.data.AWSAccessKeyId,
                                 acl:                    response.data.acl,
                                 key:                    response.data.key,
-                                policy:                 response.data.policy,
                                 success_action_status:  201,
-                                signature:              response.data.signature
+                                policy:                 response.data.policy,
+                                'x-amz-credential' :    response.data.credential,
+                                'x-amz-algorithm' :     'AWS4-HMAC-SHA256',
+                                'x-amz-date':           response.data.date,
+                                'x-amz-signature':      response.data.signature
                             };
                             that.options.response = response;
                             that.options.file = data.files[0];
