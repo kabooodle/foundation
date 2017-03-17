@@ -40,8 +40,6 @@ class ShippingTransactions extends BaseEloquentModel implements CreditTransactab
      */
     protected $dates = [
         'shipping_status_updated_on',
-        'created_at',
-        'updated_at'
     ];
 
     /**

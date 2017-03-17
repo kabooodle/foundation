@@ -49,8 +49,6 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      * @var array
      */
     protected $dates = [
-        'created_at',
-        'updated_at',
         'starts_at',
         'ends_at',
         'discount_starts_at',

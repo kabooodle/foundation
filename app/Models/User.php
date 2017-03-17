@@ -86,8 +86,6 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $dates =[
-        'created_at',
-        'updated_at',
         'trial_ends_at',
         'facebook_access_token_expires'
     ];

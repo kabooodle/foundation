@@ -56,9 +56,6 @@ class Listings extends AbstractListingModel
         'status_updated_at',
         'claimable_at',
         'claimable_until',
-        'created_at',
-        'updated_at',
-        'deleted_at',
     ];
 
     /**

@@ -26,9 +26,6 @@ class Queues extends BaseEloquentModel
      */
     protected $dates = [
         'status_updated_at',
-        'created_at',
-        'updated_at',
-        'deleted_at'
     ];
 
     /**
