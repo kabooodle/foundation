@@ -132,13 +132,16 @@ class GetUserFacebookGroupsCommandHandler extends UserFacebookCache
             $this->checkAndAttachUserToNode($storedGroup, $userId, $storedGroup->facebook_node_type);
 
             $storedNodes[] = $storedGroup;
-            if(count($group['albums'])) {
-                foreach($group['albums'] as $album) {
-                    $storedAlbum = $this->storeFbNode($album['id'], $album['name'], FacebookNodes::NODE_ALBUM, $storedGroup->id);
+            if (isset($group['albums'])) {
+                if (count($group['albums'])) {
+                    foreach ($group['albums'] as $album) {
+                        $storedAlbum = $this->storeFbNode($album['id'], $album['name'], FacebookNodes::NODE_ALBUM,
+                            $storedGroup->id);
 
-                    $this->checkAndAttachUserToNode($storedAlbum, $userId, FacebookNodes::NODE_ALBUM);
+                        $this->checkAndAttachUserToNode($storedAlbum, $userId, FacebookNodes::NODE_ALBUM);
 
-                    $storedNodes[] = $storedAlbum;
+                        $storedNodes[] = $storedAlbum;
+                    }
                 }
             }
         }
