@@ -130,7 +130,7 @@ class InventoryApiController extends AbstractApiController
             IFNULL(SUM(c.accepted = 1), 0) AS accepted_sales_count,
             IFNULL(SUM(c.accepted = null),0) AS pending_sales_count,
             IFNULL(SUM(v.count), 0) AS pageviews_count,
-            IFNULL(SUM(l.initial_qty),0) as qty_on_hand
+            l.initial_qty as qty_on_hand
             "))
             ->groupBy(DB::raw('name_with_id asc WITH rollup'));
 
