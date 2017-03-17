@@ -89,7 +89,7 @@ class InventoryClaimsController extends Controller
      */
     public function destroy(Request $request, $username, $claimsUUID)
     {
-        $data = webUser()->claimsOnMyInventory;
+        $data = webUser()->claimsOnMyListables;
         $item = $data->filter(function ($item) use ($claimsUUID) {
             return $item->uuid == $claimsUUID;
         })->first();

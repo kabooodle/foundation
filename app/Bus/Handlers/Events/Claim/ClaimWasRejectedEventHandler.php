@@ -23,6 +23,11 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
     use InteractsWithQueue;
 
     /**
+     * @var string
+     */
+    public $subject;
+
+    /**
      * @param ClaimWasRejectedEvent $event
      */
     public function handle(ClaimWasRejectedEvent $event)
@@ -30,6 +35,8 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
         /** @var Claims $claim */
         $claim = $event->getClaim();
         $claimedBy = $claim->claimer;
+
+        $this->subject = 'Your claim on '.$claim->listable->getTitle().' was rejected by '. $claim->rejector->full_name;
 
         if ($claimedBy->primaryEmail->isVerified()) {
             $this->toEmail($claim, $claimedBy);
@@ -44,11 +51,12 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
      */
     public function toEmail(Claims $claim, User $claimedBy)
     {
+        $subject = $this->subject;
         $mail = new PiperEmail;
         $mail->setView('inventory.claims.emails.rejected_toclaimer')
             ->setParameters(['item' => $claim->listedItem, 'claim' => $claim])
-            ->setCallable(function ($mail) use ($claimedBy) {
-                $mail->to($claimedBy->email)->subject('Item claim rejected.');
+            ->setCallable(function ($mail) use ($claimedBy, $subject) {
+                $mail->to($claimedBy->email)->subject($subject);
             })
             ->send();
     }
@@ -59,7 +67,7 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
      */
     public function toDatabase(Claims $claim, User $claimedBy)
     {
-        $title = 'Your claim on '.$claim->listable->getTitle().' was rejected by '. $claim->rejector->full_name;
+        $title = $this->subject;
 
         $notification = new NotificationNotices;
         $notification->user_id = $claimedBy->id;
@@ -69,7 +77,7 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
         $notification->payload = '';
         $notification->title = $title;
         $notification->description = '';
-        $notification->reference_url = route('profile.purchases.index');
+        $notification->reference_url = route('profile.purchases.show', [$claim->getUUID()]);
         $notification->save();
     }
 }
