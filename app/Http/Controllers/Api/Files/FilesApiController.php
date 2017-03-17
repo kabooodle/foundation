@@ -24,6 +24,8 @@ class FilesApiController extends AbstractApiController
      */
     public function createPresignedData(Request $request)
     {
+        return $this->createPresignedDateV4($request);
+
         $this->validate($request, $this->rules());
 
         $user = $this->getUser();
@@ -88,118 +90,87 @@ class FilesApiController extends AbstractApiController
     }
 
 
-
-
     /**
-     * WIP FOR V4 SIGNING REQUESTS
-     * Currently porting Java version (bottom) to php
-     *
      * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
      */
     public function createPresignedDateV4(Request $request)
     {
         $this->validate($request, $this->rules());
 
+        $user = $this->getUser();
         $filename = Binput::get('filename', false);
 
-        $bucket = env('AWS_BUCKET');
-        $awsSecretId = env('AWS_KEY');
+        if (!$filename || !$user) {
+            return $this->setStatusCode(500)->respond();
+        }
 
-        // Timestamp user for signing
-        $signingDate = date('Y-m-d');
+        // Only allow alphanumeric - _ . in filenames.  Anything else, replace with _
+        $filename = preg_replace('/[^A-Za-z0-9.-_]/i', '_', strtolower($filename));
+        $filename = str_replace('jpeg', 'jpg', $filename);
+        $filename = str_random(32) . $filename;
 
-        $signingDate = date('Y-m-d');
+        $region = 'us-west-1';
+        $s3Bucket = env('AWS_BUCKET');
+        $awsKey = env('AWS_KEY');
+        $awsSecret = env('AWS_SECRET');
 
-        // Add 48 hours from now() to generate the expiration timestamp.
+        $acl = 'public-read';
+        $algorithm = "AWS4-HMAC-SHA256";
+        $service = "s3";
+        $date = gmdate("Ymd\THis\Z");
+        $shortDate = gmdate("Ymd");
+        $requestType = "aws4_request";
+        $filePath = 'resources/'.$user->id.'/'.$filename;
+
+        $scope = [
+            $awsKey,
+            $shortDate,
+            $region,
+            $service,
+            $requestType
+        ];
+        $credentials = implode('/', $scope);
+
         $expiresOn = date('Y-m-d\TG:i:s\Z', strtotime('+ 48 hours', strtotime(date("c"))));
 
-        $awsRegion = 'us-west-1';
-
-        $signingCredential = awsUser.getAwsAccessKeyId() + "/" + date('Ymd', strtotime($signingDate)) + "/" + awsRegion + "/s3/aws4_request";
-
-        $policyDocument4 = '
+        $policy = '
 		{"expiration": "'.$expiresOn.'",
 		  "conditions": [
-		    {"bucket": "'.$bucket.'"},
-		    ["starts-with", "$key", "'.$filename.'"],
-		    {"acl": "public-read"},
-		    {"x-amz-algorithm": "AWS4-HMAC-SHA256"},
-		    {"x-amz-date" : "'.$signingDate.'T000000Z"},
+		    {"bucket": "'.$s3Bucket.'"},
+		    ["starts-with", "$key", ""],
+		    {"acl": "'.$acl.'"},
 		    {"success_action_status": "201"},
+		    {"x-amz-date" : "'.$date.'"},		    
+		    {"x-amz-algorithm": "AWS4-HMAC-SHA256"},		    
+		    {"x-amz-credential": "'.$credentials.'"},
+            {"x-amz-algorithm": "AWS4-HMAC-SHA256"},
 		  ]
 		}';
 
+        $base64Policy = base64_encode(($policy));
+
+        $dateKey = hash_hmac('sha256', $shortDate, 'AWS4' . $awsSecret, true);
+        $dateRegionKey = hash_hmac('sha256', $region, $dateKey, true);
+        $dateRegionServiceKey = hash_hmac('sha256', $service, $dateRegionKey, true);
+        $signingKey = hash_hmac('sha256', $requestType, $dateRegionServiceKey, true);
+
+        $signature = hash_hmac('sha256', $base64Policy, $signingKey);
+//        $url = "//{$s3Bucket}.{$service}-{$region}.amazonaws.com";
+        $url = "https://{$s3Bucket}.s3.amazonaws.com";
         $this->setData([
-            'x-amx-algorithm' =>'',
-            'x-amz-credential' => '',
-            'x-amz-date' =>'',
-            'x-amx-signature' => '',
-            'key' => $filename,
-            'path' => $filename,
+            'credential' => $credentials,
+            'algorithm' => $algorithm,
+            'date' => $date,
             'acl' => 'public-read',
-            'AWSAccessKeyId' => env('AWS_KEY'),
-            'policy' => $data['policy'],
-            'signature' => $data['signature'],
+            'url' => $url,
+            'key' => $filePath,
+            'path' => $filePath,
+            'policy' => $base64Policy,
+            'signature' => $signature,
         ]);
+
+        return $this->respond();
     }
-
-    /**
-     * @param string $key
-     * @param string $dateStamp
-     * @param string $regionName
-     * @param string $serviceName
-     *
-     * @return string
-     */
-    public function getSignatureKey(string $key, string $dateStamp, string $regionName, string $serviceName = 's3')
-    {
-        $kSecret = 'AWS4' + $key;
-        $kDate = hmacsha256($kSecret, $dateStamp);
-        $kRegion = hmacsha256($kDate, $regionName);
-        $kService = hmacsha256($kRegion, $serviceName);
-        $kSigning = hmacsha256($kService, 'aws4_request');
-
-        return $kSigning;
-    }
-
-//
-//static byte[] getSignatureKey(String key, String dateStamp, String regionName, String serviceName) throws Exception {
-//    byte[] kSecret = ("AWS4" + key).getBytes("UTF8");
-//       byte[] kDate = HmacSHA256(dateStamp, kSecret);
-//       byte[] kRegion = HmacSHA256(regionName, kDate);
-//       byte[] kService = HmacSHA256(serviceName, kRegion);
-//       byte[] kSigning = HmacSHA256("aws4_request", kService);
-//       return kSigning;
-//   }
-//
-//   public void createUploadPolicy(S3FileUploadRequest request, int minSize, int maxSize, int expiryInMinutes) throws Exception {
-//    Date signingDate = new Date();
-//       String signingCredential = awsUser.getAwsAccessKeyId() + "/" + dateFormat.format(signingDate) + "/" + awsRegion + "/s3/aws4_request";
-//
-//       String newPolicy = policyTemplate.replace("%CREDENTIAL%", signingCredential);
-//       newPolicy = newPolicy.replace("%KEY%", request.getKey());
-//       newPolicy = newPolicy.replace("%BUCKET%", bucketBasePath);
-//       newPolicy = newPolicy.replace("%MIN_SIZE%", Integer.toString(minSize));
-//       newPolicy = newPolicy.replace("%MAX_SIZE%", Integer.toString(maxSize));
-//       newPolicy = newPolicy.replace("%DATE%", dateFormat.format(signingDate) + "T000000Z");
-//
-//       Date now = new Date();
-//       Calendar cal = Calendar.getInstance();
-//       cal.setTime(now);
-//       cal.add(Calendar.MINUTE, expiryInMinutes);
-//
-//       newPolicy = newPolicy.replace("%EXPIRY%", expiryFormat.format(cal.getTime()));
-//       System.out.println("policy: " + newPolicy);
-//       String base64Policy = Base64.getEncoder().encodeToString(newPolicy.getBytes("UTF8"));
-//
-//       byte[] signingKey = getSignatureKey(awsUser.getSecretKey(), dateFormat.format(signingDate), awsRegion, "s3");
-//       byte[] signature = HmacSHA256(base64Policy, signingKey);
-//       char[] signatureChars = Hex.encodeHex(signature);
-//
-//       request.setAcl("public-read");
-//       request.setCredential(signingCredential);
-//       request.setPolicy(base64Policy);
-//       request.setSignature(new String(signatureChars));
-//       request.setSignatureDate(dateFormat.format(signingDate) + "T000000Z");
-//   }
 }
