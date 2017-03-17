@@ -31,7 +31,7 @@
                         >
                             <input type="checkbox" style="position: absolute; clip: rect(0,0,0,0); pointer-events: none;">
                             <span class="text-md">{{ subgroup.name }}</span>
-                            <small class="text-sm text-muted block" style="margin-top: -2px;">({{  subgroup.listables.length  }})</small>
+                            <small class="text-sm text-muted block" style="margin-top: -2px;">({{  subgroup.total_qty  }})</small>
                         </button>
 
                         <button

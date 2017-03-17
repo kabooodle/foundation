@@ -59,6 +59,13 @@
         poweredBy: false,
     });
     $(function(){
+        HS.beacon.ready(function() {
+            $('#hs-beacon').hide();
+        });
+        $('.js-toggle-help').click(function(){
+            $('#hs-beacon').show();
+            HS.beacon.toggle();
+        });
         $(window).scroll(function () {
             var elem = '.app-footer';
             var pageTop = $(window).scrollTop();

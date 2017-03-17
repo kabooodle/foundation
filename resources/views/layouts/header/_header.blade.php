@@ -56,6 +56,9 @@
                         <a class="dropdown-item {{ Request::is('referrals') ? 'active' : null }}" href="{{ route('referrals.index') }}"><span>Referrals</span></a>
                         <div class="dropdown-divider"></div>
                         <a class=
+                           "js-toggle-help dropdown-item" href="javascript:;">Help</a>
+                        <div class="dropdown-divider"></div>
+                        <a class=
                            "dropdown-item" href="{{ route('auth.logout') }}">Sign out</a>
                     </div>
                 </li>
