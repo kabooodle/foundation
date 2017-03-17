@@ -37,7 +37,9 @@
                         <th class="text-muted p-l-0 m-l-0">Claim Price</th>
                         <th class="text-muted p-l-0 m-l-0">Claimer</th>
                         <th class="text-muted p-l-0 m-l-0">Claimed On</th>
-                        <th class="text-muted p-l-0 m-l-0">Verified</th>
+                        <th class="text-muted p-l-0 m-l-0">Verified
+                            <i data-toggle="tooltip" title="Email address verified" data-animation="false" class="fa fa-info-circle" aria-hidden="true"></i>
+                        </th>
                         <th></th>
                     </tr>
                     </thead>

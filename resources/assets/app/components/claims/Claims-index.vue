@@ -2,6 +2,7 @@
     <tbody>
         <tr
                 v-for="claim in all_claims"
+                :key="claim.id"
                 :data-claim-id="claim.uuid" >
             <!--<td><input-->
                         <!--@change="selectedClaimsChanged(claim, $event)"-->
@@ -21,7 +22,7 @@
             </td>
             <td >${{ claim.price }}</td>
             <td >
-                {{ claim.claimer.username }}
+                <span  v-if="!claim.claimer.guest" ><a class="text-primary" :href="'/users/'+claim.claimer.username+'/'">{{ claim.claimer.username }}</a></span>
                 <small v-if="claim.claimer.guest" class="text-muted">Guest</small>
             </td>
             <td >
@@ -54,7 +55,6 @@
 </template>
 <script>
     import Timeago from "./../Timestamp.vue";
-
     export default{
         props : {
             claims : {
