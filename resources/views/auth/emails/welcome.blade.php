@@ -5,6 +5,7 @@
 <p>Or click on this link: <a href="{{ route('emails.verify', [$user->primaryEmail->token]) }}">{{ route('emails.verify', [$user->primaryEmail->token]) }}</a></p>
 
 <p>Below you will find your referral link, this will give you a free month for each person you refer to {{ env('APP_NAME') }}, up to 6 months!</p>
+<p><a href="{{ route('invite.index', [$user->username]) }}">{{ route('invite.index', [$user->username]) }}</a></p>
 
 --
 the {{ env('APP_NAME') }} Team

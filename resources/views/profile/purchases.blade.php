@@ -1,22 +1,5 @@
 @extends('layouts.full')
 
-@section('body-menu')
-
-    <div class="btn-toolbar center-block text-center">
-        <div class="btn-group dropdown">
-            <button class="btn white btn-sm dropdown-toggle" data-toggle="dropdown">
-                <span class="dropdown-label">Filter</span>
-                <span class="caret"></span>
-            </button>
-            <div class="dropdown-menu text-left text-sm">
-                <a class="dropdown-item" href="">Claimed</a>
-                <a class="dropdown-item" href="">Purchased</a>
-            </div>
-        </div>
-    </div>
-
-@endsection
-
 @section('body-content')
     <div class="box">
         <div class="box-header">
