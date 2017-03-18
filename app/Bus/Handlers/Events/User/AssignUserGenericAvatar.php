@@ -24,7 +24,7 @@ class AssignUserGenericAvatar
     {
         return DB::transaction(function() use ($event) {
 
-            $randomAvatar = 'resources/robot'.rand(1,16).'.jpg';
+            $randomAvatar = 'resources/monster'.rand(1,9).'.jpg';
             $avatarPath = 'https://'.env('AWS_BUCKET').'.s3.amazonaws.com/'.$randomAvatar;
 
             $user = $event->getUser();
