@@ -21,6 +21,7 @@ class WorkersController extends Controller
      * @param $key
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws Exception
      */
     public function fb($key)
     {
@@ -31,18 +32,18 @@ class WorkersController extends Controller
             $response = Artisan::call('facebook:enqueue');
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
-            $response = $e->getMessage();
+
+            throw $e;
         }
 
         return response()->json([$response]);
     }
 
     /**
-     * TODO: Setup a command that queues items for deletion.
-     *
      * @param $key
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws Exception
      */
     public function fbDeletion($key)
     {
@@ -50,10 +51,11 @@ class WorkersController extends Controller
             if(! $key || $key <> '7AF95578E9A597AA6B89E726E74C4') {
                 throw new InvalidArgumentException('Webhook key missing/invalid');
             }
-            $response = Artisan::call('facebook:enqueue');
+            $response = Artisan::call('facebook:delete-enqueue');
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
-            $response = $e->getMessage();
+
+            throw $e;
         }
 
         return response()->json([$response]);
@@ -63,6 +65,7 @@ class WorkersController extends Controller
      * @param $key
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws Exception
      */
     public function checktrials($key)
     {
@@ -73,7 +76,8 @@ class WorkersController extends Controller
             $response = Artisan::call('expiring:trials');
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
-            $response = $e->getMessage();
+
+            throw $e;
         }
 
         return response()->json([$response]);

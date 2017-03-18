@@ -18,8 +18,6 @@ class PhoneNumber extends BaseEloquentModel
      */
     protected $dates = [
         'verified_on',
-        'created_at',
-        'updated_at'
     ];
 
     /**

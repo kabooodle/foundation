@@ -39,7 +39,7 @@ class ListablesController extends AbstractApiController
         foreach($grouped as $styleId => $items) {
             $groupings[$styleId] = [
                 'name' => null,
-                'total' => $items->count(),
+                'total' => $items->sum('available_quantity'),
                 'id' => $styleId,
             ];
             if ($items->count() > 0) {
@@ -50,7 +50,7 @@ class ListablesController extends AbstractApiController
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['id'] = $item->styleSize->id;
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['name'] = $item->styleSize->name;
-                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] : $item->initial_qty;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] + $item->available_quantity : $item->available_quantity;
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['listables'][] = [
                         'id' => $item->id,
                         'name_uuid' => $item->name_uuid,
@@ -79,7 +79,7 @@ class ListablesController extends AbstractApiController
             $id = $outfits->count() + 1;
             $groupings[$id] = [
                 'name' => 'Outfits',
-                'total' => $outfits->count(),
+                'total' => $outfits->sum('available_quantity'),
                 'id' => $id,
             ];
             foreach ($outfits as $item) {

@@ -7,7 +7,7 @@
         </div>
     </td>
     <td class="">{{ $watch->watchable->listedItem->name }}</td>
-    <td>${{ $watch->watchable->listedItem->price_usd }}</td>
+    <td>{{ currency($watch->watchable->listedItem->price_usd) }}</td>
     <td>{{ $watch->watchable->listedItem->getOwner()->username }}</td>
     <td>{{ $watch->watchable->created_at->format('F jS Y g:i A') }}</td>
     <td>{{ $watch->watchable->updated_at->format('F jS Y g:i A') }}</td>

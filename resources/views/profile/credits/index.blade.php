@@ -36,13 +36,7 @@
     <div class="box">
         <div class="box-body">
             <h4 class="m-b-1">What are credits?</h4>
-            <h6 class="_400 m-b-1 l-h-1x" style="line-height:22px;">Credits are the most flexible way to download
-                photos, illustrations and vectors and the only way to download video clips on iStock.</h6>
-            <h6 class="_400 l-h-1x m-b-0" style="line-height:26px;">It’s up to you how you want to use credits – buy
-                just enough for the images you need or stock up and save on future downloads – the more you buy, the
-                less they cost. Unlike your monthly download limit with a subscription, there’s no limit for when you
-                use your credit downloads. And since they won’t expire as long as you sign in to your account at least
-                once a year, they’ll always be there when you need them.</h6>
+            <h6 class="_400 m-b-1 l-h-1x" style="line-height:22px;">Credits are used to pay for shipping costs and shipping labels. There's no limit, and don't expire.</h6>
         </div>
     </div>
 

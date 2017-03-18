@@ -21,7 +21,7 @@
                                 Qty:
                                 <span class="text-muted">{{ grouping.available_quantity }}</span>
                             </span>
-                            <span class="text-muted pull-right">${{ grouping.price_usd }}</span>
+                            <span class="text-muted pull-right">${{ Number(grouping.price_usd).toFixed(2) }}</span>
                         </span>
                     </div>
                     <div style="clear: both"></div>

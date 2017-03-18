@@ -32,6 +32,26 @@ if (!function_exists('current_timezone')) {
     }
 }
 
+if (!function_exists('currency')) {
+
+    /**
+     * Currently just for US. Will need to be refactored at some point for intl.
+     *
+     * @param $amount
+     * @param $symbol
+     *
+     * @return string
+     */
+    function currency($amount, $symbol = true)
+    {
+        if ($symbol) {
+            $currencyFormatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+            return $currencyFormatter->formatCurrency($amount ?: 0, $currencyFormatter->getSymbol(NumberFormatter::INTL_CURRENCY_SYMBOL));
+        }
+        return number_format($amount, 2);
+    }
+}
+
 if (! function_exists('route')) {
     /**
      * Generate a URL to a named route.

@@ -8,7 +8,7 @@
         <span>{{ $sale->listable->title }}</span>
     </div>
 </td>
-<td>${{ $sale->accepted_price ? : $sale->price }}</td>
+<td>{{ $sale->accepted_price ? currency($sale->accepted_price) : currency($sale->price) }}</td>
 <td>{{ $sale->humanizeNoTime($sale->accepted_on) }}</td>
 <td>{!! $sale->claimer->username !!}</td>
 <td>

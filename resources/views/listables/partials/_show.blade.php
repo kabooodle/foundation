@@ -42,7 +42,7 @@
                     <div class="box-header no-shadow">
                         <h2><span class="_800">{!! $listable->name_alt !!}</span></h2>
                         {{--<p class="block m-t-0"><span class="text-muted">Size:</span> {!! $listable->styleSize->name !!}</p>--}}
-                        <p class="m-b-0 m-t-1 h4 text-warning _500">${{ isset($_price) ? $_price : $listable->getPrice() }}</p>
+                        <p class="m-b-0 m-t-1 h4 text-warning _500">{{ isset($_price) ? currency($_price) : currency($listable->getPrice()) }}</p>
 
                         <div class="m-t-2 m-b-0">
                             <v-card

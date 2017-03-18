@@ -27,8 +27,6 @@ class ShippingTransactionHistory extends BaseEloquentModel
      */
     protected $dates = [
         'status_date',
-        'updated_at',
-        'created_at'
     ];
 
     /**

@@ -562,7 +562,7 @@
                             claimer_id: this.claimer.id,
                             date: this.updated_at_human,
                             image: this.listable_item_object_data.cover_photo.location,
-                            name: this.claimer.username+', '+this.listable_item_object_data.title+', $'+this.price
+                            name: this.claimer.username+', '+this.listable_item_object_data.title+', $'+Number(this.price).toFixed(2)
                         });
                     });
                 }

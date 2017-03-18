@@ -76,8 +76,8 @@ new Vue({
             let styleId = this.getSelectedStyleId();
             let style = _.find(this.inventory_types[0].styles, {id: styleId});
 
-            this.wholesale_price = moneyfy(style.wholesale_price_usd_less_5_percent);
-            this.price = moneyfy(style.suggested_price_usd);
+            this.wholesale_price = Number(style.wholesale_price_usd_less_5_percent).toFixed(2);
+            this.price = Number(style.suggested_price_usd).toFixed(2);
         },
         showTourModal(){
             $('#tour-modal').modal('show');

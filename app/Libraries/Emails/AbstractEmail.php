@@ -6,12 +6,14 @@
 
 namespace Kabooodle\Libraries\Emails;
 
+use Bugsnag;
 use Closure;
 use SuperClosure\Serializer;
 use InvalidArgumentException;
 use Illuminate\Queue\QueueManager;
 use Kabooodle\Libraries\QueueHelper;
 use Illuminate\Contracts\Mail\MailQueue;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Class AbstractEmail
@@ -164,19 +166,23 @@ abstract class AbstractEmail
             throw new InvalidArgumentException('Missing [callable] when attempting to email.');
         }
 
-        // The template we will be embedding the email's content into.
-        // This is just a dot.object path representation.
-        $view = $this->getEmailTemplate();
+        try {
+            // The template we will be embedding the email's content into.
+            // This is just a dot.object path representation.
+            $view = $this->getEmailTemplate();
 
-        // Render the content that should be inserted into the template.
-        // Inject the content parameters into this view
-        $content = $this->getView()->make($this->getResourceView(), $this->getParameters())->render();
+            // Render the content that should be inserted into the template.
+            // Inject the content parameters into this view
+            $content = $this->getView()->make($this->getResourceView(), $this->getParameters())->render();
 
-        $data = ['emailContent' => $content] + $this->getParameters();
-        $callback =  $this->buildQueueCallable($this->getCallable());
+            $data = ['emailContent' => $content] + $this->getParameters();
+            $callback =  $this->buildQueueCallable($this->getCallable());
 
-        return $this->getQueueManager()->connection(QueueHelper::pickEmails())
-            ->push('mailer@handleQueuedMessage',  compact('view', 'data', 'callback'));
+            return $this->getQueueManager()->connection(QueueHelper::pickEmails())
+                ->push('mailer@handleQueuedMessage',  compact('view', 'data', 'callback'));
+        } catch (ModelNotFoundException $e) {
+            Bugsnag::notifyException($e);
+        }
     }
 
     /**

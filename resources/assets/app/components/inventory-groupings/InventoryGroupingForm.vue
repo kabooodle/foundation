@@ -300,14 +300,14 @@
                 this.grouping.inventory.forEach(function (item) {
                     price_usd += item.price_usd;
                 });
-                return price_usd;
+                return Number(price_usd).toFixed(2);
             },
             allInventoryWholesalePriceUsd: function () {
                 var wholesale_price_usd = 0.00;
                 this.grouping.inventory.forEach(function (item) {
                     wholesale_price_usd += item.wholesale_price_usd;
                 });
-                return Number((wholesale_price_usd).toFixed(2));
+                return Number(wholesale_price_usd).toFixed(2);
             },
             quantityError: function () {
                 var message = '';

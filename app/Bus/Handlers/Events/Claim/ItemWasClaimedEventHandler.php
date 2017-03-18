@@ -56,27 +56,23 @@ class ItemWasClaimedEventHandler
         // We need to email two people, the seller and the person who claimed the item.
         $claim = $event->getclaim();
         /** @var ListableInterface $listedItem */
-        $listedItem = $claim->listedItem;
+        $listedItem = $claim->listingItem;
         $claimedBy = $claim->claimer;
         $seller = $listedItem->owner;
 
         try {
 
-            $claimerEmail = $claimedBy->email;
-
             if ($claimedBy->primaryEmail && ($claimedBy->primaryEmail->isVerified() || $claimedBy->isGuest())) {
-                with(new KitEmail('inventory.claims.emails.claimed_toclaimer', ['item' => $listedItem], function ($mailer) use ($claimerEmail) {
-                    $mailer->to($claimerEmail)->subject('You claimed an item');
-                }))->send();
+                $this->toClaimerEmail($seller, $claim, $claimedBy);
             }
 
             if ($seller->checkIsNotifyable('inventory_claimed', 'email')) {
                 if ($seller->primaryEmail && $seller->primaryEmail->isVerified()) {
-                    $this->toEmail($seller, $listedItem);
+                    $this->toEmail($seller, $claim, $listedItem);
                 }
             }
 
-            $this->toDatabase($seller, $claim, $listedItem);
+            $this->toDatabase($seller, $claim);
 
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
@@ -84,18 +80,46 @@ class ItemWasClaimedEventHandler
     }
 
     /**
-     * @param User $seller
+     * @param User              $seller
+     * @param Claims            $claim
      * @param ListableInterface $listedItem
      */
-    public function toEmail(User $seller, ListableInterface $listedItem)
+    public function toEmail(User $seller, Claims $claim, $listedItem)
     {
         $email = new KitEmail;
+        $subject = $claim->listable->getTitle().' was claimed.';
+        $emailAddress = $seller->primaryEmail->address;
         $email->setView('inventory.claims.emails.claimed_toseller')
             ->setParameters([
-                'item' => $listedItem
+                'item' => $listedItem,
+                'claim' => $claim,
+                'seller' => $seller,
             ])
-            ->setCallable(function ($mailer) use ($seller) {
-                $mailer->to($seller->primaryEmail->address)->subject('Item claimed.');
+            ->setCallable(function ($mailer) use ($emailAddress, $subject) {
+                $mailer->to($emailAddress)->subject($subject);
+            })
+            ->send();
+    }
+
+    /**
+     * @param User   $seller
+     * @param Claims $claim
+     * @param User   $claimer
+     */
+    public function toClaimerEmail(User $seller, Claims $claim, User $claimer)
+    {
+        $email = new KitEmail;
+        $subject = 'You claimed the '.$claim->listable->getTitle();
+        $emailAddress = $claimer->email;
+        $email->setView('inventory.claims.emails.claimed_toclaimer')
+            ->setParameters([
+                'item' => $claim->listingItem,
+                'claim' => $claim,
+                'seller' => $seller,
+                'claimer' => $claimer
+            ])
+            ->setCallable(function ($mailer) use ($emailAddress, $subject) {
+                $mailer->to($emailAddress)->subject($subject);
             })
             ->send();
     }
@@ -103,28 +127,10 @@ class ItemWasClaimedEventHandler
     /**
      * @param User      $user
      * @param Claims    $claim
-     * @param ListableInterface $listedItem
      */
-    public function toWeb(User $user, Claims $claim, ListableInterface $listedItem)
+    public function toDatabase(User $user, Claims $claim)
     {
-        $pusher = new WebSocket;
-        $pusher->setChannelName('private.'.env('APP_ENV').'.claims.'.$user->id)
-            ->setEventName('item:claimed')
-            ->setPayload([
-                'id' => $claim->id,
-                'inventory_item_id' => $listedItem->id
-            ])
-            ->send();
-    }
-
-    /**
-     * @param User      $user
-     * @param Claims    $claim
-     * @param ListableInterface $listedItem
-     */
-    public function toDatabase(User $user, Claims $claim, ListableInterface $listedItem)
-    {
-        $title = $listedItem->getTitle().' was claimed by '. $claim->claimer->username;
+        $title = $claim->listable->getTitle().' was claimed by '. $claim->claimer->username;
 
         $notification = new NotificationNotices;
         $notification->user_id = $user->id;
@@ -136,15 +142,5 @@ class ItemWasClaimedEventHandler
         $notification->description = '';
         $notification->reference_url = route('shop.claims.index', [$user->username]);
         $notification->save();
-    }
-
-    /**
-     * @param       $facebookPostId
-     * @param array $params
-     * @param       $userToken
-     */
-    public function handleFacebookCommentToPhoto($facebookPostId, array $params, $userToken)
-    {
-        $this->facebook->postCommentToPhoto($facebookPostId, $params, $userToken);
     }
 }

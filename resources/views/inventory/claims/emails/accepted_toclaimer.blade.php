@@ -1,1 +1,2 @@
-Your claimed item, {!! $item->name !!}, was accepted by the seller:<br>
+<p>Your claimed item, {!! $claim->listable->getTitle() !!}, for ${{ $claim->price }}, was accepted by the seller.</p>
+<p>You can view details of the item and claim here: <a href="{{ route('profile.purchases.show', [$claim->getUUID()]) }}">{{ route('profile.purchases.show', [$claim->getUUID()]) }}</a></p>

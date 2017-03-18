@@ -86,8 +86,6 @@ class User extends BaseEloquentModel implements
      * @var array
      */
     protected $dates =[
-        'created_at',
-        'updated_at',
         'trial_ends_at',
         'facebook_access_token_expires'
     ];
@@ -826,7 +824,7 @@ class User extends BaseEloquentModel implements
      */
     public function claimsAsSeller()
     {
-        return $this->claimsOnMyInventory();
+        return $this->claimsOnMyListables();
     }
 
     /**
@@ -836,7 +834,7 @@ class User extends BaseEloquentModel implements
      */
     public function claimsAsSellerNoShipping()
     {
-        $claims = $this->claimsOnMyInventory;
+        $claims = $this->claimsOnMyListables;
         if ($claims->count() > 0) {
             return $claims->filter(function (Claims $claim) {
                 // Ignore claims still pending and ones that have already shipped

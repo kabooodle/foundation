@@ -22,6 +22,11 @@ class NotifyClaimWasAccepted implements ShouldQueue
     use InteractsWithQueue;
 
     /**
+     * @var string
+     */
+    public $subject;
+
+    /**
      * @param ClaimWasAcceptedEvent $event
      */
     public function handle(ClaimWasAcceptedEvent $event)
@@ -29,6 +34,8 @@ class NotifyClaimWasAccepted implements ShouldQueue
         $claim = $event->getClaim();
         $claimedBy = $claim->claimer;
         $acceptedBy = $event->getActor();
+
+        $this->subject = 'Your claim on '.$claim->listable->getTitle().' - '.currency($claim->price).', was accepted by '. $claim->listable->username;
 
         if ($claimedBy->primaryEmail && $claimedBy->primaryEmail->isVerified()) {
             $this->toEmail($claim, $claimedBy);
@@ -39,11 +46,12 @@ class NotifyClaimWasAccepted implements ShouldQueue
 
     public function toEmail(Claims $claim, User $claimedBy)
     {
+        $subject = $this->subject;
         $mail = new PiperEmail;
         $mail->setView('inventory.claims.emails.accepted_toclaimer')
             ->setParameters(['item' => $claim->listedItem, 'claim' => $claim])
-            ->setCallable(function ($mail) use ($claimedBy) {
-                $mail->to($claimedBy->email)->subject('Item claim accepted.');
+            ->setCallable(function ($mail) use ($claimedBy, $subject) {
+                $mail->to($claimedBy->email)->subject($subject);
             })
             ->send();
     }
@@ -54,7 +62,7 @@ class NotifyClaimWasAccepted implements ShouldQueue
      */
     public function toDatabase(Claims $claim, User $claimedBy)
     {
-        $title = 'Your claim on '.$claim->listable->getTitle().' - $'.$claim->price.', was accepted by '. $claim->listable->owner->full_name;
+        $title = $this->subject;
 
         $notification = new NotificationNotices;
         $notification->user_id = $claimedBy->id;

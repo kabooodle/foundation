@@ -63,9 +63,6 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
     protected $dates = [
         'status_updated_at',
         'scheduled_for_deletion',
-        'created_at',
-        'updated_at',
-        'deleted_at',
         'make_available_at'
     ];
 
