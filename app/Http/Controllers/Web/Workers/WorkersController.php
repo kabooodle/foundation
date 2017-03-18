@@ -51,7 +51,7 @@ class WorkersController extends Controller
             if(! $key || $key <> '7AF95578E9A597AA6B89E726E74C4') {
                 throw new InvalidArgumentException('Webhook key missing/invalid');
             }
-            $response = Artisan::call('facebook:enqueue');
+            $response = Artisan::call('facebook:delete-enqueue');
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
 
