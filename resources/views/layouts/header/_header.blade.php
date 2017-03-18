@@ -55,6 +55,9 @@
                         @endif
                         <a class="dropdown-item {{ Request::is('referrals') ? 'active' : null }}" href="{{ route('referrals.index') }}"><span>Referrals</span></a>
                         <div class="dropdown-divider"></div>
+                        <a href="javascript:;" type="button" class=
+                           "js-toggle-help dropdown-item" >Help</a>
+                        <div class="dropdown-divider"></div>
                         <a class=
                            "js-toggle-help dropdown-item" href="javascript:;">Help</a>
                         <div class="dropdown-divider"></div>
