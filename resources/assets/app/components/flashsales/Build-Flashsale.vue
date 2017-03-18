@@ -174,8 +174,8 @@
                 <div class="m-a-2 p-a-2 center text-center block-center center-block">
                     <img src="/assets/images/kit1.png">
                     <h5 class="m-t-3 m-b-3">I'm Kit. If you need help, I'm here to help guide you anytime.</h5>
+                    <button type="button" class="m-l-1 btn btn-lg white" @click.prevent="noTour">No thanks, Kit!</button>
                     <button type="button" class="btn btn-success btn-lg" @click.prevent="startTour">Yes, take a tour</button>
-                    <button type="button" class="m-l-1 btn btn-lg white" @click.prevent="noTour">No thanks Kit!</button>
                 </div>
             </div>
         </modal>

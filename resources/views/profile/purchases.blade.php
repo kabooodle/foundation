@@ -33,7 +33,7 @@
                         </div>
                     </td>
                     <td>{!! $claim->present()->getClaimStatus()  !!}</td>
-                    <td>${{ $claim->price }}</td>
+                    <td>{{ currency($claim->price) }}</td>
                     <td>{{ $claim->listedItem->owner->username }}</td>
                     <td>{{ $claim->createdAtHumanNoTime() }} <i data-placement="top" class="fa fa-clock-o" data-toggle="tooltip" title="{{ $claim->created_at->format('g:i A') }}"></i></td>
                     {{--<td>--}}

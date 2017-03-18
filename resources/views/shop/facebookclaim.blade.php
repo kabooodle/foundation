@@ -25,9 +25,9 @@
 @section('body-content')
 
 
-    @include('inventory.partials._show', ['item' => $item])
+    @include('listables.partials._show', ['listable' => $item])
 
-    @include('inventory.partials._claimmodal', ['post' => route('externalclaim.claim', [$facebook->obfuscateIdToString()]) , 'redirect' => ('/')])
+    @include('listables.partials._claimmodal', ['post' => route('externalclaim.claim', [$facebook->obfuscateIdToString()]) , 'redirect' => ('/')])
 
 
 

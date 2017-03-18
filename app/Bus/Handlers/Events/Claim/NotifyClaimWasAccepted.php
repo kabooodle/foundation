@@ -35,7 +35,7 @@ class NotifyClaimWasAccepted implements ShouldQueue
         $claimedBy = $claim->claimer;
         $acceptedBy = $event->getActor();
 
-        $this->subject = 'Your claim on '.$claim->listable->getTitle().' - $'.$claim->price.', was accepted by '. $claim->listable->username;
+        $this->subject = 'Your claim on '.$claim->listable->getTitle().' - '.currency($claim->price).', was accepted by '. $claim->listable->username;
 
         if ($claimedBy->primaryEmail && $claimedBy->primaryEmail->isVerified()) {
             $this->toEmail($claim, $claimedBy);

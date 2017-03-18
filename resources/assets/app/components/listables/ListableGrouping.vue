@@ -94,7 +94,7 @@
                                                 <span class="pull-left">Qty:
                                                     <span class="text-muted">{{ useAvailableQty ? item.available_qty : item.initial_qty }}</span>
                                                 </span>
-                                                <span class="text-muted pull-right">${{ item.price_usd }}</span>
+                                                <span class="text-muted pull-right">${{ Number(item.price_usd).toFixed(2) }}</span>
                                             </span>
                                         </button>
                                         <div v-if="display_footer_buttons" class="clearfix" style="margin-top: 5px;">
