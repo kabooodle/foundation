@@ -70,7 +70,7 @@ class View extends BaseEloquentModel
 
     protected function recordChildViews()
     {
-        if ($this->viewable->hasViewableChild()) {
+        if ($this->viewable && $this->viewable->hasViewableChild()) {
             $child = $this->viewable->getViewableChild();
             self::create([
                 'viewer_id' => $this->viewer_id,
