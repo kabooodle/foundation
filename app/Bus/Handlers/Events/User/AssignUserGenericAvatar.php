@@ -23,13 +23,17 @@ class AssignUserGenericAvatar
     public function handle(UserWasCreatedEvent $event)
     {
         return DB::transaction(function() use ($event) {
+
+            $randomAvatar = 'resources/robot'.rand(1,16).'.jpg';
+            $avatarPath = 'https://'.env('AWS_BUCKET').'.s3.amazonaws.com/'.$randomAvatar;
+
             $user = $event->getUser();
             $file = new Files;
             $file->fileable_id = $user->id;
             $file->fileable_type = get_class($user);
             $file->bucket_name = env('AWS_BUCKET');
-            $file->location = defaultAvatar();
-            $file->key = 'resources/roboto-avatar.png';
+            $file->location = $avatarPath;
+            $file->key = $randomAvatar;
             $file->save();
 
             $user->avatar()->save($file);
