@@ -219,7 +219,7 @@
                     'name': null,
                     'description': null,
                     'locked': true,
-                    'price_usd': 0.00,
+                    'price_usd': Number(0).toFixed(2),
                     'initial_qty': null,
                     'inventory': [],
                     'image': null,

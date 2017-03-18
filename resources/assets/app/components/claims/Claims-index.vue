@@ -20,7 +20,7 @@
                     <span>{{ claim.listable_item_object_data.title }}</span>
                 </div>
             </td>
-            <td >${{ claim.price }}</td>
+            <td >${{ Number(claim.price).toFixed(2) }}</td>
             <td >
                 <span  v-if="!claim.claimer.guest" ><a class="text-primary" :href="'/users/'+claim.claimer.username+'/'">{{ claim.claimer.username }}</a></span>
                 <small v-if="claim.claimer.guest" class="text-muted">Guest</small>

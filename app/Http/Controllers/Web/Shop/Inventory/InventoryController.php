@@ -128,7 +128,7 @@ class InventoryController extends Controller
                 'listable' => $item,
             ];
             if ($request->ajax()) {
-                return $this->view('inventory.partials._show', $data)->render();
+                return $this->view('listables.partials._show', $data)->render();
             }
 
             return $this->view('listables.show', $data);
