@@ -66,7 +66,7 @@ if (! function_exists('route')) {
     {
         $route = app('url')->route($name, $parameters, $absolute);
 
-        return str_replace(['api.', 'app.'], '', $route);
+        return str_replace(['api.', 'app.'], 'www.', $route);
     }
 }
 
