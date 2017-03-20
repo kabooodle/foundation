@@ -76,7 +76,7 @@
                     var hash = Math.random().toString(36).substr(2, 5);
                     var timestamp = Math.floor(new Date().getTime() / 1000);
                     var ajaxData = that.options.s3_key_payload;
-                    ajaxData.filename = timestamp + '_' + data.files[0].name;
+                    ajaxData.filename = timestamp + randomAlphaStr() + '_' + data.files[0].name;
                     that.jqXHRCollection.push($.ajax({
                         url: that.options.s3_key_url,
                         dataType: 'JSON',
@@ -104,6 +104,7 @@
                             that.throwException(e.responseText, error);
                             that.log('api.files.s3key: fail', error);
                             that.buttonToggler(false);
+                            alert(e);
                         }
                     }));
                 },

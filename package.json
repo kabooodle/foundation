@@ -8,7 +8,6 @@
   "dependencies": {
     "aliasify": "2.1.0",
     "block-ui": "2.70.1",
-    "blueimp-file-upload": "9.13.1",
     "bootstrap": "4.0.0-alpha.6",
     "bootstrap-multiselect": "0.9.13-1",
     "bootstrap-sass": "3.1.1",
