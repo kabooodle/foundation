@@ -191,10 +191,10 @@
                         templateEl: el.find('.upload-template'),
                         fileupload_options: {},
                         on_s3_upload: function (data, textStatus, jqXHR) {
-                            if ($.inArray(jqXHR.status, [201, 200]) == -1) {
-                                alert('An error occurred with a file, please try that file again.');
-                                return false;
-                            }
+//                            if ($.inArray(jqXHR.status, [201, 200]) == -1) {
+//                                alert('An error occurred with a file, please try that file again.');
+//                                return false;
+//                            }
                             var xml = $(data);
                             var responseData = {
                                 id: xml.find('Key').text(),
@@ -214,10 +214,11 @@
                             $Bus.$emit(key, el, responseData);
                         },
                         on_file_add: function (element, data) {
-                            if (data.files[0].type.indexOf("image") == -1) {
-                                alert('File must be an image.', false);
-                                return false;
-                            }
+//                            alert(JSON.stringify(data.files, null, 4));
+//                            if (data.files[0].type.indexOf("image") == -1) {
+//                                alert('File must be an image.');
+//                                return false;
+//                            }
                             $Bus.$emit('image.added', data.files[0]);
                             return true;
                         }

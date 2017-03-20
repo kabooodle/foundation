@@ -6,7 +6,7 @@
  * https://blueimp.net
  *
  * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
+ * https://opensource.org/licenses/MIT
  */
 
 /* jshint nomen:false */
@@ -20,16 +20,18 @@
     //         'jquery',
     //         'load-image',
     //         'load-image-meta',
+    //         'load-image-scale',
     //         'load-image-exif',
     //         'canvas-to-blob',
     //         './jquery.fileupload-process'
     //     ], factory);
     // } else if (typeof exports === 'object') {
-    //     // Node/CommonJS:
+        // Node/CommonJS:
     //     factory(
     //         require('jquery'),
     //         require('blueimp-load-image/js/load-image'),
     //         require('blueimp-load-image/js/load-image-meta'),
+    //         require('blueimp-load-image/js/load-image-scale'),
     //         require('blueimp-load-image/js/load-image-exif'),
     //         require('blueimp-canvas-to-blob'),
     //         require('./jquery.fileupload-process')
@@ -162,19 +164,19 @@
                     file = data.files[data.index],
                     dfd = $.Deferred();
                 if (($.type(options.maxFileSize) === 'number' &&
-                            file.size > options.maxFileSize) ||
-                        (options.fileTypes &&
-                            !options.fileTypes.test(file.type)) ||
-                        !loadImage(
-                            file,
-                            function (img) {
-                                if (img.src) {
-                                    data.img = img;
-                                }
-                                dfd.resolveWith(that, [data]);
-                            },
-                            options
-                        )) {
+                    file.size > options.maxFileSize) ||
+                    (options.fileTypes &&
+                    !options.fileTypes.test(file.type)) ||
+                    !loadImage(
+                        file,
+                        function (img) {
+                            if (img.src) {
+                                data.img = img;
+                            }
+                            dfd.resolveWith(that, [data]);
+                        },
+                        options
+                    )) {
                     return data;
                 }
                 return dfd.promise();
@@ -195,8 +197,8 @@
                     img = (options.canvas && data.canvas) || data.img,
                     resolve = function (newImg) {
                         if (newImg && (newImg.width !== img.width ||
-                                newImg.height !== img.height ||
-                                options.forceResize)) {
+                            newImg.height !== img.height ||
+                            options.forceResize)) {
                             data[newImg.getContext ? 'canvas' : 'img'] = newImg;
                         }
                         data.preview = newImg;
@@ -283,7 +285,7 @@
 
             saveImageMetaData: function (data, options) {
                 if (!(data.imageHead && data.canvas &&
-                        data.canvas.toBlob && !options.disabled)) {
+                    data.canvas.toBlob && !options.disabled)) {
                     return data;
                 }
                 var file = data.files[data.index],

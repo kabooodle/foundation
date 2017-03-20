@@ -3,16 +3,6 @@ use Carbon\Carbon;
 use Dingo\Api\Facade\API;
 use Illuminate\Contracts\Encryption\EncryptException;
 
-if (!function_exists('defaultAvatar')) {
-    /**
-     * @return string
-     */
-    function defaultAvatar()
-    {
-        return 'https://kabooodle-storage.s3.amazonaws.com/resources/roboto-avatar.png';
-    }
-}
-
 if (!function_exists('current_timezone')) {
 
     /**

@@ -1,28 +1,38 @@
 /*
- * jQuery File Upload User Interface Plugin 9.6.0
+ * jQuery File Upload User Interface Plugin
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
  * https://blueimp.net
  *
  * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
+ * https://opensource.org/licenses/MIT
  */
 
 /* jshint nomen:false */
-/* global define, window */
+/* global define, require, window */
 
-(function (factory) {
+;(function (factory) {
     'use strict';
     // if (typeof define === 'function' && define.amd) {
     //     // Register as an anonymous AMD module:
     //     define([
     //         'jquery',
-    //         'tmpl',
+    //         'blueimp-tmpl',
     //         './jquery.fileupload-image',
     //         './jquery.fileupload-audio',
-    //         './jquery.fileupload-video'
+    //         './jquery.fileupload-video',
+    //         './jquery.fileupload-validate'
     //     ], factory);
+    // } else if (typeof exports === 'object') {
+        // Node/CommonJS:
+    //     factory(
+    //         require('jquery'),
+    //         require('blueimp-tmpl'),
+    //         require('./jquery.fileupload-image'),
+    //         require('./jquery.fileupload-video'),
+    //         require('./jquery.fileupload-validate')
+    //     );
     // } else {
         // Browser globals:
         factory(
@@ -32,6 +42,7 @@
     // }
 }(function ($, tmpl) {
     'use strict';
+
     $.blueimp.fileupload.prototype._specialOptions.push(
         'filesContainer',
         'uploadTemplateId',
@@ -53,10 +64,10 @@
             downloadTemplateId: 'template-download',
             // The container for the list of files. If undefined, it is set to
             // an element with class "files" inside of the widget element:
-            filesContainer: '.files',
+            filesContainer: undefined,
             // By default, files are appended to the files container.
             // Set the following option to true, to prepend files instead:
-            prependFiles: true,
+            prependFiles: false,
             // The expected data type of the upload response, sets the dataType
             // option of the $.ajax upload requests:
             dataType: 'json',
@@ -85,7 +96,6 @@
             // widget (via file input selection, drag & drop or add API call).
             // See the basic file upload widget for more information:
             add: function (e, data) {
-
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
@@ -104,7 +114,6 @@
                 data.process(function () {
                     return $this.fileupload('process', data);
                 }).always(function () {
-
                     data.context.each(function (index) {
                         $(this).find('.size').text(
                             that._formatFileSize(data.files[index].size)
@@ -134,7 +143,6 @@
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
-
                 var that = $(this).data('blueimp-fileupload') ||
                     $(this).data('fileupload');
                 if (data.context && data.dataType &&
@@ -271,7 +279,6 @@
             },
             // Callback for upload progress events:
             progress: function (e, data) {
-
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
@@ -289,14 +296,12 @@
             },
             // Callback for global upload progress events:
             progressall: function (e, data) {
-
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
-
                 var $this = $(this),
                     progress = Math.floor(data.loaded / data.total * 100),
-                    globalProgressNode = $('body').find('.fileupload-progress'),
+                    globalProgressNode = $this.find('.fileupload-progress'),
                     extendedProgressNode = globalProgressNode
                         .find('.progress-extended');
                 if (extendedProgressNode.length) {
@@ -425,12 +430,12 @@
                 return '';
             }
             if (bytes >= 1000000000) {
-                return (bytes / 1000000000).toFixed(2) + 'GB';
+                return (bytes / 1000000000).toFixed(2) + ' GB';
             }
             if (bytes >= 1000000) {
-                return (bytes / 1000000).toFixed(2) + 'MB';
+                return (bytes / 1000000).toFixed(2) + ' MB';
             }
-            return (bytes / 1000).toFixed(2) + 'KB';
+            return (bytes / 1000).toFixed(2) + ' KB';
         },
 
         _formatBitrate: function (bits) {
@@ -438,15 +443,15 @@
                 return '';
             }
             if (bits >= 1000000000) {
-                return (bits / 1000000000).toFixed(2) + 'Gbit/s';
+                return (bits / 1000000000).toFixed(2) + ' Gbit/s';
             }
             if (bits >= 1000000) {
-                return (bits / 1000000).toFixed(2) + 'Mbit/s';
+                return (bits / 1000000).toFixed(2) + ' Mbit/s';
             }
             if (bits >= 1000) {
-                return (bits / 1000).toFixed(2) + 'kbit/s';
+                return (bits / 1000).toFixed(2) + ' kbit/s';
             }
-            return bits.toFixed(2) + 'bit/s';
+            return bits.toFixed(2) + ' bit/s';
         },
 
         _formatTime: function (seconds) {
@@ -460,30 +465,19 @@
         },
 
         _formatPercentage: function (floatValue) {
-            return (floatValue * 100).toFixed(2) + '%';
+            return (floatValue * 100).toFixed(2) + ' %';
         },
 
         _renderExtendedProgress: function (data) {
-            return this._renderStrongTmpl(this._formatPercentage(
-                    data.loaded / data.total
-                )) +
-                ' at ' +
-                this._renderStrongTmpl(this._formatBitrate(data.bitrate)) +
-                ' &middot; about ' +
-                this._renderStrongTmpl(this._formatTime(
+            return this._formatBitrate(data.bitrate) + ' | ' +
+                this._formatTime(
                     (data.total - data.loaded) * 8 / data.bitrate
-                )) +
-                ' left ' +
-                '<em>('+this._formatFileSize(data.loaded) + ' / ' +
-                this._formatFileSize(data.total)+')</em>';
-        },
-
-        _renderStrongTmpl : function(string){
-            return '<strong>'+string+'</strong>';
-        },
-
-        _renderBreak : function(){
-            return '<br>';
+                ) + ' | ' +
+                this._formatPercentage(
+                    data.loaded / data.total
+                ) + ' | ' +
+                this._formatFileSize(data.loaded) + ' / ' +
+                this._formatFileSize(data.total);
         },
 
         _renderTemplate: function (func, files) {
@@ -661,7 +655,6 @@
             options.templatesContainer = this.document[0].createElement(
                 options.filesContainer.prop('nodeName')
             );
-
             if (tmpl) {
                 if (options.uploadTemplateId) {
                     options.uploadTemplate = tmpl(options.uploadTemplateId);
@@ -676,7 +669,6 @@
             var options = this.options;
             if (options.filesContainer === undefined) {
                 options.filesContainer = this.element.find('.files');
-
             } else if (!(options.filesContainer instanceof $)) {
                 options.filesContainer = $(options.filesContainer);
             }

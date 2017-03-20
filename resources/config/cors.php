@@ -3,8 +3,9 @@
 return [
     'supportsCredentials' => true,
     'allowedOrigins'      => [
-        'http://app.kabooodle.ngrok.io',
+        'http://www.kabooodle.ngrok.io',
         'http://api.kabooodle.ngrok.io',
+        'http://kabooodle.ngrok.io',
 
         'http://kabooodle.dev',
         'http://www.kabooodle.dev',
