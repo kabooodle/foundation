@@ -53,15 +53,15 @@ class ListablesController extends AbstractApiController
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] + $item->initial_qty : $item->initial_qty;
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['listables'][] = [
                         'id' => $item->id,
-                        'name_uuid' => $item->name_uuid,
+//                        'name_uuid' => $item->name_uuid,
                         'uuid' => $item->uuid,
-                        'name' => $item->name,
-                        'name_alt' => $item->name_alt,
-                        'initial_qty' => $item->initial_qty,
+                        'name' => $item->name_with_variant,
+//                        'name_alt' => $item->name,
+//                        'initial_qty' => $item->initial_qty,
                         'available_qty' => $item->available_quantity,
                         'price_usd' => $item->price_usd,
-                        'wholesale_price_usd' => $item->wholesale_price_usd,
-                        'cover_photo' => $item->cover_photo->location,
+//                        'wholesale_price_usd' => $item->wholesale_price_usd,
+//                        'cover_photo' => $item->cover_photo->location,
                         'hash_id' => $item->hash_id,
                     ];
                 }
@@ -89,15 +89,15 @@ class ListablesController extends AbstractApiController
                 $groupings[$id]['subgroupings'][$item->id]['total_qty'] = $item->available_quantity;
                 $groupings[$id]['subgroupings'][$item->id]['listables'][] = [
                     'id' => $item->id,
-                    'name_uuid' => $item->name_uuid,
-                    'name' => $item->name,
-                    'name_alt' => 'outfits',
+//                        'name_uuid' => $item->name_uuid,
                     'uuid' => $item->uuid,
-                    'initial_qty' => $item->initial_qty,
+                    'name' => $item->name_with_variant,
+//                        'name_alt' => $item->name,
+//                        'initial_qty' => $item->initial_qty,
                     'available_qty' => $item->available_quantity,
                     'price_usd' => $item->price_usd,
-                    'wholesale_price_usd' => $item->wholesale_price_usd,
-                    'cover_photo' => $item->cover_photo->location,
+//                        'wholesale_price_usd' => $item->wholesale_price_usd,
+//                        'cover_photo' => $item->cover_photo->location,
                     'hash_id' => $item->hash_id,
                 ];
             }
