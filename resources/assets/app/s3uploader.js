@@ -68,9 +68,9 @@
                 add: function (e, data) {
                     //since we are overriding the add function, in order for image-resize to work we must call the parent add()
                     $.blueimp.fileupload.prototype.options.add.call(this, e, data);
-                    if(!that.options.on_file_add(e, data)){
-                        return false;
-                    }
+                    // if(!that.options.on_file_add(e, data)){
+                    //     return false;
+                    // }
                     that.buttonToggler(true);
                     that.$element.find(that.templateElements.progress_container).show();
                     var hash = Math.random().toString(36).substr(2, 5);

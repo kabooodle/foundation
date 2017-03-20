@@ -6,10 +6,10 @@
  * https://blueimp.net
  *
  * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
+ * https://opensource.org/licenses/MIT
  */
 
-/* global define, require, window, document */
+/* global define, require, window, document, JSON */
 
 ;(function (factory) {
     'use strict';
@@ -27,7 +27,14 @@
     'use strict';
 
     // Helper variable to create unique names for the transport iframes:
-    var counter = 0;
+    var counter = 0,
+        jsonAPI = $,
+        jsonParse = 'parseJSON';
+
+    if ('JSON' in window && 'parse' in JSON) {
+        jsonAPI = JSON;
+        jsonParse = 'parse';
+    }
 
     // The iframe transport accepts four additional options:
     // options.fileInput: a jQuery collection of file input fields
@@ -45,7 +52,7 @@
             // prevents warning popups on HTTPS in IE6:
             /*jshint scripturl: true */
             var initialIframeSrc = options.initialIframeSrc || 'javascript:false;',
-            /*jshint scripturl: false */
+                /*jshint scripturl: false */
                 form,
                 iframe,
                 addParamChar;
@@ -71,11 +78,11 @@
                     counter += 1;
                     iframe = $(
                         '<iframe src="' + initialIframeSrc +
-                            '" name="iframe-transport-' + counter + '"></iframe>'
+                        '" name="iframe-transport-' + counter + '"></iframe>'
                     ).bind('load', function () {
                         var fileInputClones,
                             paramNames = $.isArray(options.paramName) ?
-                                    options.paramName : [options.paramName];
+                                options.paramName : [options.paramName];
                         iframe
                             .unbind('load')
                             .bind('load', function () {
@@ -124,7 +131,7 @@
                             });
                         }
                         if (options.fileInput && options.fileInput.length &&
-                                options.type === 'POST') {
+                            options.type === 'POST') {
                             fileInputClones = options.fileInput.clone();
                             // Insert a clone for each file input field:
                             options.fileInput.after(function (index) {
@@ -197,7 +204,7 @@
                 return iframe && $(iframe[0].body).text();
             },
             'iframe json': function (iframe) {
-                return iframe && $.parseJSON($(iframe[0].body).text());
+                return iframe && jsonAPI[jsonParse]($(iframe[0].body).text());
             },
             'iframe html': function (iframe) {
                 return iframe && $(iframe[0].body).html();
@@ -205,8 +212,8 @@
             'iframe xml': function (iframe) {
                 var xmlDoc = iframe && iframe[0];
                 return xmlDoc && $.isXMLDoc(xmlDoc) ? xmlDoc :
-                        $.parseXML((xmlDoc.XMLDocument && xmlDoc.XMLDocument.xml) ||
-                            $(xmlDoc.body).html());
+                    $.parseXML((xmlDoc.XMLDocument && xmlDoc.XMLDocument.xml) ||
+                        $(xmlDoc.body).html());
             },
             'iframe script': function (iframe) {
                 return iframe && $.globalEval($(iframe[0].body).text());
