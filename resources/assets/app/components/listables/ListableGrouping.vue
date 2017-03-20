@@ -88,7 +88,7 @@
                                             :disabled="disableUnavailable && item.available_qty <= 0"
                                         >
                                             <span class="item block avatar-thumbnail _80">
-                                                <img :src="item.cover_photo.location" >
+                                                <img :src="item.cover_photo" >
                                             </span>
                                             <span class="p-a-o text-sm clearfix block">
                                                 <span class="pull-left">Qty:
