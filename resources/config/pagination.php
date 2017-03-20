@@ -2,6 +2,6 @@
 
 return [
 
-    'per-page' => 50
+    'per-page' => 30
 
 ];
