@@ -190,7 +190,7 @@ trait ResponseTrait
             $response['data'] = $this->data->toArray();
         }
 
-        return Response::json($response, $this->statusCode, $this->headers);
+        return Response::json($response, $this->statusCode, jsonHeaders());
     }
 
     /**
