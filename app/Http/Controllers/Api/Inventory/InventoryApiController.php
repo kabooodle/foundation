@@ -49,7 +49,7 @@ class InventoryApiController extends AbstractApiController
         foreach($grouped as $styleId => $items) {
             $groupings[$styleId] = [
                 'name' => null,
-                'total' => $items->sum('initial_qty'),
+                'total' =>1,
                 'id' => $styleId,
             ];
             if ($items->count() > 0) {
@@ -60,7 +60,7 @@ class InventoryApiController extends AbstractApiController
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['id'] = $item->styleSize->id;
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['name'] = $item->styleSize->name;
-                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] + $item->initial_qty : $item->initial_qty;
+                    $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = 1;
                     $groupings[$styleId]['subgroupings'][$item->styleSize->id]['listables'][] = [
                         'id' => $item->id,
                         'name_uuid' => $item->name_uuid,
@@ -68,7 +68,7 @@ class InventoryApiController extends AbstractApiController
                         'name' => $item->name_with_variant,
                         'name_alt' => $item->name,
                         'initial_qty' => $item->initial_qty,
-                        'available_qty' => $item->available_quantity,
+//                        'available_qty' => $item->available_quantity,
                         'price_usd' => $item->price_usd,
                         'wholesale_price_usd' => $item->wholesale_price_usd,
                         'cover_photo' => $item->cover_photo,

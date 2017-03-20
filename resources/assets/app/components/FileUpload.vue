@@ -214,6 +214,7 @@
                             $Bus.$emit(key, el, responseData);
                         },
                         on_file_add: function (element, data) {
+                            console.log(data.files+' from .vue');
 //                            alert(JSON.stringify(data.files, null, 4));
 //                            if (data.files[0].type.indexOf("image") == -1) {
 //                                alert('File must be an image.');
