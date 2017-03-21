@@ -78,7 +78,7 @@
                     var timestamp = Math.floor(new Date().getTime() / 1000);
                     var ajaxData = that.options.s3_key_payload;
                     ajaxData.filename = timestamp + randomAlphaStr() + '_' + data.files[0].name;
-                    console.log(ajaxData.filename);
+                    that.log(ajaxData.filename);
                     that.jqXHRCollection.push($.ajax({
                         url: that.options.s3_key_url,
                         dataType: 'JSON',
@@ -113,6 +113,7 @@
                 },
                 formData: {},
                 success: function (data, textStatus, jqXHR) {
+                    that.log('initiating on_s3_upload');
                     that.options.on_s3_upload(data, textStatus, jqXHR);
                 },
                 done: function (e, data) {
