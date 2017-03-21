@@ -105,7 +105,6 @@ class ListablesController extends AbstractApiController
 
             sort($groupings);
 
-            Bugsnag::notifyError('json', json_encode($groupings));
             \Log::info('json '.json_encode($groupings));
 
             return $this->setData($groupings)->respond();
