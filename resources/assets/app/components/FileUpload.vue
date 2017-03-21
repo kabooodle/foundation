@@ -182,6 +182,7 @@
                 var that = this;
                 $(function(){
                     el.s3uploader({
+                        debug: true,
                         save_file_model: false,
                         multiple: that.has_multiple,
                         s3_key_url: that.s3_key_url,

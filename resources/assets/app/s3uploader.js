@@ -113,9 +113,10 @@
                     that.options.on_s3_upload(data, textStatus, jqXHR);
                 },
                 done: function (e, data) {
-                    console.log('done uploading files.');
+                    that.log('done uploading files.');
                 },
                 fail: function(e, data, error){
+                    that.log('failed uploading files.');
                     that.throwException(e.responseText, error);
                 },
                 always: function() {
