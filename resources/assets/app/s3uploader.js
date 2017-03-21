@@ -98,7 +98,7 @@
                                 'x-amz-date':           response.data.date,
                                 'x-amz-signature':      response.data.signature
                             };
-                            console.log(data.files[0].name);
+                            that.log(data.files[0].name);
                             that.options.response = response;
                             that.options.file = data.files[0];
                             that.jqXHRCollection.push(data.submit());
@@ -116,7 +116,7 @@
                     that.options.on_s3_upload(data, textStatus, jqXHR);
                 },
                 done: function (e, data) {
-                    console.log('done uploading files.');
+                    that.log('done uploading files.');
                 },
                 fail: function(e, data, error){
                     that.throwException(e.responseText, error);
