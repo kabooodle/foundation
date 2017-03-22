@@ -18,14 +18,15 @@ trait CreditTransactableTrait
 {
     public static function bootCreditTransactableTrait()
     {
-        self::creating(function (CreditTransactableInterface $model) {
-            // check again that the user has sufficient credits for this transaction.
-            if ($model->getTransactionType() == CreditTransactableInterface::TYPE_DEBIT) {
-                if (!$model->user->hasSufficientCredits($model->creditTransactionAmount())) {
-                    throw new InsufficientBalanceException;
-                }
-            }
-        });
+        // This creates a nesting bug that throws an exception
+//        self::creating(function (CreditTransactableInterface $model) {
+//            // check again that the user has sufficient credits for this transaction.
+//            if ($model->getTransactionType() == CreditTransactableInterface::TYPE_DEBIT) {
+//                if (!$model->user->hasSufficientCredits($model->creditTransactionAmount())) {
+//                    throw new InsufficientBalanceException;
+//                }
+//            }
+//        });
 
         self::saved(function (CreditTransactableInterface $model) {
             $transactionAmount = $model->creditTransactionAmount();

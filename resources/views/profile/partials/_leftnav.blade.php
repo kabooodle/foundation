@@ -21,7 +21,7 @@
 <li><a href="{{ route('profile.subscription.index') }}" class="nav-link {{ Request::is('profile/subscription') ? 'active' : null }}">
     Subscription
 </a></li>
-@if(webUser()->hasAtLeastMerchantSubscription() && ! webUser()->onGenericTrial())
+@if(webUser()->hasStripeId() || (webUser()->hasAtLeastMerchantSubscription() && ! webUser()->onGenericTrial()))
 <li><a href="{{ route('profile.subscription.invoices.index') }}" class="nav-link {{ Request::is('profile/subscription/invoices') ? 'active' : null }}">
     Receipts
 </a></li>
