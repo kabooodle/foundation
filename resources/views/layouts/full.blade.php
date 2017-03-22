@@ -2,22 +2,8 @@
     <html lang="en">
     @include('layouts.header._htmlheader')
     <body class=" header-condensed @yield('body-class', null)  {{ webUser() && webUser()->onGenericTrial() ? ' on-trial ' : null }} @hasSection('body-menu') @if(trim($__env->yieldContent('body-menu')) <> '') with-body-menu @else no-body-menu @endif @else  no-body-menu  @endif ">
-    <div class="p-a m-a" id="logging"></div>
     <div id="fb-root"></div>
     <script>
-        (function () {
-            var old = console.log;
-            var logger = document.getElementById('logging');
-            console.log = function () {
-                for (var i = 0; i < arguments.length; i++) {
-                    if (typeof arguments[i] == 'object') {
-                        logger.innerHTML += '-'+ (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + '<br />';
-                    } else {
-                        logger.innerHTML += '-'+arguments[i] + '<br />';
-                    }
-                }
-            }
-        })();
         window.fbAsyncInit = function() {
             FB.init({
                 appId: '{{ env('FACEBOOK_APP_ID') }}',

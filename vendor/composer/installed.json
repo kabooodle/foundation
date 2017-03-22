@@ -7809,5 +7809,29 @@
             "analytics",
             "keen io"
         ]
+    },
+    {
+        "name": "myokyawhtun/pdfmerger",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/myokyawhtun/PDFMerger.git",
+            "reference": "03e5d674f95cc36330dab4d4b2bdcff684b59e93"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/myokyawhtun/PDFMerger/zipball/03e5d674f95cc36330dab4d4b2bdcff684b59e93",
+            "reference": "03e5d674f95cc36330dab4d4b2bdcff684b59e93",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.0"
+        },
+        "time": "2017-03-18T08:49:38+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "notification-url": "https://packagist.org/downloads/",
+        "description": "PDFMerger for PHP (PHP5 Compatible) by Jarrod Nettles"
     }
 ]

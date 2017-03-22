@@ -905,6 +905,7 @@ return array(
     'UpdateUserTbl' => $baseDir . '/resources/database/migrations/2016_08_12_063105_update_user_tbl.php',
     'UpdateUsersAddSocialLinksAndAbout' => $baseDir . '/resources/database/migrations/2017_03_09_091851_update_users_add_social_links_and_about.php',
     'UpdateUsersProfileAddPhoneNumber' => $baseDir . '/resources/database/migrations/2017_03_09_022103_update_users_profile_add_phone_number.php',
+    'UpdateUsersTbl' => $baseDir . '/resources/database/migrations/2017_03_22_044306_update_users_tbl.php',
     'UpdateUsersTblAddAvatar' => $baseDir . '/resources/database/migrations/2016_10_31_194814_update_users_tbl_add_avatar.php',
     'UpdateUsersTblAddKeenKey' => $baseDir . '/resources/database/migrations/2017_03_13_042238_update_users_tbl_add_keen_key.php',
     'UpdateUsersTblAddReferreredById' => $baseDir . '/resources/database/migrations/2016_09_17_005109_update_users_tbl_add_referrered_by_id.php',
