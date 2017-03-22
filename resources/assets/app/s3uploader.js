@@ -71,12 +71,14 @@
                     // if(!that.options.on_file_add(e, data)){
                     //     return false;
                     // }
+
                     that.buttonToggler(true);
                     that.$element.find(that.templateElements.progress_container).show();
                     var hash = Math.random().toString(36).substr(2, 5);
                     var timestamp = Math.floor(new Date().getTime() / 1000);
                     var ajaxData = that.options.s3_key_payload;
                     ajaxData.filename = timestamp + randomAlphaStr() + '_' + data.files[0].name;
+                    that.log(ajaxData.filename);
                     that.jqXHRCollection.push($.ajax({
                         url: that.options.s3_key_url,
                         dataType: 'JSON',
@@ -96,6 +98,7 @@
                                 'x-amz-date':           response.data.date,
                                 'x-amz-signature':      response.data.signature
                             };
+                            that.log(data.files[0].name);
                             that.options.response = response;
                             that.options.file = data.files[0];
                             that.jqXHRCollection.push(data.submit());
@@ -110,6 +113,7 @@
                 },
                 formData: {},
                 success: function (data, textStatus, jqXHR) {
+                    that.log('initiating on_s3_upload');
                     that.options.on_s3_upload(data, textStatus, jqXHR);
                 },
                 done: function (e, data) {

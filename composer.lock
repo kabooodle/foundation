@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "63acda3fe86f51ba026af1186c12b691",
+    "content-hash": "5909c65ea88e9322702c663742e82c0d",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -3127,6 +3127,28 @@
                 "jsonpath"
             ],
             "time": "2016-12-03T22:08:25+00:00"
+        },
+        {
+            "name": "myokyawhtun/pdfmerger",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/myokyawhtun/PDFMerger.git",
+                "reference": "03e5d674f95cc36330dab4d4b2bdcff684b59e93"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/myokyawhtun/PDFMerger/zipball/03e5d674f95cc36330dab4d4b2bdcff684b59e93",
+                "reference": "03e5d674f95cc36330dab4d4b2bdcff684b59e93",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "PDFMerger for PHP (PHP5 Compatible) by Jarrod Nettles",
+            "time": "2017-03-18 08:49:38"
         },
         {
             "name": "namshi/jose",
@@ -7553,7 +7575,8 @@
     "stability-flags": {
         "dingo/api": 20,
         "nexmo/client": 10,
-        "tymon/jwt-auth": 20
+        "tymon/jwt-auth": 20,
+        "myokyawhtun/pdfmerger": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -166,6 +166,7 @@ class User extends BaseEloquentModel implements
         'access_token',
         'facebook_access_token',
         'facebook_user_id',
+        'superuser'
     ];
 
     /**
@@ -1250,5 +1251,13 @@ class User extends BaseEloquentModel implements
     public function hasKeenAccessKey()
     {
         return $this->keen_access_key;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuperUser()
+    {
+        return $this->superuser;
     }
 }

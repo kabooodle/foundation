@@ -3,6 +3,27 @@ use Carbon\Carbon;
 use Dingo\Api\Facade\API;
 use Illuminate\Contracts\Encryption\EncryptException;
 
+if (! function_exists('jsonHeaders')) {
+    /**
+     * @return array
+     */
+    function jsonHeaders()
+    {
+        $headers = ['Content-Type' => 'text/plain'];
+        if (isset($_SERVER['HTTP_ACCEPT']) &&
+            (strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
+            $headers['Content-Type'] = 'application/json;charset=utf-8';
+            $headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, X-Forwarded-For, X-Forwarded-Port, X-Forwarded-Proto';
+            $headers['Access-Control-Max-Age'] = 300;
+            $headers['Cache-Control'] = 'private, max-age=0, no-cache';
+            $headers['Expires'] = 'Sat, 26 Jul 1997 05:00:00 GMT';
+            $headers['Access-Control-Allow-Credentials'] = 'true';
+        }
+
+        return $headers;
+    }
+}
+
 if (!function_exists('current_timezone')) {
 
     /**
