@@ -910,5 +910,6 @@ return array(
     'UpdateUsersTblAddKeenKey' => $baseDir . '/resources/database/migrations/2017_03_13_042238_update_users_tbl_add_keen_key.php',
     'UpdateUsersTblAddReferreredById' => $baseDir . '/resources/database/migrations/2016_09_17_005109_update_users_tbl_add_referrered_by_id.php',
     'UpdateUsersTblAddShippingSetting' => $baseDir . '/resources/database/migrations/2016_11_12_015714_update_users_tbl_add_shipping_setting.php',
+    'UpdateUsersTblShippingDefault' => $baseDir . '/resources/database/migrations/2017_03_22_054837_update_users_tbl_shipping_default.php',
     'UsersTableSeeder' => $baseDir . '/resources/database/seeds/UsersTableSeeder.php',
 );

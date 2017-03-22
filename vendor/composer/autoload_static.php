@@ -1579,6 +1579,7 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
         'UpdateUsersTblAddKeenKey' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_13_042238_update_users_tbl_add_keen_key.php',
         'UpdateUsersTblAddReferreredById' => __DIR__ . '/../..' . '/resources/database/migrations/2016_09_17_005109_update_users_tbl_add_referrered_by_id.php',
         'UpdateUsersTblAddShippingSetting' => __DIR__ . '/../..' . '/resources/database/migrations/2016_11_12_015714_update_users_tbl_add_shipping_setting.php',
+        'UpdateUsersTblShippingDefault' => __DIR__ . '/../..' . '/resources/database/migrations/2017_03_22_054837_update_users_tbl_shipping_default.php',
         'UsersTableSeeder' => __DIR__ . '/../..' . '/resources/database/seeds/UsersTableSeeder.php',
     );
 

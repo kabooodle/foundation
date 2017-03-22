@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="user_hash" content="{{ $_auth_token }}">
     <meta name="token" content="{{ csrf_token() }}">
+    <link rel="shortcut icon" href="{{staticAsset('/favicon.ico')}}" />
+    <link rel="icon" type="image/x-icon" href="{{staticAsset('/favicon.ico')}}" />
     @stack('facebook-tags')
 
     @push('header-styles')

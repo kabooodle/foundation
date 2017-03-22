@@ -22,7 +22,7 @@
                     :states="{{ json_encode(getStateAbbrevs()) }}"
                     endpoint_submit_parcel="{{ apiRoute('shipping.parcel.store') }}"
                     endpoint_claims="{{ apiRoute('claims.index') }}"
-                    :sender_address="{{ webUser()->primaryShipFromAddress }}"
+                    :sender_address="{{ webUser()->primaryShipFromAddress ? webUser()->primaryShipFromAddress  : '{}' }}"
             ></shipping-parcel-form>
         </div>
     </div>
