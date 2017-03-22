@@ -488,7 +488,7 @@ class FlashSales extends BaseEloquentModel implements Revisionable, WatchableInt
      */
     public function canSellerListToFlashsaleAnytime($userId)
     {
-        return $this->owner->id == $userId || $this->admins->filter(function($admin) use ($userId) { return $admin->id == $userId; });
+        return $this->owner->id == $userId || $this->admins->contains(function($key, $admin) use ($userId) { return $admin->id == $userId; });
     }
 
     /**

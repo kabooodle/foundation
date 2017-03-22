@@ -27,10 +27,10 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="md-form-group">
-                    <select class="md-input" v-model="selected_account" name="account_type" data-style="btn white" data-width="100%">
-                        <option data-subtext="Always free" value="basic" :selected="selected_account == 'basic'">Basic</option>
-                        <option data-subtext="30 day free trial" value="merchant" :selected="selected_account == 'merchant'">Merchant</option>
-                        <option data-subtext="30 day free trial" value="merchant_plus" :selected="selected_account == 'merchant_plus'">Merchant Plus</option>
+                    <select class="md-input" name="account_type" data-style="btn white" data-width="100%">
+                        <option data-subtext="Always free" value="basic">Basic</option>
+                        <option data-subtext="30 day free trial" value="merchant" >Merchant</option>
+                        <option data-subtext="30 day free trial" value="merchant" selected>Merchant Plus</option>
                     </select>
                     <label>Account Type:</label>
                 </div>
@@ -79,8 +79,6 @@
         data() {
             return {
                 query_params: {},
-                selected_account: 'merchant_plus',
-                accountType: 'basic',
                 firstName: null,
                 lastName: null,
                 username: null,
@@ -115,14 +113,12 @@
                             }, { });
 
                         this.query_params = params;
-                        this.selected_account = params.a;
                     }
             },
         },
         computed: {
             registerData: function () {
                 return {
-                    'account_type' : this.accountType,
                     'first_name': this.firstName,
                     'last_name': this.lastName,
                     'username': this.username,

@@ -1,12 +1,10 @@
 <tr class="  ">
     <td>
-        <div class="avatar-thumbnail-container">
-            <div class="avatar-thumbnail _32">
+            <div class="avatar_container _32 inline avatar-thumbnail">
                 <img src="{{ $watch->watchable->listedItem->cover_photo->location }}">
             </div>
-        </div>
     </td>
-    <td class="">{{ $watch->watchable->listedItem->name }}</td>
+    <td class="">{{ $watch->watchable->listedItem->getTitle() }}</td>
     <td>{{ currency($watch->watchable->listedItem->price_usd) }}</td>
     <td>{{ $watch->watchable->listedItem->getOwner()->username }}</td>
     <td>{{ $watch->watchable->created_at->format('F jS Y g:i A') }}</td>
