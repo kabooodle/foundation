@@ -120,6 +120,7 @@
                     that.log('done uploading files.');
                 },
                 fail: function(e, data, error){
+                    that.log('failed uploading files.');
                     that.throwException(e.responseText, error);
                 },
                 always: function() {
