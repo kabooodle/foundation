@@ -7,6 +7,7 @@
 namespace Kabooodle\Http\Controllers\Api\PhoneNumbers;
 
 use Binput;
+use Bugsnag;
 use Exception;
 use Illuminate\Http\Request;
 use Kabooodle\Bus\Commands\PhoneNumbers\CheckPhoneNumberVerificationCommand;
@@ -44,7 +45,7 @@ class PhoneNumbersApiController extends AbstractApiController
     public function store(Request $request)
     {
         try {
-            $this->validate($request, PhoneNumber::getRules(), ['phone_number.digits' => 'Please enter a valid 10 digit phone number, including country code.']);
+            $this->validate($request, PhoneNumber::getRules(), ['phone_number.digits' => 'Please enter a valid 11 digit phone number, including country code.']);
             $this->dispatch(new StartNewVerificationCommand($this->getUser(), Binput::get('phone_number')));
 
             return $this->setData(['msg' => 'Verification code sent to ' . Binput::get('phone_number')])->respond();
@@ -64,7 +65,7 @@ class PhoneNumbersApiController extends AbstractApiController
     public function update(Request $request)
     {
         try {
-            $this->validate($request, PhoneNumber::getRules(), ['phone_number.digits' => 'Please enter a valid 10 digit phone number, including country code.']);
+            $this->validate($request, PhoneNumber::getRules(), ['phone_number.digits' => 'Please enter a valid 11 digit phone number, including country code.']);
 
             $model = PhoneNumber::where('user_id', $this->getUser()->id)
                 ->where('number', Binput::get('phone_number'))
