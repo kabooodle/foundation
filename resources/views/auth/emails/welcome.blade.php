@@ -1,4 +1,8 @@
-<p>Welcome to {{ env('APP_NAME') }}, {{ $user->first_name }}!! We look forward to saving you time and money when it comes to managing your direct sales business.<p>
+<p>Welcome to {{ env('APP_NAME') }}, {{ $user->first_name }}!!
+@if($user->hasAtLeastMerchantSubscription())
+    We look forward to saving you time and money when it comes to managing your direct sales business.
+@endif
+<p>
 
 <p>In order to take advantage of all {{ env('APP_NAME') }}'s great features, Please confirm your email:</p>
 <a class="btn primary btn-block p-x-md" href="{{ route('emails.verify', [$user->primaryEmail->token]) }}">Verify your email</a>

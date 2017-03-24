@@ -19,6 +19,14 @@ $api->version('v1', function ($api) {
             'as' => 'auth.login.store',
             'uses' => \Kabooodle\Http\Controllers\Api\Auth\AuthApiController::class.'@login'
         ]);
+        $api->post('auth/register', [
+            'as' => 'auth.register',
+            'uses' => \Kabooodle\Http\Controllers\Api\Auth\AuthApiController::class . '@register'
+        ]);
+        $api->post('auth/guest-convert', [
+            'as' => 'auth.guest-convert',
+            'uses' => \Kabooodle\Http\Controllers\Api\Auth\AuthApiController::class . '@guestConvert'
+        ]);
         $api->post('views', [
             'as' => 'views.store',
             'uses' => \Kabooodle\Http\Controllers\Api\Views\ViewsController::class.'@store'

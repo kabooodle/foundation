@@ -192,9 +192,6 @@ class User extends BaseEloquentModel implements
     public static function getConvertGuestRules(User $guest)
     {
         return [
-            'account_type' => 'required|in:basic,merchant,merchant_plus',
-            'first_name' => 'required',
-            'last_name' => 'required',
             'username' => 'required|min:5|max:30|unique:users,username,'.$guest->id,
             'email' => 'required|email|max:255',
             'password' => 'required|min:6',
@@ -214,6 +211,7 @@ class User extends BaseEloquentModel implements
             'city' => 'required',
             'state' => 'required',
             'zip' => 'required',
+            'phone' => 'required',
         ];
     }
 

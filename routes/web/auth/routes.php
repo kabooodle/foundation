@@ -10,6 +10,11 @@ Route::post('/auth/register', [
     'uses' => \Kabooodle\Http\Controllers\Web\Auth\AuthController::class.'@postRegister'
 ]);
 
+Route::post('/auth/guest-convert', [
+    'as' => 'auth.guest-convert',
+    'uses' => \Kabooodle\Http\Controllers\Web\Auth\AuthController::class.'@guestConvert'
+]);
+
 Route::get('/auth/login', [
     'as' => 'auth.login',
     'uses' => \Kabooodle\Http\Controllers\Web\Auth\AuthController::class.'@getLogin'

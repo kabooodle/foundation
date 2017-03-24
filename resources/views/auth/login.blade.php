@@ -7,7 +7,8 @@
     <div class="p-a-md box-color r box-shadow-z1 text-color" id="sign-in-content">
 
         <sign-in
-                sign-in-route="{{ route('auth.login.store') }}"
+                sign-in-api-endpoint="{{ apiRoute('auth.login.store') }}"
+                sign-in-web-route="{{ route('auth.login.store') }}"
                 password-reset-route="{{ route('auth.password.reset.index') }}"
                 csrf="{{ csrf_token() }}"
                 redirect="{{ $redirect or null }}"

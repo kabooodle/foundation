@@ -122,7 +122,7 @@ class AuthController extends Controller
 
             if ($email && $email->user->isGuest()) {
                 $guest = $email->user;
-                $this->validate($request, User::getConvertGuestRules($guest));
+                $this->validate($request, User::getRules($guest));
 
                 $user = $this->dispatch(new ConvertGuestToUserCommand(
                     $guest,
@@ -187,7 +187,7 @@ class AuthController extends Controller
         try {
             $this->parentLogin($request);
 
-            return redirect()->intended($request->get('/home', '/users/'.$request->username));
+            return redirect()->intended($request->get('_redirect', '/users/'.$request->username));
         } catch (\Illuminate\Validation\ValidationException $e) {
             Messages::error($e->validator->getMessageBag()->first());
 
@@ -217,6 +217,65 @@ class AuthController extends Controller
 //
 //
 //    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function guestConvert(Request $request)
+    {
+        try {
+            $email = Email::whereAddress(Binput::clean($request->get('email')))->first();
+            $redirect = Binput::get('_redirect', false);
+            if (! $redirect || $redirect == '') {
+                $redirect = '/';
+            }
+
+            $referral = $this->referralService->getReferral() ? : Binput::get('referred_by', null);
+
+            if ($email && $email->user->isGuest()) {
+                $guest = $email->user;
+                $this->validate($request, User::getConvertGuestRules($guest));
+
+                $user = $this->dispatch(new ConvertGuestToUserCommand(
+                    $guest,
+                    $email,
+                    $guest->first_name,
+                    $guest->last_name,
+                    $request->get('username'),
+                    $request->get('password'),
+                    $referral
+                ));
+            }
+
+            Auth::attempt([
+                'username' => $user->username,
+                'password' => $request->get('password')
+            ]);
+
+            event(new UserLoggedInEvent($user));
+
+            Messages::success("Welcome to ".env('APP_NAME').", {$user->username}!");
+
+            if ($redirect == '/') {
+                $redirect = route('users.show', [$user->username]);
+            }
+
+            return $this->redirect($redirect);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Messages::error($e->validator->getMessageBag()->first());
+
+            return $this->redirect(route('auth.register'))
+                ->withInput($request->all())
+                ->withErrors($e->validator->getMessageBag());
+        } catch (Exception $e) {
+            Messages::error('An error occurred, please try again.');
+
+            return $this->redirect(route('auth.register'))
+                ->withInput($request->all());
+        }
+    }
 
     /**
      * @param Request $request

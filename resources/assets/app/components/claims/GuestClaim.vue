@@ -1,9 +1,30 @@
 <template>
     <div>
         <div v-if="claimSuccess">
-            <span class="text-center text-muted">
-                Boo Yah!!
-            </span>
+            <div>
+                <p>Fantastic! The item is on hold for you for 5 minutes in order to give you time to verify the claim through the email we just sent you.</p>
+                <p>Want to track the progress of your claim? No problem. Become a Kabooodle user now in order to take advantage of that and other benefits.</p>
+            </div>
+            <form id="guest-convert-form" :action="guestConvertEndpoint" method="POST">
+                <input type="hidden" name="_token" :value="csrf">
+                <input type="hidden" name="email" :value="claimEmail">
+                <div class="md-form-group">
+                    <input v-model="username" type="text" name="username" class="md-input">
+                    <label>Username</label>
+                </div>
+
+                <div class="md-form-group">
+                    <input v-model="password" type="password" name="password" class="md-input">
+                    <label>Password</label>
+                </div>
+
+                <div class="md-form-group">
+                    <input v-model="referrer" type="text" name="referred_by" class="md-input">
+                    <label>Referred By User <small class="">(username)</small></label>
+                </div>
+
+                <button type="submit" @click.prevent="convertGuestToUser" :disabled="converting" class="btn primary btn-block p-x-md">Register<spinny v-if="converting"></spinny></button>
+            </form>
         </div>
         <div v-else>
             <div class="row">
@@ -73,14 +94,14 @@
                 <div class="col-xs-6">
                     <div class="md-form-group">
                         <input v-model="phone" type="text" name="phone" class="md-input">
-                        <label>Phone <small>(Optional)</small></label>
+                        <label>Phone</label>
                     </div>
                 </div>
             </div>
 
             <p class="">By clicking on "Claim" below, you are agreeing to the <a href="" class="text-info">Terms of Service</a> and the <a href="" class="text-info">Privacy Policy</a>.</p>
 
-            <button @click="claim" type="submit" class="btn primary btn-block p-x-md">Claim</button>
+            <button @click="claim" :disabled="claiming" class="btn primary btn-block p-x-md">Claim<spinny v-if="claiming"></spinny></button>
         </div>
     </div>
 </template>
@@ -89,15 +110,26 @@
 </style>
 <script>
     import StateInput from '../inputs/StateInput.vue';
+    import Spinny from '../Spinner.vue';
     export default {
         props: {
-            endpoint: {
+            guestClaimEndpoint: {
+                type: String,
+                required: true
+            },
+            guestConvertEndpoint: {
+                type: String,
+                required: true
+            },
+            csrf: {
                 type: String,
                 required: true
             },
         },
         data(){
             return {
+                claiming: false,
+                converting: false,
                 firstName: null,
                 lastName: null,
                 email: null,
@@ -109,6 +141,11 @@
                 zip: null,
                 phone: null,
                 claimSuccess: false,
+                claimEmail: null,
+                username: null,
+                password: null,
+                referrer: null,
+                convertSuccess: false,
                 stateOptions: [
                     {
                         "name": "Alabama",
@@ -366,16 +403,26 @@
                      'zip': this.zip,
                      'phone': this.phone,
                 }
+            },
+            guestConvertData: function () {
+                return {
+                    'email': this.claimEmail,
+                    'username': this.username,
+                    'password': this.password,
+                }
             }
         },
         methods: {
             claim: function () {
-                this.$http.post(
-                    this.endpoint,
-                    this.guestClaimData
+                var self = this;
+                self.claiming = true;
+                self.$http.post(
+                    self.guestClaimEndpoint,
+                    self.guestClaimData
                 ).then(function (response) {
-                    this.claimSuccess = true;
-                    this.$emit('success');
+                    self.claimSuccess = true;
+                    self.claimEmail = self.email;
+                    self.$emit('success');
                     notify({
                         'text': 'Verify this claim from the email we just sent you!',
                         'type': 'success'
@@ -385,8 +432,32 @@
                         'text': 'There was a problem with the information you provided. Please try again!',
                         'type': 'error'
                     });
+                }).finally(()=>{
+                    self.claiming = false;
                 });
-            }
+            },
+            convertGuestToUser: function () {
+                var self = this;
+                self.converting = true;
+                $('#guest-convert-form').submit();
+                //self.$http.post(
+                //    self.guestConvertEndpoint,
+                //    self.guestConvertData
+                //).then(function (response) {
+                //    self.convertSuccess = true;
+                //    notify({
+                //        'text': 'You are now a Kabooodle user!',
+                //        'type': 'success'
+                //    });
+                //}, function (response) {
+                //    notify({
+                //        'text': 'There was a problem with the information you provided. Please try again!',
+                //        'type': 'error'
+                //    });
+                //}).finally(()=>{
+                //    self.converting = false;
+                //});
+            },
         }
     }
 </script>

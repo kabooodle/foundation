@@ -34,6 +34,7 @@
                                 password-reset-route="{{ route('auth.password.reset.index') }}"
                                 register-route="{{ route('auth.register.store') }}"
                                 guest-claim-endpoint="{{ $guestClaimEndpoint }}"
+                                guest-convert-endpoint="{{ route('auth.guest-convert') }}"
                                 csrf="{{ csrf_token() }}"
                                 redirect="{{ $redirect }}"
                             ></check-in>

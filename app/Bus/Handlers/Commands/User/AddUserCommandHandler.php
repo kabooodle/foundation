@@ -45,7 +45,7 @@ class AddUserCommandHandler
     {
         return DB::transaction(function () use ($command) {
 
-            $referral = $this->lookupReferralByUsername($command->getReferralUsername());
+            $referral = $command->getReferralUsername() ? $this->lookupReferralByUsername($command->getReferralUsername()) : null;
 
             $user = User::factory([
                 'first_name' => $command->getFirstName(),

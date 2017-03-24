@@ -14,6 +14,7 @@ use Kabooodle\Models\User;
 use Kabooodle\Bus\Commands\User\ConvertGuestToUserCommand;
 use Kabooodle\Bus\Events\User\UserWasCreatedEvent;
 use DB;
+use Kabooodle\Services\User\UserService;
 
 /**
  * Class ConvertGuestToUserCommandHandler
@@ -24,15 +25,17 @@ class ConvertGuestToUserCommandHandler
     use DispatchesJobs;
 
     /**
-     * ConvertGuestToUserCommandHandler constructor.
-     *
-     * @param User $user
-     * @param Email $email
+     * @var UserService
      */
-    public function __construct(User $user, Email $email)
+    public $userService;
+
+    /**
+     * ConvertGuestToUserCommandHandler constructor.
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
     {
-        $this->user = $user;
-        $this->email = $email;
+        $this->userService = $userService;
     }
 
     /**
@@ -43,6 +46,7 @@ class ConvertGuestToUserCommandHandler
     public function handle(ConvertGuestToUserCommand $command)
     {
         return DB::transaction(function () use ($command) {
+            $referral = $command->getReferralUsername() ? $this->lookupReferralByUsername($command->getReferralUsername()) : null;
             $email = $command->getEmail();
 
             $user = $command->getGuest();
@@ -50,7 +54,7 @@ class ConvertGuestToUserCommandHandler
             $user->last_name = $command->getLastName();
             $user->username = $command->getUsername();
             $user->password = bcrypt($command->getPassword());
-            $user->referred_by_user_id = $command->getReferralId();
+            $user->referred_by_user_id = $referral ? $referral->id : null;
             $user->guest = false;
             $user->activated = $email->isVerified();
             $user->save();
@@ -64,10 +68,22 @@ class ConvertGuestToUserCommandHandler
             $notifications = $this->dispatchNow(new GetActiveNotifications);
             $user->notificationsettings()->saveMany($notifications);
 
-            event(new UserWasCreatedEvent($user));
+            event(new UserWasCreatedEvent($user, 'basic'));
             event(new EmailWasCreatedEvent($email));
 
             return $user;
         });
+    }
+
+    /**
+     * @param string|null $username
+     *
+     * @return mixed
+     */
+    public function lookupReferralByUsername(string $username = null)
+    {
+        $referral = $this->userService->repository->getByUsername($username);
+
+        return $referral;
     }
 }

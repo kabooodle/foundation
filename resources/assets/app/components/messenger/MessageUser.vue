@@ -61,11 +61,18 @@
         },
         methods : {
             openModal(){
-                $('#'+this.modal_id).modal({
-                    backdrop: 'static',
-                    keyboard: false,
-                    show: true
-                });
+                if (currentUser()) {
+                    $('#'+this.modal_id).modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    });
+                } else {
+                    notify({
+                        'text': 'You must be signed in in order to message this user.',
+                        'type': 'information'
+                    });
+                }
             }
         },
         components: {

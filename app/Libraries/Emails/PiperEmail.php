@@ -69,8 +69,8 @@ class PiperEmail extends AbstractEmail
                 'itemLink' => null,
                 'claimsLink' => null,
             ])
-            ->setCallable(function ($m) use ($email) {
-                $m->to($email->address)
+            ->setCallable(function ($m) use ($claim) {
+                $m->to($claim->listedItem->owner->primaryEmail->address)
                     ->subject('A new claim pending verification on '.env('APP_NAME'));
             })
             ->send();

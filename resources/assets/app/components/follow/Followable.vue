@@ -131,7 +131,7 @@
                     });
                 } else {
                     notify({
-                        'text': 'You must be signed in to '+this.follow_text.toLowerCase(),
+                        'text': 'You must be signed in in order to '+this.follow_text.toLowerCase()+'.',
                         'type': 'information'
                     });
                 }
