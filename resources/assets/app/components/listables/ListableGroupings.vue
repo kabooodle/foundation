@@ -136,20 +136,28 @@
             selectAllListables(){
                 $Bus.$emit('listings:listables:select:all');
             },
-            getListables(){
+            getListables(endpoint){
                 this.actions.fetching_listables = true;
-                this.$http.get(this.listablegroupings_endpoint).then((response)=>{
-                    this.listable_groupings = response.body.data;
-                    _.each(this.listable_groupings, (groupings)=>{
-                        _.each(groupings.subgroupings, (group)=>{
-                            _.each(group.listables, (listable)=>{
-                                this.listables.push(listable);
+                this.$http.get(endpoint ? endpoint : this.listablegroupings_endpoint).then((response)=>{
+                    let pagination = response.body.data.meta;
+                    if (response.body.data.data.length > 0) {
+                        _.each(response.body.data.data, (groupings)=>{
+                            this.listable_groupings.push(groupings);
+                            _.each(groupings.subgroupings, (group)=>{
+                                _.each(group.listables, (listable)=>{
+                                    this.listables.push(listable);
+                                })
                             })
-                        })
-                    });
-                }).finally(()=>{
+                        });
+                    }
+
                     this.actions.fetching_listables = false;
-                    $Bus.$emit('listables:fetched', this.listable_groupings);
+                    if (pagination.next_page_url) {
+                        this.getListables(pagination.next_page_url);
+                    } else {
+                        this.listable_groupings = _.sortBy(this.listable_groupings, ['name']);
+                        $Bus.$emit('listables:fetched', this.listable_groupings);
+                    }
                 });
             }
         },

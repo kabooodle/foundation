@@ -36,7 +36,7 @@ class InventoryApiController extends AbstractApiController
     /**
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
             // Begin the user inventory query.
@@ -44,48 +44,66 @@ class InventoryApiController extends AbstractApiController
             $inventory = Inventory::noEagerLoads()->active()->with(['claims', 'style', 'styleSize', 'files'])
                 ->where('user_id', '=', $this->getUser()->id)->get();
             $grouped = $inventory->groupBy('inventory_type_styles_id');
-            foreach($grouped as $styleId => $items) {
-                $groupings[$styleId] = [
-                    'name' => null,
-                    'total' => $items->sum('initial_qty'),
-                    'id' => $styleId,
-                ];
-                if ($items->count() > 0) {
-                    foreach($items as $item) {
-                        if(! $groupings[$styleId]['name']) {
-                            $groupings[$styleId]['name'] = $item->style->name;
-                        }
-                        $groupings[$styleId]['subgroupings'][$item->styleSize->id]['id'] = $item->styleSize->id;
-                        $groupings[$styleId]['subgroupings'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
-                        $groupings[$styleId]['subgroupings'][$item->styleSize->id]['name'] = $item->styleSize->name;
-                        $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] + $item->initial_qty : $item->initial_qty;
-                        $groupings[$styleId]['subgroupings'][$item->styleSize->id]['listables'][] = [
-                            'id' => $item->id,
-                            'name_uuid' => $item->name_uuid,
-                            'uuid' => $item->uuid,
-                            'name' => $item->name_with_variant,
-                            'name_alt' => $item->name,
-                            'initial_qty' => $item->initial_qty,
-                            'available_qty' => $item->available_quantity,
-                            'price_usd' => $item->price_usd,
-                            'wholesale_price_usd' => $item->wholesale_price_usd,
-                            'cover_photo' => $item->cover_photo->location,
-                            'hash_id' => $item->hash_id,
-                        ];
-                    }
 
-                    // Sort based on the order key.
-                    usort($groupings[$styleId]['subgroupings'], function ($item1, $item2) {
-                        return $item1['order'] <=> $item2['order'];
-                    });
+            // Group them together in groups of 6
+            $chunks = $grouped->chunk(10);
+
+            // Get the current page
+            $currentPage = $request->has('page') ? $request->get('page') : 1;
+
+            // Create some basic pagination data
+            $paginationData = [
+                'current_page' => $currentPage,
+                'next_page_url' =>  apiRoute('inventory.index', [webUser()->username]).'?page=' . ($currentPage + 1),
+            ];
+
+            // We the "next" chunk does not exist, set next page to null;
+            if (!isset($chunks[$currentPage-1]) || ($chunks[$currentPage-1])->count() == 0) {
+                $paginationData['next_page_url'] = null;
+            }
+
+            if (isset($chunks[$currentPage-1])) {
+                foreach($chunks[$currentPage-1] as $styleId => $items) {
+                    $groupings[$styleId] = [
+                        'name' => null,
+                        'total' => $items->sum('initial_qty'),
+                        'id' => $styleId,
+                    ];
+                    if ($items->count() > 0) {
+                        foreach($items as $item) {
+                            if(! $groupings[$styleId]['name']) {
+                                $groupings[$styleId]['name'] = $item->style->name;
+                            }
+                            $groupings[$styleId]['subgroupings'][$item->styleSize->id]['id'] = $item->styleSize->id;
+                            $groupings[$styleId]['subgroupings'][$item->styleSize->id]['order'] = $item->styleSize->sort_order;
+                            $groupings[$styleId]['subgroupings'][$item->styleSize->id]['name'] = $item->styleSize->name;
+                            $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] + $item->initial_qty : $item->initial_qty;
+                            $groupings[$styleId]['subgroupings'][$item->styleSize->id]['listables'][] = [
+                                'id' => $item->id,
+                                'name_uuid' => $item->name_uuid,
+                                'uuid' => $item->uuid,
+                                'name' => $item->name_with_variant,
+                                'name_alt' => $item->name,
+                                'initial_qty' => $item->initial_qty,
+                                'available_qty' => $item->available_quantity,
+                                'price_usd' => $item->price_usd,
+                                'wholesale_price_usd' => $item->wholesale_price_usd,
+                                'cover_photo' => $item->cover_photo->location,
+                                'hash_id' => $item->hash_id,
+                            ];
+                        }
+
+                        // Sort based on the order key.
+                        usort($groupings[$styleId]['subgroupings'], function ($item1, $item2) {
+                            return $item1['order'] <=> $item2['order'];
+                        });
+                    }
                 }
             }
 
             sort($groupings);
 
-            \Log::info('json '.json_encode($groupings));
-
-            return $this->setData($groupings)->respond();
+            return $this->setData(['data' => $groupings, 'meta' => $paginationData])->respond();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)
