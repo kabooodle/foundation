@@ -140,7 +140,7 @@
                                                     >
                                                         <span
                                                                 class="avatar_container _48 avatar-thumbnail">
-                                                              <img :src="listable.cover_photo.location">
+                                                              <img :src="listable.cover_photo">
                                                         </span>
                                                         <div class="block" style="margin: -6px 2px 0 0">
                                                             <span class="text-right" @click="removeItemFromFlashsale(listable, sale.id, $event)" ><i class="fa fa-times text-danger pointer"></i></span>
@@ -228,7 +228,7 @@
                                                         >
                                                         <span
                                                                 class="avatar_container _48 avatar-thumbnail">
-                                                              <img :src="listable.cover_photo.location">
+                                                              <img :src="listable.cover_photo">
                                                         </span>
                                                             <div class="block" style="margin: -6px 2px 0 0">
                                                                 <span class="text-right"  @click="removeItemFromAlbum(listable, album, $event)"><i class="fa fa-times text-danger pointer"></i></span>

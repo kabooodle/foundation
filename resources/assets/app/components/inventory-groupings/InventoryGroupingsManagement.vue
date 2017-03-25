@@ -151,18 +151,26 @@
             },
         },
         methods: {
-            getInventory: function () {
+            getInventory: function (endpoint) {
                 var self = this;
                 self.retrievingInventory = true;
-                this.$http.get(this.inventoryEndpoint)
+                this.$http.get(endpoint ? endpoint : this.inventoryEndpoint)
                     .then(function (response) {
-                        self.inventory.raw = response.data.data.inventory;
-                        self.inventory.groups = response.data.data.groupings;
-                    }, function (response) {
 
-                    }).finally(()=>{
+                        let pagination = response.body.data.meta;
+                        if (response.body.data.data.length > 0) {
+                            _.each(response.body.data.data, (groupings)=> {
+                                self.inventory.groups.push(groupings);
+                            });
+                        }
+
                         self.retrievingInventory = false;
-                });
+                        if (pagination.next_page_url) {
+                            this.getInventory(pagination.next_page_url);
+                        } else {
+                            self.inventory.groups = _.sortBy(self.inventory.groups, ['name']);
+                        }
+                    }, function (response) { });
             },
             showTourModal: function () {
                 $('#tour-modal').modal('show');
