@@ -121,7 +121,7 @@
                                         <div v-for="(inventory, index) in grouping.inventory"
                                             class="inline m-r-sm">
                                             <span class="avatar_container _48 avatar-thumbnail">
-                                                <img :src="inventory.cover_photo.location" >
+                                                <img :src="inventory.cover_photo" >
                                             </span>
                                             <span class="p-a-o text-sm clearfix block">
                                                 <span class="pull-left">Qty:

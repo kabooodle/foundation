@@ -21,7 +21,7 @@
                     ></followable>
                 </div>
                 <a :href="show_endpoint">
-                    <img :src="listed_item.cover_photo.location" class="img-responsive">
+                    <img :src="listed_item.cover_photo" class="img-responsive">
                 </a>
             </span>
             <div class="p-a-sm p-b-0">

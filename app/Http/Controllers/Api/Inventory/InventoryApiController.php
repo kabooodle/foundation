@@ -34,6 +34,8 @@ class InventoryApiController extends AbstractApiController
     use PaginatesTrait;
 
     /**
+     * @param Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -62,6 +64,7 @@ class InventoryApiController extends AbstractApiController
                 $paginationData['next_page_url'] = null;
             }
 
+            // Only iterate over the chunk for the page.
             if (isset($chunks[$currentPage-1])) {
                 foreach($chunks[$currentPage-1] as $styleId => $items) {
                     $groupings[$styleId] = [
