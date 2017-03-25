@@ -30,21 +30,27 @@
         };
     </script>
     <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
-    <script>KABOOODLE_APP.pusher = new Pusher('{{ env('PUSHER_KEY') }}', {
-            authEndpoint: '{{ route('webhooks.pusher') }}',
-            auth: {
-                headers: {
-                    'X-CSRF-Token': document.querySelectorAll('meta[name="token"]')[0].getAttribute('content')
+    <script>
+        try {
+            KABOOODLE_APP.pusher = new Pusher('{{ env('PUSHER_KEY') }}', {
+                authEndpoint: '{{ route('webhooks.pusher') }}',
+                auth: {
+                    headers: {
+                        'X-CSRF-Token': document.querySelectorAll('meta[name="token"]')[0].getAttribute('content')
+                    }
                 }
-            }
-        });
-        @if(env('APP_ENV') <> 'production')
+            });
+
+            @if(env('APP_ENV') <> 'production')
                 Pusher.log = function (message) {
-            if (window.console && window.console.log) {
-                window.console.log(message);
-            }
-        };
-        @endif
+                    if (window.console && window.console.log) {
+                        window.console.log(message);
+                    }
+                };
+            @endif
+        } catch(e) {
+            Bugsnag.notifyException(e);
+        }
     </script>
     @push('header-scripts')
     <script src="{{ staticAsset('/assets/js/vendor.js') }}"></script>

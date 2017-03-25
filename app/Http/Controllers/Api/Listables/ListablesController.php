@@ -40,7 +40,7 @@ class ListablesController extends AbstractApiController
             $grouped = $inventory->groupBy('inventory_type_styles_id');
 
             // Group them together in groups of 6
-            $chunks = $grouped->chunk(5);
+            $chunks = $grouped->chunk(8);
 
             // Get the current page
             $currentPage = $request->has('page') ? $request->get('page') : 1;
@@ -75,7 +75,7 @@ class ListablesController extends AbstractApiController
                             $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] = isset($groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty']) ? $groupings[$styleId]['subgroupings'][$item->styleSize->id]['total_qty'] + $item->initial_qty : $item->initial_qty;
                             $groupings[$styleId]['subgroupings'][$item->styleSize->id]['listables'][] = [
                                 'id' => $item->id,
-//                                'name_uuid' => $item->name_uuid,
+                                'name_uuid' => $item->name_uuid,
 //                                'uuid' => $item->uuid,
                                 'name' => $item->name_with_variant,
                                 'name_alt' => $item->name,
@@ -112,7 +112,7 @@ class ListablesController extends AbstractApiController
                     $groupings[$id]['subgroupings'][$item->id]['total_qty'] = $item->available_quantity;
                     $groupings[$id]['subgroupings'][$item->id]['listables'][] = [
                         'id' => $item->id,
-//                        'name_uuid' => $item->name_uuid,
+                        'name_uuid' => $item->name_uuid,
 //                        'uuid' => $item->uuid,
                         'name' => $item->name_with_variant,
                         'name_alt' => $item->name,
