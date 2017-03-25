@@ -25,7 +25,7 @@ class InventoryToAlbumMatcher {
      * @returns {number}
      */
     static scoreVariance(){
-        return 90;
+        return 86;
     }
 
     /**
@@ -36,7 +36,7 @@ class InventoryToAlbumMatcher {
         return {
             include: ["score"],
             shouldSort: true,
-            threshold: 0.3,
+            threshold: 0.4,
             location: 0,
             distance: 0,
             maxPatternLength: 100,
@@ -128,6 +128,15 @@ class InventoryToAlbumMatcher {
         return this.normalizeScore(score) >= this.constructor.scoreVariance();
     }
 
+    /**
+     *
+     * @param {number} score
+     * @returns {boolean}
+     */
+    satisfiesPerfectScore(score){
+        return this.normalizeScore(score) == 100;
+    }
+
     performSearch(){
         return new Promise((resolve)=>{
             let fuse = new Fuse(this.haystack(), this.constructor.fuseOptions());
@@ -158,12 +167,11 @@ class InventoryToAlbumMatcher {
         let match = false;
 
         // Our ideal match will always be the first key in the array of possible matches
-        // as the keys are sorted by the highest score.  We dont care about anything but this key.
         let ideal_match = found_results[0];
 
         // If we have an ideal match, we further qualify the match based on the score.
         // If its >= our MIN_SCORE, we will consider this match as our matching album.
-        if (ideal_match && this.satisfiesMinScore(ideal_match.score)) {
+        if (ideal_match && this.satisfiesPerfectScore(ideal_match.score)) {
             match = ideal_match;
         } else {
             // No ideal match, so lets search now using a different needle, just to be sure.

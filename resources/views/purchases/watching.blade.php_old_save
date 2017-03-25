@@ -27,6 +27,8 @@
                         @foreach($watching as $watch)
                             @include('purchases.partials._itemswatched', ['watch' => $watch])
                         @endforeach
+                    @else
+
                     @endif
                     </tbody>
                 </table>

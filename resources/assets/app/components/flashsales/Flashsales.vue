@@ -8,7 +8,6 @@
                 <flashsale-card
                         :flashsale="flashsale"
                         :show_endpoint="show_endpoint.replace(/::0::/, flashsale.uuid)"
-                        :watch_endpoint="watch_endpoint.replace(/::0::/, flashsale.id)"
                 ></flashsale-card>
             </div>
             <infinite-loading :distance="40" :on-infinite="fetchInfinite" ref="listingFinite">
@@ -28,10 +27,10 @@
                 required: true,
                 type: String
             },
-            watch_endpoint: {
-                required: true,
-                type: String
-            },
+//            watch_endpoint: {
+//                required: true,
+//                type: String
+//            },
             show_endpoint: {
                 required: true,
                 type: String
