@@ -104,6 +104,8 @@ class InventoryApiController extends AbstractApiController
                 }
             }
 
+            sort($groupings);
+
             return $this->setData(['data' => $groupings, 'meta' => $paginationData])->respond();
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
