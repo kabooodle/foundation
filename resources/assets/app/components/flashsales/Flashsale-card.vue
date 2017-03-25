@@ -8,17 +8,17 @@
                         class="pull-left text-u-c label danger label-md">
                     {{ flashsale.privacy }}
                 </a>
-                    <followable
-                            able_name="watchable"
-                            unfollow_text="Watching"
-                            follow_text="Watch"
-                            show_on_hover="1"
-                            btn_size_class="block pull-right label dark-white text-color btn-xs"
-                            able_type="Kabooodle\Models\Flashsales"
-                            :able_id="'' + flashsale.id"
-                            :already_following="flashsale.is_watched ? 1 : 0"
-                            :endpoint="watch_endpoint"
-                    ></followable>
+                    <!--<followable-->
+                            <!--able_name="watchable"-->
+                            <!--unfollow_text="Watching"-->
+                            <!--follow_text="Watch"-->
+                            <!--show_on_hover="1"-->
+                            <!--btn_size_class="block pull-right label dark-white text-color btn-xs"-->
+                            <!--able_type="Kabooodle\Models\Flashsales"-->
+                            <!--:able_id="'' + flashsale.id"-->
+                            <!--:already_following="flashsale.is_watched ? 1 : 0"-->
+                            <!--:endpoint="watch_endpoint"-->
+                    <!--&gt;</followable>-->
                 <template v-if="i_am_admin">
                 <br>
                 <a :href="show_endpoint+'/edit'" type="button" class="pull-right block btn show-on-overlay-hover btn-xs white"><i class="fa fa-cog"></i></a>
@@ -43,17 +43,17 @@
 <script>
     import currentUser from '../current-user';
     import Timestamp from '../Timestamp.vue';
-    import Followable from '../follow/Followable.vue';
+//    import Followable from '../follow/Followable.vue';
     export default{
         props: {
             flashsale: {
                 type: Object,
                 required: true,
             },
-            watch_endpoint: {
-                required: true,
-                type: String
-            },
+//            watch_endpoint: {
+//                required: true,
+//                type: String
+//            },
             show_endpoint: {
                 required: true,
                 type: String
@@ -86,7 +86,7 @@
         },
         components:{
             'timestamp' : Timestamp,
-            'followable' : Followable
+//            'followable' : Followable
         }
     }
 </script>

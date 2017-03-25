@@ -16,7 +16,7 @@
     <div class="row content">
         <flashsales-cards
                 fetch_endpoint="{{ apiRoute('flashsales.index') }}"
-                watch_endpoint="{{ apiRoute('flashsales.watchers.store', ['::0::']) }}"
+                {{--watch_endpoint="{{ apiRoute('flashsales.watchers.store', ['::0::']) }}"--}}
                 show_endpoint="{{ route('flashsales.show', ['::0::']) }}"
         ></flashsales-cards>
     </div>
