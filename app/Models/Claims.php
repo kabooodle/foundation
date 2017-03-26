@@ -166,7 +166,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
 
     public function scopeOnHold($query)
     {
-        return $query->whereVerified(false)->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()));
+        return $query->whereVerified(false)->whereNull('rejected_on')->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()));
     }
 
     /**
