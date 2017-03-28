@@ -34,6 +34,8 @@
     <build-flashsale
             title="Edit flash sale"
             user_hash="{{ webUser()->public_hash }}"
+            s3_bucket="{{ env('AWS_BUCKET') }}"
+            s3_key_url="public-read"
             s3_key_url="{{ apiRoute('api.files.sign') }}"
             search_endpoint="{{ apiRoute('users.search') }}"
             save_endpoint="{{ apiRoute('flashsales.update', [$flashsale->id]) }}"

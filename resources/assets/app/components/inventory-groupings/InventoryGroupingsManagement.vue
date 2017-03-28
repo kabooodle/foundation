@@ -30,6 +30,8 @@
                         :validation-errors=validationErrors[grouping.id]
                         :inventory=inventory
                         :restricted-inventory-ids=restrictedInventoryIds
+                        :s3_bucket="s3_bucket"
+                        :s3_acl="s3_acl"
                         :s3_key_url="s3_key_url"
                         v-on:duplicate-grouping="duplicateGrouping(grouping)"
                         v-on:delete-grouping="deleteGrouping(grouping, index)"
@@ -67,6 +69,14 @@
                 required: true,
             },
             inventoryEndpoint: {
+                type: String,
+                required: true,
+            },
+            s3_bucket: {
+                type: String,
+                required: true,
+            },
+            s3_acl: {
                 type: String,
                 required: true,
             },

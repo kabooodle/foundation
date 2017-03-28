@@ -74,47 +74,26 @@
 
                     that.buttonToggler(true);
                     that.$element.find(that.templateElements.progress_container).show();
-                    var hash = Math.random().toString(36).substr(2, 5);
-                    var timestamp = Math.floor(new Date().getTime() / 1000);
-                    var ajaxData = that.options.s3_key_payload;
-                    ajaxData.filename = timestamp + randomAlphaStr() + '_' + data.files[0].name;
-                    that.log(ajaxData.filename);
-                    that.jqXHRCollection.push($.ajax({
-                        url: that.options.s3_key_url,
-                        dataType: 'JSON',
-                        type: 'GET',
-                        data: ajaxData,
-                        success: function (response) {
-                            $(document).trigger('s3uploader.s3_key_retrieved', response);
-                            that.log('api.files.s3key: done', response);
-                            data.url = response.data.url;
-                            data.formData = {
-                                acl:                    response.data.acl,
-                                key:                    response.data.key,
-                                success_action_status:  201,
-                                policy:                 response.data.policy,
-                                'x-amz-credential' :    response.data.credential,
-                                'x-amz-algorithm' :     'AWS4-HMAC-SHA256',
-                                'x-amz-date':           response.data.date,
-                                'x-amz-signature':      response.data.signature
-                            };
-                            that.log(data.files[0].name);
-                            that.options.response = response;
-                            that.options.file = data.files[0];
-                            that.jqXHRCollection.push(data.submit());
-                        },
-                        fail: function (e, data, error) {
-                            that.throwException(e.responseText, error);
-                            that.log('api.files.s3key: fail', error);
+                    that.jqXHRCollection.push(S3.upload({
+                        Key: that.getKeyName(data),
+                        Bucket: that.options.s3_bucket,
+                        Body: data.files[0],
+                        ACL: that.options.s3_acl
+                    }, function (err, data) {
+                        if (err) {
+                            that.log('there was an error uploading the file: ', err.message);
+                        } else {
+                            that.log('file uploaded: ', data);
                             that.buttonToggler(false);
-                            alert(e);
+                            that.options.on_s3_upload(data);
                         }
                     }));
                 },
                 formData: {},
                 success: function (data, textStatus, jqXHR) {
-                    that.log('initiating on_s3_upload');
-                    that.options.on_s3_upload(data, textStatus, jqXHR);
+                    that.log('file uploaded');
+                    // that.log('initiating on_s3_upload');
+                    // that.options.on_s3_upload(data, textStatus, jqXHR);
                 },
                 done: function (e, data) {
                     that.log('done uploading files.');
@@ -146,6 +125,12 @@
                 that.cancelAll();
             }, that));
         },
+        
+        getKeyName: function (data) {
+            var that = this;
+            return 'resources/'+that.options.s3_key_payload.user+'/'+Math.floor(new Date().getTime() / 1000)+randomAlphaStr()+'_'+data.files[0].name.replace(' ', '_');
+        },
+        
         /**
          *
          * @param percent
@@ -294,6 +279,7 @@
         // required, can use $.fn.s3uploader.setDefaults({});
         s3_key_url: '',
         s3_bucket: '',
+        s3_acl: 'public_read',
         // optional
         s3_key_payload: {},
         fileupload_options: {},

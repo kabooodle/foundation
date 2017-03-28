@@ -11,6 +11,8 @@
                 <i class="fa fa-times" aria-hidden="true"></i>
             </button>
             <size-container
+                    :s3_bucket="s3_bucket"
+                    :s3_acl="s3_acl"
                     :s3_key_url="s3_key_url"
                     :sizings="sizings"
                     :id="size_container.id"
@@ -22,6 +24,14 @@
     import SizeContainer from './Size-Container.vue';
     export default{
         props: {
+            s3_bucket: {
+                required: true,
+                type: String
+            },
+            s3_acl: {
+                required: true,
+                type: String
+            },
             s3_key_url: {
                 required: true,
                 type: String

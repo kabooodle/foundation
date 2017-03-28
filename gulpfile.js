@@ -9,6 +9,8 @@ elixir.config.publicPath = 'public/assets/';
 elixir.config.js.folder = elixir.config.css.folder = elixir.config.css.sass.folder = '/';
 
 elixir(function (mix) {
+    mix.copy(elixir.config.assetsPath + 'vendor/aws/aws-sdk-2.32.0.min.js',
+        elixir.config.publicPath + 'js/aws-sdk-2.32.0.min.js');
 
     // Kabooodle VUE APP
     mix.browserify('app/app.js');
@@ -118,6 +120,5 @@ elixir(function (mix) {
             'vendor/theme/scripts/ui-scroll-to.js',
             'vendor/theme/scripts/ui-jp.js',
             'app/util.js'
-
-    ], elixir.config.publicPath + 'js/base.js');
+        ], elixir.config.publicPath + 'js/base.js');
 });

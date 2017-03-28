@@ -79,8 +79,10 @@
                     <div class="col-sm-offset-3 col-sm-7">
                                         <span class="pull-left add-images-btn">
                                             <image-attach
-                                                    :ukey="id"
-                                                    :s3_key_url="s3_key_url" ></image-attach>
+                                                :ukey="id"
+                                                :s3_bucket="s3_bucket"
+                                                :s3_acl="s3_acl"
+                                                :s3_key_url="s3_key_url" ></image-attach>
                                         </span>
 
                         <button type="button" class="pull-left btn add-categories-btn white btn-sm "
@@ -101,6 +103,14 @@
         props: {
             id: {
                 require: true,
+            },
+            s3_bucket: {
+                required: true,
+                type: String
+            },
+            s3_acl: {
+                required: true,
+                type: String
             },
             s3_key_url: {
                 required: true,

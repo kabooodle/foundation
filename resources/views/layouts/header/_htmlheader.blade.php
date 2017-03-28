@@ -29,6 +29,16 @@
             return staticAsset.replace('[URL]', url);
         };
     </script>
+    <script src="{{ staticAsset('/assets/js/aws-sdk-2.32.0.min.js') }}"></script>
+    <script>
+        AWS.config.update({
+            region: '{{ env('AWS_REGION') }}',
+            credentials: new AWS.Credentials({
+                accessKeyId: '{{ env('AWS_CLIENT_KEY') }}',
+                secretAccessKey: '{{ env('AWS_CLIENT_SECRET') }}'})
+        });
+        let S3 = new AWS.S3({apiVersion: '2006-03-01'});
+    </script>
     <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
     <script>
         try {

@@ -127,6 +127,12 @@
                 type: String,
                 default: currentUser() ? currentUser().public_hash : false,
             },
+            s3_bucket : {
+                required: true
+            },
+            s3_acl : {
+                required: true
+            },
             s3_key_url : {
                 required: true
             },
@@ -157,7 +163,7 @@
         data: function() {
             return {
                 image: {size: '', key: '', location : '', bucket: ''},
-                imageEl : null
+                imageEl : null,
             }
         },
         computed : {
@@ -185,6 +191,8 @@
                         debug: true,
                         save_file_model: false,
                         multiple: that.has_multiple,
+                        s3_bucket: that.s3_bucket,
+                        s3_acl: that.s3_acl,
                         s3_key_url: that.s3_key_url,
                         s3_key_payload: {
                             user: that.user_hash
@@ -198,11 +206,11 @@
 //                            }
                             var xml = $(data);
                             var responseData = {
-                                id: xml.find('Key').text(),
-                                bucket: xml.find('Bucket').text(),
-                                bucket_name: xml.find('Bucket').text(),
-                                key: xml.find('Key').text(),
-                                location: xml.find('Location').text()
+                                id: data.Key,
+                                bucket: data.Bucket,
+                                bucket_name: data.Bucket,
+                                key: data.Key,
+                                location: data.Location
                             };
 
                             responseData.json = JSON.stringify(responseData);

@@ -31,6 +31,8 @@
 @section('body-inner-content')
             <build-flashsale
                     user_hash="{{ webUser()->public_hash }}"
+                    s3_bucket="{{ env('AWS_BUCKET') }}"
+                    s3_acl="public-read"
                     s3_key_url="{{ apiRoute('api.files.sign') }}"
                     search_endpoint="{{ apiRoute('users.search') }}"
                     save_endpoint="{{ apiRoute('flashsales.store') }}"

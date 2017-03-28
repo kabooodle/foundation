@@ -138,11 +138,13 @@
                 </button>
                 <span class="pull-left m-l-sm">
                     <image-attach
-                            :disabled="processing || archiving || activating"
-                            btn-class-size=""
-                            :user_hash="item.user.public_hash"
-                            :s3_key_url="api_route"
-                            multiple="true"></image-attach>
+                        :disabled="processing || archiving || activating"
+                        btn-class-size=""
+                        :user_hash="item.user.public_hash"
+                        :s3_bucket="s3_bucket"
+                        :s3_acl="s3_acl"
+                        :s3_key_url="api_route"
+                        multiple="true"></image-attach>
                 </span>
 
                 <button
@@ -174,7 +176,7 @@
     import Spinny from  '../../Spinner.vue';
 
     export default{
-        props: ["styles", "existingimages", "item", "tags", "api_route", "archive_endpoint"],
+        props: ["styles", "existingimages", "item", "tags", "s3_bucket", "s3_acl", "api_route", "archive_endpoint"],
         data : function() {
             return {
                 processing: false,

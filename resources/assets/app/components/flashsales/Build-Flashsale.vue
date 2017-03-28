@@ -25,9 +25,11 @@
                     <template slot="input">
                         <input type="hidden" name="cover_photo" v-model="cover_photo" :value="cover_photo ? cover_photo.json : null">
                         <image-attach
-                                :s3_key_url="s3_key_url"
-                                multiple="false"
-                                :button_title="cover_photo ? 'Replace cover photo' : 'Add cover photo'"></image-attach>
+                            :s3_bucket="s3_bucket"
+                            :s3_acl="s3_acl"
+                            :s3_key_url="s3_key_url"
+                            multiple="false"
+                            :button_title="cover_photo ? 'Replace cover photo' : 'Add cover photo'"></image-attach>
                     </template>
                     <small slot="text-help" class="text-sm text-muted">
                         Recommended dimensions are <u>220px</u> tall by <u>850px</u> wide.
@@ -163,6 +165,8 @@
         </div>
 
         <build-group
+                :s3_bucket="s3_bucket"
+                :s3_acl="s3_acl"
                 :s3_key_url="s3_key_url"
                 :search_endpoint="search_endpoint"
                 :save_endpoint="group_save_endpoint"
@@ -242,6 +246,14 @@
                 default: 'Create a flash sale'
             },
             groups_endpoint: {
+                type: String
+            },
+            s3_bucket: {
+                required: true,
+                type: String
+            },
+            s3_acl: {
+                required: true,
                 type: String
             },
             s3_key_url: {

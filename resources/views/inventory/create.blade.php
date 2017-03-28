@@ -60,6 +60,8 @@
         </div>
 
         <size-containers
+                s3_bucket="{{ env('AWS_BUCKET') }}"
+                s3_acl="public-read"
                 s3_key_url="{{ apiRoute('api.files.sign') }}"
         ></size-containers>
 

@@ -148,6 +148,8 @@
                                     <span class="add-images-btn">
                                         <file-upload
                                             :ukey=grouping.id
+                                            :s3_bucket="s3_bucket"
+                                            :s3_acl="s3_acl"
                                             :s3_key_url="s3_key_url"
                                             multiple="false"
                                             :button_title="grouping.image ? 'Replace Cover Photo' : 'Add Cover Photo'"
@@ -237,6 +239,14 @@
             },
             restrictedInventoryIds: {
                 type: Array,
+            },
+            s3_bucket: {
+                type: String,
+                required: true
+            },
+            s3_acl: {
+                type: String,
+                required: true
             },
             s3_key_url: {
                 type: String,

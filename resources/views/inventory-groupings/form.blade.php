@@ -15,6 +15,8 @@
     <manager
         :edit="{{ isset($grouping) ? 1 : 0 }}"
         :edit-grouping="{{ isset($grouping) ? $grouping : '{}' }}"
+        s3_bucket="{{ env('AWS_BUCKET') }}"
+        s3_acl="public-read"
         s3_key_url="{{ apiRoute('api.files.sign') }}"
         inventory-groupings-endpoint="{{ apiRoute('inventory-groupings.index', [webUser()->username]) }}"
         inventory-endpoint="{{ apiRoute('inventory.index', [webUser()->username]) }}"

@@ -77,6 +77,14 @@
     import Spinny from '../Spinner.vue';
     export default{
         props: {
+            s3_bucket: {
+                required: true,
+                type: String
+            },
+            s3_acl: {
+                required: true,
+                type: String
+            },
             s3_key_url: {
                 required: true,
                 type: String
