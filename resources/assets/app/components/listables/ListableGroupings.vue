@@ -149,11 +149,11 @@
                         });
                     }
 
+                    this.listable_groupings = _.sortBy(this.listable_groupings, ['name']);
                     this.actions.fetching_listables = false;
                     if (pagination.next_page_url) {
                         this.getListables(pagination.next_page_url);
                     } else {
-                        this.listable_groupings = _.sortBy(this.listable_groupings, ['name']);
                         $Bus.$emit('listables:fetched', this.listable_groupings);
                     }
                 });

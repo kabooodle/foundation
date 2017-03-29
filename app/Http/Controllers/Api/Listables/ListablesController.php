@@ -36,8 +36,10 @@ class ListablesController extends AbstractApiController
             // Begin the user inventory query.
             $groupings = [];
             $inventory = Inventory::noEagerLoads()->active()->with(['claims', 'style', 'styleSize', 'files'])
-                ->where('user_id', '=', $this->getUser()->id)->get();
-            $grouped = $inventory->groupBy('inventory_type_styles_id');
+                ->where('user_id', '=', $this->getUser()->id)
+                ->orderBy('inventory_type_styles.name','asc')
+                ->get();
+            $grouped = $inventory->sortBy('style.name')->groupBy('inventory_type_styles_id');
 
             // Group them together in groups of 6
             $chunks = $grouped->chunk(8);
