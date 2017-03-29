@@ -37,7 +37,6 @@ class ListablesController extends AbstractApiController
             $groupings = [];
             $inventory = Inventory::noEagerLoads()->active()->with(['claims', 'style', 'styleSize', 'files'])
                 ->where('user_id', '=', $this->getUser()->id)
-                ->orderBy('inventory_type_styles.name','asc')
                 ->get();
             $grouped = $inventory->sortBy('style.name')->groupBy('inventory_type_styles_id');
 
