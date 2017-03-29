@@ -1,9 +1,5 @@
 <template>
     <div>
-        <div v-if="actions.fetching_listables" class="text-center center-block">
-            <spinny :size="'20'"></spinny>
-        </div>
-        <div v-if="! actions.fetching_listables" >
             <div v-if="show_select_buttons" class="text-center m-b-1 center-block">
                 <button
                         style="width: 140px"
@@ -54,6 +50,8 @@
                 :hide-unavailable="hideUnavailable"
                 :inventory-index-route=inventoryIndexRoute
             ></listable-grouping>
+        <div v-if="actions.fetching_listables" class="text-center center-block">
+            <spinny :size="'20'"></spinny>
         </div>
         <popout-overlay></popout-overlay>
     </div>
