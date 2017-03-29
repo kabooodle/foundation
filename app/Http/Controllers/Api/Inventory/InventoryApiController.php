@@ -43,7 +43,7 @@ class InventoryApiController extends AbstractApiController
         try {
             // Begin the user inventory query.
             $groupings = [];
-            $inventory = Inventory::noEagerLoad()->active()->with(['claims', 'style', 'styleSize', 'files'])
+            $inventory = Inventory::noEagerLoads()->active()->with(['claims', 'style', 'styleSize', 'files'])
                 ->where('user_id', '=', $this->getUser()->id)
                 ->get();
             $grouped = $inventory->sortBy('style.name')->groupBy('inventory_type_styles_id');
@@ -109,7 +109,6 @@ class InventoryApiController extends AbstractApiController
 
             return $this->setData(['data' => $groupings, 'meta' => $paginationData])->respond();
         } catch (Exception $e) {
-            dd($e);
             Bugsnag::notifyException($e);
             return $this->setStatusCode(500)
                 ->setData(['msg' => trans('alerts.error_generic_retry')])
