@@ -35,17 +35,46 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map(Router $router)
     {
+        $this->mapWorkerRoutes($router);
         $this->mapWebRoutes($router);
+        $this->mapApiRoutes($router);
     }
 
     /**
-     * Define the "web" routes for the application.
-     *
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    public function mapWorkerRoutes(Router $router)
+    {
+        $router->group([], function ($route) {
+            require base_path('routes/workers/routes.php');
+        });
+    }
+
+    /**
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
     protected function mapWebRoutes(Router $router)
     {
-        require_once base_path('routes/routes.php');
+        $router->group([
+            'domain' => getEnvDomain(true),
+            'middleware' => ['web'],
+        ], function ($route) {
+            require base_path('routes/web/routes.php');
+        });
+    }
+
+    /**
+     * @param  \Illuminate\Routing\Router  $router
+     * @return void
+     */
+    protected function mapApiRoutes(Router $router)
+    {
+        $router->group([
+            'domain' => 'api.'.getEnvDomain(true)
+        ], function($route){
+            require base_path('routes/api/routes.php');
+        });
     }
 }

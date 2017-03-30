@@ -46,6 +46,7 @@ $api->version('v1', function ($api) {
             'uses' => \Kabooodle\Http\Controllers\Api\Contact\ContactController::class.'@store'
         ]);
 
+        // TODO: Replace require_once to require when caching routes.
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'queues' . DIRECTORY_SEPARATOR . 'routes.php';
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'inventory' . DIRECTORY_SEPARATOR . 'routes.php';
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'inventory-groupings' . DIRECTORY_SEPARATOR . 'routes.php';

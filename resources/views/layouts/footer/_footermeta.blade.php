@@ -36,6 +36,9 @@
                     <small class="block text-xs text-muted">
                         v.{{ getAppVersion() }} @if(env('APP_ENV') <> 'production') r.{{ getReleaseVersion() }} @endif
                     </small>
+                    <small class="block text-xs text-muted">
+                        r.{{ executionTime() }}
+                    </small>
                 </div>
             </div>
         </div>

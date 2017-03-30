@@ -100,6 +100,8 @@ return array(
     'Barryvdh\\Cors\\' => array($vendorDir . '/barryvdh/laravel-cors/src'),
     'Aws\\Laravel\\' => array($vendorDir . '/aws/aws-sdk-php-laravel/src'),
     'Aws\\' => array($vendorDir . '/aws/aws-sdk-php/src'),
+    'Appstract\\Opcache\\' => array($vendorDir . '/appstract/laravel-opcache/src'),
+    'Appstract\\LushHttp\\' => array($vendorDir . '/appstract/lush-http/src'),
     'AltThree\\TestBench\\' => array($vendorDir . '/alt-three/testbench/src'),
     'AltThree\\Bus\\' => array($vendorDir . '/alt-three/bus/src'),
     'AlgoliaSearch\\Laravel\\' => array($vendorDir . '/algolia/algoliasearch-laravel/src'),

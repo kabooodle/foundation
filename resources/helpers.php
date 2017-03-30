@@ -3,6 +3,34 @@ use Carbon\Carbon;
 use Dingo\Api\Facade\API;
 use Illuminate\Contracts\Encryption\EncryptException;
 
+
+if (! function_exists('executionTime')) {
+    /**
+     * @param string $return
+     * @return string
+     */
+    function executionTime($return = 's')
+    {
+        $diff = microtime(true) - KABOOODLE_START;
+        $sec = intval($diff);
+        $micro = $diff - $sec;
+
+        $value = $micro;
+        $text = 's';
+        switch ($return) {
+            case 'm' :
+                $value = $micro * 1000;
+                $text = 'ms';
+                break;
+
+            default :
+                $value = $micro;
+                break;
+        }
+        return round($value, 3) . str_repeat('', 1) . $text;
+    }
+}
+
 if (! function_exists('jsonHeaders')) {
     /**
      * @return array

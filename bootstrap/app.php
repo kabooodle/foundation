@@ -6,8 +6,6 @@
 
 $app = new Kabooodle\Foundation\Application\KabooodleApplication(realpath(__DIR__.'/../'));
 
-//require_once __DIR__.'/kabooodle/environment.php';
-
 $app->singleton(Illuminate\Contracts\Http\Kernel::class, Kabooodle\Http\Kernel::class);
 $app->singleton(Illuminate\Contracts\Console\Kernel::class, Kabooodle\Console\Kernel::class);
 $app->singleton(Illuminate\Contracts\Debug\ExceptionHandler::class, Kabooodle\Foundation\Exceptions\Handler::class);
