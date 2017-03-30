@@ -54,7 +54,8 @@
     "jonnypickett/eloquent-sti": "^1.0",
     "spatie/laravel-newsletter": "^3.4",
     "keen-io/keen-io": "~2.5",
-    "myokyawhtun/PDFMerger": "dev-master"
+    "myokyawhtun/PDFMerger": "dev-master",
+    "appstract/laravel-opcache": "^1.0"
   },
   "require-dev": {
     "alt-three/testbench": "^1.8",

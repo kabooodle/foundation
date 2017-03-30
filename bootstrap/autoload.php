@@ -6,10 +6,9 @@
 
 define('KABOOODLE_START', microtime(true));
 
-require __DIR__.'/../resources/helpers.php';
-require __DIR__.'/../resources/model-helpers.php';
-require __DIR__.'/../vendor/autoload.php';
-
+require_once __DIR__.'/../resources/helpers.php';
+require_once __DIR__.'/../resources/model-helpers.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 $compiledPath = __DIR__.'/cache/compiled.php';
 

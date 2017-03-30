@@ -7,28 +7,22 @@
 //    dd($r, $x->getConnectionError());
 //});
 
-//Route::get('/', function(){
-//    return redirect('http://www.kabooodle.com');
-//});
 
-Route::get('/', function(){
-    if(webUser()) {
-        return redirect()->route('user.profile', [webUser()->username]);
-    }
-    return redirect('/home');
-});
+    Route::get('/', function(){
+        if(webUser()) {
+            return redirect()->route('user.profile', [webUser()->username]);
+        }
+        return redirect('/home');
+    });
 
-Route::get('/legal/privacy', function(){
-   return view('content.legal.privacy');
-});
-Route::get('/legal/terms-service', function(){
-    return view('content.legal.terms');
-});
+    Route::get('/legal/privacy', function(){
+       return view('content.legal.privacy');
+    });
+    Route::get('/legal/terms-service', function(){
+        return view('content.legal.terms');
+    });
 
-
-
-//Route::group(['domain' => getEnvDomain(true)], function(){
-
+    // TODO: Replace require_once to require when caching routes.
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'auth' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'claims' . DIRECTORY_SEPARATOR . 'routes.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'inventory' . DIRECTORY_SEPARATOR . 'routes.php';
@@ -64,4 +58,3 @@ Route::get('/legal/terms-service', function(){
         'as' => 'user.profile',
         'uses' => \Kabooodle\Http\Controllers\Web\Users\UsersController::class.'@userProfile'
     ]);
-//});

@@ -181,6 +181,7 @@ return [
         Kabooodle\Foundation\Providers\PusherServiceProvider::class,
         Nexmo\Laravel\NexmoServiceProvider::class,
         JonnyPickett\EloquentSTI\ServiceProvider::class,
+        Appstract\Opcache\OpcacheServiceProvider::class,
     ],
 
     /*
