@@ -58,7 +58,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes(Router $router)
     {
         $router->group([
-            'domain' => getEnvDomain(true),
+            'domain' => 'www.'.getEnvDomain(true),
             'middleware' => ['web'],
         ], function ($route) {
             require base_path('routes/web/routes.php');
