@@ -6,15 +6,16 @@
 
 namespace Kabooodle\Foundation\Providers;
 
-use Kabooodle\Repositories\Listings\ListingsRepository;
-use Kabooodle\Repositories\Listings\ListingsRepositoryInterface;
-use Kabooodle\Services\Listings\ListingsService;
-use Kabooodle\Services\Social\Facebook\FacebookSdkService;
-use Kabooodle\Services\User\UserService;
-use URL;
 use Illuminate\Support\ServiceProvider;
+use Kabooodle\Services\User\UserService;
 use Kabooodle\Repositories\User\UserRepository;
+use Kabooodle\Services\Listings\ListingsService;
+use Kabooodle\Repositories\Claims\ClaimsRepository;
+use Kabooodle\Repositories\Listings\ListingsRepository;
 use Kabooodle\Repositories\User\UserRepositoryInterface;
+use Kabooodle\Services\Social\Facebook\FacebookSdkService;
+use Kabooodle\Repositories\Claims\ClaimsRepositoryInterface;
+use Kabooodle\Repositories\Listings\ListingsRepositoryInterface;
 
 /**
  * Class RepositoryServiceProvider
@@ -32,6 +33,7 @@ class RepositoryServiceProvider extends ServiceProvider
         });
 
         $this->registerListingsServices();
+        $this->registerClaimsServices();
     }
 
     public function registerListingsServices()
@@ -44,5 +46,10 @@ class RepositoryServiceProvider extends ServiceProvider
                 $app->make(FacebookSdkService::class)
             );
         });
+    }
+
+    public function registerClaimsServices()
+    {
+        $this->app->bind(ClaimsRepositoryInterface::class, ClaimsRepository::class);
     }
 }

@@ -41,7 +41,7 @@ class ListablesController extends AbstractApiController
             $grouped = $inventory->sortBy('style.name')->groupBy('inventory_type_styles_id');
 
             // Group them together in groups of 6
-            $chunks = $grouped->chunk(8);
+            $chunks = $grouped->chunk(1);
 
             // Get the current page
             $currentPage = $request->has('page') ? $request->get('page') : 1;
