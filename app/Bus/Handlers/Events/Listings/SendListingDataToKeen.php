@@ -56,9 +56,8 @@ class SendListingDataToKeen implements ShouldQueue
                  'sale_morph_type' => $listing->morphedType,
                  'updated_at' => $listing->updated_at,
                  'created_at' => $listing->created_at,
-
-                 'listing_items' => $listing->listingItems,
-                 'listables' => $listing->listables,
+                 'listing_items_count' => $listing->listingItems->count(),
+                 'listables_count' => $listing->listables->count(),
                  'owner' => $listing->owner,
                  "keen" => [
                      "addons" => [
