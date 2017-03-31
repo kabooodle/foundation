@@ -6,7 +6,8 @@
 
 namespace Kabooodle\Bus\Handlers\Events\Comments;
 
-use DB;
+use Bugsnag;
+use Exception;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Comments;
 use Illuminate\Support\Collection;
@@ -16,8 +17,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Kabooodle\Models\NotificationNotices;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Kabooodle\Models\Contracts\Commentable;
-use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
 use Kabooodle\Services\Comments\CommentsService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Kabooodle\Bus\Events\Comments\CommentWasCreatedEvent;
 
 /**
  * Class CommentWasCreatedEventHandler
@@ -42,10 +44,13 @@ class CommentWasCreatedEventHandler implements ShouldQueue
 
     /**
      * @param CommentWasCreatedEvent $event
+     *
+     * @return bool
+     * @throws Exception
      */
     public function handle(CommentWasCreatedEvent $event)
     {
-        DB::transaction(function() use ($event) {
+        try {
             /** @var Comments $comment */
             $comment = $event->getComment();
 
@@ -59,12 +64,20 @@ class CommentWasCreatedEventHandler implements ShouldQueue
 
             /** @var User|Collection $usersMentioned */
             $usersMentioned = $this->checkCommentHasMentions($comment);
-            if ($usersMentioned && $usersMentioned->count() > 0){
-                foreach($usersMentioned as $userMentioned){
+            if ($usersMentioned && $usersMentioned->count() > 0) {
+                foreach ($usersMentioned as $userMentioned) {
                     $this->toMentioned($userMentioned, $commentableOwner, $comment, $commentable);
                 }
             }
-        });
+        } catch (ModelNotFoundException $e) {
+            $this->job->delete();
+
+            return true;
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+
+            throw $e;
+        }
     }
 
     /**
