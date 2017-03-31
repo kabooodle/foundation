@@ -123,8 +123,7 @@ new Vue({
             }
         },
         claimButtonClicked(slug, route, event){
-            route = route.replace('K', slug);
-            window.location = route;
+            window.location.href = route.replace('K', slug);
         },
         nameWithImg(val){
             let fields = val.split('::');

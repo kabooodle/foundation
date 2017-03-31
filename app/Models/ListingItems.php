@@ -86,7 +86,7 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
      */
     protected $attributes = [
         'uuid' => '',
-        'listing_id' => 0,
+        'listing_id' => null,
         'fb_group_node_id' => null,
         'flashsale_id' => null,
         'fb_album_node_id' => null,

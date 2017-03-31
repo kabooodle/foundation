@@ -3,7 +3,7 @@
         <div class="row-cell v-m">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    @if(user())
+                    @if(webUser())
                         {{ Form::open(['id' => 'form-save']) }}
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>

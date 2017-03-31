@@ -10,13 +10,18 @@ use DB;
 use Binput;
 use Exception;
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\Claim\ClaimListedItemCommand;
 use Kabooodle\Bus\Commands\Listables\ActivateListableCommand;
 use Kabooodle\Bus\Commands\Listables\ArchiveListableCommand;
+use Kabooodle\Bus\Commands\Listings\CreateListingItemCommand;
+use Kabooodle\Bus\Commands\User\AddGuestCommand;
 use Kabooodle\Foundation\Exceptions\Listables\ItemNotArchiveableBelongsToOutfitsException;
+use Kabooodle\Models\Email;
 use Kabooodle\Models\Inventory;
 use Kabooodle\Models\InventoryGrouping;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
+use Kabooodle\Models\User;
 
 /**
  * Class ListablesController
@@ -168,6 +173,57 @@ class ListablesController extends AbstractApiController
             return $this->setStatusCode(500)
                 ->setData(['msg' => $e->getTraceAsString()])
                 ->respond();
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param         $username
+     * @param         $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function claim(Request $request, $username, $id)
+    {
+        $listable = $this->getUser()->listables()->findOrFail($id);
+        $claimer = User::find(Binput::get('claimer_id'));
+
+        try {
+            $listingItem = $this->dispatchNow(new CreateListingItemCommand(webUser(), $listable));
+            if(!$claimer) {
+                $this->validate($request, User::getGuestRules());
+
+                // Does the email already exists in our system?
+                $email = Email::whereAddress(trim($request->get('email')))->first();
+                if ($email) {
+                    $this->dispatchNow(new ClaimListedItemCommand($email->user, $listingItem, $listingItem->listedItem, true, $email));
+                } else {
+                    $guest = $this->dispatch(new AddGuestCommand(
+                        $request->get('first_name'),
+                        $request->get('last_name'),
+                        $request->get('email'),
+                        $request->get('company'),
+                        $request->get('street1'),
+                        $request->get('street2'),
+                        $request->get('city'),
+                        $request->get('state'),
+                        $request->get('zip'),
+                        $request->get('phone')
+                    ));
+
+                    $this->dispatchNow(new ClaimListedItemCommand($guest, $listingItem, $listingItem->listedItem, true, $guest->primaryEmail));
+                }
+            }
+
+            if($listingItem && $claimer) {
+                $this->dispatchNow(new ClaimListedItemCommand($claimer, $listingItem, $listable));
+            }
+
+            return $this->setData([
+                'msg' => "Item claimed successfully!",
+            ])->respond();
+        } catch (Exception $e) {
+            return Response::json(['message' => $e->getMessage()], 500);
         }
     }
 }

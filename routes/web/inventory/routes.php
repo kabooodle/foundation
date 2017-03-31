@@ -36,4 +36,9 @@ Route::group(['middleware' => ['auth']], function () {
         'as' => 'shop.inventory.claim',
         'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryController::class.'@claim'
     ]);
+
+    Route::post('shop/{username}/inventory/{inventory}/guest-claim', [
+        'as' => 'guest.claim',
+        'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryController::class.'@guestClaim'
+    ]);
 });

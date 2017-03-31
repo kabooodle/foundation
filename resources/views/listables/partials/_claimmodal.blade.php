@@ -3,20 +3,34 @@
         <div class="row-cell v-m">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    @if(user())
+                    @if(webUser())
                         {{ Form::open(['id' => 'form-save']) }}
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h5 class="modal-title">Claim item</h5>
+                            @if(webUser()->id == $listable->owner->id)
+                                <h5 class="modal-title">Who are you claiming this item for?</h5>
+                            @else
+                                <h5 class="modal-title">Claim item</h5>
+                            @endif
                         </div>
                         <div class="modal-body">
-                            <p>By claiming you agree to the sales terms set by the seller. You understand that within
-                                24hours of no confirmation of payment by the seller, this item will be "unclaimed" and be
-                                once again available for everyone to claim.
-                                Blah blah blah.</p>
+                            @if(webUser()->id == $listable->owner->id)
+                                <owner-claim
+                                        search_endpoint="{{ apiRoute('users.search') }}"
+                                        endpoint="{{ apiRoute('listables.claims.store', [$listable->user->username, $listable->id]) }}"
+                                        claim-redirect="{{ $redirect }}"
+                                ></owner-claim>
+                            @else
+                                <p>By claiming you agree to the sales terms set by the seller. You understand that within
+                                    24hours of no confirmation of payment by the seller, this item will be "unclaimed" and be
+                                    once again available for everyone to claim.
+                                    Blah blah blah.</p>
+                            @endif
                         </div>
                         <div class="modal-footer">
-                            <button data-route="{{ $post }}" type="button" class="btn claim" id="btn_confirmed_claim">Confirm Claim!</button>
+                            @if(webUser()->id != $listable->owner->id)
+                                <button data-route="{{ $post }}" type="button" class="btn claim" id="btn_confirmed_claim">Confirm Claim!</button>
+                            @endif
                             <button type="button" class="btn white" id="btn_confirmed_claim_cancel"
                                     data-dismiss="modal">Cancel
                             </button>

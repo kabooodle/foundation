@@ -83,6 +83,7 @@
     ])
 
     @include('listables.partials._claimmodal', [
+        'listable' => $listingItem->listedItem,
         'post' => apiRoute('listings.listingitems.claims.store', [$listingItem->listing_id, $listingItem->id]),
         'guestClaimEndpoint' => apiRoute('listings.listingitems.claims.guest-store', [$listingItem->listing_id, $listingItem->id]),
         'redirect' => Request::url()

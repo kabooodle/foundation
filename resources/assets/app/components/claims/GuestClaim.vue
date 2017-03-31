@@ -80,7 +80,7 @@
 
             <p class="">By clicking on "Claim" below, you are agreeing to the <a href="" class="text-info">Terms of Service</a> and the <a href="" class="text-info">Privacy Policy</a>.</p>
 
-            <button @click="claim" type="submit" class="btn primary btn-block p-x-md">Claim</button>
+            <a @click="claim" class="btn primary btn-block p-x-md">Claim</a>
         </div>
     </div>
 </template>
