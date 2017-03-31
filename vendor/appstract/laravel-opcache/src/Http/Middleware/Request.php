@@ -21,11 +21,10 @@ class Request
      */
     public function handle($request, Closure $next)
     {
-
         // check if the source is trusted
-        if (! in_array($request->server('REMOTE_ADDR'), [$_SERVER['SERVER_ADDR'], '127.0.0.1', '::1'])) {
-            throw new AuthorizationException('This action is unauthorized.');
-        }
+//        if (! in_array($request->server('REMOTE_ADDR'), [$_SERVER['SERVER_ADDR'], '127.0.0.1', '::1'])) {
+//            throw new AuthorizationException('This action is unauthorized.');
+//        }
 
         return $next($request);
     }
