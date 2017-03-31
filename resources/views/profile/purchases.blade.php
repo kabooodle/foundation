@@ -29,7 +29,7 @@
                             <div class="avatar-thumbnail _32">
                                 <img src="{{ $claim->listedItem->cover_photo->location }}">
                             </div>
-                            <span>{{ $claim->listedItem->name_with_variant }}</span>
+                            <span>{{ $claim->listedItem->title }}</span>
                         </div>
                     </td>
                     <td>{!! $claim->present()->getClaimStatus()  !!}</td>
