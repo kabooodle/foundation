@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Http\Controllers\Web\Analytics;
 
+use Kabooodle\Services\Keen\KeenService;
 use Kabooodle\Http\Controllers\Web\Controller;
 
 /**
@@ -13,6 +14,11 @@ use Kabooodle\Http\Controllers\Web\Controller;
  */
 class AnalyticsController extends Controller
 {
+    public function __construct(KeenService $keenService)
+    {
+        $this->keenService = $keenService;
+    }
+
     public function index()
     {
         // https://github.com/keen/keen-js/blob/master/docs/dataviz/c3.md

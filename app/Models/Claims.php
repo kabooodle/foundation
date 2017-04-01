@@ -8,8 +8,8 @@ namespace Kabooodle\Models;
 
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
-use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Sofa\Revisionable\Revisionable;
+use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,7 +24,7 @@ use Kabooodle\Models\Contracts\NotificationableInterface;
  */
 class Claims extends BaseEloquentModel implements NotificationableInterface, Revisionable
 {
-    use ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
+    use ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SoftDeletes, TaggableTrait, UuidableTrait;
 
     /**
      * @var array

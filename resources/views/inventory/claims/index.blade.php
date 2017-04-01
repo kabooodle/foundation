@@ -3,17 +3,14 @@
 @section('body-content')
 
 
-    <div class="box white">
+    <div class="box white m-b-0">
         <div class="box-header">
             <h4>Claims</h4>
         </div>
-        <div class="box-divider"></div>
-        <div class="box-body">
-            <claims-index
-                    fetch_endpoint="{{ apiRoute('claims.index') }}"
-            ></claims-index>
-        </div>
     </div>
+    <claims-index
+            fetch_endpoint="{{ apiRoute('claims.index') }}"
+    ></claims-index>
 
     {{--@include('inventory.claims.partials._actionmodal')--}}
 
