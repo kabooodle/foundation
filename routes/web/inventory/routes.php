@@ -26,10 +26,6 @@ Route::group(['middleware' => ['auth']], function () {
             'as' =>'shop.inventory.archive.index',
             'uses' => \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryArchiveController::class.'@index'
         ]);
-        Route::resource('shop.claims', \Kabooodle\Http\Controllers\Web\Shop\Inventory\InventoryClaimsController::class, [
-            'only' => ['index', 'show', 'update', 'destroy'],
-            'parameters' => ['shop' => 'username'],
-        ]);
     });
 
     Route::post('shop/{username}/inventory/{inventory}/claim', [

@@ -1,5 +1,7 @@
 <?php
 
+require 'merchant_routes.php';
+
 Route::get('c/{hash}', [
     'as' => 'externalclaim.show',
     'uses' => \Kabooodle\Http\Controllers\Web\Claims\ClaimingController::class.'@show'

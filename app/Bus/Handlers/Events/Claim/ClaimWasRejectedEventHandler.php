@@ -53,7 +53,7 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
     {
         $subject = $this->subject;
         $mail = new PiperEmail;
-        $mail->setView('inventory.claims.emails.rejected_toclaimer')
+        $mail->setView('claims.emails.rejected_toclaimer')
             ->setParameters(['item' => $claim->listedItem, 'claim' => $claim])
             ->setCallable(function ($mail) use ($claimedBy, $subject) {
                 $mail->to($claimedBy->email)->subject($subject);
