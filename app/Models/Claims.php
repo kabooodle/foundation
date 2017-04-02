@@ -370,4 +370,12 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
 
         return false;
     }
+
+    /**
+     * @return mixed
+     */
+    public function owner()
+    {
+        return $this->listable->owner();
+    }
 }

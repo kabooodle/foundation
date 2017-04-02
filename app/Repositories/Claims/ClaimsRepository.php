@@ -34,7 +34,8 @@ class ClaimsRepository implements ClaimsRepositoryInterface
     {
         $query = "
             SELECT 
-            u.id, 
+            c.id,
+            u.id as user_id, 
             u.username,
             concat(u.first_name, ' ', u.last_name) as full_name,
             u.guest as is_guest,
@@ -64,7 +65,7 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             INNER JOIN listables l on l.id = c.listable_id
             INNER JOIN listing_items li on li.id = c.listing_item_id
             INNER JOIN listings as ll ON ll.id = li.listing_id
-            INNER JOIN users u on u.id = l.user_id 
+            INNER JOIN users u on u.id = c.claimed_by
             INNER JOIN emails as e on e.user_id = u.id
             INNER JOIN files as f ON f.id = l.cover_photo_file_id
             LEFT JOIN facebook_nodes as fb on fb.facebook_node_id = ll.fb_group_node_id
@@ -76,6 +77,7 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             and e.deleted_at is null
             and c.deleted_at is null
             and l.deleted_at is null
+            ORDER BY c.created_at DESC
             ";
 
         return DB::select($query, [$userId]);

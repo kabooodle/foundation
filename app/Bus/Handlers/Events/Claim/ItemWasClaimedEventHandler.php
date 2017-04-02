@@ -140,7 +140,7 @@ class ItemWasClaimedEventHandler
         $notification->payload = '';
         $notification->title = $title;
         $notification->description = '';
-        $notification->reference_url = route('shop.claims.index', [$user->username]);
+        $notification->reference_url = route('claims.index');
         $notification->save();
     }
 }

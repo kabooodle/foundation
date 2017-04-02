@@ -1,7 +1,19 @@
 @extends('layouts.full', ['contentId' => 'claims_index'])
 
-@section('body-content')
 
+@section('body-menu')
+    <div class="clearfix">
+        <div class="pull-left">
+            <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ rand(1,100) }} <span class="text-muted">Pending Claims</span></span>
+            <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ rand(1,100) }} <span class="text-muted">Total Sales</span></span>
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-sm white">Need some filter button(s) here!</button>
+        </div>
+    </div>
+@endsection
+
+@section('body-content')
 
     <div class="box white m-b-0">
         <div class="box-header">
@@ -16,13 +28,7 @@
 
     {{--@else--}}
 
-        {{--<onboard-card class="onboard-pendingclaims">--}}
-            {{--<template slot="title">No pending claims</template>--}}
-            {{--<template slot="subtext">                    When an item you have listed is claimed, it will be displayed on this page.--}}
-                {{--<br>--}}
-                {{--Decide which claims you wish to accept and treat as a completed sale,--}}
-                {{--<br> or reject it, returning the item to your inventory.</template>--}}
-        {{--</onboard-card>--}}
+
 
     {{--@endif--}}
 @endsection
