@@ -89,6 +89,8 @@
                 this.$http.get(this.fetch_endpoint).then((response) => {
                     this.claims = response.body.data;
                     this.makePagination(response.body.meta.pagination);
+                }, (response)=>{
+
                 }).finally(()=>{
                     this.actions.fetching = false;
                 });
