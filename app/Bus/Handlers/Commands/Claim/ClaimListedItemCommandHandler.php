@@ -7,6 +7,7 @@
 namespace Kabooodle\Bus\Handlers\Commands\Claim;
 
 use DB;
+use Kabooodle\Bus\Commands\Claim\AcceptClaimForClaimableItemCommand;
 use Kabooodle\Bus\Events\Claim\NewGuestClaimEvent;
 use Kabooodle\Models\Claims;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -51,11 +52,11 @@ class ClaimListedItemCommandHandler
             // Decrement the inventory item's quantity
             if ($claim->isVerified()) {
                 $command->getListedItem()->decrementInitialQty(1);
+                $this->dispatchNow(new AcceptClaimForClaimableItemCommand($claim->owner, $claim->uuid, $claim->price));
             }
 
             return $claim;
         });
-
 
         // Fire event
         if ($claim->isVerified()) {

@@ -67,7 +67,8 @@ class User extends BaseEloquentModel implements
         'full_name_with_username',
         'name',
         'email',
-        'profile_url'
+        'profile_url',
+        'user_avatar'
     ];
 
     /**
@@ -135,7 +136,6 @@ class User extends BaseEloquentModel implements
         'last_name',
         'username',
         'password',
-        'avatar',
         'invited_by_user_id',
         'trial_ends_at',
         'activated',
@@ -272,6 +272,11 @@ class User extends BaseEloquentModel implements
     public function getEmailAttribute()
     {
         return $this->primaryEmail ? $this->primaryEmail->address : null;
+    }
+
+    public function getUserAvatarAttribute()
+    {
+        return $this->avatar;
     }
 
     /**

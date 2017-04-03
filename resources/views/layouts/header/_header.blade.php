@@ -96,12 +96,9 @@
                             <a href="{{ route('merchant.listings.index') }}" class="dropdown-item {{ Request::is('merchant/listings') ? 'active' : null }}"><span>Manage Listings</span></a>
 
                             <div class="divider"></div>
-                            <a href="{{ route('shop.claims.index', [webUser()->username]) }}"
-                               class="dropdown-item {{ Request::is('shop/*/claims') ? 'active' : null }}">Pending Claims
-                                <span class="">({{ webUser()->pendingClaimsOnMyListables()->count() }})</span>
+                            <a href="{{ route('merchant.claims.index') }}"
+                               class="dropdown-item {{ Request::is('merchant/claims') ? 'active' : null }}">Claims
                             </a>
-                            <a  href="{{  route('merchant.sales.index') }}"
-                                class="dropdown-item {{ Request::is('merchant/sales*') ? 'active' : null }}"><span>Completed Sales</span></a>
 
                             @if(webUser()->isSubscribedToMerchantPlus())
                                 <div class="divider"></div>

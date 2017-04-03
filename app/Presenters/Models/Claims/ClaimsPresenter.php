@@ -42,9 +42,9 @@ class ClaimsPresenter extends PresenterAbstract
         $claim = $this->entity;
 
         // Rejected and Buyer POV?
-        if ($statusAsBuyerPov && ($claim->wasRejected() || $claim->isPending())) {
-            return '<span class=""></span>';
-        }
+//        if ($statusAsBuyerPov && ($claim->wasRejected() || $claim->isPending())) {
+//            return '<span class=""></span>';
+//        }
 
         // If we already have a shipping transaction, return the status.
         if ($claim->shipmentTransaction()) {

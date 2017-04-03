@@ -11,19 +11,21 @@
                                     @foreach($listable->getAllImages() as $key => $image)
                                         <div class="carousel-item {{ $key == 0 ? 'active' : null }}" >
                                             <img
-                                                data-toggle="lightbox"
-                                                data-remote="{{ $image->location }}"
-                                                data-gallery="gallery"
                                                 src="{{ $image->location }}"
                                             >
+                                            <p class="text-muted text-sm text-center m-b-0"
+                                               data-toggle="lightbox"
+                                               data-remote="{{ $image->location }}"
+                                               data-gallery="gallery"
+                                            >Enlarge Image <i class="fa fa-search-plus" aria-hidden="true"></i></p>
                                         </div>
                                     @endforeach
                                 </div>
-                                <a class="left carousel-control" href="#item-{{$listable->id}}-carousel" role="button" data-slide="prev">
+                                <a style="background: none;" class="left carousel-control" href="#item-{{$listable->id}}-carousel" role="button" data-slide="prev">
                                     <span class="icon-prev" aria-hidden="true"></span>
                                     <span class="sr-only">Previous</span>
                                 </a>
-                                <a class="right carousel-control" href="#item-{{$listable->id}}-carousel" role="button" data-slide="next">
+                                <a style="background: none;" class="right carousel-control" href="#item-{{$listable->id}}-carousel" role="button" data-slide="next">
                                     <span class="icon-next" aria-hidden="true"></span>
                                     <span class="sr-only">Next</span>
                                 </a>

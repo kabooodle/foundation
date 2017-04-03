@@ -8,8 +8,8 @@ namespace Kabooodle\Models;
 
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
-use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Sofa\Revisionable\Revisionable;
+use Kabooodle\Models\Traits\TaggableTrait;
 use Kabooodle\Presenters\PresentableTrait;
 use Kabooodle\Models\Traits\UuidableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,7 +24,12 @@ use Kabooodle\Models\Contracts\NotificationableInterface;
  */
 class Claims extends BaseEloquentModel implements NotificationableInterface, Revisionable
 {
-    use ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SoftDeletes, UuidableTrait;
+    use ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SoftDeletes, TaggableTrait, UuidableTrait;
+
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
 
     /**
      * @var array
@@ -136,6 +141,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
             if (!$claim->verified) {
                 $claim->token = Uuid::uuid4();
             }
+            $claim->created_at = Carbon::now();
         });
     }
 
@@ -175,6 +181,22 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function isVerified()
     {
         return (bool) $this->verified;
+    }
+
+    /**
+     * @return \Conner\Tagging\Illuminate\Database\Eloquent\Collection
+     */
+    public function labels()
+    {
+        return $this->tagged();
+    }
+
+    /**
+     * @return array
+     */
+    public function labelsArray()
+    {
+        return $this->tagged()->pluck('tag_name')->toArray();
     }
 
     /**
@@ -369,5 +391,13 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         }
 
         return false;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function owner()
+    {
+        return $this->listable->owner();
     }
 }

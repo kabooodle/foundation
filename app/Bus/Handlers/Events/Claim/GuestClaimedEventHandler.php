@@ -44,7 +44,7 @@ class GuestClaimedEventHandler
         $notification->payload = '';
         $notification->title = $title;
         $notification->description = '';
-        $notification->reference_url = route('shop.claims.index', [$owner->username]);
+        $notification->reference_url = route('claims.index');
         $notification->save();
 
         $this->mailer->sendClaimVerificationEmails($claim, $event->getEmail());

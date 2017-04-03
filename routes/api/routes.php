@@ -57,6 +57,7 @@ $api->version('v1', function ($api) {
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'follows'.DIRECTORY_SEPARATOR . 'routes.php';
 
         $api->group(['middleware' => 'jwt.auth'], function ($api) {
+            require_once __DIR__ . DIRECTORY_SEPARATOR . 'claims' . DIRECTORY_SEPARATOR . 'routes.php';
             require_once __DIR__ . DIRECTORY_SEPARATOR . 'addresses' . DIRECTORY_SEPARATOR . 'routes.php';
             require_once __DIR__ . DIRECTORY_SEPARATOR . 'emails' . DIRECTORY_SEPARATOR . 'routes.php';
             require_once __DIR__ . DIRECTORY_SEPARATOR . 'profile' . DIRECTORY_SEPARATOR . 'routes.php';

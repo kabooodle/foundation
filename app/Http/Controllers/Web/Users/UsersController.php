@@ -25,12 +25,11 @@ class UsersController extends Controller
      */
     public function userProfile(Request $request)
     {
-        $viewedUser = User::where('username', $request->username)->first();
-        if (! $viewedUser) {
-            return abort(404);
-        }
+        $data = [
+            'viewedUser' => User::where('username', $request->username)->firstOrFail(),
+        ];
 
-        return view('users.listings.index')->with(compact('viewedUser'));
+        return view('users.'. ($data['viewedUser']->hasAtLeastMerchantSubscription() ? 'listings' : 'claims'). '.index', $data);
     }
 
     public function getUser(Request $request)

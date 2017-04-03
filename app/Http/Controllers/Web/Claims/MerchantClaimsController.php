@@ -4,14 +4,12 @@
  * Copyright (c) 2017. Kabooodle,LLC <help@kabooodle.com>
  */
 
-namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
+namespace Kabooodle\Http\Controllers\Web\Claims;
 
 use Binput;
-use Kabooodle\Bus\Commands\Claim\VerifyClaimCommand;
-use Kabooodle\Services\DateFactory;
 use Response;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Kabooodle\Services\DateFactory;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
@@ -19,10 +17,9 @@ use Kabooodle\Bus\Commands\Claim\AcceptClaimForClaimableItemCommand;
 use Kabooodle\Bus\Commands\Claim\RejectClaimForClaimableItemCommand;
 
 /**
- * Class InventoryClaimsController
- * @package Kabooodle\Http\Controllers\Web\Shop\Inventory
+ * Class MerchantClaimsController
  */
-class InventoryClaimsController extends Controller
+class MerchantClaimsController extends Controller
 {
     use ObfuscatesIdTrait, PaginatesTrait;
 
@@ -40,24 +37,22 @@ class InventoryClaimsController extends Controller
     }
 
     /**
+     * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\View
      */
-    public function index(Request $request, $username)
+    public function index(Request $request)
     {
-        $data = webUser()->pendingClaimsOnMyListables;
-        $data = $this->paginateData($request, $data);
-
-        return $this->view('inventory.claims.index')->with(compact('data'));
+        return $this->view('claims.index');
     }
 
     /**
      * @param Request $request
-     * @param         $username
      * @param         $claimsUUID
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $username, $claimsUUID)
+    public function update(Request $request, $claimsUUID)
     {
         $data = webUser()->claimsOnMyListables;
         $claim = $data->filter(function ($item) use ($claimsUUID) {
@@ -82,12 +77,11 @@ class InventoryClaimsController extends Controller
 
     /**
      * @param Request $request
-     * @param         $username
      * @param         $claimsUUID
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Request $request, $username, $claimsUUID)
+    public function destroy(Request $request, $claimsUUID)
     {
         $data = webUser()->claimsOnMyListables;
         $item = $data->filter(function ($item) use ($claimsUUID) {

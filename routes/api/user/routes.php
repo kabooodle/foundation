@@ -14,3 +14,12 @@ $api->get('users/{username}/listings/{uuid}', [
     'as' => 'users.listings.show',
     'uses' => \Kabooodle\Http\Controllers\Api\User\ListingsController::class . '@show'
 ]);
+
+$api->get('users/{username}/claims', [
+    'as' => 'users.claims.index',
+    'uses' => \Kabooodle\Http\Controllers\Api\User\ClaimsController::class . '@index'
+]);
+$api->get('users/{username}/claims/{uuid}', [
+    'as' => 'users.claims.show',
+    'uses' => \Kabooodle\Http\Controllers\Api\User\ClaimsController::class . '@show'
+]);

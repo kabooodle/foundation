@@ -21,6 +21,13 @@
 @include text-wariant(dark, $dark);
 @include text-wariant(blue, $blue);
 
+.text-gray {
+  color: $min-white !important;
+}
+.text-green {
+  color: $success !important;
+}
+
 .white-on-hover:hover {
   color: #fff;
   opacity: 1;

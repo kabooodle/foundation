@@ -89,7 +89,7 @@ class ItemWasClaimedEventHandler
         $email = new KitEmail;
         $subject = $claim->listable->getTitle().' was claimed.';
         $emailAddress = $seller->primaryEmail->address;
-        $email->setView('inventory.claims.emails.claimed_toseller')
+        $email->setView('claims.emails.claimed_toseller')
             ->setParameters([
                 'item' => $listedItem,
                 'claim' => $claim,
@@ -111,7 +111,7 @@ class ItemWasClaimedEventHandler
         $email = new KitEmail;
         $subject = 'You claimed the '.$claim->listable->getTitle();
         $emailAddress = $claimer->email;
-        $email->setView('inventory.claims.emails.claimed_toclaimer')
+        $email->setView('claims.emails.claimed_toclaimer')
             ->setParameters([
                 'item' => $claim->listingItem,
                 'claim' => $claim,
@@ -140,7 +140,7 @@ class ItemWasClaimedEventHandler
         $notification->payload = '';
         $notification->title = $title;
         $notification->description = '';
-        $notification->reference_url = route('shop.claims.index', [$user->username]);
+        $notification->reference_url = route('claims.index');
         $notification->save();
     }
 }

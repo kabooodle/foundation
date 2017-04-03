@@ -53,8 +53,6 @@ class SendNewClaimToKeen
                 'listing_sale_name' => $claim->listingItem->listing->sale_name,
                 'listing_sale_type' => $claim->listingItem->listing->morphedType(),
                 'listing' => $claim->listingItem->listing, // Listing
-                'listing_item' => $claim->listingItem, // ListingItem
-                'listable' => $claim->listable, // Listable object
                 'listable_history' => $claim->listable_item_object_data, // Listable object snapshot
                 'owner' => $claim->listable->owner, // User model
                 'claimed_by' => $claim->claimedBy, // User model
