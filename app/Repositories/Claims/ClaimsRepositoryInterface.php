@@ -12,9 +12,35 @@ namespace Kabooodle\Repositories\Claims;
 interface ClaimsRepositoryInterface
 {
     /**
-     * @param int $userId
+     * @param int   $userId
+     * @param array $claimIds
      *
-     * @return array
+     * @return mixed
      */
-    public function getAllClaimsOnUserListables(int $userId);
+    public function getAllClaimsOnUserListables(int $userId, array $claimIds = []);
+
+    /**
+     * @param int   $userId
+     * @param array $claimIds
+     *
+     * @return mixed
+     */
+    public function accept(int $userId, array $claimIds);
+
+    /**
+     * @param int   $userId
+     * @param array $claimIds
+     *
+     * @return mixed
+     */
+    public function reject(int $userId, array $claimIds);
+
+    /**
+     * @param int   $userId
+     * @param array $claimIds
+     * @param array $labels
+     *
+     * @return mixed
+     */
+    public function label(int $userId, array $claimIds, array $labels);
 }

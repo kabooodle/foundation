@@ -27,6 +27,11 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     use ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SoftDeletes, TaggableTrait, UuidableTrait;
 
     /**
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * @var array
      */
     protected $appends = [
@@ -136,6 +141,7 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
             if (!$claim->verified) {
                 $claim->token = Uuid::uuid4();
             }
+            $claim->created_at = Carbon::now();
         });
     }
 
@@ -175,6 +181,22 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function isVerified()
     {
         return (bool) $this->verified;
+    }
+
+    /**
+     * @return \Conner\Tagging\Illuminate\Database\Eloquent\Collection
+     */
+    public function labels()
+    {
+        return $this->tagged();
+    }
+
+    /**
+     * @return array
+     */
+    public function labelsArray()
+    {
+        return $this->tagged()->pluck('tag_name')->toArray();
     }
 
     /**

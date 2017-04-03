@@ -46,4 +46,40 @@ class ClaimsMerchantApiController extends AbstractApiController
 
         return $this->response->paginator($this->paginateData($request, collect($claims)), new ClaimsMerchantTransformer);
     }
+
+    /**
+     * @param Request $reqest
+     *
+     * @return \Dingo\Api\Http\Response
+     */
+    public function accept(Request $reqest)
+    {
+        $claims = $this->claimsRepository->accept($this->getUser()->id, Binput::get('claims'));
+
+        return $this->response->collection(collect($claims), new ClaimsMerchantTransformer);
+    }
+
+    /**
+     * @param Request $reqest
+     *
+     * @return \Dingo\Api\Http\Response
+     */
+    public function reject(Request $reqest)
+    {
+        $claims = $this->claimsRepository->reject($this->getUser()->id, Binput::get('claims'));
+
+        return $this->response->collection(collect($claims), new ClaimsMerchantTransformer);
+    }
+
+    /**
+     * @param Request $reqest
+     *
+     * @return \Dingo\Api\Http\Response
+     */
+    public function label(Request $reqest)
+    {
+        $claims = $this->claimsRepository->label($this->getUser()->id, Binput::get('claims'), Binput::get('labels'));
+
+        return $this->response->collection(collect($claims), new ClaimsMerchantTransformer);
+    }
 }

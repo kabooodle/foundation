@@ -840,6 +840,7 @@ return array(
     'Text_Renderer' => $vendorDir . '/dompdf/dompdf/include/text_renderer.cls.php',
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
     'UpdateClaimsAddShippedManuallyColumn' => $baseDir . '/resources/database/migrations/2016_11_13_010021_update_claims_add_shipped_manually_column.php',
+    'UpdateClaimsListablesAddCurrentTimestamp' => $baseDir . '/resources/database/migrations/2017_04_03_050904_update_claims_listables_add_current_timestamp.php',
     'UpdateClaimsTableForClaimablePolymorphicRelation' => $baseDir . '/resources/database/migrations/2017_01_15_055021_update_claims_table_for_claimable_polymorphic_relation.php',
     'UpdateClaimsTblAddAcceptedCols' => $baseDir . '/resources/database/migrations/2016_09_05_061235_update_claims_tbl_add_accepted_cols.php',
     'UpdateClaimsTblAddUuid' => $baseDir . '/resources/database/migrations/2016_09_04_072643_update_claims_tbl_add_uuid.php',

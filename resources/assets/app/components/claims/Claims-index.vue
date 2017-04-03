@@ -1,45 +1,66 @@
 <template>
     <div>
+        <div class="inventory-overlay" v-if="actions.bulk_processing"></div>
         <template v-if="toggled.length">
             <div id="claims_actions_wrapper"
-            :class="toggledHasPending ? null : ' claims_actions_mini '"
+                 :class="toggledHasPending ? null : ' claims_actions_mini '"
             >
                 <div class="actions-menu">
-                            <a
-                                    v-if="toggledHasPending"
-                                    class="btn btn-sm white"
-                                    @click="bulkAccept"
-                               data-toggle="dropdown"
-                               href="#assignMenu"
-                               rel="tooltip"
-                               data-placement="bottom"
-                               title="abc"
-                               data-original-title="Assign (a)">
-                                Accept
-                            </a>
-
-                            <a class="btn btn-sm white"
-                               data-toggle="dropdown"
-                               href="#assignMenu"
-                               rel="tooltip"
-                               data-placement="bottom"
-                               @click="bulkReturn"
-                               title="abc"
-                               data-original-title="Assign (a)">
-                                Return
-                            </a>
-                            <a class="btn btn-sm white"
-                               data-toggle="dropdown"
-                               href="#assignMenu"
-                               rel="tooltip"
-                               data-placement="bottom"
-                               @click="bulkTag"
-                               title="abc"
-                               data-original-title="Assign (a)">
-                                Add Tag(s)
-                            </a>
-                    <div class="block text-muted text-center text-xs m-t-xs">
-                        {{ toggled.length }} Claims Selected
+                    <a
+                            v-if="toggledHasPending"
+                            class="btn btn-sm white"
+                            @click="bulkAccept"
+                            href="#assignMenu"
+                            :class="actions.bulk_processing ? ' disabled ' : null"
+                            :disabled="actions.bulk_processing"
+                    >
+                        Accept
+                    </a>
+                    <a
+                            class="btn btn-sm white"
+                            href="#assignMenu"
+                            @click="bulkReturn"
+                            :class="actions.bulk_processing ? ' disabled ' : null"
+                            :disabled="actions.bulk_processing"
+                    >
+                        Return
+                    </a>
+                    <a
+                            v-if="!actions.labeling"
+                            class="btn btn-sm white"
+                            href="#assignMenu"
+                            @click="toggleLabeling"
+                            :class="actions.bulk_processing ? ' disabled ' : null"
+                            :disabled="actions.bulk_processing"
+                    >
+                        Label
+                    </a>
+                    <a
+                            v-if="actions.labeling && labels"
+                            class="btn btn-sm white"
+                            href="#assignMenu"
+                            @click="bulkLabel"
+                            :class="actions.bulk_processing || label.length == 0 ? ' disabled ' : null"
+                            :disabled="actions.bulk_processing || label.length == 0"
+                    >
+                        Save
+                    </a>
+                    <div class="block text-center text-xs m-t-xs">
+                        <template v-if="actions.labeling">
+                            <multiselect
+                                    v-model="label"
+                                    :options="labels"
+                                    tag-placeholder="Add this as new label"
+                                    placeholder="Select or create a new label"
+                                    label="name"
+                                    track-by="name"
+                                    :multiple="true"
+                                    :taggable="true"
+                                    @tag="addTag"
+                            ></multiselect>
+                        </template>
+                        <span class="text-muted ">{{ toggled.length }} Claims Selected</span>
+                        <spinny v-if="actions.bulk_processing"></spinny>
                     </div>
                 </div>
             </div>
@@ -49,7 +70,7 @@
                     v-for="claim in claims"
                     :key="claim.id"
                     :data-claim-id="claim.uuid"
-                    :class="claim.is_guest ? ' b-l b-l-2x b-l-primary list-item-unread ' : null"
+                    :class="claim.accepted_claim == 1 ?  null : ' b-l b-l-2x b-l-primary list-item-unread '"
                     class="list-item b-b ">
                 <div class="list-left" :data-id="claim.id">
                     <h4 style="margin-top: 10px;"
@@ -72,27 +93,18 @@
                 </div>
                 <div class="list-body clearfix" style="margin-left: 126px;">
                     <div class="pull-md-left">
-                        <span class="_500">{{ claim.full_name }} <template v-if="claim.is_guest"><span class="_400 text-sm">(Guest)</span></template></span>
+                        <span class="_500">{{ claim.full_name }} <template v-if="claim.is_guest"><span
+                                class="_400 text-sm">(Guest)</span></template></span>
                         <span class="text-sm text-muted block">Address: {{ claim.shipping_address }}</span>
-                        <span class="text-sm text-muted block">Email: <a class="text-primary">{{ claim.email }}</a></span>
+                        <span class="text-sm text-muted block">Email: <a
+                                class="text-primary">{{ claim.email }}</a></span>
                         <span class="text-sm text-muted block">Item: <a class="text-primary">{{ claim.name_alt }} {{ claim.listable_price }}</a></span>
-                        <span class="text-sm text-muted block">Sale: <a class="text-primary">{{ claim.sale_name }}</a></span>
-                        <span class="text-sm text-muted block">Date: <timeago :timestamp="claim.claim_created_at.date"></timeago></span>
-                        <!--<span class="text-sm block">-->
-                        <!--<multiselect-->
-                        <!--:id="claim.id"-->
-                        <!--v-model="value"-->
-                        <!--@tag="addTag"-->
-                        <!--:options="options"-->
-                        <!--:taggable="true"-->
-                        <!--:multiple="true"-->
-                        <!--:close-on-select="false"-->
-                        <!--:clear-on-select="false"-->
-                        <!--:hide-selected="true"-->
-                        <!--placeholder="Pick some"-->
-                        <!--label="name"-->
-                        <!--track-by="name"></multiselect>-->
-                        <!--</span>-->
+                        <span class="text-sm text-muted block">Sale: <a
+                                class="text-primary">{{ claim.sale_name }}</a></span>
+                        <span class="text-sm text-muted block">Date: <timeago
+                                :timestamp="claim.claim_created_at.date"></timeago></span>
+                        <span v-if="claim.tag_name" class="text-sm text-muted block">Labels: <span
+                                v-html="displayLabels(claim.tag_name)"></span></span>
                     </div>
                     <div class="pull-md-right">
                         <div class="dropdown">
@@ -101,16 +113,14 @@
                                 <span class="hidden-md-up">Options</span>
                             </a>
                             <div class="dropdown-menu dropdown-over dropdown-menu-sm pull-xs-none dropdown-menu-right">
-                                <template v-if="claim.is_guest">
-                                    <a class="dropdown-item">Accept</a>
+                                <template v-if="claim.accepted_claim == 0">
+                                    <a @click="acceptClaim(claim, $event)" class="dropdown-item">Accept</a>
                                     <div class="divider"></div>
                                 </template>
                                 <a class="dropdown-item">Return</a>
                                 <a class="dropdown-item">View</a>
                             </div>
                         </div>
-                        <!--<button v-if="claim.is_guest" class="btn white btn-xs">Accept</button>-->
-                        <!--<button class="btn white btn-xs">Return</button>-->
                     </div>
                 </div>
             </div>
@@ -135,77 +145,158 @@
 <style>
     #claims_actions_wrapper {
         left: 50%;
-        max-width: 360px;
+        width: 350px;
         padding: 10px 15px;
-        opacity: 1;
         position: fixed;
         top: 130px;
-        z-index: 1020;
-        margin-left: -160px;
+        z-index: 9998;
+        margin-left: -170px;
         padding: 5px;
     }
+
     .claims_actions_mini {
-        margin-left: -108px !important;
+        width: 240px !important;
+        margin-left: -120px !important;
     }
+
     .actions-menu {
         zoom: 1;
         background: #fff;
         border: 1px solid #c1cbd4;
         border-radius: 6px;
-        box-shadow: 0 1px 7px 0 rgba(0,0,0,.08);
+        box-shadow: 0 1px 7px 0 rgba(0, 0, 0, .08);
         display: block;
         min-height: 46px;
         position: relative;
         padding: 5px;
     }
+
     .actions-menu a {
-        width: 96px;
+        width: 106px;
     }
 </style>
 <script>
     import OnboardCard from '../OnboardCard.vue';
     import InfiniteLoading from 'vue-infinite-loading';
     import Spinny from  '../Spinner.vue';
-    import Multiselect from 'vue-multiselect';
     import Timeago from "./../Timestamp.vue";
+    import Multiselect from 'vue-multiselect';
     export default{
         props: {
             fetch_endpoint: {
                 required: true,
                 type: String
-            }
+            },
+            accept_endpoint: {
+                required: true,
+                type: String
+            },
+            return_endpoint: {
+                required: true,
+                type: String
+            },
+            label_endpoint: {
+                required: true,
+                type: String
+            },
         },
         data: function () {
             return {
                 toggled: [],
-                value: [],
+                label: [],
+                labels: [
+                    {name: 'invoiced'},
+                    {name: 'paid'},
+                ],
                 claims: [],
                 pagination: {},
                 actions: {
+                    bulk_processing: false,
                     fetching: false,
+                    labeling: false,
                 },
-                options: [
-                    { name: 'Invoiced' },
-                    { name: 'Paid' },
-                    { name: 'Free' },
-                ]
             }
         },
         computed: {
             toggledHasPending(){
                 if (this.toggled.length) {
-                    return _.find(this.toggled, {accepted_claim: null});
+                    return _.find(this.toggled, {accepted_claim: 0});
                 }
 
                 return false;
             },
         },
         methods: {
-            bulkAccept(){},
-            bulkReturn(){},
-            bulkTag(){},
+            displayLabels(labels){
+                let html = '';
+                _.each(labels.split(','), (label) => {
+                    html += '<span class="label blue-grey m-r-xs">' + label + '</span>';
+                })
+
+                return html;
+            },
+
+            acceptClaim(claim){
+                this.actions.bulk_processing = true;
+                this.$http.post(this.accept_endpoint, {claims: [claim.id]}).then((response) => {
+                    this._handleResponseClaims(response.body.data);
+                }).finally(() => {
+                    this.actions.bulk_processing = false;
+                })
+            },
+
+            bulkAccept(){
+                this.actions.bulk_processing = true;
+                this.$http.post(this.accept_endpoint, {claims: _.map(this.toggled, 'id')}).then((response) => {
+                    this._handleResponseClaims(response.body.data);
+                }).finally(() => {
+                    this.actions.bulk_processing = false;
+                    this.toggled = [];
+                })
+            },
+
+            bulkReturn(){
+                confirmModal(($noty) => {
+                    this.actions.bulk_processing = true;
+                    this.$http.post(this.return_endpoint, {claims: _.map(this.toggled, 'id')}).then((response) => {
+                        this._handleResponseClaims(response.body.data);
+                    }).finally(() => {
+                        this.actions.bulk_processing = false;
+                        this.toggled = [];
+                    })
+                });
+            },
+
+            toggleLabeling(){
+                this.actions.labeling = !! this.actions.labeling == false;
+            },
+
+            bulkLabel(){
+                this.actions.bulk_processing = true;
+                this.$http.post(this.label_endpoint, {
+                    labels: _.map(this.label, 'name'),
+                    claims: _.map(this.toggled, 'id')
+                }).then((response) => {
+                    this._handleResponseClaims(response.body.data);
+                }).finally(() => {
+                    this.actions.bulk_processing = false;
+                    this.actions.labeling = false;
+                    this.toggled = [];
+                    this.label = [];
+                })
+            },
+
+            _handleResponseClaims(claims){
+                _.each(claims, (claim) => {
+                    let index = _.findIndex(this.claims, {id: claim.id});
+                    if (index > -1) {
+                        this.claims[index] = claim;
+                    }
+                });
+            },
+
             toggleClaim(claim, event){
-                let index = _.findIndex(this.toggled, {id : claim.id});
+                let index = _.findIndex(this.toggled, {id: claim.id});
                 if (index > -1) {
                     this.toggled.splice(index, 1);
                 } else {
@@ -220,7 +311,7 @@
             fetchInfinite(){
                 let url = this.pagination.next_page_url;
 
-                if (this.claims.length == 0 || ! this.claims.length) {
+                if (this.claims.length == 0 || !this.claims.length) {
                     url = this.fetch_endpoint;
                 }
 
@@ -230,7 +321,7 @@
                 if (url) {
                     this.fetchItems(url);
                 } else {
-                    this.$nextTick(()=>{
+                    this.$nextTick(() => {
                         this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
                     });
                 }
@@ -250,7 +341,7 @@
 
                 this.actions.fetching = true;
 
-                this.$http.get(url, {params: data}).then((response)=>{
+                this.$http.get(url, {params: data}).then((response) => {
                     this.handleResponse(response);
                 });
             },
@@ -264,7 +355,7 @@
                     this.claims = response.body.data;
                     $Bus.$emit('listing-filter:completed', this.claims);
                 } else {
-                    _.each(response.body.data, (a)=>{
+                    _.each(response.body.data, (a) => {
                         this.claims.push(a);
                     });
                     this.$refs.listingFinite.$emit('$InfiniteLoading:loaded');
@@ -276,7 +367,7 @@
 
                 // If we have reached the end, tell our infinite loader we're completed,
                 // otherwise, tell it we're loaded and ready for next...
-                this.$nextTick(()=>{
+                this.$nextTick(() => {
                     if (this.claims.length >= this.pagination.total) {
                         this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
                     } else {
@@ -291,7 +382,7 @@
              * Make our pagination object, based on the fetch items response.
              * @param data
              */
-            makePagination: function(data){
+            makePagination: function (data) {
                 const pagination = {
                     current_page: data.current_page,
                     last_page: data.current_page > 1 ? data.current_page - 1 : null,
@@ -306,14 +397,14 @@
                 const tag = {
                     name: newTag,
                 };
-                this.options.push(tag);
-                this.value.push(tag);
+                this.labels.push(tag);
+                this.label.push(tag);
             },
         },
         components: {
             'timeago': Timeago,
-            'spinny' : Spinny,
-            'onboard-card' : OnboardCard,
+            'spinny': Spinny,
+            'onboard-card': OnboardCard,
             Multiselect
         }
     }

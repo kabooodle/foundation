@@ -22,6 +22,9 @@
     </div>
     <claims-index
             fetch_endpoint="{{ apiRoute('claims.index') }}"
+            accept_endpoint="{{ apiRoute('claims.accept') }}"
+            return_endpoint="{{ apiRoute('claims.return') }}"
+            label_endpoint="{{ apiRoute('claims.label') }}"
     ></claims-index>
 
     {{--@include('inventory.claims.partials._actionmodal')--}}
