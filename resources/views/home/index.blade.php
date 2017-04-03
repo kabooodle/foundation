@@ -426,8 +426,3 @@
     </div>
 
 @endsection
-
-
-@push('footer-scripts')
-<script src="{{ staticAsset('/assets/js/home.js') }}"></script>
-@endpush
