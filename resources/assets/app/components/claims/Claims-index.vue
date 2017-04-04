@@ -379,6 +379,12 @@
                     this.claims = response.body.data;
                     $Bus.$emit('listing-filter:completed', this.claims);
                 } else {
+                    if (response.body.data.length == 0) {
+                        this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
+                        this.actions.fetching = false;
+                        return;
+                    }
+
                     _.each(response.body.data, (a) => {
                         this.claims.push(a);
                     });
@@ -392,7 +398,7 @@
                 // If we have reached the end, tell our infinite loader we're completed,
                 // otherwise, tell it we're loaded and ready for next...
                 this.$nextTick(() => {
-                    if (this.claims.length >= this.pagination.total) {
+                    if (this.claims.length >= this.pagination.total || this.pagination.total == 0) {
                         this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
                     } else {
                         this.$refs.listingFinite.$emit('$InfiniteLoading:loaded');
