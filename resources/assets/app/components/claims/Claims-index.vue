@@ -117,7 +117,7 @@
                                     <a @click="acceptClaim(claim, $event)" class="dropdown-item">Accept</a>
                                     <div class="divider"></div>
                                 </template>
-                                <a class="dropdown-item">Return</a>
+                                <a @click="returnClaim(claim, $event)" class="dropdown-item">Return</a>
                                 <a class="dropdown-item">View</a>
                             </div>
                         </div>
@@ -251,6 +251,21 @@
                 }).finally(() => {
                     this.actions.bulk_processing = false;
                 })
+            },
+
+            returnClaim(claim){
+                confirmModal(($noty) => {
+                    this.$http.post(this.return_endpoint, {claims: [claim.id]}).then((response) => {
+                        let index = _.findIndex(this.claims, {id: claim.id});
+                        if (index > -1) {
+                            this.claims.splice(index, 1);
+                        }
+                        this._triggerNotice();
+                    }).finally(() => {
+                        this.actions.bulk_processing = false;
+                        $noty.close();
+                    })
+                });
             },
 
             bulkAccept(){
