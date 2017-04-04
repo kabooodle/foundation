@@ -50,8 +50,8 @@
                             <multiselect
                                     v-model="label"
                                     :options="labels"
-                                    tag-placeholder="Add this as new label"
-                                    placeholder="Select or create a new label"
+                                    tag-placeholder="Add this label"
+                                    placeholder="Select or create a label"
                                     label="name"
                                     track-by="name"
                                     :multiple="true"
@@ -217,6 +217,14 @@
                 },
             }
         },
+        watch: {
+            toggled(v,o){
+                if (! v || v.length == 0) {
+                    this.actions.labeling = false;
+                    this.label = [];
+                }
+            }
+        },
         computed: {
             toggledHasPending(){
                 if (this.toggled.length) {
@@ -249,6 +257,7 @@
                 this.actions.bulk_processing = true;
                 this.$http.post(this.accept_endpoint, {claims: _.map(this.toggled, 'id')}).then((response) => {
                     this._handleResponseClaims(response.body.data);
+                    this._triggerNotice();
                 }).finally(() => {
                     this.actions.bulk_processing = false;
                     this.toggled = [];
@@ -259,10 +268,17 @@
                 confirmModal(($noty) => {
                     this.actions.bulk_processing = true;
                     this.$http.post(this.return_endpoint, {claims: _.map(this.toggled, 'id')}).then((response) => {
-                        this._handleResponseClaims(response.body.data);
+                        _.each(this.toggled, (claim) => {
+                            let index = _.findIndex(this.claims, {id: claim.id});
+                            if (index > -1) {
+                                this.claims.splice(index, 1);
+                            }
+                        });
+                        this._triggerNotice();
                     }).finally(() => {
                         this.actions.bulk_processing = false;
                         this.toggled = [];
+                        $noty.close();
                     })
                 });
             },
@@ -278,12 +294,20 @@
                     claims: _.map(this.toggled, 'id')
                 }).then((response) => {
                     this._handleResponseClaims(response.body.data);
+                    this._triggerNotice();
                 }).finally(() => {
                     this.actions.bulk_processing = false;
                     this.actions.labeling = false;
                     this.toggled = [];
                     this.label = [];
                 })
+            },
+
+            _triggerNotice(type, msg){
+                notify({
+                    type: type ? type : 'success',
+                    text: msg ? msg : 'Success'
+                });
             },
 
             _handleResponseClaims(claims){

@@ -115,13 +115,18 @@ class ClaimsRepository implements ClaimsRepositoryInterface
 
             // Accept all selected claims
             // NOTE: The only time claims are pending is when they are guest claims
-            $this->model->join('listables', 'listables.id', '=', 'claims.listable_id')
+            $claims = $this->model->join('listables', 'listables.id', '=', 'claims.listable_id')
                 ->whereIn('claims.id', $claimIds)
                 ->where('listables.user_id', '=', $userId)
-                ->update([
-                    'accepted_on' => $timestamp,
-                    'accepted' => 1,
-                ]);
+                ->select('claims.*')
+                ->get();
+
+            /** @var Claims $claim */
+            foreach ($claims as $claim){
+                $claim->accepted_on = $timestamp;
+                $claim->accepted = 1;
+                $claim->save();
+            }
 
             // Return a collection of the UPDATED models.
             return $this->getAllClaimsOnUserListables($userId, $claimIds);
@@ -137,16 +142,24 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             $timestamp = Carbon::now();
 
             // Update
-            $this->model->join('listables', 'listables.id', '=', 'claims.listable_id')
+            $claims = $this->model->join('listables', 'listables.id', '=', 'claims.listable_id')
                 ->whereIn('claims.id', $claimIds)
                 ->where('listables.user_id', '=', $userId)
-                ->update([
-                    'accepted_on' => null,
-                    'accepted_price' => null,
-                    'accepted' => 0,
-                    'rejected_on' => $timestamp,
-                    'rejected_by' => $userId,
-                ]);
+                ->select('claims.*')
+                ->get();
+
+            /** @var Claims $claim */
+            foreach ($claims as $claim) {
+                $claim->accepted_on = null;
+                $claim->accepted_price = null;
+                $claim->accepted = 0;
+                $claim->rejected_on = $timestamp;
+                $claim->rejected_by = $userId;
+                $claim->save();
+
+                $claim->listable->incrementInitialQty();
+                $claim->delete();
+            }
 
             // Return a collection of the UPDATED models.
             return $this->getAllClaimsOnUserListables($userId, $claimIds);

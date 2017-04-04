@@ -16,7 +16,7 @@ $api->post('claims/bulk/accept', [
 ]);
 $api->post('claims/bulk/return', [
     'as' => 'claims.return',
-    'uses' => ClaimsMerchantApiController::class.'@return'
+    'uses' => ClaimsMerchantApiController::class.'@reject'
 ]);
 $api->post('claims/bulk/label', [
     'as' => 'claims.label',

@@ -27,11 +27,6 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     use ObfuscatesIdTrait, PresentableTrait, RevisionableTrait, SoftDeletes, TaggableTrait, UuidableTrait;
 
     /**
-     * @var bool
-     */
-    public $timestamps = false;
-
-    /**
      * @var array
      */
     protected $appends = [
