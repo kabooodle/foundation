@@ -50,8 +50,8 @@
                             <multiselect
                                     v-model="label"
                                     :options="labels"
-                                    tag-placeholder="Add this as new label"
-                                    placeholder="Select or create a new label"
+                                    tag-placeholder="Add this label"
+                                    placeholder="Select or create a label"
                                     label="name"
                                     track-by="name"
                                     :multiple="true"
@@ -117,7 +117,7 @@
                                     <a @click="acceptClaim(claim, $event)" class="dropdown-item">Accept</a>
                                     <div class="divider"></div>
                                 </template>
-                                <a class="dropdown-item">Return</a>
+                                <a @click="returnClaim(claim, $event)" class="dropdown-item">Return</a>
                                 <a class="dropdown-item">View</a>
                             </div>
                         </div>
@@ -217,6 +217,14 @@
                 },
             }
         },
+        watch: {
+            toggled(v,o){
+                if (! v || v.length == 0) {
+                    this.actions.labeling = false;
+                    this.label = [];
+                }
+            }
+        },
         computed: {
             toggledHasPending(){
                 if (this.toggled.length) {
@@ -245,10 +253,26 @@
                 })
             },
 
+            returnClaim(claim){
+                confirmModal(($noty) => {
+                    $noty.close();
+                    this.$http.post(this.return_endpoint, {claims: [claim.id]}).then((response) => {
+                        let index = _.findIndex(this.claims, {id: claim.id});
+                        if (index > -1) {
+                            this.claims.splice(index, 1);
+                        }
+                        this._triggerNotice();
+                    }).finally(() => {
+                        this.actions.bulk_processing = false;
+                    })
+                });
+            },
+
             bulkAccept(){
                 this.actions.bulk_processing = true;
                 this.$http.post(this.accept_endpoint, {claims: _.map(this.toggled, 'id')}).then((response) => {
                     this._handleResponseClaims(response.body.data);
+                    this._triggerNotice();
                 }).finally(() => {
                     this.actions.bulk_processing = false;
                     this.toggled = [];
@@ -257,9 +281,16 @@
 
             bulkReturn(){
                 confirmModal(($noty) => {
+                    $noty.close();
                     this.actions.bulk_processing = true;
                     this.$http.post(this.return_endpoint, {claims: _.map(this.toggled, 'id')}).then((response) => {
-                        this._handleResponseClaims(response.body.data);
+                        _.each(this.toggled, (claim) => {
+                            let index = _.findIndex(this.claims, {id: claim.id});
+                            if (index > -1) {
+                                this.claims.splice(index, 1);
+                            }
+                        });
+                        this._triggerNotice();
                     }).finally(() => {
                         this.actions.bulk_processing = false;
                         this.toggled = [];
@@ -278,12 +309,20 @@
                     claims: _.map(this.toggled, 'id')
                 }).then((response) => {
                     this._handleResponseClaims(response.body.data);
+                    this._triggerNotice();
                 }).finally(() => {
                     this.actions.bulk_processing = false;
                     this.actions.labeling = false;
                     this.toggled = [];
                     this.label = [];
                 })
+            },
+
+            _triggerNotice(type, msg){
+                notify({
+                    type: type ? type : 'success',
+                    text: msg ? msg : 'Success'
+                });
             },
 
             _handleResponseClaims(claims){
@@ -355,6 +394,12 @@
                     this.claims = response.body.data;
                     $Bus.$emit('listing-filter:completed', this.claims);
                 } else {
+                    if (response.body.data.length == 0) {
+                        this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
+                        this.actions.fetching = false;
+                        return;
+                    }
+
                     _.each(response.body.data, (a) => {
                         this.claims.push(a);
                     });
@@ -368,7 +413,7 @@
                 // If we have reached the end, tell our infinite loader we're completed,
                 // otherwise, tell it we're loaded and ready for next...
                 this.$nextTick(() => {
-                    if (this.claims.length >= this.pagination.total) {
+                    if (this.claims.length >= this.pagination.total || this.pagination.total == 0) {
                         this.$refs.listingFinite.$emit('$InfiniteLoading:complete');
                     } else {
                         this.$refs.listingFinite.$emit('$InfiniteLoading:loaded');
