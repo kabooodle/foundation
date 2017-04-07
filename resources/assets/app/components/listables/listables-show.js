@@ -10,6 +10,7 @@ import Modal from '../Modal.vue';
 import Multiselect from 'vue-multiselect';
 import Spinny from '../Spinner.vue';
 import VCard from '../users/V-Card.vue';
+import OwnerClaim from '../claims/OwnerClaim.vue';
 
 new Vue({
     el: '#listable_item_show',
@@ -19,6 +20,7 @@ new Vue({
         'modal' : Modal,
         'multiselect' : Multiselect,
         'v-card' : VCard,
-        'spinny' : Spinny
+        'spinny' : Spinny,
+        'owner-claim' : OwnerClaim
     }
 });

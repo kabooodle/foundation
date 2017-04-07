@@ -39,6 +39,10 @@ $api->group(['middleware' => 'jwt.auth'], function($api) {
         'as' => 'listables.destroy',
         'uses' => \Kabooodle\Http\Controllers\Api\Listables\ListablesController::class.'@destroy'
     ]);
+    $api->post('users/{username}/listables/{id}/claims', [
+        'as' => 'listables.claims.store',
+        'uses' => \Kabooodle\Http\Controllers\Api\Listables\ListablesController::class.'@claim'
+    ]);
 
     // Comments
     $api->post('users/{username}/listables/{groupingId}/comments', [
