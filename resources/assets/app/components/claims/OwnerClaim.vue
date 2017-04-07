@@ -37,6 +37,7 @@
                     :claim-endpoint=endpoint
                     :convert-endpoint=convertEndpoint
                     :csrf=csrf
+                    :owner-claim=true
                 ></guest-claim>
             </div>
         </div>

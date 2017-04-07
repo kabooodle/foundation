@@ -222,7 +222,7 @@ class ListablesController extends AbstractApiController
                 // Does the email already exists in our system?
                 $email = Email::whereAddress(trim($request->get('email')))->first();
                 if ($email) {
-                    $this->dispatchNow(new ClaimListedItemCommand($email->user, $listingItem, $listingItem->listedItem, true, $email));
+                    $this->dispatchNow(new ClaimListedItemCommand($email->user, $listingItem, $listingItem->listedItem));
                 } else {
                     $guest = $this->dispatch(new AddGuestCommand(
                         $request->get('first_name'),
@@ -237,7 +237,7 @@ class ListablesController extends AbstractApiController
                         $request->get('phone')
                     ));
 
-                    $this->dispatchNow(new ClaimListedItemCommand($guest, $listingItem, $listingItem->listedItem, true, $guest->primaryEmail));
+                    $this->dispatchNow(new ClaimListedItemCommand($guest, $listingItem, $listingItem->listedItem));
                 }
             }
 

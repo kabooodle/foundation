@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="claimSuccess">
+        <div v-if="claimSuccess && !ownerClaim">
             <div>
                 <p>Fantastic! The item is on hold for you for 5 minutes in order to give you time to verify the claim through the email we just sent you.</p>
                 <p>Want to track the progress of your claim? No problem. Become a Kabooodle user now in order to take advantage of that and other benefits.</p>
@@ -125,6 +125,10 @@
                 type: String,
                 required: true
             },
+            ownerClaim: {
+                type: Boolean,
+                default: false
+            }
         },
         data(){
             return {
@@ -424,7 +428,7 @@
                     self.claimEmail = self.email;
                     self.$emit('success');
                     notify({
-                        'text': 'Verify this claim from the email we just sent you!',
+                        'text': !self.ownerClaim ? 'Verify this claim from the email we just sent you!' : 'Item claimed successfully!',
                         'type': 'success'
                     });
                 }, function (response) {
