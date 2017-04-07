@@ -26,6 +26,7 @@
                         able_type="{{ get_class($listing->owner) }}"
                         able_id="{{ $listing->owner->id }}"
                         :user="{{ $listing->owner }}"
+                        user-avatar="{{ $listing->owner->avatar->location }}"
                         message_endpoint="{{ apiRoute('messenger.store') }}"
                 ></v-card>
             </div>
