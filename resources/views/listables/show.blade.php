@@ -55,7 +55,7 @@
 
 
 @push('footer-scripts')
-    <script src="{{ staticAsset('/assets/js/listables-show.js') }}"></script>
+    <script src="{{ staticAsset('/assets/js/listables-show.js') }}fnz"></script>
 @endpush
 
 

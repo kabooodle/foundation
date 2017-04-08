@@ -62,8 +62,8 @@ class TrackAcceptedClaim implements ShouldQueue
                 'listing_sale_name' => $claim->listingItem->listing->sale_name,
                 'listing_sale_type' => $claim->listingItem->listing->morphedType(),
                 'listing' => $claim->listingItem->listing, // Listing
-                'listing_items_count' => $claim->listingItems->count(),
-                'listables_count' => $claim->listables->count(),
+                'listing_items_count' => $claim->listingItem->listing ? $claim->listingItem->listing->listingItems->count() : null,
+                'listables_count' => $claim->listable->count(),
                 'listable_history' => $claim->listable_item_object_data, // Listable object snapshot
                 'owner' => $claim->listable->owner, // User model
                 'claimed_by' => $claim->claimedBy, // User model

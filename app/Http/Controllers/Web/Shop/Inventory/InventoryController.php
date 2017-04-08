@@ -6,9 +6,16 @@
 
 namespace Kabooodle\Http\Controllers\Web\Shop\Inventory;
 
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Redirect;
 use Kabooodle\Bus\Commands\Claim\ClaimListedItemCommand;
+use Kabooodle\Bus\Commands\Listings\CreateListingItemCommand;
+use Kabooodle\Bus\Commands\User\AddGuestCommand;
+use Kabooodle\Foundation\Exceptions\Claim\RequestedQuantityCannotBeSatisfiedException;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 use Messages;
+use Kabooodle\Models\Email;
 use Response;
 use Binput;
 use Datatables;
@@ -186,32 +193,56 @@ class InventoryController extends Controller
 
     /**
      * @param Request $request
-     * @param         $username
-     * @param         $idAndName
+     * @param         $listingId
+     * @param         $listingItemsId
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
-    public function claim(Request $request, $username, $idAndName)
+    public function guestClaim(Request $request, $username, $idAndName)
     {
         $decryptedId = $this->obfuscateFromURIString(Binput::clean($idAndName));
         $user = User::where('username', $username)->first();
 
-        // We use the item so that we can store various meta data about it at the time of the claim.
-        // This metadata might include price, size, name, etc;  The reason we store this data with the claim,
-        // rather than just pivot to the item from the claim is because this data may change numerous time.
-        // Storing this data allows us to preserve it at the time of the claim.
-        // We remove the eager loaded relationships on inventory because most of it is unnecessary.
         $item = $user->inventory()->noEagerLoads()->with('style', 'size', 'styleSize', 'files')->find($decryptedId);
         try {
-            $this->dispatchNow(new ClaimListedItemCommand(webUser(), $item));
+            $listingItem = $this->dispatchNow(new CreateListingItemCommand(webUser(), $item));
 
-            Messages::success('Item claimed successfully!');
+            if (! $listingItem) {
+                throw new ModelNotFoundException;
+            }
 
-            return Response::json([], 200);
+            $this->validate($request, User::getGuestRules());
+
+            // Does the email already exists in our system?
+            $email = Email::whereAddress(trim($request->get('email')))->first();
+            if ($email) {
+                $this->dispatchNow(new ClaimListedItemCommand($email->user, $listingItem, $listingItem->listedItem, true, $email));
+            } else {
+                $guest = $this->dispatch(new AddGuestCommand(
+                    $request->get('first_name'),
+                    $request->get('last_name'),
+                    $request->get('email'),
+                    $request->get('company'),
+                    $request->get('street1'),
+                    $request->get('street2'),
+                    $request->get('city'),
+                    $request->get('state'),
+                    $request->get('zip'),
+                    $request->get('phone')
+                ));
+
+                $this->dispatchNow(new ClaimListedItemCommand($guest, $listingItem, $listingItem->listedItem, true, $guest->primaryEmail));
+            }
+
+            return $this->respond();
+        } catch (RequestedQuantityCannotBeSatisfiedException $e) {
+            return $this->setData(['msg' => $e->getMessage()])->setStatusCode(500)->respond();
         } catch (Exception $e) {
-            return Response::json(['message' => $e->getMessage()], 500);
+            Bugsnag::notifyException($e);
+            return $this->setData(['msg' => $e->getMessage()])->setStatusCode(500)->respond();
         }
     }
+
 
     /**
      * @param Request $request

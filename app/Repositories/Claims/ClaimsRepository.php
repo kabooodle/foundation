@@ -70,7 +70,7 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             FROM claims as c 
             INNER JOIN listables l on l.id = c.listable_id
             INNER JOIN listing_items li on li.id = c.listing_item_id
-            INNER JOIN listings as ll ON ll.id = li.listing_id
+            LEFT JOIN listings as ll ON ll.id = li.listing_id
             INNER JOIN users u on u.id = c.claimed_by
             INNER JOIN emails as e on e.user_id = u.id
             INNER JOIN files as f ON f.id = l.cover_photo_file_id
