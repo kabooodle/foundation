@@ -9,12 +9,14 @@ namespace Kabooodle\Transformers\Claims;
 use stdClass;
 use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
+use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 
 /**
  * Class ClaimsMerchantTransformer
  */
 class ClaimsMerchantTransformer extends TransformerAbstract
 {
+    use ObfuscatesIdTrait;
     /**
      * @param $claims
      *
@@ -29,6 +31,8 @@ class ClaimsMerchantTransformer extends TransformerAbstract
         $claims['rejected'] = (bool) ($claims['rejected_on'] !== null);
         $claims['profile_endpoint'] = $claims['username'] ? route('user.profile', [$claims['username']]) : false;
         $claims['claim_created_at'] = Carbon::parse($claims['claim_created_at'])->setTimezone(current_timezone());
+        $claims['listing_item_endpoint'] = route('listingitems.show', [$this->obfuscateIdToString($claims['listing_id'])]);
+        $claims['listing_endpoint'] = route('listings.show', [$claims['listing_uuid']]);
 
         return $claims;
     }

@@ -1,5 +1,10 @@
 <template>
     <div>
+        <modal
+                modal_id="claims_modal"
+        >
+            <div slot="modal_body"></div>
+        </modal>
         <div class="inventory-overlay" v-if="actions.bulk_processing"></div>
         <template v-if="toggled.length">
             <div id="claims_actions_wrapper"
@@ -86,7 +91,7 @@
                 </div>
                 <div class="list-left">
                     <div class="avatar-thumbnail-container">
-                        <div class="avatar-thumbnail _56">
+                        <div class="avatar-thumbnail _82">
                             <img :src="claim.listable_cover_photo_location">
                         </div>
                     </div>
@@ -95,12 +100,14 @@
                     <div class="pull-md-left">
                         <span class="_500">{{ claim.full_name }} <template v-if="claim.is_guest"><span
                                 class="_400 text-sm">(Guest)</span></template></span>
-                        <span class="text-sm text-muted block">Address: {{ claim.shipping_address }}</span>
-                        <span class="text-sm text-muted block">Email: <a
-                                class="text-primary">{{ claim.email }}</a></span>
-                        <span class="text-sm text-muted block">Item: <a class="text-primary">{{ claim.name_alt }} {{ claim.listable_price }}</a></span>
-                        <span class="text-sm text-muted block">Sale: <a
-                                class="text-primary">{{ claim.sale_name }}</a></span>
+                        <span class="container_address text-sm text-muted block">Address: {{ claim.shipping_address }}</span>
+                        <span class="container_email text-sm text-muted block">Email: <a :href="'mailto:'+claim.email"
+                                class="text-u-l-on-hover text-primary">{{ claim.email }}</a>
+                        <a v-if="" class="text-primary text-u-l-on-hover" :href="claim.profile_endpoint">(View Profile)</a>
+                        </span>
+                        <span class="container_item text-sm text-muted block">Item: <a :href="claim.listing_item_endpoint" class="text-u-l-on-hover text-primary">{{ claim.name_alt }} {{ claim.listable_price }}</a></span>
+                        <span class="container_sale text-sm text-muted block">Sale: <a :href="claim.listing_endpoint"
+                                class="text-u-l-on-hover text-primary">{{ claim.sale_name }}</a></span>
                         <span class="text-sm text-muted block">Date: <timeago
                                 :timestamp="claim.claim_created_at.date"></timeago></span>
                         <span v-if="claim.tag_name" class="text-sm text-muted block">Labels: <span
@@ -153,12 +160,10 @@
         margin-left: -170px;
         padding: 5px;
     }
-
     .claims_actions_mini {
         width: 240px !important;
         margin-left: -120px !important;
     }
-
     .actions-menu {
         zoom: 1;
         background: #fff;
@@ -170,12 +175,12 @@
         position: relative;
         padding: 5px;
     }
-
     .actions-menu a {
         width: 106px;
     }
 </style>
 <script>
+    import Modal from '../Modal.vue';
     import OnboardCard from '../OnboardCard.vue';
     import InfiniteLoading from 'vue-infinite-loading';
     import Spinny from  '../Spinner.vue';
@@ -450,6 +455,7 @@
             'timeago': Timeago,
             'spinny': Spinny,
             'onboard-card': OnboardCard,
+            'modal' : Modal,
             Multiselect
         }
     }
