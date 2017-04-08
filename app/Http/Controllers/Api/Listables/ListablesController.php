@@ -8,6 +8,7 @@ namespace Kabooodle\Http\Controllers\Api\Listables;
 
 use Bugsnag;
 use Exception;
+use Response;
 use Illuminate\Http\Request;
 use Kabooodle\Bus\Commands\Claim\ClaimListedItemCommand;
 use Kabooodle\Bus\Commands\Listables\ActivateListableCommand;
@@ -211,10 +212,10 @@ class ListablesController extends AbstractApiController
      */
     public function claim(Request $request, $username, $id)
     {
-        $listable = $this->getUser()->listables()->findOrFail($id);
-        $claimer = User::find(Binput::get('claimer_id'));
-
         try {
+            $listable = $this->getUser()->listables()->findOrFail($id);
+            $claimer = User::find(Binput::get('claimer_id'));
+
             $listingItem = $this->dispatchNow(new CreateListingItemCommand(webUser(), $listable));
             if(!$claimer) {
                 $this->validate($request, User::getGuestRules());
@@ -249,7 +250,8 @@ class ListablesController extends AbstractApiController
                 'msg' => "Item claimed successfully!",
             ])->respond();
         } catch (Exception $e) {
-            return Response::json(['message' => $e->getMessage()], 500);
+//            return Response::json(['msg' => trans('alerts.error_generic_retry')], 500);
+            return Response::json(['msg' => $e->getTraceAsString()], 500);
         }
     }
 }

@@ -260,7 +260,7 @@
 
             returnClaim(claim){
                 confirmModal(($noty) => {
-                    $noty.close();
+                    this._disableNotyButtons($noty);
                     this.$http.post(this.return_endpoint, {claims: [claim.id]}).then((response) => {
                         let index = _.findIndex(this.claims, {id: claim.id});
                         if (index > -1) {
@@ -269,6 +269,7 @@
                         this._triggerNotice();
                     }).finally(() => {
                         this.actions.bulk_processing = false;
+                        $noty.close();
                     })
                 });
             },
@@ -286,7 +287,7 @@
 
             bulkReturn(){
                 confirmModal(($noty) => {
-                    $noty.close();
+                    this._disableNotyButtons($noty);
                     this.actions.bulk_processing = true;
                     this.$http.post(this.return_endpoint, {claims: _.map(this.toggled, 'id')}).then((response) => {
                         _.each(this.toggled, (claim) => {
@@ -299,6 +300,7 @@
                     }).finally(() => {
                         this.actions.bulk_processing = false;
                         this.toggled = [];
+                        $noty.close();
                     })
                 });
             },
@@ -321,6 +323,10 @@
                     this.toggled = [];
                     this.label = [];
                 })
+            },
+
+            _disableNotyButtons($noty){
+                $noty.$buttons.find('.noty-btn-primary').html(spinny()).end().find('.noty-btn').addClass('disabled').prop('disabled', true);
             },
 
             _triggerNotice(type, msg){
