@@ -103,11 +103,15 @@
                         <span class="container_address text-sm text-muted block">Address: {{ claim.shipping_address }}</span>
                         <span class="container_email text-sm text-muted block">Email: <a :href="'mailto:'+claim.email"
                                 class="text-u-l-on-hover text-primary">{{ claim.email }}</a>
-                        <a v-if="" class="text-primary text-u-l-on-hover" :href="claim.profile_endpoint">(View Profile)</a>
+                        <a v-if="!claim.is_guest" class="text-primary text-u-l-on-hover" :href="claim.profile_endpoint">(View Profile)</a>
                         </span>
                         <span class="container_item text-sm text-muted block">Item: <a :href="claim.listing_item_endpoint" class="text-u-l-on-hover text-primary">{{ claim.name_alt }} {{ claim.listable_price }}</a></span>
-                        <span class="container_sale text-sm text-muted block">Sale: <a :href="claim.listing_endpoint"
-                                class="text-u-l-on-hover text-primary">{{ claim.sale_name }}</a></span>
+                        <span class="container_sale text-sm text-muted block">Sale:
+                            <template v-if="claim.sale_name != 'Claimed manually'">
+                                <a :href="claim.listing_endpoint" class="text-u-l-on-hover text-primary">{{ claim.sale_name }}</a>
+                            </template>
+                            <template v-else><i>{{ claim.sale_name }}</i></template>
+                        </span>
                         <span class="text-sm text-muted block">Date: <timeago
                                 :timestamp="claim.claim_created_at.date"></timeago></span>
                         <span v-if="claim.tag_name" class="text-sm text-muted block">Labels: <span
