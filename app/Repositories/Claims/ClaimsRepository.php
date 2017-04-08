@@ -63,13 +63,14 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             e.address as email,
             concat(a.street1, ', ', IFNULL(a.street2, ''), a.city, ', ', a.state, ' ', a.zip) as shipping_address,
             ifnull(fb.facebook_node_name, fs.name)  as sale_name,
-            ll.id as listing_id,
+            li.id as listing_id,
+            ll.uuid as listing_uuid,
             group_concat(tt.tag_name SEPARATOR ',') as tag_name,
             group_concat(tt.tag_slug SEPARATOR ',') as tag_slug
             FROM claims as c 
             INNER JOIN listables l on l.id = c.listable_id
             INNER JOIN listing_items li on li.id = c.listing_item_id
-            INNER JOIN listings as ll ON ll.id = li.listing_id
+            LEFT JOIN listings as ll ON ll.id = li.listing_id
             INNER JOIN users u on u.id = c.claimed_by
             INNER JOIN emails as e on e.user_id = u.id
             INNER JOIN files as f ON f.id = l.cover_photo_file_id

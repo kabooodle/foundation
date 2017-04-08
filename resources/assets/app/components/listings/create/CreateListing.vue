@@ -46,9 +46,9 @@
         <div class="box white">
 
             <steps
-                    :current_step="selected.step"
-                    :selected_listables_count="selected.listables.length"
-                    :selected_sales_count="selected.sales.length"
+                :current_step="selected.step"
+                :selected_listables_count="selected.listables.length"
+                :selected_sales_count="selected.sales.length"
             ></steps>
 
             <div class="box-body">
@@ -193,48 +193,72 @@
                                         </div>
                                     </div>
                                     <div class="form-group m-t-1" v-if="selected.sale.sale_id">
-                                        <label v-if="selected.listables.length" class="control-label">Select an album below to add all {{ selected.listables.length}} items into</label>
-                                        <div class="m-b-sm" v-for="album in postables.facebookgroups[_.findIndex(postables.facebookgroups, {id: selected.sale.sale_id})].albums" >
+                                        <div class="box white m-t-1" v-if="selected.sale.sale_id">
+                                            <div class="box-header">
+                                                <label class="control-label">{{ notMatchedListablesText }}</label>
+                                                <a
+                                                    v-show="selected.listables.length"
+                                                    v-html="showToBeMatched ? 'Hide' : 'View'"
+                                                    href="javascript:;"
+                                                    @click.prevent="showToBeMatched = !showToBeMatched"
+                                                    class="text-primary text-sm">Hide</a>
+                                            </div>
+                                            <div class="box-body" v-show="showToBeMatched">
+                                                <draggable
+                                                    id="to-be-matched"
+                                                    class="drag-area"
+                                                    v-model="selected.listables"
+                                                    :options="{group: 'listables'}"
+                                                >
+                                                    <listable
+                                                        v-for="listable in selected.listables" :key="listable.id"
+                                                        :listable="listable"
+                                                        v-on:remove-item="removeItemFromSelected(listable)"
+                                                    ></listable>
+                                                </draggable>
+                                            </div>
+                                        </div>
+                                        <div class="m-b-sm album" v-for="album in postables.facebookgroups[_.findIndex(postables.facebookgroups, {id: selected.sale.sale_id})].albums" >
                                             <label class="form-check-label block md-check">
                                                 <input
-                                                        :data-album-id="album.id"
-                                                        :checked="_.findIndex(selected.sales, {album_id: album.id}) > -1"
-                                                        key="album.id"
-                                                        :value="selected.sale.sale_id"
-                                                        :name="album.id"
-                                                        @click="selectAlbum(album, $event)"
-                                                        class="form-check-input"
-                                                        type="checkbox">
+                                                    :data-album-id="album.id"
+                                                    :checked="album.listables.length"
+                                                    key="album.id"
+                                                    :value="selected.sale.sale_id"
+                                                    :name="album.id"
+                                                    @click="selectAlbum(album, $event)"
+                                                    class="form-check-input"
+                                                    type="checkbox">
                                                 <i class="indigo"></i>
                                                 <span
-                                                        :class="_.findIndex(selected.sales, {album_id: album.id}) > -1 ? 'text-primary' : 'text-muted'"
+                                                    :class="album.listables.length ? 'text-primary' : 'text-muted'"
                                                 >{{ album.name }}</span>
                                             </label>
-                                            <template v-if="_.findIndex(selected.sales, {album_id: album.id}) > -1">
+                                            <template>
                                                 <div class="m-t-0">
-                                                    <span class="text-xs text-muted m-l-2">{{ selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables.length }} items associated.
+                                                    <span
+                                                        v-if="album.listables.length"
+                                                        class="text-xs text-muted m-l-2">
+                                                        {{ album.listables.length }} items associated.
                                                         <a
-                                                                v-html="toggle_albums ? 'Hide' : 'View'"
-                                                                href="javascript:;"
-                                                                @click.prevent="toggleAlbumItems(album.id, $event)"
-                                                                class="text-primary">Hide</a></span>
-                                                    <div
-                                                            :id="'album_items_'+album.id"
-                                                            class="m-l-2 m-t-1"
-                                                            :style="! toggle_albums ? 'display: none;' : null">
-
-                                                        <div class="inline m-r-sm" v-for="listable in selected.sales[_.findIndex(selected.sales, {album_id: album.id})].listables"
-                                                        :key="listable.id"
-                                                        >
-                                                        <span
-                                                                class="avatar_container _48 avatar-thumbnail">
-                                                              <img :src="listable.cover_photo">
-                                                        </span>
-                                                            <div class="block" style="margin: -6px 2px 0 0">
-                                                                <span class="text-right"  @click="removeItemFromAlbum(listable, album, $event)"><i class="fa fa-times text-danger pointer"></i></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                            v-html="toggle_albums ? 'Hide' : 'View'"
+                                                            href="javascript:;"
+                                                            @click.prevent="toggleAlbumItems(album.id, $event)"
+                                                            class="text-primary">Hide</a>
+                                                    </span>
+                                                    <draggable
+                                                        v-model="album.listables"
+                                                        :id="'album_items_'+album.id"
+                                                        class="m-l-2 m-t-1 drag-area"
+                                                        :style="! toggle_albums ? 'display: none;' : null"
+                                                        :options="{group: 'listables'}"
+                                                    >
+                                                        <listable
+                                                            v-for="listable in album.listables" :key="listable.id"
+                                                            :listable="listable"
+                                                            v-on:remove-item="removeItemFromAlbum(listable, album, $event)"
+                                                        ></listable>
+                                                    </draggable>
                                                  </div>
                                             </template>
                                         </div>
@@ -288,6 +312,13 @@
         margin: 0;
         padding: 0;
         cursor: pointer;
+    }
+    .drag-area {
+        min-height: 5px;
+    }
+    #to-be-matched {
+        max-height: 200px;
+        overflow: scroll;
     }
 </style>
 <script>
@@ -350,6 +381,7 @@
             },
 
             toggle_albums: true,
+            showToBeMatched: false,
             facebook_listing_options: {}
         }
     };
@@ -359,7 +391,9 @@
     import Fuse from 'fuse.js';
     import Steps from './Steps.vue';
     import Spinny from '../../Spinner.vue';
+    import draggable from 'vuedraggable';
     import ListablesGroups from '../../listables/ListableGroupings.vue';
+    import Listable from './Listable.vue';
     import InventoryToAlbumMatcher from './InventoryToAlbumMatcher';
     export default{
         props: {
@@ -429,6 +463,14 @@
                 this.matching_listables.misses = [];
             });
         },
+        watch: {
+            postables: {
+                handler: function () {
+                    this.resetFacebookAlbumSales();
+                },
+                deep: true
+            }
+        },
         methods: {
             toggleSalesItems(e){
                 this.toggle_albums = e.target.checked;
@@ -493,16 +535,19 @@
                     });
                 }
             },
-            removeItemFromAlbum(listable, album, e){
-                const index = _.findIndex(this.selected.sales, {album_id: album.id});
+            removeItemFromSelected(listable){
+                const index = _.findIndex(this.selected.listables, listable);
                 if (index > -1) {
-                    this.selected.sales[index].listables = _.filter(this.selected.sales[index].listables, (local_listable)=>{
-                        return local_listable.id !== listable.id;
-                    });
-
-                    // If the number of listables in a sale reaches 0, remove the sale.
-                    if (this.selected.sales[index].listables.length == 0) {
-                        this.selected.sales.splice(index, 1);
+                    this.selected.listables.splice(index, 1);
+                }
+            },
+            removeItemFromAlbum(listable, album, e){
+                const index = _.findIndex(album.listables, listable);
+                if (index > -1) {
+                    var local_listable = album.listables.splice(index, 1)[0];
+                    if (local_listable) {
+                        this.addItemBackToSelected(local_listable);
+                        this.selected.sale.magical_matcher = false;
                     }
                 }
             },
@@ -517,6 +562,18 @@
                     if (this.selected.sales[index].listables.length == 0) {
                         this.selected.sales.splice(index, 1);
                     }
+                }
+            },
+            addItemToAlbum(listable, album){
+                let index = _.findIndex(album.listables, {id: listable.id});
+                if (index == -1) {
+                    album.listables.push(listable);
+                }
+            },
+            addItemBackToSelected(listable){
+                let index = _.findIndex(this.selected.listables, {id: listable.id});
+                if (index == -1) {
+                    this.selected.listables.push(listable);
                 }
             },
 
@@ -563,25 +620,23 @@
             resetAllSalesForGroup(){
                 this.actions.resetting_sales = true;
 
-                // loop through the saved sales, and extract the listables.
-                let selected_sales_for_group = _.filter(this.selected.sales, {sale_id: this.selected.sale.sale_id});
+                var that = this;
+                let index = _.findIndex(this.postables.facebookgroups, {id: this.selected.sale.sale_id});
 
-                for (let i = 0; i < selected_sales_for_group.length; i++) {
-                    let sale = selected_sales_for_group[i];
-                    for (let k = 0; k < sale.listables.length; k++) {
-                        let listable = sale.listables[k];
-
-                        // Give me the listable back, but only if I dont already have it!
-                        const index = _.findIndex(this.selected.listables, {id: listable.id});
-                        if (index == -1) {
-                            this.selected.listables.push(listable);
-                        }
+                if (index > -1) {
+                    let group = this.postables.facebookgroups[index];
+                    if (group.albums.length) {
+                        group.albums.forEach(function (album) {
+                            if (album.listables.length) {
+                                album.listables.forEach(function (listable) {
+                                    that.addItemBackToSelected(listable);
+                                });
+                                album.listables = [];
+                                return;
+                            }
+                        });
                     }
                 }
-
-                // RIP, saved sales.
-                // (plays taps)
-                _.remove(this.selected.sales, {sale_id: this.selected.sale.sale_id});
             },
 
             buildInventoryAlbumMatchings(){
@@ -639,7 +694,8 @@
             },
 
             assignMatchingsToAlbums(matching_albums, misses){
-                if (this.matching_listables.misses.length == this.selected.listables.length) {
+                var that = this;
+                if (that.matching_listables.misses.length == that.selected.listables.length) {
                     // shit, not a single match!?
                     return false;
                 }
@@ -652,22 +708,23 @@
                         listables.push(matching_results.results[k].listable);
                     }
 
-                    let sale_data = JSON.parse(JSON.stringify(this.selected.sale));
-                    sale_data.album = matching_results.results[0].album;
-                    sale_data.album_id = matching_results.results[0].album.id;
-                    sale_data.listables = listables;
-
-                    this.selected.sales.push(sale_data);
+                    var index = _.findIndex(this.postables.facebookgroups[0].albums, {id: matching_results.key});
+                    if (index > -1) {
+                        var album = that.postables.facebookgroups[0].albums[index];
+                        listables.forEach(function (listable) {
+                            that.addItemToAlbum(listable, album);
+                        });
+                    }
                 }
 
                 // Push our misses, to the selected listables array.
-                this.selected.listables = [];
+                that.selected.listables = [];
 
                 for (let i = 0; i < misses.length; i++) {
                     let listable = misses[i];
                     const index = _.findIndex(this.selected.listables, {id: listable.id});
                     if (index == -1) {
-                        this.selected.listables.push(listable);
+                        that.addItemBackToSelected(listable);
                     }
                 }
 
@@ -704,30 +761,27 @@
                 this.selected.listables = [];
             },
             selectAlbum(album, e){
-                const index = _.findIndex(this.selected.sales, {album_id: album.id});
-
-                // So the album is already in our sales and we're unchecking it.
-                if (index > -1) {
-                    this.selected.sales.splice(index, 1);
+                if (album.listables.length) {
+                    var that = this;
+                    album.listables.forEach(function (listable) {
+                        that.addItemBackToSelected(listable);
+                    });
+                    album.listables = [];
                     return;
-                }
-
-                if(!this.selected.listables.length) {
-                    if (e) {
-                        e.preventDefault();
+                } else {
+                    if(!this.selected.listables.length) {
+                        if (e) {
+                            e.preventDefault();
+                        }
+                        return;
                     }
-                    return;
+
+                    this.selected.listables.forEach(function (listable) {
+                        album.listables.push(listable);
+                    });
+
+                    this.selected.listables = [];
                 }
-
-                let selected_sale = JSON.parse(JSON.stringify(this.selected.sale));
-                let selected_listables = JSON.parse(JSON.stringify(this.selected.listables));
-                selected_sale.album = JSON.parse(JSON.stringify(album));
-                selected_sale.album_id = album.id;
-                selected_sale.listables = selected_listables;
-
-                this.selected.sales.push(selected_sale);
-
-                this.selected.listables = [];
             },
 
             selectFacebookGroup(e){
@@ -752,9 +806,29 @@
                 $Bus.$emit('listings:create:sale:selected');
             },
             getPostables(){
+                var that = this;
                 this.actions.refreshing_postables = true;
                 this.$http.get(window.location.protocol+'//'+window.location.hostname+'/inventory/postables').then((response)=>{
                     // Called using computed property;
+                    if (response.body.data.facebookgroups.length) {
+                        response.body.data.facebookgroups.forEach(function (group) {
+                            if (group.albums.length) {
+                                group.albums.forEach(function (album) {
+                                    if (that.postables.facebookgroups.length) {
+                                        var groupIndex = _.findIndex(that.postables.facebookgroups, {id: group.id});
+                                        var albumIndex = _.findIndex(that.postables.facebookgroups[groupIndex].albums, {id: album.id});
+                                        if (groupIndex > -1 && albumIndex > -1) {
+                                            album.listables = that.postables.facebookgroups[groupIndex].albums[albumIndex].listables;
+                                        } else {
+                                            album.listables = [];
+                                        }
+                                    } else {
+                                        album.listables = [];
+                                    }
+                                });
+                            }
+                        });
+                    }
                     this.postables = response.body.data;
                     this.actions.refreshing_postables = false;
                 }, (response)=>{
@@ -786,6 +860,31 @@
                 this.completed.steps.push(2);
                 this.selected.step = 3
                 this.prepareSalesForPreview();
+            },
+            resetFacebookAlbumSales(){
+                var that = this;
+                that.postables.facebookgroups.forEach(function (group) {
+                    group.albums.forEach(function (album) {
+                        var existingIndex = _.findIndex(that.selected.sales, {album_id: album.id});
+                        if (existingIndex > -1) {
+                            if (album.listables.length) {
+                                that.selected.sales[existingIndex].listables = album.listables;
+                            } else {
+                                that.selected.sales.splice(existingIndex, 1);
+                            }
+                        } else if (album.listables.length) {
+                            that.selected.sales.push({
+                                album: album,
+                                album_id: album.id,
+                                listables: album.listables,
+                                magical_matcher: that.selected.sale.magical_matcher,
+                                sale: that.selected.sale.sale,
+                                sale_id: that.selected.sale.sale.id,
+                                sale_type: 'facebook'
+                            });
+                        }
+                    });
+                });
             },
             saveListing(){
                 let flashsales = this.prepared_sales_for_preview.flashsales;
@@ -851,12 +950,20 @@
 
                 return misses.length +' of '+ (misses.length + matches.length) +' were not matched.';
             },
+            notMatchedListablesText(){
+                if (this.selected.listables.length) {
+                    return "Select an album below to add all "+ this.selected.listables.length +" items into or drag and drop items into specific albums";
+                }
+                return "No items to place in albums";
+            }
         },
         components:{
             'facebook-login' : FacebookLogin,
             'steps' : Steps,
             'spinny' : Spinny,
+            'draggable' : draggable,
             'listable-groups' : ListablesGroups,
+            'listable' : Listable,
             'listing-settings': ListingSettings
         }
     }

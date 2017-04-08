@@ -50,8 +50,8 @@
             </p>
             <div v-show="checkInType === 'guest'">
                 <guest-claim
-                    :guest-claim-endpoint="guestClaimEndpoint"
-                    :guest-convert-endpoint="guestConvertEndpoint"
+                    :claim-endpoint="guestClaimEndpoint"
+                    :convert-endpoint="guestConvertEndpoint"
                     :csrf="csrf"
                     v-on:success="performGuestSuccess"
                 >

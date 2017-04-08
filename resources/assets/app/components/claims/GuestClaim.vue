@@ -1,11 +1,11 @@
 <template>
     <div>
-        <div v-if="claimSuccess">
+        <div v-if="claimSuccess && !ownerClaim">
             <div>
                 <p>Fantastic! The item is on hold for you for 5 minutes in order to give you time to verify the claim through the email we just sent you.</p>
                 <p>Want to track the progress of your claim? No problem. Become a Kabooodle user now in order to take advantage of that and other benefits.</p>
             </div>
-            <form id="guest-convert-form" :action="guestConvertEndpoint" method="POST">
+            <form id="guest-convert-form" :action="convertEndpoint" method="POST">
                 <input type="hidden" name="_token" :value="csrf">
                 <input type="hidden" name="email" :value="claimEmail">
                 <div class="md-form-group">
@@ -101,7 +101,7 @@
 
             <p class="">By clicking on "Claim" below, you are agreeing to the <a href="" class="text-info">Terms of Service</a> and the <a href="" class="text-info">Privacy Policy</a>.</p>
 
-            <button @click="claim" :disabled="claiming" class="btn primary btn-block p-x-md">Claim<spinny v-if="claiming"></spinny></button>
+            <a @click="claim" :disabled="claiming" class="btn primary btn-block p-x-md">Claim<spinny v-if="claiming"></spinny></a>
         </div>
     </div>
 </template>
@@ -113,11 +113,11 @@
     import Spinny from '../Spinner.vue';
     export default {
         props: {
-            guestClaimEndpoint: {
+            claimEndpoint: {
                 type: String,
                 required: true
             },
-            guestConvertEndpoint: {
+            convertEndpoint: {
                 type: String,
                 required: true
             },
@@ -125,6 +125,10 @@
                 type: String,
                 required: true
             },
+            ownerClaim: {
+                type: Boolean,
+                default: false
+            }
         },
         data(){
             return {
@@ -417,14 +421,14 @@
                 var self = this;
                 self.claiming = true;
                 self.$http.post(
-                    self.guestClaimEndpoint,
+                    self.claimEndpoint,
                     self.guestClaimData
                 ).then(function (response) {
                     self.claimSuccess = true;
                     self.claimEmail = self.email;
                     self.$emit('success');
                     notify({
-                        'text': 'Verify this claim from the email we just sent you!',
+                        'text': !self.ownerClaim ? 'Verify this claim from the email we just sent you!' : 'Item claimed successfully!',
                         'type': 'success'
                     });
                 }, function (response) {
@@ -441,7 +445,7 @@
                 self.converting = true;
                 $('#guest-convert-form').submit();
                 //self.$http.post(
-                //    self.guestConvertEndpoint,
+                //    self.convertEndpoint,
                 //    self.guestConvertData
                 //).then(function (response) {
                 //    self.convertSuccess = true;

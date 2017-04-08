@@ -47,6 +47,7 @@
     "vue-multiselect": "2.0.0-beta.14",
     "vue-resource": "1.2.0",
     "vue-timeago": "3.3.0",
+    "vuedraggable": "^2.9.0",
     "vuex": "2.0.0"
   }
 }
