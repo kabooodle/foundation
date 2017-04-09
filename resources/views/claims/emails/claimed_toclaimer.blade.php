@@ -6,4 +6,4 @@
     <li><strong>Item:</strong> {!! $claim->listable->getTitle() !!}</li>
     <li><strong>Price:</strong> ${!! $claim->price !!}</li>
 </ul>
-<p>You will be updated when the seller accepts or rejects your claim. You can view the status of the claim here: <a href="{{ route('profile.purchases.show', [$claim->getUUID()]) }}">{{ route('profile.purchases.show', [$claim->getUUID()]) }}</a></p>
+<p>You will be updated when the seller accepts or rejects your claim. You can view the status of the claim here: <a href="{{ route('profile.claims.show', [$claim->getUUID()]) }}">{{ route('profile.claims.show', [$claim->getUUID()]) }}</a></p>

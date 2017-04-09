@@ -96,7 +96,7 @@ class NotifyUsersShippingStatusUpdatedHandler
         $notification->notification_id = null;
         $notification->reference_id = $claim->id;
         $notification->reference_type = get_class($claim);
-        $notification->reference_url = route('profile.purchases.show', [$claim->getUUID()]);
+        $notification->reference_url = route('profile.claims.show', [$claim->getUUID()]);
         $notification->payload = '';
         $notification->title = $this->subject;
         $notification->description = '';

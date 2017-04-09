@@ -110,39 +110,43 @@
                         </div>
                     </li>
                 @endif
-                {{--@if(webUser() && (webUser()->claimsAsBuyer->count() > 0 || ! webUser()->hasAtLeastMerchantSubscription()))--}}
-                    @if(webUser())
-                    <li class ="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> <span class="nav-text">Purchases</span></a>
+                @if(webUser() && webUser()->hasAtLeastMerchantSubscription())
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle nav-link"
+                           data-toggle="dropdown"
+                           href="{{ route('flashsales.index') }}"><span class="nav-text">Flash Sales</span></a>
                         <div class="dropdown-menu">
-                            <a href="{{ route('profile.purchases.index') }}"
-                               class="dropdown-item {{ Request::is('purchases*') ? 'active' : null }}">Purchases &amp; Claims</a>
-                            <a href="{{ route('watching.items.index', [webUser()->username]) }}"
-                               class="dropdown-item {{ Request::is('watching*') ? 'active' : null }}">Watching</a>
-                        </div>
-                    </li>
-                    @endif
-                {{--@endif--}}
-                <li class="nav-item dropdown">
-                    <a class="dropdown-toggle nav-link"
-                       data-toggle="dropdown"
-                       href="{{ route('flashsales.index') }}"><span class="nav-text">Flash Sales</span></a>
-                    <div class="dropdown-menu">
-                        @if(webUser())
-                            <a href="{{ route('flashsales.create') }}"
-                               class="dropdown-item {{ Request::is('flashsales/create') ? 'active' : null }}">Create</a>
-                        @endif
-                        <a href="{{ route('flashsales.index') }}"
-                           class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Browse</a>
+                            @if(webUser())
+                                <a href="{{ route('flashsales.create') }}"
+                                   class="dropdown-item {{ Request::is('flashsales/create') ? 'active' : null }}">Create</a>
+                            @endif
+                            <a href="{{ route('flashsales.index') }}"
+                               class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Browse</a>
 
                             @if(webUser())
                                 <div class="divider"></div>
-                            <a href="{{ route('flashsales.index') }}"
-                               class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Manage Active Sales</a>
+                                <a href="{{ route('flashsales.index') }}"
+                                   class="dropdown-item {{ Request::is('flashsales') ? 'active' : null }}">Manage Active Sales</a>
                             @endif
 
-                    </div>
-                </li>
+                        </div>
+                    </li>
+                @else
+                    <li class ="nav-item ">
+                        <a href="{{ route('flashsales.index') }}"
+                           class="nav-link {{ Request::is('flashsales') ? 'active' : null }}"><span class="nav-text">Flash Sales</span></a>
+                    </li>
+                @endif
+                @if(webUser())
+                    <li class ="nav-item ">
+                        <a href="{{ route('profile.claims.index') }}"
+                           class="nav-link {{ Request::is('claims*') ? 'active' : null }}"><span class="nav-text">My Claims</span></a>
+                    </li>
+                    <li class ="nav-item ">
+                        <a href="{{ route('watching.items.index', [webUser()->username]) }}"
+                           class="nav-link {{ Request::is('watching*') ? 'active' : null }}"><span class="nav-text">Watching</span></a>
+                    </li>
+                @endif
             </ul>
         </div>
     </div>

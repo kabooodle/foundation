@@ -1,4 +1,4 @@
-@extends('layouts.full', ['contentId' => 'purchases_page'])
+@extends('layouts.full', ['contentId' => 'claims_page'])
 
 @section('body-content')
 
@@ -93,5 +93,5 @@
 
 
 @push('footer-scripts')
-<script src="{{ staticAsset('/assets/js/purchases-index.js') }}"></script>
+    <script src="{{ staticAsset('/assets/js/claims-show.js') }}"></script>
 @endpush

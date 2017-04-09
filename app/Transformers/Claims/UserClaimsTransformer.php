@@ -21,9 +21,10 @@ class UserClaimsTransformer extends TransformerAbstract
             'status' => $claim->present()->getClaimStatus(),
             'price' => currency($claim->price),
             'shipping_status' => $claim->present()->getShippingStatus($statusAsBuyerPov = true),
-            'view_route' => route('profile.purchases.show', [$claim->getUUID()]),
+            'view_route' => route('profile.claims.show', [$claim->getUUID()]),
             'created_at_human' => $claim->createdAtHumanNoTime(),
             'created_at' => $claim->created_at,
+            'accepted' => $claim->wasAccepted(),
             'rejected' => $claim->wasRejected(),
             'item' => [
                 'image' => $claim->listedItem->cover_photo->location,
@@ -34,8 +35,8 @@ class UserClaimsTransformer extends TransformerAbstract
                 ]
             ],
             'listing' => [
-                'name' => $claim->listingItem->listing->sale_name,
-                'view_route' => route('listings.show', $claim->listingItem->listing->uuid),
+                'name' => $claim->listingItem->sale_name,
+                'view_route' => $claim->listingItem->listing ? route('listings.show', $claim->listingItem->listing->uuid) : null,
             ],
         ];
     }

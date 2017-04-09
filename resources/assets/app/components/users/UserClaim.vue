@@ -1,7 +1,8 @@
 <template>
     <div>
         <div
-            class="list-item b-b"
+            :class="claim.accepted ? null : ' b-l b-l-2x b-l-primary list-item-unread '"
+            class="list-item b-b "
             :data-uuid="claim.uuid"
             :data-href="claim.view_route"
         >

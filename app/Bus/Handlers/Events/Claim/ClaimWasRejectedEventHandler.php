@@ -77,7 +77,7 @@ class ClaimWasRejectedEventHandler implements ShouldQueue
         $notification->payload = '';
         $notification->title = $title;
         $notification->description = '';
-        $notification->reference_url = route('profile.purchases.show', [$claim->getUUID()]);
+        $notification->reference_url = route('profile.claims.show', [$claim->getUUID()]);
         $notification->save();
     }
 }
