@@ -816,7 +816,7 @@
                     // Called using computed property;
                     if (response.body.data.facebookgroups.length) {
                         response.body.data.facebookgroups.forEach(function (group) {
-                            if (group.albums.length) {
+                            if (group.hasOwnProperty('albums') && group.albums.length) {
                                 group.albums.forEach(function (album) {
                                     if (that.postables.facebookgroups.length) {
                                         var groupIndex = _.findIndex(that.postables.facebookgroups, {id: group.id});
