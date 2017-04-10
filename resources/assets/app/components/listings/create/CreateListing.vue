@@ -868,26 +868,28 @@
             resetFacebookAlbumSales(){
                 var that = this;
                 that.postables.facebookgroups.forEach(function (group) {
-                    group.albums.forEach(function (album) {
-                        var existingIndex = _.findIndex(that.selected.sales, {album_id: album.id});
-                        if (existingIndex > -1) {
-                            if (album.listables.length) {
-                                that.selected.sales[existingIndex].listables = album.listables;
-                            } else {
-                                that.selected.sales.splice(existingIndex, 1);
+                    if (group.hasOwnProperty('albums') && group.albums.length) {
+                        group.albums.forEach(function (album) {
+                            var existingIndex = _.findIndex(that.selected.sales, {album_id: album.id});
+                            if (existingIndex > -1) {
+                                if (album.listables.length) {
+                                    that.selected.sales[existingIndex].listables = album.listables;
+                                } else {
+                                    that.selected.sales.splice(existingIndex, 1);
+                                }
+                            } else if (album.listables.length) {
+                                that.selected.sales.push({
+                                    album: album,
+                                    album_id: album.id,
+                                    listables: album.listables,
+                                    magical_matcher: that.selected.sale.magical_matcher,
+                                    sale: that.selected.sale.sale,
+                                    sale_id: that.selected.sale.sale.id,
+                                    sale_type: 'facebook'
+                                });
                             }
-                        } else if (album.listables.length) {
-                            that.selected.sales.push({
-                                album: album,
-                                album_id: album.id,
-                                listables: album.listables,
-                                magical_matcher: that.selected.sale.magical_matcher,
-                                sale: that.selected.sale.sale,
-                                sale_id: that.selected.sale.sale.id,
-                                sale_type: 'facebook'
-                            });
-                        }
-                    });
+                        });
+                    }
                 });
             },
             saveListing(){
