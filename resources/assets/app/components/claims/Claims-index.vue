@@ -116,6 +116,14 @@
                                 :timestamp="claim.claim_created_at.date"></timeago></span>
                         <span v-if="claim.tag_name" class="text-sm text-muted block">Labels: <span
                                 v-html="displayLabels(claim.tag_name)"></span></span>
+                        <template v-if="claim.is_merchant_plus && claim.accepted_claim == 1">
+                            <span class="text-sm text-muted block">Shipping:
+                                <a v-if="shipped_via_kabooodle" class="text-primary text-u-l-on-hover">
+                                    {{ claim.shipping_status }}
+                                </a>
+                                <a v-else :href="claim.shipping_create_endpoint" class="text-primary text-u-l-on-hover">Create shipping label</a>
+                            </span>
+                        </template>
                     </div>
                     <div class="pull-md-right">
                         <div class="dropdown">
@@ -130,6 +138,11 @@
                                 </template>
                                 <a @click="returnClaim(claim, $event)" class="dropdown-item">Return</a>
                                 <a class="dropdown-item">View</a>
+                                <template v-if="claim.is_merchant_plus">
+                                    <div class="divider"></div>
+                                        <a v-if="shipped_via_kabooodle" class="dropdown-item">Print shipping label</a>
+                                        <a v-else :href="claim.shipping_create_endpoint" class="dropdown-item">Create shipping label</a>
+                                </template>
                             </div>
                         </div>
                     </div>

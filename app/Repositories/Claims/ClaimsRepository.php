@@ -44,6 +44,7 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             u.guest as is_guest,
             c.price as price,
             c.verified as verified_claim,
+            c.shipped_manually_on,  
             IFNULL(c.accepted, 0) as accepted_claim,
             c.accepted_on,
             c.rejected_on,
@@ -61,12 +62,23 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             f.location as listable_cover_photo_location,
             f.key as  listable_cover_photo_key,
             e.address as email,
-            IFNULL(concat(a.street1, ', ', IFNULL(a.street2, ''), a.city, ', ', a.state, ' ', a.zip), 'None provided') as shipping_address,
-            ifnull(fb.facebook_node_name, ifnull(fs.name, 'Claimed manually'))  as sale_name,
+            IFNULL(concat(a.street1, ', ', IFNULL(a.street2, ''), a.city, ', ', a.state, ' ', a.zip), null) as shipping_address,
+            ifnull(fb.facebook_node_name, ifnull(fs.name, null))  as sale_name,
             li.id as listing_id,
             ll.uuid as listing_uuid,
             group_concat(tt.tag_name SEPARATOR ',') as tag_name,
-            group_concat(tt.tag_slug SEPARATOR ',') as tag_slug
+            group_concat(tt.tag_slug SEPARATOR ',') as tag_slug,
+            st.id as shipping_transaction_id,
+            if(st.id, true, false) as shipped_via_kabooodle,
+            if(c.shipped_manually = 1, true, false) shipped_manually,
+            st.shipping_status,
+            st.shipping_status_updated_on,
+            st.status,
+            st.tracking_number,
+            st.label_url,
+            st.uuid as shipping_transaction_uuid,
+            st.tracking_status,
+            st.tracking_url_provider
             FROM claims as c 
             INNER JOIN listables l on l.id = c.listable_id
             INNER JOIN listing_items li on li.id = c.listing_item_id
@@ -78,6 +90,11 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             LEFT JOIN flashsales as fs on fs.id = ll.flashsale_id
             LEFT JOIN addresses as a ON a.user_id = u.id AND a.primary = 1 AND a.type = 'ship_to'    
             LEFT JOIN tagging_tagged as tt ON tt.taggable_id = c.id AND tt.taggable_type = 'Kabooodle\\\Models\\\Claims'
+            LEFT JOIN (
+            shipping_shipments_claims as ssc 
+                INNER JOIN shipping_shipments as ss ON ss.id = ssc.shipping_shipments_id
+                LEFT JOIN shipping_transactions as st ON ss.id = st.shipping_shipments_id
+            ) on ssc.claim_id = c.id     
             WHERE 
             l.user_id = ?
             and e.primary = 1

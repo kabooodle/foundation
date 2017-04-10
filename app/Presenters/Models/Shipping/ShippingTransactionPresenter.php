@@ -23,7 +23,17 @@ class ShippingTransactionPresenter extends PresenterAbstract
         /** @var ShippingTransactions $entity */
         $entity = $this->entity;
 
-        switch ($entity->getLatestHistory()) {
+        return $this->mapStatusAndReturnLink($entity->getLatestHistory());
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return array
+     */
+    public function mapStatus(string $status)
+    {
+        switch ($status) {
             case 'LABEL PRINTED':
                 $class = 'deep-purple-500';
                 $text = 'Label Created';
@@ -49,6 +59,20 @@ class ShippingTransactionPresenter extends PresenterAbstract
                 break;
         }
 
+        return [
+            'class' => $class,
+            'text' => $text
+        ];
+    }
+
+    /**
+     * @param $status
+     *
+     * @return string
+     */
+    public function mapStatusAndReturnLink($status)
+    {
+        list($class, $text) = $this->mapStatus($status);
         return '<span class="w-8 rounded '.$class.'" style="margin-right: 3px"></span> <span class="text-'.$class.'" >'.$text.'</span>';
     }
 }

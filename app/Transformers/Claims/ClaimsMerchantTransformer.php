@@ -6,6 +6,7 @@
 
 namespace Kabooodle\Transformers\Claims;
 
+use Kabooodle\Models\ShippingTransactions;
 use stdClass;
 use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
@@ -17,6 +18,25 @@ use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 class ClaimsMerchantTransformer extends TransformerAbstract
 {
     use ObfuscatesIdTrait;
+
+    /**
+     * @var bool
+     */
+    public $userHasMerchantPlus = false;
+
+    /**
+     * @var ShippingTransactions
+     */
+    public $shippingEntity;
+
+    public function __construct()
+    {
+        if (user() && user()->isSubscribedToMerchantPlus()) {
+            $this->userHasMerchantPlus = true;
+            $this->shippingEntity = new ShippingTransactions;
+        }
+    }
+
     /**
      * @param $claims
      *
@@ -33,6 +53,12 @@ class ClaimsMerchantTransformer extends TransformerAbstract
         $claims['claim_created_at'] = Carbon::parse($claims['claim_created_at'])->setTimezone(current_timezone());
         $claims['listing_item_endpoint'] = route('listingitems.show', [$this->obfuscateIdToString($claims['listing_id'])]);
         $claims['listing_endpoint'] = route('listings.show', [$claims['listing_uuid']]);
+        $claims['shipping_create_endpoint'] = $this->userHasMerchantPlus ? route('merchant.shipping.create').'?c='.$claims['id'] : null;
+        $claims['is_merchant_plus'] = $this->userHasMerchantPlus;
+
+        if ($this->shippingEntity && $claims['shipped_via_kabooodle'] == 1) {
+            $claims['shipping_status'] = $this->shippingEntity->present()->mapStatiiAndReturnStatusLinks($claims['shipping_status']);
+        }
 
         return $claims;
     }
