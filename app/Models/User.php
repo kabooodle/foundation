@@ -895,7 +895,7 @@ class User extends BaseEloquentModel implements
      */
     public function claimsAsBuyer()
     {
-        return $this->hasMany(Claims::class, 'claimed_by');
+        return $this->hasMany(Claims::class, 'claimed_by')->orderBy('created_at', 'desc');
     }
 
     /**

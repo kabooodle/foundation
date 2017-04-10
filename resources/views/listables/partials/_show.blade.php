@@ -1,4 +1,3 @@
-
 <div class="box white">
     <div class="row-col m-b">
         <div class="col-md-10">
@@ -42,12 +41,43 @@
                 </div>
                 <div class="col-md-4">
                     <div class="box-header no-shadow">
-                        <h2><span class="_800">{!! $listable->name_alt !!}</span></h2>
+                        <h2><span class="_800">{!! $listable->title !!}</span></h2>
                         {{--<p class="block m-t-0"><span class="text-muted">Size:</span> {!! $listable->styleSize->name !!}</p>--}}
                         <p class="m-b-0 m-t-1 h4 text-warning _500">{{ isset($_price) ? currency($_price) : currency($listable->getPrice()) }}</p>
-
-                        <div class="m-t-2 m-b-0">
-                            <v-card
+                        @if($listable->user_id == webUser()->id)
+                            <table id="listable-qty" class="table table-condensed m-t-1 text-muted">
+                                <thead class="text-primary">
+                                    <tr>
+                                        <th colspan="2">Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tfoot class="text-primary">
+                                    <tr>
+                                        <th>Available</th>
+                                        <th class="text-right">{!! $listable->available_quantity !!}</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    <tr>
+                                        <td>On hand</td>
+                                        <td class="text-right">{!! $listable->initial_qty !!}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> - On hold</td>
+                                        <td class="text-right">{!! $listable->getOnHoldQuantity() !!}</td>
+                                    </tr>
+                                    @if($listable instanceof \Kabooodle\Models\Inventory)
+                                        <tr>
+                                            <td> - In locked outfits</td>
+                                            <td class="text-right">{!! $listable->lockedGroupings->count() !!}</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        @endif
+                        @if($listable->user_id != webUser()->id)
+                            <div class="m-t-2 m-b-0">
+                                <v-card
                                     extra_class="list-group-item no-border b-a-0 "
                                     :already_following="{{ $listable->user->is_following ? 1 : 0 }}"
                                     follow_endpoint="{{ apiRoute('user.followers.store', [$listable->owner->id]) }}"
@@ -55,8 +85,9 @@
                                     able_id="{{ $listable->user->id }}"
                                     :user="{{ $listable->user }}"
                                     message_endpoint="{{ apiRoute('messenger.store') }}"
-                            ></v-card>
-                        </div>
+                                ></v-card>
+                            </div>
+                        @endif
                     </div>
                     <div class="box-body">
                         <p class="m-b-lg text-muted text">{!! nl2br($listable->description) !!}</p>

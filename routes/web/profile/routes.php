@@ -44,14 +44,14 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileSettingsController::class.'@postSocial'
     ]);
 
-    Route::get('/purchases', [
-        'as' => 'profile.purchases.index',
-        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfilePurchasesController::class.'@index'
+    Route::get('/claims', [
+        'as' => 'profile.claims.index',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileClaimsController::class.'@index'
     ]);
 
     Route::get('/purchases/{itemID}', [
-        'as' => 'profile.purchases.show',
-        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfilePurchasesController::class.'@show'
+        'as' => 'profile.claims.show',
+        'uses' => \Kabooodle\Http\Controllers\Web\Profile\ProfileClaimsController::class.'@show'
     ]);
 
     Route::get('/profile/subscription', [

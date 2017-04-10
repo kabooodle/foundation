@@ -1,10 +1,6 @@
 <template>
     <div>
-        <div v-if="!claimSuccess">
-            <span class="text-center text-muted">
-                There was a problem claiming this item.
-            </span>
-        </div>
+        <div id="inline_message" class="m-b-sm"></div>
         <div v-show="claimType === null || claimType === 'user'">
             <p class="text-center">
                 <a @click="claimType = 'user'" class="text-primary">Claim For User</a>
@@ -42,10 +38,7 @@
             </div>
         </div>
     </div>
-
 </template>
-<style>
-</style>
 <script>
     import GuestClaim from './GuestClaim.vue'
     import UserSearch from '../users/UserSearch.vue'
@@ -92,16 +85,18 @@
                 }).then((response)=>{
                     this.claimSuccess = true;
                     notify({
+                        'el': $('#inline_message'),
                         'text': 'The item has been claimed!',
                         'type': 'success'
                     });
                     setTimeout(function(){
                         location.reload();
-                    }, 5000)
+                    }, 1800)
                 }, (response)=>{
                     this.claimSuccess = false;
                      notify({
-                        'text': response.body.data.msg,
+                         'el': $('#inline_message'),
+                        'text': response.body.msg,
                         'type': 'error'
                      });
                 }).finally(()=>{

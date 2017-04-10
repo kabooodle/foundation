@@ -27,18 +27,21 @@
                     </a>
                 </div>
             @else
-                @if($listingItem->claimableBasedOnSchedule())
-                    <a data-toggle="modal" data-target="#modal_claim_wrapper" data-backdrop="static" data-keyboard="false" href="" class="btn btn-sm claim  _800 ">Claim Item</a>
-                @else
-                    <a class="btn btn-sm claim  _800 disabled" disabled href="#">
-                        @if($listingItem->type == 'flashsale' && $listingItem->flashsale->saleHasEnded())
-                            Sale ended
-                        @else
-                            Not Yet Claimable
-                        @endif
-                    </a>
+                @if($listingItem->listing)
+                    @if($listingItem->claimableBasedOnSchedule())
+                        <a data-toggle="modal" data-target="#modal_claim_wrapper" data-backdrop="static" data-keyboard="false" href="" class="btn btn-sm claim  _800 ">Claim Item</a>
+                    @else
+                        <a class="btn btn-sm claim  _800 disabled" disabled href="#">
+                            @if($listingItem->type == 'flashsale' && $listingItem->flashsale->saleHasEnded())
+                                Sale ended
+                            @else
+                                Not Yet Claimable
+                            @endif
+                        </a>
+                    @endif
                 @endif
             @endif
+            @if($listingItem->listing)
             <followable
                     able_name="watchable"
                     able_type="{{ get_class($listingItem) }}"
@@ -50,6 +53,7 @@
                     endpoint="{{ apiRoute('listings.listingitems.watchers.store', [$listingItem->listing_id, $listingItem->id]) }}"
             >
             </followable>
+           @endif
         </div>
     </div>
 @endsection
@@ -65,13 +69,17 @@
                         @if($listingItem->type == 'flashsale')
                             <a href="{{ route('flashsales.show', [$listingItem->flashsale->uuid] ) }}"class="m-t-xs block link btn-link text-primary">Back to flash sale</a>
                         @else
+                            @if($listingItem->listing)
                             <a href="{{ route('listings.show', [$listingItem->listing->uuid] ) }}"class="m-t-xs block link btn-link text-primary">More items from {{ $listingItem->owner->username }}</a>
+                            @endif
                         @endif
                     </span>
                     @if($listingItem->type == 'flashsale')
                         <span class="pull-right m-b-0 text-muted text-sm">Items can be claimed {{ $listingItem->flashsale->claimable_range }}</span>
                     @else
+                        @if($listingItem->listing)
                         <span class="pull-right m-b-0 text-muted text-sm">Items can be claimed {{ $listingItem->listing->claimable_range }}</span>
+                        @endif
                     @endif
                 </h4>
             </div>

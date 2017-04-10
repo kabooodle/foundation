@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="list box-shadow-z0 white" v-if="claims">
+        <div class="list box-shadow-z0 white">
             <user-claim
                 v-for="claim in claims"
                 :key="claim.id"
@@ -8,14 +8,12 @@
                 claim_endpoint=""
             ></user-claim>
         </div>
-        <infinite-loading :distance="50" :on-infinite="fetchInfinite" ref="claimsFinite">
+        <infinite-loading :distance="40" :on-infinite="fetchInfinite" ref="claimsFinite">
             <span slot="no-more"></span>
             <span slot="no-results">
                 No claims to view.
             </span>
-            <span slot="spinner">
-                <spinny class="text-center center-block" :size="'' + 38"></spinny>
-            </span>
+            <span slot="spinner"><spinny class="text-center center-block m-t-1" :size="'' + 38"></spinny></span>
         </infinite-loading>
     </div>
 </template>

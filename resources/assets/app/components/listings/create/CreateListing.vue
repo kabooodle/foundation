@@ -707,13 +707,17 @@
                     for (let k = 0; k < matching_results.results.length; k++){
                         listables.push(matching_results.results[k].listable);
                     }
+                    let groupIndex = _.findIndex(this.postables.facebookgroups, {id: this.selected.sale.sale_id});
 
-                    var index = _.findIndex(this.postables.facebookgroups[0].albums, {id: matching_results.key});
-                    if (index > -1) {
-                        var album = that.postables.facebookgroups[0].albums[index];
-                        listables.forEach(function (listable) {
-                            that.addItemToAlbum(listable, album);
-                        });
+                    if (groupIndex > -1) {
+                        let group = this.postables.facebookgroups[groupIndex];
+                        var albumIndex = _.findIndex(group.albums, {id: matching_results.key});
+                        if (albumIndex > -1) {
+                            var album = group.albums[albumIndex];
+                            listables.forEach(function (listable) {
+                                that.addItemToAlbum(listable, album);
+                            });
+                        }
                     }
                 }
 

@@ -6,7 +6,7 @@
     <div class="clearfix">
         <div class="pull-left">
             @if(webUser() && $listable->owner->id == webUser()->id)
-            <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ $listable->sales->count() }} <span class="text-muted">Total Sales</span></span>
+                <span class="inline btn-group-vertical _500" style="margin-top: 5px;">{{ $listable->sales->count() }} <span class="text-muted">Total Sales</span></span>
             @endif
             <span class="inline btn-group-vertical _500 m-l" style="margin-top: 5px;">{{ $listable->views->count() }} <span class="text-muted">Total Views</span></span>
         </div>
@@ -19,7 +19,7 @@
                 <a data-toggle="modal" data-target="#modal_claim_wrapper" data-backdrop="static" data-keyboard="false" href="{{ $listable->getEditRoute() }}" class="btn btn-sm claim  _800 ">Claim it now!</a>
             @endif
                 <a href="javascript:;" data-toggle="modal" data-target="#share--modal" class="btn-sm btn white">Share</a>
-            @if ($listable->user_id == webUser()->id)
+            @if($listable->user_id == webUser()->id)
                 <span class="b-l m-l m-r"></span>
                 <a href="{{ $listable->getEditRoute() }}" class="btn btn-sm default white"><i class="fa fa-cog" aria-hidden="true"></i></a>
             @endif

@@ -95,5 +95,5 @@
 @endsection
 
 @push('footer-scripts')
-<script src="{{ staticAsset('/assets/js/profile.js') }}"></script>
+    <script src="{{ staticAsset('/assets/js/profile.js') }}"></script>
 @endpush

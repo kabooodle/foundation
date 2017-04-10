@@ -55,9 +55,6 @@ elixir(function (mix) {
 
     mix.browserify('app/components/notices/notice-handler.js');
 
-    mix.browserify('app/components/purchases/purchases-index.js');
-    mix.browserify('app/components/purchases/watching-items.js');
-
     mix.browserify('app/components/register/register.js');
 
     mix.browserify('app/components/sign-in/sign-in.js');
@@ -70,6 +67,9 @@ elixir(function (mix) {
     mix.browserify('app/components/flashsales/flashsales-edit.js');
 
     mix.browserify('app/components/profile/profile.js');
+    mix.browserify('app/components/profile/claims.js');
+    mix.browserify('app/components/profile/claims-show.js');
+    mix.browserify('app/components/profile/watching-items.js');
 
     mix.browserify('app/components/follow/follow.js');
 

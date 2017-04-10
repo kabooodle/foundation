@@ -25,9 +25,9 @@ class CreateListingItemCommandHandler
     use DispatchesJobs;
 
     /**
-     * @param CreateListingItemCommandHandler $command
+     * @param CreateListingItemCommand $command
      *
-     * @return bool|mixed
+     * @return mixed
      * @throws RequestedQuantityCannotBeSatisfiedException
      */
     public function handle(CreateListingItemCommand $command)

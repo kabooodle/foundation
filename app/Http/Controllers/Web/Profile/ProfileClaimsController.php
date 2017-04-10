@@ -13,10 +13,10 @@ use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
 
 /**
- * Class ProfileCreditCardController
+ * Class ProfileClaimsController
  * @package Kabooodle\Http\Controllers\Web\Profile
  */
-class ProfilePurchasesController extends Controller
+class ProfileClaimsController extends Controller
 {
     use ObfuscatesIdTrait, PaginatesTrait;
 
@@ -29,7 +29,7 @@ class ProfilePurchasesController extends Controller
     {
         $claims = $this->paginateData($request, webUser()->claimsAsBuyer->sortByDesc('created_at'));
 
-        return view('profile.purchases')->with(compact('claims'));
+        return view('profile.claims')->with(compact('claims'));
     }
 
     /**
@@ -48,6 +48,6 @@ class ProfilePurchasesController extends Controller
             $q->withTrashed();
         }]);
 
-        return view('profile.purchases.show')->with(compact('claim'));
+        return view('profile.claims.show')->with(compact('claim'));
     }
 }

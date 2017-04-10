@@ -249,7 +249,11 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
             return $this->facebookAlbum->facebook_node_name;
         }
 
-        return $this->flashsale->name;
+        if ($this->isFlashsale()){
+            return $this->flashsale->name;
+        }
+
+        return 'Manually claimed';
     }
 
     /**
@@ -265,7 +269,7 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
      */
     public function getSaleNameAttribute()
     {
-        return $this->listing->sale_name;
+        return $this->listing ? $this->listing->sale_name : 'Manually claimed';
     }
 
     /**
@@ -281,25 +285,27 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
      */
     public function claimableBasedOnSchedule()
     {
-        $now = Carbon::now();
-        $claimableAt = $this->listing->claimable_at;
-        $scheduledFor = $this->listing->scheduled_for;
+        if($this->listing) {
+            $now = Carbon::now();$claimableAt = $this->listing->claimable_at;
+            $scheduledFor = $this->listing->scheduled_for;
 
-        if ($scheduledFor) {
-            if ($claimableAt) {
-                if ($now >= $claimableAt && $now >= $scheduledFor) {
-                    return true;
+            if ($scheduledFor) {
+                if ($claimableAt) {
+                    if ($now >= $claimableAt && $now >= $scheduledFor) {
+                        return true;
+                    }
+
+                    return false;
                 }
 
-                return false;
+                if ($now >= $scheduledFor) {
+                    return true;
+                }
             }
-
-            if ($now >= $scheduledFor) {
-                return true;
-            }
+            return false;
+        } else {
+            return true;
         }
-
-        return false;
     }
 
     /**
