@@ -8,7 +8,7 @@
                 claim_endpoint=""
             ></user-claim>
         </div>
-        <infinite-loading :distance="40" :on-infinite="fetchInfinite" ref="claimsFinite">
+        <infinite-loading :on-infinite="fetchInfinite" ref="claimsFinite">
             <span slot="no-more"></span>
             <span slot="no-results">
                 No claims to view.
