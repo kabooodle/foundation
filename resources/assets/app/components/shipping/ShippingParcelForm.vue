@@ -559,10 +559,10 @@
                     $.each(claims, function(k,v){
                         data.Claims.push({
                             value: parseInt(this.id),
-                            claimer_id: this.claimer.id,
-                            date: this.updated_at_human,
-                            image: this.listable_item_object_data.cover_photo.location,
-                            name: this.claimer.username+', '+this.listable_item_object_data.title+', $'+Number(this.price).toFixed(2)
+                            claimer_id: this.user_id,
+                            date: this.claim_created_at,
+                            image: this.listable_cover_photo_location,
+                            name: this.username+', '+this.name_alt+', '+this.price
                         });
                     });
                 }
@@ -615,9 +615,9 @@
                 // Set address
                 if(elSelectedType == 'claimed_item') {
                     let claim = this.getClaimById(elSelectedVal);
-                    let address = claim.claimer.primary_ship_to_address;
-                    $('[name="to[name]"]').val(claim.claimer.name);
-                    $('[name="to[email]"]').val(claim.claimer.email);
+                    let address = claim.shipping_address;
+                    $('[name="to[name]"]').val(claim.full_name);
+                    $('[name="to[email]"]').val(claim.email);
                     if(address) {
                         this.address = address;
                         this.fillRecipientAddress(address);

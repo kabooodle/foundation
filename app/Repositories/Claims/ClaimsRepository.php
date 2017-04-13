@@ -46,6 +46,7 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             c.verified as verified_claim,
             c.shipped_manually_on,  
             IFNULL(c.accepted, 0) as accepted_claim,
+            c.created_at as claim_created_at,
             c.accepted_on,
             c.rejected_on,
             c.shipped_manually,
@@ -93,8 +94,8 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             LEFT JOIN (
             shipping_shipments_claims as ssc 
                 INNER JOIN shipping_shipments as ss ON ss.id = ssc.shipping_shipments_id
-                LEFT JOIN shipping_transactions as st ON ss.id = st.shipping_shipments_id
-            ) on ssc.claim_id = c.id     
+                INNER JOIN shipping_transactions as st ON ss.id = st.shipping_shipments_id
+            ) on ssc.claim_id = c.id   
             WHERE 
             l.user_id = ?
             and e.primary = 1

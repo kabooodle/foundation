@@ -25,7 +25,7 @@ abstract class BaseTestCase extends L_TestCase
      *
      * @var string
      */
-    protected $baseUrl = 'http://kabooodle.dev';
+    protected $baseUrl = 'http://www.kabooodle.dev';
 
     /**
      * @return KabooodleApplication

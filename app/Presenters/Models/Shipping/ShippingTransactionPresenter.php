@@ -60,8 +60,8 @@ class ShippingTransactionPresenter extends PresenterAbstract
         }
 
         return [
-            'class' => $class,
-            'text' => $text
+            $class,
+            $text
         ];
     }
 
