@@ -57,7 +57,7 @@ class ClaimsMerchantTransformer extends TransformerAbstract
         $claims['is_merchant_plus'] = $this->userHasMerchantPlus;
 
         if ($this->shippingEntity && $claims['shipped_via_kabooodle'] == 1) {
-            $claims['shipping_status'] = $this->shippingEntity->present()->mapStatiiAndReturnStatusLinks($claims['shipping_status']);
+            $claims['shipping_status'] = $this->shippingEntity->present()->mapStatusAndReturnLink($claims['shipping_status']);
         }
 
         return $claims;
