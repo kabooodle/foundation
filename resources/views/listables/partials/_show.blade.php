@@ -42,9 +42,8 @@
                 <div class="col-md-4">
                     <div class="box-header no-shadow">
                         <h2><span class="_800">{!! $listable->title !!}</span></h2>
-                        {{--<p class="block m-t-0"><span class="text-muted">Size:</span> {!! $listable->styleSize->name !!}</p>--}}
                         <p class="m-b-0 m-t-1 h4 text-warning _500">{{ isset($_price) ? currency($_price) : currency($listable->getPrice()) }}</p>
-                        @if($listable->user_id == webUser()->id)
+                        @if(webuser() && $listable->user_id == webUser()->id)
                             <table id="listable-qty" class="table table-condensed m-t-1 text-muted">
                                 <thead class="text-primary">
                                     <tr>
@@ -75,7 +74,7 @@
                                 </tbody>
                             </table>
                         @endif
-                        @if($listable->user_id != webUser()->id)
+                        @if(! webuser() || $listable->user_id != webUser()->id)
                             <div class="m-t-2 m-b-0">
                                 <v-card
                                     extra_class="list-group-item no-border b-a-0 "
