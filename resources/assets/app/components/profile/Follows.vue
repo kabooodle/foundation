@@ -13,7 +13,7 @@
                     able_type="Kabooodle\Models\User"
             ></vcard>
         </div>
-        <infinite-loading :distance="50" :on-infinite="fetchInfinite" ref="listingFinite">
+        <infinite-loading :on-infinite="fetchInfinite" ref="listingFinite">
             <span slot="no-more"></span>
             <span slot="no-results">
                 <span>{{ no_results_text }}</span>
