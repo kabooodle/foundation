@@ -128,7 +128,7 @@
         
         getKeyName: function (data) {
             var that = this;
-            return 'resources/'+that.options.s3_key_payload.user+'/'+Math.floor(new Date().getTime() / 1000)+randomAlphaStr()+'_'+data.files[0].name.replace(' ', '_');
+            return 'resources/'+that.options.s3_key_payload.user+'/'+Math.floor(new Date().getTime() / 1000)+randomAlphaStr()+'_'+data.files[0].name.toLowerCase().replace(' ', '_');
         },
         
         /**
