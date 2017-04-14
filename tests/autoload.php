@@ -10,7 +10,6 @@ if (env('APP_ENV') === 'testing') {
     $output = new Symfony\Component\Console\Output\ConsoleOutput();
     $output->writeln("<info>Truncating database...</info>");
 
-    $connection->query("DROP DATABASE IF EXISTS ".env('DB_DATABASE'))->execute();
     $connection->query("CREATE DATABASE IF NOT EXISTS ".env('DB_DATABASE'))->execute();
     $output->writeln("<info>Migrating database...</info>");
     Artisan::call('migrate', ['--env' => 'testing']);

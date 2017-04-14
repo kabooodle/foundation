@@ -1,12 +1,17 @@
 <?php
-namespace Kabooodle\Tests\Unit;
+/**
+ * This file is part of Kabooodle.
+ * Copyright (c) 2017. Kabooodle,LLC <help@kabooodle.com>
+ */
+
+namespace Kabooodle\Tests\Integration;
 
 use Kabooodle\Models\Inventory;
 use Kabooodle\Models\InventoryGrouping;
 use Kabooodle\Models\User;
 use Kabooodle\Tests\BaseTestCase;
 
-class InventoryGroupingsTest extends BaseTestCase
+class InventoryGroupingsTest extends BaseIntegrationTestCase
 {
     /**
      * Test that inventory in locked grouping can not satisfy request of amount
