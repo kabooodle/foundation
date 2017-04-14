@@ -133,21 +133,24 @@
                                     <a @click="acceptClaim(claim, $event)" class="dropdown-item">Accept</a>
                                     <div class="divider"></div>
                                 </template>
-                                <a class="dropdown-item">View</a>
+                                <a :href="claim.shipping_transaction_endpoint" class="dropdown-item">View Claim</a>
                                 <template v-if="claim.is_merchant_plus">
                                     <div class="divider"></div>
-                                        <a v-if="claim.shipped_via_kabooodle" class="dropdown-item">Print shipping label</a>
-                                        <a v-else :href="claim.shipping_create_endpoint" class="dropdown-item">Create shipping label</a>
+                                    <template v-if="claim.shipped_via_kabooodle">
+                                        <a  :href="claim.shipping_transaction_endpoint" class="dropdown-item">View shipment info</a>
+                                        <a  :href="claim.shipping_label_endpoint" class="dropdown-item">View shipment label</a>
+                                    </template>
+                                    <a v-else :href="claim.shipping_create_endpoint" class="dropdown-item">Create shipping label</a>
                                 </template>
                                 <div class="divider"></div>
-                                <a @click="returnClaim(claim, $event)" class="dropdown-item">Return</a>
+                                <a @click="returnClaim(claim, $event)" class="dropdown-item">Return Item</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <infinite-loading :distance="40" :on-infinite="fetchInfinite" ref="listingFinite">
+        <infinite-loading :on-infinite="fetchInfinite" ref="listingFinite">
             <span slot="no-more"></span>
             <span slot="no-results">
                 <onboard-card class="onboard-pendingclaims">

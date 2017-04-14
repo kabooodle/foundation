@@ -8,7 +8,7 @@
                     listing_endpoint=""
             ></user-listing>
         </div>
-        <infinite-loading :distance="50" :on-infinite="fetchInfinite" ref="listingFinite">
+        <infinite-loading :on-infinite="fetchInfinite" ref="listingFinite">
             <span slot="no-more"></span>
             <span slot="no-results">
                 No scheduled listings to view.
