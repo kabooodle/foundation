@@ -29,6 +29,9 @@ class EventServiceProvider extends ServiceProvider
         \Kabooodle\Bus\Events\Claim\ClaimWasRejectedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Claim\ClaimWasRejectedEventHandler::class
         ],
+        \Kabooodle\Bus\Events\Claim\ClaimWasCanceledEvent::class => [
+            \Kabooodle\Bus\Handlers\Events\Claim\ClaimWasCanceledEventHandler::class
+        ],
         \Kabooodle\Bus\Events\Claim\ClaimWasAcceptedEvent::class => [
             \Kabooodle\Bus\Handlers\Events\Claim\TrackAcceptedClaim::class,
             \Kabooodle\Bus\Handlers\Events\Claim\MoveClaimToShippingEventHandler::class,

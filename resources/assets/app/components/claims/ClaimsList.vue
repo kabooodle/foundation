@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="list box-shadow-z0 white">
-            <user-claim
-                v-for="claim in claims"
-                :key="claim.id"
+            <user-claim v-for="(claim, index) in claims" :key="claim.id"
                 :claim="claim"
-                claim_endpoint=""
+                :claim-endpoint="fetchEndpoint + '/' + claim.id"
+                :claimer-view="claimerView"
+                v-on:canceled="claims.splice(index, 1)"
             ></user-claim>
         </div>
         <infinite-loading :on-infinite="fetchInfinite" ref="claimsFinite">
@@ -23,9 +23,13 @@
     import InfiniteLoad from 'vue-infinite-loading';
     export default{
         props: {
-            fetch_endpoint: {
+            fetchEndpoint: {
                 type: String,
                 required: true,
+            },
+            claimerView: {
+                type: Boolean,
+                default: false
             }
         },
         data(){
@@ -46,7 +50,7 @@
                 let url = this.pagination.next_page_url;
 
                 if (this.claims.length == 0 || ! this.claims.length) {
-                    url = this.fetch_endpoint;
+                    url = this.fetchEndpoint;
                 }
 
                 // Check if there is a next_page_url as per our pagination.

@@ -20,6 +20,8 @@ class UserClaimsTransformer extends TransformerAbstract
             'id' => $claim->id,
             'status' => $claim->present()->getClaimStatus(),
             'price' => currency($claim->price),
+            'cancelable' => $claim->isCancelable(),
+            'canceled_at' => $claim->canceled_at,
             'shipping_status' => $claim->present()->getShippingStatus($statusAsBuyerPov = true),
             'view_route' => route('profile.claims.show', [$claim->getUUID()]),
             'created_at_human' => $claim->createdAtHumanNoTime(),

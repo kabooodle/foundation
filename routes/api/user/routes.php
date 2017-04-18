@@ -23,3 +23,7 @@ $api->get('users/{username}/claims/{uuid}', [
     'as' => 'users.claims.show',
     'uses' => \Kabooodle\Http\Controllers\Api\User\ClaimsController::class . '@show'
 ]);
+$api->post('users/{username}/claims/{uuid}/cancel', [
+    'as' => 'users.claims.cancel',
+    'uses' => \Kabooodle\Http\Controllers\Api\User\ClaimsController::class . '@cancel'
+]);
