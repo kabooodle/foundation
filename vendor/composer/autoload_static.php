@@ -616,8 +616,8 @@ class ComposerStaticInite3e1964d508cf57e82e89ed4ec8dabc3
             ),
             'Postmark\\' => 
             array (
-                0 => __DIR__ . '/..' . '/wildbit/swiftmailer-postmark/src',
-                1 => __DIR__ . '/..' . '/wildbit/laravel-postmark-provider/src',
+                0 => __DIR__ . '/..' . '/wildbit/laravel-postmark-provider/src',
+                1 => __DIR__ . '/..' . '/wildbit/swiftmailer-postmark/src',
             ),
             'PHPExcel' => 
             array (

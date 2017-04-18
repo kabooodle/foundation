@@ -6075,16 +6075,16 @@
         },
         {
             "name": "wildbit/swiftmailer-postmark",
-            "version": "2.0.5",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wildbit/swiftmailer-postmark.git",
-                "reference": "7b69441324b40517d4ef69703677853fb367ee4e"
+                "reference": "fb49114bc8033b125f9d19473dc0741385131d84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wildbit/swiftmailer-postmark/zipball/7b69441324b40517d4ef69703677853fb367ee4e",
-                "reference": "7b69441324b40517d4ef69703677853fb367ee4e",
+                "url": "https://api.github.com/repos/wildbit/swiftmailer-postmark/zipball/fb49114bc8033b125f9d19473dc0741385131d84",
+                "reference": "fb49114bc8033b125f9d19473dc0741385131d84",
                 "shasum": ""
             },
             "require": {
@@ -6114,7 +6114,7 @@
                 }
             ],
             "description": "A Swiftmailer Transport for Postmark.",
-            "time": "2016-09-13T20:43:41+00:00"
+            "time": "2017-04-18T14:24:10+00:00"
         },
         {
             "name": "zackkitzmiller/tiny",

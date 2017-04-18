@@ -6,7 +6,10 @@
 
 namespace Kabooodle\Services\PdfMerger;
 
+use Storage;
 use Exception;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 use LynX39\LaraPdfMerger\PdfManage;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
@@ -29,15 +32,50 @@ class PdfMerger implements PdfMergerInterface
     }
 
     /**
+     * @param string      $url
+     * @param string      $pages
+     * @param string|null $orientation
+     *
+     * @return PdfManage|void
+     * @throws FileNotFoundException|InvalidArgumentException
+     */
+    public function addRemotePdf(string $url, string $pages = 'all', string $orientation = null)
+    {
+        $stream = file_get_contents($url);
+
+        if (! $stream){
+            throw new FileNotFoundException('Invalid file');
+        }
+
+        $localFile = str_random(32);
+        Storage::disk('local')->put($localFile, $stream);
+
+        return $this->addPdf($localFile, $pages, $orientation);
+    }
+
+    /**
+     * @param string $filePath
+     *
+     * @throws InvalidArgumentException
+     */
+    public function assertFileIsPdf(string $filePath)
+    {
+        $mimeType = mime_content_type($filePath);
+        \Log::info($mimeType . ' '. $filePath);
+
+        if (! Str::contains(strtolower($mimeType), 'pdf')) {
+            throw new InvalidArgumentException('File is not a valid PDF');
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function addPdf(string $filepath, string $pages = 'all', string $orientation = null)
     {
-        try {
-            return $this->client->addPDF($filepath, $pages, $orientation);
-        } catch (Exception $e) {
-            throw new FileNotFoundException;
-        }
+        $this->assertFileIsPdf($filepath);
+
+        return $this->client->addPDF($filepath, $pages, $orientation);
     }
 
     /**

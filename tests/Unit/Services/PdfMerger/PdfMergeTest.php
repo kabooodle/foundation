@@ -8,11 +8,11 @@ namespace Kabooodle\Tests\Unit\Services\PdfMerger;
 
 use Storage;
 use Mockery;
+use InvalidArgumentException;
 use Kabooodle\Tests\BaseTestCase;
 use LynX39\LaraPdfMerger\PdfManage;
 use Kabooodle\Services\PdfMerger\PdfMerger;
 use Kabooodle\Services\PdfMerger\PdfMergerInterface;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 /**
  * Class PdfMergeTest
@@ -23,6 +23,11 @@ class PdfMergeTest extends BaseTestCase
      * @var string
      */
     public $sampleFilePath;
+
+    /**
+     * @var string
+     */
+    public $expectedMergeResult;
 
     /**
      * @var string
@@ -39,6 +44,7 @@ class PdfMergeTest extends BaseTestCase
         parent::setUp();
 
         $this->sampleFilePath = __DIR__ . DIRECTORY_SEPARATOR .'sample_pdf.pdf';
+        $this->expectedMergeResult = __DIR__ . DIRECTORY_SEPARATOR .'merged_test.pdf';
         $this->savedFilePath = storage_path('app') . DIRECTORY_SEPARATOR . 'saved_file.pdf';
         $this->mergedOutputFilePath = storage_path('app') . DIRECTORY_SEPARATOR . 'merged_test.pdf';
     }
@@ -74,16 +80,18 @@ class PdfMergeTest extends BaseTestCase
         $pdf->merge('file', $this->mergedOutputFilePath, 'P');
 
         $this->assertFileExists($this->mergedOutputFilePath);
+        $this->assertEquals(mime_content_type($this->expectedMergeResult), mime_content_type($this->mergedOutputFilePath));
+        $this->assertEquals(filesize($this->expectedMergeResult), filesize($this->mergedOutputFilePath));
         unlink($this->savedFilePath);
         unlink($this->mergedOutputFilePath);
     }
 
     public function test_throws_exception_when_file_not_found()
     {
-        $this->expectException(FileNotFoundException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $pdf = app()->make(PdfMergerInterface::class);
 
-        $pdf->addPdf('abc.pdf', 'all');
+        $pdf->addPdf(__DIR__ . DIRECTORY_SEPARATOR . 'not_a_pdf.txt');
     }
 }
