@@ -395,8 +395,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
         className: "phpdebugbar " + csscls('minimized'),
 
         options: {
-            bodyPaddingBottom: true,
-            bodyPaddingBottomHeight: parseInt($('body').css('padding-bottom'))
+            bodyMarginBottom: true,
+            bodyMarginBottomHeight: 0
         },
 
         initialize: function() {
@@ -406,6 +406,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.firstTabName = null;
             this.activePanelName = null;
             this.datesetTitleFormater = new DatasetTitleFormater(this);
+            this.options.bodyMarginBottomHeight = parseInt($('body').css('margin-bottom'));
             this.registerResizeHandler();
         },
 
@@ -793,7 +794,16 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.$el.addClass(csscls('closed'));
             this.recomputeBottomOffset();
         },
-
+        
+        /**
+         * Checks if the panel is closed
+         *
+         * @return {Boolean}
+         */
+        isClosed: function() {
+            return this.$el.hasClass(csscls('closed'));
+        },
+        
         /**
          * Restore the debug bar
          *
@@ -813,13 +823,17 @@ if (typeof(PhpDebugBar) == 'undefined') {
         },
 
         /**
-         * Recomputes the padding-bottom css property of the body so
+         * Recomputes the margin-bottom css property of the body so
          * that the debug bar never hides any content
          */
         recomputeBottomOffset: function() {
-            if (this.options.bodyPaddingBottom) {
-                var height = parseInt(this.$el.height()) + this.options.bodyPaddingBottomHeight;
-                $('body').css('padding-bottom', height);
+            if (this.options.bodyMarginBottom) {
+                if (this.isClosed()) {
+                    return $('body').css('margin-bottom', this.options.bodyMarginBottomHeight || '');
+                }
+                
+                var offset = parseInt(this.$el.height()) + (this.options.bodyMarginBottomHeight || 0);
+                $('body').css('margin-bottom', offset);
             }
         },
 
@@ -881,9 +895,10 @@ if (typeof(PhpDebugBar) == 'undefined') {
          * @param {Object} data
          * @param {String} id The name of this set, optional
          * @param {String} suffix
+         * @param {Bool} show Whether to show the new dataset, optional (default: true)
          * @return {String} Dataset's id
          */
-        addDataSet: function(data, id, suffix) {
+        addDataSet: function(data, id, suffix, show) {
             var label = this.datesetTitleFormater.format(id, data, suffix);
             id = id || (getObjectSize(this.datasets) + 1);
             this.datasets[id] = data;
@@ -893,7 +908,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 this.$datasets.show();
             }
 
-            this.showDataSet(id);
+            if (typeof(show) == 'undefined' || show) {
+                this.showDataSet(id);
+            }
             return id;
         },
 
@@ -901,14 +918,15 @@ if (typeof(PhpDebugBar) == 'undefined') {
          * Loads a dataset using the open handler
          * 
          * @param {String} id
+         * @param {Bool} show Whether to show the new dataset, optional (default: true)
          */
-        loadDataSet: function(id, suffix, callback) {
+        loadDataSet: function(id, suffix, callback, show) {
             if (!this.openHandler) {
                 throw new Error('loadDataSet() needs an open handler');
             }
             var self = this;
             this.openHandler.load(id, function(data) {
-                self.addDataSet(data, id, suffix);
+                self.addDataSet(data, id, suffix, show);
                 callback && callback(data);
             });
         },
@@ -990,10 +1008,13 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * AjaxHandler
      *
      * Extract data from headers of an XMLHttpRequest and adds a new dataset
+     *
+     * @param {Bool} autoShow Whether to immediately show new datasets, optional (default: true)
      */
-    var AjaxHandler = PhpDebugBar.AjaxHandler = function(debugbar, headerName) {
+    var AjaxHandler = PhpDebugBar.AjaxHandler = function(debugbar, headerName, autoShow) {
         this.debugbar = debugbar;
         this.headerName = headerName || 'phpdebugbar';
+        this.autoShow = typeof(autoShow) == 'undefined' ? true : autoShow;
     };
 
     $.extend(AjaxHandler.prototype, {
@@ -1006,6 +1027,10 @@ if (typeof(PhpDebugBar) == 'undefined') {
          * @return {Bool}
          */
         handle: function(xhr) {
+             // Check if the debugbar header is available
+            if (xhr.getAllResponseHeaders().indexOf(this.headerName) === -1){
+                return true;
+            }
             if (!this.loadFromId(xhr)) {
                 return this.loadFromData(xhr);
             }
@@ -1021,7 +1046,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         loadFromId: function(xhr) {
             var id = this.extractIdFromHeaders(xhr);
             if (id && this.debugbar.openHandler) {
-                this.debugbar.loadDataSet(id, "(ajax)");
+                this.debugbar.loadDataSet(id, "(ajax)", undefined, this.autoShow);
                 return true;
             }
             return false;
@@ -1053,7 +1078,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             if (data.error) {
                 throw new Error('Error loading debugbar data: ' + data.error);
             } else if(data.data) {
-                this.debugbar.addDataSet(data.data, data.id, "(ajax)");
+                this.debugbar.addDataSet(data.data, data.id, "(ajax)", this.autoShow);
             }
             return true;
         },

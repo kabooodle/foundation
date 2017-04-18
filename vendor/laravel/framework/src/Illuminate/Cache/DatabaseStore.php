@@ -4,6 +4,7 @@ namespace Illuminate\Cache;
 
 use Closure;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
@@ -77,7 +78,7 @@ class DatabaseStore implements Store
                 $cache = (object) $cache;
             }
 
-            if (time() >= $cache->expiration) {
+            if (Carbon::now()->getTimestamp() >= $cache->expiration) {
                 $this->forget($key);
 
                 return;
@@ -92,7 +93,7 @@ class DatabaseStore implements Store
      *
      * @param  string  $key
      * @param  mixed   $value
-     * @param  int     $minutes
+     * @param  float|int  $minutes
      * @return void
      */
     public function put($key, $value, $minutes)
@@ -104,7 +105,7 @@ class DatabaseStore implements Store
         // time and place that on the table so we will check it on our retrieval.
         $value = $this->encrypter->encrypt($value);
 
-        $expiration = $this->getTime() + ($minutes * 60);
+        $expiration = $this->getTime() + (int) ($minutes * 60);
 
         try {
             $this->table()->insert(compact('key', 'value', 'expiration'));
@@ -128,7 +129,7 @@ class DatabaseStore implements Store
     }
 
     /**
-     * Increment the value of an item in the cache.
+     * Decrement the value of an item in the cache.
      *
      * @param  string  $key
      * @param  mixed   $value
@@ -165,7 +166,7 @@ class DatabaseStore implements Store
             }
 
             $current = $this->encrypter->decrypt($cache->value);
-            $new = $callback($current, $value);
+            $new = $callback((int) $current, $value);
 
             if (! is_numeric($current)) {
                 return false;
@@ -186,7 +187,7 @@ class DatabaseStore implements Store
      */
     protected function getTime()
     {
-        return time();
+        return Carbon::now()->getTimestamp();
     }
 
     /**

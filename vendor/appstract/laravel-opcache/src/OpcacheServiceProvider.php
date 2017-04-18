@@ -2,7 +2,6 @@
 
 namespace Appstract\Opcache;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class OpcacheServiceProvider extends ServiceProvider
@@ -27,12 +26,18 @@ class OpcacheServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if (str_contains($this->app->version(), 'Lumen')) {
+            $router = $this->app;
+        } else {
+            $router = $this->app->router;
+        }
+
         // bind routes
-        Route::group([
+        $router->group([
             'middleware'    => [\Appstract\Opcache\Http\Middleware\Request::class],
             'prefix'        => 'opcache-api',
             'namespace'     => 'Appstract\Opcache\Http\Controllers',
-        ], function () {
+        ], function ($router) {
             require __DIR__.'/Http/routes.php';
         });
     }

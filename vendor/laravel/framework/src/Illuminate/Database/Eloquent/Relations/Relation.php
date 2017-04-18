@@ -200,7 +200,6 @@ abstract class Relation
     {
         return array_unique(array_values(array_map(function ($value) use ($key) {
             return $key ? $value->getAttribute($key) : $value->getKey();
-
         }, $models)));
     }
 
@@ -307,7 +306,8 @@ abstract class Relation
         $map = static::buildMorphMapFromModels($map);
 
         if (is_array($map)) {
-            static::$morphMap = $merge ? array_merge(static::$morphMap, $map) : $map;
+            static::$morphMap = $merge && static::$morphMap
+                            ? array_merge(static::$morphMap, $map) : $map;
         }
 
         return static::$morphMap;

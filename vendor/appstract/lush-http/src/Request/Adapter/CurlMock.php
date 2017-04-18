@@ -2,6 +2,7 @@
 
 namespace Appstract\LushHttp\Request\Adapter;
 
+use Exception;
 use Appstract\LushHttp\Exception\LushRequestException;
 
 class CurlMock implements AdapterInterface
@@ -77,6 +78,7 @@ class CurlMock implements AdapterInterface
 
     /**
      * Execute the request.
+     *
      * @return mixed
      * @throws Exception
      */
@@ -87,13 +89,14 @@ class CurlMock implements AdapterInterface
         }
 
         $statusCode = (int) isset($this->lushOptions['return_status']) ? $this->lushOptions['return_status'] : 200;
+        $contentType = isset($this->lushOptions['return_content_type']) ? $this->lushOptions['return_content_type'] : 'text';
 
         $this->headers['url'] = $this->ch;
         $this->headers['http_code'] = $statusCode;
 
         $this->executed = true;
 
-        return $this->createResponse($statusCode);
+        return $this->createResponse($statusCode, $contentType);
     }
 
     /**
@@ -153,22 +156,45 @@ class CurlMock implements AdapterInterface
      * Create a example response based on statuscode.
      *
      * @param $statusCode
+     * @param $contentType
      *
      * @return string
      */
-    protected function createResponse($statusCode)
+    protected function createResponse($statusCode, $contentType)
     {
         switch ($statusCode) {
             case 200:
             case 201:
-                return json_encode(['url' => $this->ch, 'status' => 'ok']);
+                return $this->createContent($contentType);
             default:
                 // fail on error
                 if ($this->curlOptions[45]) {
-                    throw new LushRequestException($this, ['message' => sprintf('Mocked server error %d', $statusCode), 'code' => $statusCode]);
+                    throw new LushRequestException($this, ['message' => sprintf('%d - Mocked server error', $statusCode), 'code' => $statusCode]);
                 }
 
                 return json_encode(['url' => $this->ch, 'status' => sprintf('Error: %d', $statusCode)]);
         }
+    }
+
+    /**
+     * Create sample content for response.
+     *
+     * @param $type
+     *
+     * @return string
+     */
+    protected function createContent($type)
+    {
+        if ($type == 'json') {
+            $this->headers['content_type'] = 'application/json; charset=UTF-8';
+
+            return json_encode(['url' => $this->ch, 'status' => 'ok']);
+        } elseif ($type == 'xml') {
+            $this->headers['content_type'] = 'text/xml; charset=UTF-8';
+
+            return '<?xml version="1.0" encoding="UTF-8"?><result><url>'.$this->ch.'</url><status>ok</status></result>';
+        }
+
+        return 'ok';
     }
 }

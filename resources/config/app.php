@@ -2,6 +2,8 @@
 
 return [
 
+    'name' => 'Kabooodle',
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -165,6 +167,7 @@ return [
         Kabooodle\Foundation\Providers\HTMLServiceProvider::class,
         Kabooodle\Foundation\Providers\RepositoryServiceProvider::class,
         Kabooodle\Foundation\Providers\KeenServiceProvider::class,
+        Kabooodle\Foundation\Providers\PdfMergerProvider::class,
 
         Aws\Laravel\AwsServiceProvider::class,
         AlgoliaSearch\Laravel\AlgoliaServiceProvider::class,

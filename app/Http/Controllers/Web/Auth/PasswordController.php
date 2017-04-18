@@ -35,7 +35,7 @@ class PasswordController extends Controller
     protected function getResetValidationRules()
     {
         return [
-            'token' => 'required',
+            '_token' => 'required',
             'email' => 'required|email',
             'password' => 'required|confirmed|min:6',
         ];
@@ -60,9 +60,7 @@ class PasswordController extends Controller
         try {
             $this->validate(
                 $request,
-                $this->getResetValidationRules(),
-                $this->getResetValidationMessages(),
-                $this->getResetValidationCustomAttributes()
+                $this->getResetValidationRules()
             );
 
             $credentials = $request->only(

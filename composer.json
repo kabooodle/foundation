@@ -19,13 +19,14 @@
     },
     {
       "type": "vcs",
-      "url": "https://github.com/kabooodle/lara-pdf-merger"
+      "url": "https://github.com/kabooodle/laravel-postmark-provider"
     }
   ],
   "require": {
     "php": ">=5.5.9 || ^7.0",
     "algolia/algoliasearch-laravel": "1.2.2",
-    "alt-three/bus": "1.1.0",
+    "alt-three/bus": "^2.0",
+    "appstract/laravel-opcache": "^1.0",
     "aws/aws-sdk-php-laravel": "3.1.0",
     "barryvdh/laravel-cors": "0.8.1",
     "barryvdh/laravel-ide-helper": "2.2.1",
@@ -36,10 +37,12 @@
     "graham-campbell/binput": "3.4.0",
     "graham-campbell/htmlmin": "4.5.1",
     "helpscout/api": "^1.8",
+    "hydreflab/iron-queue": "5.3",
+    "jonnypickett/eloquent-sti": "^1.0",
+    "keen-io/keen-io": "~2.5",
     "laravel/cashier": "6.0.19",
-    "laravel/framework": "5.2.31",
-    "laravelcollective/html": "5.2.4",
-    "laravelcollective/iron-queue": "^5.2",
+    "laravel/framework": "5.3.*",
+    "laravelcollective/html": "5.3.1",
     "league/flysystem-aws-s3-v3": "1.0.13",
     "lynx39/lara-pdf-merger": "dev-master",
     "maatwebsite/excel": "~2.1.0",
@@ -52,24 +55,20 @@
     "shippo/shippo-php": "1.1.1",
     "sofa/revisionable": "5.2.1",
     "spatie/laravel-fractal": "1.9.1",
-    "tymon/jwt-auth": "1.0.*@dev",
-    "wildbit/laravel-postmark-provider": "3.0.0",
-    "zackkitzmiller/tiny": "1.2.2",
-    "vinkla/pusher": "^2.4",
-    "jonnypickett/eloquent-sti": "^1.0",
     "spatie/laravel-newsletter": "^3.4",
-    "keen-io/keen-io": "~2.5",
-    "myokyawhtun/PDFMerger": "dev-master",
-    "appstract/laravel-opcache": "^1.0"
+    "tymon/jwt-auth": "1.0.*@dev",
+    "wildbit/laravel-postmark-provider": "4.0.0",
+    "zackkitzmiller/tiny": "1.2.2",
+    "vinkla/pusher": "^2.4"
   },
   "require-dev": {
     "alt-three/testbench": "^1.8",
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "0.9.*",
-    "phpunit/phpunit": "5.2.9",
-    "symfony/css-selector": "2.8.*|3.0.*",
-    "symfony/dom-crawler": "2.8.*|3.0.*",
-    "barryvdh/laravel-debugbar": "2.2.2"
+    "phpunit/phpunit": "~5.4",
+    "symfony/css-selector": "3.1.*",
+    "symfony/dom-crawler": "3.1.*",
+    "barryvdh/laravel-debugbar": "2.3.2"
   },
   "autoload": {
     "classmap": [

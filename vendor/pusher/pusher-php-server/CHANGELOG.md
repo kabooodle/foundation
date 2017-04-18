@@ -1,36 +1,4 @@
-## 2.6.1 (2016-11-11)
-
-[FIXED] Check for correct status code when POSTing to native push notifications API.
-
-## 2.6.0 (2016-08-23)
-
-[ADDED] support for publishing push notifications on up to 10 interests.
-
-## 2.5.0 (2016-08-15)
-
-[REMOVED] Native push notifications payload validation in the client.
-
-## 2.5.0-rc2 (2016-07-19)
-
-[FIXED] DDN and Native Push endpoints were not assembled correctly.
-
-## 2.5.0-rc1 (2016-07-18)
-
-[NEW] Native push notifications
-
-## 2.4.2 (2016-07-04)
-
-[CHANGED] One curl instance per Pusher instance
-
-## 2.4.1 (2016-05-27)
-
-[FIXED] Presence data could not be submitted after the style changes
-
-## 2.4.0 (2016-05-25)
-
-[ADDED] Support for batch events
-[ADDED] Curl options
-[FIXED] Applied fixes from StyleCI
+# Changelog
 
 ## 2.3.0 (2015-02-16)
 

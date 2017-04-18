@@ -77,7 +77,7 @@ class Conversation {
 			$this->bccList     = isset($data->bcc) ? $data->bcc : null;
 			$this->tags        = isset($data->tags) ? $data->tags : null;
 
-			if ($data->closedBy) {
+			if (isset($data->closedBy)) {
 				$this->closedBy = new \HelpScout\model\ref\PersonRef($data->closedBy);
 			}
 
@@ -94,6 +94,9 @@ class Conversation {
 					'phone'         => '\HelpScout\model\thread\Phone'
 				);
 				foreach ($data->threads as $thread) {
+					if (is_null($thread)) {
+						continue;
+					}
 					$type = $thread->type;
 					if (isset($types[$type])) {
 						$this->threads[] = new $types[$type]($thread);
@@ -587,7 +590,7 @@ class Conversation {
 	 * @return array|null
 	 */
 	public function getThreads($cache = true, $apiCall = true) {
-		if ($this->threads === false && $apiCall) {
+		if ($this->threads === null && $apiCall) {
 			$convo = \HelpScout\ApiClient::getInstance()->getConversation($this->id);
 			if ($convo) {
 				if ($cache) {

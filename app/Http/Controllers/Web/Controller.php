@@ -20,7 +20,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesResources;
  */
 class Controller extends BaseController
 {
-    use AuthorizesRequests, AuthorizesResources, DispatchesJobs, Helpers, ValidatesRequests;
+    use AuthorizesRequests, DispatchesJobs, Helpers, ValidatesRequests;
 
     /**
      * @param string $view

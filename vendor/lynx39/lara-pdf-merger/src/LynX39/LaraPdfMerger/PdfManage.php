@@ -8,7 +8,7 @@ use TCPDI;
 require_once('tcpdf/tcpdf.php');
 require_once('tcpdf/tcpdi.php');
 
-class PdfManage
+class PDFManage
 {
     private $_files;    //['form.pdf']  ["1,2,4, 5-19"]
     private $_fpdi;

@@ -203,7 +203,7 @@ class Inventory extends Listable implements ListableInterface
     {
         return $this->hasMany(Claims::class, 'listable_id')
             ->whereListableType(InventoryGrouping::class)
-            ->whereIn('listable_id', $this->groupings()->lists('listables.id'));
+            ->whereIn('listable_id', $this->groupings()->pluck('listables.id'));
     }
 
     /**
@@ -213,7 +213,7 @@ class Inventory extends Listable implements ListableInterface
     {
         return $this->hasMany(Claims::class, 'listable_id')
             ->whereListableType(InventoryGrouping::class)
-            ->whereIn('listable_id', $this->lockedGroupings()->lists('listables.id'));
+            ->whereIn('listable_id', $this->lockedGroupings()->pluck('listables.id'));
     }
 
     /**
@@ -223,7 +223,7 @@ class Inventory extends Listable implements ListableInterface
     {
         return $this->hasMany(Claims::class, 'listable_id')
             ->whereListableType(InventoryGrouping::class)
-            ->whereIn('listable_id', $this->unlockedGroupings()->lists('listables.id'));
+            ->whereIn('listable_id', $this->unlockedGroupings()->pluck('listables.id'));
     }
 
     /**

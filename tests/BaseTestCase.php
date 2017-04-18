@@ -48,8 +48,6 @@ abstract class BaseTestCase extends L_TestCase
 
     public function tearDown()
     {
-        parent::tearDown();
-
         // https://phpunit.de/manual/current/en/fixtures.html
         $refl = new ReflectionObject($this);
         foreach ($refl->getProperties() as $prop) {
@@ -58,6 +56,9 @@ abstract class BaseTestCase extends L_TestCase
                 $prop->setValue($this, null);
             }
         }
+
+        parent::tearDown();
+
         Mockery::close();
     }
 
