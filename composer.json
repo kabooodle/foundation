@@ -16,6 +16,10 @@
     {
       "type": "vcs",
       "url": "https://github.com/kabooodle/Laravel-HTMLMin"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/kabooodle/lara-pdf-merger"
     }
   ],
   "require": {
@@ -37,6 +41,7 @@
     "laravelcollective/html": "5.2.4",
     "laravelcollective/iron-queue": "^5.2",
     "league/flysystem-aws-s3-v3": "1.0.13",
+    "lynx39/lara-pdf-merger": "dev-master",
     "maatwebsite/excel": "~2.1.0",
     "nexmo/client": "@beta",
     "nexmo/laravel": "1.0.0-beta3",

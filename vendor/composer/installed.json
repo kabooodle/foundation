@@ -6886,12 +6886,12 @@
         "version_normalized": "0.9.8.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/padraic/mockery.git",
+            "url": "https://github.com/mockery/mockery.git",
             "reference": "1e5e2ffdc4d71d7358ed58a6fdd30a4a0c506855"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/padraic/mockery/zipball/1e5e2ffdc4d71d7358ed58a6fdd30a4a0c506855",
+            "url": "https://api.github.com/repos/mockery/mockery/zipball/1e5e2ffdc4d71d7358ed58a6fdd30a4a0c506855",
             "reference": "1e5e2ffdc4d71d7358ed58a6fdd30a4a0c506855",
             "shasum": ""
         },
@@ -7940,5 +7940,54 @@
             "laravel",
             "php"
         ]
+    },
+    {
+        "name": "lynx39/lara-pdf-merger",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/kabooodle/lara-pdf-merger.git",
+            "reference": "30a60aae3db6b96be5ce4120bcb8d95ec49ec1da"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/kabooodle/lara-pdf-merger/zipball/30a60aae3db6b96be5ce4120bcb8d95ec49ec1da",
+            "reference": "30a60aae3db6b96be5ce4120bcb8d95ec49ec1da",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4"
+        },
+        "time": "2017-04-18T00:38:09+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "LynX39\\LaraPdfMerger": "src/"
+            }
+        },
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Michael Musso",
+                "email": "lynx@deltaaskii.com",
+                "homepage": "https://github.com/LynX39"
+            }
+        ],
+        "homepage": "https://github.com/LynX39/lara-pdf-merger",
+        "keywords": [
+            "laravel",
+            "manage",
+            "merge",
+            "merger",
+            "paginate",
+            "pdf"
+        ],
+        "support": {
+            "source": "https://github.com/kabooodle/lara-pdf-merger/tree/master"
+        }
     }
 ]
