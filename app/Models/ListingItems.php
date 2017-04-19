@@ -323,7 +323,7 @@ class ListingItems extends AbstractListingModel implements WatchableInterface, V
             ];
 
             $id = $this->obfuscateIdToString($this->id);
-            $route = str_replace(['https://', 'http://'], '', str_replace(['api.', 'app.', 'api', 'app'], 'www.', route('externalclaim.show', [$id])));
+            $route = str_replace(['api.', 'app.', 'api', 'app'], 'www.', route('externalclaim.show', [$id]));
             $itemMessage = str_ireplace($placeholders['url'], ' '.$route.' ', $itemMessage);
             $itemMessage = str_ireplace($placeholders['price'], $this->listedItem->getPrice(), $itemMessage);
 
