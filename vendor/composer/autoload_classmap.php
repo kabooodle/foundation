@@ -10,6 +10,8 @@ return array(
     'Abstract_Renderer' => $vendorDir . '/dompdf/dompdf/include/abstract_renderer.cls.php',
     'Add1000EntriesIntoDb' => $baseDir . '/resources/database/migrations/2016_10_14_182820_add_1000_entries_into_db.php',
     'AddBillingAndShippingFieldsToAddressesTbl' => $baseDir . '/resources/database/migrations/2016_12_12_010916_add_billing_and_shipping_fields_to_addresses_tbl.php',
+    'AddCanceledToClaimsTable' => $baseDir . '/resources/database/migrations/2017_04_17_162704_add_canceled_to_claims_table.php',
+    'AddClaimCanceledToNotificationsTable' => $baseDir . '/resources/database/migrations/2017_04_17_172847_add_claim_canceled_to_notifications_table.php',
     'AddCoverPhotoToInventoryGroupsTable' => $baseDir . '/resources/database/migrations/2017_01_22_074712_add_cover_photo_to_inventory_groups_table.php',
     'AddFacebookColumnsToUsersTable' => $baseDir . '/resources/database/migrations/2016_09_06_194340_add_facebook_columns_to_users_table.php',
     'AddFacebookNodesUsersTbl' => $baseDir . '/resources/database/migrations/2016_12_04_212554_add_facebook_nodes_users_tbl.php',

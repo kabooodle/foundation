@@ -7,6 +7,7 @@
         </div>
     </div>
     <claims-list
-        fetch_endpoint="{{ apiRoute('users.claims.index', [$viewedUser->username]) }}"
+        fetch-endpoint="{{ apiRoute('users.claims.index', [$viewedUser->username]) }}"
+        :claimer-view="{{ ($viewedUser->username == webUser()->username) ? 'true' : 'false' }}"
     ></claims-list>
 @endsection

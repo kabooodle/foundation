@@ -9,6 +9,8 @@ namespace Kabooodle\Http\Controllers\Api\User;
 use DB;
 use Binput;
 use Illuminate\Http\Request;
+use Kabooodle\Bus\Commands\Claim\CancelUserClaimCommand;
+use Kabooodle\Foundation\Exceptions\Claim\UserClaimNotCancelableException;
 use Kabooodle\Http\Controllers\Api\AbstractApiController;
 use Kabooodle\Models\User;
 use Kabooodle\Transformers\Claims\UserClaimsTransformer;
@@ -27,7 +29,7 @@ class ClaimsController extends AbstractApiController
     public function index(Request $request, string $username)
     {
         $user = User::where('username', '=', $username)->firstOrFail();
-        $claims = $user->claimsAsBuyer()->paginate(config('pagination.per-page'));;
+        $claims = $user->claimsAsBuyer()->notCanceled()->paginate(config('pagination.per-page'));;
 
         return $this->response->paginator($claims, new UserClaimsTransformer);
     }
@@ -45,5 +47,27 @@ class ClaimsController extends AbstractApiController
         $claim = $user->claims->findOrFail($claimId);
 
         return $this->setData(['claim' => $claim])->respond();
+    }
+
+    /**
+     * @param Request $request
+     * @param string $username
+     * @param $claimId
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function cancel(Request $request, string $username, $claimId)
+    {
+        try {
+            $claim = $this->getUser()->claimsAsBuyer()->findOrFail($claimId);
+
+            $this->dispatchNow(new CancelUserClaimCommand($claim, $request->get('message')));
+
+            return $this->setData(['message' => 'Your claim has been canceled', 'claim' => $claim])->respond();
+        } catch (UserClaimNotCancelableException $e) {
+            return $this->setData(['message' => $e->getMessage()])->setStatusCode(400)->respond($e);
+        } catch (Exception $e) {
+            return $this->setData(['message' => $e->getMessage()])->setStatusCode(500)->respond($e);
+        }
     }
 }

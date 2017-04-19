@@ -11,6 +11,7 @@ use Kabooodle\Models\Claims;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Models\Traits\ObfuscatesIdTrait;
 use Kabooodle\Http\Controllers\Traits\PaginatesTrait;
+use Kabooodle\Transformers\Claims\UserClaimsTransformer;
 
 /**
  * Class ProfileClaimsController
@@ -48,6 +49,10 @@ class ProfileClaimsController extends Controller
             $q->withTrashed();
         }]);
 
-        return view('profile.claims.show')->with(compact('claim'));
+        $data = [
+            'claim' => $claim,
+        ];
+
+        return view('profile.claims.show', $data);
     }
 }

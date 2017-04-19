@@ -4,7 +4,14 @@
 
     <div class="box">
         <div class="box-header">
-            <h4>Claim Information</h4>
+            <h4>Claim Information
+                <span class="pull-right" style="position: relative; top: -5px;">
+                    <cancel-claim
+                        :claim="{{ json_encode($claim) }}"
+                        claim-endpoint="{{ apiRoute('users.claims.show', [webUser()->username, $claim->id]) }}"
+                    ></cancel-claim>
+                </span>
+            </h4>
         </div>
         <div class="box-divider"></div>
         <div class="box-body">

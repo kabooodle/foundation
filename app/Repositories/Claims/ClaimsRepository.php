@@ -103,6 +103,7 @@ class ClaimsRepository implements ClaimsRepositoryInterface
             l.user_id = ?
             and e.primary = 1
             and e.deleted_at is null
+            and c.canceled_at is null
             and c.deleted_at is null
             and l.deleted_at is null
             ::REPLACE::

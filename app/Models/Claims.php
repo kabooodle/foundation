@@ -31,7 +31,8 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
      */
     protected $appends = [
         'claim_status',
-        'status'
+        'status',
+        'cancelable',
     ];
 
     /**
@@ -51,7 +52,8 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     protected $dates = [
         'accepted_on',
         'rejected_on',
-        'shipped_manually_on'
+        'shipped_manually_on',
+        'canceled_at',
     ];
 
     /**
@@ -118,7 +120,9 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         'accepted_price',
         'listing_item_id',
         'shipped_manually',
-        'shipped_manually_on'
+        'shipped_manually_on',
+        'canceled_at',
+        'cancel_message',
     ];
 
     /**
@@ -165,9 +169,24 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
         return ! is_null($this->accepted_price) ? $this->accepted_price : $value;
     }
 
+    /**
+     * @param $query
+     *
+     * @return mixed
+     */
     public function scopeOnHold($query)
     {
         return $query->whereVerified(false)->whereNull('rejected_on')->where('created_at', '>=', Carbon::now()->sub(onHoldInterval()));
+    }
+
+    /**
+     * @param $query
+     *
+     * @return mixed
+     */
+    public function scopeNotCanceled($query)
+    {
+        return $query->whereNULL('canceled_at');
     }
 
     /**
@@ -176,6 +195,22 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function isVerified()
     {
         return (bool) $this->verified;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getCancelableAttribute()
+    {
+        return $this->isCancelable();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCancelable()
+    {
+        return !$this->shipmentTransaction();
     }
 
     /**
@@ -207,6 +242,20 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     }
 
     /**
+     * Cancel the claim.
+     *
+     * @return bool
+     */
+    public function cancel()
+    {
+        $this->canceled_at = Carbon::now();
+        if ($this->isVerified()) {
+            $this->listable->incrementInitialQty();
+        }
+        return $this->save();
+    }
+
+    /**
      * @return bool
      */
     public function isRejected()
@@ -225,6 +274,10 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
 
         if ($this->wasRejected()) {
             return 'Rejected';
+        }
+
+        if ($this->wasCanceled()) {
+            return 'Canceled';
         }
 
         return 'Pending';
@@ -316,6 +369,14 @@ class Claims extends BaseEloquentModel implements NotificationableInterface, Rev
     public function wasAccepted()
     {
         return (bool) ($this->accepted == 1 && $this->accepted_on <> null && $this->rejected_by === null);
+    }
+
+    /**
+     * @return bool
+     */
+    public function wasCanceled()
+    {
+        return (bool) $this->canceled_at;
     }
 
     /**
