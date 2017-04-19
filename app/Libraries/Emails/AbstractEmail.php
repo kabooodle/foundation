@@ -13,6 +13,7 @@ use InvalidArgumentException;
 use Illuminate\Queue\QueueManager;
 use Kabooodle\Libraries\QueueHelper;
 use Illuminate\Contracts\Mail\MailQueue;
+use Illuminate\Mail\Jobs\HandleQueuedMessage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
@@ -179,7 +180,7 @@ abstract class AbstractEmail
             $callback =  $this->buildQueueCallable($this->getCallable());
 
             return $this->getQueueManager()->connection(QueueHelper::pickEmails())
-                ->push('mailer@handleQueuedMessage',  compact('view', 'data', 'callback'));
+                ->push(new HandleQueuedMessage($view, $data, $callback));
         } catch (ModelNotFoundException $e) {
             Bugsnag::notifyException($e);
         }
