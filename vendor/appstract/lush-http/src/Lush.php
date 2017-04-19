@@ -13,6 +13,7 @@ class Lush
     protected $allowedMethods = [
         'DELETE',
         'GET',
+        'HEAD',
         'PATCH',
         'POST',
         'PUT',
@@ -54,14 +55,15 @@ class Lush
      * @param string $baseUrl
      * @param array  $options
      */
-    public function __construct($baseUrl = '', $options = [])
+    public function __construct($baseUrl = '', array $options = [])
     {
         // without curl, we can do anything
         if (! extension_loaded('curl') || ! function_exists('curl_init')) {
             throw new LushException('cUrl is not enabled on this server');
         }
 
-        // append trailing slash if it is missing
+        // append trailing slash to the
+        // baseUrl if it is missing
         if (! empty($baseUrl) && substr($baseUrl, -1) !== '/') {
             $baseUrl = $baseUrl.'/';
         }
@@ -78,7 +80,7 @@ class Lush
      *
      * @return \Appstract\LushHttp\Response\LushResponse
      */
-    public function __call($method, $arguments)
+    public function __call($method, array $arguments)
     {
         $url = isset($arguments[0]) ? $arguments[0] : '';
         $parameters = isset($arguments[1]) ? $arguments[1] : [];
@@ -99,7 +101,7 @@ class Lush
      *
      * @return \Appstract\LushHttp\Response\LushResponse
      */
-    public function request($method, $url = '', $parameters = '', $headers = [], $options = [])
+    public function request($method, $url = '', $parameters = '', array $headers = [], array $options = [])
     {
         $this->method = $method;
         $this->url = $url;
@@ -126,26 +128,15 @@ class Lush
         }
 
         if (! in_array($this->method, $this->allowedMethods)) {
-            throw new LushException(sprintf("Method '%s' is not allowed", $this->method), 101);
+            throw new LushException(sprintf("Method '%s' is not supported", $this->method), 101);
         }
 
-        return $this->send($this->method, $this->url, $this->parameters, $this->headers, $this->options);
-    }
-
-    /**
-     * Create the Lush request and send it.
-     *
-     * @param        $method
-     * @param        $url
-     * @param string $parameters
-     * @param array  $headers
-     * @param array  $options
-     *
-     * @return \Appstract\LushHttp\Response\LushResponse
-     */
-    protected function send($method, $url, $parameters = '', $headers = [], $options = [])
-    {
-        $request = new LushRequest($method, compact('url', 'parameters', 'headers', 'options'));
+        $request = new LushRequest($this->method, [
+            'url' => $this->url,
+            'parameters' => $this->parameters,
+            'headers' => $this->headers,
+            'options' => $this->options,
+        ]);
 
         return $request->send();
     }

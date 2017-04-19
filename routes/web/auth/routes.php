@@ -25,7 +25,7 @@ Route::post('/auth/login', [
     'uses' => \Kabooodle\Http\Controllers\Web\Auth\AuthController::class.'@postLogin'
 ]);
 
-Route::get('/auth/logout', [
+Route::post('/auth/logout', [
     'as' => 'auth.logout',
     'uses' => \Kabooodle\Http\Controllers\Web\Auth\AuthController::class.'@logout'
 ]);

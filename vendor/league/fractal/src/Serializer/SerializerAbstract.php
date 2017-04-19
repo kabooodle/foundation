@@ -15,7 +15,7 @@ use League\Fractal\Pagination\CursorInterface;
 use League\Fractal\Pagination\PaginatorInterface;
 use League\Fractal\Resource\ResourceInterface;
 
-abstract class SerializerAbstract
+abstract class SerializerAbstract implements Serializer
 {
     /**
      * Serialize a collection.
@@ -36,6 +36,13 @@ abstract class SerializerAbstract
      * @return array
      */
     abstract public function item($resourceKey, array $data);
+
+    /**
+     * Serialize null resource.
+     *
+     * @return array
+     */
+    abstract public function null();
 
     /**
      * Serialize the included data.
@@ -119,5 +126,15 @@ abstract class SerializerAbstract
     public function filterIncludes($includedData, $data)
     {
         return $includedData;
+    }
+
+    /**
+     * Get the mandatory fields for the serializer
+     *
+     * @return array
+     */
+    public function getMandatoryFields()
+    {
+        return [];
     }
 }

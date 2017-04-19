@@ -55,8 +55,8 @@ class ClaimsMerchantTransformer extends TransformerAbstract
         $claims['listing_endpoint'] = route('listings.show', [$claims['listing_uuid']]);
         $claims['shipping_create_endpoint'] = $this->userHasMerchantPlus ? route('merchant.shipping.create').'?c='.$claims['id'] : null;
         $claims['is_merchant_plus'] = $this->userHasMerchantPlus;
-        $claims['shipping_label_endpoint'] = $this->userHasMerchantPlus ? route('merchant.shipping.transactions.label.show', [$claims['shipping_shipment_uuid'], $claims['shipping_transaction_uuid']]) : null;
-        $claims['shipping_transaction_endpoint'] = $this->userHasMerchantPlus ? route('merchant.shipping.transactions.show', [$claims['shipping_shipment_uuid'], $claims['shipping_transaction_uuid']]) : null;
+        $claims['shipping_label_endpoint'] = $this->userHasMerchantPlus && $claims['shipping_transaction_uuid'] != null ? route('merchant.shipping.transactions.label.show', [$claims['shipping_shipment_uuid'], $claims['shipping_transaction_uuid']]) : null;
+        $claims['shipping_transaction_endpoint'] = $this->userHasMerchantPlus && $claims['shipping_transaction_uuid'] != null  ? route('merchant.shipping.transactions.show', [$claims['shipping_shipment_uuid'], $claims['shipping_transaction_uuid']]) : null;
 
         if ($this->shippingEntity && $claims['shipped_via_kabooodle'] == 1) {
             $claims['shipping_status'] = $this->shippingEntity->present()->mapStatusAndReturnLink($claims['shipping_status']);

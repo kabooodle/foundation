@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->registerBugsnag();
         $this->registerMessages();
-        $this->registerPaginationPresenter();
+//        $this->registerPaginationPresenter();
     }
 
     protected function registerMessages()

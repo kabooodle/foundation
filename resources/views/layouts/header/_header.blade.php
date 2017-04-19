@@ -58,8 +58,9 @@
                         <a href="javascript:;" type="button" class=
                            "js-toggle-help dropdown-item" >Help</a>
                         <div class="dropdown-divider"></div>
-                        <a class=
-                           "dropdown-item" href="{{ route('auth.logout') }}">Sign out</a>
+                        <form action="{{ route('auth.logout') }}" method="POST">
+                        <a onclick="$(this).closest('form').submit()" class=
+                           "dropdown-item" href="javascript:;">Sign out</a></form>
                     </div>
                 </li>
             @else

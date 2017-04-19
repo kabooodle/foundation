@@ -10,9 +10,15 @@
 
 namespace SebastianBergmann\Diff;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class ParserTest extends PHPUnit_Framework_TestCase
+/**
+ * @covers SebastianBergmann\Diff\Parser
+ * @uses SebastianBergmann\Diff\Chunk
+ * @uses SebastianBergmann\Diff\Diff
+ * @uses SebastianBergmann\Diff\Line
+ */
+class ParserTest extends TestCase
 {
     /**
      * @var Parser

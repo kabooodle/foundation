@@ -2,8 +2,10 @@
 
 namespace Illuminate\Session;
 
+use Carbon\Carbon;
 use SessionHandlerInterface;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Container\Container;
 
@@ -24,6 +26,13 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
     protected $table;
 
     /**
+     * The number of minutes the session should be valid.
+     *
+     * @var int
+     */
+    protected $minutes;
+
+    /**
      * The container instance.
      *
      * @var \Illuminate\Contracts\Container\Container
@@ -42,12 +51,14 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
      *
      * @param  \Illuminate\Database\ConnectionInterface  $connection
      * @param  string  $table
+     * @param  int  $minutes
      * @param  \Illuminate\Contracts\Container\Container|null  $container
      * @return void
      */
-    public function __construct(ConnectionInterface $connection, $table, Container $container = null)
+    public function __construct(ConnectionInterface $connection, $table, $minutes, Container $container = null)
     {
         $this->table = $table;
+        $this->minutes = $minutes;
         $this->container = $container;
         $this->connection = $connection;
     }
@@ -75,6 +86,14 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
     {
         $session = (object) $this->getQuery()->find($sessionId);
 
+        if (isset($session->last_activity)) {
+            if ($session->last_activity < Carbon::now()->subMinutes($this->minutes)->getTimestamp()) {
+                $this->exists = true;
+
+                return;
+            }
+        }
+
         if (isset($session->payload)) {
             $this->exists = true;
 
@@ -94,14 +113,44 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
         }
 
         if ($this->exists) {
-            $this->getQuery()->where('id', $sessionId)->update($payload);
+            $this->performUpdate($sessionId, $payload);
         } else {
-            $payload['id'] = $sessionId;
-
-            $this->getQuery()->insert($payload);
+            $this->performInsert($sessionId, $payload);
         }
 
         $this->exists = true;
+
+        return true;
+    }
+
+    /**
+     * Perform an insert operation on the session ID.
+     *
+     * @param  string  $sessionId
+     * @param  string  $payload
+     * @return void
+     */
+    protected function performInsert($sessionId, $payload)
+    {
+        try {
+            $payload['id'] = $sessionId;
+
+            return $this->getQuery()->insert($payload);
+        } catch (QueryException $e) {
+            $this->performUpdate($sessionId, $payload);
+        }
+    }
+
+    /**
+     * Perform an update operation on the session ID.
+     *
+     * @param  string  $sessionId
+     * @param  string  $payload
+     * @return int
+     */
+    protected function performUpdate($sessionId, $payload)
+    {
+        return $this->getQuery()->where('id', $sessionId)->update($payload);
     }
 
     /**
@@ -112,7 +161,7 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
      */
     protected function getDefaultPayload($data)
     {
-        $payload = ['payload' => base64_encode($data), 'last_activity' => time()];
+        $payload = ['payload' => base64_encode($data), 'last_activity' => Carbon::now()->getTimestamp()];
 
         if (! $container = $this->container) {
             return $payload;
@@ -139,6 +188,8 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
     public function destroy($sessionId)
     {
         $this->getQuery()->where('id', $sessionId)->delete();
+
+        return true;
     }
 
     /**
@@ -146,7 +197,7 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
      */
     public function gc($lifetime)
     {
-        $this->getQuery()->where('last_activity', '<=', time() - $lifetime)->delete();
+        $this->getQuery()->where('last_activity', '<=', Carbon::now()->getTimestamp() - $lifetime)->delete();
     }
 
     /**

@@ -162,7 +162,7 @@ class InventoryGrouping extends Listable implements ListableInterface
      */
     public function getAllImages()
     {
-        $ids = array_merge([$this->cover_photo_file_id],$this->inventoryItems->lists('cover_photo_file_id')->all());
+        $ids = array_merge([$this->cover_photo_file_id],$this->inventoryItems->pluck('cover_photo_file_id')->all());
         return Files::leftJoin('listables', 'files.fileable_id', '=', 'listables.id')
             ->where(function ($q) use ($ids) {
                 $q->whereIn('files.id', $ids);

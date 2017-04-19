@@ -22,16 +22,34 @@ class SparkPostTransport extends Transport
     protected $key;
 
     /**
+     * Transmission options.
+     *
+     * @var array
+     */
+    protected $options = [];
+
+    /**
+     * Transmission metadata.
+     *
+     * @var array
+     */
+    protected $metadata = [];
+
+    /**
      * Create a new SparkPost transport instance.
      *
      * @param  \GuzzleHttp\ClientInterface  $client
      * @param  string  $key
+     * @param  array  $options
+     * @param  array  $metadata
      * @return void
      */
-    public function __construct(ClientInterface $client, $key)
+    public function __construct(ClientInterface $client, $key, $options = [], $metadata = [])
     {
-        $this->client = $client;
         $this->key = $key;
+        $this->client = $client;
+        $this->options = $options;
+        $this->metadata = $metadata;
     }
 
     /**
@@ -52,14 +70,24 @@ class SparkPostTransport extends Transport
             'json' => [
                 'recipients' => $recipients,
                 'content' => [
-                    'html' => $message->getBody(),
-                    'from' => $this->getFrom($message),
-                    'subject' => $message->getSubject(),
+                    'email_rfc822' => $message->toString(),
                 ],
             ],
         ];
 
-        return $this->client->post('https://api.sparkpost.com/api/v1/transmissions', $options);
+        if ($this->options) {
+            $options['json']['options'] = $this->options;
+        }
+
+        if ($this->metadata) {
+            $options['json']['metadata'] = $this->metadata;
+        }
+
+        $this->client->post('https://api.sparkpost.com/api/v1/transmissions', $options);
+
+        $this->sendPerformed($message);
+
+        return $this->numberOfRecipients($message);
     }
 
     /**
@@ -72,7 +100,7 @@ class SparkPostTransport extends Transport
      */
     protected function getRecipients(Swift_Mime_Message $message)
     {
-        $to = $bcc = [];
+        $to = [];
 
         if ($message->getTo()) {
             $to = array_merge($to, array_keys($message->getTo()));
@@ -83,27 +111,14 @@ class SparkPostTransport extends Transport
         }
 
         if ($message->getBcc()) {
-            $to = array_merge($bcc, array_keys($message->getBcc()));
+            $to = array_merge($to, array_keys($message->getBcc()));
         }
 
         $recipients = array_map(function ($address) {
-            return ['address' => ['email' => $address, 'header_to' => $address]];
+            return compact('address');
         }, $to);
 
         return $recipients;
-    }
-
-    /**
-     * Get the "from" contacts in the format required by SparkPost.
-     *
-     * @param  Swift_Mime_Message  $message
-     * @return array
-     */
-    protected function getFrom(Swift_Mime_Message $message)
-    {
-        return array_map(function ($email, $name) {
-            return compact('name', 'email');
-        }, array_keys($message->getFrom()), $message->getFrom())[0];
     }
 
     /**
@@ -125,5 +140,47 @@ class SparkPostTransport extends Transport
     public function setKey($key)
     {
         return $this->key = $key;
+    }
+
+    /**
+     * Get the transmission options being used by the transport.
+     *
+     * @return string
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Set the transmission options being used by the transport.
+     *
+     * @param  array  $options
+     * @return array
+     */
+    public function setOptions(array $options)
+    {
+        return $this->options = $options;
+    }
+
+    /**
+     * Get the transmission metadata being used by the transport.
+     *
+     * @return string
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * Set the transmission metadata being used by the transport.
+     *
+     * @param  array  $metadata
+     * @return array
+     */
+    public function setMetadata(array $metadata)
+    {
+        return $this->metadata = $metadata;
     }
 }

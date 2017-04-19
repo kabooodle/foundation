@@ -9,10 +9,10 @@ class LushRequest extends CurlRequest
     /**
      * LushRequest constructor.
      *
-     * @param $method
-     * @param $payload
+     * @param string $method
+     * @param array $payload
      */
-    public function __construct($method, $payload)
+    public function __construct($method, array $payload)
     {
         parent::__construct();
 
@@ -29,7 +29,7 @@ class LushRequest extends CurlRequest
     {
         $this->addHeaders();
         $this->addParameters();
-        $this->setOptions();
+        $this->initOptions();
     }
 
     /**
@@ -65,8 +65,8 @@ class LushRequest extends CurlRequest
     /**
      * Add Lush option.
      *
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      */
     protected function addOption($key, $value)
     {
@@ -76,8 +76,8 @@ class LushRequest extends CurlRequest
     /**
      * Add Curl option.
      *
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      */
     protected function addCurlOption($key, $value)
     {
@@ -87,33 +87,16 @@ class LushRequest extends CurlRequest
     /**
      * Set request options.
      */
-    protected function setOptions()
+    protected function initOptions()
     {
-        // Handle options from payload
-        if (is_array($this->payload['options'])) {
-            $options = $this->payload['options'];
-
-            // Add authentication
-            if (isset($options['username']) && isset($options['password'])) {
-                $this->addCurlOption(CURLOPT_USERPWD, sprintf('%s:%s', $options['username'], $options['password']));
-            }
-
-            // Add user options
-            foreach ($options as $option => $value) {
-                $resolvedOption = OptionResolver::resolve($option);
-
-                if ($resolvedOption['type'] == 'curl_option') {
-                    $this->addCurlOption($resolvedOption['option'], $value);
-                } else {
-                    $this->addOption($option, $value);
-                }
-            }
-        }
-
         // Set method
         if ($this->method == 'POST') {
             $this->addCurlOption(CURLOPT_POST, true);
-        } elseif (in_array($this->method, ['DELETE', 'PATCH', 'PUT'])) {
+        } elseif (in_array($this->method, ['DELETE', 'HEAD', 'PATCH', 'PUT'])) {
+            if ($this->method == 'HEAD') {
+                $this->addCurlOption(CURLOPT_NOBODY, true);
+            }
+
             $this->addCurlOption(CURLOPT_CUSTOMREQUEST, $this->method);
         }
 
@@ -122,7 +105,42 @@ class LushRequest extends CurlRequest
             $this->addCurlOption(CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
         }
 
+        // Handle options from payload
+        if (is_array($this->payload['options'])) {
+            // Add authentication
+            $this->handleAuthentication();
+
+            // Add user options
+            $this->handleUserOptions();
+        }
+
         $this->mergeCurlOptions();
+    }
+
+    /**
+     *  Handle authentication.
+     */
+    protected function handleAuthentication()
+    {
+        if (isset($this->payload['options']['username'], $this->payload['options']['password'])) {
+            $this->addCurlOption(CURLOPT_USERPWD, sprintf('%s:%s', $this->payload['options']['username'], $this->payload['options']['password']));
+        }
+    }
+
+    /**
+     *  Handle user options.
+     */
+    protected function handleUserOptions()
+    {
+        foreach ($this->payload['options'] as $option => $value) {
+            $resolvedOption = OptionResolver::resolve($option);
+
+            if ($resolvedOption['type'] == 'curl_option') {
+                $this->addCurlOption($resolvedOption['option'], $value);
+            } else {
+                $this->addOption($option, $value);
+            }
+        }
     }
 
     /**

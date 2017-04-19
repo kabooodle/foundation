@@ -8,20 +8,18 @@ namespace Kabooodle\Http\Controllers\Web\Auth;
 
 use Auth;
 use Binput;
-use Kabooodle\Services\Referrals\ReferralsService;
-use Kabooodle\Services\User\UserService;
 use Messages;
 use Validator;
 use Exception;
 use Kabooodle\Models\User;
 use Kabooodle\Models\Email;
 use Illuminate\Http\Request;
+use Kabooodle\Services\User\UserService;
 use Kabooodle\Http\Controllers\Web\Controller;
 use Kabooodle\Bus\Commands\User\AddUserCommand;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Kabooodle\Bus\Events\User\UserLoggedInEvent;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Kabooodle\Http\Middleware\ReferralProgramMiddleware;
+use Kabooodle\Services\Referrals\ReferralsService;
 use Kabooodle\Bus\Commands\User\ConvertGuestToUserCommand;
 
 /**
@@ -33,7 +31,6 @@ class AuthController extends Controller
     use AuthenticatesUsers {
         login as parentLogin;
     }
-//    use ThrottlesLogins;
 
     /**
      * @var string
@@ -73,7 +70,17 @@ class AuthController extends Controller
     {
         $this->userService = $userService;
         $this->referralService = $referralsService;
-        $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
+        $this->middleware('guest', ['except' => 'logout']);
+    }
+
+    /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return $this->username;
     }
 
     /**
@@ -182,7 +189,7 @@ class AuthController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function login(Request $request)
+    public function postLogin(Request $request)
     {
         try {
             $this->parentLogin($request);
@@ -196,6 +203,14 @@ class AuthController extends Controller
         } catch (Exception $e) {
             return $this->redirect(route('auth.login'));
         }
+    }
+
+    /**
+     * @return \Illuminate\Http\Response
+     */
+    public function getLogin()
+    {
+        return $this->showLoginForm();
     }
 
     /**

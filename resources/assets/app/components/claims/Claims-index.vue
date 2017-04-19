@@ -8,7 +8,7 @@
         <div class="inventory-overlay" v-if="actions.bulk_processing"></div>
         <template v-if="toggled.length">
             <div id="claims_actions_wrapper"
-                 :class="toggledHasPending ? null : ' claims_actions_mini '"
+                 :class="toggledHasPending || toggledHasShipped ? null : ' claims_actions_mini '"
             >
                 <div class="actions-menu">
                     <a
@@ -31,32 +31,42 @@
                         Return
                     </a>
                     <a
-                            v-if="!actions.labeling"
+                            v-if="toggledHasShipped"
                             class="btn btn-sm white"
                             href="#assignMenu"
-                            @click="toggleLabeling"
+                            @click="bulkShippingLabel"
                             :class="actions.bulk_processing ? ' disabled ' : null"
                             :disabled="actions.bulk_processing"
                     >
-                        Label
+                        Get Labels
                     </a>
                     <a
-                            v-if="actions.labeling && labels"
+                            v-if="!actions.tagging"
                             class="btn btn-sm white"
                             href="#assignMenu"
-                            @click="bulkLabel"
-                            :class="actions.bulk_processing || label.length == 0 ? ' disabled ' : null"
-                            :disabled="actions.bulk_processing || label.length == 0"
+                            @click="toggleTagging"
+                            :class="actions.bulk_processing ? ' disabled ' : null"
+                            :disabled="actions.bulk_processing"
+                    >
+                        Tag
+                    </a>
+                    <a
+                            v-if="actions.tagging && tags"
+                            class="btn btn-sm white"
+                            href="#assignMenu"
+                            @click="bulkTag"
+                            :class="actions.bulk_processing || tag.length == 0 ? ' disabled ' : null"
+                            :disabled="actions.bulk_processing || tag.length == 0"
                     >
                         Save
                     </a>
                     <div class="block text-center text-xs m-t-xs">
-                        <template v-if="actions.labeling">
+                        <template v-if="actions.tagging">
                             <multiselect
-                                    v-model="label"
-                                    :options="labels"
-                                    tag-placeholder="Add this label"
-                                    placeholder="Select or create a label"
+                                    v-model="tag"
+                                    :options="tags"
+                                    tag-placeholder="Add this tag"
+                                    placeholder="Select or create a tag"
                                     label="name"
                                     track-by="name"
                                     :multiple="true"
@@ -113,8 +123,8 @@
                         <span class="text-sm text-muted block">Date: <timeago
                                 :timestamp="claim.claim_created_at.date"></timeago>, {{ claim.claim_created_at.date }}
                         </span>
-                        <span v-if="claim.tag_name" class="text-sm text-muted block">Labels: <span
-                                v-html="displayLabels(claim.tag_name)"></span></span>
+                        <span v-if="claim.tag_name" class="text-sm text-muted block">Tags: <span
+                                v-html="displayTags(claim.tag_name)"></span></span>
                         <template v-if="claim.is_merchant_plus && claim.accepted_claim == 1">
                             <span class="text-sm text-muted block">Shipping:
                                 <span v-if="claim.shipped_via_kabooodle" v-html="claim.shipping_status"></span>
@@ -226,8 +236,8 @@
         data: function () {
             return {
                 toggled: [],
-                label: [],
-                labels: [
+                tag: [],
+                tags: [
                     {name: 'invoiced'},
                     {name: 'paid'},
                 ],
@@ -236,15 +246,15 @@
                 actions: {
                     bulk_processing: false,
                     fetching: false,
-                    labeling: false,
+                    tagging: false,
                 },
             }
         },
         watch: {
             toggled(v,o){
                 if (! v || v.length == 0) {
-                    this.actions.labeling = false;
-                    this.label = [];
+                    this.actions.tagging = false;
+                    this.tag = [];
                 }
             }
         },
@@ -256,12 +266,19 @@
 
                 return false;
             },
+            toggledHasShipped(){
+                if (this.toggled.length) {
+                    return _.reject(this.toggled, {'shipping_transaction_uuid' : null}).length > 0;
+                }
+
+                return false;
+            },
         },
         methods: {
-            displayLabels(labels){
+            displayTags(tags){
                 let html = '';
-                _.each(labels.split(','), (label) => {
-                    html += '<span class="label blue-grey m-r-xs">' + label + '</span>';
+                _.each(tags.split(','), (tag) => {
+                    html += '<span class="label blue-grey m-r-xs">' + tag + '</span>';
                 })
 
                 return html;
@@ -323,23 +340,25 @@
                 });
             },
 
-            toggleLabeling(){
-                this.actions.labeling = !! this.actions.labeling == false;
+            toggleTagging(){
+                this.actions.tagging = !! this.actions.tagging == false;
             },
 
-            bulkLabel(){
+            bulkShippingLabel(){},
+
+            bulkTag(){
                 this.actions.bulk_processing = true;
                 this.$http.post(this.label_endpoint, {
-                    labels: _.map(this.label, 'name'),
+                    labels: _.map(this.tag, 'name'),
                     claims: _.map(this.toggled, 'id')
                 }).then((response) => {
                     this._handleResponseClaims(response.body.data);
                     this._triggerNotice();
                 }).finally(() => {
                     this.actions.bulk_processing = false;
-                    this.actions.labeling = false;
+                    this.actions.tagging = false;
                     this.toggled = [];
-                    this.label = [];
+                    this.tag = [];
                 })
             },
 
@@ -471,8 +490,8 @@
                 const tag = {
                     name: newTag,
                 };
-                this.labels.push(tag);
-                this.label.push(tag);
+                this.tags.push(tag);
+                this.tag.push(tag);
             },
         },
         components: {

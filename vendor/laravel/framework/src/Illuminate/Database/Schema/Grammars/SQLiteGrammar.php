@@ -40,7 +40,7 @@ class SQLiteGrammar extends Grammar
      */
     public function compileColumnExists($table)
     {
-        return 'pragma table_info('.str_replace('.', '__', $table).')';
+        return 'pragma table_info('.$this->wrapTable(str_replace('.', '__', $table)).')';
     }
 
     /**
@@ -292,6 +292,26 @@ class SQLiteGrammar extends Grammar
         $from = $this->wrapTable($blueprint);
 
         return "alter table {$from} rename to ".$this->wrapTable($command->to);
+    }
+
+    /**
+     * Compile the command to enable foreign key constraints.
+     *
+     * @return string
+     */
+    public function compileEnableForeignKeyConstraints()
+    {
+        return 'PRAGMA foreign_keys = ON;';
+    }
+
+    /**
+     * Compile the command to disable foreign key constraints.
+     *
+     * @return string
+     */
+    public function compileDisableForeignKeyConstraints()
+    {
+        return 'PRAGMA foreign_keys = OFF;';
     }
 
     /**

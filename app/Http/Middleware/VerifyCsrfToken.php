@@ -24,6 +24,7 @@ class VerifyCsrfToken extends BaseVerifier
         '__captainHook*',
         'api*',
         'api',
-        '*.api.*'
+        '*.api.*',
+        '/auth/logout',
     ];
 }

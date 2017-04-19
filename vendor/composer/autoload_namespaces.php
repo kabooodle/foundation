@@ -8,10 +8,11 @@ $baseDir = dirname($vendorDir);
 return array(
     'ZackKitzmiller' => array($vendorDir . '/zackkitzmiller/tiny/src'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
-    'Postmark\\' => array($vendorDir . '/wildbit/swiftmailer-postmark/src', $vendorDir . '/wildbit/laravel-postmark-provider/src'),
+    'Postmark\\' => array($vendorDir . '/wildbit/laravel-postmark-provider/src', $vendorDir . '/wildbit/swiftmailer-postmark/src'),
     'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
     'Maatwebsite\\Excel\\' => array($vendorDir . '/maatwebsite/excel/src'),
+    'LynX39\\LaraPdfMerger' => array($vendorDir . '/lynx39/lara-pdf-merger/src'),
     'JakubOnderka\\PhpConsoleHighlighter' => array($vendorDir . '/jakub-onderka/php-console-highlighter/src'),
     'JakubOnderka\\PhpConsoleColor' => array($vendorDir . '/jakub-onderka/php-console-color/src'),
     'HelpScout\\' => array($vendorDir . '/helpscout/api/src'),

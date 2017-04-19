@@ -3,6 +3,7 @@
 namespace Illuminate\Database\Eloquent;
 
 use Closure;
+use BadMethodCallException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Pagination\Paginator;
@@ -11,6 +12,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 
+/**
+ * @mixin \Illuminate\Database\Query\Builder
+ */
 class Builder
 {
     /**
@@ -66,6 +70,13 @@ class Builder
     protected $scopes = [];
 
     /**
+     * Removed global scopes.
+     *
+     * @var array
+     */
+    protected $removedScopes = [];
+
+    /**
      * Create a new Eloquent query builder instance.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
@@ -102,17 +113,13 @@ class Builder
      */
     public function withoutGlobalScope($scope)
     {
-        if (is_string($scope)) {
-            unset($this->scopes[$scope]);
-
-            return $this;
+        if (! is_string($scope)) {
+            $scope = get_class($scope);
         }
 
-        foreach ($this->scopes as $key => $value) {
-            if ($scope instanceof $value) {
-                unset($this->scopes[$key]);
-            }
-        }
+        unset($this->scopes[$scope]);
+
+        $this->removedScopes[] = $scope;
 
         return $this;
     }
@@ -134,6 +141,16 @@ class Builder
         }
 
         return $this;
+    }
+
+    /**
+     * Get an array of global scopes that were removed from the query.
+     *
+     * @return array
+     */
+    public function removedScopes()
+    {
+        return $this->removedScopes;
     }
 
     /**
@@ -193,7 +210,7 @@ class Builder
             return $result;
         }
 
-        throw (new ModelNotFoundException)->setModel(get_class($this->model));
+        throw (new ModelNotFoundException)->setModel(get_class($this->model), $id);
     }
 
     /**
@@ -209,7 +226,9 @@ class Builder
             return $model;
         }
 
-        return $this->model->newInstance();
+        return $this->model->newInstance()->setConnection(
+            $this->query->getConnection()->getName()
+        );
     }
 
     /**
@@ -224,22 +243,27 @@ class Builder
             return $instance;
         }
 
-        return $this->model->newInstance($attributes);
+        return $this->model->newInstance($attributes)->setConnection(
+            $this->query->getConnection()->getName()
+        );
     }
 
     /**
      * Get the first record matching the attributes or create it.
      *
      * @param  array  $attributes
+     * @param  array  $values
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function firstOrCreate(array $attributes)
+    public function firstOrCreate(array $attributes, array $values = [])
     {
         if (! is_null($instance = $this->where($attributes)->first())) {
             return $instance;
         }
 
-        $instance = $this->model->newInstance($attributes);
+        $instance = $this->model->newInstance($attributes + $values)->setConnection(
+            $this->query->getConnection()->getName()
+        );
 
         $instance->save();
 
@@ -328,6 +352,20 @@ class Builder
     }
 
     /**
+     * Get a generator for the given query.
+     *
+     * @return \Generator
+     */
+    public function cursor()
+    {
+        $builder = $this->applyScopes();
+
+        foreach ($builder->query->cursor() as $record) {
+            yield $this->model->newFromBuilder($record);
+        }
+    }
+
+    /**
      * Chunk the results of the query.
      *
      * @param  int  $count
@@ -336,20 +374,26 @@ class Builder
      */
     public function chunk($count, callable $callback)
     {
-        $results = $this->forPage($page = 1, $count)->get();
+        $page = 1;
 
-        while (count($results) > 0) {
+        do {
+            $results = $this->forPage($page, $count)->get();
+
+            $countResults = $results->count();
+
+            if ($countResults == 0) {
+                break;
+            }
+
             // On each chunk result set, we will pass them to the callback and then let the
             // developer take care of everything within the callback, which allows us to
             // keep the memory low for spinning through large result sets for working.
-            if (call_user_func($callback, $results) === false) {
+            if ($callback($results) === false) {
                 return false;
             }
 
             $page++;
-
-            $results = $this->forPage($page, $count)->get();
-        }
+        } while ($countResults == $count);
 
         return true;
     }
@@ -364,19 +408,25 @@ class Builder
      */
     public function chunkById($count, callable $callback, $column = 'id')
     {
-        $lastId = null;
+        $lastId = 0;
 
-        $results = $this->forPageAfterId($count, 0, $column)->get();
+        do {
+            $clone = clone $this;
 
-        while (! $results->isEmpty()) {
-            if (call_user_func($callback, $results) === false) {
+            $results = $clone->forPageAfterId($count, $lastId, $column)->get();
+
+            $countResults = $results->count();
+
+            if ($countResults == 0) {
+                break;
+            }
+
+            if ($callback($results) === false) {
                 return false;
             }
 
             $lastId = $results->last()->{$column};
-
-            $results = $this->forPageAfterId($count, $lastId, $column)->get();
-        }
+        } while ($countResults == $count);
 
         return true;
     }
@@ -390,7 +440,7 @@ class Builder
      */
     public function each(callable $callback, $count = 1000)
     {
-        if (is_null($this->query->orders) && is_null($this->query->unionOrders)) {
+        if (empty($this->query->orders) && empty($this->query->unionOrders)) {
             $this->orderBy($this->model->getQualifiedKeyName(), 'asc');
         }
 
@@ -417,29 +467,15 @@ class Builder
         // If the model has a mutator for the requested column, we will spin through
         // the results and mutate the values so that the mutated version of these
         // columns are returned as you would expect from these Eloquent models.
-        if ($this->model->hasGetMutator($column)) {
-            foreach ($results as $key => &$value) {
-                $fill = [$column => $value];
-
-                $value = $this->model->newFromBuilder($fill)->$column;
-            }
+        if (! $this->model->hasGetMutator($column) &&
+            ! $this->model->hasCast($column) &&
+            ! in_array($column, $this->model->getDates())) {
+            return $results;
         }
 
-        return collect($results);
-    }
-
-    /**
-     * Alias for the "pluck" method.
-     *
-     * @param  string  $column
-     * @param  string  $key
-     * @return \Illuminate\Support\Collection
-     *
-     * @deprecated since version 5.2. Use the "pluck" method directly.
-     */
-    public function lists($column, $key = null)
-    {
-        return $this->pluck($column, $key);
+        return $results->map(function ($value) use ($column) {
+            return $this->model->newFromBuilder([$column => $value])->$column;
+        });
     }
 
     /**
@@ -455,16 +491,19 @@ class Builder
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
+        $page = $page ?: Paginator::resolveCurrentPage($pageName);
+
+        $perPage = $perPage ?: $this->model->getPerPage();
+
         $query = $this->toBase();
 
         $total = $query->getCountForPagination();
 
-        $this->forPage(
-            $page = $page ?: Paginator::resolveCurrentPage($pageName),
-            $perPage = $perPage ?: $this->model->getPerPage()
-        );
+        $results = $total
+            ? $this->forPage($page, $perPage)->get($columns)
+            : $this->model->newCollection();
 
-        return new LengthAwarePaginator($this->get($columns), $total, $perPage, $page, [
+        return new LengthAwarePaginator($results, $total, $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
@@ -476,11 +515,12 @@ class Builder
      * @param  int  $perPage
      * @param  array  $columns
      * @param  string  $pageName
+     * @param  int|null  $page
      * @return \Illuminate\Contracts\Pagination\Paginator
      */
-    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page')
+    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
-        $page = Paginator::resolveCurrentPage($pageName);
+        $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
         $perPage = $perPage ?: $this->model->getPerPage();
 
@@ -558,7 +598,9 @@ class Builder
     public function delete()
     {
         if (isset($this->onDelete)) {
-            return call_user_func($this->onDelete, $this);
+            $closure = $this->onDelete;
+
+            return $closure($this);
         }
 
         return $this->toBase()->delete();
@@ -593,7 +635,7 @@ class Builder
      */
     public function getModels($columns = ['*'])
     {
-        $results = $this->query->get($columns);
+        $results = $this->query->get($columns)->all();
 
         $connection = $this->model->getConnectionName();
 
@@ -637,7 +679,7 @@ class Builder
 
         $relation->addEagerConstraints($models);
 
-        call_user_func($constraints, $relation);
+        $constraints($relation);
 
         $models = $relation->initRelation($models, $name);
 
@@ -661,7 +703,11 @@ class Builder
         // not have to remove these where clauses manually which gets really hacky
         // and is error prone while we remove the developer's own where clauses.
         $relation = Relation::noConstraints(function () use ($name) {
-            return $this->getModel()->$name();
+            try {
+                return $this->getModel()->$name();
+            } catch (BadMethodCallException $e) {
+                throw RelationNotFoundException::make($this->getModel(), $name);
+            }
         });
 
         $nested = $this->nestedRelations($name);
@@ -713,9 +759,30 @@ class Builder
     }
 
     /**
+     * Apply the callback's query changes if the given "value" is true.
+     *
+     * @param  bool  $value
+     * @param  \Closure  $callback
+     * @param  \Closure  $default
+     * @return $this
+     */
+    public function when($value, $callback, $default = null)
+    {
+        $builder = $this;
+
+        if ($value) {
+            $builder = $callback($builder);
+        } elseif ($default) {
+            $builder = $default($builder);
+        }
+
+        return $builder;
+    }
+
+    /**
      * Add a basic where clause to the query.
      *
-     * @param  string  $column
+     * @param  string|\Closure  $column
      * @param  string  $operator
      * @param  mixed   $value
      * @param  string  $boolean
@@ -726,11 +793,11 @@ class Builder
         if ($column instanceof Closure) {
             $query = $this->model->newQueryWithoutScopes();
 
-            call_user_func($column, $query);
+            $column($query);
 
             $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
         } else {
-            call_user_func_array([$this->query, 'where'], func_get_args());
+            $this->query->where(...func_get_args());
         }
 
         return $this;
@@ -739,7 +806,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  string  $column
+     * @param  string|\Closure  $column
      * @param  string  $operator
      * @param  mixed   $value
      * @return \Illuminate\Database\Eloquent\Builder|static
@@ -776,7 +843,7 @@ class Builder
         $query = $relation->{$queryType}($relation->getRelated()->newQuery(), $this);
 
         if ($callback) {
-            call_user_func($callback, $query);
+            $query->callScope($callback);
         }
 
         return $this->addHasWhere(
@@ -828,13 +895,13 @@ class Builder
     /**
      * Add a relationship count / exists condition to the query with where clauses.
      *
-     * @param  string    $relation
-     * @param  \Closure  $callback
-     * @param  string    $operator
-     * @param  int       $count
+     * @param  string  $relation
+     * @param  \Closure|null  $callback
+     * @param  string  $operator
+     * @param  int     $count
      * @return \Illuminate\Database\Eloquent\Builder|static
      */
-    public function whereHas($relation, Closure $callback, $operator = '>=', $count = 1)
+    public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1)
     {
         return $this->has($relation, $operator, $count, 'and', $callback);
     }
@@ -886,11 +953,11 @@ class Builder
      * @param  string  $operator
      * @param  int  $count
      * @param  string  $boolean
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|static
      */
     protected function addHasWhere(Builder $hasQuery, Relation $relation, $operator, $count, $boolean)
     {
-        $this->mergeModelDefinedRelationWheresToHasQuery($hasQuery, $relation);
+        $hasQuery->mergeModelDefinedRelationConstraints($relation->getQuery());
 
         if ($this->shouldRunExistsQuery($operator, $count)) {
             $not = ($operator === '<' && $count === 1);
@@ -934,21 +1001,24 @@ class Builder
     }
 
     /**
-     * Merge the "wheres" from a relation query to a has query.
+     * Merge the constraints from a relation query to the current query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $hasQuery
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-     * @return void
+     * @param  \Illuminate\Database\Eloquent\Builder  $relation
+     * @return \Illuminate\Database\Eloquent\Builder|static
      */
-    protected function mergeModelDefinedRelationWheresToHasQuery(Builder $hasQuery, Relation $relation)
+    public function mergeModelDefinedRelationConstraints(Builder $relation)
     {
-        // Here we have the "has" query and the original relation. We need to copy over any
-        // where clauses the developer may have put in the relationship function over to
-        // the has query, and then copy the bindings from the "has" query to the main.
-        $relationQuery = $relation->toBase();
+        $removedScopes = $relation->removedScopes();
 
-        $hasQuery->withoutGlobalScopes()->mergeWheres(
-            $relationQuery->wheres, $relationQuery->getBindings()
+        $relationQuery = $relation->getQuery();
+
+        $whereBindings = Arr::get($relationQuery->getRawBindings(), 'where', []);
+
+        // Here we have some relation query and the original relation. We need to copy over any
+        // where clauses that the developer may have put in the relation definition function.
+        // We need to remove any global scopes that the developer already removed as well.
+        return $this->withoutGlobalScopes($removedScopes)->mergeWheres(
+            $relationQuery->wheres, $whereBindings
         );
     }
 
@@ -985,6 +1055,73 @@ class Builder
     }
 
     /**
+     * Prevent the specified relations from being eager loaded.
+     *
+     * @param  mixed  $relations
+     * @return $this
+     */
+    public function without($relations)
+    {
+        if (is_string($relations)) {
+            $relations = func_get_args();
+        }
+
+        $this->eagerLoad = array_diff_key($this->eagerLoad, array_flip($relations));
+
+        return $this;
+    }
+
+    /**
+     * Add subselect queries to count the relations.
+     *
+     * @param  mixed  $relations
+     * @return $this
+     */
+    public function withCount($relations)
+    {
+        if (is_null($this->query->columns)) {
+            $this->query->select([$this->query->from.'.*']);
+        }
+
+        $relations = is_array($relations) ? $relations : func_get_args();
+
+        foreach ($this->parseWithRelations($relations) as $name => $constraints) {
+            // First we will determine if the name has been aliased using an "as" clause on the name
+            // and if it has we will extract the actual relationship name and the desired name of
+            // the resulting column. This allows multiple counts on the same relationship name.
+            $segments = explode(' ', $name);
+
+            unset($alias);
+
+            if (count($segments) == 3 && Str::lower($segments[1]) == 'as') {
+                list($name, $alias) = [$segments[0], $segments[2]];
+            }
+
+            $relation = $this->getHasRelationQuery($name);
+
+            // Here we will get the relationship count query and prepare to add it to the main query
+            // as a sub-select. First, we'll get the "has" query and use that to get the relation
+            // count query. We will normalize the relation name then append _count as the name.
+            $query = $relation->getRelationCountQuery(
+                $relation->getRelated()->newQuery(), $this
+            );
+
+            $query->callScope($constraints);
+
+            $query->mergeModelDefinedRelationConstraints($relation->getQuery());
+
+            // Finally we will add the proper result column alias to the query and run the subselect
+            // statement against the query builder. Then we will return the builder instance back
+            // to the developer for further constraint chaining that needs to take place on it.
+            $column = snake_case(isset($alias) ? $alias : $name).'_count';
+
+            $this->selectSub($query->toBase(), $column);
+        }
+
+        return $this;
+    }
+
+    /**
      * Parse a list of relations into individuals.
      *
      * @param  array  $relations
@@ -999,9 +1136,17 @@ class Builder
             // constraints have been specified for the eager load and we'll just put
             // an empty Closure with the loader so that we can treat all the same.
             if (is_numeric($name)) {
-                $f = function () {
-                    //
-                };
+                if (Str::contains($constraints, ':')) {
+                    list($constraints, $columns) = explode(':', $constraints);
+
+                    $f = function ($q) use ($columns) {
+                        $q->select(explode(',', $columns));
+                    };
+                } else {
+                    $f = function () {
+                        //
+                    };
+                }
 
                 list($name, $constraints) = [$constraints, $f];
             }
@@ -1045,13 +1190,36 @@ class Builder
     }
 
     /**
-     * Call the given model scope on the underlying model.
+     * Add the given scopes to the current builder instance.
      *
-     * @param  string  $scope
-     * @param  array   $parameters
-     * @return \Illuminate\Database\Query\Builder
+     * @param  array  $scopes
+     * @return mixed
      */
-    protected function callScope($scope, $parameters)
+    public function scopes(array $scopes)
+    {
+        $builder = $this;
+
+        foreach ($scopes as $scope => $parameters) {
+            if (is_int($scope)) {
+                list($scope, $parameters) = [$parameters, []];
+            }
+
+            $builder = $builder->callScope(
+                [$this->model, 'scope'.ucfirst($scope)], (array) $parameters
+            );
+        }
+
+        return $builder;
+    }
+
+    /**
+     * Apply the given scope on the current builder instance.
+     *
+     * @param  callable $scope
+     * @param  array $parameters
+     * @return mixed
+     */
+    protected function callScope(callable $scope, $parameters = [])
     {
         array_unshift($parameters, $this);
 
@@ -1062,7 +1230,7 @@ class Builder
         // query as their own isolated nested where statement and avoid issues.
         $originalWhereCount = count($query->wheres);
 
-        $result = call_user_func_array([$this->model, $scope], $parameters) ?: $this;
+        $result = $scope(...array_values($parameters)) ?: $this;
 
         if ($this->shouldNestWheresForScope($query, $originalWhereCount)) {
             $this->nestWheresForScope($query, $originalWhereCount);
@@ -1084,45 +1252,17 @@ class Builder
 
         $builder = clone $this;
 
-        $query = $builder->getQuery();
-
-        // We will keep track of how many wheres are on the query before running the
-        // scope so that we can properly group the added scope constraints in the
-        // query as their own isolated nested where statement and avoid issues.
-        $originalWhereCount = count($query->wheres);
-
-        $whereCounts = [$originalWhereCount];
-
         foreach ($this->scopes as $scope) {
-            $this->applyScope($scope, $builder);
-
-            // Again, we will keep track of the count each time we add where clauses so that
-            // we will properly isolate each set of scope constraints inside of their own
-            // nested where clause to avoid any conflicts or issues with logical order.
-            $whereCounts[] = count($query->wheres);
-        }
-
-        if ($this->shouldNestWheresForScope($query, $originalWhereCount)) {
-            $this->nestWheresForScope($query, $whereCounts);
+            $builder->callScope(function (Builder $builder) use ($scope) {
+                if ($scope instanceof Closure) {
+                    $scope($builder);
+                } elseif ($scope instanceof Scope) {
+                    $scope->apply($builder, $this->getModel());
+                }
+            });
         }
 
         return $builder;
-    }
-
-    /**
-     * Apply a single scope on the given builder instance.
-     *
-     * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
-     * @return void
-     */
-    protected function applyScope($scope, $builder)
-    {
-        if ($scope instanceof Closure) {
-            $scope($builder);
-        } elseif ($scope instanceof Scope) {
-            $scope->apply($builder, $this->getModel());
-        }
     }
 
     /**
@@ -1134,17 +1274,17 @@ class Builder
      */
     protected function shouldNestWheresForScope(QueryBuilder $query, $originalWhereCount)
     {
-        return $originalWhereCount && count($query->wheres) > $originalWhereCount;
+        return count($query->wheres) > $originalWhereCount;
     }
 
     /**
      * Nest where conditions by slicing them at the given where count.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  int|array  $whereCounts
+     * @param  int  $originalWhereCount
      * @return void
      */
-    protected function nestWheresForScope(QueryBuilder $query, $whereCounts)
+    protected function nestWheresForScope(QueryBuilder $query, $originalWhereCount)
     {
         // Here, we totally remove all of the where clauses since we are going to
         // rebuild them as nested queries by slicing the groups of wheres into
@@ -1153,35 +1293,27 @@ class Builder
 
         $query->wheres = [];
 
-        // We will construct where offsets by adding the outer most offsets to the
-        // collection (0 and total where count) while also flattening the array
-        // and extracting unique values, ensuring that all wheres are sliced.
-        $whereOffsets = collect([0, $whereCounts, count($allWheres)])
-                    ->flatten()->unique();
+        $this->addNestedWhereSlice(
+            $query, $allWheres, 0, $originalWhereCount
+        );
 
-        $sliceFrom = $whereOffsets->shift();
-
-        foreach ($whereOffsets as $sliceTo) {
-            $this->sliceWhereConditions(
-                $query, $allWheres, $sliceFrom, $sliceTo
-            );
-
-            $sliceFrom = $sliceTo;
-        }
+        $this->addNestedWhereSlice(
+            $query, $allWheres, $originalWhereCount
+        );
     }
 
     /**
-     * Create a slice of where conditions at the given offsets and nest them if needed.
+     * Slice where conditions at the given offset and add them to the query as a nested condition.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $wheres
-     * @param  int  $sliceFrom
-     * @param  int  $sliceTo
+     * @param  int  $offset
+     * @param  int  $length
      * @return void
      */
-    protected function sliceWhereConditions(QueryBuilder $query, array $wheres, $sliceFrom, $sliceTo)
+    protected function addNestedWhereSlice(QueryBuilder $query, $wheres, $offset, $length = null)
     {
-        $whereSlice = array_slice($wheres, $sliceFrom, $sliceTo - $sliceFrom);
+        $whereSlice = array_slice($wheres, $offset, $length);
 
         $whereBooleans = collect($whereSlice)->pluck('boolean');
 
@@ -1189,7 +1321,7 @@ class Builder
         // booleans and in this case create a nested where expression. That way
         // we don't add any unnecessary nesting thus keeping the query clean.
         if ($whereBooleans->contains('or')) {
-            $query->wheres[] = $this->nestWhereSlice($whereSlice);
+            $query->wheres[] = $this->nestWhereSlice($whereSlice, $whereBooleans->first());
         } else {
             $query->wheres = array_merge($query->wheres, $whereSlice);
         }
@@ -1199,21 +1331,22 @@ class Builder
      * Create a where array with nested where conditions.
      *
      * @param  array  $whereSlice
+     * @param  string  $boolean
      * @return array
      */
-    protected function nestWhereSlice($whereSlice)
+    protected function nestWhereSlice($whereSlice, $boolean = 'and')
     {
         $whereGroup = $this->getQuery()->forNestedWhere();
 
         $whereGroup->wheres = $whereSlice;
 
-        return ['type' => 'Nested', 'query' => $whereGroup, 'boolean' => 'and'];
+        return ['type' => 'Nested', 'query' => $whereGroup, 'boolean' => $boolean];
     }
 
     /**
      * Get the underlying query builder instance.
      *
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Illuminate\Database\Query\Builder
      */
     public function getQuery()
     {
@@ -1326,18 +1459,18 @@ class Builder
         if (isset($this->macros[$method])) {
             array_unshift($parameters, $this);
 
-            return call_user_func_array($this->macros[$method], $parameters);
+            return $this->macros[$method](...$parameters);
         }
 
         if (method_exists($this->model, $scope = 'scope'.ucfirst($method))) {
-            return $this->callScope($scope, $parameters);
+            return $this->callScope([$this->model, $scope], $parameters);
         }
 
         if (in_array($method, $this->passthru)) {
-            return call_user_func_array([$this->toBase(), $method], $parameters);
+            return $this->toBase()->$method(...$parameters);
         }
 
-        call_user_func_array([$this->query, $method], $parameters);
+        $this->query->$method(...$parameters);
 
         return $this;
     }

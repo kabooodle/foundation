@@ -95,6 +95,7 @@ class AppNameCommand extends Command
     {
         $files = Finder::create()
                             ->in($this->laravel['path'])
+                            ->contains($this->currentRoot)
                             ->name('*.php');
 
         foreach ($files as $file) {
@@ -237,7 +238,9 @@ class AppNameCommand extends Command
      */
     protected function replaceIn($path, $search, $replace)
     {
-        $this->files->put($path, str_replace($search, $replace, $this->files->get($path)));
+        if ($this->files->exists($path)) {
+            $this->files->put($path, str_replace($search, $replace, $this->files->get($path)));
+        }
     }
 
     /**

@@ -2,7 +2,7 @@ Help Scout PHP Wrapper [![Build Status](https://travis-ci.org/helpscout/helpscou
 ================================================================================
 > PHP Wrapper for the Help Scout API and Webhooks implementation. More information on our [developer site](http://developer.helpscout.net).
 
-Version 1.8.1 Released
+Version 1.8.2 Released
 ---------------------
 Please see the [Changelog](https://github.com/helpscout/helpscout-api-php/blob/master/CHANGELOG.md) for details.
 
@@ -25,7 +25,7 @@ Download the [.zip](https://github.com/helpscout/helpscout-api-php/archive/maste
 - Download the [shuber/curl .zip](https://github.com/hamstar/curl/archive/master.zip) and unpack it.
 
 ```php
-require_once '/path/to/shuber/curl/lib/curl.php';
+require_once '/path/to/shuber/curl/curl.php';
 include_once '/path/to/helpscout/helpscout-api-php/src/HelpScout/ApiClient.php'
 ```
 
@@ -68,9 +68,6 @@ if ($conversation) {
 
 // to get page 2 of a list of conversations:
 $list = $hs->getConversationsForMailbox(99, array('page' => 2));
-
-// to get all the closed conversations:
-$closed = $hs->getConversationsForMailbox(99, array('page' => 1, 'status' => 'closed'));
 
 // to get page 2 of a list of conversations,
 // while only returning the "id" and "number" attributes on a conversation:

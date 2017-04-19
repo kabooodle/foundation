@@ -8,8 +8,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Session\SessionManager;
 use Illuminate\Session\SessionInterface;
-use Symfony\Component\HttpFoundation\Cookie;
 use Illuminate\Session\CookieSessionHandler;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
 class StartSession
@@ -57,6 +57,8 @@ class StartSession
             $session = $this->startSession($request);
 
             $request->setSession($session);
+
+            $this->collectGarbage($session);
         }
 
         $response = $next($request);
@@ -66,8 +68,6 @@ class StartSession
         // add the session identifier cookie to the application response headers now.
         if ($this->sessionConfigured()) {
             $this->storeCurrentUrl($request, $session);
-
-            $this->collectGarbage($session);
 
             $this->addCookieToResponse($response, $session);
         }
@@ -180,7 +180,8 @@ class StartSession
         if ($this->sessionIsPersistent($config = $this->manager->getSessionConfig())) {
             $response->headers->setCookie(new Cookie(
                 $session->getName(), $session->getId(), $this->getCookieExpirationDate(),
-                $config['path'], $config['domain'], Arr::get($config, 'secure', false)
+                $config['path'], $config['domain'], Arr::get($config, 'secure', false),
+                Arr::get($config, 'http_only', true)
             ));
         }
     }

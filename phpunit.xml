@@ -22,6 +22,16 @@
             <directory>./tests/Integration/</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+            <exclude>
+                <file>./routes/api/routes.php</file>
+                <file>./routes/web/routes.php</file>
+                <file>./routes/workers/routes.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="CACHE_DRIVER" value="array"/>

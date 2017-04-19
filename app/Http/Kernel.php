@@ -43,6 +43,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             'throttle:15,10',
+            'bindings',
         ],
     ];
 
@@ -52,7 +53,8 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \Kabooodle\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
+        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \Kabooodle\Http\Middleware\RedirectIfAuthenticated::class,
         'subscribed' => \Kabooodle\Http\Middleware\Subscribed::class,
         'creditcardrequired' => \Kabooodle\Http\Middleware\CreditCardOnFileRequiredMiddleware::class,
