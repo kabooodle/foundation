@@ -79,7 +79,35 @@ trait Billable
     }
 
     /**
-     * Invoice the customer for the given amount.
+     * Add an invoice item to the customer's upcoming invoice.
+     *
+     * @param  string  $description
+     * @param  int  $amount
+     * @param  array  $options
+     * @return \Stripe\InvoiceItem
+     *
+     * @throws \Stripe\Error\Card
+     */
+    public function tab($description, $amount, array $options = [])
+    {
+        if (! $this->stripe_id) {
+            throw new InvalidArgumentException(class_basename($this).' is not a Stripe customer. See the createAsStripeCustomer method.');
+        }
+
+        $options = array_merge([
+            'customer' => $this->stripe_id,
+            'amount' => $amount,
+            'currency' => $this->preferredCurrency(),
+            'description' => $description,
+        ], $options);
+
+        return StripeInvoiceItem::create(
+            $options, ['api_key' => $this->getStripeKey()]
+        );
+    }
+
+    /**
+     * Invoice the customer for the given amount and generate an invoice immediately.
      *
      * @param  string  $description
      * @param  int  $amount
@@ -90,20 +118,7 @@ trait Billable
      */
     public function invoiceFor($description, $amount, array $options = [])
     {
-        if (! $this->stripe_id) {
-            throw new InvalidArgumentException('User is not a customer. See the createAsStripeCustomer method.');
-        }
-
-        $options = array_merge([
-            'customer' => $this->stripe_id,
-            'amount' => $amount,
-            'currency' => $this->preferredCurrency(),
-            'description' => $description,
-        ], $options);
-
-        StripeInvoiceItem::create(
-            $options, ['api_key' => $this->getStripeKey()]
-        );
+        $this->tab($description, $amount, $options);
 
         return $this->invoice();
     }
@@ -121,7 +136,7 @@ trait Billable
     }
 
     /**
-     * Determine if the user is on trial.
+     * Determine if the Stripe model is on trial.
      *
      * @param  string  $subscription
      * @param  string|null  $plan
@@ -144,7 +159,7 @@ trait Billable
     }
 
     /**
-     * Determine if the user is on a "generic" trial at the user level.
+     * Determine if the Stripe model is on a "generic" trial at the model level.
      *
      * @return bool
      */
@@ -154,7 +169,7 @@ trait Billable
     }
 
     /**
-     * Determine if the user has a given subscription.
+     * Determine if the Stripe model has a given subscription.
      *
      * @param  string  $subscription
      * @param  string|null  $plan
@@ -187,19 +202,19 @@ trait Billable
         return $this->subscriptions->sortByDesc(function ($value) {
             return $value->created_at->getTimestamp();
         })
-        ->first(function ($key, $value) use ($subscription) {
+        ->first(function ($value) use ($subscription) {
             return $value->name === $subscription;
         });
     }
 
     /**
-     * Get all of the subscriptions for the user.
+     * Get all of the subscriptions for the Stripe model.
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function subscriptions()
     {
-        return $this->hasMany(Subscription::class, 'user_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(Subscription::class, $this->getForeignKey())->orderBy('created_at', 'desc');
     }
 
     /**
@@ -324,6 +339,31 @@ trait Billable
     }
 
     /**
+     * Get a collection of the entity's cards.
+     *
+     * @param  array  $parameters
+     * @return \Illuminate\Support\Collection
+     */
+    public function cards($parameters = [])
+    {
+        $cards = [];
+
+        $parameters = array_merge(['limit' => 24], $parameters);
+
+        $stripeCards = $this->asStripeCustomer()->sources->all(
+            ['object' => 'card'] + $parameters
+        );
+
+        if (! is_null($stripeCards)) {
+            foreach ($stripeCards->data as $card) {
+                $cards[] = new Card($this, $card);
+            }
+        }
+
+        return new Collection($cards);
+    }
+
+    /**
      * Update customer's credit card.
      *
      * @param  string  $token
@@ -337,7 +377,7 @@ trait Billable
 
         // If the given token already has the card as their default source, we can just
         // bail out of the method now. We don't need to keep adding the same card to
-        // the user's account each time we go through this particular method call.
+        // a model's account every time we go through this particular method call.
         if ($token->card->id === $customer->default_source) {
             return;
         }
@@ -348,9 +388,9 @@ trait Billable
 
         $customer->save();
 
-        // Next, we will get the default source for this user so we can update the last
-        // four digits and the card brand on this user record in the database, which
-        // is convenient when displaying on the front-end when updating the cards.
+        // Next we will get the default source for this model so we can update the last
+        // four digits and the card brand on the record in the database. This allows
+        // us to display the information on the front-end when updating the cards.
         $source = $customer->default_source
                     ? $customer->sources->retrieve($customer->default_source)
                     : null;
@@ -391,7 +431,7 @@ trait Billable
     }
 
     /**
-     * Fills the user's properties with the source from Stripe.
+     * Fills the model's properties with the source from Stripe.
      *
      * @param \Stripe\Card|null  $card
      * @return $this
@@ -404,6 +444,18 @@ trait Billable
         }
 
         return $this;
+    }
+
+    /**
+     * Deletes the entity's cards.
+     *
+     * @return void
+     */
+    public function deleteCards()
+    {
+        $this->cards()->each(function ($card) {
+            $card->delete();
+        });
     }
 
     /**
@@ -422,7 +474,7 @@ trait Billable
     }
 
     /**
-     * Determine if the user is actively subscribed to one of the given plans.
+     * Determine if the Stripe model is actively subscribed to one of the given plans.
      *
      * @param  array|string  $plans
      * @param  string  $subscription
@@ -453,7 +505,7 @@ trait Billable
      */
     public function onPlan($plan)
     {
-        return ! is_null($this->subscriptions->first(function ($key, $value) use ($plan) {
+        return ! is_null($this->subscriptions->first(function ($value) use ($plan) {
             return $value->stripe_plan === $plan && $value->valid();
         }));
     }
@@ -469,7 +521,7 @@ trait Billable
     }
 
     /**
-     * Create a Stripe customer for the given user.
+     * Create a Stripe customer for the given Stripe model.
      *
      * @param  string  $token
      * @param  array  $options
@@ -502,7 +554,7 @@ trait Billable
     }
 
     /**
-     * Get the Stripe customer for the user.
+     * Get the Stripe customer for the Stripe model.
      *
      * @return \Stripe\Customer
      */

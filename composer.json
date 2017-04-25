@@ -40,7 +40,7 @@
     "hydreflab/iron-queue": "5.3",
     "jonnypickett/eloquent-sti": "^1.0",
     "keen-io/keen-io": "~2.5",
-    "laravel/cashier": "6.0.19",
+    "laravel/cashier": "7.0.9",
     "laravel/framework": "5.3.*",
     "laravelcollective/html": "5.3.1",
     "league/flysystem-aws-s3-v3": "1.0.13",

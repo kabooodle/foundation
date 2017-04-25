@@ -45,9 +45,19 @@ class Subscription extends Model
      */
     public function user()
     {
-        $model = getenv('STRIPE_MODEL') ?: config('services.stripe.model', 'User');
+        return $this->owner();
+    }
 
-        return $this->belongsTo($model, 'user_id');
+    /**
+     * Get the model related to the subscription.
+     */
+    public function owner()
+    {
+        $model = getenv('STRIPE_MODEL') ?: config('services.stripe.model', 'App\\User');
+
+        $model = new $model;
+
+        return $this->belongsTo(get_class($model), $model->getForeignKey());
     }
 
     /**
@@ -162,6 +172,8 @@ class Subscription extends Model
 
         $subscription->quantity = $quantity;
 
+        $subscription->prorate = $this->prorate;
+
         $subscription->save();
 
         $this->quantity = $quantity;
@@ -196,6 +208,20 @@ class Subscription extends Model
         }
 
         $this->billingCycleAnchor = $date;
+
+        return $this;
+    }
+
+    /**
+     * Force the trial to end immediately.
+     *
+     * This method must be combined with swap, resume, etc.
+     *
+     * @return $this
+     */
+    public function skipTrial()
+    {
+        $this->trial_ends_at = null;
 
         return $this;
     }

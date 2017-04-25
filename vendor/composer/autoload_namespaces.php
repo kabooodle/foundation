@@ -7,6 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'ZackKitzmiller' => array($vendorDir . '/zackkitzmiller/tiny/src'),
+    'Svg\\' => array($vendorDir . '/phenx/php-svg-lib/src'),
+    'Sabberworm\\CSS' => array($vendorDir . '/sabberworm/php-css-parser/lib'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Postmark\\' => array($vendorDir . '/wildbit/laravel-postmark-provider/src', $vendorDir . '/wildbit/swiftmailer-postmark/src'),
     'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
