@@ -6,10 +6,10 @@
 
 namespace Kabooodle\Tests\Integration;
 
-use Kabooodle\Models\Inventory;
-use Kabooodle\Models\InventoryGrouping;
 use Kabooodle\Models\User;
+use Kabooodle\Models\Inventory;
 use Kabooodle\Tests\BaseTestCase;
+use Kabooodle\Models\InventoryGrouping;
 
 class InventoryGroupingsTest extends BaseIntegrationTestCase
 {

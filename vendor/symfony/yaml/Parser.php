@@ -208,7 +208,7 @@ class Parser
                     $this->refs[$isRef] = end($data);
                 }
             } elseif (
-                self::preg_match('#^(?P<key>'.Inline::REGEX_QUOTED_STRING.'|(?:![^\s]++\s++)?[^ \'"\[\{!].*?) *\:(\s++(?P<value>.+))?$#u', rtrim($this->currentLine), $values)
+                self::preg_match('#^(?P<key>'.Inline::REGEX_QUOTED_STRING.'|(?:!?!php/const:)?(?:![^\s]++\s++)?[^ \'"\[\{!].*?) *\:(\s++(?P<value>.+))?$#u', rtrim($this->currentLine), $values)
                 && (false === strpos($values['key'], ' #') || in_array($values['key'][0], array('"', "'")))
             ) {
                 if ($context && 'sequence' == $context) {
@@ -221,7 +221,14 @@ class Parser
                 try {
                     Inline::$parsedLineNumber = $this->getRealCurrentLineNb();
                     $i = 0;
-                    $key = Inline::parseScalar($values['key'], 0, null, $i, !(Yaml::PARSE_KEYS_AS_STRINGS & $flags));
+                    $evaluateKey = !(Yaml::PARSE_KEYS_AS_STRINGS & $flags);
+
+                    // constants in key will be evaluated anyway
+                    if (isset($values['key'][0]) && '!' === $values['key'][0] && Yaml::PARSE_CONSTANT & $flags) {
+                        $evaluateKey = true;
+                    }
+
+                    $key = Inline::parseScalar($values['key'], 0, null, $i, $evaluateKey);
                 } catch (ParseException $e) {
                     $e->setParsedLine($this->getRealCurrentLineNb() + 1);
                     $e->setSnippet($this->currentLine);
@@ -229,8 +236,9 @@ class Parser
                     throw $e;
                 }
 
-                if (!(Yaml::PARSE_KEYS_AS_STRINGS & $flags) && !is_string($key)) {
-                    @trigger_error('Implicit casting of incompatible mapping keys to strings is deprecated since version 3.3 and will throw \Symfony\Component\Yaml\Exception\ParseException in 4.0. Pass the PARSE_KEYS_AS_STRING flag to explicitly enable the type casts.', E_USER_DEPRECATED);
+                if (!(Yaml::PARSE_KEYS_AS_STRINGS & $flags) && !is_string($key) && !is_int($key)) {
+                    $keyType = is_numeric($key) ? 'numeric key' : 'non-string key';
+                    @trigger_error(sprintf('Implicit casting of %s to string is deprecated since version 3.3 and will throw \Symfony\Component\Yaml\Exception\ParseException in 4.0. Pass the PARSE_KEYS_AS_STRINGS flag to explicitly enable the type casts.', $keyType), E_USER_DEPRECATED);
                 }
 
                 // Convert float keys to strings, to avoid being converted to integers by PHP
@@ -304,7 +312,7 @@ class Parser
                                 $data[$key] = null;
                             }
                         } else {
-                            @trigger_error(sprintf('Duplicate key "%s" detected on line %d whilst parsing YAML. Silent handling of duplicate mapping keys in YAML is deprecated since version 3.2 and will throw \Symfony\Component\Yaml\Exception\ParseException in 4.0.', $key, $this->getRealCurrentLineNb() + 1), E_USER_DEPRECATED);
+                            @trigger_error(sprintf('Duplicate key "%s" detected whilst parsing YAML. Silent handling of duplicate mapping keys in YAML is deprecated since version 3.2 and will throw \Symfony\Component\Yaml\Exception\ParseException in 4.0.', $key), E_USER_DEPRECATED);
                         }
                     } else {
                         // remember the parsed line number here in case we need it to provide some contexts in error messages below
@@ -319,7 +327,7 @@ class Parser
                                 $data[$key] = $value;
                             }
                         } else {
-                            @trigger_error(sprintf('Duplicate key "%s" detected on line %d whilst parsing YAML. Silent handling of duplicate mapping keys in YAML is deprecated since version 3.2 and will throw \Symfony\Component\Yaml\Exception\ParseException in 4.0.', $key, $realCurrentLineNbKey + 1), E_USER_DEPRECATED);
+                            @trigger_error(sprintf('Duplicate key "%s" detected whilst parsing YAML. Silent handling of duplicate mapping keys in YAML is deprecated since version 3.2 and will throw \Symfony\Component\Yaml\Exception\ParseException in 4.0.', $key), E_USER_DEPRECATED);
                         }
                     }
                 } else {
@@ -329,7 +337,7 @@ class Parser
                     if ($allowOverwrite || !isset($data[$key])) {
                         $data[$key] = $value;
                     } else {
-                        @trigger_error(sprintf('Duplicate key "%s" detected on line %d whilst parsing YAML. Silent handling of duplicate mapping keys in YAML is deprecated since version 3.2 and will throw \Symfony\Component\Yaml\Exception\ParseException in 4.0.', $key, $this->getRealCurrentLineNb() + 1), E_USER_DEPRECATED);
+                        @trigger_error(sprintf('Duplicate key "%s" detected whilst parsing YAML. Silent handling of duplicate mapping keys in YAML is deprecated since version 3.2 and will throw \Symfony\Component\Yaml\Exception\ParseException in 4.0.', $key), E_USER_DEPRECATED);
                     }
                 }
                 if ($isRef) {
@@ -368,7 +376,11 @@ class Parser
 
                     foreach ($this->lines as $line) {
                         try {
-                            $parsedLine = Inline::parse($line, $flags, $this->refs);
+                            if (isset($line[0]) && ('"' === $line[0] || "'" === $line[0])) {
+                                $parsedLine = $line;
+                            } else {
+                                $parsedLine = Inline::parse($line, $flags, $this->refs);
+                            }
 
                             if (!is_string($parsedLine)) {
                                 $parseError = true;
@@ -441,9 +453,11 @@ class Parser
     /**
      * Returns the current line number (takes the offset into account).
      *
+     * @internal
+     *
      * @return int The current line number
      */
-    private function getRealCurrentLineNb()
+    public function getRealCurrentLineNb()
     {
         $realCurrentLineNumber = $this->currentLineNb + $this->offset;
 

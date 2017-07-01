@@ -1,3 +1,27 @@
+### 4.13.0 2017-06-19
+
+* Add support for ephemeral keys
+
+### 4.12.0 2017-06-05
+
+* Clients can implement `getUserAgentInfo()` to add additional user agent information
+
+### 4.11.0 2017-06-05
+
+* Implement `Countable` for `AttachedObject` (`metadata` and `additional_owners`)
+
+### 4.10.0 2017-05-25
+
+* Add support for login links
+
+### 4.9.1 2017-05-10
+
+* Fix docs to include arrays on `$id` parameter for retrieve methods
+
+### 4.9.0 2017-04-28
+
+* Support for checking webhook signatures
+
 ### 4.8.1 2017-04-24
 
 * Allow nested field `payout_schedule` to be updated

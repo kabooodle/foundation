@@ -4,11 +4,11 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Total Downloads](https://img.shields.io/packagist/dt/appstract/laravel-opcache.svg?style=flat-square)](https://packagist.org/packages/appstract/laravel-opcache)
 
-![Opcache](header.png?raw=true)
+[<img src="header.png?raw=true">](https://medium.com/appstract/make-your-laravel-app-fly-with-php-opcache-9948db2a5f93)
 
 This package contains some useful Artisan commands to work with PHP OPcache.
 
-#### If you want to learn more about OPcache and what it can do for your Laravel app, you can read [the article](https://medium.com/appstract/make-your-laravel-app-fly-with-php-opcache-9948db2a5f93#.bjrpj4h1c) on Medium.
+#### If you want to learn more about OPcache and what it can do for your Laravel app, you can [read the article on Medium](https://medium.com/appstract/make-your-laravel-app-fly-with-php-opcache-9948db2a5f93#.bjrpj4h1c).
 
 ## Installation
 
@@ -35,7 +35,9 @@ $app->register(Appstract\Opcache\OpcacheServiceProvider::class);
 // config/app.php
 'url' => env('APP_URL'),
 ```
-##### Make sure your APP_URL is set correctly in .env.
+Make sure your APP_URL is set correctly in .env.
+If you want to set a different url to call the OPcache routes (for use with a load balancer for example),
+you can set OPCACHE_URL.
 
 ## Usage
 Login to your server/vm and run one of the commands.
@@ -77,11 +79,7 @@ Contributions are welcome, [thanks to y'all](https://github.com/appstract/larave
 
 ## About Appstract
 
-Appstract is a small team from The Netherlands. <3 Laravel, Vue and other awesome tools.
-
-## Buy Us A Beer
-
-Would be awesome if you would [buy us a beer](https://www.paypal.me/teamappstract/10)! Or [a lot of beer](https://www.patreon.com/appstract) :)
+Appstract is a small team from The Netherlands. We create (open source) tools for webdevelopment and write about related subjects on [Medium](https://medium.com/appstract). You can [follow us on Twitter](https://twitter.com/teamappstract), [buy us a beer](https://www.paypal.me/teamappstract/10) or [support us on Patreon](https://www.patreon.com/appstract).
 
 ## License
 

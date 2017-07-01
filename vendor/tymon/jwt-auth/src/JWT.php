@@ -132,17 +132,19 @@ class JWT
     /**
      * Check that the token is valid.
      *
-     * @return bool
+     * @param  bool  $getPayload
+     *
+     * @return \Tymon\JWTAuth\Payload|bool
      */
-    public function check()
+    public function check($getPayload = false)
     {
         try {
-            $this->checkOrFail();
+            $payload = $this->checkOrFail();
         } catch (JWTException $e) {
             return false;
         }
 
-        return true;
+        return $getPayload ? $payload : true;
     }
 
     /**
@@ -235,10 +237,53 @@ class JWT
     protected function getClaimsArray(JWTSubject $subject)
     {
         return array_merge(
-            ['sub' => $subject->getJWTIdentifier()],
-            $this->customClaims, // custom claims from inline setter
-            $subject->getJWTCustomClaims() // custom claims from JWTSubject method
+            $this->getClaimsForSubject($subject),
+            $subject->getJWTCustomClaims(), // custom claims from JWTSubject method
+            $this->customClaims // custom claims from inline setter
         );
+    }
+
+    /**
+     * Get the claims associated with a given subject.
+     *
+     * @param  \Tymon\JWTAuth\Contracts\JWTSubject  $subject
+     *
+     * @return array
+     */
+    protected function getClaimsForSubject(JWTSubject $subject)
+    {
+        return [
+            'sub' => $subject->getJWTIdentifier(),
+            'prv' => $this->hashProvider($subject),
+        ];
+    }
+
+    /**
+     * Hash the provider and return it.
+     *
+     * @param  string|object  $provider
+     *
+     * @return string
+     */
+    protected function hashProvider($provider)
+    {
+        return sha1(is_object($provider) ? get_class($provider) : $provider);
+    }
+
+    /**
+     * Check if the provider matches the one saved in the token.
+     *
+     * @param  string|object  $provider
+     *
+     * @return bool
+     */
+    public function checkProvider($provider)
+    {
+        if (is_null($prv = $this->payload()->get('prv'))) {
+            return true;
+        }
+
+        return $this->hashProvider($provider) === $prv;
     }
 
     /**

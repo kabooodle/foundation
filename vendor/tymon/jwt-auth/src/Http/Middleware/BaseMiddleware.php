@@ -49,7 +49,7 @@ abstract class BaseMiddleware
     public function checkForToken(Request $request)
     {
         if (! $this->auth->parser()->setRequest($request)->hasToken()) {
-            throw new UnauthorizedHttpException('Token not provided');
+            throw new UnauthorizedHttpException('jwt-auth', 'Token not provided');
         }
     }
 
@@ -78,10 +78,10 @@ abstract class BaseMiddleware
     /**
      * Set the authentication header.
      *
-     * @param \Illuminate\Http\Response|\Illuminate\Http\JsonResponse $response
-     * @param string|null $token
+     * @param  \Illuminate\Http\Response|\Illuminate\Http\JsonResponse  $response
+     * @param  string|null  $token
      *
-     * @return  \Illuminate\Http\Response|\Illuminate\Http\JsonResponse mixed
+     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
     protected function setAuthenticationHeader($response, $token = null)
     {

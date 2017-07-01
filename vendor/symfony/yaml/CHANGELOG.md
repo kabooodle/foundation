@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+3.4.0
+-----
+
+ * Deprecated using the non-specific tag `!` as its behavior will change in 4.0.
+   It will force non-evaluating your values in 4.0. Use plain integers or `!!float` instead.
+
 3.3.0
 -----
 
@@ -53,8 +59,8 @@ CHANGELOG
 -----
 
  * Mappings with a colon (`:`) that is not followed by a whitespace are deprecated
-   and will lead to a `ParseException` in Symfony 4.0 (e.g. `foo:bar` must be
-   `foo: bar`).
+   when the mapping key is not quoted and will lead to a `ParseException` in
+   Symfony 4.0 (e.g. `foo:bar` must be `foo: bar`).
 
  * Added support for parsing PHP constants:
 

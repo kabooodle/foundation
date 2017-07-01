@@ -2,7 +2,6 @@
 [![Latest Version](https://img.shields.io/github/release/spatie/laravel-newsletter.svg?style=flat-square)](https://github.com/spatie/laravel-newsletter/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://img.shields.io/travis/spatie/laravel-newsletter/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-newsletter)
-[![SensioLabsInsight](https://img.shields.io/sensiolabs/i/10993a65-449a-488a-886c-f810b9950070.svg?style=flat-square)](https://insight.sensiolabs.com/projects/10993a65-449a-488a-886c-f810b9950070)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-newsletter.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-newsletter)
 [![StyleCI](https://styleci.io/repos/35035915/shield?branch=master)](https://styleci.io/repos/35035915)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-newsletter.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-newsletter)
@@ -25,8 +24,17 @@ Newsletter::subscribe('nanny.ogg@discworld.com', ['firstName'=>'Nanny', 'lastNam
 //Subscribe or update someone
 Newsletter::subscribeOrUpdate('sam.vines@discworld.com', ['firstName'=>'Foo', 'lastName'=>'Bar']);
 
+// Change the email address of an existing subscriber
+Newsletter::updateEmailAddress('rincewind@discworld.com', 'the.luggage@discworld.com');
+
 //Get some member info, returns an array described in the official docs
 Newsletter::getMember('lord.vetinari@discworld.com');
+
+//Get the member activity, returns an array with recent activity for a given user
+Newsletter::getMemberActivity('lord.vetinari@discworld.com');
+
+//Get the members for a given list, optionally filtered by passing a second array of parameters
+Newsletter::getMembers();
 
 //Returns a boolean
 Newsletter::hasMember('greebo@discworld.com');
@@ -39,15 +47,15 @@ Spatie is a webdesign agency in Antwerp, Belgium. You'll find an overview of all
 
 ## Postcardware
 
-You're free to use this package (it's [MIT-licensed](LICENSE.md)), but if it makes it to your production environment you are required to send us a postcard from your hometown, mentioning which of our package(s) you are using.
+You're free to use this package (it's [MIT-licensed](LICENSE.md)), but if it makes it to your production environment we appreciated you sending us a postcard from your hometown, mentioning which of our package(s) you are using.
 
 Our address is: Spatie, Samberstraat 69D, 2060 Antwerp, Belgium.
 
-The best postcards will get published on the open source page on our website.
+All postcards are published [on our website](https://spatie.be/en/opensource/laravel).
 
 ## Installation
 
-You can install this package via Composer using:
+You can install this package via composer using:
 
 ```bash
 composer require spatie/laravel-newsletter
@@ -161,7 +169,7 @@ That third argument is the name of a list you configured in the config file.
 You can also subscribe and/or update someone. The person will be subscribed or updated if he/she is already subscribed:
 
  ```php
- Newletter::subscribeOrUpdate('rincewind@discworld.com', ['firstName'=>'Foo', 'lastname'=>'Bar']);
+ Newsletter::subscribeOrUpdate('rincewind@discworld.com', ['firstName'=>'Foo', 'lastname'=>'Bar']);
  ```
  
 You can subscribe someone to one or more specific group(s)/interest(s) by using the fourth argument:
@@ -176,14 +184,9 @@ You can also unsubscribe someone from a specific list:
 Newsletter::unsubscribe('rincewind@discworld.com', 'subscribers');
 ```
 
-You can also subscribe and/or update someone. He/She will be subscribed or updated if he/she is already subscribed:
-```php
-Newletter::subscribeOrUpdate('rincewind@discworld.com', ['firstName'=>'Foo', 'lastname'=>'Bar']);
-```
-
 ### Deleting subscribers
 
-Deleting is not the same as unsubscribing. Unlinke unsubscribing, deleting a member will result in the loss of all history (add/opt-in/edits) as well as removing them from the list. In most cases you want to use `unsubscribe` instead of `delete`.
+Deleting is not the same as unsubscribing. Unlike unsubscribing, deleting a member will result in the loss of all history (add/opt-in/edits) as well as removing them from the list. In most cases you want to use `unsubscribe` instead of `delete`.
 
 Here's how to perform a delete:
 

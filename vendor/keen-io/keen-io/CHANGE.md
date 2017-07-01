@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+VERSION 2.5.9
+-------------
+* Update the querying methods to use a POST request instead of a GET request
+
+VERSION 2.5.8
+-------------
+* Fixes a bug with the return type of queries (reverting back to associated arrays)
+
 Version 2.5.7
 -------------
 * Added a new HTTP Header that tracks the SDK version

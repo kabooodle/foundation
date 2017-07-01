@@ -19,7 +19,6 @@ return array(
     'JakubOnderka\\PhpConsoleColor' => array($vendorDir . '/jakub-onderka/php-console-color/src'),
     'HelpScout\\' => array($vendorDir . '/helpscout/api/src'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
-    'Doctrine\\Common\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib'),
     'Barryvdh' => array($vendorDir . '/barryvdh/reflection-docblock/src'),
     'AlgoliaSearch\\Tests' => array($vendorDir . '/algolia/algoliasearch-client-php/tests'),
     'AlgoliaSearch' => array($vendorDir . '/algolia/algoliasearch-client-php/src'),

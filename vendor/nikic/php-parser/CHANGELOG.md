@@ -1,7 +1,30 @@
-Version 3.0.6-dev
+Version 3.1.0-dev
 -----------------
 
-Nothing yet.
+### Added
+
+* [PHP 7.2] Added support for trailing comma in group use statements.
+* [PHP 7.2] Added support for `object` type. This means `object` types will now be represented as a
+  builtin type (a simple `"object"` string), rather than a class `Name`.
+
+Version 3.0.6 (2017-06-28)
+--------------------------
+
+### Fixed
+
+* Fixed the spelling of `Class_::VISIBILITY_MODIFIER_MASK`. The previous spelling of
+  `Class_::VISIBILITY_MODIFER_MASK` is preserved for backwards compatibility.
+* The pretty printing will now preserve comments inside array literals and function calls by
+  printing the array items / function arguments on separate lines. Array literals and functions that
+  do not contain comments are not affected.
+
+### Added
+
+* Added `Builder\Param::makeVariadic()`.
+
+### Deprecated
+
+* The `Node::setLine()` method has been deprecated.
 
 Version 3.0.5 (2017-03-05)
 --------------------------

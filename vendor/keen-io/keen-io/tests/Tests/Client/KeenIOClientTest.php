@@ -80,9 +80,9 @@ class KeenIOClientTest extends \PHPUnit_Framework_TestCase
 		$unmergedAfter = $this->invokeMethod($client, 'combineEventCollectionArgs', array($unmerged));
 		$mergedAfter = $this->invokeMethod($client, 'combineEventCollectionArgs', array($merged));
 
-        $this->assertEquals($unmergedAfter['event_collection'], 'collection'); 
+        $this->assertEquals($unmergedAfter['event_collection'], 'collection');
 		$this->assertEquals($unmergedAfter['timeframe'], 'this_14_days');
-        $this->assertEquals($mergedAfter['event_collection'], 'collection'); 
+        $this->assertEquals($mergedAfter['event_collection'], 'collection');
 		$this->assertEquals($mergedAfter['timeframe'], 'this_14_days');
     }
 
@@ -224,18 +224,18 @@ class KeenIOClientTest extends \PHPUnit_Framework_TestCase
     public function testServiceCommands($method, $params)
     {
         $queue = new MockHandler([
-            new Response(200, [], '{response: true}')
+            new Response(200, ['Content-Type' => 'application/json'], '{"response": true}')
         ]);
         $handler = HandlerStack::create($queue);
         $client = $this->getClient($handler);
 
         $command = $client->getCommand($method, $params);
-        $client->execute($command);
+        $result = $client->execute($command);
         $request = $queue->getLastRequest();
 
         //Resource Url
         $url = parse_url($request->getUri());
-        parse_str($url['query'], $queryString);
+        $body = json_decode($request->getBody()->getContents(), true);
 
         //Camel to underscore case
         $method = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $method));
@@ -251,9 +251,14 @@ class KeenIOClientTest extends \PHPUnit_Framework_TestCase
         //Make sure the url has the right method
         $this->assertContains($method, explode('/', $url['path']));
 
+        //Check that the json body has all of the parameters
+        $this->assertEquals(count($params), count($body));
+        foreach($params as $param => $value) {
+            $this->assertEquals($value, $body[$param]);
+        }
 
-        //Check that the querystring has all the parameters
-        $this->assertEquals($params, $queryString);
+        // Make sure that the response is a PHP array, according to the documented return type
+        $this->assertInternalType('array', $result);
     }
 
     /**

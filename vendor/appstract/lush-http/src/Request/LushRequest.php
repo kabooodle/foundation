@@ -2,8 +2,6 @@
 
 namespace Appstract\LushHttp\Request;
 
-use Appstract\LushHttp\Response\LushResponse;
-
 class LushRequest extends CurlRequest
 {
     /**
@@ -20,6 +18,82 @@ class LushRequest extends CurlRequest
         $this->payload = $payload;
 
         $this->prepareRequest();
+    }
+
+    /**
+     * @return array
+     */
+    public function getPayload()
+    {
+        return $this->payload;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getUrl()
+    {
+        return isset($this->payload['url']) ? $this->payload['url'] : '';
+    }
+
+    /**
+     * @return array|mixed
+     */
+    public function getParameters()
+    {
+        return isset($this->payload['parameters']) ? $this->payload['parameters'] : [];
+    }
+
+    /**
+     * Get a specific parameter.
+     *
+     * @param $parameter
+     *
+     * @return mixed
+     */
+    public function getParameter($parameter)
+    {
+        return isset($this->getParameters()[$parameter]) ? $this->getParameters()[$parameter] : null;
+    }
+
+    /**
+     * @return array|mixed
+     */
+    public function getOptions()
+    {
+        return isset($this->payload['options']) ? $this->payload['options'] : [];
+    }
+
+    /**
+     * Get a specific option.
+     *
+     * @param $option
+     *
+     * @return mixed
+     */
+    public function getOption($option)
+    {
+        return isset($this->getOptions()[$option]) ? $this->getOptions()[$option] : null;
+    }
+
+    /**
+     * @return array|mixed
+     */
+    public function getHeaders()
+    {
+        return isset($this->payload['headers']) ? $this->payload['headers'] : [];
+    }
+
+    /**
+     * Get a specific header.
+     *
+     * @param $header
+     *
+     * @return mixed
+     */
+    public function getHeader($header)
+    {
+        return isset($this->getHeaders()[$header]) ? $this->getHeaders()[$header] : null;
     }
 
     /**
@@ -54,7 +128,7 @@ class LushRequest extends CurlRequest
     {
         $parameters = http_build_query($this->payload['parameters']);
 
-        if ($this->method == 'POST') {
+        if (in_array($this->method, ['DELETE', 'PATCH', 'POST', 'PUT'])) {
             $this->addCurlOption(CURLOPT_POSTFIELDS, $parameters);
         } else {
             // append parameters in the url
@@ -150,8 +224,6 @@ class LushRequest extends CurlRequest
      */
     public function send()
     {
-        $response = $this->makeRequest();
-
-        return new LushResponse($response, $this);
+        return $this->makeRequest();
     }
 }
